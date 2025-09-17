@@ -39,7 +39,7 @@ export function Footer() {
             <h4 className="font-semibold mb-4 text-foreground">Product</h4>
             <nav className="flex flex-col gap-3">
               <Link href="/#features" className="text-muted-foreground hover:text-foreground text-sm transition-colors">Features</Link>
-              <Link href="#" className="text-muted-foreground hover:text-foreground text-sm transition-colors">Pricing</Link>
+              <Link href="/pricing" className="text-muted-foreground hover:text-foreground text-sm transition-colors">Pricing</Link>
               <Link href="/create" className="text-muted-foreground hover:text-foreground text-sm transition-colors">Create Invoice</Link>
             </nav>
           </div>
@@ -47,7 +47,7 @@ export function Footer() {
             <h4 className="font-semibold mb-4 text-foreground">Company</h4>
             <nav className="flex flex-col gap-3">
               <Link href="#" className="text-muted-foreground hover:text-foreground text-sm transition-colors">About Us</Link>
-              <Link href="#" className="text-muted-foreground hover:text-foreground text-sm transition-colors">Blog</Link>
+              <Link href="/blog" className="text-muted-foreground hover:text-foreground text-sm transition-colors">Blog</Link>
               <Link href="#" className="text-muted-foreground hover:text-foreground text-sm transition-colors">Careers</Link>
             </nav>
           </div>
