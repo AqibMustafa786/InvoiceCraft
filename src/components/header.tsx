@@ -1,8 +1,13 @@
+'use client';
+
 import Link from 'next/link';
-import { Sun } from 'lucide-react';
+import { Sun, Moon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { useTheme } from 'next-themes';
 
 export function Header() {
+  const { theme, setTheme } = useTheme();
+
   return (
     <header className="sticky top-0 z-40 w-full border-b border-border/40 bg-background/95 backdrop-blur-sm">
       <div className="container flex items-center h-16">
@@ -45,8 +50,10 @@ export function Header() {
           <Button asChild className="text-white transition-transform shadow-lg bg-gradient-to-r from-primary to-accent hover:scale-105">
             <Link href="/create">Get Started</Link>
           </Button>
-          <Button variant="ghost" size="icon" aria-label="Toggle Theme">
-              <Sun className="w-5 h-5" />
+          <Button variant="ghost" size="icon" aria-label="Toggle Theme" onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}>
+              <Sun className="w-5 h-5 transition-all scale-100 rotate-0 dark:-rotate-90 dark:scale-0" />
+              <Moon className="absolute w-5 h-5 transition-all scale-0 rotate-90 dark:rotate-0 dark:scale-100" />
+              <span className="sr-only">Toggle theme</span>
           </Button>
         </div>
       </div>
