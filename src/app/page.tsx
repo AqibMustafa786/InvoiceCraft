@@ -165,9 +165,7 @@ export default function Home() {
           <div className="lg:col-span-2">
              <h2 className="text-2xl font-bold font-headline mb-4">Live Preview</h2>
              <div className="sticky top-24">
-                <div id="invoice-preview-container">
-                    <InvoicePreview invoice={invoice} logoUrl={logoUrl} />
-                </div>
+                <InvoicePreview invoice={invoice} logoUrl={logoUrl} />
              </div>
           </div>
         </div>

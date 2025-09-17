@@ -82,15 +82,8 @@
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;
   }
-  body > * {
-    display: none;
-  }
-  main, #invoice-container, #invoice-container > * {
-    display: block;
-    visibility: visible;
-  }
-  #invoice-preview {
-    visibility: visible;
+  .print-only {
+    display: block !important;
     position: absolute;
     left: 0;
     top: 0;
@@ -98,18 +91,14 @@
     height: auto;
     padding: 0;
     margin: 0;
+  }
+  .print-only #invoice-preview {
     border: none;
     box-shadow: none;
     transform: scale(1);
-  }
-  #invoice-preview > div {
-    box-shadow: none !important;
-    border-radius: 0 !important;
-  }
-  .print-only {
-    display: block;
+    border-radius: 0;
   }
   .no-print {
-    display: none;
+    display: none !important;
   }
 }
