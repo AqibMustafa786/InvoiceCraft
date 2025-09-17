@@ -17,8 +17,8 @@ export default {
     },
     extend: {
       fontFamily: {
-        body: ['PT Sans', 'sans-serif'],
-        headline: ['PT Sans', 'sans-serif'],
+        body: ['Poppins', 'sans-serif'],
+        headline: ['Poppins', 'sans-serif'],
         code: ['monospace'],
       },
       colors: {
@@ -78,9 +78,9 @@ export default {
         },
       },
       borderRadius: {
-        lg: 'var(--radius)',
-        md: 'calc(var(--radius) - 2px)',
-        sm: 'calc(var(--radius) - 4px)',
+        lg: '16px', // Updated for glassmorphism
+        md: '12px',
+        sm: '8px',
       },
       keyframes: {
         'accordion-down': {
@@ -99,10 +99,17 @@ export default {
             height: '0',
           },
         },
+        blob: {
+          '0%, 100%': { transform: 'translate(0, 0) scale(1)' },
+          '25%': { transform: 'translate(20px, -30px) scale(1.1)' },
+          '50%': { transform: 'translate(0, 40px) scale(1)' },
+          '75%': { transform: 'translate(-30px, -20px) scale(0.9)' },
+        }
       },
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out',
+        'blob': 'blob 7s infinite',
       },
     },
   },

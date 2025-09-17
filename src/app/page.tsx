@@ -9,7 +9,10 @@ export default function HomePage() {
     <div className="flex flex-col min-h-screen">
       <main className="flex-1">
         {/* Hero Section */}
-        <section className="w-full py-20 md:py-32 lg:py-40 bg-background">
+        <section className="w-full py-20 md:py-32 lg:py-40 bg-background relative overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-transparent -z-10"></div>
+           <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-accent/20 rounded-full filter blur-3xl opacity-30 animate-blob"></div>
+          <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-primary/20 rounded-full filter blur-3xl opacity-30 animate-blob animation-delay-4000"></div>
           <div className="container mx-auto px-4 md:px-6 text-center">
             <div className="max-w-3xl mx-auto">
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold font-headline tracking-tight">
@@ -19,10 +22,10 @@ export default function HomePage() {
                 InvoiceCraft is the simplest way to create, manage, and send beautiful invoices to your clients. Get started for free and streamline your billing today.
               </p>
               <div className="mt-8 flex justify-center gap-4">
-                <Button asChild size="lg">
+                <Button asChild size="lg" className="shadow-lg hover:scale-105 transition-transform">
                   <Link href="/create">Get Started - It's Free</Link>
                 </Button>
-                <Button asChild variant="outline" size="lg">
+                <Button asChild variant="outline" size="lg" className="bg-background/50 backdrop-blur-sm">
                   <Link href="/#features">Learn More</Link>
                 </Button>
               </div>
@@ -40,7 +43,7 @@ export default function HomePage() {
               </p>
             </div>
             <div className="mt-12 grid gap-8 md:grid-cols-3">
-              <Card>
+              <Card className="bg-background/50 backdrop-blur-lg border border-white/20 shadow-lg">
                 <CardHeader className="flex flex-col items-center text-center">
                   <div className="p-3 rounded-full bg-primary/10 text-primary mb-4">
                     <Zap className="h-8 w-8" />
@@ -51,7 +54,7 @@ export default function HomePage() {
                   Generate beautiful, professional invoices with our intuitive live editor. See your changes in real-time.
                 </CardContent>
               </Card>
-              <Card>
+              <Card className="bg-background/50 backdrop-blur-lg border border-white/20 shadow-lg">
                 <CardHeader className="flex flex-col items-center text-center">
                   <div className="p-3 rounded-full bg-primary/10 text-primary mb-4">
                     <CheckCircle className="h-8 w-8" />
@@ -62,7 +65,7 @@ export default function HomePage() {
                   Keep track of all your invoice drafts in a powerful, filterable dashboard. Never lose an invoice again.
                 </CardContent>
               </Card>
-              <Card>
+              <Card className="bg-background/50 backdrop-blur-lg border border-white/20 shadow-lg">
                 <CardHeader className="flex flex-col items-center text-center">
                    <div className="p-3 rounded-full bg-primary/10 text-primary mb-4">
                     <ShieldCheck className="h-8 w-8" />
@@ -86,7 +89,7 @@ export default function HomePage() {
                 Stop wrestling with spreadsheets and word processors. Join thousands of freelancers and small businesses who trust InvoiceCraft.
               </p>
               <div className="mt-8">
-                <Button asChild size="lg">
+                <Button asChild size="lg" className="shadow-lg hover:scale-105 transition-transform">
                   <Link href="/create">Create Your First Invoice</Link>
                 </Button>
               </div>

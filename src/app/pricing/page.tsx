@@ -17,7 +17,7 @@ export default function PricingPage() {
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
         {/* Free Plan */}
-        <Card className="flex flex-col">
+        <Card className="flex flex-col bg-background/50 backdrop-blur-lg border border-white/20 shadow-lg">
           <CardHeader>
             <CardTitle>Free</CardTitle>
             <CardDescription>For individuals and hobbyists starting out.</CardDescription>
@@ -50,7 +50,7 @@ export default function PricingPage() {
         </Card>
 
         {/* Basic Plan */}
-        <Card className="border-primary flex flex-col shadow-lg">
+        <Card className="border-primary flex flex-col shadow-xl bg-background/70 backdrop-blur-lg border-2">
           <CardHeader>
             <CardTitle>Basic</CardTitle>
             <CardDescription>For freelancers and small businesses.</CardDescription>
@@ -80,14 +80,14 @@ export default function PricingPage() {
             </ul>
           </CardContent>
           <CardFooter>
-            <Button asChild className="w-full">
+            <Button asChild className="w-full shadow-lg hover:scale-105 transition-transform">
               <Link href="/signup">Choose Basic</Link>
             </Button>
           </CardFooter>
         </Card>
 
         {/* Premium Plan */}
-        <Card className="flex flex-col">
+        <Card className="flex flex-col bg-background/50 backdrop-blur-lg border border-white/20 shadow-lg">
           <CardHeader>
             <CardTitle>Premium</CardTitle>
             <CardDescription>For growing businesses and agencies.</CardDescription>
