@@ -5,7 +5,7 @@ import type { Invoice } from '@/lib/types';
 import { InvoiceForm } from '@/components/invoice-form';
 import { InvoicePreview } from '@/components/invoice-preview';
 import { Button } from '@/components/ui/button';
-import { Printer, Save, FilePlus, FolderOpen } from 'lucide-react';
+import { Printer, Save, FilePlus, FolderOpen, Edit } from 'lucide-react';
 import { addDays } from 'date-fns';
 import { useToast } from '@/hooks/use-toast';
 
@@ -67,7 +67,7 @@ export default function Home() {
     window.print();
   };
 
-  const handleSave = () => {
+  const handleSaveDraft = () => {
     try {
       // Stringify date objects for storage
       const toJSON = (key: string, value: any) => {
@@ -80,14 +80,14 @@ export default function Home() {
       const dataToSave = JSON.stringify({ invoice, logoUrl }, toJSON);
       localStorage.setItem(LOCAL_STORAGE_KEY, dataToSave);
       toast({
-        title: "Invoice Saved",
-        description: "Your invoice has been saved locally.",
+        title: "Draft Saved",
+        description: "Your invoice draft has been saved locally.",
       });
     } catch (error) {
       console.error("Failed to save invoice data to localStorage", error);
       toast({
         title: "Error",
-        description: "There was an error saving your invoice.",
+        description: "There was an error saving your draft.",
         variant: "destructive",
       });
     }
@@ -111,21 +111,21 @@ export default function Home() {
           setLogoUrl(parsedData.logoUrl);
         }
         toast({
-          title: "Invoice Loaded",
-          description: "Your saved invoice has been loaded.",
+          title: "Draft Loaded",
+          description: "Your saved draft has been loaded.",
         });
       } catch (error) {
         console.error("Failed to parse invoice data from localStorage", error);
         toast({
           title: "Error",
-          description: "Could not load saved invoice data.",
+          description: "Could not load saved draft data.",
           variant: "destructive",
         });
       }
     } else {
        toast({
-        title: "No Saved Data",
-        description: "There is no saved invoice to load.",
+        title: "No Saved Draft",
+        description: "There is no saved draft to load.",
       });
     }
   };
@@ -154,15 +154,15 @@ export default function Home() {
             </Button>
             <Button onClick={handleLoad} variant="outline">
                 <FolderOpen className="mr-2 h-5 w-5" />
-                Load
+                Load Draft
             </Button>
-            <Button onClick={handleSave}>
-              <Save className="mr-2 h-5 w-5" />
-              Save
+            <Button onClick={handleSaveDraft}>
+              <Edit className="mr-2 h-5 w-5" />
+              Save Draft
             </Button>
             <Button onClick={handlePrint}>
               <Printer className="mr-2 h-5 w-5" />
-              Print / PDF
+              Save as PDF
             </Button>
         </div>
       </div>
