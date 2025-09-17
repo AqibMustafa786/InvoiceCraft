@@ -6,31 +6,49 @@ import { PageHeader, PageHeaderDescription, PageHeaderHeading } from "@/componen
 
 const blogPosts = [
   {
-    slug: "streamline-your-billing",
-    title: "5 Tips to Streamline Your Billing Process",
-    description: "Discover five actionable tips to make your invoicing and payment collection faster and more efficient.",
-    author: "Jane Doe",
+    slug: "creating-your-first-invoice",
+    title: "Creating Your First Invoice: A Step-by-Step Guide",
+    description: "Learn how to create a professional invoice from scratch, from entering business details to adding line items and calculating totals.",
+    author: "InvoiceCraft Team",
+    date: "2024-07-30",
+    imageUrl: "https://picsum.photos/seed/guide1/600/400",
+    imageHint: "desk invoice"
+  },
+  {
+    slug: "writing-effective-descriptions",
+    title: "How to Write Effective Invoice Descriptions",
+    description: "Clear descriptions avoid client disputes and ensure you get paid on time. Learn how to write with clarity and professionalism.",
+    author: "InvoiceCraft Team",
+    date: "2024-07-29",
+    imageUrl: "https://picsum.photos/seed/guide2/600/400",
+    imageHint: "writing notes"
+  },
+  {
+    slug: "sending-invoices-best-practices",
+    title: "Best Practices for Sending Invoices to Clients",
+    description: "Discover the best ways to send invoices, including email tips, PDF attachments, and using automated reminders to prevent late payments.",
+    author: "InvoiceCraft Team",
     date: "2024-07-28",
-    imageUrl: "https://picsum.photos/seed/blog1/600/400",
-    imageHint: "office billing"
+    imageUrl: "https://picsum.photos/seed/guide3/600/400",
+    imageHint: "email laptop"
   },
   {
-    slug: "professional-invoices",
-    title: "How to Create Professional Invoices That Get You Paid Faster",
-    description: "A deep dive into the elements of a professional invoice and how they can impact your cash flow.",
-    author: "John Smith",
-    date: "2024-07-25",
-    imageUrl: "https://picsum.photos/seed/blog2/600/400",
-    imageHint: "invoice document"
+    slug: "managing-invoice-payments",
+    title: "Effectively Managing and Tracking Invoice Payments",
+    description: "From marking invoices as paid to handling partial payments, learn how to manage your cash flow with our powerful tools.",
+    author: "InvoiceCraft Team",
+    date: "2024-07-27",
+    imageUrl: "https://picsum.photos/seed/guide4/600/400",
+    imageHint: "finance chart"
   },
   {
-    slug: "freelancer-finances",
-    title: "Managing Your Finances as a Freelancer: A Beginner's Guide",
-    description: "Learn the basics of financial management for freelancers, from tracking income to planning for taxes.",
-    author: "Alice Johnson",
-    date: "2024-07-22",
-    imageUrl: "https://picsum.photos/seed/blog3/600/400",
-    imageHint: "desk finance"
+    slug: "why-use-an-invoice-generator",
+    title: "Why Use a SaaS Invoice Generator for Your Business?",
+    description: "Explore the benefits of using a dedicated invoice generator, from saving time to maintaining a professional image and securing your data.",
+    author: "InvoiceCraft Team",
+    date: "2024-07-26",
+    imageUrl: "https://picsum.photos/seed/guide5/600/400",
+    imageHint: "business meeting"
   },
 ];
 
@@ -72,7 +90,6 @@ export default function BlogPage() {
           </Card>
         ))}
       </div>
-       <p className="text-xs text-center text-muted-foreground pt-12">(This is a non-functional placeholder page, blog post links will not work yet)</p>
     </div>
   );
 }
