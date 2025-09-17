@@ -5,8 +5,8 @@ export default function ManagingPaymentsPage() {
   return (
     <div className="container mx-auto p-4 md:p-8">
       <PageHeader>
-        <PageHeaderHeading>Managing Invoice Payments: How to Track Payments Like a Pro</PageHeaderHeading>
-        <PageHeaderDescription>Track payments to keep your finances organized and your cash flow healthy.</PageHeaderDescription>
+        <PageHeaderHeading>Managing Invoice Payments – How to Track & Organize Payments</PageHeaderHeading>
+        <PageHeaderDescription>A complete guide on managing invoice payments. Learn how to track, organize, and automate payments to improve your cash flow.</PageHeaderDescription>
       </PageHeader>
 
       <div className="max-w-4xl mx-auto bg-card/50 backdrop-blur-lg border border-border/30 shadow-lg rounded-lg p-8">

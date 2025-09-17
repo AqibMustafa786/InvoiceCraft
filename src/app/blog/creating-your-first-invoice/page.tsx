@@ -35,8 +35,8 @@ export default function CreatingInvoicePage() {
   return (
     <div className="container mx-auto p-4 md:p-8">
       <PageHeader>
-        <PageHeaderHeading>Creating Your First Invoice – A Complete Step-by-Step Guide</PageHeaderHeading>
-        <PageHeaderDescription>Learn how to create your first professional invoice with this step-by-step guide. Perfect for freelancers, consultants, and small businesses who want to get paid faster and maintain accurate records.</PageHeaderDescription>
+        <PageHeaderHeading>How to Create Your First Invoice – Step-by-Step Guide for Beginners</PageHeaderHeading>
+        <PageHeaderDescription>Learn how to create your first invoice with our step-by-step guide. Perfect for freelancers & small businesses who want professional invoices and faster payments.</PageHeaderDescription>
       </PageHeader>
 
       <div className="max-w-4xl mx-auto bg-card/50 backdrop-blur-lg border border-border/30 shadow-lg rounded-lg p-8">

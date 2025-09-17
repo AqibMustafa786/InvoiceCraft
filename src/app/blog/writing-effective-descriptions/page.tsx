@@ -5,8 +5,8 @@ export default function DescriptionsPage() {
   return (
     <div className="container mx-auto p-4 md:p-8">
       <PageHeader>
-        <PageHeaderHeading>Writing Effective Descriptions: Tips for Clear Communication in Invoices</PageHeaderHeading>
-        <PageHeaderDescription>Clear descriptions make your invoice easier to understand and avoid client disputes.</PageHeaderDescription>
+        <PageHeaderHeading>Writing Effective Invoice Descriptions – Clear Communication Tips</PageHeaderHeading>
+        <PageHeaderDescription>Discover proven tips to write clear, effective invoice descriptions. Improve client communication, reduce disputes, and get paid faster with professional invoices.</PageHeaderDescription>
       </PageHeader>
 
        <div className="max-w-4xl mx-auto bg-card/50 backdrop-blur-lg border border-border/30 shadow-lg rounded-lg p-8">

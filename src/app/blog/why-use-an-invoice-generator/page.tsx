@@ -5,8 +5,8 @@ export default function WhyUseGeneratorPage() {
   return (
     <div className="container mx-auto p-4 md:p-8">
       <PageHeader>
-        <PageHeaderHeading>Why Use an Invoice Generator: The Ultimate Guide</PageHeaderHeading>
-        <PageHeaderDescription>Discover the benefits of using a dedicated tool for your invoicing needs, saving time, reducing errors, and improving cash flow.</PageHeaderDescription>
+        <PageHeaderHeading>Why Use an Invoice Generator – Benefits, Features & Tips</PageHeaderHeading>
+        <PageHeaderDescription>Wondering why you should use an invoice generator? Discover key benefits, features, and best practices for freelancers & businesses.</PageHeaderDescription>
       </PageHeader>
 
       <div className="max-w-4xl mx-auto bg-card/50 backdrop-blur-lg border border-border/30 shadow-lg rounded-lg p-8">

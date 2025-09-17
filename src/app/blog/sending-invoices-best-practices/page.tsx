@@ -5,8 +5,8 @@ export default function SendingInvoicesPage() {
   return (
     <div className="container mx-auto p-4 md:p-8">
       <PageHeader>
-        <PageHeaderHeading>Sending Invoices: Best Practices for Faster Payments</PageHeaderHeading>
-        <PageHeaderDescription>This guide covers everything you need to know about sending invoices: timing, format, communication, and follow-ups to get paid on time.</PageHeaderDescription>
+        <PageHeaderHeading>Best Practices for Sending Invoices – Get Paid Faster</PageHeaderHeading>
+        <PageHeaderDescription>Learn the best practices for sending invoices professionally. Discover tips to improve client trust, avoid delays, and ensure faster payments.</PageHeaderDescription>
       </PageHeader>
 
       <div className="max-w-4xl mx-auto bg-card/50 backdrop-blur-lg border border-border/30 shadow-lg rounded-lg p-8">
