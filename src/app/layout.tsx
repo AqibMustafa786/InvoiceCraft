@@ -26,7 +26,7 @@ export default function RootLayout({
           'min-h-screen bg-background font-body antialiased'
         )}
       >
-        <div className="relative flex min-h-screen flex-col">
+        <div id="app-container" className="relative flex min-h-screen flex-col">
           <Header />
           <main className="flex-1">{children}</main>
         </div>
