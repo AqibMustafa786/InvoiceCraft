@@ -3,6 +3,7 @@ import './globals.css';
 import { cn } from '@/lib/utils';
 import { Toaster } from '@/components/ui/toaster';
 import { Header } from '@/components/header';
+import { Footer } from '@/components/footer';
 
 export const metadata: Metadata = {
   title: 'InvoiceCraft - Professional Invoice Generator',
@@ -29,6 +30,7 @@ export default function RootLayout({
         <div className="app-main-container relative flex min-h-screen flex-col">
           <Header />
           <main className="flex-1">{children}</main>
+          <Footer />
         </div>
         <Toaster />
         <div id="print-container" className="hidden"></div>
