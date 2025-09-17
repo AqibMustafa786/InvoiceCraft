@@ -104,12 +104,18 @@ export default {
           '25%': { transform: 'translate(20px, -30px) scale(1.1)' },
           '50%': { transform: 'translate(0, 40px) scale(1)' },
           '75%': { transform: 'translate(-30px, -20px) scale(0.9)' },
+        },
+        gradient: {
+          '0%': { 'background-position': '0% 50%' },
+          '50%': { 'background-position': '100% 50%' },
+          '100%': { 'background-position': '0% 50%' },
         }
       },
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out',
         'blob': 'blob 7s infinite',
+        'gradient': 'gradient 15s ease infinite',
       },
     },
   },
