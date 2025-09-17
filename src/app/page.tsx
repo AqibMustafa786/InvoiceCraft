@@ -2,27 +2,26 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { CheckCircle, Zap, ShieldCheck } from 'lucide-react';
-import Image from 'next/image';
 
 export default function HomePage() {
   return (
     <div className="flex flex-col min-h-screen">
       <main className="flex-1">
         {/* Hero Section */}
-        <section className="w-full py-20 md:py-32 lg:py-40 bg-background relative overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-transparent -z-10"></div>
-           <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-accent/20 rounded-full filter blur-3xl opacity-30 animate-blob"></div>
-          <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-primary/20 rounded-full filter blur-3xl opacity-30 animate-blob animation-delay-4000"></div>
-          <div className="container mx-auto px-4 md:px-6 text-center">
+        <section className="relative w-full py-20 overflow-hidden md:py-32 lg:py-40 bg-background/10">
+          <div className="absolute inset-0 -z-10 bg-gradient-to-br from-primary/10 to-transparent"></div>
+          <div className="absolute top-0 left-0 w-96 h-96 rounded-full bg-accent/20 filter blur-3xl opacity-30 animate-blob"></div>
+          <div className="absolute bottom-0 right-0 w-96 h-96 rounded-full bg-primary/20 filter blur-3xl opacity-30 animate-blob animation-delay-4000"></div>
+          <div className="container px-4 mx-auto text-center md:px-6">
             <div className="max-w-3xl mx-auto">
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold font-headline tracking-tight">
+              <h1 className="text-4xl font-bold tracking-tight md:text-5xl lg:text-6xl font-headline">
                 Create Professional Invoices in Seconds
               </h1>
-              <p className="mt-6 text-lg md:text-xl text-muted-foreground">
+              <p className="mt-6 text-lg text-muted-foreground md:text-xl">
                 InvoiceCraft is the simplest way to create, manage, and send beautiful invoices to your clients. Get started for free and streamline your billing today.
               </p>
-              <div className="mt-8 flex justify-center gap-4">
-                <Button asChild size="lg" className="shadow-lg hover:scale-105 transition-transform">
+              <div className="flex justify-center gap-4 mt-8">
+                <Button asChild size="lg" className="transition-transform shadow-lg hover:scale-105">
                   <Link href="/create">Get Started - It's Free</Link>
                 </Button>
                 <Button asChild variant="outline" size="lg" className="bg-background/50 backdrop-blur-sm">
@@ -34,19 +33,19 @@ export default function HomePage() {
         </section>
 
         {/* Feature Section */}
-        <section id="features" className="w-full py-20 md:py-32 bg-secondary">
-          <div className="container mx-auto px-4 md:px-6">
-            <div className="text-center max-w-2xl mx-auto">
-              <h2 className="text-3xl md:text-4xl font-bold font-headline">Why You'll Love InvoiceCraft</h2>
+        <section id="features" className="w-full py-20 md:py-32 bg-background/30">
+          <div className="container px-4 mx-auto md:px-6">
+            <div className="max-w-2xl mx-auto text-center">
+              <h2 className="text-3xl font-bold md:text-4xl font-headline">Why You'll Love InvoiceCraft</h2>
               <p className="mt-4 text-muted-foreground">
                 We've built a feature-rich platform to make your invoicing process seamless and professional.
               </p>
             </div>
-            <div className="mt-12 grid gap-8 md:grid-cols-3">
-              <Card className="bg-background/50 backdrop-blur-lg border border-white/20 shadow-lg">
+            <div className="grid gap-8 mt-12 md:grid-cols-3">
+              <Card className="border shadow-lg bg-background/50 backdrop-blur-lg border-white/20">
                 <CardHeader className="flex flex-col items-center text-center">
-                  <div className="p-3 rounded-full bg-primary/10 text-primary mb-4">
-                    <Zap className="h-8 w-8" />
+                  <div className="p-3 mb-4 rounded-full bg-primary/10 text-primary">
+                    <Zap className="w-8 h-8" />
                   </div>
                   <CardTitle>Effortless Creation</CardTitle>
                 </CardHeader>
@@ -54,10 +53,10 @@ export default function HomePage() {
                   Generate beautiful, professional invoices with our intuitive live editor. See your changes in real-time.
                 </CardContent>
               </Card>
-              <Card className="bg-background/50 backdrop-blur-lg border border-white/20 shadow-lg">
+              <Card className="border shadow-lg bg-background/50 backdrop-blur-lg border-white/20">
                 <CardHeader className="flex flex-col items-center text-center">
-                  <div className="p-3 rounded-full bg-primary/10 text-primary mb-4">
-                    <CheckCircle className="h-8 w-8" />
+                  <div className="p-3 mb-4 rounded-full bg-primary/10 text-primary">
+                    <CheckCircle className="w-8 h-8" />
                   </div>
                   <CardTitle>Manage with Ease</CardTitle>
                 </CardHeader>
@@ -65,10 +64,10 @@ export default function HomePage() {
                   Keep track of all your invoice drafts in a powerful, filterable dashboard. Never lose an invoice again.
                 </CardContent>
               </Card>
-              <Card className="bg-background/50 backdrop-blur-lg border border-white/20 shadow-lg">
+              <Card className="border shadow-lg bg-background/50 backdrop-blur-lg border-white/20">
                 <CardHeader className="flex flex-col items-center text-center">
-                   <div className="p-3 rounded-full bg-primary/10 text-primary mb-4">
-                    <ShieldCheck className="h-8 w-8" />
+                   <div className="p-3 mb-4 rounded-full bg-primary/10 text-primary">
+                    <ShieldCheck className="w-8 h-8" />
                   </div>
                   <CardTitle>Secure & Private</CardTitle>
                 </CardHeader>
@@ -82,14 +81,14 @@ export default function HomePage() {
         
         {/* CTA Section */}
         <section className="w-full py-20 md:py-32">
-           <div className="container mx-auto px-4 md:px-6 text-center">
+           <div className="container px-4 mx-auto text-center md:px-6">
             <div className="max-w-3xl mx-auto">
-              <h2 className="text-3xl md:text-4xl font-bold font-headline">Ready to Get Started?</h2>
+              <h2 className="text-3xl font-bold md:text-4xl font-headline">Ready to Get Started?</h2>
               <p className="mt-4 text-lg text-muted-foreground">
                 Stop wrestling with spreadsheets and word processors. Join thousands of freelancers and small businesses who trust InvoiceCraft.
               </p>
               <div className="mt-8">
-                <Button asChild size="lg" className="shadow-lg hover:scale-105 transition-transform">
+                <Button asChild size="lg" className="transition-transform shadow-lg hover:scale-105">
                   <Link href="/create">Create Your First Invoice</Link>
                 </Button>
               </div>

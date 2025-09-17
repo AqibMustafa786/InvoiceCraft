@@ -35,7 +35,7 @@
     --input: 240 5.9% 90%;
     --ring: 235 48% 50%; /* deep blue #3F51B5 */
 
-    --radius: 0.5rem;
+    --radius: 1rem;
   }
 
   .dark {
@@ -123,4 +123,16 @@
 @page {
   size: auto;
   margin: 0mm;
+}
+
+@keyframes gradient {
+	0% {
+		background-position: 0% 50%;
+	}
+	50% {
+		background-position: 100% 50%;
+	}
+	100% {
+		background-position: 0% 50%;
+	}
 }

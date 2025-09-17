@@ -5,58 +5,58 @@ import { Button } from './ui/button';
 
 export function Footer() {
   return (
-    <footer className="bg-secondary border-t text-secondary-foreground">
-      <div className="container mx-auto grid grid-cols-1 md:grid-cols-5 gap-12 py-12 px-4 md:px-6">
+    <footer className="border-t bg-black/10 backdrop-blur-lg text-secondary-foreground">
+      <div className="container grid grid-cols-1 gap-12 px-4 py-12 mx-auto md:grid-cols-5 md:px-6">
         
         {/* Branding Section */}
-        <div className="md:col-span-2 flex flex-col gap-4">
+        <div className="flex flex-col gap-4 md:col-span-2">
           <Link href="/" className="flex items-center gap-2">
-            <FileText className="h-6 w-6 text-primary" />
-            <span className="font-bold text-lg font-headline text-foreground">InvoiceCraft</span>
+            <FileText className="w-6 h-6 text-primary" />
+            <span className="text-lg font-bold text-foreground font-headline">InvoiceCraft</span>
           </Link>
-          <p className="text-muted-foreground max-w-sm">
+          <p className="max-w-sm text-muted-foreground">
             Smart, simple, and professional invoicing for modern freelancers and businesses.
           </p>
            <div className="flex gap-3 mt-4">
-            <Link href="#" aria-label="Twitter" rel="noopener noreferrer" target="_blank" className="text-muted-foreground hover:text-foreground transition-colors">
-              <Twitter className="h-5 w-5" />
+            <Link href="#" aria-label="Twitter" rel="noopener noreferrer" target="_blank" className="transition-colors text-muted-foreground hover:text-foreground">
+              <Twitter className="w-5 h-5" />
             </Link>
-            <Link href="#" aria-label="GitHub" rel="noopener noreferrer" target="_blank" className="text-muted-foreground hover:text-foreground transition-colors">
-              <Github className="h-5 w-5" />
+            <Link href="#" aria-label="GitHub" rel="noopener noreferrer" target="_blank" className="transition-colors text-muted-foreground hover:text-foreground">
+              <Github className="w-5 h-5" />
             </Link>
-            <Link href="#" aria-label="LinkedIn" rel="noopener noreferrer" target="_blank" className="text-muted-foreground hover:text-foreground transition-colors">
-              <Linkedin className="h-5 w-5" />
+            <Link href="#" aria-label="LinkedIn" rel="noopener noreferrer" target="_blank" className="transition-colors text-muted-foreground hover:text-foreground">
+              <Linkedin className="w-5 h-5" />
             </Link>
-            <Link href="#" aria-label="Instagram" rel="noopener noreferrer" target="_blank" className="text-muted-foreground hover:text-foreground transition-colors">
-              <Instagram className="h-5 w-5" />
+            <Link href="#" aria-label="Instagram" rel="noopener noreferrer" target="_blank" className="transition-colors text-muted-foreground hover:text-foreground">
+              <Instagram className="w-5 h-5" />
             </Link>
           </div>
         </div>
 
         {/* Navigation Links */}
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-8 md:col-span-3">
+        <div className="grid grid-cols-2 gap-8 md:col-span-3 md:grid-cols-3">
           <div>
-            <h4 className="font-semibold mb-4 text-foreground">Product</h4>
+            <h4 className="mb-4 font-semibold text-foreground">Product</h4>
             <nav className="flex flex-col gap-3">
-              <Link href="/#features" className="text-muted-foreground hover:text-foreground text-sm transition-colors">Features</Link>
-              <Link href="/pricing" className="text-muted-foreground hover:text-foreground text-sm transition-colors">Pricing</Link>
-              <Link href="/create" className="text-muted-foreground hover:text-foreground text-sm transition-colors">Create Invoice</Link>
+              <Link href="/#features" className="text-sm transition-colors text-muted-foreground hover:text-foreground">Features</Link>
+              <Link href="/pricing" className="text-sm transition-colors text-muted-foreground hover:text-foreground">Pricing</Link>
+              <Link href="/create" className="text-sm transition-colors text-muted-foreground hover:text-foreground">Create Invoice</Link>
             </nav>
           </div>
           <div>
-            <h4 className="font-semibold mb-4 text-foreground">Company</h4>
+            <h4 className="mb-4 font-semibold text-foreground">Company</h4>
             <nav className="flex flex-col gap-3">
-              <Link href="/about" className="text-muted-foreground hover:text-foreground text-sm transition-colors">About Us</Link>
-              <Link href="/blog" className="text-muted-foreground hover:text-foreground text-sm transition-colors">Blog</Link>
-              <Link href="/careers" className="text-muted-foreground hover:text-foreground text-sm transition-colors">Careers</Link>
+              <Link href="/about" className="text-sm transition-colors text-muted-foreground hover:text-foreground">About Us</Link>
+              <Link href="/blog" className="text-sm transition-colors text-muted-foreground hover:text-foreground">Blog</Link>
+              <Link href="/careers" className="text-sm transition-colors text-muted-foreground hover:text-foreground">Careers</Link>
             </nav>
           </div>
           <div>
-            <h4 className="font-semibold mb-4 text-foreground">Resources</h4>
+            <h4 className="mb-4 font-semibold text-foreground">Resources</h4>
             <nav className="flex flex-col gap-3">
-              <Link href="/help" className="text-muted-foreground hover:text-foreground text-sm transition-colors">Help Center</Link>
-              <Link href="/contact" className="text-muted-foreground hover:text-foreground text-sm transition-colors">Contact Us</Link>
-              <Link href="/faq" className="text-muted-foreground hover:text-foreground text-sm transition-colors">FAQs</Link>
+              <Link href="/help" className="text-sm transition-colors text-muted-foreground hover:text-foreground">Help Center</Link>
+              <Link href="/contact" className="text-sm transition-colors text-muted-foreground hover:text-foreground">Contact Us</Link>
+              <Link href="/faq" className="text-sm transition-colors text-muted-foreground hover:text-foreground">FAQs</Link>
             </nav>
           </div>
         </div>
@@ -65,13 +65,13 @@ export function Footer() {
 
       {/* Bottom Bar */}
       <div className="border-t">
-        <div className="container mx-auto py-6 px-4 md:px-6 flex flex-col sm:flex-row justify-between items-center gap-4">
-            <p className="text-muted-foreground text-sm">
+        <div className="container flex flex-col items-center justify-between gap-4 px-4 py-6 mx-auto sm:flex-row md:px-6">
+            <p className="text-sm text-muted-foreground">
                 &copy; {new Date().getFullYear()} InvoiceCraft. All rights reserved.
             </p>
             <div className="flex gap-4">
-                <Link href="/privacy" className="text-muted-foreground hover:text-foreground text-sm transition-colors">Privacy Policy</Link>
-                <Link href="/terms" className="text-muted-foreground hover:text-foreground text-sm transition-colors">Terms of Service</Link>
+                <Link href="/privacy" className="text-sm transition-colors text-muted-foreground hover:text-foreground">Privacy Policy</Link>
+                <Link href="/terms" className="text-sm transition-colors text-muted-foreground hover:text-foreground">Terms of Service</Link>
             </div>
         </div>
       </div>

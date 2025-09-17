@@ -78,9 +78,9 @@ export default {
         },
       },
       borderRadius: {
-        lg: '16px', // Updated for glassmorphism
-        md: '12px',
-        sm: '8px',
+        lg: 'var(--radius)',
+        md: 'calc(var(--radius) - 4px)',
+        sm: 'calc(var(--radius) - 8px)',
       },
       keyframes: {
         'accordion-down': {
@@ -100,10 +100,18 @@ export default {
           },
         },
         blob: {
-          '0%, 100%': { transform: 'translate(0, 0) scale(1)' },
-          '25%': { transform: 'translate(20px, -30px) scale(1.1)' },
-          '50%': { transform: 'translate(0, 40px) scale(1)' },
-          '75%': { transform: 'translate(-30px, -20px) scale(0.9)' },
+          "0%": {
+            transform: "translate(0px, 0px) scale(1)",
+          },
+          "33%": {
+            transform: "translate(30px, -50px) scale(1.1)",
+          },
+          "66%": {
+            transform: "translate(-20px, 20px) scale(0.9)",
+          },
+          "100%": {
+            transform: "translate(0px, 0px) scale(1)",
+          },
         },
         gradient: {
           '0%': { 'background-position': '0% 50%' },
