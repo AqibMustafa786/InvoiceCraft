@@ -67,14 +67,14 @@ export function FilterSheet({ open, onOpenChange, filters, onFiltersChange, onRe
                     <div className="space-y-2">
                         <Label htmlFor="filter-status">Status</Label>
                         <Select
-                            value={filters.status ?? ''}
-                            onValueChange={(value) => onFiltersChange(f => ({ ...f, status: value as InvoiceStatus | null }))}
+                            value={filters.status ?? 'all'}
+                            onValueChange={(value) => onFiltersChange(f => ({ ...f, status: value === 'all' ? null : value as InvoiceStatus }))}
                         >
                             <SelectTrigger id="filter-status">
                                 <SelectValue placeholder="Any Status" />
                             </SelectTrigger>
                             <SelectContent>
-                                <SelectItem value="">Any Status</SelectItem>
+                                <SelectItem value="all">Any Status</SelectItem>
                                 <SelectItem value="draft">Draft</SelectItem>
                                 <SelectItem value="sent">Sent</SelectItem>
                                 <SelectItem value="paid">Paid</SelectItem>
