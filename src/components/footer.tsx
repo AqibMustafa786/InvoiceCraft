@@ -46,17 +46,17 @@ export function Footer() {
           <div>
             <h4 className="font-semibold mb-4 text-foreground">Company</h4>
             <nav className="flex flex-col gap-3">
-              <Link href="#" className="text-muted-foreground hover:text-foreground text-sm transition-colors">About Us</Link>
+              <Link href="/about" className="text-muted-foreground hover:text-foreground text-sm transition-colors">About Us</Link>
               <Link href="/blog" className="text-muted-foreground hover:text-foreground text-sm transition-colors">Blog</Link>
-              <Link href="#" className="text-muted-foreground hover:text-foreground text-sm transition-colors">Careers</Link>
+              <Link href="/careers" className="text-muted-foreground hover:text-foreground text-sm transition-colors">Careers</Link>
             </nav>
           </div>
           <div>
             <h4 className="font-semibold mb-4 text-foreground">Resources</h4>
             <nav className="flex flex-col gap-3">
-              <Link href="#" className="text-muted-foreground hover:text-foreground text-sm transition-colors">Help Center</Link>
-              <Link href="#" className="text-muted-foreground hover:text-foreground text-sm transition-colors">Contact Us</Link>
-              <Link href="#" className="text-muted-foreground hover:text-foreground text-sm transition-colors">FAQs</Link>
+              <Link href="/help" className="text-muted-foreground hover:text-foreground text-sm transition-colors">Help Center</Link>
+              <Link href="/contact" className="text-muted-foreground hover:text-foreground text-sm transition-colors">Contact Us</Link>
+              <Link href="/faq" className="text-muted-foreground hover:text-foreground text-sm transition-colors">FAQs</Link>
             </nav>
           </div>
         </div>
@@ -70,8 +70,8 @@ export function Footer() {
                 &copy; {new Date().getFullYear()} InvoiceCraft. All rights reserved.
             </p>
             <div className="flex gap-4">
-                <Link href="#" className="text-muted-foreground hover:text-foreground text-sm transition-colors">Privacy Policy</Link>
-                <Link href="#" className="text-muted-foreground hover:text-foreground text-sm transition-colors">Terms of Service</Link>
+                <Link href="/privacy" className="text-muted-foreground hover:text-foreground text-sm transition-colors">Privacy Policy</Link>
+                <Link href="/terms" className="text-muted-foreground hover:text-foreground text-sm transition-colors">Terms of Service</Link>
             </div>
         </div>
       </div>
