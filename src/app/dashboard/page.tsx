@@ -163,49 +163,52 @@ export default function DashboardPage() {
                         </DropdownMenu>
                     </div>
 
-                    <Table>
-                        <TableHeader>
-                            <TableRow>
-                                <TableHead>Invoice #</TableHead>
-                                <TableHead>Client</TableHead>
-                                <TableHead>Amount</TableHead>
-                                <TableHead>Status</TableHead>
-                                <TableHead>Date</TableHead>
-                                <TableHead className="text-right">Actions</TableHead>
-                            </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                            {filteredAndSortedDrafts.length > 0 ? filteredAndSortedDrafts.map((invoice) => (
-                                <TableRow key={invoice.id}>
-                                    <TableCell className="font-medium">{invoice.invoiceNumber}</TableCell>
-                                    <TableCell>{invoice.clientName}</TableCell>
-                                    <TableCell>${calculateTotal(invoice).toFixed(2)}</TableCell>
-                                    <TableCell>Draft</TableCell>
-                                    <TableCell>{format(invoice.invoiceDate, 'yyyy-MM-dd')}</TableCell>
-                                    <TableCell className="text-right space-x-2">
-                                        <Button variant="ghost" size="icon" asChild>
-                                            <Link href={`/?draftId=${invoice.id}`}>
-                                                <Edit className="h-4 w-4" />
-                                                <span className="sr-only">Edit</span>
-                                            </Link>
-                                        </Button>
-                                        <Button variant="ghost" size="icon" onClick={() => setDeleteCandidateId(invoice.id)}>
-                                            <Trash2 className="h-4 w-4 text-destructive" />
-                                            <span className="sr-only">Delete</span>
-                                        </Button>
-                                    </TableCell>
-                                </TableRow>
-                            )) : (
+                    <div className="overflow-x-auto">
+                        <Table>
+                            <TableHeader>
                                 <TableRow>
-                                    <TableCell colSpan={6} className="text-center h-24">
-                                        {searchTerm ? 'No drafts match your search.' : 'No drafts found.'}
-                                    </TableCell>
+                                    <TableHead>Invoice #</TableHead>
+                                    <TableHead>Client</TableHead>
+                                    <TableHead>Amount</TableHead>
+                                    <TableHead>Status</TableHead>
+                                    <TableHead>Date</TableHead>
+                                    <TableHead className="text-right">Actions</TableHead>
                                 </TableRow>
-                            )}
-                        </TableBody>
-                    </Table>
+                            </TableHeader>
+                            <TableBody>
+                                {filteredAndSortedDrafts.length > 0 ? filteredAndSortedDrafts.map((invoice) => (
+                                    <TableRow key={invoice.id}>
+                                        <TableCell className="font-medium">{invoice.invoiceNumber}</TableCell>
+                                        <TableCell>{invoice.clientName}</TableCell>
+                                        <TableCell>${calculateTotal(invoice).toFixed(2)}</TableCell>
+                                        <TableCell>Draft</TableCell>
+                                        <TableCell>{format(invoice.invoiceDate, 'yyyy-MM-dd')}</TableCell>
+                                        <TableCell className="text-right space-x-2">
+                                            <Button variant="ghost" size="icon" asChild>
+                                                <Link href={`/?draftId=${invoice.id}`}>
+                                                    <Edit className="h-4 w-4" />
+                                                    <span className="sr-only">Edit</span>
+                                                </Link>
+                                            </Button>
+                                            <Button variant="ghost" size="icon" onClick={() => setDeleteCandidateId(invoice.id)}>
+                                                <Trash2 className="h-4 w-4 text-destructive" />
+                                                <span className="sr-only">Delete</span>
+                                            </Button>
+                                        </TableCell>
+                                    </TableRow>
+                                )) : (
+                                    <TableRow>
+                                        <TableCell colSpan={6} className="text-center h-24">
+                                            {searchTerm ? 'No drafts match your search.' : 'No drafts found.'}
+                                        </TableCell>
+                                    </TableRow>
+                                )}
+                            </TableBody>
+                        </Table>
+                    </div>
                 </CardContent>
             </Card>
         </div>
     );
-}
+
+    
