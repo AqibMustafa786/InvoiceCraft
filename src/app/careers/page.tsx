@@ -36,7 +36,7 @@ export default function CareersPage() {
         {jobOpenings.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {jobOpenings.map((job) => (
-              <Card key={job.title} className="bg-background/50 backdrop-blur-lg border border-white/20 shadow-lg">
+              <Card key={job.title} className="bg-card/50 backdrop-blur-lg border border-border/30 shadow-lg">
                 <CardHeader>
                   <CardTitle>{job.title}</CardTitle>
                   <CardDescription>{job.department} &middot; {job.location}</CardDescription>
@@ -50,7 +50,7 @@ export default function CareersPage() {
             ))}
           </div>
         ) : (
-          <div className="text-center text-muted-foreground bg-background/50 backdrop-blur-lg border-dashed border-2 border-white/20 rounded-xl p-12">
+          <div className="text-center text-muted-foreground bg-card/50 backdrop-blur-lg border-dashed border-2 border-border/30 rounded-lg p-12">
             <p className="text-lg">There are no open positions at the moment.</p>
             <p>Please check back later or send us a speculative application!</p>
           </div>

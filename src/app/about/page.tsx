@@ -53,7 +53,7 @@ export default function AboutPage() {
       </PageHeader>
 
       <div className="grid md:grid-cols-2 gap-8 mb-16">
-        <div className="bg-background/50 backdrop-blur-lg border border-white/20 shadow-lg rounded-xl p-8">
+        <div className="bg-card/50 backdrop-blur-lg border border-border/30 shadow-lg rounded-lg p-8">
           <div className="flex items-center gap-4 mb-4">
             <div className="p-3 rounded-full bg-primary/10 text-primary">
               <Eye className="h-8 w-8" />
@@ -64,7 +64,7 @@ export default function AboutPage() {
             My vision is to make invoicing simple, professional, and accessible to everyone. I believe that freelancers, startups, and small businesses should not waste time struggling with complicated accounting software.
           </p>
         </div>
-        <div className="bg-background/50 backdrop-blur-lg border border-white/20 shadow-lg rounded-xl p-8">
+        <div className="bg-card/50 backdrop-blur-lg border border-border/30 shadow-lg rounded-lg p-8">
           <div className="flex items-center gap-4 mb-4">
              <div className="p-3 rounded-full bg-primary/10 text-primary">
               <Rocket className="h-8 w-8" />
@@ -83,7 +83,7 @@ export default function AboutPage() {
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {whatWeOffer.map(item => (
-            <div key={item.title} className="bg-background/50 backdrop-blur-lg border border-white/20 shadow-lg rounded-xl p-6 text-center flex flex-col items-center">
+            <div key={item.title} className="bg-card/50 backdrop-blur-lg border border-border/30 shadow-lg rounded-lg p-6 text-center flex flex-col items-center">
               {item.icon}
               <h3 className="text-xl font-semibold mt-4 mb-2">{item.title}</h3>
               <p className="text-muted-foreground text-sm flex-1">{item.description}</p>
@@ -98,7 +98,7 @@ export default function AboutPage() {
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {whyChooseUs.map(item => (
-             <div key={item.title} className="bg-background/50 backdrop-blur-lg border border-white/20 shadow-lg rounded-xl p-6">
+             <div key={item.title} className="bg-card/50 backdrop-blur-lg border border-border/30 shadow-lg rounded-lg p-6">
               <h3 className="text-xl font-semibold mb-2">{item.title}</h3>
               <p className="text-muted-foreground text-sm">{item.description}</p>
             </div>

@@ -1,18 +1,15 @@
 import Link from 'next/link';
-import { FileText, Twitter, Github, Linkedin, Instagram } from 'lucide-react';
-import { Input } from './ui/input';
-import { Button } from './ui/button';
+import { Twitter, Github, Linkedin, Instagram } from 'lucide-react';
 
 export function Footer() {
   return (
-    <footer className="border-t bg-black/10 backdrop-blur-lg text-secondary-foreground">
+    <footer className="border-t border-border/40 bg-background/95 backdrop-blur-sm">
       <div className="container grid grid-cols-1 gap-12 px-4 py-12 mx-auto md:grid-cols-5 md:px-6">
         
         {/* Branding Section */}
         <div className="flex flex-col gap-4 md:col-span-2">
           <Link href="/" className="flex items-center gap-2">
-            <FileText className="w-6 h-6 text-primary" />
-            <span className="text-lg font-bold text-foreground font-headline">InvoiceCraft</span>
+            <span className="text-lg font-bold text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent">InvoiceCraft</span>
           </Link>
           <p className="max-w-sm text-muted-foreground">
             Smart, simple, and professional invoicing for modern freelancers and businesses.
@@ -64,7 +61,7 @@ export function Footer() {
       </div>
 
       {/* Bottom Bar */}
-      <div className="border-t">
+      <div className="border-t border-border/40">
         <div className="container flex flex-col items-center justify-between gap-4 px-4 py-6 mx-auto sm:flex-row md:px-6">
             <p className="text-sm text-muted-foreground">
                 &copy; {new Date().getFullYear()} InvoiceCraft. All rights reserved.
