@@ -135,8 +135,8 @@ export default function Home() {
   };
 
   return (
-    <div id="invoice-container">
-      <div className="container mx-auto p-4 md:p-8 no-print">
+    <>
+      <div className="container mx-auto p-4 md:p-8">
         <div className="flex flex-col md:flex-row justify-between md:items-center gap-4 mb-8">
           <div>
             <h1 className="text-3xl font-bold font-headline">Create Invoice</h1>
@@ -170,9 +170,9 @@ export default function Home() {
           </div>
         </div>
       </div>
-      <div className="hidden print-only">
+      <div id="print-container">
         <InvoicePreview invoice={invoice} logoUrl={logoUrl} />
       </div>
-    </div>
+    </>
   );
 }
