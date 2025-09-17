@@ -6,6 +6,7 @@ export interface LineItem {
 }
 
 export interface Invoice {
+  id: string; // Add id to invoice
   companyName: string;
   companyAddress: string;
   clientName: string;
