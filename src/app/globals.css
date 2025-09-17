@@ -94,12 +94,15 @@
   }
   
   #invoice-preview-print {
+    margin: 0;
+    padding: 0;
     border: none !important;
     box-shadow: none !important;
     transform: scale(1) !important;
     width: 100% !important;
     height: 100% !important;
     border-radius: 0 !important;
+    page-break-after: always;
   }
 }
 

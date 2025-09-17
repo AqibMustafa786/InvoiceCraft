@@ -20,7 +20,7 @@ export function InvoicePreview({ invoice, logoUrl, id = 'invoice-preview' }: Inv
 
   return (
     <div id={id} className="w-full shadow-lg rounded-xl overflow-hidden print:shadow-none print:rounded-none">
-        <Card>
+        <Card className="rounded-xl">
         <CardContent className="p-8 md:p-10 bg-white text-gray-800">
             <header className="flex justify-between items-start mb-10">
             <div>
