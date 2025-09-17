@@ -26,6 +26,7 @@ const initialInvoice: Invoice = {
   tax: 5,
   discount: 0,
   notes: 'Thank you for your business.',
+  status: 'draft',
 };
 
 const DRAFTS_STORAGE_KEY = 'invoiceDrafts';
@@ -137,8 +138,8 @@ export default function Home() {
   };
   
   const handleNew = () => {
-    // Create a new invoice with a new unique ID
-    setInvoice({ ...initialInvoice, id: crypto.randomUUID(), invoiceNumber: `INV-${String(Math.floor(Math.random() * 1000)).padStart(3, '0')}` });
+    const newInvoiceId = crypto.randomUUID();
+    setInvoice({ ...initialInvoice, id: newInvoiceId, status: 'draft', invoiceNumber: `INV-${String(Math.floor(Math.random() * 1000)).padStart(3, '0')}` });
     setLogoUrl(null);
     router.push('/');
     toast({

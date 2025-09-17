@@ -5,6 +5,8 @@ export interface LineItem {
   rate: number;
 }
 
+export type InvoiceStatus = 'draft' | 'sent' | 'paid' | 'overdue';
+
 export interface Invoice {
   id: string; // Add id to invoice
   companyName: string;
@@ -18,4 +20,5 @@ export interface Invoice {
   tax: number;
   discount: number;
   notes: string;
+  status: InvoiceStatus;
 }

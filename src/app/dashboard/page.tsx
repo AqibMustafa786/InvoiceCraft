@@ -1,20 +1,10 @@
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
-import type { Invoice } from '@/lib/types';
+import { useState, useEffect, useMemo, useCallback } from 'react';
+import type { Invoice, InvoiceStatus } from '@/lib/types';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Input } from "@/components/ui/input";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuRadioGroup,
-  DropdownMenuRadioItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import {
     AlertDialog,
     AlertDialogAction,
@@ -25,19 +15,28 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { FilePlus2, Edit, Trash2, ArrowUpDown, Search } from "lucide-react";
+import { FilePlus2, Edit, Trash2, Filter, X } from "lucide-react";
 import Link from "next/link";
-import { format } from 'date-fns';
+import { format, isWithinInterval } from 'date-fns';
+import { FilterSheet, type DashboardFilters } from '@/components/dashboard/filter-sheet';
+import { Badge } from '@/components/ui/badge';
 
 const DRAFTS_STORAGE_KEY = 'invoiceDrafts';
 
-type SortOption = 'date-desc' | 'date-asc' | 'amount-desc' | 'amount-asc';
+const initialFilters: DashboardFilters = {
+    clientName: '',
+    status: null,
+    amountMin: null,
+    amountMax: null,
+    dateFrom: null,
+    dateTo: null,
+};
 
 export default function DashboardPage() {
     const [drafts, setDrafts] = useState<Invoice[]>([]);
-    const [searchTerm, setSearchTerm] = useState('');
-    const [sortOption, setSortOption] = useState<SortOption>('date-desc');
     const [deleteCandidateId, setDeleteCandidateId] = useState<string | null>(null);
+    const [filters, setFilters] = useState<DashboardFilters>(initialFilters);
+    const [isFilterSheetOpen, setIsFilterSheetOpen] = useState(false);
 
     useEffect(() => {
         const fromJSON = (key: string, value: any) => {
@@ -51,19 +50,21 @@ export default function DashboardPage() {
         if (savedData) {
             try {
                 const parsedData: Invoice[] = JSON.parse(savedData, fromJSON);
-                setDrafts(parsedData);
+                // Ensure all drafts have a status for backward compatibility
+                const draftsWithStatus = parsedData.map(d => ({...d, status: d.status || 'draft'}));
+                setDrafts(draftsWithStatus);
             } catch (error) {
                 console.error("Failed to parse invoice drafts from localStorage", error);
             }
         }
     }, []);
 
-    const calculateTotal = (invoice: Invoice): number => {
+    const calculateTotal = useCallback((invoice: Invoice): number => {
         const subtotal = invoice.items.reduce((acc, item) => acc + item.quantity * item.rate, 0);
         const taxAmount = (subtotal * invoice.tax) / 100;
         const discountAmount = (subtotal * invoice.discount) / 100;
         return subtotal + taxAmount - discountAmount;
-    }
+    }, []);
 
     const handleDelete = (invoiceId: string) => {
         const updatedDrafts = drafts.filter(draft => draft.id !== invoiceId);
@@ -77,27 +78,51 @@ export default function DashboardPage() {
         setDeleteCandidateId(null);
     };
 
+    const resetFilters = useCallback(() => {
+        setFilters(initialFilters);
+    }, []);
+
     const filteredAndSortedDrafts = useMemo(() => {
         return drafts
-            .filter(draft => draft.clientName.toLowerCase().includes(searchTerm.toLowerCase()))
-            .sort((a, b) => {
-                switch (sortOption) {
-                    case 'date-asc':
-                        return new Date(a.invoiceDate).getTime() - new Date(b.invoiceDate).getTime();
-                    case 'date-desc':
-                        return new Date(b.invoiceDate).getTime() - new Date(a.invoiceDate).getTime();
-                    case 'amount-asc':
-                        return calculateTotal(a) - calculateTotal(b);
-                    case 'amount-desc':
-                        return calculateTotal(b) - calculateTotal(a);
-                    default:
-                        return 0;
-                }
-            });
-    }, [drafts, searchTerm, sortOption]);
+            .filter(draft => {
+                const total = calculateTotal(draft);
+                const clientNameMatch = filters.clientName ? draft.clientName.toLowerCase().includes(filters.clientName.toLowerCase()) : true;
+                const statusMatch = filters.status ? draft.status === filters.status : true;
+                const amountMinMatch = filters.amountMin !== null ? total >= filters.amountMin : true;
+                const amountMaxMatch = filters.amountMax !== null ? total <= filters.amountMax : true;
+                const dateMatch = (filters.dateFrom && filters.dateTo) ? isWithinInterval(draft.invoiceDate, { start: filters.dateFrom, end: filters.dateTo })
+                                : filters.dateFrom ? draft.invoiceDate >= filters.dateFrom
+                                : filters.dateTo ? draft.invoiceDate <= filters.dateTo
+                                : true;
+                return clientNameMatch && statusMatch && amountMinMatch && amountMaxMatch && dateMatch;
+            })
+            .sort((a, b) => new Date(b.invoiceDate).getTime() - new Date(a.invoiceDate).getTime()); // Default sort by newest
+    }, [drafts, filters, calculateTotal]);
 
+    const activeFilterCount = useMemo(() => {
+        return Object.values(filters).filter(v => v !== null && v !== '').length;
+    }, [filters]);
+
+    const getStatusVariant = (status: InvoiceStatus) => {
+        switch (status) {
+            case 'paid': return 'default';
+            case 'sent': return 'secondary';
+            case 'overdue': return 'destructive';
+            case 'draft':
+            default: return 'outline';
+        }
+    };
+    
     return (
         <div className="container mx-auto p-4 md:p-8">
+            <FilterSheet
+                open={isFilterSheetOpen}
+                onOpenChange={setIsFilterSheetOpen}
+                filters={filters}
+                onFiltersChange={setFilters}
+                onReset={resetFilters}
+            />
+
             <AlertDialog open={deleteCandidateId !== null} onOpenChange={(open) => !open && setDeleteCandidateId(null)}>
                 <AlertDialogContent>
                     <AlertDialogHeader>
@@ -133,35 +158,30 @@ export default function DashboardPage() {
                 </CardHeader>
                 <CardContent>
                     <div className="flex justify-between items-center mb-4 gap-2 flex-wrap">
-                        <div className="relative w-full max-w-sm">
-                            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-                            <Input
-                                type="search"
-                                placeholder="Search by client name..."
-                                className="pl-8 w-full"
-                                value={searchTerm}
-                                onChange={(e) => setSearchTerm(e.target.value)}
-                            />
-                        </div>
-                        <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                                <Button variant="outline">
-                                    <ArrowUpDown className="mr-2 h-4 w-4" />
-                                    Sort by
-                                </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end" className="w-[200px]">
-                                <DropdownMenuLabel>Sort by</DropdownMenuLabel>
-                                <DropdownMenuSeparator />
-                                <DropdownMenuRadioGroup value={sortOption} onValueChange={(value) => setSortOption(value as SortOption)}>
-                                    <DropdownMenuRadioItem value="date-desc">Date: Newest first</DropdownMenuRadioItem>
-                                    <DropdownMenuRadioItem value="date-asc">Date: Oldest first</DropdownMenuRadioItem>
-                                    <DropdownMenuRadioItem value="amount-desc">Amount: High to low</DropdownMenuRadioItem>
-                                    <DropdownMenuRadioItem value="amount-asc">Amount: Low to high</DropdownMenuRadioItem>
-                                </DropdownMenuRadioGroup>
-                            </DropdownMenuContent>
-                        </DropdownMenu>
+                        <Button variant="outline" onClick={() => setIsFilterSheetOpen(true)}>
+                           <Filter className="mr-2 h-4 w-4" />
+                           Filter
+                           {activeFilterCount > 0 && (
+                               <Badge variant="secondary" className="ml-2 rounded-full h-5 w-5 p-0 flex items-center justify-center">{activeFilterCount}</Badge>
+                           )}
+                        </Button>
                     </div>
+
+                    {activeFilterCount > 0 && (
+                        <div className="flex items-center gap-2 mb-4 flex-wrap">
+                            <span className="text-sm font-medium">Active filters:</span>
+                            {filters.clientName && <Badge variant="outline">Client: {filters.clientName}</Badge>}
+                            {filters.status && <Badge variant="outline">Status: {filters.status}</Badge>}
+                            {filters.amountMin !== null && <Badge variant="outline">Min Amount: ${filters.amountMin}</Badge>}
+                            {filters.amountMax !== null && <Badge variant="outline">Max Amount: ${filters.amountMax}</Badge>}
+                            {filters.dateFrom && <Badge variant="outline">From: {format(filters.dateFrom, 'MMM d, yyyy')}</Badge>}
+                            {filters.dateTo && <Badge variant="outline">To: {format(filters.dateTo, 'MMM d, yyyy')}</Badge>}
+                             <Button variant="ghost" size="icon" className="h-6 w-6" onClick={resetFilters}>
+                                <X className="h-4 w-4" />
+                                <span className="sr-only">Clear all filters</span>
+                            </Button>
+                        </div>
+                    )}
 
                     <div className="overflow-x-auto">
                         <Table>
@@ -181,7 +201,9 @@ export default function DashboardPage() {
                                         <TableCell className="font-medium">{invoice.invoiceNumber}</TableCell>
                                         <TableCell>{invoice.clientName}</TableCell>
                                         <TableCell>${calculateTotal(invoice).toFixed(2)}</TableCell>
-                                        <TableCell>Draft</TableCell>
+                                        <TableCell>
+                                            <Badge variant={getStatusVariant(invoice.status)} className="capitalize">{invoice.status}</Badge>
+                                        </TableCell>
                                         <TableCell>{format(invoice.invoiceDate, 'yyyy-MM-dd')}</TableCell>
                                         <TableCell className="text-right space-x-2">
                                             <Button variant="ghost" size="icon" asChild>
@@ -199,7 +221,7 @@ export default function DashboardPage() {
                                 )) : (
                                     <TableRow>
                                         <TableCell colSpan={6} className="text-center h-24">
-                                            {searchTerm ? 'No drafts match your search.' : 'No drafts found.'}
+                                            No drafts match your filters.
                                         </TableCell>
                                     </TableRow>
                                 )}
@@ -210,5 +232,4 @@ export default function DashboardPage() {
             </Card>
         </div>
     );
-
-    
+}
