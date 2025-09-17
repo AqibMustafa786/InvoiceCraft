@@ -6,10 +6,11 @@ import type { Invoice } from '@/lib/types';
 import { InvoiceForm } from '@/components/invoice-form';
 import { InvoicePreview } from '@/components/invoice-preview';
 import { Button } from '@/components/ui/button';
-import { Printer, Edit, FilePlus } from 'lucide-react';
+import { Printer, Edit, FilePlus, LayoutDashboard } from 'lucide-react';
 import { addDays } from 'date-fns';
 import { useToast } from '@/hooks/use-toast';
 import { useRouter, useSearchParams } from 'next/navigation';
+import Link from 'next/link';
 
 const initialLineItem = { id: crypto.randomUUID(), name: '', quantity: 1, rate: 0 };
 
@@ -160,6 +161,12 @@ export default function CreateInvoicePage() {
               <Button onClick={handleNew} variant="outline">
                   <FilePlus className="mr-2 h-5 w-5" />
                   New
+              </Button>
+              <Button asChild variant="outline">
+                <Link href="/dashboard">
+                  <LayoutDashboard className="mr-2 h-5 w-5" />
+                  Dashboard
+                </Link>
               </Button>
               <Button onClick={handleSaveDraft}>
                 <Edit className="mr-2 h-5 w-5" />

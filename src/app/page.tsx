@@ -23,7 +23,7 @@ export default function HomePage() {
                   <Link href="/create">Get Started - It's Free</Link>
                 </Button>
                 <Button asChild variant="outline" size="lg">
-                  <Link href="#features">Learn More</Link>
+                  <Link href="/#features">Learn More</Link>
                 </Button>
               </div>
             </div>

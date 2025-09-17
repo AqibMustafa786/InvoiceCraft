@@ -11,14 +11,8 @@ export function Header() {
           <span className="font-bold text-lg font-headline">InvoiceCraft</span>
         </Link>
         <nav className="flex items-center gap-6 text-sm flex-1">
-          <Link
-            href="/dashboard"
-            className="text-muted-foreground transition-colors hover:text-foreground font-medium"
-          >
-            Dashboard
-          </Link>
            <Link
-            href="#features"
+            href="/#features"
             className="text-muted-foreground transition-colors hover:text-foreground font-medium"
           >
             Features
