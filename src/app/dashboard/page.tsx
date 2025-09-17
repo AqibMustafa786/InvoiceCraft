@@ -15,11 +15,18 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { FilePlus2, Edit, Trash2, Filter, X } from "lucide-react";
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { FilePlus2, Edit, Trash2, Filter, X, MoreHorizontal } from "lucide-react";
 import Link from "next/link";
 import { format, isWithinInterval } from 'date-fns';
 import { FilterSheet, type DashboardFilters } from '@/components/dashboard/filter-sheet';
 import { Badge } from '@/components/ui/badge';
+import { useToast } from '@/hooks/use-toast';
 
 const DRAFTS_STORAGE_KEY = 'invoiceDrafts';
 
@@ -32,11 +39,14 @@ const initialFilters: DashboardFilters = {
     dateTo: null,
 };
 
+const STATUS_OPTIONS: InvoiceStatus[] = ['draft', 'sent', 'paid', 'overdue'];
+
 export default function DashboardPage() {
     const [drafts, setDrafts] = useState<Invoice[]>([]);
     const [deleteCandidateId, setDeleteCandidateId] = useState<string | null>(null);
     const [filters, setFilters] = useState<DashboardFilters>(initialFilters);
     const [isFilterSheetOpen, setIsFilterSheetOpen] = useState(false);
+    const { toast } = useToast();
 
     useEffect(() => {
         const fromJSON = (key: string, value: any) => {
@@ -50,7 +60,6 @@ export default function DashboardPage() {
         if (savedData) {
             try {
                 const parsedData: Invoice[] = JSON.parse(savedData, fromJSON);
-                // Ensure all drafts have a status for backward compatibility
                 const draftsWithStatus = parsedData.map(d => ({...d, status: d.status || 'draft'}));
                 setDrafts(draftsWithStatus);
             } catch (error) {
@@ -58,6 +67,25 @@ export default function DashboardPage() {
             }
         }
     }, []);
+
+    const saveDraftsToStorage = (updatedDrafts: Invoice[]) => {
+        try {
+            localStorage.setItem(DRAFTS_STORAGE_KEY, JSON.stringify(updatedDrafts, (key, value) => {
+                if (key === 'invoiceDate' || key === 'dueDate') {
+                    return value ? new Date(value).toISOString() : value;
+                }
+                return value;
+            }));
+        } catch (error) {
+            console.error("Failed to save invoice data to localStorage", error);
+             toast({
+                title: "Error",
+                description: "There was an error saving your changes.",
+                variant: "destructive",
+            });
+        }
+    };
+
 
     const calculateTotal = useCallback((invoice: Invoice): number => {
         const subtotal = invoice.items.reduce((acc, item) => acc + item.quantity * item.rate, 0);
@@ -69,13 +97,20 @@ export default function DashboardPage() {
     const handleDelete = (invoiceId: string) => {
         const updatedDrafts = drafts.filter(draft => draft.id !== invoiceId);
         setDrafts(updatedDrafts);
-        localStorage.setItem(DRAFTS_STORAGE_KEY, JSON.stringify(updatedDrafts, (key, value) => {
-            if (key === 'invoiceDate' || key === 'dueDate') {
-                return value ? new Date(value).toISOString() : value;
-            }
-            return value;
-        }));
+        saveDraftsToStorage(updatedDrafts);
         setDeleteCandidateId(null);
+    };
+
+    const handleStatusChange = (invoiceId: string, newStatus: InvoiceStatus) => {
+        const updatedDrafts = drafts.map(draft => 
+            draft.id === invoiceId ? { ...draft, status: newStatus } : draft
+        );
+        setDrafts(updatedDrafts);
+        saveDraftsToStorage(updatedDrafts);
+        toast({
+            title: "Status Updated",
+            description: `Invoice status changed to "${newStatus}".`,
+        });
     };
 
     const resetFilters = useCallback(() => {
@@ -202,20 +237,48 @@ export default function DashboardPage() {
                                         <TableCell>{invoice.clientName}</TableCell>
                                         <TableCell>${calculateTotal(invoice).toFixed(2)}</TableCell>
                                         <TableCell>
-                                            <Badge variant={getStatusVariant(invoice.status)} className="capitalize">{invoice.status}</Badge>
+                                             <DropdownMenu>
+                                                <DropdownMenuTrigger asChild>
+                                                    <Button variant="outline" className="capitalize w-28 justify-start">
+                                                        <Badge variant={getStatusVariant(invoice.status)} className="w-full justify-center">{invoice.status}</Badge>
+                                                    </Button>
+                                                </DropdownMenuTrigger>
+                                                <DropdownMenuContent align="start">
+                                                    {STATUS_OPTIONS.map(status => (
+                                                        <DropdownMenuItem
+                                                            key={status}
+                                                            disabled={invoice.status === status}
+                                                            onClick={() => handleStatusChange(invoice.id, status)}
+                                                            className="capitalize"
+                                                        >
+                                                            {status}
+                                                        </DropdownMenuItem>
+                                                    ))}
+                                                </DropdownMenuContent>
+                                            </DropdownMenu>
                                         </TableCell>
                                         <TableCell>{format(invoice.invoiceDate, 'yyyy-MM-dd')}</TableCell>
-                                        <TableCell className="text-right space-x-2">
-                                            <Button variant="ghost" size="icon" asChild>
-                                                <Link href={`/?draftId=${invoice.id}`}>
-                                                    <Edit className="h-4 w-4" />
-                                                    <span className="sr-only">Edit</span>
-                                                </Link>
-                                            </Button>
-                                            <Button variant="ghost" size="icon" onClick={() => setDeleteCandidateId(invoice.id)}>
-                                                <Trash2 className="h-4 w-4 text-destructive" />
-                                                <span className="sr-only">Delete</span>
-                                            </Button>
+                                        <TableCell className="text-right">
+                                            <DropdownMenu>
+                                                <DropdownMenuTrigger asChild>
+                                                    <Button variant="ghost" size="icon">
+                                                        <MoreHorizontal className="h-4 w-4" />
+                                                        <span className="sr-only">More actions</span>
+                                                    </Button>
+                                                </DropdownMenuTrigger>
+                                                <DropdownMenuContent align="end">
+                                                     <DropdownMenuItem asChild>
+                                                        <Link href={`/?draftId=${invoice.id}`} className="cursor-pointer">
+                                                            <Edit className="mr-2 h-4 w-4" />
+                                                            <span>Edit</span>
+                                                        </Link>
+                                                    </DropdownMenuItem>
+                                                    <DropdownMenuItem onClick={() => setDeleteCandidateId(invoice.id)} className="text-destructive cursor-pointer">
+                                                        <Trash2 className="mr-2 h-4 w-4" />
+                                                        <span>Delete</span>
+                                                    </DropdownMenuItem>
+                                                </DropdownMenuContent>
+                                            </DropdownMenu>
                                         </TableCell>
                                     </TableRow>
                                 )) : (
