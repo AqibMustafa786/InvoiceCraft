@@ -140,7 +140,7 @@ export default function DashboardPage() {
 
     const getStatusVariant = (status: InvoiceStatus) => {
         switch (status) {
-            case 'paid': return 'default';
+            case 'paid': return 'success';
             case 'sent': return 'secondary';
             case 'overdue': return 'destructive';
             case 'draft':

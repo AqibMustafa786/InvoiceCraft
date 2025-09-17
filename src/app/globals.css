@@ -27,6 +27,9 @@
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
+    
+    --success: 142.1 76.2% 36.3%;
+    --success-foreground: 142.1 76.2% 96.3%;
 
     --border: 240 5.9% 90%;
     --input: 240 5.9% 90%;
@@ -60,6 +63,9 @@
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 0% 98%;
 
+    --success: 142.1 76.2% 36.3%;
+    --success-foreground: 142.1 76.2% 96.3%;
+
     --border: 240 3.7% 15.9%;
     --input: 240 3.7% 15.9%;
     --ring: 231 48% 48%;
@@ -91,6 +97,11 @@
 
   #print-container {
     display: block !important;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
   }
   
   #invoice-preview-print {
@@ -102,6 +113,7 @@
     width: 100% !important;
     height: 100% !important;
     border-radius: 0 !important;
+    page-break-after: auto;
   }
 }
 
