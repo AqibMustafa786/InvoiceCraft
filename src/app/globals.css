@@ -78,47 +78,34 @@
 
 /* Print Styles */
 @media print {
-  /* Hide everything by default */
-  body * {
-    visibility: hidden;
-  }
-
-  /* Make only the print container and its children visible */
-  #print-container, #print-container * {
-    visibility: visible;
-  }
-
-  /* Position the print container to fill the page */
-  #print-container {
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: auto;
-    padding: 0;
-    margin: 0;
-  }
-  
-  #print-container #invoice-preview {
-      border: none;
-      box-shadow: none;
-      transform: scale(1);
-      border-radius: 0;
-      width: 100%;
-      height: 100%;
-      position: fixed;
-      top: 0;
-      left: 0;
-  }
-  
   body {
     background: white !important;
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;
   }
+  
+  #app-container {
+    display: none;
+  }
+
+  #print-container {
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+  }
+
+  #invoice-preview {
+    border: none;
+    box-shadow: none;
+    border-radius: 0;
+    width: 100%;
+    height: 100%;
+    transform: scale(1);
+  }
 }
 
-/* Control printed page margins and remove browser headers/footers */
 @page {
   size: auto;
   margin: 0mm;

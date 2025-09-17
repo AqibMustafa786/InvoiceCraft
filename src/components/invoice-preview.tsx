@@ -18,7 +18,7 @@ export function InvoicePreview({ invoice, logoUrl }: InvoicePreviewProps) {
   const total = subtotal + taxAmount - discountAmount;
 
   return (
-    <div id="invoice-preview" className="w-full shadow-lg rounded-xl overflow-hidden">
+    <div id="invoice-preview" className="w-full shadow-lg rounded-xl overflow-hidden print:shadow-none print:rounded-none">
         <Card>
         <CardContent className="p-8 md:p-10 bg-white text-gray-800">
             <header className="flex justify-between items-start mb-10">
