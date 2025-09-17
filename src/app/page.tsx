@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import type { Invoice } from '@/lib/types';
 import { InvoiceForm } from '@/components/invoice-form';
 import { InvoicePreview } from '@/components/invoice-preview';
@@ -88,14 +88,16 @@ export default function Home() {
   const handlePrint = () => {
     const printContainer = document.getElementById('print-container');
     if (printContainer) {
-        ReactDOM.render(
-            <InvoicePreview invoice={invoice} logoUrl={logoUrl} id="invoice-preview-print" />,
-            printContainer,
-            () => {
-                window.print();
-                ReactDOM.unmountComponentAtNode(printContainer);
-            }
+        const root = createRoot(printContainer);
+        root.render(
+            <InvoicePreview invoice={invoice} logoUrl={logoUrl} id="invoice-preview-print" />
         );
+        
+        // Allow time for render before printing
+        setTimeout(() => {
+            window.print();
+            root.unmount();
+        }, 100);
     }
   };
 
@@ -147,7 +149,7 @@ export default function Home() {
 
   return (
     <>
-      <div className="container mx-auto p-4 md:p-8">
+      <div className="container mx-auto p-4 md:p-8 app-main-container">
         <div className="flex flex-col md:flex-row justify-between md:items-center gap-4 mb-8">
           <div>
             <h1 className="text-3xl font-bold font-headline">Create Invoice</h1>
