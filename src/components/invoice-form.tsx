@@ -1,0 +1,180 @@
+'use client';
+
+import type { ChangeEvent, Dispatch, SetStateAction } from 'react';
+import type { Invoice, LineItem } from '@/lib/types';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import { DatePicker } from '@/components/ui/datepicker';
+import { ImageUp, Plus, Trash2 } from 'lucide-react';
+
+interface InvoiceFormProps {
+  invoice: Invoice;
+  setInvoice: Dispatch<SetStateAction<Invoice>>;
+  setLogoUrl: Dispatch<SetStateAction<string | null>>;
+}
+
+export function InvoiceForm({ invoice, setInvoice, setLogoUrl }: InvoiceFormProps) {
+
+  const handleInputChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setInvoice(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleNumberChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setInvoice(prev => ({ ...prev, [name]: parseFloat(value) || 0 }));
+  }
+
+  const handleItemChange = (index: number, field: keyof LineItem, value: string | number) => {
+    const newItems = [...invoice.items];
+    (newItems[index] as any)[field] = value;
+    setInvoice(prev => ({ ...prev, items: newItems }));
+  };
+
+  const addItem = () => {
+    setInvoice(prev => ({
+      ...prev,
+      items: [...prev.items, { id: crypto.randomUUID(), name: '', quantity: 1, rate: 0 }],
+    }));
+  };
+
+  const removeItem = (index: number) => {
+    const newItems = invoice.items.filter((_, i) => i !== index);
+    setInvoice(prev => ({ ...prev, items: newItems }));
+  };
+
+  const handleLogoUpload = (e: ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      setLogoUrl(URL.createObjectURL(file));
+    }
+  };
+
+  return (
+    <div className="space-y-6">
+      <Card>
+        <CardHeader>
+          <CardTitle>Bill From</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="companyName">Company Name</Label>
+              <Input id="companyName" name="companyName" value={invoice.companyName} onChange={handleInputChange} />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="logoUpload" className="flex items-center gap-2 cursor-pointer text-sm font-medium text-primary underline-offset-4 hover:underline">
+                <ImageUp className="h-4 w-4" /> Upload Logo
+              </Label>
+              <Input id="logoUpload" type="file" className="sr-only" onChange={handleLogoUpload} accept="image/*" />
+            </div>
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="companyAddress">Company Address</Label>
+            <Textarea id="companyAddress" name="companyAddress" value={invoice.companyAddress} onChange={handleInputChange} />
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Bill To</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="clientName">Client Name</Label>
+            <Input id="clientName" name="clientName" value={invoice.clientName} onChange={handleInputChange} />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="clientAddress">Client Address</Label>
+            <Textarea id="clientAddress" name="clientAddress" value={invoice.clientAddress} onChange={handleInputChange} />
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Invoice Details</CardTitle>
+        </CardHeader>
+        <CardContent className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="space-y-2">
+            <Label htmlFor="invoiceNumber">Invoice Number</Label>
+            <Input id="invoiceNumber" name="invoiceNumber" value={invoice.invoiceNumber} onChange={handleInputChange} />
+          </div>
+          <div className="space-y-2">
+            <Label>Invoice Date</Label>
+            <DatePicker date={invoice.invoiceDate} setDate={(date) => setInvoice(p => ({ ...p, invoiceDate: date! }))} />
+          </div>
+          <div className="space-y-2">
+            <Label>Due Date</Label>
+            <DatePicker date={invoice.dueDate} setDate={(date) => setInvoice(p => ({ ...p, dueDate: date! }))} />
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Items</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="hidden md:grid md:grid-cols-12 gap-4 text-sm font-medium text-muted-foreground">
+            <div className="col-span-6"><Label>Item Name</Label></div>
+            <div className="col-span-2"><Label>Quantity</Label></div>
+            <div className="col-span-2"><Label>Rate</Label></div>
+            <div className="col-span-2"><Label>Subtotal</Label></div>
+          </div>
+          {invoice.items.map((item, index) => (
+            <div key={item.id} className="grid grid-cols-12 gap-4 items-center">
+              <div className="col-span-12 md:col-span-6 space-y-2">
+                <Label htmlFor={`itemName-${index}`} className="md:hidden">Item Name</Label>
+                <Input id={`itemName-${index}`} value={item.name} onChange={(e) => handleItemChange(index, 'name', e.target.value)} />
+              </div>
+              <div className="col-span-4 md:col-span-2 space-y-2">
+                 <Label htmlFor={`itemQuantity-${index}`} className="md:hidden">Quantity</Label>
+                <Input id={`itemQuantity-${index}`} type="number" value={item.quantity} onChange={(e) => handleItemChange(index, 'quantity', parseFloat(e.target.value) || 0)} />
+              </div>
+              <div className="col-span-4 md:col-span-2 space-y-2">
+                <Label htmlFor={`itemRate-${index}`} className="md:hidden">Rate</Label>
+                <Input id={`itemRate-${index}`} type="number" value={item.rate} onChange={(e) => handleItemChange(index, 'rate', parseFloat(e.target.value) || 0)} />
+              </div>
+              <div className="col-span-3 md:col-span-1 flex items-end h-10">
+                <p className="font-medium tabular-nums">${(item.quantity * item.rate).toFixed(2)}</p>
+              </div>
+              <div className="col-span-1 flex items-end h-10">
+                <Button variant="ghost" size="icon" onClick={() => removeItem(index)}>
+                  <Trash2 className="h-4 w-4 text-destructive" />
+                </Button>
+              </div>
+            </div>
+          ))}
+          <Button variant="outline" onClick={addItem}><Plus className="mr-2 h-4 w-4" /> Add Item</Button>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Totals & Notes</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="tax">Tax (%)</Label>
+              <Input id="tax" name="tax" type="number" value={invoice.tax} onChange={handleNumberChange} />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="discount">Discount (%)</Label>
+              <Input id="discount" name="discount" type="number" value={invoice.discount} onChange={handleNumberChange} />
+            </div>
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="notes">Notes</Label>
+            <Textarea id="notes" name="notes" value={invoice.notes} onChange={handleInputChange} />
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
