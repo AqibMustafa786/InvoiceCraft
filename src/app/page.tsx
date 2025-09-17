@@ -1,189 +1,109 @@
-'use client';
-
-import { useState, useEffect } from 'react';
-import { createRoot } from 'react-dom/client';
-import type { Invoice } from '@/lib/types';
-import { InvoiceForm } from '@/components/invoice-form';
-import { InvoicePreview } from '@/components/invoice-preview';
+import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { Printer, Edit, FilePlus } from 'lucide-react';
-import { addDays } from 'date-fns';
-import { useToast } from '@/hooks/use-toast';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { CheckCircle, Zap, ShieldCheck } from 'lucide-react';
+import Image from 'next/image';
 
-const initialLineItem = { id: crypto.randomUUID(), name: '', quantity: 1, rate: 0 };
-
-const initialInvoice: Invoice = {
-  id: crypto.randomUUID(),
-  companyName: 'Your Company',
-  companyAddress: '123 Main St, Anytown, USA',
-  clientName: 'Client Company',
-  clientAddress: '456 Oak Ave, Someplace, USA',
-  invoiceNumber: 'INV-001',
-  invoiceDate: new Date(),
-  dueDate: addDays(new Date(), 7),
-  items: [{ ...initialLineItem, name: 'Sample Item', rate: 100 }],
-  tax: 5,
-  discount: 0,
-  notes: 'Thank you for your business.',
-  status: 'draft',
-};
-
-const DRAFTS_STORAGE_KEY = 'invoiceDrafts';
-
-export default function Home() {
-  const [invoice, setInvoice] = useState<Invoice>(initialInvoice);
-  const [logoUrl, setLogoUrl] = useState<string | null>(null);
-  const { toast } = useToast();
-  const router = useRouter();
-  const searchParams = useSearchParams();
-
-  useEffect(() => {
-    const draftId = searchParams.get('draftId');
-    if (draftId) {
-      loadDraft(draftId);
-    }
-  }, [searchParams]);
-
-  const loadDraft = (draftId: string) => {
-    const fromJSON = (key: string, value: any) => {
-      if (key === 'invoiceDate' || key === 'dueDate') {
-        return value ? new Date(value) : value;
-      }
-      return value;
-    };
-
-    const savedData = localStorage.getItem(DRAFTS_STORAGE_KEY);
-    if (savedData) {
-      try {
-        const drafts: Invoice[] = JSON.parse(savedData, fromJSON);
-        const draftToLoad = drafts.find(d => d.id === draftId);
-        if (draftToLoad) {
-          setInvoice(draftToLoad);
-          // Note: Logo URL is not saved with individual drafts in this implementation.
-          // You might want to implement a way to save/load logos for drafts if needed.
-          setLogoUrl(null); 
-          toast({
-            title: "Draft Loaded",
-            description: `Invoice draft #${draftToLoad.invoiceNumber} has been loaded.`,
-          });
-        } else {
-          toast({
-            title: "Draft not found",
-            description: "The specified draft could not be found.",
-            variant: "destructive",
-          });
-        }
-      } catch (error) {
-        console.error("Failed to parse invoice drafts from localStorage", error);
-        toast({
-          title: "Error",
-          description: "Could not load saved draft data.",
-          variant: "destructive",
-        });
-      }
-    }
-  }
-
-
-  const handlePrint = () => {
-    const printContainer = document.getElementById('print-container');
-    if (printContainer) {
-        const root = createRoot(printContainer);
-        root.render(
-            <InvoicePreview invoice={invoice} logoUrl={logoUrl} id="invoice-preview-print" />
-        );
-        
-        // Allow time for render before printing
-        setTimeout(() => {
-            window.print();
-            root.unmount();
-        }, 100);
-    }
-  };
-
-  const handleSaveDraft = () => {
-    try {
-      const toJSON = (key: string, value: any) => {
-          if (key === 'invoiceDate' || key === 'dueDate') {
-              return value ? new Date(value).toISOString() : value;
-          }
-          return value;
-      };
-      
-      const savedData = localStorage.getItem(DRAFTS_STORAGE_KEY);
-      let drafts: Invoice[] = savedData ? JSON.parse(savedData) : [];
-      
-      const existingDraftIndex = drafts.findIndex(d => d.id === invoice.id);
-
-      if (existingDraftIndex !== -1) {
-        drafts[existingDraftIndex] = invoice;
-      } else {
-        drafts.push(invoice);
-      }
-
-      localStorage.setItem(DRAFTS_STORAGE_KEY, JSON.stringify(drafts, toJSON));
-      toast({
-        title: "Draft Saved",
-        description: "Your invoice draft has been saved.",
-      });
-    } catch (error) {
-      console.error("Failed to save invoice data to localStorage", error);
-      toast({
-        title: "Error",
-        description: "There was an error saving your draft.",
-        variant: "destructive",
-      });
-    }
-  };
-  
-  const handleNew = () => {
-    const newInvoiceId = crypto.randomUUID();
-    setInvoice({ ...initialInvoice, id: newInvoiceId, status: 'draft', invoiceNumber: `INV-${String(Math.floor(Math.random() * 1000)).padStart(3, '0')}` });
-    setLogoUrl(null);
-    router.push('/');
-    toast({
-        title: "New Invoice",
-        description: "A new blank invoice has been created.",
-      });
-  };
-
+export default function HomePage() {
   return (
-    <>
-      <div className="container mx-auto p-4 md:p-8 app-main-container">
-        <div className="flex flex-col md:flex-row justify-between md:items-center gap-4 mb-8">
-          <div>
-            <h1 className="text-3xl font-bold font-headline">Create Invoice</h1>
-            <p className="text-muted-foreground">Fill out the form below to generate your invoice.</p>
+    <div className="flex flex-col min-h-screen">
+      <main className="flex-1">
+        {/* Hero Section */}
+        <section className="w-full py-20 md:py-32 lg:py-40 bg-background">
+          <div className="container mx-auto px-4 md:px-6 text-center">
+            <div className="max-w-3xl mx-auto">
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold font-headline tracking-tight">
+                Create Professional Invoices in Seconds
+              </h1>
+              <p className="mt-6 text-lg md:text-xl text-muted-foreground">
+                InvoiceCraft is the simplest way to create, manage, and send beautiful invoices to your clients. Get started for free and streamline your billing today.
+              </p>
+              <div className="mt-8 flex justify-center gap-4">
+                <Button asChild size="lg">
+                  <Link href="/create">Get Started - It's Free</Link>
+                </Button>
+                <Button asChild variant="outline" size="lg">
+                  <Link href="#features">Learn More</Link>
+                </Button>
+              </div>
+            </div>
           </div>
-          <div className="flex flex-wrap gap-2">
-              <Button onClick={handleNew} variant="outline">
-                  <FilePlus className="mr-2 h-5 w-5" />
-                  New
-              </Button>
-              <Button onClick={handleSaveDraft}>
-                <Edit className="mr-2 h-5 w-5" />
-                Save Draft
-              </Button>
-              <Button onClick={handlePrint}>
-                <Printer className="mr-2 h-5 w-5" />
-                Save as PDF
-              </Button>
-          </div>
-        </div>
+        </section>
 
-        <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 xl:gap-12">
-          <div className="lg:col-span-3">
-            <InvoiceForm invoice={invoice} setInvoice={setInvoice} setLogoUrl={setLogoUrl} />
+        {/* Feature Section */}
+        <section id="features" className="w-full py-20 md:py-32 bg-secondary">
+          <div className="container mx-auto px-4 md:px-6">
+            <div className="text-center max-w-2xl mx-auto">
+              <h2 className="text-3xl md:text-4xl font-bold font-headline">Why You'll Love InvoiceCraft</h2>
+              <p className="mt-4 text-muted-foreground">
+                We've built a feature-rich platform to make your invoicing process seamless and professional.
+              </p>
+            </div>
+            <div className="mt-12 grid gap-8 md:grid-cols-3">
+              <Card>
+                <CardHeader className="flex flex-col items-center text-center">
+                  <div className="p-3 rounded-full bg-primary/10 text-primary mb-4">
+                    <Zap className="h-8 w-8" />
+                  </div>
+                  <CardTitle>Effortless Creation</CardTitle>
+                </CardHeader>
+                <CardContent className="text-center text-muted-foreground">
+                  Generate beautiful, professional invoices with our intuitive live editor. See your changes in real-time.
+                </CardContent>
+              </Card>
+              <Card>
+                <CardHeader className="flex flex-col items-center text-center">
+                  <div className="p-3 rounded-full bg-primary/10 text-primary mb-4">
+                    <CheckCircle className="h-8 w-8" />
+                  </div>
+                  <CardTitle>Manage with Ease</CardTitle>
+                </CardHeader>
+                <CardContent className="text-center text-muted-foreground">
+                  Keep track of all your invoice drafts in a powerful, filterable dashboard. Never lose an invoice again.
+                </CardContent>
+              </Card>
+              <Card>
+                <CardHeader className="flex flex-col items-center text-center">
+                   <div className="p-3 rounded-full bg-primary/10 text-primary mb-4">
+                    <ShieldCheck className="h-8 w-8" />
+                  </div>
+                  <CardTitle>Secure & Private</CardTitle>
+                </CardHeader>
+                <CardContent className="text-center text-muted-foreground">
+                  Your data is yours. All drafts are saved securely in your browser's local storage. No sign-up required.
+                </CardContent>
+              </Card>
+            </div>
           </div>
-          <div className="lg:col-span-2">
-             <h2 className="text-2xl font-bold font-headline mb-4">Live Preview</h2>
-             <div className="sticky top-24">
-                <InvoicePreview invoice={invoice} logoUrl={logoUrl} />
-             </div>
+        </section>
+        
+        {/* CTA Section */}
+        <section className="w-full py-20 md:py-32">
+           <div className="container mx-auto px-4 md:px-6 text-center">
+            <div className="max-w-3xl mx-auto">
+              <h2 className="text-3xl md:text-4xl font-bold font-headline">Ready to Get Started?</h2>
+              <p className="mt-4 text-lg text-muted-foreground">
+                Stop wrestling with spreadsheets and word processors. Join thousands of freelancers and small businesses who trust InvoiceCraft.
+              </p>
+              <div className="mt-8">
+                <Button asChild size="lg">
+                  <Link href="/create">Create Your First Invoice</Link>
+                </Button>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <footer className="bg-secondary border-t">
+        <div className="container mx-auto py-8 px-4 md:px-6 flex flex-col md:flex-row justify-between items-center">
+          <p className="text-muted-foreground text-sm">&copy; {new Date().getFullYear()} InvoiceCraft. All rights reserved.</p>
+          <div className="flex gap-4 mt-4 md:mt-0">
+             <Link href="#" className="text-sm text-muted-foreground hover:text-foreground">Terms of Service</Link>
+             <Link href="#" className="text-sm text-muted-foreground hover:text-foreground">Privacy Policy</Link>
           </div>
         </div>
-      </div>
-    </>
+      </footer>
+    </div>
   );
 }

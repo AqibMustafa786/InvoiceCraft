@@ -179,7 +179,7 @@ export default function DashboardPage() {
                     <p className="text-muted-foreground">Manage your invoice drafts here.</p>
                 </div>
                 <Button asChild>
-                    <Link href="/">
+                    <Link href="/create">
                         <FilePlus2 className="mr-2 h-4 w-4" />
                         New Invoice
                     </Link>
@@ -268,7 +268,7 @@ export default function DashboardPage() {
                                                 </DropdownMenuTrigger>
                                                 <DropdownMenuContent align="end">
                                                      <DropdownMenuItem asChild>
-                                                        <Link href={`/?draftId=${invoice.id}`} className="cursor-pointer">
+                                                        <Link href={`/create?draftId=${invoice.id}`} className="cursor-pointer">
                                                             <Edit className="mr-2 h-4 w-4" />
                                                             <span>Edit</span>
                                                         </Link>
