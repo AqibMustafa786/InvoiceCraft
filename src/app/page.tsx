@@ -5,7 +5,7 @@ import type { Invoice } from '@/lib/types';
 import { InvoiceForm } from '@/components/invoice-form';
 import { InvoicePreview } from '@/components/invoice-preview';
 import { Button } from '@/components/ui/button';
-import { Printer, Save, FilePlus, FolderOpen, Edit } from 'lucide-react';
+import { Printer, Edit, FilePlus } from 'lucide-react';
 import { addDays } from 'date-fns';
 import { useToast } from '@/hooks/use-toast';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -135,38 +135,45 @@ export default function Home() {
   };
 
   return (
-    <div className="container mx-auto p-4 md:p-8">
-      <div className="flex flex-col md:flex-row justify-between md:items-center gap-4 mb-8">
-        <div>
-          <h1 className="text-3xl font-bold font-headline">Create Invoice</h1>
-          <p className="text-muted-foreground">Fill out the form below to generate your invoice.</p>
+    <div id="invoice-container">
+      <div className="container mx-auto p-4 md:p-8 no-print">
+        <div className="flex flex-col md:flex-row justify-between md:items-center gap-4 mb-8">
+          <div>
+            <h1 className="text-3xl font-bold font-headline">Create Invoice</h1>
+            <p className="text-muted-foreground">Fill out the form below to generate your invoice.</p>
+          </div>
+          <div className="flex flex-wrap gap-2">
+              <Button onClick={handleNew} variant="outline">
+                  <FilePlus className="mr-2 h-5 w-5" />
+                  New
+              </Button>
+              <Button onClick={handleSaveDraft}>
+                <Edit className="mr-2 h-5 w-5" />
+                Save Draft
+              </Button>
+              <Button onClick={handlePrint}>
+                <Printer className="mr-2 h-5 w-5" />
+                Save as PDF
+              </Button>
+          </div>
         </div>
-        <div className="flex flex-wrap gap-2">
-            <Button onClick={handleNew} variant="outline">
-                <FilePlus className="mr-2 h-5 w-5" />
-                New
-            </Button>
-            <Button onClick={handleSaveDraft}>
-              <Edit className="mr-2 h-5 w-5" />
-              Save Draft
-            </Button>
-            <Button onClick={handlePrint}>
-              <Printer className="mr-2 h-5 w-5" />
-              Save as PDF
-            </Button>
+
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 xl:gap-12">
+          <div className="lg:col-span-3">
+            <InvoiceForm invoice={invoice} setInvoice={setInvoice} setLogoUrl={setLogoUrl} />
+          </div>
+          <div className="lg:col-span-2">
+             <h2 className="text-2xl font-bold font-headline mb-4">Live Preview</h2>
+             <div className="sticky top-24">
+                <div id="invoice-preview-container">
+                    <InvoicePreview invoice={invoice} logoUrl={logoUrl} />
+                </div>
+             </div>
+          </div>
         </div>
       </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 xl:gap-12">
-        <div className="lg:col-span-3">
-          <InvoiceForm invoice={invoice} setInvoice={setInvoice} setLogoUrl={setLogoUrl} />
-        </div>
-        <div className="lg:col-span-2">
-           <h2 className="text-2xl font-bold font-headline mb-4">Live Preview</h2>
-           <div id="invoice-preview" className="sticky top-24">
-             <InvoicePreview invoice={invoice} logoUrl={logoUrl} />
-           </div>
-        </div>
+      <div className="hidden print-only">
+        <InvoicePreview invoice={invoice} logoUrl={logoUrl} />
       </div>
     </div>
   );
