@@ -1,4 +1,5 @@
 import { CheckCircle, Eye, Rocket, ShieldCheck, Zap } from 'lucide-react';
+import { PageHeader, PageHeaderDescription, PageHeaderHeading } from '@/components/page-header';
 
 export default function AboutPage() {
   const whatWeOffer = [
@@ -46,14 +47,10 @@ export default function AboutPage() {
 
   return (
     <div className="container mx-auto p-4 md:p-8">
-      <div className="text-center max-w-3xl mx-auto mb-16">
-        <h1 className="text-4xl md:text-5xl font-bold font-headline tracking-tight">
-          About InvoiceCraft
-        </h1>
-        <p className="mt-6 text-lg md:text-xl text-muted-foreground">
-          Our goal is to make invoicing simple, professional, and accessible to everyone. We empower businesses to manage their billing with efficiency and style.
-        </p>
-      </div>
+      <PageHeader>
+        <PageHeaderHeading>About InvoiceCraft</PageHeaderHeading>
+        <PageHeaderDescription>Our goal is to make invoicing simple, professional, and accessible to everyone. We empower businesses to manage their billing with efficiency and style.</PageHeaderDescription>
+      </PageHeader>
 
       <div className="grid md:grid-cols-2 gap-8 mb-16">
         <div className="bg-background/50 backdrop-blur-lg border border-white/20 shadow-lg rounded-xl p-8">

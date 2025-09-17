@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { PageHeader, PageHeaderDescription, PageHeaderHeading } from "@/components/page-header";
 import Link from "next/link";
 
 const jobOpenings = [
@@ -23,14 +24,12 @@ const jobOpenings = [
 export default function CareersPage() {
   return (
     <div className="container mx-auto p-4 md:p-8">
-      <div className="text-center max-w-3xl mx-auto mb-16">
-        <h1 className="text-4xl md:text-5xl font-bold font-headline tracking-tight">
-          Join Our Team
-        </h1>
-        <p className="mt-6 text-lg md:text-xl text-muted-foreground">
+      <PageHeader>
+        <PageHeaderHeading>Join Our Team</PageHeaderHeading>
+        <PageHeaderDescription>
           We're building the future of invoicing and are looking for passionate people to join our mission. At InvoiceCraft, you'll have the chance to make a real impact.
-        </p>
-      </div>
+        </PageHeaderDescription>
+      </PageHeader>
 
       <div>
         <h2 className="text-3xl font-bold text-center mb-10">Current Openings</h2>

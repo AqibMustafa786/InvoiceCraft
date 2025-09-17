@@ -4,6 +4,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion"
+import { PageHeader, PageHeaderDescription, PageHeaderHeading } from "@/components/page-header";
 
 const faqItems = [
   {
@@ -32,14 +33,12 @@ const faqItems = [
 export default function FaqPage() {
   return (
     <div className="container mx-auto p-4 md:p-8">
-      <div className="text-center max-w-2xl mx-auto mb-16">
-        <h1 className="text-4xl md:text-5xl font-bold font-headline tracking-tight">
-          Frequently Asked Questions
-        </h1>
-        <p className="mt-6 text-lg md:text-xl text-muted-foreground">
+      <PageHeader>
+        <PageHeaderHeading>Frequently Asked Questions</PageHeaderHeading>
+        <PageHeaderDescription>
           Find answers to common questions about InvoiceCraft. If you can't find your answer here, feel free to contact us.
-        </p>
-      </div>
+        </PageHeaderDescription>
+      </PageHeader>
 
       <div className="max-w-3xl mx-auto bg-background/50 backdrop-blur-lg border border-white/20 shadow-lg rounded-xl p-4">
         <Accordion type="single" collapsible className="w-full">

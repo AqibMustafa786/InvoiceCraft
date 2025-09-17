@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import Image from "next/image";
 import { ArrowRight } from "lucide-react";
+import { PageHeader, PageHeaderDescription, PageHeaderHeading } from "@/components/page-header";
 
 const blogPosts = [
   {
@@ -37,14 +38,10 @@ const blogPosts = [
 export default function BlogPage() {
   return (
     <div className="container mx-auto p-4 md:p-8">
-      <div className="text-center max-w-2xl mx-auto mb-16">
-        <h1 className="text-4xl md:text-5xl font-bold font-headline tracking-tight">
-          From the InvoiceCraft Blog
-        </h1>
-        <p className="mt-6 text-lg md:text-xl text-muted-foreground">
-          Tips, tutorials, and insights on invoicing, finance, and freelance life.
-        </p>
-      </div>
+      <PageHeader>
+        <PageHeaderHeading>From the InvoiceCraft Blog</PageHeaderHeading>
+        <PageHeaderDescription>Tips, tutorials, and insights on invoicing, finance, and freelance life.</PageHeaderDescription>
+      </PageHeader>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {blogPosts.map((post) => (
