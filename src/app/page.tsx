@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import ReactDOM from 'react-dom';
 import type { Invoice } from '@/lib/types';
 import { InvoiceForm } from '@/components/invoice-form';
 import { InvoicePreview } from '@/components/invoice-preview';
@@ -85,7 +86,17 @@ export default function Home() {
 
 
   const handlePrint = () => {
-    window.print();
+    const printContainer = document.getElementById('print-container');
+    if (printContainer) {
+        ReactDOM.render(
+            <InvoicePreview invoice={invoice} logoUrl={logoUrl} id="invoice-preview-print" />,
+            printContainer,
+            () => {
+                window.print();
+                ReactDOM.unmountComponentAtNode(printContainer);
+            }
+        );
+    }
   };
 
   const handleSaveDraft = () => {
@@ -169,9 +180,6 @@ export default function Home() {
              </div>
           </div>
         </div>
-      </div>
-      <div id="print-container" className="hidden print:block">
-        <InvoicePreview invoice={invoice} logoUrl={logoUrl} />
       </div>
     </>
   );

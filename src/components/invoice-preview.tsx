@@ -9,16 +9,17 @@ import { format } from 'date-fns';
 interface InvoicePreviewProps {
   invoice: Invoice;
   logoUrl: string | null;
+  id?: string;
 }
 
-export function InvoicePreview({ invoice, logoUrl }: InvoicePreviewProps) {
+export function InvoicePreview({ invoice, logoUrl, id = 'invoice-preview' }: InvoicePreviewProps) {
   const subtotal = invoice.items.reduce((acc, item) => acc + item.quantity * item.rate, 0);
   const taxAmount = (subtotal * invoice.tax) / 100;
   const discountAmount = (subtotal * invoice.discount) / 100;
   const total = subtotal + taxAmount - discountAmount;
 
   return (
-    <div id="invoice-preview" className="w-full shadow-lg rounded-xl overflow-hidden print:shadow-none print:rounded-none">
+    <div id={id} className="w-full shadow-lg rounded-xl overflow-hidden print:shadow-none print:rounded-none">
         <Card>
         <CardContent className="p-8 md:p-10 bg-white text-gray-800">
             <header className="flex justify-between items-start mb-10">
