@@ -255,7 +255,7 @@ export function InvoiceForm({ invoice, setInvoice, logoUrl, setLogoUrl, accentCo
             <div className="col-span-1"></div>
           </div>
           {invoice.items.map((item, index) => (
-            <div key={item.id} className="grid grid-cols-12 gap-2 items-start">
+            <div key={item.id} className="grid grid-cols-12 gap-2 items-center">
               <div className="col-span-12 md:col-span-5 space-y-2">
                 <Label htmlFor={`itemName-${index}`} className="md:hidden">Item Name</Label>
                 <Input id={`itemName-${index}`} value={item.name} onChange={(e) => handleItemChange(index, 'name', e.target.value)} />
