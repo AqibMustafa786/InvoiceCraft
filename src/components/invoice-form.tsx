@@ -1,6 +1,6 @@
 'use client';
 
-import type { ChangeEvent, Dispatch, SetStateAction } from 'react';
+import { ChangeEvent, Dispatch, SetStateAction, useState } from 'react';
 import type { Invoice, LineItem } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -21,6 +21,7 @@ interface InvoiceFormProps {
   invoice: Invoice;
   setInvoice: Dispatch<SetStateAction<Invoice>>;
   setLogoUrl: Dispatch<SetStateAction<string | null>>;
+  toast: (options: { title: string; description: string; variant?: "default" | "destructive" }) => void;
 }
 
 const currencies = [
@@ -31,7 +32,8 @@ const currencies = [
     { value: 'PKR', label: 'PKR (₨)' },
 ]
 
-export function InvoiceForm({ invoice, setInvoice, setLogoUrl }: InvoiceFormProps) {
+export function InvoiceForm({ invoice, setInvoice, setLogoUrl, toast }: InvoiceFormProps) {
+  const [bulkAddCount, setBulkAddCount] = useState(10);
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -54,9 +56,43 @@ export function InvoiceForm({ invoice, setInvoice, setLogoUrl }: InvoiceFormProp
   };
 
   const addItem = () => {
+     if (invoice.items.length >= 50) {
+       toast({
+        title: "Item Limit Reached",
+        description: "You cannot add more than 50 items to a single invoice.",
+        variant: "destructive",
+      });
+      return;
+    }
     setInvoice(prev => ({
       ...prev,
       items: [...prev.items, { id: crypto.randomUUID(), name: '', quantity: 1, rate: 0 }],
+    }));
+  };
+  
+  const handleBulkAddItem = () => {
+    const count = Number(bulkAddCount);
+    if (count <= 0) return;
+
+    if (invoice.items.length + count > 50) {
+      toast({
+        title: "Item Limit Exceeded",
+        description: `You can only add ${50 - invoice.items.length} more items. The maximum is 50.`,
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const newItems = Array.from({ length: count }, () => ({
+      id: crypto.randomUUID(),
+      name: '',
+      quantity: 1,
+      rate: 0,
+    }));
+
+    setInvoice(prev => ({
+      ...prev,
+      items: [...prev.items, ...newItems],
     }));
   };
 
@@ -184,7 +220,27 @@ export function InvoiceForm({ invoice, setInvoice, setLogoUrl }: InvoiceFormProp
               </div>
             </div>
           ))}
-          <Button variant="outline" onClick={addItem}><Plus className="mr-2 h-4 w-4" /> Add Item</Button>
+          <div className="flex flex-wrap items-end gap-4">
+            <Button variant="outline" onClick={addItem}><Plus className="mr-2 h-4 w-4" /> Add Item</Button>
+            
+            <div className="flex items-end gap-2">
+                <div className="space-y-2">
+                    <Label htmlFor="bulk-add-count" className="text-sm">Quantity</Label>
+                    <Input 
+                        id="bulk-add-count" 
+                        type="number" 
+                        value={bulkAddCount} 
+                        onChange={(e) => setBulkAddCount(Number(e.target.value))}
+                        className="w-24 h-10"
+                        min="1"
+                        max="50"
+                    />
+                </div>
+                <Button variant="outline" onClick={handleBulkAddItem}>
+                    <Plus className="mr-2 h-4 w-4" /> Add Multiple
+                </Button>
+            </div>
+          </div>
         </CardContent>
       </Card>
 

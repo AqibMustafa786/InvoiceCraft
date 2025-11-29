@@ -182,7 +182,12 @@ export default function CreateInvoicePage() {
 
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 xl:gap-12">
           <div className="lg:col-span-3">
-            <InvoiceForm invoice={invoice} setInvoice={setInvoice} setLogoUrl={setLogoUrl} />
+            <InvoiceForm 
+              invoice={invoice} 
+              setInvoice={setInvoice} 
+              setLogoUrl={setLogoUrl}
+              toast={toast}
+            />
           </div>
           <div className="lg:col-span-2">
              <h2 className="text-2xl font-bold font-headline mb-4">Live Preview</h2>
