@@ -102,19 +102,7 @@ export default function CreateInvoicePage() {
 
 
   const handlePrint = () => {
-    const printContainer = document.getElementById('print-container');
-    if (printContainer) {
-        const root = createRoot(printContainer);
-        root.render(
-            <InvoicePreview invoice={invoice} logoUrl={logoUrl} accentColor={accentColor} id="invoice-preview-print" isPrint={true} />
-        );
-        
-        // Allow time for render before printing
-        setTimeout(() => {
-            window.print();
-            root.unmount();
-        }, 100);
-    }
+    window.print();
   };
 
   const handleSaveDraft = () => {
@@ -183,7 +171,7 @@ export default function CreateInvoicePage() {
 
     toast({
       title: "Email Client Opened",
-      description: "Please attach the PDF and send the email.",
+      description: "First, save the invoice as a PDF, then attach it to the email.",
     });
   };
 
@@ -241,7 +229,9 @@ export default function CreateInvoicePage() {
           </div>
         </div>
       </div>
-      <div id="print-container" className="hidden"></div>
+      <div id="print-container" className="hidden print:block">
+        <InvoicePreview invoice={invoice} logoUrl={logoUrl} accentColor={accentColor} id="invoice-preview-print" isPrint={true} />
+      </div>
     </>
   );
 }

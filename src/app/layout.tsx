@@ -40,7 +40,7 @@ export default function RootLayout({
             <Footer />
           </div>
           <Toaster />
-          <div id="print-container" className="hidden"></div>
+          <div id="print-container" className="hidden print:block"></div>
         </ThemeProvider>
       </body>
     </html>
