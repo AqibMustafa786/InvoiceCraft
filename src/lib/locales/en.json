@@ -1,0 +1,15 @@
+{
+    "invoice": "Invoice",
+    "billTo": "BILL TO",
+    "invoiceDate": "Invoice Date",
+    "dueDate": "Due Date",
+    "item": "Item",
+    "quantity": "Qty",
+    "rate": "Rate",
+    "subtotal": "Subtotal",
+    "tax": "Tax",
+    "discount": "Discount",
+    "total": "Total",
+    "notes": "Notes",
+    "itemDescription": "Item description"
+}

@@ -6,7 +6,7 @@ import type { Invoice } from '@/lib/types';
 import { InvoiceForm } from '@/components/invoice-form';
 import { InvoicePreview } from '@/components/invoice-preview';
 import { Button } from '@/components/ui/button';
-import { Printer, Edit, FilePlus, LayoutDashboard } from 'lucide-react';
+import { Printer, Edit, FilePlus, LayoutDashboard, Mail } from 'lucide-react';
 import { addDays } from 'date-fns';
 import { useToast } from '@/hooks/use-toast';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -29,6 +29,7 @@ const initialInvoice: Invoice = {
   notes: 'Thank you for your business.',
   status: 'draft',
   currency: 'USD',
+  language: 'en',
 };
 
 const DRAFTS_STORAGE_KEY = 'invoiceDrafts';
@@ -50,6 +51,7 @@ function PrintableInvoice({ invoice, logoUrl, accentColor }: { invoice: Invoice,
         printRoot
     );
 }
+
 
 export default function CreateInvoicePage() {
   const [invoice, setInvoice] = useState<Invoice>(initialInvoice);

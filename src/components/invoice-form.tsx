@@ -48,6 +48,10 @@ export function InvoiceForm({ invoice, setInvoice, logoUrl, setLogoUrl, accentCo
     setInvoice(prev => ({ ...prev, currency: value }));
   }
 
+  const handleLanguageChange = (value: string) => {
+    setInvoice(prev => ({ ...prev, language: value }));
+  };
+
   const handleNumberChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setInvoice(prev => ({ ...prev, [name]: parseFloat(value) || 0 }));
@@ -133,17 +137,17 @@ export function InvoiceForm({ invoice, setInvoice, logoUrl, setLogoUrl, accentCo
               <Label>Company Logo</Label>
                <div className="flex items-center gap-4">
                 {logoUrl ? (
-                    <>
-                    <Image src={logoUrl} alt="Company Logo" width={80} height={40} className="rounded-md object-contain bg-muted p-1" />
-                    <div className="flex items-center gap-2">
-                        <Button asChild variant="outline" size="sm">
-                            <label htmlFor="logo-upload" className="cursor-pointer">Change</label>
-                        </Button>
-                        <Button variant="destructive" size="sm" onClick={() => setLogoUrl(null)}>
-                           <X className="h-4 w-4 mr-1" /> Remove
-                        </Button>
+                    <div className="flex items-center gap-4">
+                        <Image src={logoUrl} alt="Company Logo" width={80} height={40} className="rounded-md object-contain bg-muted p-1" />
+                        <div className="flex items-center gap-2">
+                            <Button asChild variant="outline" size="sm">
+                                <label htmlFor="logo-upload" className="cursor-pointer">Change</label>
+                            </Button>
+                            <Button variant="destructive" size="sm" onClick={() => setLogoUrl(null)}>
+                               <X className="h-4 w-4 mr-1" /> Remove
+                            </Button>
+                        </div>
                     </div>
-                    </>
                 ) : (
                     <Button asChild variant="outline" className="w-full">
                         <label htmlFor="logo-upload" className="cursor-pointer flex items-center justify-center gap-2">
@@ -241,7 +245,7 @@ export function InvoiceForm({ invoice, setInvoice, logoUrl, setLogoUrl, accentCo
             </div>
             <div className="space-y-2">
                 <Label htmlFor="language">Invoice Language</Label>
-                <Select value={'en'} onValueChange={() => { /* Placeholder */ }}>
+                <Select value={invoice.language} onValueChange={handleLanguageChange}>
                     <SelectTrigger id="language">
                         <SelectValue placeholder="Select language" />
                     </SelectTrigger>
@@ -254,7 +258,6 @@ export function InvoiceForm({ invoice, setInvoice, logoUrl, setLogoUrl, accentCo
                         <SelectItem value="zh">中文 (Chinese)</SelectItem>
                     </SelectContent>
                 </Select>
-                <p className="text-xs text-muted-foreground">This is a visual placeholder and does not change the language yet.</p>
             </div>
         </CardContent>
       </Card>

@@ -22,4 +22,5 @@ export interface Invoice {
   notes: string;
   status: InvoiceStatus;
   currency: string;
+  language: string;
 }
