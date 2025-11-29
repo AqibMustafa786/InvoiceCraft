@@ -91,26 +91,12 @@
     print-color-adjust: exact;
   }
   
-  .app-main-container,
-  .print-hide {
+  .app-main-container {
     display: none !important;
   }
 
   #print-container {
     display: block !important;
-    position: static;
-  }
-  
-  #invoice-preview-print {
-    margin: 0;
-    padding: 0;
-    border: none !important;
-    box-shadow: none !important;
-    transform: scale(1) !important;
-    width: 100% !important;
-    height: auto !important;
-    border-radius: 0 !important;
-    background: white !important;
   }
   
   .page-break {

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { createRoot } from 'react-dom/client';
+import { createPortal } from 'react-dom';
 import type { Invoice } from '@/lib/types';
 import { InvoiceForm } from '@/components/invoice-form';
 import { InvoicePreview } from '@/components/invoice-preview';
@@ -33,6 +33,24 @@ const initialInvoice: Invoice = {
 };
 
 const DRAFTS_STORAGE_KEY = 'invoiceDrafts';
+
+function PrintableInvoice({ invoice, logoUrl, accentColor }: { invoice: Invoice, logoUrl: string | null, accentColor: string }) {
+    const [printRoot, setPrintRoot] = useState<HTMLElement | null>(null);
+
+    useEffect(() => {
+        const root = document.getElementById('print-container');
+        setPrintRoot(root);
+    }, []);
+
+    if (!printRoot) {
+        return null;
+    }
+
+    return createPortal(
+        <InvoicePreview invoice={invoice} logoUrl={logoUrl} accentColor={accentColor} id="invoice-preview-print" isPrint={true} />,
+        printRoot
+    );
+}
 
 export default function CreateInvoicePage() {
   const [invoice, setInvoice] = useState<Invoice>(initialInvoice);
@@ -229,9 +247,7 @@ export default function CreateInvoicePage() {
           </div>
         </div>
       </div>
-      <div id="print-container" className="hidden print:block">
-        <InvoicePreview invoice={invoice} logoUrl={logoUrl} accentColor={accentColor} id="invoice-preview-print" isPrint={true} />
-      </div>
+      <PrintableInvoice invoice={invoice} logoUrl={logoUrl} accentColor={accentColor} />
     </>
   );
 }
