@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { DatePicker } from '@/components/ui/datepicker';
-import { ImageUp, Plus, Trash2 } from 'lucide-react';
+import { ImageUp, Plus, Trash2, Palette } from 'lucide-react';
 import {
   Select,
   SelectContent,
@@ -21,6 +21,8 @@ interface InvoiceFormProps {
   invoice: Invoice;
   setInvoice: Dispatch<SetStateAction<Invoice>>;
   setLogoUrl: Dispatch<SetStateAction<string | null>>;
+  accentColor: string;
+  setAccentColor: Dispatch<SetStateAction<string>>;
   toast: (options: { title: string; description: string; variant?: "default" | "destructive" }) => void;
 }
 
@@ -32,7 +34,7 @@ const currencies = [
     { value: 'PKR', label: 'PKR (₨)' },
 ]
 
-export function InvoiceForm({ invoice, setInvoice, setLogoUrl, toast }: InvoiceFormProps) {
+export function InvoiceForm({ invoice, setInvoice, setLogoUrl, accentColor, setAccentColor, toast }: InvoiceFormProps) {
   const [bulkAddCount, setBulkAddCount] = useState(10);
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -114,20 +116,48 @@ export function InvoiceForm({ invoice, setInvoice, setLogoUrl, toast }: InvoiceF
     <div className="space-y-6">
       <Card>
         <CardHeader>
+          <CardTitle>Branding</CardTitle>
+        </CardHeader>
+        <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6">
+           <div className="space-y-2">
+              <Label>Company Logo</Label>
+              <Button asChild variant="outline">
+                <label htmlFor="logoUpload" className="w-full flex items-center justify-center gap-2 cursor-pointer text-sm font-medium">
+                    <ImageUp className="h-4 w-4" /> Upload Logo
+                </label>
+              </Button>
+              <Input id="logoUpload" type="file" className="sr-only" onChange={handleLogoUpload} accept="image/*" />
+            </div>
+            <div className="space-y-2">
+                <Label htmlFor="accentColor">Accent Color</Label>
+                <div className="relative flex items-center">
+                    <Palette className="absolute left-3 h-5 w-5 text-muted-foreground" />
+                    <Input 
+                        id="accentColor"
+                        type="text" 
+                        value={accentColor} 
+                        onChange={(e) => setAccentColor(e.target.value)}
+                        className="pl-10"
+                    />
+                    <input 
+                        type="color" 
+                        value={accentColor} 
+                        onChange={(e) => setAccentColor(e.target.value)}
+                        className="absolute right-1 top-1/2 -translate-y-1/2 h-8 w-8 p-1 rounded-md cursor-pointer bg-transparent border-none appearance-none"
+                    />
+                </div>
+            </div>
+        </CardContent>
+      </Card>
+    
+      <Card>
+        <CardHeader>
           <CardTitle>Bill From</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="companyName">Company Name</Label>
-              <Input id="companyName" name="companyName" value={invoice.companyName} onChange={handleInputChange} />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="logoUpload" className="flex items-center gap-2 cursor-pointer text-sm font-medium text-primary underline-offset-4 hover:underline">
-                <ImageUp className="h-4 w-4" /> Upload Logo
-              </Label>
-              <Input id="logoUpload" type="file" className="sr-only" onChange={handleLogoUpload} accept="image/*" />
-            </div>
+          <div className="space-y-2">
+            <Label htmlFor="companyName">Company Name</Label>
+            <Input id="companyName" name="companyName" value={invoice.companyName} onChange={handleInputChange} />
           </div>
           <div className="space-y-2">
             <Label htmlFor="companyAddress">Company Address</Label>
@@ -194,10 +224,11 @@ export function InvoiceForm({ invoice, setInvoice, setLogoUrl, toast }: InvoiceF
             <div className="col-span-5"><Label>Item Name</Label></div>
             <div className="col-span-2"><Label>Quantity</Label></div>
             <div className="col-span-2"><Label>Rate</Label></div>
-            <div className="col-span-3"><Label>Subtotal</Label></div>
+            <div className="col-span-2"><Label>Subtotal</Label></div>
+            <div className="col-span-1"></div>
           </div>
           {invoice.items.map((item, index) => (
-            <div key={item.id} className="grid grid-cols-12 gap-4 items-end">
+            <div key={item.id} className="grid grid-cols-12 gap-2 items-start">
               <div className="col-span-12 md:col-span-5 space-y-2">
                 <Label htmlFor={`itemName-${index}`} className="md:hidden">Item Name</Label>
                 <Input id={`itemName-${index}`} value={item.name} onChange={(e) => handleItemChange(index, 'name', e.target.value)} />
@@ -213,7 +244,7 @@ export function InvoiceForm({ invoice, setInvoice, setLogoUrl, toast }: InvoiceF
               <div className="col-span-3 md:col-span-2">
                 <p className="font-medium tabular-nums h-10 flex items-center">{currencySymbol}{(item.quantity * item.rate).toFixed(2)}</p>
               </div>
-              <div className="col-span-1">
+              <div className="col-span-1 flex items-center h-10">
                 <Button variant="ghost" size="icon" onClick={() => removeItem(index)}>
                   <Trash2 className="h-4 w-4 text-destructive" />
                 </Button>

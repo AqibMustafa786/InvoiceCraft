@@ -9,6 +9,7 @@ import { format } from 'date-fns';
 interface InvoicePreviewProps {
   invoice: Invoice;
   logoUrl: string | null;
+  accentColor: string;
   id?: string;
   isPrint?: boolean;
 }
@@ -23,13 +24,13 @@ const currencySymbols: { [key: string]: string } = {
 
 const ITEMS_PER_PAGE = 10;
 
-const PageHeader = ({ invoice, logoUrl }: { invoice: Invoice, logoUrl: string | null }) => (
+const PageHeader = ({ invoice, logoUrl, accentColor }: { invoice: Invoice, logoUrl: string | null, accentColor: string }) => (
     <header className="flex justify-between items-start mb-10">
         <div>
             {logoUrl ? (
             <Image src={logoUrl} alt={`${invoice.companyName} Logo`} width={120} height={40} className="object-contain" data-ai-hint="logo" />
             ) : (
-            <h1 className="text-3xl font-bold font-headline text-primary">{invoice.companyName}</h1>
+            <h1 className="text-3xl font-bold font-headline" style={{ color: accentColor }}>{invoice.companyName}</h1>
             )}
             <p className="text-muted-foreground text-sm mt-2 whitespace-pre-line">{invoice.companyAddress}</p>
         </div>
@@ -56,12 +57,18 @@ const PageClientDetails = ({ invoice }: { invoice: Invoice }) => (
     </section>
 )
 
-export function InvoicePreview({ invoice, logoUrl, id = 'invoice-preview', isPrint = false }: InvoicePreviewProps) {
+export function InvoicePreview({ invoice, logoUrl, accentColor, id = 'invoice-preview', isPrint = false }: InvoicePreviewProps) {
   const subtotal = invoice.items.reduce((acc, item) => acc + item.quantity * item.rate, 0);
   const taxAmount = (subtotal * invoice.tax) / 100;
   const discountAmount = (subtotal * invoice.discount) / 100;
   const total = subtotal + taxAmount - discountAmount;
   const currencySymbol = currencySymbols[invoice.currency] || '$';
+
+  const previewStyle = {
+      '--primary-hsl': accentColor,
+      '--primary': accentColor
+  } as React.CSSProperties;
+
 
   if (isPrint) {
     const itemPages = [];
@@ -70,11 +77,11 @@ export function InvoicePreview({ invoice, logoUrl, id = 'invoice-preview', isPri
     }
     
     return (
-      <div id={id} className="bg-white text-gray-800">
+      <div id={id} className="bg-white text-gray-800" style={previewStyle}>
         {itemPages.map((pageItems, pageIndex) => (
           <div key={pageIndex} className={pageIndex < itemPages.length - 1 ? "page-break" : ""}>
             <div className="p-8 md:p-10">
-              <PageHeader invoice={invoice} logoUrl={logoUrl} />
+              <PageHeader invoice={invoice} logoUrl={logoUrl} accentColor={accentColor} />
               <PageClientDetails invoice={invoice} />
               <section>
                 <table className="w-full text-left">
@@ -122,7 +129,7 @@ export function InvoicePreview({ invoice, logoUrl, id = 'invoice-preview', isPri
                       <Separator className="my-2" />
                       <div className="flex justify-between items-center font-bold text-lg">
                         <span>Total</span>
-                        <span className="text-primary tabular-nums">{currencySymbol}{total.toFixed(2)}</span>
+                        <span className="tabular-nums" style={{ color: accentColor }}>{currencySymbol}{total.toFixed(2)}</span>
                       </div>
                     </div>
                   </section>
@@ -144,9 +151,9 @@ export function InvoicePreview({ invoice, logoUrl, id = 'invoice-preview', isPri
 
   // Default live preview (single page)
   return (
-    <Card id={id} className="w-full shadow-lg rounded-xl overflow-hidden print-hide">
+    <Card id={id} className="w-full shadow-lg rounded-xl overflow-hidden print-hide" style={previewStyle}>
       <CardContent className="p-8 md:p-10 text-gray-800">
-          <PageHeader invoice={invoice} logoUrl={logoUrl} />
+          <PageHeader invoice={invoice} logoUrl={logoUrl} accentColor={accentColor}/>
           <PageClientDetails invoice={invoice} />
           <section>
               <table className="w-full text-left">
@@ -192,7 +199,7 @@ export function InvoicePreview({ invoice, logoUrl, id = 'invoice-preview', isPri
                   <Separator className="my-2" />
                   <div className="flex justify-between items-center font-bold text-lg">
                   <span>Total</span>
-                  <span className="text-primary tabular-nums">{currencySymbol}{total.toFixed(2)}</span>
+                  <span className="tabular-nums" style={{ color: accentColor }}>{currencySymbol}{total.toFixed(2)}</span>
                   </div>
               </div>
           </section>

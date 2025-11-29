@@ -36,6 +36,7 @@ const DRAFTS_STORAGE_KEY = 'invoiceDrafts';
 export default function CreateInvoicePage() {
   const [invoice, setInvoice] = useState<Invoice>(initialInvoice);
   const [logoUrl, setLogoUrl] = useState<string | null>(null);
+  const [accentColor, setAccentColor] = useState<string>('#663399'); // Default: vibrant purple
   const { toast } = useToast();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -46,6 +47,17 @@ export default function CreateInvoicePage() {
       loadDraft(draftId);
     }
   }, [searchParams]);
+  
+  useEffect(() => {
+    // A little trick to get the initial value from CSS variables
+    if (typeof window !== 'undefined') {
+        const primaryColor = getComputedStyle(document.documentElement).getPropertyValue('--primary').trim();
+        if (primaryColor) {
+            // HSL to Hex conversion or just use a default hex. For simplicity, we'll keep a default hex.
+            // A full HSL parser would be needed for perfect sync.
+        }
+    }
+  }, []);
 
   const loadDraft = (draftId: string) => {
     const fromJSON = (key: string, value: any) => {
@@ -62,9 +74,9 @@ export default function CreateInvoicePage() {
         const draftToLoad = drafts.find(d => d.id === draftId);
         if (draftToLoad) {
           setInvoice(draftToLoad);
-          // Note: Logo URL is not saved with individual drafts in this implementation.
-          // You might want to implement a way to save/load logos for drafts if needed.
+          // Note: Logo URL and accent color are not saved with individual drafts in this implementation.
           setLogoUrl(null); 
+          setAccentColor('#663399');
           toast({
             title: "Draft Loaded",
             description: `Invoice draft #${draftToLoad.invoiceNumber} has been loaded.`,
@@ -93,7 +105,7 @@ export default function CreateInvoicePage() {
     if (printContainer) {
         const root = createRoot(printContainer);
         root.render(
-            <InvoicePreview invoice={invoice} logoUrl={logoUrl} id="invoice-preview-print" isPrint={true} />
+            <InvoicePreview invoice={invoice} logoUrl={logoUrl} accentColor={accentColor} id="invoice-preview-print" isPrint={true} />
         );
         
         // Allow time for render before printing
@@ -143,6 +155,7 @@ export default function CreateInvoicePage() {
     const newInvoiceId = crypto.randomUUID();
     setInvoice({ ...initialInvoice, id: newInvoiceId, status: 'draft', invoiceNumber: `INV-${String(Math.floor(Math.random() * 1000)).padStart(3, '0')}` });
     setLogoUrl(null);
+    setAccentColor('#663399');
     router.push('/create');
     toast({
         title: "New Invoice",
@@ -186,13 +199,15 @@ export default function CreateInvoicePage() {
               invoice={invoice} 
               setInvoice={setInvoice} 
               setLogoUrl={setLogoUrl}
+              accentColor={accentColor}
+              setAccentColor={setAccentColor}
               toast={toast}
             />
           </div>
           <div className="lg:col-span-2">
              <h2 className="text-2xl font-bold font-headline mb-4">Live Preview</h2>
              <div className="sticky top-24">
-                <InvoicePreview invoice={invoice} logoUrl={logoUrl} />
+                <InvoicePreview invoice={invoice} logoUrl={logoUrl} accentColor={accentColor} />
              </div>
           </div>
         </div>
