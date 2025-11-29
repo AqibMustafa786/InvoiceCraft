@@ -1,0 +1,15 @@
+{
+    "invoice": "فاتورة",
+    "billTo": "فاتورة إلى",
+    "invoiceDate": "تاريخ الفاتورة",
+    "dueDate": "تاريخ الاستحقاق",
+    "item": "بند",
+    "quantity": "الكمية",
+    "rate": "السعر",
+    "subtotal": "المجموع الفرعي",
+    "tax": "ضريبة",
+    "discount": "خصم",
+    "total": "المجموع",
+    "notes": "ملاحظات",
+    "itemDescription": "وصف البند"
+}
