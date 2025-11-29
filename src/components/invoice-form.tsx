@@ -155,14 +155,14 @@ export function InvoiceForm({ invoice, setInvoice, setLogoUrl }: InvoiceFormProp
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="hidden md:grid md:grid-cols-12 gap-4 text-sm font-medium text-muted-foreground">
-            <div className="col-span-6"><Label>Item Name</Label></div>
+            <div className="col-span-5"><Label>Item Name</Label></div>
             <div className="col-span-2"><Label>Quantity</Label></div>
             <div className="col-span-2"><Label>Rate</Label></div>
-            <div className="col-span-2"><Label>Subtotal</Label></div>
+            <div className="col-span-3"><Label>Subtotal</Label></div>
           </div>
           {invoice.items.map((item, index) => (
-            <div key={item.id} className="grid grid-cols-12 gap-4 items-center">
-              <div className="col-span-12 md:col-span-6 space-y-2">
+            <div key={item.id} className="grid grid-cols-12 gap-4 items-end">
+              <div className="col-span-12 md:col-span-5 space-y-2">
                 <Label htmlFor={`itemName-${index}`} className="md:hidden">Item Name</Label>
                 <Input id={`itemName-${index}`} value={item.name} onChange={(e) => handleItemChange(index, 'name', e.target.value)} />
               </div>
@@ -174,10 +174,10 @@ export function InvoiceForm({ invoice, setInvoice, setLogoUrl }: InvoiceFormProp
                 <Label htmlFor={`itemRate-${index}`} className="md:hidden">Rate</Label>
                 <Input id={`itemRate-${index}`} type="number" value={item.rate} onChange={(e) => handleItemChange(index, 'rate', parseFloat(e.target.value) || 0)} />
               </div>
-              <div className="col-span-3 md:col-span-1 flex items-end h-10">
-                <p className="font-medium tabular-nums">{currencySymbol}{(item.quantity * item.rate).toFixed(2)}</p>
+              <div className="col-span-3 md:col-span-2">
+                <p className="font-medium tabular-nums h-10 flex items-center">{currencySymbol}{(item.quantity * item.rate).toFixed(2)}</p>
               </div>
-              <div className="col-span-1 flex items-end h-10">
+              <div className="col-span-1">
                 <Button variant="ghost" size="icon" onClick={() => removeItem(index)}>
                   <Trash2 className="h-4 w-4 text-destructive" />
                 </Button>
