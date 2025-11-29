@@ -41,6 +41,15 @@ const initialFilters: DashboardFilters = {
 
 const STATUS_OPTIONS: InvoiceStatus[] = ['draft', 'sent', 'paid', 'overdue'];
 
+const currencySymbols: { [key: string]: string } = {
+    USD: '$',
+    EUR: '€',
+    GBP: '£',
+    JPY: '¥',
+    PKR: '₨',
+};
+
+
 export default function DashboardPage() {
     const [drafts, setDrafts] = useState<Invoice[]>([]);
     const [deleteCandidateId, setDeleteCandidateId] = useState<string | null>(null);
@@ -60,8 +69,8 @@ export default function DashboardPage() {
         if (savedData) {
             try {
                 const parsedData: Invoice[] = JSON.parse(savedData, fromJSON);
-                const draftsWithStatus = parsedData.map(d => ({...d, status: d.status || 'draft'}));
-                setDrafts(draftsWithStatus);
+                const draftsWithDefaults = parsedData.map(d => ({...d, status: d.status || 'draft', currency: d.currency || 'USD'}));
+                setDrafts(draftsWithDefaults);
             } catch (error) {
                 console.error("Failed to parse invoice drafts from localStorage", error);
             }
@@ -235,7 +244,7 @@ export default function DashboardPage() {
                                     <TableRow key={invoice.id}>
                                         <TableCell className="font-medium">{invoice.invoiceNumber}</TableCell>
                                         <TableCell>{invoice.clientName}</TableCell>
-                                        <TableCell>${calculateTotal(invoice).toFixed(2)}</TableCell>
+                                        <TableCell>{currencySymbols[invoice.currency] || '$'}{calculateTotal(invoice).toFixed(2)}</TableCell>
                                         <TableCell>
                                              <DropdownMenu>
                                                 <DropdownMenuTrigger asChild>

@@ -28,6 +28,7 @@ const initialInvoice: Invoice = {
   discount: 0,
   notes: 'Thank you for your business.',
   status: 'draft',
+  currency: 'USD',
 };
 
 const DRAFTS_STORAGE_KEY = 'invoiceDrafts';

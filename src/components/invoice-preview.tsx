@@ -12,11 +12,20 @@ interface InvoicePreviewProps {
   id?: string;
 }
 
+const currencySymbols: { [key: string]: string } = {
+    USD: '$',
+    EUR: '€',
+    GBP: '£',
+    JPY: '¥',
+    PKR: '₨',
+};
+
 export function InvoicePreview({ invoice, logoUrl, id = 'invoice-preview' }: InvoicePreviewProps) {
   const subtotal = invoice.items.reduce((acc, item) => acc + item.quantity * item.rate, 0);
   const taxAmount = (subtotal * invoice.tax) / 100;
   const discountAmount = (subtotal * invoice.discount) / 100;
   const total = subtotal + taxAmount - discountAmount;
+  const currencySymbol = currencySymbols[invoice.currency] || '$';
 
   return (
     <div id={id} className="w-full shadow-lg rounded-xl overflow-hidden print:shadow-none print:rounded-none">
@@ -66,8 +75,8 @@ export function InvoicePreview({ invoice, logoUrl, id = 'invoice-preview' }: Inv
                     <tr key={item.id} className="border-b">
                     <td className="p-3">{item.name || <span className="text-gray-400">Item description</span>}</td>
                     <td className="p-3 text-center tabular-nums">{item.quantity}</td>
-                    <td className="p-3 text-right tabular-nums">${item.rate.toFixed(2)}</td>
-                    <td className="p-3 text-right tabular-nums font-medium">${(item.quantity * item.rate).toFixed(2)}</td>
+                    <td className="p-3 text-right tabular-nums">{currencySymbol}{item.rate.toFixed(2)}</td>
+                    <td className="p-3 text-right tabular-nums font-medium">{currencySymbol}{(item.quantity * item.rate).toFixed(2)}</td>
                     </tr>
                 ))}
                 </tbody>
@@ -78,20 +87,20 @@ export function InvoicePreview({ invoice, logoUrl, id = 'invoice-preview' }: Inv
             <div className="w-full max-w-xs space-y-2">
                 <div className="flex justify-between text-sm">
                 <span className="text-muted-foreground">Subtotal</span>
-                <span className="font-medium tabular-nums">${subtotal.toFixed(2)}</span>
+                <span className="font-medium tabular-nums">{currencySymbol}{subtotal.toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between text-sm">
                 <span className="text-muted-foreground">Tax ({invoice.tax}%)</span>
-                <span className="font-medium tabular-nums">${taxAmount.toFixed(2)}</span>
+                <span className="font-medium tabular-nums">{currencySymbol}{taxAmount.toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between text-sm">
                 <span className="text-muted-foreground">Discount ({invoice.discount}%)</span>
-                <span className="font-medium text-destructive tabular-nums">-${discountAmount.toFixed(2)}</span>
+                <span className="font-medium text-destructive tabular-nums">-{currencySymbol}{discountAmount.toFixed(2)}</span>
                 </div>
                 <Separator className="my-2" />
                 <div className="flex justify-between items-center font-bold text-lg">
                 <span>Total</span>
-                <span className="text-primary tabular-nums">${total.toFixed(2)}</span>
+                <span className="text-primary tabular-nums">{currencySymbol}{total.toFixed(2)}</span>
                 </div>
             </div>
             </section>

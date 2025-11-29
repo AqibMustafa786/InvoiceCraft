@@ -9,6 +9,13 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { DatePicker } from '@/components/ui/datepicker';
 import { ImageUp, Plus, Trash2 } from 'lucide-react';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface InvoiceFormProps {
   invoice: Invoice;
@@ -16,12 +23,24 @@ interface InvoiceFormProps {
   setLogoUrl: Dispatch<SetStateAction<string | null>>;
 }
 
+const currencies = [
+    { value: 'USD', label: 'USD ($)' },
+    { value: 'EUR', label: 'EUR (€)' },
+    { value: 'GBP', label: 'GBP (£)' },
+    { value: 'JPY', label: 'JPY (¥)' },
+    { value: 'PKR', label: 'PKR (₨)' },
+]
+
 export function InvoiceForm({ invoice, setInvoice, setLogoUrl }: InvoiceFormProps) {
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setInvoice(prev => ({ ...prev, [name]: value }));
   };
+  
+  const handleCurrencyChange = (value: string) => {
+    setInvoice(prev => ({ ...prev, currency: value }));
+  }
 
   const handleNumberChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -52,6 +71,8 @@ export function InvoiceForm({ invoice, setInvoice, setLogoUrl }: InvoiceFormProp
       setLogoUrl(URL.createObjectURL(file));
     }
   };
+  
+  const currencySymbol = currencies.find(c => c.value === invoice.currency)?.label.split(' ')[1] || '$';
 
   return (
     <div className="space-y-6">
@@ -112,6 +133,19 @@ export function InvoiceForm({ invoice, setInvoice, setLogoUrl }: InvoiceFormProp
             <Label>Due Date</Label>
             <DatePicker date={invoice.dueDate} setDate={(date) => setInvoice(p => ({ ...p, dueDate: date! }))} />
           </div>
+           <div className="space-y-2 md:col-span-3">
+                <Label htmlFor="currency">Currency</Label>
+                <Select value={invoice.currency} onValueChange={handleCurrencyChange}>
+                    <SelectTrigger id="currency">
+                        <SelectValue placeholder="Select currency" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        {currencies.map(c => (
+                            <SelectItem key={c.value} value={c.value}>{c.label}</SelectItem>
+                        ))}
+                    </SelectContent>
+                </Select>
+            </div>
         </CardContent>
       </Card>
 
@@ -141,7 +175,7 @@ export function InvoiceForm({ invoice, setInvoice, setLogoUrl }: InvoiceFormProp
                 <Input id={`itemRate-${index}`} type="number" value={item.rate} onChange={(e) => handleItemChange(index, 'rate', parseFloat(e.target.value) || 0)} />
               </div>
               <div className="col-span-3 md:col-span-1 flex items-end h-10">
-                <p className="font-medium tabular-nums">${(item.quantity * item.rate).toFixed(2)}</p>
+                <p className="font-medium tabular-nums">{currencySymbol}{(item.quantity * item.rate).toFixed(2)}</p>
               </div>
               <div className="col-span-1 flex items-end h-10">
                 <Button variant="ghost" size="icon" onClick={() => removeItem(index)}>

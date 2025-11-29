@@ -21,4 +21,5 @@ export interface Invoice {
   discount: number;
   notes: string;
   status: InvoiceStatus;
+  currency: string;
 }
