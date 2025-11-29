@@ -93,7 +93,7 @@ export default function CreateInvoicePage() {
     if (printContainer) {
         const root = createRoot(printContainer);
         root.render(
-            <InvoicePreview invoice={invoice} logoUrl={logoUrl} id="invoice-preview-print" />
+            <InvoicePreview invoice={invoice} logoUrl={logoUrl} id="invoice-preview-print" isPrint={true} />
         );
         
         // Allow time for render before printing

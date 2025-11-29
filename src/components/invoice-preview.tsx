@@ -10,6 +10,7 @@ interface InvoicePreviewProps {
   invoice: Invoice;
   logoUrl: string | null;
   id?: string;
+  isPrint?: boolean; // New prop to control pagination
 }
 
 const currencySymbols: { [key: string]: string } = {
@@ -55,7 +56,7 @@ const PageClientDetails = ({ invoice }: { invoice: Invoice }) => (
     </section>
 )
 
-export function InvoicePreview({ invoice, logoUrl, id = 'invoice-preview' }: InvoicePreviewProps) {
+export function InvoicePreview({ invoice, logoUrl, id = 'invoice-preview', isPrint = false }: InvoicePreviewProps) {
   const subtotal = invoice.items.reduce((acc, item) => acc + item.quantity * item.rate, 0);
   const taxAmount = (subtotal * invoice.tax) / 100;
   const discountAmount = (subtotal * invoice.discount) / 100;
@@ -63,18 +64,28 @@ export function InvoicePreview({ invoice, logoUrl, id = 'invoice-preview' }: Inv
   const currencySymbol = currencySymbols[invoice.currency] || '$';
 
   const itemPages = [];
-  for (let i = 0; i < invoice.items.length; i += ITEMS_PER_PAGE) {
-    itemPages.push(invoice.items.slice(i, i + ITEMS_PER_PAGE));
+  if (isPrint) {
+    for (let i = 0; i < invoice.items.length; i += ITEMS_PER_PAGE) {
+      itemPages.push(invoice.items.slice(i, i + ITEMS_PER_PAGE));
+    }
+  } else {
+    itemPages.push(invoice.items);
   }
+
 
   return (
     <div id={id} className="w-full shadow-lg rounded-xl overflow-hidden print:shadow-none print:rounded-none bg-white">
         {itemPages.map((pageItems, pageIndex) => (
-             <div key={pageIndex} className="page-break print:break-after-page">
+             <div key={pageIndex} className={isPrint ? "page-break print:break-after-page" : ""}>
                  <Card className="rounded-xl shadow-none border-none">
                     <CardContent className="p-8 md:p-10 text-gray-800">
-                        <PageHeader invoice={invoice} logoUrl={logoUrl} />
-                        <PageClientDetails invoice={invoice} />
+                        {/* Show header on all pages for print, but only once for live preview */}
+                        {(isPrint || pageIndex === 0) && (
+                          <>
+                            <PageHeader invoice={invoice} logoUrl={logoUrl} />
+                            <PageClientDetails invoice={invoice} />
+                          </>
+                        )}
                         
                         <section>
                             <table className="w-full text-left">
