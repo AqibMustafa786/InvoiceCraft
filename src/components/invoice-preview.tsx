@@ -10,7 +10,7 @@ interface InvoicePreviewProps {
   invoice: Invoice;
   logoUrl: string | null;
   id?: string;
-  isPrint?: boolean; // New prop to control pagination
+  isPrint?: boolean;
 }
 
 const currencySymbols: { [key: string]: string } = {
@@ -76,7 +76,7 @@ export function InvoicePreview({ invoice, logoUrl, id = 'invoice-preview', isPri
   return (
     <div id={id} className="w-full shadow-lg rounded-xl overflow-hidden print:shadow-none print:rounded-none bg-white">
         {itemPages.map((pageItems, pageIndex) => (
-             <div key={pageIndex} className={isPrint ? "page-break print:break-after-page" : ""}>
+             <div key={pageIndex} className={isPrint && pageIndex < itemPages.length - 1 ? "page-break" : ""}>
                  <Card className="rounded-xl shadow-none border-none">
                     <CardContent className="p-8 md:p-10 text-gray-800">
                         {/* Show header on all pages for print, but only once for live preview */}
