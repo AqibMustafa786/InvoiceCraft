@@ -131,6 +131,7 @@ export function InvoiceForm({ invoice, setInvoice, logoUrl, setLogoUrl, accentCo
         <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6">
            <div className="space-y-2">
               <Label>Company Logo</Label>
+              <Input id="logoUpload" type="file" className="sr-only" onChange={handleLogoUpload} accept="image/png, image/jpeg, image/gif" />
               {logoUrl ? (
                 <div className="flex items-center gap-4">
                   <Image src={logoUrl} alt="Company Logo" width={80} height={40} className="rounded-md object-contain bg-muted p-1" />
@@ -152,7 +153,6 @@ export function InvoiceForm({ invoice, setInvoice, logoUrl, setLogoUrl, accentCo
                     </label>
                 </Button>
               )}
-              <Input id="logoUpload" type="file" className="sr-only" onChange={handleLogoUpload} accept="image/png, image/jpeg, image/gif" />
             </div>
             <div className="space-y-2">
                 <Label htmlFor="accentColor">Accent Color</Label>
