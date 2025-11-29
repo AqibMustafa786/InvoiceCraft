@@ -189,7 +189,7 @@ export default function CreateInvoicePage() {
 
     toast({
       title: "Email Client Opened",
-      description: "First, save the invoice as a PDF, then attach it to the email.",
+      description: "First, use 'Save as PDF' to download the invoice. Then, in the email window that opens, use the 'Attach File' button to add the PDF you just saved.",
     });
   };
 
