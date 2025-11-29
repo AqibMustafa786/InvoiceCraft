@@ -17,7 +17,7 @@ export default function HomePage() {
                 <span className="inline-block ml-4 origin-bottom-right animate-wave">👋</span>
               </h1>
               <p className="mt-6 text-lg text-muted-foreground md:text-xl">
-                Software Engineer | Web & App Developer | AI Enthusiast
+                The ultimate tool for freelancers and small businesses to create, manage, and track professional invoices online.
               </p>
               <div className="flex flex-col items-center justify-center gap-4 mt-8 sm:flex-row">
                 <Button asChild size="lg" className="w-full text-lg transition-transform shadow-lg bg-gradient-to-r from-primary to-accent text-primary-foreground hover:scale-105 sm:w-auto">
