@@ -63,91 +63,147 @@ export function InvoicePreview({ invoice, logoUrl, id = 'invoice-preview', isPri
   const total = subtotal + taxAmount - discountAmount;
   const currencySymbol = currencySymbols[invoice.currency] || '$';
 
-  const itemPages = [];
   if (isPrint) {
+    const itemPages = [];
     for (let i = 0; i < invoice.items.length; i += ITEMS_PER_PAGE) {
       itemPages.push(invoice.items.slice(i, i + ITEMS_PER_PAGE));
     }
-  } else {
-    itemPages.push(invoice.items);
+    
+    return (
+      <div id={id} className="bg-white text-gray-800">
+        {itemPages.map((pageItems, pageIndex) => (
+          <div key={pageIndex} className={pageIndex < itemPages.length - 1 ? "page-break" : ""}>
+            <div className="p-8 md:p-10">
+              <PageHeader invoice={invoice} logoUrl={logoUrl} />
+              <PageClientDetails invoice={invoice} />
+              <section>
+                <table className="w-full text-left">
+                  <thead className="bg-gray-50">
+                    <tr>
+                      <th className="p-3 text-sm font-semibold w-1/2">Item</th>
+                      <th className="p-3 text-sm font-semibold text-center">Qty</th>
+                      <th className="p-3 text-sm font-semibold text-right">Rate</th>
+                      <th className="p-3 text-sm font-semibold text-right">Subtotal</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {pageItems.map(item => (
+                      <tr key={item.id} className="border-b">
+                        <td className="p-3">{item.name || <span className="text-gray-400">Item description</span>}</td>
+                        <td className="p-3 text-center tabular-nums">{item.quantity}</td>
+                        <td className="p-3 text-right tabular-nums">{currencySymbol}{item.rate.toFixed(2)}</td>
+                        <td className="p-3 text-right tabular-nums font-medium">{currencySymbol}{(item.quantity * item.rate).toFixed(2)}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </section>
+
+              {pageIndex === itemPages.length - 1 && (
+                <>
+                  <section className="flex justify-end mt-8">
+                    <div className="w-full max-w-xs space-y-2">
+                      <div className="flex justify-between text-sm">
+                        <span className="text-muted-foreground">Subtotal</span>
+                        <span className="font-medium tabular-nums">{currencySymbol}{subtotal.toFixed(2)}</span>
+                      </div>
+                      {invoice.tax > 0 && (
+                        <div className="flex justify-between text-sm">
+                          <span className="text-muted-foreground">Tax ({invoice.tax}%)</span>
+                          <span className="font-medium tabular-nums">{currencySymbol}{taxAmount.toFixed(2)}</span>
+                        </div>
+                      )}
+                      {invoice.discount > 0 && (
+                        <div className="flex justify-between text-sm">
+                          <span className="text-muted-foreground">Discount ({invoice.discount}%)</span>
+                          <span className="font-medium text-destructive tabular-nums">-{currencySymbol}{discountAmount.toFixed(2)}</span>
+                        </div>
+                      )}
+                      <Separator className="my-2" />
+                      <div className="flex justify-between items-center font-bold text-lg">
+                        <span>Total</span>
+                        <span className="text-primary tabular-nums">{currencySymbol}{total.toFixed(2)}</span>
+                      </div>
+                    </div>
+                  </section>
+
+                  {invoice.notes && (
+                    <footer className="mt-10">
+                      <p className="text-sm font-semibold text-gray-500">Notes</p>
+                      <p className="text-sm text-muted-foreground mt-1 whitespace-pre-line">{invoice.notes}</p>
+                    </footer>
+                  )}
+                </>
+              )}
+            </div>
+          </div>
+        ))}
+      </div>
+    );
   }
 
-
+  // Default live preview (single page)
   return (
-    <div id={id} className="w-full shadow-lg rounded-xl overflow-hidden print:shadow-none print:rounded-none bg-white">
-        {itemPages.map((pageItems, pageIndex) => (
-             <div key={pageIndex} className={isPrint && pageIndex < itemPages.length - 1 ? "page-break" : ""}>
-                 <Card className="rounded-xl shadow-none border-none">
-                    <CardContent className="p-8 md:p-10 text-gray-800">
-                        {/* Show header on all pages for print, but only once for live preview */}
-                        {(isPrint || pageIndex === 0) && (
-                          <>
-                            <PageHeader invoice={invoice} logoUrl={logoUrl} />
-                            <PageClientDetails invoice={invoice} />
-                          </>
-                        )}
-                        
-                        <section>
-                            <table className="w-full text-left">
-                                <thead className="bg-gray-50">
-                                <tr>
-                                    <th className="p-3 text-sm font-semibold w-1/2">Item</th>
-                                    <th className="p-3 text-sm font-semibold text-center">Qty</th>
-                                    <th className="p-3 text-sm font-semibold text-right">Rate</th>
-                                    <th className="p-3 text-sm font-semibold text-right">Subtotal</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                {pageItems.map(item => (
-                                    <tr key={item.id} className="border-b">
-                                    <td className="p-3">{item.name || <span className="text-gray-400">Item description</span>}</td>
-                                    <td className="p-3 text-center tabular-nums">{item.quantity}</td>
-                                    <td className="p-3 text-right tabular-nums">{currencySymbol}{item.rate.toFixed(2)}</td>
-                                    <td className="p-3 text-right tabular-nums font-medium">{currencySymbol}{(item.quantity * item.rate).toFixed(2)}</td>
-                                    </tr>
-                                ))}
-                                </tbody>
-                            </table>
-                        </section>
+    <Card id={id} className="w-full shadow-lg rounded-xl overflow-hidden print-hide">
+      <CardContent className="p-8 md:p-10 text-gray-800">
+          <PageHeader invoice={invoice} logoUrl={logoUrl} />
+          <PageClientDetails invoice={invoice} />
+          <section>
+              <table className="w-full text-left">
+                  <thead className="bg-gray-50">
+                  <tr>
+                      <th className="p-3 text-sm font-semibold w-1/2">Item</th>
+                      <th className="p-3 text-sm font-semibold text-center">Qty</th>
+                      <th className="p-3 text-sm font-semibold text-right">Rate</th>
+                      <th className="p-3 text-sm font-semibold text-right">Subtotal</th>
+                  </tr>
+                  </thead>
+                  <tbody>
+                  {invoice.items.map(item => (
+                      <tr key={item.id} className="border-b">
+                      <td className="p-3">{item.name || <span className="text-gray-400">Item description</span>}</td>
+                      <td className="p-3 text-center tabular-nums">{item.quantity}</td>
+                      <td className="p-3 text-right tabular-nums">{currencySymbol}{item.rate.toFixed(2)}</td>
+                      <td className="p-3 text-right tabular-nums font-medium">{currencySymbol}{(item.quantity * item.rate).toFixed(2)}</td>
+                      </tr>
+                  ))}
+                  </tbody>
+              </table>
+          </section>
 
-                        {/* Totals and Notes only on the last page */}
-                        {pageIndex === itemPages.length - 1 && (
-                             <>
-                                <section className="flex justify-end mt-8">
-                                    <div className="w-full max-w-xs space-y-2">
-                                        <div className="flex justify-between text-sm">
-                                        <span className="text-muted-foreground">Subtotal</span>
-                                        <span className="font-medium tabular-nums">{currencySymbol}{subtotal.toFixed(2)}</span>
-                                        </div>
-                                        <div className="flex justify-between text-sm">
-                                        <span className="text-muted-foreground">Tax ({invoice.tax}%)</span>
-                                        <span className="font-medium tabular-nums">{currencySymbol}{taxAmount.toFixed(2)}</span>
-                                        </div>
-                                        <div className="flex justify-between text-sm">
-                                        <span className="text-muted-foreground">Discount ({invoice.discount}%)</span>
-                                        <span className="font-medium text-destructive tabular-nums">-{currencySymbol}{discountAmount.toFixed(2)}</span>
-                                        </div>
-                                        <Separator className="my-2" />
-                                        <div className="flex justify-between items-center font-bold text-lg">
-                                        <span>Total</span>
-                                        <span className="text-primary tabular-nums">{currencySymbol}{total.toFixed(2)}</span>
-                                        </div>
-                                    </div>
-                                </section>
+          <section className="flex justify-end mt-8">
+              <div className="w-full max-w-xs space-y-2">
+                  <div className="flex justify-between text-sm">
+                  <span className="text-muted-foreground">Subtotal</span>
+                  <span className="font-medium tabular-nums">{currencySymbol}{subtotal.toFixed(2)}</span>
+                  </div>
+                  {invoice.tax > 0 && (
+                  <div className="flex justify-between text-sm">
+                  <span className="text-muted-foreground">Tax ({invoice.tax}%)</span>
+                  <span className="font-medium tabular-nums">{currencySymbol}{taxAmount.toFixed(2)}</span>
+                  </div>
+                  )}
+                  {invoice.discount > 0 && (
+                  <div className="flex justify-between text-sm">
+                  <span className="text-muted-foreground">Discount ({invoice.discount}%)</span>
+                  <span className="font-medium text-destructive tabular-nums">-{currencySymbol}{discountAmount.toFixed(2)}</span>
+                  </div>
+                  )}
+                  <Separator className="my-2" />
+                  <div className="flex justify-between items-center font-bold text-lg">
+                  <span>Total</span>
+                  <span className="text-primary tabular-nums">{currencySymbol}{total.toFixed(2)}</span>
+                  </div>
+              </div>
+          </section>
 
-                                {invoice.notes && (
-                                    <footer className="mt-10">
-                                        <p className="text-sm font-semibold text-gray-500">Notes</p>
-                                        <p className="text-sm text-muted-foreground mt-1 whitespace-pre-line">{invoice.notes}</p>
-                                    </footer>
-                                )}
-                            </>
-                        )}
-
-                    </CardContent>
-                 </Card>
-            </div>
-        ))}
-    </div>
+          {invoice.notes && (
+              <footer className="mt-10">
+                  <p className="text-sm font-semibold text-gray-500">Notes</p>
+                  <p className="text-sm text-muted-foreground mt-1 whitespace-pre-line">{invoice.notes}</p>
+              </footer>
+          )}
+      </CardContent>
+    </Card>
   );
 }
