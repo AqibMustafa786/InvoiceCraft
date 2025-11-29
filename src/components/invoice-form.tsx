@@ -8,7 +8,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { DatePicker } from '@/components/ui/datepicker';
-import { ImageUp, Plus, Trash2, Palette } from 'lucide-react';
+import { ImageUp, Plus, Trash2, Palette, X } from 'lucide-react';
+import Image from 'next/image';
 import {
   Select,
   SelectContent,
@@ -20,6 +21,7 @@ import {
 interface InvoiceFormProps {
   invoice: Invoice;
   setInvoice: Dispatch<SetStateAction<Invoice>>;
+  logoUrl: string | null;
   setLogoUrl: Dispatch<SetStateAction<string | null>>;
   accentColor: string;
   setAccentColor: Dispatch<SetStateAction<string>>;
@@ -34,7 +36,7 @@ const currencies = [
     { value: 'PKR', label: 'PKR (₨)' },
 ]
 
-export function InvoiceForm({ invoice, setInvoice, setLogoUrl, accentColor, setAccentColor, toast }: InvoiceFormProps) {
+export function InvoiceForm({ invoice, setInvoice, logoUrl, setLogoUrl, accentColor, setAccentColor, toast }: InvoiceFormProps) {
   const [bulkAddCount, setBulkAddCount] = useState(10);
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -106,6 +108,14 @@ export function InvoiceForm({ invoice, setInvoice, setLogoUrl, accentColor, setA
   const handleLogoUpload = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
+       if (file.size > 2 * 1024 * 1024) { // 2MB limit
+        toast({
+          title: "Image too large",
+          description: "Please upload an image smaller than 2MB.",
+          variant: "destructive",
+        });
+        return;
+      }
       setLogoUrl(URL.createObjectURL(file));
     }
   };
@@ -116,17 +126,33 @@ export function InvoiceForm({ invoice, setInvoice, setLogoUrl, accentColor, setA
     <div className="space-y-6">
       <Card>
         <CardHeader>
-          <CardTitle>Branding</CardTitle>
+          <CardTitle>Branding &amp; Customization</CardTitle>
         </CardHeader>
         <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6">
            <div className="space-y-2">
               <Label>Company Logo</Label>
-              <Button asChild variant="outline">
-                <label htmlFor="logoUpload" className="w-full flex items-center justify-center gap-2 cursor-pointer text-sm font-medium">
-                    <ImageUp className="h-4 w-4" /> Upload Logo
-                </label>
-              </Button>
-              <Input id="logoUpload" type="file" className="sr-only" onChange={handleLogoUpload} accept="image/*" />
+              {logoUrl ? (
+                <div className="flex items-center gap-4">
+                  <Image src={logoUrl} alt="Company Logo" width={80} height={40} className="rounded-md object-contain bg-muted p-1" />
+                  <div className="flex gap-2">
+                     <Button asChild variant="outline" size="sm">
+                        <label htmlFor="logoUpload" className="cursor-pointer">
+                           Change
+                        </label>
+                     </Button>
+                     <Button variant="destructive" size="sm" onClick={() => setLogoUrl(null)}>
+                        <X className="h-4 w-4 mr-1" /> Remove
+                     </Button>
+                  </div>
+                </div>
+              ) : (
+                <Button asChild variant="outline">
+                    <label htmlFor="logoUpload" className="w-full flex items-center justify-center gap-2 cursor-pointer text-sm font-medium">
+                        <ImageUp className="h-4 w-4" /> Upload Logo
+                    </label>
+                </Button>
+              )}
+              <Input id="logoUpload" type="file" className="sr-only" onChange={handleLogoUpload} accept="image/png, image/jpeg, image/gif" />
             </div>
             <div className="space-y-2">
                 <Label htmlFor="accentColor">Accent Color</Label>
@@ -138,6 +164,7 @@ export function InvoiceForm({ invoice, setInvoice, setLogoUrl, accentColor, setA
                         value={accentColor} 
                         onChange={(e) => setAccentColor(e.target.value)}
                         className="pl-10"
+                        placeholder="#663399"
                     />
                     <input 
                         type="color" 
@@ -241,8 +268,8 @@ export function InvoiceForm({ invoice, setInvoice, setLogoUrl, accentColor, setA
                 <Label htmlFor={`itemRate-${index}`} className="md:hidden">Rate</Label>
                 <Input id={`itemRate-${index}`} type="number" value={item.rate} onChange={(e) => handleItemChange(index, 'rate', parseFloat(e.target.value) || 0)} />
               </div>
-              <div className="col-span-3 md:col-span-2">
-                <p className="font-medium tabular-nums h-10 flex items-center">{currencySymbol}{(item.quantity * item.rate).toFixed(2)}</p>
+              <div className="col-span-3 md:col-span-2 flex items-center h-10">
+                <p className="font-medium tabular-nums">{currencySymbol}{(item.quantity * item.rate).toFixed(2)}</p>
               </div>
               <div className="col-span-1 flex items-center h-10">
                 <Button variant="ghost" size="icon" onClick={() => removeItem(index)}>
