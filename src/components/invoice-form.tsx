@@ -202,10 +202,6 @@ export function InvoiceForm({ invoice, setInvoice, logoUrl, setLogoUrl, accentCo
             <Label htmlFor="clientName">Client Name</Label>
             <Input id="clientName" name="clientName" value={invoice.clientName} onChange={handleInputChange} />
           </div>
-           <div className="space-y-2">
-            <Label htmlFor="clientEmail">Client Email</Label>
-            <Input id="clientEmail" name="clientEmail" type="email" value={invoice.clientEmail} onChange={handleInputChange} />
-          </div>
           <div className="space-y-2">
             <Label htmlFor="clientAddress">Client Address</Label>
             <Textarea id="clientAddress" name="clientAddress" value={invoice.clientAddress} onChange={handleInputChange} />

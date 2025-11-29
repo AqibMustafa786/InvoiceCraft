@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { Sun, Moon, ChevronDown } from 'lucide-react';
+import { Sun, Moon, ChevronDown, Globe } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useTheme } from 'next-themes';
 import {
@@ -73,8 +73,24 @@ export function Header() {
             Contact
           </Link>
         </nav>
-        <div className="flex items-center justify-end flex-1 gap-4">
-          <Button asChild className="text-white transition-transform shadow-lg bg-gradient-to-r from-primary to-accent hover:scale-105">
+        <div className="flex items-center justify-end flex-1 gap-2">
+           <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="icon">
+                <Globe className="h-5 w-5" />
+                <span className="sr-only">Change language</span>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem>English</DropdownMenuItem>
+              <DropdownMenuItem>Español</DropdownMenuItem>
+              <DropdownMenuItem>Français</DropdownMenuItem>
+              <DropdownMenuItem>Deutsch</DropdownMenuItem>
+              <DropdownMenuItem>Português</DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+
+          <Button asChild className="hidden sm:flex text-white transition-transform shadow-lg bg-gradient-to-r from-primary to-accent hover:scale-105">
             <Link href="/create">Get Started</Link>
           </Button>
           <Button variant="ghost" size="icon" aria-label="Toggle Theme" onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}>

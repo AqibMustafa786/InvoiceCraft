@@ -12,7 +12,6 @@ export interface Invoice {
   companyName: string;
   companyAddress: string;
   clientName: string;
-  clientEmail: string;
   clientAddress: string;
   invoiceNumber: string;
   invoiceDate: Date;
