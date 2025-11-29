@@ -131,28 +131,28 @@ export function InvoiceForm({ invoice, setInvoice, logoUrl, setLogoUrl, accentCo
         <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6">
            <div className="space-y-2">
               <Label>Company Logo</Label>
-              <Input id="logoUpload" type="file" className="sr-only" onChange={handleLogoUpload} accept="image/png, image/jpeg, image/gif" />
-              {logoUrl ? (
-                <div className="flex items-center gap-4">
-                  <Image src={logoUrl} alt="Company Logo" width={80} height={40} className="rounded-md object-contain bg-muted p-1" />
-                  <div className="flex gap-2">
-                     <Button asChild variant="outline" size="sm">
-                        <label htmlFor="logoUpload" className="cursor-pointer">
-                           Change
+               <div className="flex items-center gap-4">
+                {logoUrl ? (
+                    <>
+                    <Image src={logoUrl} alt="Company Logo" width={80} height={40} className="rounded-md object-contain bg-muted p-1" />
+                    <div className="flex items-center gap-2">
+                        <Button asChild variant="outline" size="sm">
+                            <label htmlFor="logo-upload" className="cursor-pointer">Change</label>
+                        </Button>
+                        <Button variant="destructive" size="sm" onClick={() => setLogoUrl(null)}>
+                           <X className="h-4 w-4 mr-1" /> Remove
+                        </Button>
+                    </div>
+                    </>
+                ) : (
+                    <Button asChild variant="outline" className="w-full">
+                        <label htmlFor="logo-upload" className="cursor-pointer flex items-center justify-center gap-2">
+                            <ImageUp className="h-4 w-4" /> Upload Logo
                         </label>
-                     </Button>
-                     <Button variant="destructive" size="sm" onClick={() => setLogoUrl(null)}>
-                        <X className="h-4 w-4 mr-1" /> Remove
-                     </Button>
-                  </div>
+                    </Button>
+                )}
+                 <Input id="logo-upload" type="file" className="sr-only" onChange={handleLogoUpload} accept="image/png, image/jpeg, image/gif" />
                 </div>
-              ) : (
-                <Button asChild variant="outline">
-                    <label htmlFor="logoUpload" className="w-full flex items-center justify-center gap-2 cursor-pointer text-sm font-medium">
-                        <ImageUp className="h-4 w-4" /> Upload Logo
-                    </label>
-                </Button>
-              )}
             </div>
             <div className="space-y-2">
                 <Label htmlFor="accentColor">Accent Color</Label>
@@ -213,7 +213,7 @@ export function InvoiceForm({ invoice, setInvoice, logoUrl, setLogoUrl, accentCo
         <CardHeader>
           <CardTitle>Invoice Details</CardTitle>
         </CardHeader>
-        <CardContent className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-2">
             <Label htmlFor="invoiceNumber">Invoice Number</Label>
             <Input id="invoiceNumber" name="invoiceNumber" value={invoice.invoiceNumber} onChange={handleInputChange} />
@@ -226,7 +226,7 @@ export function InvoiceForm({ invoice, setInvoice, logoUrl, setLogoUrl, accentCo
             <Label>Due Date</Label>
             <DatePicker date={invoice.dueDate} setDate={(date) => setInvoice(p => ({ ...p, dueDate: date! }))} />
           </div>
-           <div className="space-y-2 md:col-span-3">
+           <div className="space-y-2">
                 <Label htmlFor="currency">Currency</Label>
                 <Select value={invoice.currency} onValueChange={handleCurrencyChange}>
                     <SelectTrigger id="currency">
@@ -238,6 +238,23 @@ export function InvoiceForm({ invoice, setInvoice, logoUrl, setLogoUrl, accentCo
                         ))}
                     </SelectContent>
                 </Select>
+            </div>
+            <div className="space-y-2">
+                <Label htmlFor="language">Invoice Language</Label>
+                <Select value={'en'} onValueChange={() => { /* Placeholder */ }}>
+                    <SelectTrigger id="language">
+                        <SelectValue placeholder="Select language" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem value="en">English</SelectItem>
+                        <SelectItem value="es">Español (Spanish)</SelectItem>
+                        <SelectItem value="fr">Français (French)</SelectItem>
+                        <SelectItem value="de">Deutsch (German)</SelectItem>
+                        <SelectItem value="ar">العربية (Arabic)</SelectItem>
+                        <SelectItem value="zh">中文 (Chinese)</SelectItem>
+                    </SelectContent>
+                </Select>
+                <p className="text-xs text-muted-foreground">This is a visual placeholder and does not change the language yet.</p>
             </div>
         </CardContent>
       </Card>
