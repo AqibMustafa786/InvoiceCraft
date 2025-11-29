@@ -6,7 +6,7 @@ import type { Invoice } from '@/lib/types';
 import { InvoiceForm } from '@/components/invoice-form';
 import { InvoicePreview } from '@/components/invoice-preview';
 import { Button } from '@/components/ui/button';
-import { Printer, Edit, FilePlus, LayoutDashboard } from 'lucide-react';
+import { Printer, Edit, FilePlus, LayoutDashboard, Mail } from 'lucide-react';
 import { addDays } from 'date-fns';
 import { useToast } from '@/hooks/use-toast';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -19,6 +19,7 @@ const initialInvoice: Invoice = {
   companyName: 'Your Company',
   companyAddress: '123 Main St, Anytown, USA',
   clientName: 'Client Company',
+  clientEmail: 'client@example.com',
   clientAddress: '456 Oak Ave, Someplace, USA',
   invoiceNumber: 'INV-001',
   invoiceDate: new Date(),
@@ -163,6 +164,29 @@ export default function CreateInvoicePage() {
       });
   };
 
+  const handleEmail = () => {
+    if (!invoice.clientEmail) {
+      toast({
+        title: "Client Email Missing",
+        description: "Please enter a client email address before sending.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const subject = `Invoice ${invoice.invoiceNumber} from ${invoice.companyName}`;
+    const body = `Hi ${invoice.clientName},\n\nPlease find the invoice attached.\n\nThank you for your business!\n\nBest regards,\n${invoice.companyName}`;
+    
+    const mailtoLink = `mailto:${invoice.clientEmail}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    
+    window.location.href = mailtoLink;
+
+    toast({
+      title: "Email Client Opened",
+      description: "Please attach the PDF and send the email.",
+    });
+  };
+
   return (
     <>
       <div className="container mx-auto p-4 md:p-8 app-main-container">
@@ -186,6 +210,10 @@ export default function CreateInvoicePage() {
                 <Edit className="mr-2 h-5 w-5" />
                 Save Draft
               </Button>
+              <Button onClick={handleEmail} variant="outline">
+                <Mail className="mr-2 h-5 w-5" />
+                Email Invoice
+              </Button>
               <Button onClick={handlePrint}>
                 <Printer className="mr-2 h-5 w-5" />
                 Save as PDF
@@ -198,6 +226,7 @@ export default function CreateInvoicePage() {
             <InvoiceForm 
               invoice={invoice} 
               setInvoice={setInvoice} 
+              logoUrl={logoUrl}
               setLogoUrl={setLogoUrl}
               accentColor={accentColor}
               setAccentColor={setAccentColor}
@@ -212,6 +241,7 @@ export default function CreateInvoicePage() {
           </div>
         </div>
       </div>
+      <div id="print-container" className="hidden"></div>
     </>
   );
 }
