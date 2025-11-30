@@ -358,15 +358,16 @@ const templates = {
 
 
 const PAGE_HEIGHT = 1056; // 11 inches at 96 DPI for Letter size
-const PAGE_PADDING = 80;
+const PAGE_PADDING = 80; // 40px top + 40px bottom
 const AVAILABLE_HEIGHT = PAGE_HEIGHT - PAGE_PADDING;
 
 
 // --- MAIN PREVIEW COMPONENT ---
 export function InvoicePreview({ invoice, logoUrl, accentColor, id = 'invoice-preview', isPrint = false }: InvoicePreviewProps) {
   const [paginatedItems, setPaginatedItems] = useState<LineItem[][]>([invoice.items]);
+  const [needsRemeasure, setNeedsRemeasure] = useState(true);
   const containerRef = useRef<HTMLDivElement>(null);
-
+  
   const subtotal = invoice.items.reduce((acc, item) => acc + item.quantity * item.rate, 0);
   const taxAmount = (subtotal * invoice.tax) / 100;
   const discountAmount = (subtotal * invoice.discount) / 100;
@@ -374,6 +375,12 @@ export function InvoicePreview({ invoice, logoUrl, accentColor, id = 'invoice-pr
   const balanceDue = total - (invoice.amountPaid || 0);
   const currencySymbol = currencySymbols[invoice.currency] || '$';
   const t = locales[invoice.language as keyof typeof locales] || locales.en;
+
+  // Trigger remeasure whenever invoice data changes
+  useEffect(() => {
+    setNeedsRemeasure(true);
+  }, [invoice, logoUrl, accentColor, t]);
+
 
   const previewStyle = {
       '--primary-hsl': accentColor,
@@ -383,67 +390,91 @@ export function InvoicePreview({ invoice, logoUrl, accentColor, id = 'invoice-pr
   const TemplateComponent = templates[invoice.template as keyof typeof templates] || templates.default;
   
   useLayoutEffect(() => {
-    if (!isPrint || !containerRef.current) return;
+    if (!isPrint || !containerRef.current || !needsRemeasure) return;
 
     const measureAndPaginate = () => {
       const container = containerRef.current!;
-      const header = container.querySelector('[data-element="header"]') as HTMLElement;
-      const clientDetails = container.querySelector('[data-element="client-details"]') as HTMLElement;
-      const tableHeader = container.querySelector('[data-element="table-header"]') as HTMLElement;
-      const footer = container.querySelector('.avoid-page-break') as HTMLElement;
-      const allRows = Array.from(container.querySelectorAll('[data-element="table-row"]')) as HTMLElement[];
+      // Temporarily render all items to measure them
+      const tempRoot = document.createElement('div');
+      tempRoot.style.position = 'absolute';
+      tempRoot.style.left = '-9999px';
+      document.body.appendChild(tempRoot);
 
-      if (!header || !clientDetails || !tableHeader || !footer) return;
-      
-      const headerHeight = header.offsetHeight + clientDetails.offsetHeight;
-      const tableHeaderHeight = tableHeader.offsetHeight;
-      const footerHeight = footer.offsetHeight;
-
-      let currentPage = 0;
-      let currentPageHeight = headerHeight;
-      let newPages: LineItem[][] = [[]];
-
-      // Paginate items
-      allRows.forEach((row, index) => {
-        const itemHeight = row.offsetHeight;
-        let potentialHeight = currentPageHeight + (newPages[currentPage].length === 0 ? tableHeaderHeight : 0) + itemHeight;
-
-        // Check if footer fits on this page
-        if(index === allRows.length - 1) { // last item
-            potentialHeight += footerHeight;
+      // We create a temporary React root to render the full, unpaginated content for measurement.
+      Promise.resolve().then(() => {
+        const tempContainer = container.cloneNode(true) as HTMLElement;
+        tempRoot.appendChild(tempContainer);
+        
+        const header = tempContainer.querySelector('[data-element="header"]') as HTMLElement;
+        const clientDetails = tempContainer.querySelector('[data-element="client-details"]') as HTMLElement;
+        const tableHeader = tempContainer.querySelector('[data-element="table-header"]') as HTMLElement;
+        const footer = tempContainer.querySelector('.avoid-page-break') as HTMLElement;
+        const allRows = Array.from(tempContainer.querySelectorAll('[data-element="table-row"]')) as HTMLElement[];
+        
+        if (!header || !clientDetails || !tableHeader || !footer || allRows.length !== invoice.items.length) {
+            document.body.removeChild(tempRoot);
+            return;
         }
 
-        if (potentialHeight > AVAILABLE_HEIGHT) {
-            currentPage++;
-            newPages[currentPage] = [];
-            currentPageHeight = headerHeight + tableHeaderHeight;
+        const headerHeight = header.offsetHeight + clientDetails.offsetHeight;
+        const tableHeaderHeight = tableHeader.offsetHeight;
+        const footerHeight = footer.offsetHeight;
+
+        let currentPage = 0;
+        let currentPageHeight = headerHeight;
+        let newPages: LineItem[][] = [[]];
+
+        allRows.forEach((row, index) => {
+            const itemHeight = row.offsetHeight;
+            let pageHeightForCurrentItem = currentPageHeight + (newPages[currentPage].length === 0 ? tableHeaderHeight : 0) + itemHeight;
+            
+            // Is this the last item? If so, add footer height.
+            let isLastItem = index === allRows.length - 1;
+            if (isLastItem) {
+                pageHeightForCurrentItem += footerHeight;
+            }
+
+            if (pageHeightForCurrentItem > AVAILABLE_HEIGHT) {
+                currentPage++;
+                newPages[currentPage] = [];
+                currentPageHeight = headerHeight + tableHeaderHeight; // Reset for new page
+            }
+            
+            if (newPages[currentPage].length === 0) { // First item on a page
+                currentPageHeight += tableHeaderHeight;
+            }
+
+            newPages[currentPage].push(invoice.items[index]);
+            currentPageHeight += itemHeight;
+        });
+        
+        // Final check: if the last page with items doesn't have space for the footer, push footer to a new page.
+        const lastPageItemHeight = newPages[currentPage].reduce((total, item) => {
+            const itemIndex = invoice.items.findIndex(i => i.id === item.id);
+            return total + (allRows[itemIndex]?.offsetHeight || 0);
+        }, 0);
+
+        const lastPageContentHeight = headerHeight + tableHeaderHeight + lastPageItemHeight + footerHeight;
+
+        if (lastPageContentHeight > AVAILABLE_HEIGHT && newPages[currentPage].length > 0) {
+             const lastItem = newPages[currentPage].pop();
+             if (lastItem) {
+                currentPage++;
+                newPages[currentPage] = [lastItem];
+             }
         }
         
-        newPages[currentPage].push(invoice.items[index]);
-        currentPageHeight += itemHeight;
+        setPaginatedItems(newPages);
+        setNeedsRemeasure(false);
+        document.body.removeChild(tempRoot);
       });
-
-      // After paginating items, check if footer fits on the last page
-      const lastPageItemHeight = newPages[currentPage].reduce((acc, item, index) => {
-          const row = allRows.find(r => r.textContent?.includes(item.name));
-          return acc + (row?.offsetHeight || 0);
-      }, 0);
-      const lastPageHeight = headerHeight + tableHeaderHeight + lastPageItemHeight + footerHeight;
-
-      if(lastPageHeight > AVAILABLE_HEIGHT && newPages[currentPage].length > 0) {
-          currentPage++;
-          newPages[currentPage] = []; // Empty page for the footer
-      }
-
-      setPaginatedItems(newPages);
     };
-
-    // We need to render the full list first to measure, then re-render with pagination.
-    // A timeout helps ensure the DOM is ready for measurement.
-    const timer = setTimeout(measureAndPaginate, 100);
+    
+    // Defer measurement to allow DOM to update
+    const timer = setTimeout(measureAndPaginate, 50);
     return () => clearTimeout(timer);
 
-  }, [invoice, logoUrl, accentColor, t, isPrint]);
+  }, [invoice.items, isPrint, needsRemeasure, TemplateComponent]);
 
 
   const commonProps: Omit<PageProps, 'pageItems' | 'pageIndex' | 'totalPages'> = {
@@ -460,15 +491,19 @@ export function InvoicePreview({ invoice, logoUrl, accentColor, id = 'invoice-pr
   };
 
   if (isPrint) {
+    // For printing, we render the paginated content.
+    // If we need to remeasure, we render all items so they can be measured.
+    const itemsToRender = needsRemeasure ? [invoice.items] : paginatedItems;
+    
     return (
       <div id={id} className="bg-white text-gray-800" style={previewStyle} ref={containerRef}>
-        {paginatedItems.map((pageItems, pageIndex) => (
+        {itemsToRender.map((pageItems, pageIndex) => (
           <TemplateComponent
             key={pageIndex}
             {...commonProps}
             pageItems={pageItems}
             pageIndex={pageIndex}
-            totalPages={paginatedItems.length}
+            totalPages={itemsToRender.length}
           />
         ))}
       </div>
