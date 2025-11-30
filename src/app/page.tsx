@@ -20,7 +20,7 @@ export default function HomePage() {
                 The ultimate tool for freelancers and small businesses to create, manage, and track professional invoices online.
               </p>
               <div className="flex flex-col items-center justify-center gap-4 mt-8 sm:flex-row">
-                <Button asChild size="lg" className="w-full text-lg transition-transform shadow-lg bg-gradient-to-r from-primary to-accent text-primary-foreground hover:scale-105 sm:w-auto">
+                <Button asChild size="lg" className="w-full text-lg text-white transition-transform shadow-lg bg-gradient-to-r from-primary to-accent hover:scale-105 sm:w-auto">
                   <Link href="/create">Create Invoice</Link>
                 </Button>
                 <Button asChild variant="outline" size="lg" className="w-full text-lg bg-transparent sm:w-auto">
