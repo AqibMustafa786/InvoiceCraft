@@ -66,14 +66,14 @@ function PrintableInsuranceDoc({ insuranceDoc, logoUrl, accentColor }: { insuran
 
 
 export default function CreateInsurancePage() {
-  const [document, setDocument] = useState<InsuranceDocument | null>(null);
+  const [doc, setDoc] = useState<InsuranceDocument | null>(null);
   const [logoUrl, setLogoUrl] = useState<string | null>(null);
   const [accentColor, setAccentColor] = useState<string>('hsl(var(--primary))');
   const { toast } = useToast();
 
   useEffect(() => {
     // Initialize state on the client to avoid hydration mismatch
-    setDocument(getInitialInsuranceDoc());
+    setDoc(getInitialInsuranceDoc());
 
     if (typeof window !== 'undefined' && document) {
         const computedColor = getComputedStyle(document.documentElement).getPropertyValue('--primary').trim();
@@ -90,7 +90,7 @@ export default function CreateInsurancePage() {
   const handleNew = () => {
     const newDoc = getInitialInsuranceDoc();
     newDoc.documentNumber = `DOC-${String(Math.floor(Math.random() * 1000)).padStart(3, '0')}`;
-    setDocument(newDoc);
+    setDoc(newDoc);
     setLogoUrl(null);
     if (typeof window !== 'undefined' && document) {
         const computedColor = getComputedStyle(document.documentElement).getPropertyValue('--primary').trim();
@@ -104,7 +104,7 @@ export default function CreateInsurancePage() {
       });
   };
 
-  if (!document) {
+  if (!doc) {
     return (
         <div className="container mx-auto p-4 md:p-8">
             <h1 className="text-3xl font-bold font-headline">Loading...</h1>
@@ -143,14 +143,14 @@ export default function CreateInsurancePage() {
              <div className="my-8 md:my-12">
                 <h2 className="text-2xl font-bold font-headline mb-6 text-center">Select a Template</h2>
                  <InsuranceTemplateSelector 
-                  selectedTemplate={document.template}
-                  onSelectTemplate={(template) => setDocument(prev => prev ? ({...prev, template}) : null)}
+                  selectedTemplate={doc.template}
+                  onSelectTemplate={(template) => setDoc(prev => prev ? ({...prev, template}) : null)}
                 />
               </div>
             <h2 className="text-2xl font-bold font-headline mb-4 text-center lg:text-left">Fill in Details</h2>
             <InsuranceForm 
-              document={document} 
-              setDocument={setDocument as React.Dispatch<React.SetStateAction<InsuranceDocument>>} 
+              document={doc} 
+              setDocument={setDoc as React.Dispatch<React.SetStateAction<InsuranceDocument>>} 
               logoUrl={logoUrl}
               setLogoUrl={setLogoUrl}
               accentColor={accentColor}
@@ -162,13 +162,13 @@ export default function CreateInsurancePage() {
             <div className="my-8 md:my-12">
               <h2 className="text-2xl font-bold font-headline mb-6">Live Preview</h2>
               <div className="sticky top-24">
-                  <InsurancePreview doc={document} logoUrl={logoUrl} accentColor={accentColor} />
+                  <InsurancePreview doc={doc} logoUrl={logoUrl} accentColor={accentColor} />
               </div>
             </div>
           </div>
         </div>
       </div>
-      <PrintableInsuranceDoc insuranceDoc={document} logoUrl={logoUrl} accentColor={accentColor} />
+      <PrintableInsuranceDoc insuranceDoc={doc} logoUrl={logoUrl} accentColor={accentColor} />
     </>
   );
 }
