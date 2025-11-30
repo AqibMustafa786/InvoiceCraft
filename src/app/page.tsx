@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
+import Marquee from '@/components/marquee';
 
 export default function HomePage() {
   return (
@@ -30,6 +31,10 @@ export default function HomePage() {
               </div>
             </div>
           </div>
+        </section>
+
+        <section className="py-12 md:py-20">
+            <Marquee />
         </section>
 
       </main>
