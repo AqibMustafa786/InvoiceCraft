@@ -46,7 +46,7 @@ const getInitialInsuranceDoc = (): InsuranceDocument => ({
 });
 
 
-function PrintableInsuranceDoc({ document, logoUrl, accentColor }: { document: InsuranceDocument, logoUrl: string | null, accentColor: string }) {
+function PrintableInsuranceDoc({ insuranceDoc, logoUrl, accentColor }: { insuranceDoc: InsuranceDocument, logoUrl: string | null, accentColor: string }) {
     const [printRoot, setPrintRoot] = useState<HTMLElement | null>(null);
 
     useEffect(() => {
@@ -59,7 +59,7 @@ function PrintableInsuranceDoc({ document, logoUrl, accentColor }: { document: I
     }
 
     return createPortal(
-        <InsurancePreview document={document} logoUrl={logoUrl} accentColor={accentColor} id="insurance-preview-print" isPrint={true} />,
+        <InsurancePreview document={insuranceDoc} logoUrl={logoUrl} accentColor={accentColor} id="insurance-preview-print" isPrint={true} />,
         printRoot
     );
 }
@@ -166,7 +166,7 @@ export default function CreateInsurancePage() {
           </div>
         </div>
       </div>
-      <PrintableInsuranceDoc document={document} logoUrl={logoUrl} accentColor={accentColor} />
+      <PrintableInsuranceDoc insuranceDoc={document} logoUrl={logoUrl} accentColor={accentColor} />
     </>
   );
 }
