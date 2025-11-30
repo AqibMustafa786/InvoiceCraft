@@ -1,7 +1,6 @@
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Download, FileText, Palette, Languages, LayoutDashboard, Zap, Badge } from 'lucide-react';
-import { SidebarTrigger } from '@/components/ui/sidebar';
 
 
 const features = [
@@ -41,14 +40,6 @@ const features = [
 export default function HomePage() {
   return (
     <div className="flex flex-col min-h-[calc(100vh-4rem)]">
-       <header className="sticky top-0 z-40 w-full border-b border-border/40 bg-background/95 backdrop-blur-sm md:hidden">
-         <div className="container flex items-center h-16">
-            <SidebarTrigger />
-            <div className="flex-1 text-center font-bold text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent">
-              InvoiceCraft
-            </div>
-         </div>
-      </header>
       <main className="flex-1">
         <section className="relative w-full py-20 overflow-hidden text-center md:py-32 lg:py-40">
           <div className="container px-4 mx-auto md:px-6">
