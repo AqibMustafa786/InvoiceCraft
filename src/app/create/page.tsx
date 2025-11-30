@@ -65,7 +65,7 @@ function PrintableInvoice({ invoice, logoUrl, accentColor }: { invoice: Invoice,
 export default function CreateInvoicePage() {
   const [invoice, setInvoice] = useState<Invoice>(initialInvoice);
   const [logoUrl, setLogoUrl] = useState<string | null>(null);
-  const [accentColor, setAccentColor] = useState<string>('#007aff'); // Default: Apple Blue
+  const [accentColor, setAccentColor] = useState<string>('hsl(var(--primary))');
   const { toast } = useToast();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -78,11 +78,10 @@ export default function CreateInvoicePage() {
   }, [searchParams]);
   
   useEffect(() => {
-    // A little trick to get the initial value from CSS variables
     if (typeof window !== 'undefined') {
-        const primaryColor = getComputedStyle(document.documentElement).getPropertyValue('--primary').trim();
-        if (primaryColor) {
-            // HSL to Hex conversion or just use a default hex. For simplicity, we'll keep a default hex.
+        const computedColor = getComputedStyle(document.documentElement).getPropertyValue('--primary').trim();
+        if (computedColor) {
+           setAccentColor(`hsl(${computedColor})`);
         }
     }
   }, []);
@@ -106,7 +105,12 @@ export default function CreateInvoicePage() {
           setInvoice(fullDraft);
           
           setLogoUrl(null); 
-          setAccentColor('#007aff');
+          if (typeof window !== 'undefined') {
+            const computedColor = getComputedStyle(document.documentElement).getPropertyValue('--primary').trim();
+            if (computedColor) {
+              setAccentColor(`hsl(${computedColor})`);
+            }
+          }
           toast({
             title: "Draft Loaded",
             description: `Invoice draft #${draftToLoad.invoiceNumber} has been loaded.`,
@@ -173,7 +177,12 @@ export default function CreateInvoicePage() {
     const newInvoiceId = crypto.randomUUID();
     setInvoice({ ...initialInvoice, id: newInvoiceId, invoiceNumber: `INV-${String(Math.floor(Math.random() * 1000)).padStart(3, '0')}` });
     setLogoUrl(null);
-    setAccentColor('#007aff');
+    if (typeof window !== 'undefined') {
+        const computedColor = getComputedStyle(document.documentElement).getPropertyValue('--primary').trim();
+        if (computedColor) {
+            setAccentColor(`hsl(${computedColor})`);
+        }
+    }
     router.push('/create');
     toast({
         title: "New Invoice",

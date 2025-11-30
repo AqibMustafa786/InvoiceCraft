@@ -1,6 +1,6 @@
 'use client';
 
-import { ChangeEvent, Dispatch, SetStateAction, useState } from 'react';
+import { ChangeEvent, Dispatch, SetStateAction, useState, useEffect } from 'react';
 import type { Invoice, LineItem } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -39,6 +39,11 @@ const currencies = [
 
 export function InvoiceForm({ invoice, setInvoice, logoUrl, setLogoUrl, accentColor, setAccentColor, toast }: InvoiceFormProps) {
   const [bulkAddCount, setBulkAddCount] = useState(10);
+  const [colorInputValue, setColorInputValue] = useState(accentColor);
+
+  useEffect(() => {
+    setColorInputValue(accentColor);
+  }, [accentColor]);
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -170,15 +175,19 @@ export function InvoiceForm({ invoice, setInvoice, logoUrl, setLogoUrl, accentCo
                     <Input 
                         id="accentColor"
                         type="text" 
-                        value={accentColor} 
-                        onChange={(e) => setAccentColor(e.target.value)}
+                        value={colorInputValue} 
+                        onChange={(e) => setColorInputValue(e.target.value)}
+                        onBlur={(e) => setAccentColor(e.target.value)}
                         className="pl-10"
-                        placeholder="#007aff"
+                        placeholder="hsl(260 85% 66%)"
                     />
                     <input 
                         type="color" 
-                        value={accentColor} 
-                        onChange={(e) => setAccentColor(e.target.value)}
+                        value={accentColor.startsWith('hsl') ? '#000000' : accentColor}
+                        onChange={(e) => {
+                            setAccentColor(e.target.value);
+                            setColorInputValue(e.target.value);
+                        }}
                         className="absolute right-1 top-1/2 -translate-y-1/2 h-8 w-8 p-1 rounded-md cursor-pointer bg-transparent border-none appearance-none"
                     />
                 </div>
