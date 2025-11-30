@@ -1,12 +1,11 @@
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
-import { Menu, Mountain } from 'lucide-react';
+import { Menu } from 'lucide-react';
 import { ModeToggle } from './mode-toggle';
 
-
 const navLinks = [
-    { href: "/#features", label: "Features" },
+    { href: "/features", label: "Features" },
     { href: "/create", label: "Templates" },
     { href: "/pricing", label: "Pricing" },
     { href: "/blog", label: "Blog" },
