@@ -26,7 +26,7 @@ const featureCategories = [
     category: "Productivity & Management (Pro)",
     features: [
       { name: "Save Invoice Drafts", description: "Save your work locally in your browser and pick up where you left off." },
-      { name:/src/app/features/page.tsx "Invoice Dashboard", description: "A central place to view, manage, and track all your saved invoices." },
+      { name: "Invoice Dashboard", description: "A central place to view, manage, and track all your saved invoices." },
       { name: "Advanced Filtering & Search", description: "Quickly find any invoice by client name, status, amount, or date range." },
       { name: "Payment Status Tracking", description: "Mark invoices as Draft, Sent, Paid, or Overdue to manage your cash flow." },
     ],
