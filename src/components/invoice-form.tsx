@@ -280,6 +280,13 @@ export function InvoiceForm({ invoice, setInvoice, logoUrl, setLogoUrl, accentCo
                 </Select>
             </div>
             <div className="space-y-2">
+              <Label htmlFor="poNumber">PO Number</Label>
+                <div className="relative flex items-center">
+                  <Hash className="absolute left-3 h-5 w-5 text-muted-foreground" />
+                  <Input id="poNumber" name="poNumber" value={invoice.poNumber} onChange={handleInputChange} className="pl-10" />
+              </div>
+          </div>
+            <div className="space-y-2">
               <Label htmlFor="trackingNumber">Tracking Number</Label>
                 <div className="relative flex items-center">
                   <Hash className="absolute left-3 h-5 w-5 text-muted-foreground" />

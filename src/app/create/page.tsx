@@ -25,6 +25,7 @@ const initialInvoice: Invoice = {
   clientEmail: '',
   shippingAddress: '',
   invoiceNumber: 'INV-001',
+  poNumber: '',
   invoiceDate: new Date(),
   dueDate: addDays(new Date(), 7),
   trackingNumber: '',

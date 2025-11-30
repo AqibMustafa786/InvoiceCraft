@@ -17,6 +17,7 @@ export interface Invoice {
   clientEmail: string;
   shippingAddress: string;
   invoiceNumber: string;
+  poNumber: string;
   invoiceDate: Date;
   dueDate: Date;
   trackingNumber: string;

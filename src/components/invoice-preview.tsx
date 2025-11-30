@@ -259,6 +259,12 @@ const UsaTemplatePage = ({ pageItems, pageIndex, totalPages, ...commonProps }: P
                                 <span className="text-gray-500 w-28 text-right">Invoice #</span>
                                 <span className="w-28 text-right font-medium">{invoice.invoiceNumber}</span>
                             </div>
+                            {invoice.poNumber && (
+                                <div className="flex justify-end">
+                                    <span className="text-gray-500 w-28 text-right">PO Number</span>
+                                    <span className="w-28 text-right font-medium">{invoice.poNumber}</span>
+                                </div>
+                            )}
                             <div className="flex justify-end">
                                 <span className="text-gray-500 w-28 text-right">Invoice Date</span>
                                 <span className="w-28 text-right font-medium">{format(invoice.invoiceDate, 'MMM d, yyyy')}</span>
