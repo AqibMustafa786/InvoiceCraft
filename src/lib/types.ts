@@ -8,11 +8,12 @@ export interface LineItem {
 export type InvoiceStatus = 'draft' | 'sent' | 'paid' | 'overdue';
 
 export interface Invoice {
-  id: string; // Add id to invoice
+  id: string; 
   companyName: string;
   companyAddress: string;
   clientName: string;
   clientAddress: string;
+  clientEmail: string;
   invoiceNumber: string;
   invoiceDate: Date;
   dueDate: Date;
@@ -23,4 +24,5 @@ export interface Invoice {
   status: InvoiceStatus;
   currency: string;
   language: string;
+  template: string;
 }

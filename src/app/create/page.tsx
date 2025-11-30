@@ -6,7 +6,7 @@ import type { Invoice } from '@/lib/types';
 import { InvoiceForm } from '@/components/invoice-form';
 import { InvoicePreview } from '@/components/invoice-preview';
 import { Button } from '@/components/ui/button';
-import { Printer, Edit, FilePlus, LayoutDashboard, Mail } from 'lucide-react';
+import { Printer, Edit, FilePlus, LayoutDashboard } from 'lucide-react';
 import { addDays } from 'date-fns';
 import { useToast } from '@/hooks/use-toast';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -20,7 +20,7 @@ const initialInvoice: Invoice = {
   companyAddress: '123 Main St, Anytown, USA',
   clientName: 'Client Company',
   clientAddress: '456 Oak Ave, Someplace, USA',
-  clientEmail: '', // Initialize clientEmail to fix uncontrolled input error
+  clientEmail: '',
   invoiceNumber: 'INV-001',
   invoiceDate: new Date(),
   dueDate: addDays(new Date(), 7),
@@ -31,6 +31,7 @@ const initialInvoice: Invoice = {
   status: 'draft',
   currency: 'USD',
   language: 'en',
+  template: 'default',
 };
 
 const DRAFTS_STORAGE_KEY = 'invoiceDrafts';

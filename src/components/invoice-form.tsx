@@ -17,6 +17,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { TemplateSelector } from './template-selector';
 
 interface InvoiceFormProps {
   invoice: Invoice;
@@ -43,10 +44,6 @@ export function InvoiceForm({ invoice, setInvoice, logoUrl, setLogoUrl, accentCo
     const { name, value } = e.target;
     setInvoice(prev => ({ ...prev, [name]: value }));
   };
-
-  const handleEmailChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setInvoice(prev => ({ ...prev, clientEmail: e.target.value }));
-  }
   
   const handleCurrencyChange = (value: string) => {
     setInvoice(prev => ({ ...prev, currency: value }));
@@ -185,6 +182,13 @@ export function InvoiceForm({ invoice, setInvoice, logoUrl, setLogoUrl, accentCo
                         className="absolute right-1 top-1/2 -translate-y-1/2 h-8 w-8 p-1 rounded-md cursor-pointer bg-transparent border-none appearance-none"
                     />
                 </div>
+            </div>
+            <div className="md:col-span-2 space-y-2">
+              <Label>Invoice Template</Label>
+              <TemplateSelector 
+                selectedTemplate={invoice.template}
+                onSelectTemplate={(template) => setInvoice(prev => ({...prev, template}))}
+              />
             </div>
         </CardContent>
       </Card>
