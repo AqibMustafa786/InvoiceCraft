@@ -39,7 +39,7 @@
   }
 
   .dark {
-    --background: 0 0% 4%;
+    --background: 0 0% 2%;
     --foreground: 0 0% 98%;
 
     --card: 248 12% 16%;
@@ -79,8 +79,6 @@
   body {
     @apply bg-background text-foreground font-body;
     min-height: 100vh;
-  }
-  .dark body {
     background-image: radial-gradient(ellipse at bottom, hsl(var(--primary) / 0.15), transparent 60%);
   }
 }
