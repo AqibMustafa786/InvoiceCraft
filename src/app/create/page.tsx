@@ -211,7 +211,7 @@ export default function CreateInvoicePage() {
 
   return (
     <>
-      <div className="container mx-auto p-4 md:p-8 app-main-container">
+      <div className="container mx-auto p-4 md:p-8">
         <div className="flex flex-col md:flex-row justify-between md:items-center gap-4 mb-8">
           <div>
             <h1 className="text-3xl font-bold font-headline">Create Invoice</h1>
@@ -259,12 +259,10 @@ export default function CreateInvoicePage() {
               toast={toast}
             />
           </div>
-          <div className="lg:col-span-2">
-            <div className="my-8 md:my-12">
-                <h2 className="text-2xl font-bold font-headline mb-6">Live Preview</h2>
-                <div className="sticky top-24">
-                    <InvoicePreview invoice={invoice} logoUrl={logoUrl} accentColor={accentColor} />
-                </div>
+          <div className="lg:col-span-2 my-8 md:my-12">
+            <h2 className="text-2xl font-bold font-headline mb-6">Live Preview</h2>
+            <div className="sticky top-24">
+                <InvoicePreview invoice={invoice} logoUrl={logoUrl} accentColor={accentColor} />
             </div>
           </div>
         </div>
