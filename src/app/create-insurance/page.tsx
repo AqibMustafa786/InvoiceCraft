@@ -75,7 +75,7 @@ export default function CreateInsurancePage() {
     // Initialize state on the client to avoid hydration mismatch
     setDocument(getInitialInsuranceDoc());
 
-    if (typeof window !== 'undefined') {
+    if (typeof window !== 'undefined' && document) {
         const computedColor = getComputedStyle(document.documentElement).getPropertyValue('--primary').trim();
         if (computedColor) {
            setAccentColor(`hsl(${computedColor})`);
@@ -92,7 +92,7 @@ export default function CreateInsurancePage() {
     newDoc.documentNumber = `DOC-${String(Math.floor(Math.random() * 1000)).padStart(3, '0')}`;
     setDocument(newDoc);
     setLogoUrl(null);
-    if (typeof window !== 'undefined') {
+    if (typeof window !== 'undefined' && document) {
         const computedColor = getComputedStyle(document.documentElement).getPropertyValue('--primary').trim();
         if (computedColor) {
             setAccentColor(`hsl(${computedColor})`);
