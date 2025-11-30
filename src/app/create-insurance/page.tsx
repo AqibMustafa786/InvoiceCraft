@@ -159,10 +159,12 @@ export default function CreateInsurancePage() {
             />
           </div>
           <div className="lg:col-span-2">
-             <h2 className="text-2xl font-bold font-headline mb-4">Live Preview</h2>
-             <div className="sticky top-24">
-                <InsurancePreview doc={document} logoUrl={logoUrl} accentColor={accentColor} />
-             </div>
+            <div className="my-8 md:my-12">
+              <h2 className="text-2xl font-bold font-headline mb-6">Live Preview</h2>
+              <div className="sticky top-24">
+                  <InsurancePreview doc={document} logoUrl={logoUrl} accentColor={accentColor} />
+              </div>
+            </div>
           </div>
         </div>
       </div>
