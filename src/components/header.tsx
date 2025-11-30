@@ -1,8 +1,12 @@
+'use client';
+
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { Menu } from 'lucide-react';
 import { ModeToggle } from './mode-toggle';
+import { cn } from '@/lib/utils';
 
 const navLinks = [
     { href: "/features", label: "Features" },
@@ -14,6 +18,8 @@ const navLinks = [
 ]
 
 export function Header() {
+    const pathname = usePathname();
+
     return (
         <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur-sm">
             <div className="container flex h-16 items-center">
@@ -22,11 +28,21 @@ export function Header() {
                 </Link>
 
                 <nav className="hidden md:flex items-center space-x-6 text-sm font-medium">
-                    {navLinks.map(link => (
-                         <Link key={link.href} href={link.href} className="transition-colors hover:text-foreground/80 text-foreground/60">
-                            {link.label}
-                        </Link>
-                    ))}
+                    {navLinks.map(link => {
+                        const isActive = pathname === link.href;
+                        return (
+                            <Link 
+                                key={link.href} 
+                                href={link.href} 
+                                className={cn(
+                                    "transition-colors hover:text-foreground/80",
+                                    isActive ? "text-foreground font-semibold" : "text-foreground/60"
+                                )}
+                            >
+                                {link.label}
+                            </Link>
+                        )
+                    })}
                 </nav>
 
                 <div className="flex flex-1 items-center justify-end gap-2">
@@ -53,11 +69,21 @@ export function Header() {
                              <Link href="/" className="flex items-center gap-2 text-lg font-semibold">
                                 <span className="text-lg font-bold text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent">InvoiceCraft</span>
                             </Link>
-                            {navLinks.map(link => (
-                                <Link key={link.href} href={link.href} className="hover:text-foreground/80 text-foreground/60">
+                            {navLinks.map(link => {
+                                const isActive = pathname === link.href;
+                                return (
+                                <Link 
+                                    key={link.href} 
+                                    href={link.href} 
+                                    className={cn(
+                                        "transition-colors hover:text-foreground/80",
+                                        isActive ? "text-foreground font-semibold" : "text-foreground/60"
+                                    )}
+                                >
                                     {link.label}
                                 </Link>
-                            ))}
+                                )
+                            })}
                              <div className='flex flex-col gap-4 mt-4'>
                                 <Button asChild variant="outline">
                                     <Link href="/login">Login</Link>
