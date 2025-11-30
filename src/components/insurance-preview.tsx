@@ -147,10 +147,14 @@ const AVAILABLE_HEIGHT = PAGE_HEIGHT - PAGE_PADDING;
 
 // --- MAIN PREVIEW COMPONENT ---
 export function InsurancePreview({ doc, logoUrl, accentColor, id = 'insurance-preview', isPrint = false }: InsurancePreviewProps) {
-  const [paginatedItems, setPaginatedItems] = useState<LineItem[][]>([doc.items]);
+  const [paginatedItems, setPaginatedItems] = useState<LineItem[][]>(doc ? [doc.items] : []);
   const [needsRemeasure, setNeedsRemeasure] = useState(true);
   const containerRef = useRef<HTMLDivElement>(null);
   
+  if (!doc) {
+    return null;
+  }
+
   const subtotal = doc.items.reduce((acc, item) => acc + item.quantity * item.rate, 0);
   const taxAmount = (subtotal * doc.tax) / 100;
   const discountAmount = (subtotal * doc.discount) / 100;
@@ -160,6 +164,7 @@ export function InsurancePreview({ doc, logoUrl, accentColor, id = 'insurance-pr
 
   useEffect(() => {
     setNeedsRemeasure(true);
+    setPaginatedItems([doc.items]);
   }, [doc, logoUrl, accentColor, t]);
 
 
@@ -242,7 +247,7 @@ export function InsurancePreview({ doc, logoUrl, accentColor, id = 'insurance-pr
              }
         }
         
-        setPaginatedItems(newPages.length > 0 ? newPages : [[]]);
+        setPaginatedItems(newPages.length > 0 ? newPages.filter(p => p.length > 0) : [[]]);
         setNeedsRemeasure(false);
         document.body.removeChild(tempRoot);
       });
@@ -298,5 +303,3 @@ export function InsurancePreview({ doc, logoUrl, accentColor, id = 'insurance-pr
     </Card>
   );
 }
-
-    
