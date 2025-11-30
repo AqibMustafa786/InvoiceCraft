@@ -250,17 +250,19 @@ export function InvoiceForm({ invoice, setInvoice, logoUrl, setLogoUrl, accentCo
       
       <Collapsible>
         <Card>
-          <CollapsibleTrigger className='w-full'>
-              <CardHeader className='flex-row items-center justify-between'>
+          <div className="flex-row items-center justify-between p-6 pb-0">
+            <div className='flex justify-between'>
                 <CardTitle>Insurance Details (Optional)</CardTitle>
-                <Button variant="ghost" size="sm">
-                  <Shield className="h-4 w-4 mr-2" />
-                  <span className="text-sm">Show/Hide</span>
-                </Button>
-              </CardHeader>
-          </CollapsibleTrigger>
+                <CollapsibleTrigger asChild>
+                  <Button variant="ghost" size="sm">
+                    <Shield className="h-4 w-4 mr-2" />
+                    <span className="text-sm">Show/Hide</span>
+                  </Button>
+                </CollapsibleTrigger>
+              </div>
+          </div>
           <CollapsibleContent>
-            <CardContent className="space-y-4">
+            <CardContent className="space-y-4 pt-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="insuredName">Insured Name</Label>
