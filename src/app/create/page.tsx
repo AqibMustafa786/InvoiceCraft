@@ -79,6 +79,13 @@ export default function CreateInvoicePage() {
     if (draftId) {
       loadDraft(draftId, initialInvoice);
     }
+    
+    if (typeof window !== 'undefined' && document) {
+        const computedColor = getComputedStyle(document.documentElement).getPropertyValue('--primary').trim();
+        if (computedColor) {
+           setAccentColor(`hsl(${computedColor})`);
+        }
+    }
   }, []);
 
   useEffect(() => {
@@ -87,15 +94,6 @@ export default function CreateInvoicePage() {
         loadDraft(draftId, getInitialInvoice());
     }
   }, [searchParams]);
-  
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-        const computedColor = getComputedStyle(document.documentElement).getPropertyValue('--primary').trim();
-        if (computedColor) {
-           setAccentColor(`hsl(${computedColor})`);
-        }
-    }
-  }, []);
 
   const loadDraft = (draftId: string, baseInvoice: Invoice) => {
     const fromJSON = (key: string, value: any) => {
@@ -116,7 +114,7 @@ export default function CreateInvoicePage() {
           setInvoice(fullDraft);
           
           setLogoUrl(null); 
-          if (typeof window !== 'undefined') {
+          if (typeof window !== 'undefined' && document) {
             const computedColor = getComputedStyle(document.documentElement).getPropertyValue('--primary').trim();
             if (computedColor) {
               setAccentColor(`hsl(${computedColor})`);
@@ -190,7 +188,7 @@ export default function CreateInvoicePage() {
     newInvoice.invoiceNumber = `INV-${String(Math.floor(Math.random() * 1000)).padStart(3, '0')}`;
     setInvoice(newInvoice);
     setLogoUrl(null);
-    if (typeof window !== 'undefined') {
+    if (typeof window !== 'undefined' && document) {
         const computedColor = getComputedStyle(document.documentElement).getPropertyValue('--primary').trim();
         if (computedColor) {
             setAccentColor(`hsl(${computedColor})`);
