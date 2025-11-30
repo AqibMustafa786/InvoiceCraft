@@ -18,7 +18,7 @@ interface InsurancePreviewProps {
 }
 
 interface CommonTemplateProps {
-  document: InsuranceDocument;
+  doc: InsuranceDocument;
   logoUrl: string | null;
   accentColor: string;
   t: any;
@@ -45,7 +45,7 @@ const currencySymbols: { [key: string]: string } = {
 
 // --- TEMPLATE: USA Claim Default ---
 const UsaClaimDefaultTemplatePage = ({ pageItems, pageIndex, totalPages, ...commonProps }: PageProps) => {
-    const { document: doc, logoUrl, accentColor, total, subtotal, currencySymbol } = commonProps;
+    const { doc, logoUrl, accentColor, total, subtotal, currencySymbol } = commonProps;
 
     return (
         <div className={`invoice-page font-sans text-gray-800 ${pageIndex < totalPages - 1 ? "page-break" : ""}`}>
@@ -146,21 +146,21 @@ const AVAILABLE_HEIGHT = PAGE_HEIGHT - PAGE_PADDING;
 
 
 // --- MAIN PREVIEW COMPONENT ---
-export function InsurancePreview({ document, logoUrl, accentColor, id = 'insurance-preview', isPrint = false }: InsurancePreviewProps) {
-  const [paginatedItems, setPaginatedItems] = useState<LineItem[][]>([document.items]);
+export function InsurancePreview({ document: doc, logoUrl, accentColor, id = 'insurance-preview', isPrint = false }: InsurancePreviewProps) {
+  const [paginatedItems, setPaginatedItems] = useState<LineItem[][]>([doc.items]);
   const [needsRemeasure, setNeedsRemeasure] = useState(true);
   const containerRef = useRef<HTMLDivElement>(null);
   
-  const subtotal = document.items.reduce((acc, item) => acc + item.quantity * item.rate, 0);
-  const taxAmount = (subtotal * document.tax) / 100;
-  const discountAmount = (subtotal * document.discount) / 100;
-  const total = subtotal + taxAmount - discountAmount + (document.shippingCost || 0);
-  const currencySymbol = currencySymbols[document.currency] || '$';
-  const t = locales[document.language as keyof typeof locales] || locales.en;
+  const subtotal = doc.items.reduce((acc, item) => acc + item.quantity * item.rate, 0);
+  const taxAmount = (subtotal * doc.tax) / 100;
+  const discountAmount = (subtotal * doc.discount) / 100;
+  const total = subtotal + taxAmount - discountAmount + (doc.shippingCost || 0);
+  const currencySymbol = currencySymbols[doc.currency] || '$';
+  const t = locales[doc.language as keyof typeof locales] || locales.en;
 
   useEffect(() => {
     setNeedsRemeasure(true);
-  }, [document, logoUrl, accentColor, t]);
+  }, [doc, logoUrl, accentColor, t]);
 
 
   const previewStyle = {
@@ -168,7 +168,7 @@ export function InsurancePreview({ document, logoUrl, accentColor, id = 'insuran
       '--primary': accentColor
   } as React.CSSProperties;
 
-  const TemplateComponent = templates[document.template as keyof typeof templates] || templates['usa-claim-default'];
+  const TemplateComponent = templates[doc.template as keyof typeof templates] || templates['usa-claim-default'];
   
   useLayoutEffect(() => {
     if (!isPrint || !containerRef.current || !needsRemeasure) return;
@@ -222,12 +222,12 @@ export function InsurancePreview({ document, logoUrl, accentColor, id = 'insuran
                 currentPageHeight += tableHeaderHeight;
             }
 
-            newPages[currentPage].push(document.items[index]);
+            newPages[currentPage].push(doc.items[index]);
             currentPageHeight += itemHeight;
         });
         
         const lastPageItemHeight = (newPages[currentPage] || []).reduce((total, item) => {
-            const itemIndex = document.items.findIndex(i => i.id === item.id);
+            const itemIndex = doc.items.findIndex(i => i.id === item.id);
             return total + (allRows[itemIndex]?.offsetHeight || 0);
         }, 0);
 
@@ -250,11 +250,11 @@ export function InsurancePreview({ document, logoUrl, accentColor, id = 'insuran
     const timer = setTimeout(measureAndPaginate, 50);
     return () => clearTimeout(timer);
 
-  }, [document.items, isPrint, needsRemeasure, TemplateComponent]);
+  }, [doc.items, isPrint, needsRemeasure, TemplateComponent]);
 
 
   const commonProps: Omit<PageProps, 'pageItems' | 'pageIndex' | 'totalPages'> = {
-    document,
+    doc,
     logoUrl,
     accentColor,
     t,
@@ -266,7 +266,7 @@ export function InsurancePreview({ document, logoUrl, accentColor, id = 'insuran
   };
 
   if (isPrint) {
-    const itemsToRender = needsRemeasure ? [document.items] : paginatedItems;
+    const itemsToRender = needsRemeasure ? [doc.items] : paginatedItems;
     
     return (
       <div id={id} className="bg-white text-gray-800" style={previewStyle} ref={containerRef}>
@@ -289,7 +289,7 @@ export function InsurancePreview({ document, logoUrl, accentColor, id = 'insuran
       <CardContent className="p-0">
           <TemplateComponent
             {...commonProps}
-            pageItems={document.items}
+            pageItems={doc.items}
             pageIndex={0}
             totalPages={1}
           />
