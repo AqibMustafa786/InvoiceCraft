@@ -59,7 +59,7 @@ function PrintableInsuranceDoc({ insuranceDoc, logoUrl, accentColor }: { insuran
     }
 
     return createPortal(
-        <InsurancePreview document={insuranceDoc} logoUrl={logoUrl} accentColor={accentColor} id="insurance-preview-print" isPrint={true} />,
+        <InsurancePreview doc={insuranceDoc} logoUrl={logoUrl} accentColor={accentColor} id="insurance-preview-print" isPrint={true} />,
         printRoot
     );
 }
@@ -75,7 +75,7 @@ export default function CreateInsurancePage() {
     // Initialize state on the client to avoid hydration mismatch
     setDocument(getInitialInsuranceDoc());
 
-    if (typeof window !== 'undefined' && document) {
+    if (typeof window !== 'undefined') {
         const computedColor = getComputedStyle(document.documentElement).getPropertyValue('--primary').trim();
         if (computedColor) {
            setAccentColor(`hsl(${computedColor})`);
@@ -92,7 +92,7 @@ export default function CreateInsurancePage() {
     newDoc.documentNumber = `DOC-${String(Math.floor(Math.random() * 1000)).padStart(3, '0')}`;
     setDocument(newDoc);
     setLogoUrl(null);
-    if (typeof window !== 'undefined' && document) {
+    if (typeof window !== 'undefined') {
         const computedColor = getComputedStyle(document.documentElement).getPropertyValue('--primary').trim();
         if (computedColor) {
             setAccentColor(`hsl(${computedColor})`);
@@ -161,7 +161,7 @@ export default function CreateInsurancePage() {
           <div className="lg:col-span-2">
              <h2 className="text-2xl font-bold font-headline mb-4">Live Preview</h2>
              <div className="sticky top-24">
-                <InsurancePreview document={document} logoUrl={logoUrl} accentColor={accentColor} />
+                <InsurancePreview doc={document} logoUrl={logoUrl} accentColor={accentColor} />
              </div>
           </div>
         </div>
