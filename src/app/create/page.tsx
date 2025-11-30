@@ -242,7 +242,7 @@ export default function CreateInvoicePage() {
 
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 xl:gap-12">
           <div className="lg:col-span-3">
-             <div className="my-8 md:my-12">
+             <div className="mb-12">
                 <h2 className="text-2xl font-bold font-headline mb-6 text-center">Select a Template</h2>
                  <TemplateSelector 
                   selectedTemplate={invoice.template}
@@ -260,12 +260,10 @@ export default function CreateInvoicePage() {
               toast={toast}
             />
           </div>
-          <div className="lg:col-span-2 my-8 md:my-12">
-            <h2 className="text-2xl font-bold font-headline mb-6">Live Preview</h2>
-            <div className="relative">
-              <div className="sticky top-24 !overflow-visible">
-                <InvoicePreview invoice={invoice} logoUrl={logoUrl} accentColor={accentColor} />
-              </div>
+          <div className="lg:col-span-2">
+            <div className="sticky top-24">
+              <h2 className="text-2xl font-bold font-headline mb-6">Live Preview</h2>
+              <InvoicePreview invoice={invoice} logoUrl={logoUrl} accentColor={accentColor} />
             </div>
           </div>
         </div>
