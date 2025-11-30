@@ -10,7 +10,7 @@ import locales from '@/lib/locales';
 
 // --- PROPS ---
 interface InsurancePreviewProps {
-  document: InsuranceDocument;
+  doc: InsuranceDocument;
   logoUrl: string | null;
   accentColor: string;
   id?: string;
@@ -146,7 +146,7 @@ const AVAILABLE_HEIGHT = PAGE_HEIGHT - PAGE_PADDING;
 
 
 // --- MAIN PREVIEW COMPONENT ---
-export function InsurancePreview({ document: doc, logoUrl, accentColor, id = 'insurance-preview', isPrint = false }: InsurancePreviewProps) {
+export function InsurancePreview({ doc, logoUrl, accentColor, id = 'insurance-preview', isPrint = false }: InsurancePreviewProps) {
   const [paginatedItems, setPaginatedItems] = useState<LineItem[][]>([doc.items]);
   const [needsRemeasure, setNeedsRemeasure] = useState(true);
   const containerRef = useRef<HTMLDivElement>(null);
