@@ -18,12 +18,12 @@ const featureCategories = [
     features: [
       { name: "Flexible Item Management", description: "Add, remove, and even bulk-add line items to speed up creation." },
       { name: "Automatic Calculations", description: "Subtotals, taxes, and discounts are calculated for you, reducing errors." },
-      { name: "Multi-Currency Support", description: "Bill clients in their local currency with support for USD, EUR, GBP, and more." },
+      { name: "Multi-Currency Support", description: "Bill clients in their local currency with support for USD, EUR, GBP, JPY, and PKR." },
       { name: "Shipping Cost & Amount Paid", description: "Include additional costs like shipping and track partial payments." },
     ],
   },
   {
-    category: "Productivity & Management (Pro)",
+    category: "Productivity & Management (Locally Saved)",
     features: [
       { name: "Save Invoice Drafts", description: "Save your work locally in your browser and pick up where you left off." },
       { name: "Invoice Dashboard", description: "A central place to view, manage, and track all your saved invoices." },
