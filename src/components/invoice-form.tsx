@@ -188,24 +188,16 @@ export function InvoiceForm({ invoice, setInvoice, logoUrl, setLogoUrl, accentCo
       
       <Card>
         <CardHeader>
-          <CardTitle>Invoice Template</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <TemplateSelector 
-            selectedTemplate={invoice.template}
-            onSelectTemplate={(template) => setInvoice(prev => ({...prev, template}))}
-          />
-        </CardContent>
-      </Card>
-    
-      <Card>
-        <CardHeader>
           <CardTitle>Bill From</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="companyName">Company Name</Label>
             <Input id="companyName" name="companyName" value={invoice.companyName} onChange={handleInputChange} />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="companySlogan">Company Slogan</Label>
+            <Input id="companySlogan" name="companySlogan" value={invoice.companySlogan} onChange={handleInputChange} />
           </div>
           <div className="space-y-2">
             <Label htmlFor="companyAddress">Company Address</Label>

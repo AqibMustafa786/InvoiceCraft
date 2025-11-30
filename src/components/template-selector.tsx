@@ -2,7 +2,13 @@
 
 import { cn } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
-import Image from 'next/image';
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
 
 interface Template {
   id: string;
@@ -58,32 +64,41 @@ const templateCategories: TemplateCategory[] = [
 
 export function TemplateSelector({ selectedTemplate, onSelectTemplate }: TemplateSelectorProps) {
   return (
-    <div className="space-y-6">
-      {templateCategories.map((category) => (
-        <div key={category.title}>
-          <h3 className="text-lg font-semibold mb-3">{category.title}</h3>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {category.templates.map((template) => (
-              <div
-                key={template.id}
+    <Carousel
+      opts={{
+        align: "start",
+        loop: true,
+      }}
+      className="w-full"
+    >
+      <CarouselContent>
+        {templateCategories.flatMap(category => category.templates).map((template, index) => (
+          <CarouselItem key={index} className="md:basis-1/2 lg:basis-1/3 xl:basis-1/4">
+            <div className="p-1">
+               <div
                 onClick={() => onSelectTemplate(template.id)}
                 className={cn(
-                  'relative cursor-pointer rounded-lg border-2 transition-all',
+                  'relative cursor-pointer rounded-lg border-2 transition-all overflow-hidden group',
                   selectedTemplate === template.id ? 'border-primary ring-2 ring-primary/50' : 'border-border hover:border-primary/50'
                 )}
               >
-                <div className="aspect-[3/4] w-full overflow-hidden rounded-md bg-muted flex items-center justify-center">
+                <div className="aspect-[3/4] w-full bg-muted flex items-center justify-center">
                   <div className="text-sm text-muted-foreground">{template.name}</div>
                 </div>
-                <p className="text-center text-sm font-medium p-2">{template.name}</p>
+                 <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                    <span className="text-white font-bold">Select</span>
+                 </div>
                 {template.isPro && (
                   <Badge className="absolute top-2 right-2" variant="secondary">PRO</Badge>
                 )}
               </div>
-            ))}
-          </div>
-        </div>
-      ))}
-    </div>
+               <p className="text-center text-sm font-medium p-2">{template.name}</p>
+            </div>
+          </CarouselItem>
+        ))}
+      </CarouselContent>
+      <CarouselPrevious className="ml-12"/>
+      <CarouselNext className="mr-12"/>
+    </Carousel>
   );
 }

@@ -11,12 +11,14 @@ import { addDays } from 'date-fns';
 import { useToast } from '@/hooks/use-toast';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
+import { TemplateSelector } from '@/components/template-selector';
 
 const initialLineItem = { id: crypto.randomUUID(), name: '', quantity: 1, rate: 0 };
 
 const initialInvoice: Invoice = {
   id: crypto.randomUUID(),
   companyName: 'Your Company',
+  companySlogan: 'Your Slogan Here',
   companyAddress: '123 Main St, Anytown, USA',
   clientName: 'Client Company',
   clientAddress: '456 Oak Ave, Someplace, USA',
@@ -184,7 +186,7 @@ export default function CreateInvoicePage() {
         <div className="flex flex-col md:flex-row justify-between md:items-center gap-4 mb-8">
           <div>
             <h1 className="text-3xl font-bold font-headline">Create Invoice</h1>
-            <p className="text-muted-foreground">Fill out the form below to generate your invoice.</p>
+            <p className="text-muted-foreground">Select a template, then fill out the form to generate your invoice.</p>
           </div>
           <div className="flex flex-wrap gap-2">
               <Button onClick={handleNew} variant="outline">
@@ -208,8 +210,17 @@ export default function CreateInvoicePage() {
           </div>
         </div>
 
+        <div className="mb-8">
+          <h2 className="text-2xl font-bold font-headline mb-4 text-center">1. Select a Template</h2>
+           <TemplateSelector 
+            selectedTemplate={invoice.template}
+            onSelectTemplate={(template) => setInvoice(prev => ({...prev, template}))}
+          />
+        </div>
+
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 xl:gap-12">
           <div className="lg:col-span-3">
+             <h2 className="text-2xl font-bold font-headline mb-4 text-center lg:text-left">2. Fill in Details</h2>
             <InvoiceForm 
               invoice={invoice} 
               setInvoice={setInvoice} 
