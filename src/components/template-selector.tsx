@@ -62,17 +62,18 @@ export function TemplateSelector({ selectedTemplate, onSelectTemplate }: Templat
         >
           <div
             className={cn(
-              'relative rounded-lg border-2 transition-all overflow-hidden aspect-[3/4] shadow-md',
+              'relative rounded-lg border-2 transition-all overflow-hidden aspect-[3/4] shadow-md mx-auto',
               selectedTemplate === template.id
                 ? 'border-primary ring-4 ring-primary/20'
                 : 'border-border hover:border-primary/50'
             )}
+            style={{ width: '188px' }}
           >
             <Image
               src={template.thumbnailUrl}
               alt={template.name}
-              width={225}
-              height={300}
+              width={188}
+              height={250}
               className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
             />
             <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
