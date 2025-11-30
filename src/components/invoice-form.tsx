@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { DatePicker } from '@/components/ui/datepicker';
-import { ImageUp, Plus, Trash2, Palette, X, Mail, Truck, Hash, Wallet, Phone } from 'lucide-react';
+import { ImageUp, Plus, Trash2, Palette, X, Mail, Truck, Hash, Wallet, Phone, Shield } from 'lucide-react';
 import Image from 'next/image';
 import {
   Select,
@@ -17,7 +17,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { TemplateSelector } from './template-selector';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+
 
 interface InvoiceFormProps {
   invoice: Invoice;
@@ -246,6 +247,44 @@ export function InvoiceForm({ invoice, setInvoice, logoUrl, setLogoUrl, accentCo
           </div>
         </CardContent>
       </Card>
+      
+      <Collapsible>
+        <Card>
+          <CollapsibleTrigger className='w-full'>
+              <CardHeader className='flex-row items-center justify-between'>
+                <CardTitle>Insurance Details (Optional)</CardTitle>
+                <Button variant="ghost" size="sm">
+                  <Shield className="h-4 w-4 mr-2" />
+                  <span className="text-sm">Show/Hide</span>
+                </Button>
+              </CardHeader>
+          </CollapsibleTrigger>
+          <CollapsibleContent>
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="insuredName">Insured Name</Label>
+                  <Input id="insuredName" name="insuredName" value={invoice.insuredName || ''} onChange={handleInputChange} />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="claimNumber">Claim #</Label>
+                  <Input id="claimNumber" name="claimNumber" value={invoice.claimNumber || ''} onChange={handleInputChange} />
+                </div>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="dateOfLoss">Date of Loss</Label>
+                  <Input id="dateOfLoss" name="dateOfLoss" value={invoice.dateOfLoss || ''} onChange={handleInputChange} placeholder="MM/DD/YYYY" />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="insuranceCompany">Insurance Co.</Label>
+                  <Input id="insuranceCompany" name="insuranceCompany" value={invoice.insuranceCompany || ''} onChange={handleInputChange} />
+                </div>
+              </div>
+            </CardContent>
+          </CollapsibleContent>
+        </Card>
+      </Collapsible>
 
       <Card>
         <CardHeader>
