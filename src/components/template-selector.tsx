@@ -41,6 +41,16 @@ const templateCategories: TemplateCategory[] = [
         name: 'Modern',
         thumbnailUrl: '/templates/modern.png',
       },
+      {
+        id: 'minimalist',
+        name: 'Minimalist',
+        thumbnailUrl: '/templates/minimalist.png',
+      },
+       {
+        id: 'creative',
+        name: 'Creative',
+        thumbnailUrl: '/templates/creative.png',
+      },
        {
         id: 'elegant',
         name: 'Elegant',
@@ -82,9 +92,10 @@ export function TemplateSelector({ selectedTemplate, onSelectTemplate }: Templat
                 )}
               >
                 <div className="aspect-[3/4] w-full bg-muted flex items-center justify-center">
-                  <div className="text-sm text-muted-foreground">{template.name}</div>
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={template.thumbnailUrl} alt={template.name} className="object-cover w-full h-full" />
                 </div>
-                 <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                 <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                     <span className="text-white font-bold">Select</span>
                  </div>
                 {template.isPro && (

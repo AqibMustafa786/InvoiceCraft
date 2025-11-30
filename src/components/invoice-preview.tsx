@@ -257,7 +257,7 @@ const ElegantTemplatePage = ({ pageItems, pageIndex, totalPages, ...commonProps 
 
 // --- TEMPLATE: USA ---
 const UsaTemplatePage = ({ pageItems, pageIndex, totalPages, ...commonProps }: PageProps) => {
-    const { invoice, logoUrl, t, currencySymbol, subtotal, taxAmount, discountAmount, total, balanceDue, accentColor } = commonProps;
+    const { invoice, logoUrl, t, currencySymbol, balanceDue, accentColor } = commonProps;
     const finalShippingAddress = invoice.shippingAddress || invoice.clientAddress;
 
     return (
@@ -348,12 +348,128 @@ const UsaTemplatePage = ({ pageItems, pageIndex, totalPages, ...commonProps }: P
     );
 };
 
+// --- TEMPLATE: Minimalist ---
+const MinimalistTemplatePage = ({ pageItems, pageIndex, totalPages, ...commonProps }: PageProps) => (
+    <div className={`invoice-page font-serif ${pageIndex < totalPages - 1 ? "page-break" : ""}`}>
+        <div className="p-10 md:p-12">
+            <header className="grid grid-cols-2 gap-10 mb-16" data-element="header">
+                <div>
+                     {commonProps.logoUrl ? (
+                        <Image src={commonProps.logoUrl} alt={`${commonProps.invoice.companyName} Logo`} width={120} height={40} className="object-contain" data-ai-hint="logo" />
+                    ) : (
+                        <h1 className="text-3xl font-bold font-headline">{commonProps.invoice.companyName}</h1>
+                    )}
+                </div>
+                <div className="text-right">
+                    <h2 className="text-3xl font-bold text-gray-800 uppercase tracking-widest">{commonProps.t.invoice}</h2>
+                </div>
+            </header>
+            
+            <section className="grid grid-cols-3 gap-10 mb-12" data-element="client-details">
+                <div className="space-y-1">
+                    <p className="text-sm font-semibold text-gray-500 uppercase tracking-wider">{commonProps.t.billTo}</p>
+                    <p className="font-bold">{commonProps.invoice.clientName}</p>
+                    <p className="text-muted-foreground text-sm whitespace-pre-line">{commonProps.invoice.clientAddress}</p>
+                </div>
+                <div className="space-y-1 col-start-3 text-right">
+                    <p className="text-sm font-semibold text-gray-500 uppercase tracking-wider">{commonProps.t.invoice} #</p>
+                    <p>{commonProps.invoice.invoiceNumber}</p>
+                    <p className="text-sm font-semibold text-gray-500 uppercase tracking-wider mt-3">{commonProps.t.invoiceDate}</p>
+                    <p>{format(commonProps.invoice.invoiceDate, 'yyyy-MM-dd')}</p>
+                    <p className="text-sm font-semibold text-gray-500 uppercase tracking-wider mt-3">{commonProps.t.dueDate}</p>
+                    <p>{format(commonProps.invoice.dueDate, 'yyyy-MM-dd')}</p>
+                </div>
+            </section>
+
+            <ItemsTable items={pageItems} t={commonProps.t} currencySymbol={commonProps.currencySymbol} />
+            {pageIndex === totalPages - 1 && <InvoiceFooter {...commonProps} balanceDue={commonProps.balanceDue} />}
+        </div>
+    </div>
+);
+
+
+// --- TEMPLATE: Creative ---
+const CreativeTemplatePage = ({ pageItems, pageIndex, totalPages, ...commonProps }: PageProps) => {
+    const { invoice, logoUrl, t, currencySymbol, balanceDue, accentColor } = commonProps;
+    
+    return (
+        <div className={`invoice-page relative overflow-hidden ${pageIndex < totalPages - 1 ? "page-break" : ""}`}>
+            <div className="absolute top-0 right-0 h-full w-1/3" style={{backgroundColor: accentColor, opacity: 0.05}}></div>
+            <div className="p-10 md:p-12">
+                 <header className="grid grid-cols-2 gap-10 items-start mb-16" data-element="header">
+                    <div className="z-10">
+                        {logoUrl ? (
+                            <Image src={logoUrl} alt={`${invoice.companyName} Logo`} width={120} height={40} className="object-contain" data-ai-hint="logo" />
+                        ) : (
+                            <h1 className="text-3xl font-bold font-headline" style={{ color: accentColor }}>{invoice.companyName}</h1>
+                        )}
+                        <div className="text-muted-foreground text-sm mt-2 space-y-1">
+                          <p className="whitespace-pre-line">{invoice.companyAddress}</p>
+                          {invoice.companyPhone && <p>{invoice.companyPhone}</p>}
+                        </div>
+                    </div>
+                    <div className="text-right z-10">
+                        <h2 className="text-5xl font-bold uppercase tracking-wider">{t.invoice}</h2>
+                        <p className="text-muted-foreground mt-1">{invoice.invoiceNumber}</p>
+                    </div>
+                </header>
+
+                <section className="mb-12 grid grid-cols-2 gap-10" data-element="client-details">
+                    <div className="space-y-1 z-10">
+                        <p className="text-sm font-semibold text-gray-500 uppercase tracking-wider">{t.billTo}</p>
+                        <p className="font-bold text-lg">{invoice.clientName}</p>
+                        <p className="text-muted-foreground text-sm whitespace-pre-line">{invoice.clientAddress}</p>
+                    </div>
+                    <div className="space-y-4 text-right self-end z-10">
+                         <div className="space-y-1">
+                            <p className="text-sm font-semibold text-gray-500">{t.invoiceDate}</p>
+                            <p className="font-medium">{format(invoice.invoiceDate, 'MMMM d, yyyy')}</p>
+                        </div>
+                         <div className="space-y-1">
+                            <p className="text-sm font-semibold text-gray-500">{t.dueDate}</p>
+                            <p className="font-medium">{format(invoice.dueDate, 'MMMM d, yyyy')}</p>
+                        </div>
+                    </div>
+                </section>
+                
+                 <section className="mt-8 z-10 relative">
+                    <table className="w-full text-left" data-element="items-table">
+                        <thead data-element="table-header">
+                            <tr className="border-b-2" style={{borderColor: accentColor}}>
+                                <th className="p-3 pb-4 text-sm font-bold uppercase tracking-wider w-1/2">{t.item}</th>
+                                <th className="p-3 pb-4 text-sm font-bold uppercase tracking-wider text-center">{t.quantity}</th>
+                                <th className="p-3 pb-4 text-sm font-bold uppercase tracking-wider text-right">{t.rate}</th>
+                                <th className="p-3 pb-4 text-sm font-bold uppercase tracking-wider text-right">{t.subtotal}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        {pageItems.map(item => (
+                            <tr key={item.id} className="border-b" data-element="table-row">
+                                <td className="p-3 py-4 whitespace-pre-line font-medium">{item.name || <span className="text-gray-400">{t.itemDescription}</span>}</td>
+                                <td className="p-3 py-4 text-center tabular-nums">{item.quantity}</td>
+                                <td className="p-3 py-4 text-right tabular-nums">{currencySymbol}{item.rate.toFixed(2)}</td>
+                                <td className="p-3 py-4 text-right tabular-nums font-medium">{currencySymbol}{(item.quantity * item.rate).toFixed(2)}</td>
+                            </tr>
+                        ))}
+                        </tbody>
+                    </table>
+                </section>
+
+                {pageIndex === totalPages - 1 && <InvoiceFooter {...commonProps} balanceDue={balanceDue} />}
+
+            </div>
+        </div>
+    );
+};
+
 
 const templates = {
     default: DefaultTemplatePage,
     modern: ModernTemplatePage,
     elegant: ElegantTemplatePage,
     usa: UsaTemplatePage,
+    minimalist: MinimalistTemplatePage,
+    creative: CreativeTemplatePage,
 };
 
 
