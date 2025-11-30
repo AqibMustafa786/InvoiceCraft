@@ -3,7 +3,7 @@ import { Twitter, Github, Linkedin, Instagram } from 'lucide-react';
 
 export function Footer() {
   return (
-    <footer className="border-t border-border/40 bg-background/95 backdrop-blur-sm">
+    <footer className="border-t border-border/40 bg-transparent">
       <div className="container grid grid-cols-1 gap-12 px-4 py-12 mx-auto md:grid-cols-5 md:px-6">
         
         {/* Branding Section */}
