@@ -17,6 +17,7 @@ const initialLineItem = { id: crypto.randomUUID(), name: '', quantity: 1, rate: 
 const initialInvoice: Invoice = {
   id: crypto.randomUUID(),
   companyName: 'Your Company',
+  companySlogan: 'Your Company Slogan',
   companyAddress: '123 Main St, Anytown, USA',
   clientName: 'Client Company',
   clientAddress: '456 Oak Ave, Someplace, USA',

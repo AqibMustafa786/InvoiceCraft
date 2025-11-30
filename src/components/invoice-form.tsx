@@ -203,6 +203,10 @@ export function InvoiceForm({ invoice, setInvoice, logoUrl, setLogoUrl, accentCo
             <Input id="companyName" name="companyName" value={invoice.companyName} onChange={handleInputChange} />
           </div>
           <div className="space-y-2">
+            <Label htmlFor="companySlogan">Company Slogan</Label>
+            <Input id="companySlogan" name="companySlogan" value={invoice.companySlogan} onChange={handleInputChange} />
+          </div>
+          <div className="space-y-2">
             <Label htmlFor="companyAddress">Company Address</Label>
             <Textarea id="companyAddress" name="companyAddress" value={invoice.companyAddress} onChange={handleInputChange} />
           </div>
@@ -222,7 +226,7 @@ export function InvoiceForm({ invoice, setInvoice, logoUrl, setLogoUrl, accentCo
             <Label htmlFor="clientEmail">Client Email</Label>
             <div className="relative flex items-center">
                 <Mail className="absolute left-3 h-5 w-5 text-muted-foreground" />
-                <Input id="clientEmail" name="clientEmail" value={invoice.clientEmail} onChange={handleInputChange} className="pl-10" placeholder="client@example.com" />
+                <Input id="clientEmail" name="clientEmail" value={invoice.clientEmail ?? ''} onChange={handleInputChange} className="pl-10" placeholder="client@example.com" />
             </div>
           </div>
           <div className="space-y-2">

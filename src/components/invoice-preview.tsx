@@ -229,11 +229,98 @@ const ElegantTemplatePage = ({ invoice, logoUrl, accentColor, t, currencySymbol,
     </div>
 )
 
+// --- TEMPLATE: USA ---
+const UsaTemplatePage = ({ invoice, logoUrl, accentColor, t, currencySymbol, pageItems, pageIndex, totalPages, ...totals }: PageProps) => (
+    <div className={pageIndex < totalPages - 1 ? "page-break" : ""}>
+        <div className="p-12 text-sm">
+            <header className="flex justify-between items-start mb-8">
+                <div className="space-y-1">
+                    {logoUrl ? (
+                         <Image src={logoUrl} alt={`${invoice.companyName} Logo`} width={150} height={50} className="object-contain" data-ai-hint="logo" />
+                    ) : (
+                        <h1 className="text-2xl font-bold">{invoice.companyName}</h1>
+                    )}
+                    {invoice.companySlogan && <p className="text-muted-foreground text-xs">{invoice.companySlogan}</p>}
+                    <p className="text-muted-foreground text-xs whitespace-pre-line pt-2">{invoice.companyAddress}</p>
+                </div>
+                <div className="text-right">
+                    <h2 className="text-4xl font-bold text-gray-800 uppercase tracking-widest">INVOICE</h2>
+                    <div className="mt-2 space-y-1 text-xs">
+                        <div className="flex justify-end">
+                            <span className="text-gray-500 w-24 text-right">Invoice #</span>
+                            <span className="w-24 text-right font-medium">{invoice.invoiceNumber}</span>
+                        </div>
+                        <div className="flex justify-end">
+                            <span className="text-gray-500 w-24 text-right">Date</span>
+                            <span className="w-24 text-right font-medium">{format(invoice.invoiceDate, 'MMMM d, yyyy')}</span>
+                        </div>
+                         <div className="flex justify-end">
+                            <span className="text-gray-500 w-24 text-right">Due Date</span>
+                            <span className="w-24 text-right font-medium">{format(invoice.dueDate, 'MMMM d, yyyy')}</span>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <section className="grid grid-cols-2 gap-4 mb-8">
+                <div className="border p-4 rounded-md bg-gray-50/50 space-y-1">
+                    <h3 className="font-bold text-xs uppercase text-gray-500">Billing Address</h3>
+                    <p className="font-bold">{invoice.clientName}</p>
+                    <p className="text-muted-foreground whitespace-pre-line">{invoice.clientAddress}</p>
+                </div>
+                 <div className="border p-4 rounded-md bg-gray-50/50 space-y-1">
+                    <h3 className="font-bold text-xs uppercase text-gray-500">Delivery Address</h3>
+                     <p className="font-bold">{invoice.clientName}</p>
+                    <p className="text-muted-foreground whitespace-pre-line">{invoice.clientAddress}</p>
+                </div>
+            </section>
+
+            <ItemsTable items={pageItems} t={{...t, item: 'DESCRIPTION', quantity: 'QUANTITY', rate: 'UNIT PRICE', subtotal: 'AMOUNT'}} currencySymbol={currencySymbol} />
+            
+            {pageIndex === totalPages - 1 && (
+                <>
+                    <section className="flex justify-end mt-4">
+                        <div className="w-full max-w-sm space-y-2 text-sm">
+                             <div className="flex justify-between">
+                                <span className="text-gray-500">Subtotal</span>
+                                <span className="font-medium tabular-nums">{currencySymbol}{totals.subtotal.toFixed(2)}</span>
+                            </div>
+                            {invoice.tax > 0 && (
+                                <div className="flex justify-between">
+                                    <span className="text-gray-500">Sales Tax ({invoice.tax}%)</span>
+                                    <span className="font-medium tabular-nums">{currencySymbol}{totals.taxAmount.toFixed(2)}</span>
+                                </div>
+                            )}
+                             {invoice.discount > 0 && (
+                                <div className="flex justify-between">
+                                    <span className="text-gray-500">Discount ({invoice.discount}%)</span>
+                                    <span className="font-medium text-destructive tabular-nums">-{currencySymbol}{totals.discountAmount.toFixed(2)}</span>
+                                </div>
+                            )}
+                            <div className="border-t my-1"></div>
+                            <div className="flex justify-between border-t-2 border-black pt-2 font-bold">
+                                <span>TOTAL DUE</span>
+                                <span className="tabular-nums">{currencySymbol}{totals.total.toFixed(2)}</span>
+                            </div>
+                        </div>
+                    </section>
+                     <footer className="text-center mt-12 text-xs text-gray-500">
+                        {invoice.notes && <p className="mb-4">{invoice.notes}</p>}
+                        <p>Make all cheques payable to <strong>{invoice.companyName}</strong></p>
+                        <p className="mt-4 font-bold text-gray-600">THANK YOU FOR YOUR BUSINESS!</p>
+                    </footer>
+                </>
+            )}
+        </div>
+    </div>
+);
+
 
 const templates = {
     default: DefaultTemplatePage,
     modern: ModernTemplatePage,
     elegant: ElegantTemplatePage,
+    usa: UsaTemplatePage,
 };
 
 // --- MAIN PREVIEW COMPONENT ---
