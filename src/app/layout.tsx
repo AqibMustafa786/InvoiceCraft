@@ -2,9 +2,10 @@ import type { Metadata } from 'next';
 import './globals.css';
 import { cn } from '@/lib/utils';
 import { Toaster } from '@/components/ui/toaster';
-import { Header } from '@/components/header';
 import { Footer } from '@/components/footer';
 import { ThemeProvider } from '@/components/theme-provider';
+import { SidebarProvider } from '@/components/ui/sidebar';
+import { AppSidebar } from '@/components/sidebar';
 
 export const metadata: Metadata = {
   title: 'InvoiceCraft - Professional Invoice Generator',
@@ -34,11 +35,13 @@ export default function RootLayout({
             enableSystem
             disableTransitionOnChange
           >
-          <div className="app-main-container relative flex min-h-screen flex-col">
-            <Header />
-            <main className="flex-1">{children}</main>
-            <Footer />
-          </div>
+          <SidebarProvider>
+            <AppSidebar />
+            <div className="app-main-container relative flex min-h-screen flex-col">
+              <main className="flex-1">{children}</main>
+              <Footer />
+            </div>
+          </SidebarProvider>
           <Toaster />
           <div id="print-container" className="hidden print:block"></div>
         </ThemeProvider>
