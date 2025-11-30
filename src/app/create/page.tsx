@@ -241,17 +241,16 @@ export default function CreateInvoicePage() {
           </div>
         </div>
 
-        <div className="my-8 md:my-12">
-          <h2 className="text-2xl font-bold font-headline mb-6 text-center">Select a Template</h2>
-           <TemplateSelector 
-            selectedTemplate={invoice.template}
-            onSelectTemplate={(template) => setInvoice(prev => prev ? ({...prev, template}) : null)}
-          />
-        </div>
-
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 xl:gap-12">
           <div className="lg:col-span-3">
-             <h2 className="text-2xl font-bold font-headline mb-4 text-center lg:text-left">2. Fill in Details</h2>
+             <div className="my-8 md:my-12">
+                <h2 className="text-2xl font-bold font-headline mb-6 text-center">Select a Template</h2>
+                 <TemplateSelector 
+                  selectedTemplate={invoice.template}
+                  onSelectTemplate={(template) => setInvoice(prev => prev ? ({...prev, template}) : null)}
+                />
+              </div>
+            <h2 className="text-2xl font-bold font-headline mb-4 text-center lg:text-left">Fill in Details</h2>
             <InvoiceForm 
               invoice={invoice} 
               setInvoice={setInvoice as React.Dispatch<React.SetStateAction<Invoice>>} 
