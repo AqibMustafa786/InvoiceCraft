@@ -224,7 +224,7 @@ const Sidebar = React.forwardRef<
         {/* This is what handles the sidebar gap on desktop */}
         <div
           className={cn(
-            "duration-300 relative h-svh w-[--sidebar-width] bg-transparent transition-[width] ease-in-out",
+            "duration-300 relative h-svh bg-transparent transition-[width] ease-in-out",
             "group-data-[collapsible=offcanvas]:w-0",
             "group-data-[side=right]:rotate-180",
             variant === "floating" || variant === "inset"
@@ -563,12 +563,12 @@ const SidebarMenuButton = React.forwardRef<
 
 
     const buttonContent = (
-        <>
+        <div className="flex items-center gap-2 overflow-hidden">
             {icon}
             <span className="truncate transition-all duration-200 group-data-[collapsible=icon]:opacity-0 group-data-[collapsible=icon]:delay-0 group-data-[collapsible=icon]:w-0 delay-100 w-full">
                 {label}
             </span>
-        </>
+        </div>
     )
 
     const button = (
