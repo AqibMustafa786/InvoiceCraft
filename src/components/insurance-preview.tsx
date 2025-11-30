@@ -90,13 +90,13 @@ const UsaClaimDefaultTemplatePage = ({ pageItems, pageIndex, totalPages, ...comm
                                 <td className="border p-2 align-top h-8 whitespace-pre-line font-bold">{doc.incidentDescription}</td>
                                 <td className="border p-2 text-right align-top"></td>
                             </tr>
-                            {pageItems.map((item) => (
+                            {pageItems?.filter(Boolean).map((item) => (
                                 <tr key={item.id} data-element="table-row">
                                     <td className="border p-2 align-top h-8 whitespace-pre-line pl-6">{item.name}</td>
                                     <td className="border p-2 text-right align-top">{currencySymbol}{(item.quantity * item.rate).toFixed(2)}</td>
                                 </tr>
                             ))}
-                             {[...Array(Math.max(0, 8 - pageItems.length))].map((_, i) => (
+                             {[...Array(Math.max(0, 8 - (pageItems?.length || 0)))].map((_, i) => (
                                 <tr key={`blank-${i}`}>
                                     <td className="border p-2 h-8"></td>
                                     <td className="border p-2"></td>
@@ -164,7 +164,7 @@ export function InsurancePreview({ doc, logoUrl, accentColor, id = 'insurance-pr
 
   useEffect(() => {
     setNeedsRemeasure(true);
-    setPaginatedItems([doc.items]);
+    setPaginatedItems(doc ? [doc.items] : []);
   }, [doc, logoUrl, accentColor, t]);
 
 
@@ -272,7 +272,7 @@ export function InsurancePreview({ doc, logoUrl, accentColor, id = 'insurance-pr
   };
 
   if (isPrint) {
-    const itemsToRender = needsRemeasure ? [doc.items] : paginatedItems;
+    const itemsToRender = needsRemeasure ? (doc ? [doc.items] : [[]]) : paginatedItems;
     
     return (
       <div id={id} className="bg-white text-gray-800" style={previewStyle} ref={containerRef}>
