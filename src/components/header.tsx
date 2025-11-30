@@ -22,10 +22,34 @@ export function Header() {
             Features
           </Link>
            <Link
+            href="/create"
+            className="font-medium transition-colors text-muted-foreground hover:text-foreground"
+          >
+            Templates
+          </Link>
+           <Link
             href="/pricing"
             className="font-medium transition-colors text-muted-foreground hover:text-foreground"
           >
             Pricing
+          </Link>
+           <Link
+            href="/blog"
+            className="font-medium transition-colors text-muted-foreground hover:text-foreground"
+          >
+            Blogs
+          </Link>
+           <Link
+            href="/about"
+            className="font-medium transition-colors text-muted-foreground hover:text-foreground"
+          >
+            About us
+          </Link>
+           <Link
+            href="/contact"
+            className="font-medium transition-colors text-muted-foreground hover:text-foreground"
+          >
+            Contact us
           </Link>
         </nav>
         <div className="flex items-center justify-end flex-1 gap-2">
