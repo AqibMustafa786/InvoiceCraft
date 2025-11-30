@@ -2,13 +2,6 @@
 
 import { cn } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from "@/components/ui/carousel";
 import Image from 'next/image';
 
 interface Template {
@@ -60,45 +53,40 @@ const templates: Template[] = [
 
 export function TemplateSelector({ selectedTemplate, onSelectTemplate }: TemplateSelectorProps) {
   return (
-    <Carousel
-      opts={{
-        align: "start",
-      }}
-      className="w-full"
-    >
-      <CarouselContent>
-        {templates.map((template, index) => (
-          <CarouselItem key={index} className="md:basis-1/2 lg:basis-1/3 xl:basis-1/4">
-            <div className="p-1">
-               <div
-                onClick={() => onSelectTemplate(template.id)}
-                className={cn(
-                  'relative cursor-pointer rounded-lg border-2 transition-all overflow-hidden group',
-                  selectedTemplate === template.id ? 'border-primary ring-2 ring-primary/50' : 'border-border hover:border-primary/50'
-                )}
-              >
-                <div className="aspect-[3/4] w-full bg-muted flex items-center justify-center relative">
-                  <Image 
-                    src={template.thumbnailUrl} 
-                    alt={template.name} 
-                    width={300}
-                    height={400}
-                  />
-                </div>
-                 <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                    <span className="text-white font-bold">Select</span>
-                 </div>
-                {template.isPro && (
-                  <Badge className="absolute top-2 right-2" variant="secondary">PRO</Badge>
-                )}
-              </div>
-               <p className="text-center text-sm font-medium p-2">{template.name}</p>
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-10">
+      {templates.map((template) => (
+        <div
+          key={template.id}
+          onClick={() => onSelectTemplate(template.id)}
+          className="cursor-pointer group"
+        >
+          <div
+            className={cn(
+              'relative rounded-lg border-2 transition-all overflow-hidden aspect-[3/4] shadow-md',
+              selectedTemplate === template.id
+                ? 'border-primary ring-4 ring-primary/20'
+                : 'border-border hover:border-primary/50'
+            )}
+          >
+            <Image
+              src={template.thumbnailUrl}
+              alt={template.name}
+              width={300}
+              height={400}
+              className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+            />
+            <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+              <span className="text-white font-bold text-lg">Select</span>
             </div>
-          </CarouselItem>
-        ))}
-      </CarouselContent>
-      <CarouselPrevious className="ml-12"/>
-      <CarouselNext className="mr-12"/>
-    </Carousel>
+            {template.isPro && (
+              <Badge className="absolute top-2 right-2" variant="secondary">
+                PRO
+              </Badge>
+            )}
+          </div>
+          <p className="text-center text-sm font-semibold p-3">{template.name}</p>
+        </div>
+      ))}
+    </div>
   );
 }
