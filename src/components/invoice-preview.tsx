@@ -1,5 +1,6 @@
 'use client';
 
+import { useState, useLayoutEffect, useRef, useEffect } from 'react';
 import type { Invoice, LineItem } from '@/lib/types';
 import { Card, CardContent } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
@@ -43,11 +44,9 @@ const currencySymbols: { [key: string]: string } = {
     PKR: '₨',
 };
 
-const ITEMS_PER_PAGE = 10;
-
 // --- SHARED COMPONENTS ---
 const InvoiceHeader = ({ invoice, logoUrl, accentColor, t }: CommonTemplateProps) => (
-    <header className="flex justify-between items-start mb-10">
+    <header className="flex justify-between items-start mb-10" data-element="header">
         <div>
             {logoUrl ? (
                 <Image src={logoUrl} alt={`${invoice.companyName} Logo`} width={120} height={40} className="object-contain" data-ai-hint="logo" />
@@ -67,7 +66,7 @@ const InvoiceHeader = ({ invoice, logoUrl, accentColor, t }: CommonTemplateProps
 );
 
 const ClientDetails = ({ invoice, t }: { invoice: Invoice, t: any }) => (
-     <section className="flex justify-between mb-10">
+     <section className="flex justify-between mb-10" data-element="client-details">
         <div className="space-y-1">
             <p className="text-sm font-semibold text-gray-500">{t.billTo}</p>
             <p className="font-bold">{invoice.clientName}</p>
@@ -82,10 +81,10 @@ const ClientDetails = ({ invoice, t }: { invoice: Invoice, t: any }) => (
     </section>
 );
 
-const ItemsTable = ({ items, t, currencySymbol, accentColor }: { items: LineItem[], t: any, currencySymbol: string, accentColor?: string }) => (
+const ItemsTable = ({ items, t, currencySymbol, accentColor, tableRef }: { items: LineItem[], t: any, currencySymbol: string, accentColor?: string, tableRef?: React.RefObject<HTMLTableElement> }) => (
     <section>
-        <table className="w-full text-left">
-            <thead style={accentColor ? {backgroundColor: accentColor, color: 'white'} : {}} className={accentColor ? '' : "bg-gray-50"}>
+        <table className="w-full text-left" ref={tableRef}>
+            <thead style={accentColor ? {backgroundColor: accentColor, color: 'white'} : {}} className={accentColor ? '' : "bg-gray-50"} data-element="table-header">
             <tr>
                 <th className="p-3 text-sm font-semibold w-1/2">{t.item}</th>
                 <th className="p-3 text-sm font-semibold text-center">{t.quantity}</th>
@@ -95,7 +94,7 @@ const ItemsTable = ({ items, t, currencySymbol, accentColor }: { items: LineItem
             </thead>
             <tbody>
             {items.map(item => (
-                <tr key={item.id} className="border-b">
+                <tr key={item.id} className="border-b" data-element="table-row">
                 <td className="p-3 whitespace-pre-line">{item.name || <span className="text-gray-400">{t.itemDescription}</span>}</td>
                 <td className="p-3 text-center tabular-nums">{item.quantity}</td>
                 <td className="p-3 text-right tabular-nums">{currencySymbol}{item.rate.toFixed(2)}</td>
@@ -107,32 +106,48 @@ const ItemsTable = ({ items, t, currencySymbol, accentColor }: { items: LineItem
     </section>
 );
 
-const InvoiceFooter = ({ invoice, t, subtotal, taxAmount, discountAmount, total, currencySymbol, accentColor }: {
-    invoice: Invoice, t: any, subtotal: number, taxAmount: number, discountAmount: number, total: number, currencySymbol: string, accentColor: string
+const InvoiceFooter = ({ invoice, t, subtotal, taxAmount, discountAmount, total, currencySymbol, accentColor, balanceDue, footerRef }: {
+    invoice: Invoice, t: any, subtotal: number, taxAmount: number, discountAmount: number, total: number, currencySymbol: string, accentColor: string, balanceDue: number, footerRef?: React.RefObject<HTMLDivElement>
 }) => (
-    <>
+    <div className="avoid-page-break" ref={footerRef}>
         <section className="flex justify-end mt-8">
             <div className="w-full max-w-xs space-y-2">
                 <div className="flex justify-between text-sm">
                 <span className="text-muted-foreground">{t.subtotal}</span>
                 <span className="font-medium tabular-nums">{currencySymbol}{subtotal.toFixed(2)}</span>
                 </div>
+                {invoice.discount > 0 && (
+                    <div className="flex justify-between text-sm">
+                        <span className="text-muted-foreground">{t.discount} ({invoice.discount}%)</span>
+                        <span className="font-medium text-destructive tabular-nums">-{currencySymbol}{discountAmount.toFixed(2)}</span>
+                    </div>
+                )}
+                {invoice.shippingCost > 0 && (
+                     <div className="flex justify-between text-sm">
+                        <span className="text-muted-foreground">Shipping Cost</span>
+                        <span className="font-medium tabular-nums">{currencySymbol}{invoice.shippingCost.toFixed(2)}</span>
+                    </div>
+                )}
                 {invoice.tax > 0 && (
                 <div className="flex justify-between text-sm">
                 <span className="text-muted-foreground">{t.tax} ({invoice.tax}%)</span>
                 <span className="font-medium tabular-nums">{currencySymbol}{taxAmount.toFixed(2)}</span>
                 </div>
                 )}
-                {invoice.discount > 0 && (
-                <div className="flex justify-between text-sm">
-                <span className="text-muted-foreground">{t.discount} ({invoice.discount}%)</span>
-                <span className="font-medium text-destructive tabular-nums">-{currencySymbol}{discountAmount.toFixed(2)}</span>
-                </div>
-                )}
                 <Separator className="my-2" />
                 <div className="flex justify-between items-center font-bold text-lg">
                 <span>{t.total}</span>
-                <span className="tabular-nums" style={{ color: accentColor }}>{currencySymbol}{total.toFixed(2)}</span>
+                <span className="tabular-nums">{currencySymbol}{total.toFixed(2)}</span>
+                </div>
+                 {invoice.amountPaid > 0 && (
+                    <div className="flex justify-between text-sm">
+                        <span className="text-muted-foreground">Amount Paid</span>
+                        <span className="font-medium tabular-nums">-{currencySymbol}{invoice.amountPaid.toFixed(2)}</span>
+                    </div>
+                )}
+                <div className="flex justify-between items-center font-bold text-lg p-3 mt-2 rounded-md" style={{backgroundColor: accentColor, color: 'white'}}>
+                    <span>Balance Due</span>
+                    <span className="tabular-nums">{currencySymbol}{balanceDue.toFixed(2)}</span>
                 </div>
             </div>
         </section>
@@ -143,18 +158,18 @@ const InvoiceFooter = ({ invoice, t, subtotal, taxAmount, discountAmount, total,
                 <p className="text-sm text-muted-foreground mt-1 whitespace-pre-line">{invoice.paymentInstructions}</p>
             </footer>
         )}
-    </>
+    </div>
 );
 
 
 // --- TEMPLATE: Default ---
 const DefaultTemplatePage = ({ pageItems, pageIndex, totalPages, ...commonProps }: PageProps) => (
-    <div className={pageIndex < totalPages - 1 ? "page-break" : ""}>
+    <div className={`invoice-page ${pageIndex < totalPages - 1 ? "page-break" : ""}`}>
         <div className="p-8 md:p-10">
             <InvoiceHeader {...commonProps} />
             <ClientDetails invoice={commonProps.invoice} t={commonProps.t} />
             <ItemsTable items={pageItems} t={commonProps.t} currencySymbol={commonProps.currencySymbol} />
-            {pageIndex === totalPages - 1 && <InvoiceFooter {...commonProps} />}
+            {pageIndex === totalPages - 1 && <InvoiceFooter {...commonProps} balanceDue={commonProps.balanceDue} />}
         </div>
     </div>
 );
@@ -162,9 +177,9 @@ const DefaultTemplatePage = ({ pageItems, pageIndex, totalPages, ...commonProps 
 
 // --- TEMPLATE: Modern ---
 const ModernTemplatePage = ({ pageItems, pageIndex, totalPages, ...commonProps }: PageProps) => (
-     <div className={pageIndex < totalPages - 1 ? "page-break" : ""}>
+     <div className={`invoice-page ${pageIndex < totalPages - 1 ? "page-break" : ""}`}>
         <div className="p-8 md:p-10">
-            <header className="mb-10">
+            <header className="mb-10" data-element="header">
                 <div className="p-6 rounded-lg flex justify-between items-start" style={{backgroundColor: commonProps.accentColor, color: 'white'}}>
                     <div>
                         {commonProps.logoUrl ? (
@@ -187,16 +202,16 @@ const ModernTemplatePage = ({ pageItems, pageIndex, totalPages, ...commonProps }
             </header>
             <ClientDetails invoice={commonProps.invoice} t={commonProps.t} />
             <ItemsTable items={pageItems} t={commonProps.t} currencySymbol={commonProps.currencySymbol} accentColor={commonProps.accentColor} />
-            {pageIndex === totalPages - 1 && <InvoiceFooter {...commonProps} />}
+            {pageIndex === totalPages - 1 && <InvoiceFooter {...commonProps} balanceDue={commonProps.balanceDue} />}
         </div>
     </div>
 )
 
 // --- TEMPLATE: Elegant ---
 const ElegantTemplatePage = ({ pageItems, pageIndex, totalPages, ...commonProps }: PageProps) => (
-    <div className={pageIndex < totalPages - 1 ? "page-break" : ""}>
+    <div className={`invoice-page ${pageIndex < totalPages - 1 ? "page-break" : ""}`}>
         <div className="p-8 md:p-10 m-4 border">
-            <header className="text-center mb-12">
+            <header className="text-center mb-12" data-element="header">
                 <div>
                     {commonProps.logoUrl ? (
                         <Image src={commonProps.logoUrl} alt={`${commonProps.invoice.companyName} Logo`} width={120} height={40} className="object-contain mx-auto mb-4" data-ai-hint="logo" />
@@ -209,7 +224,7 @@ const ElegantTemplatePage = ({ pageItems, pageIndex, totalPages, ...commonProps 
                     </div>
                 </div>
             </header>
-            <div className="flex justify-between items-start mb-8">
+            <div className="flex justify-between items-start mb-8" data-element="client-details">
                 <div className="text-left space-y-1">
                     <p className="text-sm font-semibold text-gray-500">{commonProps.t.billTo}</p>
                     <p className="font-bold">{commonProps.invoice.clientName}</p>
@@ -235,7 +250,7 @@ const ElegantTemplatePage = ({ pageItems, pageIndex, totalPages, ...commonProps 
             </div>
 
             <ItemsTable items={pageItems} t={commonProps.t} currencySymbol={commonProps.currencySymbol} />
-            {pageIndex === totalPages - 1 && <InvoiceFooter {...commonProps}/>}
+            {pageIndex === totalPages - 1 && <InvoiceFooter {...commonProps} balanceDue={commonProps.balanceDue} />}
         </div>
     </div>
 )
@@ -243,14 +258,12 @@ const ElegantTemplatePage = ({ pageItems, pageIndex, totalPages, ...commonProps 
 // --- TEMPLATE: USA ---
 const UsaTemplatePage = ({ pageItems, pageIndex, totalPages, ...commonProps }: PageProps) => {
     const { invoice, logoUrl, t, currencySymbol, subtotal, taxAmount, discountAmount, total, balanceDue, accentColor } = commonProps;
-
     const finalShippingAddress = invoice.shippingAddress || invoice.clientAddress;
 
     return (
-        <div className={pageIndex < totalPages - 1 ? "page-break" : ""}>
+        <div className={`invoice-page ${pageIndex < totalPages - 1 ? "page-break" : ""}`}>
             <div className="p-10 font-sans text-sm text-gray-800">
-                {/* Header */}
-                <header className="flex justify-between items-start pb-6 border-b-2" style={{borderColor: accentColor}}>
+                <header className="flex justify-between items-start pb-6 border-b-2" style={{borderColor: accentColor}} data-element="header">
                     <div className="w-1/2">
                         {logoUrl ? (
                             <Image src={logoUrl} alt={`${invoice.companyName} Logo`} width={160} height={80} className="object-contain" data-ai-hint="logo" />
@@ -288,8 +301,7 @@ const UsaTemplatePage = ({ pageItems, pageIndex, totalPages, ...commonProps }: P
                     </div>
                 </header>
 
-                {/* Client Info */}
-                <section className="grid grid-cols-2 gap-8 mt-6">
+                <section className="grid grid-cols-2 gap-8 mt-6" data-element="client-details">
                     <div>
                         <p className="font-bold text-xs uppercase text-gray-500">Bill To</p>
                         <p className="font-bold text-gray-700">{invoice.clientName}</p>
@@ -303,11 +315,10 @@ const UsaTemplatePage = ({ pageItems, pageIndex, totalPages, ...commonProps }: P
                     </div>
                 </section>
                 
-                {/* Items Table */}
                  <section className="mt-8">
-                    <table className="w-full text-left">
+                    <table className="w-full text-left" data-element="items-table">
                         <thead>
-                        <tr style={{backgroundColor: accentColor, color: 'white'}} className="text-xs uppercase">
+                        <tr style={{backgroundColor: accentColor, color: 'white'}} className="text-xs uppercase" data-element="table-header">
                             <th className="p-3 font-semibold w-1/2">Description</th>
                             <th className="p-3 font-semibold text-right">Quantity</th>
                             <th className="p-3 font-semibold text-right">Rate</th>
@@ -316,7 +327,7 @@ const UsaTemplatePage = ({ pageItems, pageIndex, totalPages, ...commonProps }: P
                         </thead>
                         <tbody>
                         {pageItems.map(item => (
-                            <tr key={item.id} className="border-b">
+                            <tr key={item.id} className="border-b" data-element="table-row">
                                 <td className="p-3 align-top">
                                     <p className="font-medium">{item.name || <span className="text-gray-400">Item description</span>}</p>
                                 </td>
@@ -329,70 +340,9 @@ const UsaTemplatePage = ({ pageItems, pageIndex, totalPages, ...commonProps }: P
                     </table>
                 </section>
 
-
                 {pageIndex === totalPages - 1 && (
-                    <div className="grid grid-cols-2 gap-8 mt-6">
-                        {/* Payment Instructions */}
-                        <div>
-                             {invoice.paymentInstructions && (
-                                <div className="text-xs">
-                                    <p className="font-bold text-gray-500 uppercase">Payment Instructions</p>
-                                    <div className="mt-2 text-gray-600 whitespace-pre-line">
-                                        {invoice.paymentInstructions}
-                                    </div>
-                                </div>
-                             )}
-                        </div>
-
-                        {/* Totals */}
-                        <div className="text-sm">
-                             <div className="space-y-1">
-                                <div className="flex justify-between">
-                                    <span className="text-gray-500">Subtotal</span>
-                                    <span className="font-medium tabular-nums">{currencySymbol}{subtotal.toFixed(2)}</span>
-                                </div>
-                                 {invoice.discount > 0 && (
-                                    <div className="flex justify-between">
-                                        <span className="text-gray-500">Discount ({invoice.discount}%)</span>
-                                        <span className="font-medium tabular-nums">-{currencySymbol}{discountAmount.toFixed(2)}</span>
-                                    </div>
-                                )}
-                                {invoice.shippingCost > 0 && (
-                                    <div className="flex justify-between">
-                                        <span className="text-gray-500">Shipping Cost</span>
-                                        <span className="font-medium tabular-nums">{currencySymbol}{invoice.shippingCost.toFixed(2)}</span>
-                                    </div>
-                                )}
-                                {invoice.tax > 0 && (
-                                    <div className="flex justify-between">
-                                        <span className="text-gray-500">Sales Tax ({invoice.tax}%)</span>
-                                        <span className="font-medium tabular-nums">{currencySymbol}{taxAmount.toFixed(2)}</span>
-                                    </div>
-                                )}
-                                <div className="flex justify-between font-bold">
-                                    <span className="text-gray-500">Total</span>
-                                    <span className="tabular-nums">{currencySymbol}{total.toFixed(2)}</span>
-                                </div>
-                                {invoice.amountPaid > 0 && (
-                                    <div className="flex justify-between">
-                                        <span className="text-gray-500">Amount Paid</span>
-                                        <span className="font-medium tabular-nums">-{currencySymbol}{invoice.amountPaid.toFixed(2)}</span>
-                                    </div>
-                                )}
-                                 <div className="flex justify-between items-center font-bold text-lg p-3 mt-2 rounded-md" style={{backgroundColor: accentColor, color: 'white'}}>
-                                    <span>Balance Due</span>
-                                    <span className="tabular-nums">{currencySymbol}{balanceDue.toFixed(2)}</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    <InvoiceFooter {...commonProps} balanceDue={balanceDue} />
                 )}
-                 {pageIndex === totalPages - 1 && (
-                    <footer className="text-center mt-16 text-xs text-gray-500">
-                        <p>Thank you for your business!</p>
-                    </footer>
-                )}
-
             </div>
         </div>
     );
@@ -406,15 +356,23 @@ const templates = {
     usa: UsaTemplatePage,
 };
 
+
+const PAGE_HEIGHT = 1056; // 11 inches at 96 DPI for Letter size
+const PAGE_PADDING = 80;
+const AVAILABLE_HEIGHT = PAGE_HEIGHT - PAGE_PADDING;
+
+
 // --- MAIN PREVIEW COMPONENT ---
 export function InvoicePreview({ invoice, logoUrl, accentColor, id = 'invoice-preview', isPrint = false }: InvoicePreviewProps) {
+  const [paginatedItems, setPaginatedItems] = useState<LineItem[][]>([invoice.items]);
+  const containerRef = useRef<HTMLDivElement>(null);
+
   const subtotal = invoice.items.reduce((acc, item) => acc + item.quantity * item.rate, 0);
   const taxAmount = (subtotal * invoice.tax) / 100;
   const discountAmount = (subtotal * invoice.discount) / 100;
   const total = subtotal + taxAmount - discountAmount + (invoice.shippingCost || 0);
   const balanceDue = total - (invoice.amountPaid || 0);
   const currencySymbol = currencySymbols[invoice.currency] || '$';
-
   const t = locales[invoice.language as keyof typeof locales] || locales.en;
 
   const previewStyle = {
@@ -424,6 +382,70 @@ export function InvoicePreview({ invoice, logoUrl, accentColor, id = 'invoice-pr
 
   const TemplateComponent = templates[invoice.template as keyof typeof templates] || templates.default;
   
+  useLayoutEffect(() => {
+    if (!isPrint || !containerRef.current) return;
+
+    const measureAndPaginate = () => {
+      const container = containerRef.current!;
+      const header = container.querySelector('[data-element="header"]') as HTMLElement;
+      const clientDetails = container.querySelector('[data-element="client-details"]') as HTMLElement;
+      const tableHeader = container.querySelector('[data-element="table-header"]') as HTMLElement;
+      const footer = container.querySelector('.avoid-page-break') as HTMLElement;
+      const allRows = Array.from(container.querySelectorAll('[data-element="table-row"]')) as HTMLElement[];
+
+      if (!header || !clientDetails || !tableHeader || !footer) return;
+      
+      const headerHeight = header.offsetHeight + clientDetails.offsetHeight;
+      const tableHeaderHeight = tableHeader.offsetHeight;
+      const footerHeight = footer.offsetHeight;
+
+      let currentPage = 0;
+      let currentPageHeight = headerHeight;
+      let newPages: LineItem[][] = [[]];
+
+      // Paginate items
+      allRows.forEach((row, index) => {
+        const itemHeight = row.offsetHeight;
+        let potentialHeight = currentPageHeight + (newPages[currentPage].length === 0 ? tableHeaderHeight : 0) + itemHeight;
+
+        // Check if footer fits on this page
+        if(index === allRows.length - 1) { // last item
+            potentialHeight += footerHeight;
+        }
+
+        if (potentialHeight > AVAILABLE_HEIGHT) {
+            currentPage++;
+            newPages[currentPage] = [];
+            currentPageHeight = headerHeight + tableHeaderHeight;
+        }
+        
+        newPages[currentPage].push(invoice.items[index]);
+        currentPageHeight += itemHeight;
+      });
+
+      // After paginating items, check if footer fits on the last page
+      const lastPageItemHeight = newPages[currentPage].reduce((acc, item, index) => {
+          const row = allRows.find(r => r.textContent?.includes(item.name));
+          return acc + (row?.offsetHeight || 0);
+      }, 0);
+      const lastPageHeight = headerHeight + tableHeaderHeight + lastPageItemHeight + footerHeight;
+
+      if(lastPageHeight > AVAILABLE_HEIGHT && newPages[currentPage].length > 0) {
+          currentPage++;
+          newPages[currentPage] = []; // Empty page for the footer
+      }
+
+      setPaginatedItems(newPages);
+    };
+
+    // We need to render the full list first to measure, then re-render with pagination.
+    // A timeout helps ensure the DOM is ready for measurement.
+    const timer = setTimeout(measureAndPaginate, 100);
+    return () => clearTimeout(timer);
+
+  }, [invoice, logoUrl, accentColor, t, isPrint]);
+
+
   const commonProps: Omit<PageProps, 'pageItems' | 'pageIndex' | 'totalPages'> = {
     invoice,
     logoUrl,
@@ -438,20 +460,15 @@ export function InvoicePreview({ invoice, logoUrl, accentColor, id = 'invoice-pr
   };
 
   if (isPrint) {
-    const itemPages = [];
-    for (let i = 0; i < invoice.items.length; i += ITEMS_PER_PAGE) {
-      itemPages.push(invoice.items.slice(i, i + ITEMS_PER_PAGE));
-    }
-    
     return (
-      <div id={id} className="bg-white text-gray-800" style={previewStyle}>
-        {itemPages.map((pageItems, pageIndex) => (
+      <div id={id} className="bg-white text-gray-800" style={previewStyle} ref={containerRef}>
+        {paginatedItems.map((pageItems, pageIndex) => (
           <TemplateComponent
             key={pageIndex}
             {...commonProps}
             pageItems={pageItems}
             pageIndex={pageIndex}
-            totalPages={itemPages.length}
+            totalPages={paginatedItems.length}
           />
         ))}
       </div>

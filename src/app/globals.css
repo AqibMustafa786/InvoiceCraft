@@ -102,6 +102,10 @@
   .page-break {
     break-after: page;
   }
+
+  .avoid-page-break {
+    page-break-inside: avoid;
+  }
 }
 
 @page {
