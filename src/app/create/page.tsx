@@ -20,6 +20,7 @@ const initialInvoice: Invoice = {
   companyAddress: '123 Main St, Anytown, USA',
   clientName: 'Client Company',
   clientAddress: '456 Oak Ave, Someplace, USA',
+  clientEmail: '', // Initialize clientEmail to fix uncontrolled input error
   invoiceNumber: 'INV-001',
   invoiceDate: new Date(),
   dueDate: addDays(new Date(), 7),
