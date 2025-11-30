@@ -9,6 +9,7 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
+import Image from 'next/image';
 
 interface Template {
   id: string;
@@ -76,9 +77,8 @@ export function TemplateSelector({ selectedTemplate, onSelectTemplate }: Templat
                   selectedTemplate === template.id ? 'border-primary ring-2 ring-primary/50' : 'border-border hover:border-primary/50'
                 )}
               >
-                <div className="aspect-[3/4] w-full bg-muted flex items-center justify-center">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={template.thumbnailUrl} alt={template.name} className="object-cover object-top w-full h-full" />
+                <div className="aspect-[3/4] w-full bg-muted flex items-center justify-center relative">
+                  <Image src={template.thumbnailUrl} alt={template.name} fill className="object-cover object-top" />
                 </div>
                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                     <span className="text-white font-bold">Select</span>
