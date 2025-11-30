@@ -4,7 +4,7 @@ import { cn } from '@/lib/utils';
 import { Toaster } from '@/components/ui/toaster';
 import { Footer } from '@/components/footer';
 import { ThemeProvider } from '@/components/theme-provider';
-import { SidebarProvider } from '@/components/ui/sidebar';
+import { SidebarProvider, SidebarInset } from '@/components/ui/sidebar';
 import { AppSidebar } from '@/components/sidebar';
 
 export const metadata: Metadata = {
@@ -37,10 +37,10 @@ export default function RootLayout({
           >
           <SidebarProvider>
             <AppSidebar />
-            <div className="app-main-container relative flex min-h-screen flex-col">
+            <SidebarInset>
               <main className="flex-1">{children}</main>
               <Footer />
-            </div>
+            </SidebarInset>
           </SidebarProvider>
           <Toaster />
           <div id="print-container" className="hidden print:block"></div>
