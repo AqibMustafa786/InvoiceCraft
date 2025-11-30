@@ -38,22 +38,25 @@ export function Footer() {
               <Link href="/#features" className="text-sm transition-colors text-muted-foreground hover:text-foreground">Features</Link>
               <Link href="/pricing" className="text-sm transition-colors text-muted-foreground hover:text-foreground">Pricing</Link>
               <Link href="/create" className="text-sm transition-colors text-muted-foreground hover:text-foreground">Create Invoice</Link>
+              <Link href="/faq" className="text-sm transition-colors text-muted-foreground hover:text-foreground">FAQs</Link>
             </nav>
           </div>
           <div>
             <h4 className="mb-4 font-semibold text-foreground">Company</h4>
             <nav className="flex flex-col gap-3">
-              <Link href="/about" className="text-sm transition-colors text-muted-foreground hover:text-foreground">About Us</Link>
+              <Link href="/about" className="text-sm transition-colors text-muted-foreground hover:text-foreground">About us</Link>
+              <Link href="/contact" className="text-sm transition-colors text-muted-foreground hover:text-foreground">Contact us</Link>
               <Link href="/blog" className="text-sm transition-colors text-muted-foreground hover:text-foreground">Blog</Link>
-              <Link href="/careers" className="text-sm transition-colors text-muted-foreground hover:text-foreground">Careers</Link>
+              <Link href="/press" className="text-sm transition-colors text-muted-foreground hover:text-foreground">Press</Link>
             </nav>
           </div>
           <div>
-            <h4 className="mb-4 font-semibold text-foreground">Resources</h4>
+            <h4 className="mb-4 font-semibold text-foreground">Legal</h4>
             <nav className="flex flex-col gap-3">
-              <Link href="/help" className="text-sm transition-colors text-muted-foreground hover:text-foreground">Help Center</Link>
-              <Link href="/contact" className="text-sm transition-colors text-muted-foreground hover:text-foreground">Contact Us</Link>
-              <Link href="/faq" className="text-sm transition-colors text-muted-foreground hover:text-foreground">FAQs</Link>
+              <Link href="/security" className="text-sm transition-colors text-muted-foreground hover:text-foreground">Security</Link>
+              <Link href="/privacy" className="text-sm transition-colors text-muted-foreground hover:text-foreground">Privacy policy</Link>
+              <Link href="/terms" className="text-sm transition-colors text-muted-foreground hover:text-foreground">Terms & conditions</Link>
+              <Link href="/cookies" className="text-sm transition-colors text-muted-foreground hover:text-foreground">Cookies</Link>
             </nav>
           </div>
         </div>
@@ -66,10 +69,6 @@ export function Footer() {
             <p className="text-sm text-muted-foreground">
                 &copy; {new Date().getFullYear()} InvoiceCraft. All rights reserved.
             </p>
-            <div className="flex gap-4">
-                <Link href="/privacy" className="text-sm transition-colors text-muted-foreground hover:text-foreground">Privacy Policy</Link>
-                <Link href="/terms" className="text-sm transition-colors text-muted-foreground hover:text-foreground">Terms of Service</Link>
-            </div>
         </div>
       </div>
     </footer>

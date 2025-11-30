@@ -39,33 +39,6 @@ export function Header() {
           >
             Pricing
           </Link>
-
-          <DropdownMenu>
-            <DropdownMenuTrigger className="flex items-center gap-1 font-medium transition-colors text-muted-foreground hover:text-foreground focus:outline-none">
-              Blog <ChevronDown className="w-4 h-4" />
-            </DropdownMenuTrigger>
-            <DropdownMenuContent>
-              <DropdownMenuItem asChild>
-                <Link href="/blog">All Posts</Link>
-              </DropdownMenuItem>
-              <DropdownMenuItem asChild>
-                <Link href="/blog/creating-your-first-invoice">Creating Your First Invoice</Link>
-              </DropdownMenuItem>
-              <DropdownMenuItem asChild>
-                <Link href="/blog/writing-effective-descriptions">Writing Effective Descriptions</Link>
-              </DropdownMenuItem>
-              <DropdownMenuItem asChild>
-                <Link href="/blog/sending-invoices-best-practices">Sending Invoices</Link>
-              </DropdownMenuItem>
-              <DropdownMenuItem asChild>
-                <Link href="/blog/managing-invoice-payments">Managing Payments</Link>
-              </DropdownMenuItem>
-              <DropdownMenuItem asChild>
-                <Link href="/blog/why-use-an-invoice-generator">Why Use Our App?</Link>
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-
            <Link
             href="/contact"
             className="font-medium transition-colors text-muted-foreground hover:text-foreground"
