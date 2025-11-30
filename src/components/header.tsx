@@ -29,7 +29,7 @@ export function Header() {
 
                 <nav className="hidden md:flex items-center space-x-6 text-sm font-medium">
                     {navLinks.map(link => {
-                        const isActive = pathname === link.href;
+                        const isActive = pathname.startsWith(link.href);
                         return (
                             <Link 
                                 key={link.href} 
@@ -70,7 +70,7 @@ export function Header() {
                                 <span className="text-lg font-bold text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent">InvoiceCraft</span>
                             </Link>
                             {navLinks.map(link => {
-                                const isActive = pathname === link.href;
+                                const isActive = pathname.startsWith(link.href);
                                 return (
                                 <Link 
                                     key={link.href} 
