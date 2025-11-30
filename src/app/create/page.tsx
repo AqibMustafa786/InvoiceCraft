@@ -73,11 +73,12 @@ export default function CreateInvoicePage() {
   useEffect(() => {
     // Initialize state on the client to avoid hydration mismatch
     const initialInvoice = getInitialInvoice();
-    setInvoice(initialInvoice);
-
+    
     const draftId = searchParams.get('draftId');
     if (draftId) {
       loadDraft(draftId, initialInvoice);
+    } else {
+      setInvoice(initialInvoice);
     }
     
     if (typeof window !== 'undefined' && document) {
