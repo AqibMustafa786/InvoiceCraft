@@ -54,7 +54,10 @@ const InvoiceHeader = ({ invoice, logoUrl, accentColor, t }: CommonTemplateProps
             ) : (
                 <h1 className="text-3xl font-bold font-headline" style={{ color: accentColor }}>{invoice.companyName}</h1>
             )}
-            <p className="text-muted-foreground text-sm mt-2 whitespace-pre-line">{invoice.companyAddress}</p>
+            <div className="text-muted-foreground text-sm mt-2 space-y-1">
+              <p className="whitespace-pre-line">{invoice.companyAddress}</p>
+              {invoice.companyPhone && <p>{invoice.companyPhone}</p>}
+            </div>
         </div>
         <div className="text-right">
             <h2 className="text-3xl font-bold text-gray-400 uppercase tracking-wider">{t.invoice}</h2>
@@ -171,6 +174,10 @@ const ModernTemplatePage = ({ pageItems, pageIndex, totalPages, ...commonProps }
                         ) : (
                             <h1 className="text-3xl font-bold font-headline">{commonProps.invoice.companyName}</h1>
                         )}
+                        <div className="text-white/80 text-sm mt-2 space-y-1">
+                            <p className="whitespace-pre-line">{commonProps.invoice.companyAddress}</p>
+                            {commonProps.invoice.companyPhone && <p>{commonProps.invoice.companyPhone}</p>}
+                        </div>
                     </div>
                     <div className="text-right">
                         <h2 className="text-3xl font-bold uppercase tracking-wider">{commonProps.t.invoice}</h2>
@@ -196,7 +203,10 @@ const ElegantTemplatePage = ({ pageItems, pageIndex, totalPages, ...commonProps 
                     ) : (
                         <h1 className="text-4xl font-bold font-headline" style={{ color: commonProps.accentColor }}>{commonProps.invoice.companyName}</h1>
                     )}
-                    <p className="text-muted-foreground text-sm mt-2 whitespace-pre-line">{commonProps.invoice.companyAddress}</p>
+                    <div className="text-muted-foreground text-sm mt-2 space-y-1">
+                        <p className="whitespace-pre-line">{commonProps.invoice.companyAddress}</p>
+                        {commonProps.invoice.companyPhone && <p>{commonProps.invoice.companyPhone}</p>}
+                    </div>
                 </div>
             </header>
             <div className="flex justify-between items-start mb-8">
@@ -247,9 +257,10 @@ const UsaTemplatePage = ({ pageItems, pageIndex, totalPages, ...commonProps }: P
                         ) : (
                              <h1 className="text-3xl font-bold font-headline" style={{ color: accentColor }}>{invoice.companyName}</h1>
                         )}
-                        <div className="mt-4 text-xs text-gray-500">
+                        <div className="mt-4 text-xs text-gray-500 space-y-1">
                             <p className="font-bold text-base text-gray-700">{invoice.companyName}</p>
                             <p className="whitespace-pre-line">{invoice.companyAddress}</p>
+                            {invoice.companyPhone && <p>{invoice.companyPhone}</p>}
                         </div>
                     </div>
                     <div className="w-1/2 text-right">

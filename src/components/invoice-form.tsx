@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { DatePicker } from '@/components/ui/datepicker';
-import { ImageUp, Plus, Trash2, Palette, X, Mail, Truck, Hash, Wallet, Building } from 'lucide-react';
+import { ImageUp, Plus, Trash2, Palette, X, Mail, Truck, Hash, Wallet, Phone } from 'lucide-react';
 import Image from 'next/image';
 import {
   Select,
@@ -191,13 +191,18 @@ export function InvoiceForm({ invoice, setInvoice, logoUrl, setLogoUrl, accentCo
           <CardTitle>Bill From</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="companyName">Company Name</Label>
-            <Input id="companyName" name="companyName" value={invoice.companyName} onChange={handleInputChange} />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="companySlogan">Company Slogan</Label>
-            <Input id="companySlogan" name="companySlogan" value={invoice.companySlogan} onChange={handleInputChange} />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="companyName">Company Name</Label>
+              <Input id="companyName" name="companyName" value={invoice.companyName} onChange={handleInputChange} />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="companyPhone">Phone #</Label>
+              <div className="relative flex items-center">
+                  <Phone className="absolute left-3 h-5 w-5 text-muted-foreground" />
+                  <Input id="companyPhone" name="companyPhone" value={invoice.companyPhone} onChange={handleInputChange} className="pl-10" />
+              </div>
+            </div>
           </div>
           <div className="space-y-2">
             <Label htmlFor="companyAddress">Company Address</Label>

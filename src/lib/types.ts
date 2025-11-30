@@ -10,7 +10,7 @@ export type InvoiceStatus = 'draft' | 'sent' | 'paid' | 'overdue';
 export interface Invoice {
   id: string; 
   companyName: string;
-  companySlogan: string;
+  companyPhone: string;
   companyAddress: string;
   clientName: string;
   clientAddress: string;
