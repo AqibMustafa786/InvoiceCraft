@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { DatePicker } from '@/components/ui/datepicker';
-import { ImageUp, Plus, Trash2, Palette, X, Mail, Truck, Hash, Wallet } from 'lucide-react';
+import { ImageUp, Plus, Trash2, Palette, X, Mail, Truck, Hash, Wallet, Building } from 'lucide-react';
 import Image from 'next/image';
 import {
   Select,
@@ -183,13 +183,18 @@ export function InvoiceForm({ invoice, setInvoice, logoUrl, setLogoUrl, accentCo
                     />
                 </div>
             </div>
-            <div className="md:col-span-2 space-y-2">
-              <Label>Invoice Template</Label>
-              <TemplateSelector 
-                selectedTemplate={invoice.template}
-                onSelectTemplate={(template) => setInvoice(prev => ({...prev, template}))}
-              />
-            </div>
+        </CardContent>
+      </Card>
+      
+      <Card>
+        <CardHeader>
+          <CardTitle>Invoice Template</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <TemplateSelector 
+            selectedTemplate={invoice.template}
+            onSelectTemplate={(template) => setInvoice(prev => ({...prev, template}))}
+          />
         </CardContent>
       </Card>
     
@@ -222,7 +227,7 @@ export function InvoiceForm({ invoice, setInvoice, logoUrl, setLogoUrl, accentCo
             <Label htmlFor="clientEmail">Client Email</Label>
             <div className="relative flex items-center">
                 <Mail className="absolute left-3 h-5 w-5 text-muted-foreground" />
-                <Input id="clientEmail" name="clientEmail" value={invoice.clientEmail} onChange={handleInputChange} className="pl-10" placeholder="client@example.com" />
+                <Input id="clientEmail" name="clientEmail" value={invoice.clientEmail || ''} onChange={handleInputChange} className="pl-10" placeholder="client@example.com" />
             </div>
           </div>
           <div className="space-y-2">
