@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { DatePicker } from '@/components/ui/datepicker';
-import { ImageUp, Plus, Trash2, Palette, X, Mail, Truck, Hash, Wallet, Ship } from 'lucide-react';
+import { ImageUp, Plus, Trash2, Palette, X, Mail, Truck, Hash, Wallet } from 'lucide-react';
 import Image from 'next/image';
 import {
   Select,
@@ -130,8 +130,6 @@ export function InvoiceForm({ invoice, setInvoice, logoUrl, setLogoUrl, accentCo
   };
   
   const currencySymbol = currencies.find(c => c.value === invoice.currency)?.label.split(' ')[1] || '$';
-  
-  const isUsaTemplate = invoice.template === 'usa';
 
   return (
     <div className="space-y-6">
@@ -224,19 +222,17 @@ export function InvoiceForm({ invoice, setInvoice, logoUrl, setLogoUrl, accentCo
             <Label htmlFor="clientEmail">Client Email</Label>
             <div className="relative flex items-center">
                 <Mail className="absolute left-3 h-5 w-5 text-muted-foreground" />
-                <Input id="clientEmail" name="clientEmail" value={invoice.clientEmail ?? ''} onChange={handleInputChange} className="pl-10" placeholder="client@example.com" />
+                <Input id="clientEmail" name="clientEmail" value={invoice.clientEmail} onChange={handleInputChange} className="pl-10" placeholder="client@example.com" />
             </div>
           </div>
           <div className="space-y-2">
             <Label htmlFor="clientAddress">Billing Address</Label>
             <Textarea id="clientAddress" name="clientAddress" value={invoice.clientAddress} onChange={handleInputChange} />
           </div>
-           {isUsaTemplate && (
-             <div className="space-y-2">
-                <Label htmlFor="shippingAddress">Shipping Address</Label>
-                <Textarea id="shippingAddress" name="shippingAddress" value={invoice.shippingAddress} onChange={handleInputChange} placeholder="Leave blank to use billing address"/>
-            </div>
-           )}
+          <div className="space-y-2">
+              <Label htmlFor="shippingAddress">Shipping Address (optional)</Label>
+              <Textarea id="shippingAddress" name="shippingAddress" value={invoice.shippingAddress} onChange={handleInputChange} placeholder="Leave blank to use billing address"/>
+          </div>
         </CardContent>
       </Card>
 
@@ -286,15 +282,13 @@ export function InvoiceForm({ invoice, setInvoice, logoUrl, setLogoUrl, accentCo
                     </SelectContent>
                 </Select>
             </div>
-             {isUsaTemplate && (
-                 <div className="space-y-2">
-                    <Label htmlFor="trackingNumber">Tracking Number</Label>
-                     <div className="relative flex items-center">
-                        <Hash className="absolute left-3 h-5 w-5 text-muted-foreground" />
-                        <Input id="trackingNumber" name="trackingNumber" value={invoice.trackingNumber} onChange={handleInputChange} className="pl-10" />
-                    </div>
-                </div>
-            )}
+            <div className="space-y-2">
+              <Label htmlFor="trackingNumber">Tracking Number</Label>
+                <div className="relative flex items-center">
+                  <Hash className="absolute left-3 h-5 w-5 text-muted-foreground" />
+                  <Input id="trackingNumber" name="trackingNumber" value={invoice.trackingNumber} onChange={handleInputChange} className="pl-10" />
+              </div>
+          </div>
         </CardContent>
       </Card>
 
@@ -372,24 +366,20 @@ export function InvoiceForm({ invoice, setInvoice, logoUrl, setLogoUrl, accentCo
               <Label htmlFor="discount">Discount (%)</Label>
               <Input id="discount" name="discount" type="number" value={invoice.discount} onChange={handleNumberChange} />
             </div>
-            {isUsaTemplate && (
-                <>
-                 <div className="space-y-2">
-                    <Label htmlFor="shippingCost">Shipping Cost</Label>
-                    <div className="relative flex items-center">
-                        <Truck className="absolute left-3 h-5 w-5 text-muted-foreground" />
-                        <Input id="shippingCost" name="shippingCost" type="number" value={invoice.shippingCost} onChange={handleNumberChange} className="pl-10"/>
-                    </div>
-                </div>
-                 <div className="space-y-2">
-                    <Label htmlFor="amountPaid">Amount Paid</Label>
-                     <div className="relative flex items-center">
-                        <Wallet className="absolute left-3 h-5 w-5 text-muted-foreground" />
-                        <Input id="amountPaid" name="amountPaid" type="number" value={invoice.amountPaid} onChange={handleNumberChange} className="pl-10"/>
-                    </div>
-                </div>
-                </>
-            )}
+            <div className="space-y-2">
+              <Label htmlFor="shippingCost">Shipping Cost</Label>
+              <div className="relative flex items-center">
+                  <Truck className="absolute left-3 h-5 w-5 text-muted-foreground" />
+                  <Input id="shippingCost" name="shippingCost" type="number" value={invoice.shippingCost} onChange={handleNumberChange} className="pl-10"/>
+              </div>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="amountPaid">Amount Paid</Label>
+                <div className="relative flex items-center">
+                  <Wallet className="absolute left-3 h-5 w-5 text-muted-foreground" />
+                  <Input id="amountPaid" name="amountPaid" type="number" value={invoice.amountPaid} onChange={handleNumberChange} className="pl-10"/>
+              </div>
+            </div>
           </div>
           <div className="space-y-2">
             <Label htmlFor="paymentInstructions">Payment Instructions / Notes</Label>
