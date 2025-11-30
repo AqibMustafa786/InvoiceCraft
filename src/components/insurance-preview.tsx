@@ -227,6 +227,7 @@ export function InsurancePreview({ document: doc, logoUrl, accentColor, id = 'in
         });
         
         const lastPageItemHeight = (newPages[currentPage] || []).reduce((total, item) => {
+            if (!item) return total;
             const itemIndex = doc.items.findIndex(i => i.id === item.id);
             return total + (allRows[itemIndex]?.offsetHeight || 0);
         }, 0);
@@ -250,7 +251,7 @@ export function InsurancePreview({ document: doc, logoUrl, accentColor, id = 'in
     const timer = setTimeout(measureAndPaginate, 50);
     return () => clearTimeout(timer);
 
-  }, [doc.items, isPrint, needsRemeasure, TemplateComponent]);
+  }, [doc.items, isPrint, needsRemeasure, TemplateComponent, doc]);
 
 
   const commonProps: Omit<PageProps, 'pageItems' | 'pageIndex' | 'totalPages'> = {
@@ -297,3 +298,5 @@ export function InsurancePreview({ document: doc, logoUrl, accentColor, id = 'in
     </Card>
   );
 }
+
+    
