@@ -78,7 +78,13 @@ export function TemplateSelector({ selectedTemplate, onSelectTemplate }: Templat
                 )}
               >
                 <div className="aspect-[3/4] w-full bg-muted flex items-center justify-center relative">
-                  <Image src={template.thumbnailUrl} alt={template.name} fill className="object-cover object-top" />
+                  <Image 
+                    src={template.thumbnailUrl} 
+                    alt={template.name} 
+                    width={300}
+                    height={400}
+                    className="object-cover object-top" 
+                  />
                 </div>
                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                     <span className="text-white font-bold">Select</span>
