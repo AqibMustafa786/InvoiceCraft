@@ -32,6 +32,7 @@ interface PageProps extends CommonTemplateProps {
     taxAmount: number;
     discountAmount: number;
     total: number;
+    balanceDue: number;
 }
 
 const currencySymbols: { [key: string]: string } = {
@@ -92,7 +93,7 @@ const ItemsTable = ({ items, t, currencySymbol, accentColor }: { items: LineItem
             <tbody>
             {items.map(item => (
                 <tr key={item.id} className="border-b">
-                <td className="p-3">{item.name || <span className="text-gray-400">{t.itemDescription}</span>}</td>
+                <td className="p-3 whitespace-pre-line">{item.name || <span className="text-gray-400">{t.itemDescription}</span>}</td>
                 <td className="p-3 text-center tabular-nums">{item.quantity}</td>
                 <td className="p-3 text-right tabular-nums">{currencySymbol}{item.rate.toFixed(2)}</td>
                 <td className="p-3 text-right tabular-nums font-medium">{currencySymbol}{(item.quantity * item.rate).toFixed(2)}</td>
@@ -133,10 +134,10 @@ const InvoiceFooter = ({ invoice, t, subtotal, taxAmount, discountAmount, total,
             </div>
         </section>
 
-        {invoice.notes && (
+        {invoice.paymentInstructions && (
             <footer className="mt-10">
                 <p className="text-sm font-semibold text-gray-500">{t.notes}</p>
-                <p className="text-sm text-muted-foreground mt-1 whitespace-pre-line">{invoice.notes}</p>
+                <p className="text-sm text-muted-foreground mt-1 whitespace-pre-line">{invoice.paymentInstructions}</p>
             </footer>
         )}
     </>
@@ -144,176 +145,241 @@ const InvoiceFooter = ({ invoice, t, subtotal, taxAmount, discountAmount, total,
 
 
 // --- TEMPLATE: Default ---
-const DefaultTemplatePage = ({ invoice, logoUrl, accentColor, t, currencySymbol, pageItems, pageIndex, totalPages, ...totals }: PageProps) => (
+const DefaultTemplatePage = ({ pageItems, pageIndex, totalPages, ...commonProps }: PageProps) => (
     <div className={pageIndex < totalPages - 1 ? "page-break" : ""}>
         <div className="p-8 md:p-10">
-            <InvoiceHeader invoice={invoice} logoUrl={logoUrl} accentColor={accentColor} t={t} currencySymbol={currencySymbol} />
-            <ClientDetails invoice={invoice} t={t} />
-            <ItemsTable items={pageItems} t={t} currencySymbol={currencySymbol} />
-            {pageIndex === totalPages - 1 && <InvoiceFooter invoice={invoice} t={t} {...totals} currencySymbol={currencySymbol} accentColor={accentColor}/>}
+            <InvoiceHeader {...commonProps} />
+            <ClientDetails invoice={commonProps.invoice} t={commonProps.t} />
+            <ItemsTable items={pageItems} t={commonProps.t} currencySymbol={commonProps.currencySymbol} />
+            {pageIndex === totalPages - 1 && <InvoiceFooter {...commonProps} />}
         </div>
     </div>
 );
 
 
 // --- TEMPLATE: Modern ---
-const ModernTemplatePage = ({ invoice, logoUrl, accentColor, t, currencySymbol, pageItems, pageIndex, totalPages, ...totals }: PageProps) => (
+const ModernTemplatePage = ({ pageItems, pageIndex, totalPages, ...commonProps }: PageProps) => (
      <div className={pageIndex < totalPages - 1 ? "page-break" : ""}>
         <div className="p-8 md:p-10">
             <header className="mb-10">
-                <div className="p-6 rounded-lg flex justify-between items-start" style={{backgroundColor: accentColor, color: 'white'}}>
+                <div className="p-6 rounded-lg flex justify-between items-start" style={{backgroundColor: commonProps.accentColor, color: 'white'}}>
                     <div>
-                        {logoUrl ? (
-                            <div className="bg-white p-2 rounded-md w-32 h-auto">
-                                <Image src={logoUrl} alt={`${invoice.companyName} Logo`} width={120} height={40} className="object-contain" data-ai-hint="logo"/>
+                        {commonProps.logoUrl ? (
+                            <div className="bg-white p-2 rounded-md inline-block">
+                                <Image src={commonProps.logoUrl} alt={`${commonProps.invoice.companyName} Logo`} width={120} height={40} className="object-contain" data-ai-hint="logo"/>
                             </div>
                         ) : (
-                            <h1 className="text-3xl font-bold font-headline">{invoice.companyName}</h1>
+                            <h1 className="text-3xl font-bold font-headline">{commonProps.invoice.companyName}</h1>
                         )}
                     </div>
                     <div className="text-right">
-                        <h2 className="text-3xl font-bold uppercase tracking-wider">{t.invoice}</h2>
-                        <p className="text-sm mt-1">{invoice.invoiceNumber}</p>
+                        <h2 className="text-3xl font-bold uppercase tracking-wider">{commonProps.t.invoice}</h2>
+                        <p className="text-sm mt-1">{commonProps.invoice.invoiceNumber}</p>
                     </div>
                 </div>
             </header>
-            <ClientDetails invoice={invoice} t={t} />
-            <ItemsTable items={pageItems} t={t} currencySymbol={currencySymbol} accentColor={accentColor} />
-            {pageIndex === totalPages - 1 && <InvoiceFooter invoice={invoice} t={t} {...totals} currencySymbol={currencySymbol} accentColor={accentColor}/>}
+            <ClientDetails invoice={commonProps.invoice} t={commonProps.t} />
+            <ItemsTable items={pageItems} t={commonProps.t} currencySymbol={commonProps.currencySymbol} accentColor={commonProps.accentColor} />
+            {pageIndex === totalPages - 1 && <InvoiceFooter {...commonProps} />}
         </div>
     </div>
 )
 
 // --- TEMPLATE: Elegant ---
-const ElegantTemplatePage = ({ invoice, logoUrl, accentColor, t, currencySymbol, pageItems, pageIndex, totalPages, ...totals }: PageProps) => (
+const ElegantTemplatePage = ({ pageItems, pageIndex, totalPages, ...commonProps }: PageProps) => (
     <div className={pageIndex < totalPages - 1 ? "page-break" : ""}>
         <div className="p-8 md:p-10 m-4 border">
             <header className="text-center mb-12">
                 <div>
-                    {logoUrl ? (
-                        <Image src={logoUrl} alt={`${invoice.companyName} Logo`} width={120} height={40} className="object-contain mx-auto mb-4" data-ai-hint="logo" />
+                    {commonProps.logoUrl ? (
+                        <Image src={commonProps.logoUrl} alt={`${commonProps.invoice.companyName} Logo`} width={120} height={40} className="object-contain mx-auto mb-4" data-ai-hint="logo" />
                     ) : (
-                        <h1 className="text-4xl font-bold font-headline" style={{ color: accentColor }}>{invoice.companyName}</h1>
+                        <h1 className="text-4xl font-bold font-headline" style={{ color: commonProps.accentColor }}>{commonProps.invoice.companyName}</h1>
                     )}
-                    <p className="text-muted-foreground text-sm mt-2 whitespace-pre-line">{invoice.companyAddress}</p>
+                    <p className="text-muted-foreground text-sm mt-2 whitespace-pre-line">{commonProps.invoice.companyAddress}</p>
                 </div>
             </header>
             <div className="flex justify-between items-start mb-8">
                 <div className="text-left space-y-1">
-                    <p className="text-sm font-semibold text-gray-500">{t.billTo}</p>
-                    <p className="font-bold">{invoice.clientName}</p>
-                    <p className="text-muted-foreground text-sm whitespace-pre-line">{invoice.clientAddress}</p>
+                    <p className="text-sm font-semibold text-gray-500">{commonProps.t.billTo}</p>
+                    <p className="font-bold">{commonProps.invoice.clientName}</p>
+                    <p className="text-muted-foreground text-sm whitespace-pre-line">{commonProps.invoice.clientAddress}</p>
                 </div>
                 <div className="text-right">
-                    <h2 className="text-4xl font-bold text-gray-800 uppercase tracking-wider mb-2">{t.invoice}</h2>
+                    <h2 className="text-4xl font-bold text-gray-800 uppercase tracking-wider mb-2">{commonProps.t.invoice}</h2>
                     <div className="space-y-1 text-sm">
                         <div className="flex justify-end">
-                            <span className="font-semibold text-gray-500 w-28 text-left">{t.invoice} #: &nbsp;</span>
-                            <span className="w-24 text-right">{invoice.invoiceNumber}</span>
+                            <span className="font-semibold text-gray-500 w-28 text-left">{commonProps.t.invoice} #: &nbsp;</span>
+                            <span className="w-24 text-right">{commonProps.invoice.invoiceNumber}</span>
                         </div>
                         <div className="flex justify-end">
-                            <span className="font-semibold text-gray-500 w-28 text-left">{t.invoiceDate}: &nbsp;</span>
-                            <span className="w-24 text-right">{format(invoice.invoiceDate, 'yyyy-MM-dd')}</span>
+                            <span className="font-semibold text-gray-500 w-28 text-left">{commonProps.t.invoiceDate}: &nbsp;</span>
+                            <span className="w-24 text-right">{format(commonProps.invoice.invoiceDate, 'yyyy-MM-dd')}</span>
                         </div>
                          <div className="flex justify-end">
-                            <span className="font-semibold text-gray-500 w-28 text-left">{t.dueDate}: &nbsp;</span>
-                            <span className="w-24 text-right">{format(invoice.dueDate, 'yyyy-MM-dd')}</span>
+                            <span className="font-semibold text-gray-500 w-28 text-left">{commonProps.t.dueDate}: &nbsp;</span>
+                            <span className="w-24 text-right">{format(commonProps.invoice.dueDate, 'yyyy-MM-dd')}</span>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <ItemsTable items={pageItems} t={t} currencySymbol={currencySymbol} />
-            {pageIndex === totalPages - 1 && <InvoiceFooter invoice={invoice} t={t} {...totals} currencySymbol={currencySymbol} accentColor={accentColor}/>}
+            <ItemsTable items={pageItems} t={commonProps.t} currencySymbol={commonProps.currencySymbol} />
+            {pageIndex === totalPages - 1 && <InvoiceFooter {...commonProps}/>}
         </div>
     </div>
 )
 
 // --- TEMPLATE: USA ---
-const UsaTemplatePage = ({ invoice, logoUrl, accentColor, t, currencySymbol, pageItems, pageIndex, totalPages, ...totals }: PageProps) => (
-    <div className={pageIndex < totalPages - 1 ? "page-break" : ""}>
-        <div className="p-12 text-sm">
-            <header className="flex justify-between items-start mb-8">
-                <div className="space-y-1">
-                    {logoUrl ? (
-                         <Image src={logoUrl} alt={`${invoice.companyName} Logo`} width={150} height={50} className="object-contain" data-ai-hint="logo" />
-                    ) : (
-                        <h1 className="text-2xl font-bold">{invoice.companyName}</h1>
-                    )}
-                    {invoice.companySlogan && <p className="text-muted-foreground text-xs">{invoice.companySlogan}</p>}
-                    <p className="text-muted-foreground text-xs whitespace-pre-line pt-2">{invoice.companyAddress}</p>
-                </div>
-                <div className="text-right">
-                    <h2 className="text-4xl font-bold text-gray-800 uppercase tracking-widest">INVOICE</h2>
-                    <div className="mt-2 space-y-1 text-xs">
-                        <div className="flex justify-end">
-                            <span className="text-gray-500 w-24 text-right">Invoice #</span>
-                            <span className="w-24 text-right font-medium">{invoice.invoiceNumber}</span>
-                        </div>
-                        <div className="flex justify-end">
-                            <span className="text-gray-500 w-24 text-right">Date</span>
-                            <span className="w-24 text-right font-medium">{format(invoice.invoiceDate, 'MMMM d, yyyy')}</span>
-                        </div>
-                         <div className="flex justify-end">
-                            <span className="text-gray-500 w-24 text-right">Due Date</span>
-                            <span className="w-24 text-right font-medium">{format(invoice.dueDate, 'MMMM d, yyyy')}</span>
+const UsaTemplatePage = ({ pageItems, pageIndex, totalPages, ...commonProps }: PageProps) => {
+    const { invoice, logoUrl, t, currencySymbol, subtotal, taxAmount, discountAmount, total, balanceDue, accentColor } = commonProps;
+
+    const finalShippingAddress = invoice.shippingAddress || invoice.clientAddress;
+
+    return (
+        <div className={pageIndex < totalPages - 1 ? "page-break" : ""}>
+            <div className="p-10 font-sans text-sm text-gray-800">
+                {/* Header */}
+                <header className="flex justify-between items-start pb-6 border-b-2" style={{borderColor: accentColor}}>
+                    <div className="w-1/2">
+                        {logoUrl ? (
+                            <Image src={logoUrl} alt={`${invoice.companyName} Logo`} width={160} height={80} className="object-contain" data-ai-hint="logo" />
+                        ) : (
+                             <h1 className="text-3xl font-bold font-headline" style={{ color: accentColor }}>{invoice.companyName}</h1>
+                        )}
+                        <div className="mt-4 text-xs text-gray-500">
+                            <p className="font-bold text-base text-gray-700">{invoice.companyName}</p>
+                            <p className="whitespace-pre-line">{invoice.companyAddress}</p>
                         </div>
                     </div>
-                </div>
-            </header>
-
-            <section className="grid grid-cols-2 gap-4 mb-8">
-                <div className="border p-4 rounded-md bg-gray-50/50 space-y-1">
-                    <h3 className="font-bold text-xs uppercase text-gray-500">Billing Address</h3>
-                    <p className="font-bold">{invoice.clientName}</p>
-                    <p className="text-muted-foreground whitespace-pre-line">{invoice.clientAddress}</p>
-                </div>
-                 <div className="border p-4 rounded-md bg-gray-50/50 space-y-1">
-                    <h3 className="font-bold text-xs uppercase text-gray-500">Delivery Address</h3>
-                     <p className="font-bold">{invoice.clientName}</p>
-                    <p className="text-muted-foreground whitespace-pre-line">{invoice.clientAddress}</p>
-                </div>
-            </section>
-
-            <ItemsTable items={pageItems} t={{...t, item: 'DESCRIPTION', quantity: 'QUANTITY', rate: 'UNIT PRICE', subtotal: 'AMOUNT'}} currencySymbol={currencySymbol} />
-            
-            {pageIndex === totalPages - 1 && (
-                <>
-                    <section className="flex justify-end mt-4">
-                        <div className="w-full max-w-sm space-y-2 text-sm">
-                             <div className="flex justify-between">
-                                <span className="text-gray-500">Subtotal</span>
-                                <span className="font-medium tabular-nums">{currencySymbol}{totals.subtotal.toFixed(2)}</span>
+                    <div className="w-1/2 text-right">
+                        <h2 className="text-4xl font-bold uppercase" style={{color: accentColor}}>INVOICE</h2>
+                         <div className="mt-4 space-y-1 text-xs">
+                            <div className="flex justify-end">
+                                <span className="text-gray-500 w-28 text-right">Invoice #</span>
+                                <span className="w-28 text-right font-medium">{invoice.invoiceNumber}</span>
                             </div>
-                            {invoice.tax > 0 && (
-                                <div className="flex justify-between">
-                                    <span className="text-gray-500">Sales Tax ({invoice.tax}%)</span>
-                                    <span className="font-medium tabular-nums">{currencySymbol}{totals.taxAmount.toFixed(2)}</span>
-                                </div>
-                            )}
-                             {invoice.discount > 0 && (
-                                <div className="flex justify-between">
-                                    <span className="text-gray-500">Discount ({invoice.discount}%)</span>
-                                    <span className="font-medium text-destructive tabular-nums">-{currencySymbol}{totals.discountAmount.toFixed(2)}</span>
-                                </div>
-                            )}
-                            <div className="border-t my-1"></div>
-                            <div className="flex justify-between border-t-2 border-black pt-2 font-bold">
-                                <span>TOTAL DUE</span>
-                                <span className="tabular-nums">{currencySymbol}{totals.total.toFixed(2)}</span>
+                            <div className="flex justify-end">
+                                <span className="text-gray-500 w-28 text-right">Invoice Date</span>
+                                <span className="w-28 text-right font-medium">{format(invoice.invoiceDate, 'MMM d, yyyy')}</span>
+                            </div>
+                            <div className="flex justify-end">
+                                <span className="text-gray-500 w-28 text-right">Due Date</span>
+                                <span className="w-28 text-right font-medium">{format(invoice.dueDate, 'MMM d, yyyy')}</span>
                             </div>
                         </div>
-                    </section>
-                     <footer className="text-center mt-12 text-xs text-gray-500">
-                        {invoice.notes && <p className="mb-4">{invoice.notes}</p>}
-                        <p>Make all cheques payable to <strong>{invoice.companyName}</strong></p>
-                        <p className="mt-4 font-bold text-gray-600">THANK YOU FOR YOUR BUSINESS!</p>
+                    </div>
+                </header>
+
+                {/* Client Info */}
+                <section className="grid grid-cols-2 gap-8 mt-6">
+                    <div>
+                        <p className="font-bold text-xs uppercase text-gray-500">Bill To</p>
+                        <p className="font-bold text-gray-700">{invoice.clientName}</p>
+                        <p className="text-gray-600 text-xs whitespace-pre-line">{invoice.clientAddress}</p>
+                    </div>
+                     <div>
+                        <p className="font-bold text-xs uppercase text-gray-500">Ship To</p>
+                        <p className="font-bold text-gray-700">{invoice.clientName}</p>
+                        <p className="text-gray-600 text-xs whitespace-pre-line">{finalShippingAddress}</p>
+                        {invoice.trackingNumber && <p className="text-xs text-gray-500 mt-2">Track #: {invoice.trackingNumber}</p>}
+                    </div>
+                </section>
+                
+                {/* Items Table */}
+                 <section className="mt-8">
+                    <table className="w-full text-left">
+                        <thead>
+                        <tr style={{backgroundColor: accentColor, color: 'white'}} className="text-xs uppercase">
+                            <th className="p-3 font-semibold w-1/2">Description</th>
+                            <th className="p-3 font-semibold text-right">Quantity</th>
+                            <th className="p-3 font-semibold text-right">Rate</th>
+                            <th className="p-3 font-semibold text-right">Amount</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {pageItems.map(item => (
+                            <tr key={item.id} className="border-b">
+                                <td className="p-3 align-top">
+                                    <p className="font-medium">{item.name || <span className="text-gray-400">Item description</span>}</p>
+                                </td>
+                                <td className="p-3 text-right tabular-nums align-top">{item.quantity}</td>
+                                <td className="p-3 text-right tabular-nums align-top">{currencySymbol}{item.rate.toFixed(2)}</td>
+                                <td className="p-3 text-right tabular-nums font-medium align-top">{currencySymbol}{(item.quantity * item.rate).toFixed(2)}</td>
+                            </tr>
+                        ))}
+                        </tbody>
+                    </table>
+                </section>
+
+
+                {pageIndex === totalPages - 1 && (
+                    <div className="grid grid-cols-2 gap-8 mt-6">
+                        {/* Payment Instructions */}
+                        <div>
+                             {invoice.paymentInstructions && (
+                                <div className="text-xs">
+                                    <p className="font-bold text-gray-500 uppercase">Payment Instructions</p>
+                                    <div className="mt-2 text-gray-600 whitespace-pre-line">
+                                        {invoice.paymentInstructions}
+                                    </div>
+                                </div>
+                             )}
+                        </div>
+
+                        {/* Totals */}
+                        <div className="text-sm">
+                             <div className="space-y-1">
+                                <div className="flex justify-between">
+                                    <span className="text-gray-500">Subtotal</span>
+                                    <span className="font-medium tabular-nums">{currencySymbol}{subtotal.toFixed(2)}</span>
+                                </div>
+                                 {invoice.discount > 0 && (
+                                    <div className="flex justify-between">
+                                        <span className="text-gray-500">Discount ({invoice.discount}%)</span>
+                                        <span className="font-medium tabular-nums">-{currencySymbol}{discountAmount.toFixed(2)}</span>
+                                    </div>
+                                )}
+                                {invoice.shippingCost > 0 && (
+                                    <div className="flex justify-between">
+                                        <span className="text-gray-500">Shipping Cost</span>
+                                        <span className="font-medium tabular-nums">{currencySymbol}{invoice.shippingCost.toFixed(2)}</span>
+                                    </div>
+                                )}
+                                {invoice.tax > 0 && (
+                                    <div className="flex justify-between">
+                                        <span className="text-gray-500">Sales Tax ({invoice.tax}%)</span>
+                                        <span className="font-medium tabular-nums">{currencySymbol}{taxAmount.toFixed(2)}</span>
+                                    </div>
+                                )}
+                                <div className="flex justify-between font-bold">
+                                    <span className="text-gray-500">Total</span>
+                                    <span className="tabular-nums">{currencySymbol}{total.toFixed(2)}</span>
+                                </div>
+                                {invoice.amountPaid > 0 && (
+                                    <div className="flex justify-between">
+                                        <span className="text-gray-500">Amount Paid</span>
+                                        <span className="font-medium tabular-nums">-{currencySymbol}{invoice.amountPaid.toFixed(2)}</span>
+                                    </div>
+                                )}
+                                 <div className="flex justify-between items-center font-bold text-lg p-3 mt-2 rounded-md" style={{backgroundColor: accentColor, color: 'white'}}>
+                                    <span>Balance Due</span>
+                                    <span className="tabular-nums">{currencySymbol}{balanceDue.toFixed(2)}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                )}
+                 {pageIndex === totalPages - 1 && (
+                    <footer className="text-center mt-16 text-xs text-gray-500">
+                        <p>Thank you for your business!</p>
                     </footer>
-                </>
-            )}
+                )}
+
+            </div>
         </div>
-    </div>
-);
+    );
+};
 
 
 const templates = {
@@ -328,7 +394,8 @@ export function InvoicePreview({ invoice, logoUrl, accentColor, id = 'invoice-pr
   const subtotal = invoice.items.reduce((acc, item) => acc + item.quantity * item.rate, 0);
   const taxAmount = (subtotal * invoice.tax) / 100;
   const discountAmount = (subtotal * invoice.discount) / 100;
-  const total = subtotal + taxAmount - discountAmount;
+  const total = subtotal + taxAmount - discountAmount + (invoice.shippingCost || 0);
+  const balanceDue = total - (invoice.amountPaid || 0);
   const currencySymbol = currencySymbols[invoice.currency] || '$';
 
   const t = locales[invoice.language as keyof typeof locales] || locales.en;
@@ -340,6 +407,19 @@ export function InvoicePreview({ invoice, logoUrl, accentColor, id = 'invoice-pr
 
   const TemplateComponent = templates[invoice.template as keyof typeof templates] || templates.default;
   
+  const commonProps: Omit<PageProps, 'pageItems' | 'pageIndex' | 'totalPages'> = {
+    invoice,
+    logoUrl,
+    accentColor,
+    t,
+    currencySymbol,
+    subtotal,
+    taxAmount,
+    discountAmount,
+    total,
+    balanceDue
+  };
+
   if (isPrint) {
     const itemPages = [];
     for (let i = 0; i < invoice.items.length; i += ITEMS_PER_PAGE) {
@@ -351,18 +431,10 @@ export function InvoicePreview({ invoice, logoUrl, accentColor, id = 'invoice-pr
         {itemPages.map((pageItems, pageIndex) => (
           <TemplateComponent
             key={pageIndex}
-            invoice={invoice}
-            logoUrl={logoUrl}
-            accentColor={accentColor}
-            t={t}
-            currencySymbol={currencySymbol}
+            {...commonProps}
             pageItems={pageItems}
             pageIndex={pageIndex}
             totalPages={itemPages.length}
-            subtotal={subtotal}
-            taxAmount={taxAmount}
-            discountAmount={discountAmount}
-            total={total}
           />
         ))}
       </div>
@@ -374,18 +446,10 @@ export function InvoicePreview({ invoice, logoUrl, accentColor, id = 'invoice-pr
     <Card id={id} className="w-full shadow-lg rounded-xl overflow-hidden print-hide" style={previewStyle}>
       <CardContent className="p-0">
           <TemplateComponent
-            invoice={invoice}
-            logoUrl={logoUrl}
-            accentColor={accentColor}
-            t={t}
-            currencySymbol={currencySymbol}
+            {...commonProps}
             pageItems={invoice.items}
             pageIndex={0}
             totalPages={1}
-            subtotal={subtotal}
-            taxAmount={taxAmount}
-            discountAmount={discountAmount}
-            total={total}
           />
       </CardContent>
     </Card>

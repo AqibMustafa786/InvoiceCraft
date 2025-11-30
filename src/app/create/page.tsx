@@ -17,18 +17,21 @@ const initialLineItem = { id: crypto.randomUUID(), name: '', quantity: 1, rate: 
 const initialInvoice: Invoice = {
   id: crypto.randomUUID(),
   companyName: 'Your Company',
-  companySlogan: 'Your Company Slogan',
   companyAddress: '123 Main St, Anytown, USA',
   clientName: 'Client Company',
   clientAddress: '456 Oak Ave, Someplace, USA',
   clientEmail: '',
+  shippingAddress: '',
   invoiceNumber: 'INV-001',
   invoiceDate: new Date(),
   dueDate: addDays(new Date(), 7),
+  trackingNumber: '',
   items: [{ ...initialLineItem, name: 'Sample Item', rate: 100 }],
   tax: 5,
   discount: 0,
-  notes: 'Thank you for your business.',
+  shippingCost: 0,
+  amountPaid: 0,
+  paymentInstructions: 'Thank you for your business.',
   status: 'draft',
   currency: 'USD',
   language: 'en',
@@ -59,7 +62,7 @@ function PrintableInvoice({ invoice, logoUrl, accentColor }: { invoice: Invoice,
 export default function CreateInvoicePage() {
   const [invoice, setInvoice] = useState<Invoice>(initialInvoice);
   const [logoUrl, setLogoUrl] = useState<string | null>(null);
-  const [accentColor, setAccentColor] = useState<string>('#663399'); // Default: vibrant purple
+  const [accentColor, setAccentColor] = useState<string>('#007aff'); // Default: Apple Blue
   const { toast } = useToast();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -95,10 +98,12 @@ export default function CreateInvoicePage() {
         const drafts: Invoice[] = JSON.parse(savedData, fromJSON);
         const draftToLoad = drafts.find(d => d.id === draftId);
         if (draftToLoad) {
-          setInvoice(draftToLoad);
-          // Note: Logo URL and accent color are not saved with individual drafts in this implementation.
+          // Ensure all fields from the latest Invoice type are present
+          const fullDraft = {...initialInvoice, ...draftToLoad};
+          setInvoice(fullDraft);
+          
           setLogoUrl(null); 
-          setAccentColor('#663399');
+          setAccentColor('#007aff');
           toast({
             title: "Draft Loaded",
             description: `Invoice draft #${draftToLoad.invoiceNumber} has been loaded.`,
@@ -163,9 +168,9 @@ export default function CreateInvoicePage() {
   
   const handleNew = () => {
     const newInvoiceId = crypto.randomUUID();
-    setInvoice({ ...initialInvoice, id: newInvoiceId, status: 'draft', invoiceNumber: `INV-${String(Math.floor(Math.random() * 1000)).padStart(3, '0')}` });
+    setInvoice({ ...initialInvoice, id: newInvoiceId, invoiceNumber: `INV-${String(Math.floor(Math.random() * 1000)).padStart(3, '0')}` });
     setLogoUrl(null);
-    setAccentColor('#663399');
+    setAccentColor('#007aff');
     router.push('/create');
     toast({
         title: "New Invoice",
