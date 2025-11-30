@@ -27,33 +27,33 @@ const templates: Template[] = [
   {
     id: 'default',
     name: 'Default',
-    thumbnailUrl: '/templates/default.png',
+    thumbnailUrl: '/templates/Default.png',
   },
   {
     id: 'modern',
     name: 'Modern',
-    thumbnailUrl: '/templates/modern.png',
+    thumbnailUrl: '/templates/Modern.png',
   },
   {
     id: 'minimalist',
     name: 'Minimalist',
-    thumbnailUrl: '/templates/minimalist.png',
+    thumbnailUrl: '/templates/Minimalist.png',
   },
   {
     id: 'creative',
     name: 'Creative',
-    thumbnailUrl: '/templates/creative.png',
+    thumbnailUrl: '/templates/Creative.png',
   },
   {
     id: 'elegant',
     name: 'Elegant',
-    thumbnailUrl: '/templates/elegant.png',
+    thumbnailUrl: '/templates/Elegant.png',
     isPro: true,
   },
   {
     id: 'usa',
     name: 'USA',
-    thumbnailUrl: '/templates/usa.png',
+    thumbnailUrl: '/templates/Usa.png',
     isPro: true,
   }
 ];
