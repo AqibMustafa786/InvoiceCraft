@@ -50,7 +50,7 @@ export function AppSidebar() {
     return (
         <Sidebar collapsible="icon">
             <SidebarHeader>
-                 <span className="text-lg font-bold text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent">InvoiceCraft</span>
+                 <span className="text-lg font-bold text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent transition-all duration-300 group-data-[collapsible=icon]:opacity-0">InvoiceCraft</span>
             </SidebarHeader>
             <SidebarContent>
                 <SidebarMenu>
@@ -63,7 +63,7 @@ export function AppSidebar() {
                             >
                                 <Link href={item.href}>
                                     <item.icon />
-                                    <span>{item.label}</span>
+                                    {item.label}
                                 </Link>
                             </SidebarMenuButton>
                         </SidebarMenuItem>
@@ -81,7 +81,7 @@ export function AppSidebar() {
                             >
                                 <Link href={item.href}>
                                     <item.icon />
-                                    <span>{item.label}</span>
+                                    {item.label}
                                 </Link>
                             </SidebarMenuButton>
                         </SidebarMenuItem>
@@ -90,7 +90,7 @@ export function AppSidebar() {
                         <SidebarMenuButton tooltip="Settings" asChild>
                             <button>
                                 <Settings />
-                                <span>Settings</span>
+                                Settings
                             </button>
                         </SidebarMenuButton>
                     </SidebarMenuItem>
