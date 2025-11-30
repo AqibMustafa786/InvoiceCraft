@@ -67,7 +67,6 @@ export function TemplateSelector({ selectedTemplate, onSelectTemplate }: Templat
     <Carousel
       opts={{
         align: "start",
-        loop: true,
       }}
       className="w-full"
     >

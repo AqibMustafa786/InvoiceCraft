@@ -13,9 +13,9 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { TemplateSelector } from '@/components/template-selector';
 
-const initialLineItem = { id: crypto.randomUUID(), name: '', quantity: 1, rate: 0 };
+const getInitialLineItem = () => ({ id: crypto.randomUUID(), name: '', quantity: 1, rate: 0 });
 
-const initialInvoice: Invoice = {
+const getInitialInvoice = (): Invoice => ({
   id: crypto.randomUUID(),
   companyName: 'Your Company',
   companyPhone: '+1 (123) 456-7890',
@@ -29,7 +29,7 @@ const initialInvoice: Invoice = {
   invoiceDate: new Date(),
   dueDate: addDays(new Date(), 7),
   trackingNumber: '',
-  items: [{ ...initialLineItem, name: 'Sample Item', rate: 100 }],
+  items: [{ ...getInitialLineItem(), name: 'Sample Item', rate: 100 }],
   tax: 5,
   discount: 0,
   shippingCost: 0,
@@ -39,7 +39,7 @@ const initialInvoice: Invoice = {
   currency: 'USD',
   language: 'en',
   template: 'default',
-};
+});
 
 const DRAFTS_STORAGE_KEY = 'invoiceDrafts';
 
@@ -63,7 +63,7 @@ function PrintableInvoice({ invoice, logoUrl, accentColor }: { invoice: Invoice,
 
 
 export default function CreateInvoicePage() {
-  const [invoice, setInvoice] = useState<Invoice>(initialInvoice);
+  const [invoice, setInvoice] = useState<Invoice | null>(null);
   const [logoUrl, setLogoUrl] = useState<string | null>(null);
   const [accentColor, setAccentColor] = useState<string>('hsl(var(--primary))');
   const { toast } = useToast();
@@ -71,9 +71,20 @@ export default function CreateInvoicePage() {
   const searchParams = useSearchParams();
 
   useEffect(() => {
+    // Initialize state on the client to avoid hydration mismatch
+    const initialInvoice = getInitialInvoice();
+    setInvoice(initialInvoice);
+
     const draftId = searchParams.get('draftId');
     if (draftId) {
-      loadDraft(draftId);
+      loadDraft(draftId, initialInvoice);
+    }
+  }, []);
+
+  useEffect(() => {
+    const draftId = searchParams.get('draftId');
+    if(draftId && invoice && invoice.id !== draftId) {
+        loadDraft(draftId, getInitialInvoice());
     }
   }, [searchParams]);
   
@@ -86,7 +97,7 @@ export default function CreateInvoicePage() {
     }
   }, []);
 
-  const loadDraft = (draftId: string) => {
+  const loadDraft = (draftId: string, baseInvoice: Invoice) => {
     const fromJSON = (key: string, value: any) => {
       if (key === 'invoiceDate' || key === 'dueDate') {
         return value ? new Date(value) : value;
@@ -101,7 +112,7 @@ export default function CreateInvoicePage() {
         const draftToLoad = drafts.find(d => d.id === draftId);
         if (draftToLoad) {
           // Ensure all fields from the latest Invoice type are present
-          const fullDraft = {...initialInvoice, ...draftToLoad};
+          const fullDraft = {...baseInvoice, ...draftToLoad};
           setInvoice(fullDraft);
           
           setLogoUrl(null); 
@@ -139,6 +150,7 @@ export default function CreateInvoicePage() {
   };
 
   const handleSaveDraft = () => {
+    if (!invoice) return;
     try {
       const toJSON = (key: string, value: any) => {
           if (key === 'invoiceDate' || key === 'dueDate') {
@@ -174,8 +186,9 @@ export default function CreateInvoicePage() {
   };
   
   const handleNew = () => {
-    const newInvoiceId = crypto.randomUUID();
-    setInvoice({ ...initialInvoice, id: newInvoiceId, invoiceNumber: `INV-${String(Math.floor(Math.random() * 1000)).padStart(3, '0')}` });
+    const newInvoice = getInitialInvoice();
+    newInvoice.invoiceNumber = `INV-${String(Math.floor(Math.random() * 1000)).padStart(3, '0')}`;
+    setInvoice(newInvoice);
     setLogoUrl(null);
     if (typeof window !== 'undefined') {
         const computedColor = getComputedStyle(document.documentElement).getPropertyValue('--primary').trim();
@@ -189,6 +202,14 @@ export default function CreateInvoicePage() {
         description: "A new blank invoice has been created.",
       });
   };
+
+  if (!invoice) {
+    return (
+        <div className="container mx-auto p-4 md:p-8">
+            <h1 className="text-3xl font-bold font-headline">Loading...</h1>
+        </div>
+    );
+  }
 
   return (
     <>
@@ -224,7 +245,7 @@ export default function CreateInvoicePage() {
           <h2 className="text-2xl font-bold font-headline mb-4 text-center">1. Select a Template</h2>
            <TemplateSelector 
             selectedTemplate={invoice.template}
-            onSelectTemplate={(template) => setInvoice(prev => ({...prev, template}))}
+            onSelectTemplate={(template) => setInvoice(prev => prev ? ({...prev, template}) : null)}
           />
         </div>
 
@@ -233,7 +254,7 @@ export default function CreateInvoicePage() {
              <h2 className="text-2xl font-bold font-headline mb-4 text-center lg:text-left">2. Fill in Details</h2>
             <InvoiceForm 
               invoice={invoice} 
-              setInvoice={setInvoice} 
+              setInvoice={setInvoice as React.Dispatch<React.SetStateAction<Invoice>>} 
               logoUrl={logoUrl}
               setLogoUrl={setLogoUrl}
               accentColor={accentColor}
