@@ -61,7 +61,7 @@ export default function AboutPage() {
             <h2 className="text-3xl font-bold font-headline">Our Vision</h2>
           </div>
           <p className="text-muted-foreground">
-            My vision is to make invoicing simple, professional, and accessible to everyone. I believe that freelancers, startups, and small businesses should not waste time struggling with complicated accounting software.
+            Our vision is to make invoicing simple, professional, and accessible to everyone. We believe that freelancers, startups, and small businesses should not waste time struggling with complicated accounting software.
           </p>
         </div>
         <div className="bg-card/50 backdrop-blur-lg border border-border/30 shadow-lg rounded-lg p-8">

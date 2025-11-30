@@ -22,12 +22,6 @@ export function Header() {
         </Link>
         <nav className="items-center flex-1 hidden gap-6 text-sm md:flex">
            <Link
-            href="/about"
-            className="font-medium transition-colors text-muted-foreground hover:text-foreground"
-          >
-            About Me
-          </Link>
-           <Link
             href="/#features"
             className="font-medium transition-colors text-muted-foreground hover:text-foreground"
           >
@@ -38,12 +32,6 @@ export function Header() {
             className="font-medium transition-colors text-muted-foreground hover:text-foreground"
           >
             Pricing
-          </Link>
-           <Link
-            href="/contact"
-            className="font-medium transition-colors text-muted-foreground hover:text-foreground"
-          >
-            Contact
           </Link>
         </nav>
         <div className="flex items-center justify-end flex-1 gap-2">
