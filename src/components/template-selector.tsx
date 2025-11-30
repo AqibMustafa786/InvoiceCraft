@@ -17,58 +17,43 @@ interface Template {
   isPro?: boolean;
 }
 
-interface TemplateCategory {
-  title: string;
-  templates: Template[];
-}
-
 interface TemplateSelectorProps {
   selectedTemplate: string;
   onSelectTemplate: (templateId: string) => void;
 }
 
-const templateCategories: TemplateCategory[] = [
+const templates: Template[] = [
   {
-    title: "General Purpose",
-    templates: [
-       {
-        id: 'default',
-        name: 'Default',
-        thumbnailUrl: '/templates/default.png',
-      },
-      {
-        id: 'modern',
-        name: 'Modern',
-        thumbnailUrl: '/templates/modern.png',
-      },
-      {
-        id: 'minimalist',
-        name: 'Minimalist',
-        thumbnailUrl: '/templates/minimalist.png',
-      },
-       {
-        id: 'creative',
-        name: 'Creative',
-        thumbnailUrl: '/templates/creative.png',
-      },
-       {
-        id: 'elegant',
-        name: 'Elegant',
-        thumbnailUrl: '/templates/elegant.png',
-        isPro: true,
-      },
-    ]
+    id: 'default',
+    name: 'Default',
+    thumbnailUrl: '/templates/default.png',
   },
   {
-    title: "Regional (USA)",
-    templates: [
-       {
-        id: 'usa',
-        name: 'USA',
-        thumbnailUrl: '/templates/usa.png',
-        isPro: true,
-      }
-    ]
+    id: 'modern',
+    name: 'Modern',
+    thumbnailUrl: '/templates/modern.png',
+  },
+  {
+    id: 'minimalist',
+    name: 'Minimalist',
+    thumbnailUrl: '/templates/minimalist.png',
+  },
+  {
+    id: 'creative',
+    name: 'Creative',
+    thumbnailUrl: '/templates/creative.png',
+  },
+  {
+    id: 'elegant',
+    name: 'Elegant',
+    thumbnailUrl: '/templates/elegant.png',
+    isPro: true,
+  },
+  {
+    id: 'usa',
+    name: 'USA',
+    thumbnailUrl: '/templates/usa.png',
+    isPro: true,
   }
 ];
 
@@ -81,7 +66,7 @@ export function TemplateSelector({ selectedTemplate, onSelectTemplate }: Templat
       className="w-full"
     >
       <CarouselContent>
-        {templateCategories.flatMap(category => category.templates).map((template, index) => (
+        {templates.map((template, index) => (
           <CarouselItem key={index} className="md:basis-1/2 lg:basis-1/3 xl:basis-1/4">
             <div className="p-1">
                <div
@@ -93,7 +78,7 @@ export function TemplateSelector({ selectedTemplate, onSelectTemplate }: Templat
               >
                 <div className="aspect-[3/4] w-full bg-muted flex items-center justify-center">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={template.thumbnailUrl} alt={template.name} className="object-cover w-full h-full" />
+                  <img src={template.thumbnailUrl} alt={template.name} className="object-cover object-top w-full h-full" />
                 </div>
                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                     <span className="text-white font-bold">Select</span>
