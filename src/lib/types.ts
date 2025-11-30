@@ -37,3 +37,38 @@ export interface Invoice {
   dateOfLoss?: string;
   insuranceCompany?: string;
 }
+
+export interface InsuranceDocument {
+  id: string;
+  companyName: string;
+  companyPhone: string;
+  companyAddress: string;
+
+  // Insured/Policyholder Details
+  insuredName: string;
+  policyId: string;
+  insuredAddress: string;
+  insuredPhone: string;
+  insuredEmail: string;
+
+  // Claim/Incident Details
+  claimNumber: string;
+  dateOfLoss: string;
+  typeOfClaim: string;
+  incidentDescription: string;
+
+  // Invoice-like details
+  documentNumber: string;
+  documentDate: Date;
+  
+  items: LineItem[];
+  tax: number;
+  discount: number;
+  shippingCost: number;
+
+  notes: string;
+  
+  currency: string;
+  language: string;
+  template: string;
+}
