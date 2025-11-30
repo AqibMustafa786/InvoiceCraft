@@ -78,10 +78,10 @@ const ClientDetails = ({ invoice, t }: { invoice: Invoice, t: any }) => (
     </section>
 );
 
-const ItemsTable = ({ items, t, currencySymbol }: { items: LineItem[], t: any, currencySymbol: string }) => (
+const ItemsTable = ({ items, t, currencySymbol, accentColor }: { items: LineItem[], t: any, currencySymbol: string, accentColor?: string }) => (
     <section>
         <table className="w-full text-left">
-            <thead className="bg-gray-50">
+            <thead style={accentColor ? {backgroundColor: accentColor, color: 'white'} : {}} className={accentColor ? '' : "bg-gray-50"}>
             <tr>
                 <th className="p-3 text-sm font-semibold w-1/2">{t.item}</th>
                 <th className="p-3 text-sm font-semibold text-center">{t.quantity}</th>
@@ -164,7 +164,9 @@ const ModernTemplatePage = ({ invoice, logoUrl, accentColor, t, currencySymbol, 
                 <div className="p-6 rounded-lg flex justify-between items-start" style={{backgroundColor: accentColor, color: 'white'}}>
                     <div>
                         {logoUrl ? (
-                            <Image src={logoUrl} alt={`${invoice.companyName} Logo`} width={120} height={40} className="object-contain brightness-0 invert" data-ai-hint="logo"/>
+                            <div className="bg-white p-2 rounded-md w-32 h-auto">
+                                <Image src={logoUrl} alt={`${invoice.companyName} Logo`} width={120} height={40} className="object-contain" data-ai-hint="logo"/>
+                            </div>
                         ) : (
                             <h1 className="text-3xl font-bold font-headline">{invoice.companyName}</h1>
                         )}
@@ -176,16 +178,62 @@ const ModernTemplatePage = ({ invoice, logoUrl, accentColor, t, currencySymbol, 
                 </div>
             </header>
             <ClientDetails invoice={invoice} t={t} />
+            <ItemsTable items={pageItems} t={t} currencySymbol={currencySymbol} accentColor={accentColor} />
+            {pageIndex === totalPages - 1 && <InvoiceFooter invoice={invoice} t={t} {...totals} currencySymbol={currencySymbol} accentColor={accentColor}/>}
+        </div>
+    </div>
+)
+
+// --- TEMPLATE: Elegant ---
+const ElegantTemplatePage = ({ invoice, logoUrl, accentColor, t, currencySymbol, pageItems, pageIndex, totalPages, ...totals }: PageProps) => (
+    <div className={pageIndex < totalPages - 1 ? "page-break" : ""}>
+        <div className="p-8 md:p-10 m-4 border">
+            <header className="text-center mb-12">
+                <div>
+                    {logoUrl ? (
+                        <Image src={logoUrl} alt={`${invoice.companyName} Logo`} width={120} height={40} className="object-contain mx-auto mb-4" data-ai-hint="logo" />
+                    ) : (
+                        <h1 className="text-4xl font-bold font-headline" style={{ color: accentColor }}>{invoice.companyName}</h1>
+                    )}
+                    <p className="text-muted-foreground text-sm mt-2 whitespace-pre-line">{invoice.companyAddress}</p>
+                </div>
+            </header>
+            <div className="flex justify-between items-start mb-8">
+                <div className="text-left space-y-1">
+                    <p className="text-sm font-semibold text-gray-500">{t.billTo}</p>
+                    <p className="font-bold">{invoice.clientName}</p>
+                    <p className="text-muted-foreground text-sm whitespace-pre-line">{invoice.clientAddress}</p>
+                </div>
+                <div className="text-right">
+                    <h2 className="text-4xl font-bold text-gray-800 uppercase tracking-wider mb-2">{t.invoice}</h2>
+                    <div className="space-y-1 text-sm">
+                        <div className="flex justify-end">
+                            <span className="font-semibold text-gray-500 w-28 text-left">{t.invoice} #: &nbsp;</span>
+                            <span className="w-24 text-right">{invoice.invoiceNumber}</span>
+                        </div>
+                        <div className="flex justify-end">
+                            <span className="font-semibold text-gray-500 w-28 text-left">{t.invoiceDate}: &nbsp;</span>
+                            <span className="w-24 text-right">{format(invoice.invoiceDate, 'yyyy-MM-dd')}</span>
+                        </div>
+                         <div className="flex justify-end">
+                            <span className="font-semibold text-gray-500 w-28 text-left">{t.dueDate}: &nbsp;</span>
+                            <span className="w-24 text-right">{format(invoice.dueDate, 'yyyy-MM-dd')}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <ItemsTable items={pageItems} t={t} currencySymbol={currencySymbol} />
             {pageIndex === totalPages - 1 && <InvoiceFooter invoice={invoice} t={t} {...totals} currencySymbol={currencySymbol} accentColor={accentColor}/>}
         </div>
     </div>
 )
 
+
 const templates = {
     default: DefaultTemplatePage,
     modern: ModernTemplatePage,
-    // Add other templates here
+    elegant: ElegantTemplatePage,
 };
 
 // --- MAIN PREVIEW COMPONENT ---
