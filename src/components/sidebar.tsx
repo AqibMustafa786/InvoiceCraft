@@ -56,18 +56,16 @@ export function AppSidebar() {
                 <SidebarMenu>
                     {menuItems.map((item) => (
                         <SidebarMenuItem key={item.href}>
-                            <Link href={item.href} legacyBehavior passHref>
-                                <SidebarMenuButton
-                                    isActive={pathname === item.href}
-                                    tooltip={item.tooltip}
-                                    asChild
-                                >
-                                    <span>
-                                        <item.icon />
-                                        <span>{item.label}</span>
-                                    </span>
-                                </SidebarMenuButton>
-                            </Link>
+                            <SidebarMenuButton
+                                asChild
+                                isActive={pathname === item.href}
+                                tooltip={item.tooltip}
+                            >
+                                <Link href={item.href}>
+                                    <item.icon />
+                                    <span>{item.label}</span>
+                                </Link>
+                            </SidebarMenuButton>
                         </SidebarMenuItem>
                     ))}
                 </SidebarMenu>
@@ -76,18 +74,16 @@ export function AppSidebar() {
                  <SidebarMenu>
                     {authItems.map((item) => (
                          <SidebarMenuItem key={item.href}>
-                             <Link href={item.href} legacyBehavior passHref>
-                                <SidebarMenuButton
-                                    isActive={pathname === item.href}
-                                    tooltip={item.tooltip}
-                                    asChild
-                                >
-                                     <span>
-                                        <item.icon />
-                                        <span>{item.label}</span>
-                                    </span>
-                                </SidebarMenuButton>
-                            </Link>
+                            <SidebarMenuButton
+                                asChild
+                                isActive={pathname === item.href}
+                                tooltip={item.tooltip}
+                            >
+                                <Link href={item.href}>
+                                    <item.icon />
+                                    <span>{item.label}</span>
+                                </Link>
+                            </SidebarMenuButton>
                         </SidebarMenuItem>
                     ))}
                     <SidebarMenuItem>
