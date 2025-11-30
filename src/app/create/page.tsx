@@ -261,8 +261,10 @@ export default function CreateInvoicePage() {
           </div>
           <div className="lg:col-span-2 my-8 md:my-12">
             <h2 className="text-2xl font-bold font-headline mb-6">Live Preview</h2>
-            <div className="sticky top-24">
+            <div className="relative">
+              <div className="sticky top-24 !overflow-visible">
                 <InvoicePreview invoice={invoice} logoUrl={logoUrl} accentColor={accentColor} />
+              </div>
             </div>
           </div>
         </div>
