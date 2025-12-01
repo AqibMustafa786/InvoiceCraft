@@ -1,8 +1,9 @@
 
+
 'use client';
 
 import { useState, useMemo, useCallback, useEffect } from 'react';
-import type { Invoice, Quote, DocumentStatus } from '@/lib/types';
+import type { Invoice, Estimate, DocumentStatus } from '@/lib/types';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -35,7 +36,7 @@ import { collection, doc, addDoc, query, where } from 'firebase/firestore';
 import { deleteDocumentNonBlocking, updateDocumentNonBlocking } from '@/firebase';
 
 const INVOICES_COLLECTION = 'invoices';
-const QUOTES_COLLECTION = 'quotes';
+const ESTIMATES_COLLECTION = 'estimates';
 
 const initialFilters: DashboardFilters = {
     clientName: '',
@@ -56,7 +57,7 @@ const currencySymbols: { [key: string]: string } = {
     PKR: '₨',
 };
 
-type DocumentType = Invoice | Quote;
+type DocumentType = Invoice | Estimate;
 
 export default function DashboardPage() {
     const [deleteCandidate, setDeleteCandidate] = useState<{ id: string; collection: string } | null>(null);
@@ -71,13 +72,13 @@ export default function DashboardPage() {
         return query(collection(firestore, INVOICES_COLLECTION), where("userId", "==", user.uid));
     }, [firestore, user]);
 
-    const quotesQuery = useMemoFirebase(() => {
+    const estimatesQuery = useMemoFirebase(() => {
         if (!firestore || !user) return null;
-        return query(collection(firestore, QUOTES_COLLECTION), where("userId", "==", user.uid));
+        return query(collection(firestore, ESTIMATES_COLLECTION), where("userId", "==", user.uid));
     }, [firestore, user]);
 
     const { data: invoices, isLoading: isLoadingInvoices, error: invoicesError } = useCollection<Invoice>(invoicesQuery);
-    const { data: quotes, isLoading: isLoadingQuotes, error: quotesError } = useCollection<Quote>(quotesQuery);
+    const { data: estimates, isLoading: isLoadingEstimates, error: estimatesError } = useCollection<Estimate>(estimatesQuery);
 
     const calculateTotal = useCallback((doc: DocumentType): number => {
         if (doc.documentType === 'invoice') {
@@ -87,8 +88,8 @@ export default function DashboardPage() {
             const discountAmount = (subtotal * invoice.discount) / 100;
             return subtotal + taxAmount - discountAmount + (invoice.shippingCost || 0);
         } else {
-            const quote = doc as Quote;
-            return quote.summary.grandTotal;
+            const estimate = doc as Estimate;
+            return estimate.summary.grandTotal;
         }
     }, []);
 
@@ -100,7 +101,7 @@ export default function DashboardPage() {
         setDeleteCandidate(null);
         toast({
             title: "Document Deleted",
-            description: `The ${collection === 'invoices' ? 'invoice' : 'quote'} has been deleted.`,
+            description: `The ${collection === 'invoices' ? 'invoice' : 'estimate'} has been deleted.`,
         });
     };
 
@@ -114,10 +115,10 @@ export default function DashboardPage() {
         });
     };
     
-    const handleConvertToInvoice = async (quote: Quote) => {
+    const handleConvertToInvoice = async (estimate: Estimate) => {
         if (!firestore || !user) return;
         
-        const { business, client, lineItems, summary, projectTitle, currency, language, quoteNumber, referenceNumber } = quote;
+        const { business, client, lineItems, summary, projectTitle, currency, language, estimateNumber, referenceNumber } = estimate;
 
         const newInvoiceData: Omit<Invoice, 'id'> = {
             userId: user.uid,
@@ -127,7 +128,7 @@ export default function DashboardPage() {
             clientName: client.name,
             clientAddress: client.address,
             clientEmail: client.email,
-            invoiceNumber: `INV-${quoteNumber.replace('QUO-', '')}`,
+            invoiceNumber: `INV-${estimateNumber.replace('EST-', '')}`,
             invoiceDate: new Date(),
             dueDate: new Date(new Date().setDate(new Date().getDate() + 30)),
             items: lineItems.map(item => ({...item, rate: item.unitPrice})),
@@ -150,21 +151,21 @@ export default function DashboardPage() {
             const newDocRef = await addDoc(collection(firestore, INVOICES_COLLECTION), newInvoiceData);
             toast({
                 title: 'Invoice Created',
-                description: `Quote ${quoteNumber} has been successfully converted to an invoice.`
+                description: `Estimate ${estimateNumber} has been successfully converted to an invoice.`
             });
             router.push(`/create?draftId=${newDocRef.id}`);
         } catch (error) {
-            console.error("Error converting quote to invoice:", error);
+            console.error("Error converting estimate to invoice:", error);
             toast({
                 title: 'Conversion Failed',
-                description: 'Could not convert the quote to an invoice. Please try again.',
+                description: 'Could not convert the estimate to an invoice. Please try again.',
                 variant: 'destructive'
             });
         }
     };
 
     const handleShare = (docId: string) => {
-        const url = `${window.location.origin}/quote/${docId}`;
+        const url = `${window.location.origin}/estimate/${docId}`;
         navigator.clipboard.writeText(url);
         toast({
             title: "Link Copied!",
@@ -177,8 +178,8 @@ export default function DashboardPage() {
     }, []);
 
     const combinedDocuments = useMemo(() => {
-        if (!user || !invoices || !quotes) return [];
-        const allDocs: DocumentType[] = [...invoices, ...quotes];
+        if (!user || !invoices || !estimates) return [];
+        const allDocs: DocumentType[] = [...invoices, ...estimates];
         
         // Safely parse Firestore timestamps to Date objects
         const safeParsedDocs = allDocs.map(doc => {
@@ -196,9 +197,9 @@ export default function DashboardPage() {
             if (newDoc.documentType === 'invoice') {
                 newDoc.invoiceDate = toDateSafe((newDoc as Invoice).invoiceDate) as Date;
                 newDoc.dueDate = toDateSafe((newDoc as Invoice).dueDate) as Date;
-            } else if (newDoc.documentType === 'quote') {
-                newDoc.quoteDate = toDateSafe((newDoc as Quote).quoteDate) as Date;
-                newDoc.validUntilDate = toDateSafe((newDoc as Quote).validUntilDate) as Date;
+            } else if (newDoc.documentType === 'estimate') {
+                newDoc.estimateDate = toDateSafe((newDoc as Estimate).estimateDate) as Date;
+                newDoc.validUntilDate = toDateSafe((newDoc as Estimate).validUntilDate) as Date;
             }
             return newDoc;
         });
@@ -207,16 +208,19 @@ export default function DashboardPage() {
             .filter(doc => {
                 const total = calculateTotal(doc);
                 let date: Date | null = null;
+                let clientName = '';
                 if (doc.documentType === 'invoice') {
                   date = (doc as Invoice).invoiceDate;
-                } else if (doc.documentType === 'quote') {
-                  date = (doc as Quote).quoteDate;
+                  clientName = (doc as Invoice).clientName;
+                } else if (doc.documentType === 'estimate') {
+                  date = (doc as Estimate).estimateDate;
+                  clientName = (doc as Estimate).client.name;
                 }
                 
                 // Filter out documents with invalid primary dates
                 if (!date || !isValid(date)) return false;
 
-                const clientNameMatch = filters.clientName ? doc.clientName.toLowerCase().includes(filters.clientName.toLowerCase()) : true;
+                const clientNameMatch = filters.clientName ? clientName.toLowerCase().includes(filters.clientName.toLowerCase()) : true;
                 const statusMatch = filters.status ? doc.status === filters.status : true;
                 const amountMinMatch = filters.amountMin !== null ? total >= filters.amountMin : true;
                 const amountMaxMatch = filters.amountMax !== null ? total <= filters.amountMax : true;
@@ -227,13 +231,13 @@ export default function DashboardPage() {
                 return clientNameMatch && statusMatch && amountMinMatch && amountMaxMatch && dateMatch;
             })
             .sort((a, b) => {
-                const dateA = a.documentType === 'invoice' ? (a as Invoice).invoiceDate : (a as Quote).quoteDate;
-                const dateB = b.documentType === 'invoice' ? (b as Invoice).invoiceDate : (b as Quote).invoiceDate;
+                const dateA = a.documentType === 'invoice' ? (a as Invoice).invoiceDate : (a as Estimate).estimateDate;
+                const dateB = b.documentType === 'invoice' ? (b as Invoice).invoiceDate : (b as Estimate).estimateDate;
                 if (!dateA || !isValid(dateA)) return 1;
                 if (!dateB || !isValid(dateB)) return -1;
                 return dateB.getTime() - dateA.getTime();
             });
-    }, [invoices, quotes, filters, calculateTotal, user]);
+    }, [invoices, estimates, filters, calculateTotal, user]);
 
     const activeFilterCount = useMemo(() => {
         let count = 0;
@@ -260,9 +264,9 @@ export default function DashboardPage() {
         }
     };
     
-    const isLoading = isUserLoading || isLoadingInvoices || isLoadingQuotes;
+    const isLoading = isUserLoading || isLoadingInvoices || isLoadingEstimates;
 
-    if (isLoading && !invoices && !quotes) {
+    if (isLoading && !invoices && !estimates) {
         return (
             <div className="container mx-auto p-4 md:p-8">
                 <h1 className="text-3xl font-bold font-headline">Loading Dashboard...</h1>
@@ -303,7 +307,7 @@ export default function DashboardPage() {
             <div className="flex justify-between items-center mb-8 gap-4 flex-wrap">
                 <div>
                     <h1 className="text-3xl font-bold font-headline">Dashboard</h1>
-                    <p className="text-muted-foreground">Manage your invoices and quotes here.</p>
+                    <p className="text-muted-foreground">Manage your invoices and estimates here.</p>
                 </div>
                 <div className="flex gap-2">
                     <Button asChild>
@@ -313,9 +317,9 @@ export default function DashboardPage() {
                         </Link>
                     </Button>
                      <Button asChild variant="outline">
-                        <Link href="/create-quote">
+                        <Link href="/create-estimate">
                             <FilePlus2 className="mr-2 h-4 w-4" />
-                            New Quote
+                            New Estimate
                         </Link>
                     </Button>
                 </div>
@@ -324,7 +328,7 @@ export default function DashboardPage() {
             <Card className="bg-card/50 backdrop-blur-sm">
                 <CardHeader>
                     <CardTitle>My Documents</CardTitle>
-                    <CardDescription>A list of your saved invoices and quotes from Firestore.</CardDescription>
+                    <CardDescription>A list of your saved invoices and estimates from Firestore.</CardDescription>
                 </CardHeader>
                 <CardContent>
                     <div className="flex justify-between items-center mb-4 gap-2 flex-wrap">
@@ -373,7 +377,7 @@ export default function DashboardPage() {
                                             Loading documents...
                                         </TableCell>
                                     </TableRow>
-                                ) : (invoicesError || quotesError) ? (
+                                ) : (invoicesError || estimatesError) ? (
                                     <TableRow>
                                         <TableCell colSpan={7} className="text-center h-24 text-destructive">
                                            Error loading documents. Please check your connection and security rules.
@@ -381,10 +385,10 @@ export default function DashboardPage() {
                                     </TableRow>
                                 ) : combinedDocuments.length > 0 ? combinedDocuments.map((doc) => {
                                     const isInvoice = doc.documentType === 'invoice';
-                                    const docNumber = isInvoice ? (doc as Invoice).invoiceNumber : (doc as Quote).quoteNumber;
-                                    const clientName = isInvoice ? (doc as Invoice).clientName : (doc as Quote).client.name;
-                                    let docDate = isInvoice ? (doc as Invoice).invoiceDate : (doc as Quote).quoteDate;
-                                    const docCollection = isInvoice ? INVOICES_COLLECTION : QUOTES_COLLECTION;
+                                    const docNumber = isInvoice ? (doc as Invoice).invoiceNumber : (doc as Estimate).estimateNumber;
+                                    const clientName = isInvoice ? (doc as Invoice).clientName : (doc as Estimate).client.name;
+                                    let docDate = isInvoice ? (doc as Invoice).invoiceDate : (doc as Estimate).estimateDate;
+                                    const docCollection = isInvoice ? INVOICES_COLLECTION : ESTIMATES_COLLECTION;
 
                                     return (
                                     <TableRow key={doc.id}>
@@ -424,7 +428,7 @@ export default function DashboardPage() {
                                                 </DropdownMenuTrigger>
                                                 <DropdownMenuContent align="end">
                                                      <DropdownMenuItem asChild>
-                                                        <Link href={`/${isInvoice ? 'create' : 'create-quote'}?draftId=${doc.id}`} className="cursor-pointer">
+                                                        <Link href={`/${isInvoice ? 'create' : 'create-estimate'}?draftId=${doc.id}`} className="cursor-pointer">
                                                             <Edit className="mr-2 h-4 w-4" />
                                                             <span>Edit</span>
                                                         </Link>
@@ -435,7 +439,7 @@ export default function DashboardPage() {
                                                                 <Share2 className="mr-2 h-4 w-4" />
                                                                 <span>Share Link</span>
                                                             </DropdownMenuItem>
-                                                            <DropdownMenuItem onClick={() => handleConvertToInvoice(doc as Quote)} className="cursor-pointer">
+                                                            <DropdownMenuItem onClick={() => handleConvertToInvoice(doc as Estimate)} className="cursor-pointer">
                                                                 <FileText className="mr-2 h-4 w-4" />
                                                                 <span>Convert to Invoice</span>
                                                             </DropdownMenuItem>

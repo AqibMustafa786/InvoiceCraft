@@ -1,3 +1,4 @@
+
 rules_version = '2';
 
 service cloud.firestore {
@@ -22,12 +23,12 @@ service cloud.firestore {
         allow read, update, delete: if isSignedIn() && isOwner(resource.data.userId);
     }
     
-    // Rules for the 'quotes' collection
-    match /quotes/{quoteId} {
+    // Rules for the 'estimates' collection
+    match /estimates/{estimateId} {
         // Allow create if the user is signed in and the new document's userId matches their UID
         allow create: if isSignedIn() && request.auth.uid == request.resource.data.userId;
 
-        // Allow read, update, delete if the user is signed in and owns the document
+        // Allow read, update if the user is signed in and owns the document
         allow read, update: if isSignedIn() && isOwner(resource.data.userId);
         
         // Public read access for shared links
@@ -38,7 +39,7 @@ service cloud.firestore {
     match /{path=**}/invoices/{invoiceId} {
         allow list: if isSignedIn() && request.query.where.userId == request.auth.uid;
     }
-     match /{path=**}/quotes/{quoteId} {
+     match /{path=**}/estimates/{estimateId} {
         allow list: if isSignedIn() && request.query.where.userId == request.auth.uid;
     }
   }

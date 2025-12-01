@@ -1,3 +1,4 @@
+
 'use client';
 
 import Link from 'next/link';
@@ -16,7 +17,6 @@ const navLinks = [
     { href: "/features", label: "Features" },
     { href: "/create", label: "Create Invoice" },
     { href: "/create-estimate", label: "Create Estimate" },
-    { href: "/create-quote", label: "Create Quote" },
     { href: "/create-insurance", label: "Create Insurance" },
     { href: "/pricing", label: "Pricing" },
     { href: "/blog", label: "Blog" },
@@ -57,7 +57,7 @@ export function Header() {
     };
 
     return (
-        <header className="sticky top-0 z-50 w-full bg-background">
+        <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur-sm supports-[backdrop-filter]:bg-background/60">
             <div className="container flex h-16 items-center">
                 <Link href="/" className="mr-6 flex items-center gap-2">
                      <span className="text-lg font-bold text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent">InvoiceCraft</span>

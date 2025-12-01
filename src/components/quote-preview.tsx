@@ -1,15 +1,15 @@
 
 'use client';
 
-import type { Quote } from '@/lib/types';
+import type { Estimate } from '@/lib/types';
 import { Card, CardContent } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import Image from 'next/image';
 import { format, isValid } from 'date-fns';
 
 // --- PROPS ---
-interface QuotePreviewProps {
-  quote: Quote;
+interface EstimatePreviewProps {
+  estimate: Estimate;
   accentColor: string;
   id?: string;
   isPrint?: boolean;
@@ -29,8 +29,8 @@ const safeFormat = (date: Date | string | number, formatString: string) => {
     return format(d, formatString);
 }
 
-const DefaultQuoteTemplate = ({ quote, accentColor }: { quote: Quote, accentColor: string }) => {
-    const { business, client, lineItems, summary, currency } = quote;
+const DefaultEstimateTemplate = ({ estimate, accentColor }: { estimate: Estimate, accentColor: string }) => {
+    const { business, client, lineItems, summary, currency } = estimate;
     const currencySymbol = currencySymbols[currency] || '$';
 
     return (
@@ -51,14 +51,14 @@ const DefaultQuoteTemplate = ({ quote, accentColor }: { quote: Quote, accentColo
                     </div>
                 </div>
                 <div className="text-right">
-                    <h2 className="text-3xl font-bold text-gray-400 uppercase tracking-wider">Quote</h2>
-                    <p className="text-muted-foreground mt-1">{quote.quoteNumber}</p>
+                    <h2 className="text-3xl font-bold text-gray-400 uppercase tracking-wider">Estimate</h2>
+                    <p className="text-muted-foreground mt-1">{estimate.estimateNumber}</p>
                 </div>
             </header>
 
             <section className="grid grid-cols-2 gap-4 mb-10">
                 <div className="space-y-1">
-                    <p className="text-sm font-semibold text-gray-500">QUOTE FOR</p>
+                    <p className="text-sm font-semibold text-gray-500">ESTIMATE FOR</p>
                     <p className="font-bold">{client.name}</p>
                     {client.companyName && <p className="text-sm text-gray-600">{client.companyName}</p>}
                     <p className="text-muted-foreground text-sm whitespace-pre-line">{client.address}</p>
@@ -68,20 +68,20 @@ const DefaultQuoteTemplate = ({ quote, accentColor }: { quote: Quote, accentColo
                 <div className="text-right space-y-1">
                      <div className="space-y-1">
                         <p className="text-sm font-semibold text-gray-500">Project / Job Title</p>
-                        <p>{quote.projectTitle}</p>
+                        <p>{estimate.projectTitle}</p>
                     </div>
                     <div className="space-y-1 mt-2">
-                        <p className="text-sm font-semibold text-gray-500">Quote Date</p>
-                        <p>{safeFormat(new Date(quote.quoteDate || new Date()), 'MMMM d, yyyy')}</p>
+                        <p className="text-sm font-semibold text-gray-500">Estimate Date</p>
+                        <p>{safeFormat(new Date(estimate.estimateDate || new Date()), 'MMMM d, yyyy')}</p>
                     </div>
                     <div className="space-y-1 mt-2">
                         <p className="text-sm font-semibold text-gray-500">Valid Until</p>
-                        <p>{safeFormat(new Date(quote.validUntilDate || new Date()), 'MMMM d, yyyy')}</p>
+                        <p>{safeFormat(new Date(estimate.validUntilDate || new Date()), 'MMMM d, yyyy')}</p>
                     </div>
-                    {quote.referenceNumber && (
+                    {estimate.referenceNumber && (
                         <div className="space-y-1 mt-2">
                             <p className="text-sm font-semibold text-gray-500">Reference #</p>
-                            <p>{quote.referenceNumber}</p>
+                            <p>{estimate.referenceNumber}</p>
                         </div>
                     )}
                 </div>
@@ -136,20 +136,20 @@ const DefaultQuoteTemplate = ({ quote, accentColor }: { quote: Quote, accentColo
                     )}
                     <Separator className="my-2" />
                     <div className="flex justify-between items-center font-bold text-lg p-3 mt-2 rounded-md" style={{ backgroundColor: accentColor, color: 'white' }}>
-                        <span>Quote Total</span>
+                        <span>Estimate Total</span>
                         <span className="tabular-nums">{currencySymbol}{summary.grandTotal.toFixed(2)}</span>
                     </div>
                 </div>
             </section>
             
             <footer className="mt-10">
-                {quote.termsAndConditions && (
+                {estimate.termsAndConditions && (
                     <div className="mb-8">
                         <p className="text-sm font-semibold text-gray-500">Terms & Conditions</p>
-                        <p className="text-sm text-muted-foreground mt-1 whitespace-pre-line">{quote.termsAndConditions}</p>
+                        <p className="text-sm text-muted-foreground mt-1 whitespace-pre-line">{estimate.termsAndConditions}</p>
                     </div>
                 )}
-                {quote.signatureRequired && (
+                {estimate.signatureRequired && (
                     <div className="grid grid-cols-2 gap-16 pt-8 border-t">
                         <div>
                             <div className="h-12 border-b"></div>
@@ -166,8 +166,8 @@ const DefaultQuoteTemplate = ({ quote, accentColor }: { quote: Quote, accentColo
     );
 };
 
-const ContractorQuoteTemplate = ({ quote, accentColor }: { quote: Quote, accentColor: string }) => {
-    const { business, client, lineItems, summary, currency } = quote;
+const ContractorEstimateTemplate = ({ estimate, accentColor }: { estimate: Estimate, accentColor: string }) => {
+    const { business, client, lineItems, summary, currency } = estimate;
     const currencySymbol = currencySymbols[currency] || '$';
 
     return (
@@ -186,11 +186,11 @@ const ContractorQuoteTemplate = ({ quote, accentColor }: { quote: Quote, accentC
                      </div>
                 </div>
                  <div className="text-right">
-                    <h2 className="text-5xl font-light uppercase text-gray-400 tracking-wider">Quote</h2>
+                    <h2 className="text-5xl font-light uppercase text-gray-400 tracking-wider">Estimate</h2>
                     <div className="mt-4 text-xs space-y-1">
-                        <p><span className="font-bold text-gray-500">Quote #:</span> {quote.quoteNumber}</p>
-                        <p><span className="font-bold text-gray-500">Date:</span> {safeFormat(new Date(quote.quoteDate || new Date()), 'M/d/yyyy')}</p>
-                        <p><span className="font-bold text-gray-500">Valid Until:</span> {safeFormat(new Date(quote.validUntilDate || new Date()), 'M/d/yyyy')}</p>
+                        <p><span className="font-bold text-gray-500">Estimate #:</span> {estimate.estimateNumber}</p>
+                        <p><span className="font-bold text-gray-500">Date:</span> {safeFormat(new Date(estimate.estimateDate || new Date()), 'M/d/yyyy')}</p>
+                        <p><span className="font-bold text-gray-500">Valid Until:</span> {safeFormat(new Date(estimate.validUntilDate || new Date()), 'M/d/yyyy')}</p>
                     </div>
                 </div>
             </header>
@@ -249,15 +249,15 @@ const ContractorQuoteTemplate = ({ quote, accentColor }: { quote: Quote, accentC
             </section>
             
             <footer className="mt-12">
-                {quote.termsAndConditions && (
+                {estimate.termsAndConditions && (
                     <div className="text-xs text-gray-500 border-t pt-6 mb-8">
                         <h4 className="font-bold text-sm text-gray-600 mb-2">Terms & Conditions</h4>
-                        <p className="whitespace-pre-line">{quote.termsAndConditions}</p>
+                        <p className="whitespace-pre-line">{estimate.termsAndConditions}</p>
                     </div>
                 )}
-                {quote.signatureRequired && (
+                {estimate.signatureRequired && (
                     <div className="mt-16 text-xs text-gray-500 text-center">
-                        <p>Thank you for the opportunity to quote this project.</p>
+                        <p>Thank you for the opportunity to estimate this project.</p>
                         <p className="mt-4 font-bold">Client Signature: _________________________ Date: __________</p>
                     </div>
                 )}
@@ -268,12 +268,12 @@ const ContractorQuoteTemplate = ({ quote, accentColor }: { quote: Quote, accentC
 
 
 const templates = {
-  'default': DefaultQuoteTemplate,
-  'contractor': ContractorQuoteTemplate,
+  'default': DefaultEstimateTemplate,
+  'contractor': ContractorEstimateTemplate,
 };
 
-export function QuotePreview({ quote, accentColor, id = 'quote-preview', isPrint = false }: QuotePreviewProps) {
-  if (!quote) {
+export function EstimatePreview({ estimate, accentColor, id = 'estimate-preview', isPrint = false }: EstimatePreviewProps) {
+  if (!estimate) {
     return null;
   }
 
@@ -282,11 +282,11 @@ export function QuotePreview({ quote, accentColor, id = 'quote-preview', isPrint
       '--primary': accentColor
   } as React.CSSProperties;
 
-  const TemplateComponent = templates[quote.template as keyof typeof templates] || templates.default;
+  const TemplateComponent = templates[estimate.template as keyof typeof templates] || templates.default;
 
   const renderContent = () => (
     <TemplateComponent
-      quote={quote}
+      estimate={estimate}
       accentColor={accentColor}
     />
   );
@@ -307,5 +307,3 @@ export function QuotePreview({ quote, accentColor, id = 'quote-preview', isPrint
     </Card>
   );
 }
-
-    

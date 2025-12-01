@@ -1,31 +1,32 @@
 
+
 'use client';
 
 import { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import type { Quote, LineItem } from '@/lib/types';
-import { QuoteForm } from '@/components/quote-form';
-import { QuotePreview } from '@/components/quote-preview';
+import type { Estimate, LineItem } from '@/lib/types';
+import { EstimateForm } from '@/components/estimate-form';
+import { EstimatePreview } from '@/components/estimate-preview';
 import { Button } from '@/components/ui/button';
 import { Printer, FilePlus, LayoutDashboard, Edit } from 'lucide-react';
 import { addDays } from 'date-fns';
 import { useToast } from '@/hooks/use-toast';
-import { QuoteTemplateSelector } from '@/components/quote-template-selector';
+import { EstimateTemplateSelector } from '@/components/estimate-template-selector';
 import Link from 'next/link';
 import { useFirebase, useMemoFirebase } from '@/firebase/provider';
-import { doc, collection } from 'firebase/firestore';
+import { doc } from 'firebase/firestore';
 import { setDocumentNonBlocking } from '@/firebase/non-blocking-updates';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useDoc } from '@/firebase/firestore/use-doc';
 
-const QUOTES_COLLECTION = 'quotes';
+const ESTIMATES_COLLECTION = 'estimates';
 
 const getInitialLineItem = (): LineItem => ({ id: crypto.randomUUID(), name: '', quantity: 1, unitPrice: 0 });
 
-const getInitialQuote = (): Omit<Quote, 'userId'> => ({
+const getInitialEstimate = (): Omit<Estimate, 'userId'> => ({
   id: crypto.randomUUID(),
-  quoteNumber: `QUO-${new Date().getFullYear()}-001`,
-  quoteDate: new Date(),
+  estimateNumber: `EST-${new Date().getFullYear()}-001`,
+  estimateDate: new Date(),
   validUntilDate: addDays(new Date(), 30),
   status: 'draft',
   
@@ -60,16 +61,16 @@ const getInitialQuote = (): Omit<Quote, 'userId'> => ({
   projectTitle: 'New Project',
   referenceNumber: 'REF-001',
   
-  termsAndConditions: 'This quote is valid for 30 days. Prices are subject to change thereafter. Payment Terms: 50% upfront, 50% on completion.',
+  termsAndConditions: 'This estimate is valid for 30 days. Prices are subject to change thereafter. Payment Terms: 50% upfront, 50% on completion.',
   
   template: 'default',
-  documentType: 'quote',
+  documentType: 'estimate',
   language: 'en',
   currency: 'USD',
 });
 
 
-function PrintableQuote({ quote, accentColor }: { quote: Quote, accentColor: string }) {
+function PrintableEstimate({ estimate, accentColor }: { estimate: Estimate, accentColor: string }) {
     const [printRoot, setPrintRoot] = useState<HTMLElement | null>(null);
 
     useEffect(() => {
@@ -82,14 +83,14 @@ function PrintableQuote({ quote, accentColor }: { quote: Quote, accentColor: str
     }
 
     return createPortal(
-        <QuotePreview quote={quote} accentColor={accentColor} id="quote-preview-print" isPrint={true} />,
+        <EstimatePreview estimate={estimate} accentColor={accentColor} id="estimate-preview-print" isPrint={true} />,
         printRoot
     );
 }
 
 
-export default function CreateQuotePage() {
-  const [quote, setQuote] = useState<Quote | null>(null);
+export default function CreateEstimatePage() {
+  const [estimate, setEstimate] = useState<Estimate | null>(null);
   const [accentColor, setAccentColor] = useState<string>('hsl(var(--primary))');
   const { toast } = useToast();
   const { firestore, user, isUserLoading } = useFirebase();
@@ -97,8 +98,8 @@ export default function CreateQuotePage() {
   const searchParams = useSearchParams();
 
   const draftId = searchParams.get('draftId');
-  const docRef = useMemoFirebase(() => draftId && firestore ? doc(firestore, QUOTES_COLLECTION, draftId) : null, [draftId, firestore]);
-  const { data: remoteDraft, isLoading: isDraftLoading } = useDoc<Quote>(docRef);
+  const docRef = useMemoFirebase(() => draftId && firestore ? doc(firestore, ESTIMATES_COLLECTION, draftId) : null, [draftId, firestore]);
+  const { data: remoteDraft, isLoading: isDraftLoading } = useDoc<Estimate>(docRef);
 
   useEffect(() => {
     if (isUserLoading) return;
@@ -107,21 +108,21 @@ export default function CreateQuotePage() {
         return;
     }
 
-    const initialQuote = {...getInitialQuote(), userId: user.uid};
+    const initialEstimate = {...getInitialEstimate(), userId: user.uid};
 
     if (draftId) {
         if (remoteDraft) {
             const fromJSON = (key: string, value: any) => {
-                if (['quoteDate', 'validUntilDate'].includes(key) && value) {
+                if (['estimateDate', 'validUntilDate'].includes(key) && value) {
                     return value.toDate ? value.toDate() : new Date(value);
                 }
                 return value;
             };
             const loadedDraft = JSON.parse(JSON.stringify(remoteDraft), fromJSON);
-            setQuote({ ...initialQuote, ...loadedDraft });
+            setEstimate({ ...initialEstimate, ...loadedDraft });
         }
     } else {
-        setQuote(initialQuote);
+        setEstimate(initialEstimate);
     }
     
     if (typeof window !== 'undefined' && document) {
@@ -137,50 +138,50 @@ export default function CreateQuotePage() {
   };
   
   const handleSaveDraft = () => {
-    if (!quote || !firestore) return;
+    if (!estimate || !firestore) return;
 
     const draftToSave = {
-      ...quote,
-      quoteDate: quote.quoteDate,
-      validUntilDate: quote.validUntilDate,
+      ...estimate,
+      estimateDate: estimate.estimateDate,
+      validUntilDate: estimate.validUntilDate,
     };
     
-    const docRef = doc(firestore, QUOTES_COLLECTION, quote.id);
+    const docRef = doc(firestore, ESTIMATES_COLLECTION, estimate.id);
     setDocumentNonBlocking(docRef, draftToSave, { merge: true });
 
     toast({
-      title: "Quote Draft Saved",
-      description: "Your quote draft has been saved online.",
+      title: "Estimate Draft Saved",
+      description: "Your estimate draft has been saved online.",
     });
-    router.push(`/create-quote?draftId=${quote.id}`);
+    router.push(`/create-estimate?draftId=${estimate.id}`);
   };
 
   const handleNew = () => {
     if (!user) return;
-    const newQuote = {...getInitialQuote(), userId: user.uid};
-    newQuote.quoteNumber = `Q-${String(Math.floor(Math.random() * 1000)).padStart(3, '0')}`;
-    setQuote(newQuote);
+    const newEstimate = {...getInitialEstimate(), userId: user.uid};
+    newEstimate.estimateNumber = `EST-${String(Math.floor(Math.random() * 1000)).padStart(3, '0')}`;
+    setEstimate(newEstimate);
     if (typeof window !== 'undefined' && document) {
         const computedColor = getComputedStyle(document.documentElement).getPropertyValue('--primary').trim();
         if (computedColor) {
             setAccentColor(`hsl(${computedColor})`);
         }
     }
-     router.push('/create-quote');
+     router.push('/create-estimate');
     toast({
-        title: "New Quote",
-        description: "A new blank quote has been created.",
+        title: "New Estimate",
+        description: "A new blank estimate has been created.",
       });
   };
   
   useEffect(() => {
-    if (quote) {
-      const subtotal = quote.lineItems.reduce((acc, item) => acc + item.quantity * item.unitPrice, 0);
-      const taxAmount = (subtotal * quote.summary.taxPercentage) / 100;
-      const discountAmount = quote.summary.discount; // Can be percentage or fixed amount
-      const grandTotal = subtotal + taxAmount - discountAmount + quote.summary.shippingCost;
+    if (estimate) {
+      const subtotal = estimate.lineItems.reduce((acc, item) => acc + item.quantity * item.unitPrice, 0);
+      const taxAmount = (subtotal * estimate.summary.taxPercentage) / 100;
+      const discountAmount = estimate.summary.discount; // Can be percentage or fixed amount
+      const grandTotal = subtotal + taxAmount - discountAmount + estimate.summary.shippingCost;
 
-      setQuote(prev => {
+      setEstimate(prev => {
         if (!prev) return null;
         if (prev.summary.subtotal !== subtotal ||
             prev.summary.taxAmount !== taxAmount ||
@@ -198,10 +199,10 @@ export default function CreateQuotePage() {
         return prev;
       });
     }
-  }, [quote?.lineItems, quote?.summary.taxPercentage, quote?.summary.discount, quote?.summary.shippingCost]);
+  }, [estimate?.lineItems, estimate?.summary.taxPercentage, estimate?.summary.discount, estimate?.summary.shippingCost]);
 
 
-  if (!quote || (draftId && isDraftLoading)) {
+  if (!estimate || (draftId && isDraftLoading) || isUserLoading) {
     return (
         <div className="container mx-auto p-4 md:p-8">
             <h1 className="text-3xl font-bold font-headline">Loading...</h1>
@@ -214,8 +215,8 @@ export default function CreateQuotePage() {
       <div className="container mx-auto p-4 md:p-8">
         <div className="flex flex-col md:flex-row justify-between md:items-center gap-4 mb-8">
           <div>
-            <h1 className="text-3xl font-bold font-headline">Create Quote</h1>
-            <p className="text-muted-foreground">Select a template and fill out the form to generate your professional quote.</p>
+            <h1 className="text-3xl font-bold font-headline">Create Estimate</h1>
+            <p className="text-muted-foreground">Select a template and fill out the form to generate your professional estimate.</p>
           </div>
           <div className="flex flex-wrap gap-2">
               <Button onClick={handleNew} variant="outline">
@@ -244,16 +245,16 @@ export default function CreateQuotePage() {
             <div className="space-y-12">
               <div>
                 <h2 className="text-2xl font-bold font-headline mb-6 text-center">Select a Template</h2>
-                 <QuoteTemplateSelector 
-                  selectedTemplate={quote.template}
-                  onSelectTemplate={(template) => setQuote(prev => prev ? ({...prev, template}) : null)}
+                 <EstimateTemplateSelector 
+                  selectedTemplate={estimate.template}
+                  onSelectTemplate={(template) => setEstimate(prev => prev ? ({...prev, template}) : null)}
                 />
               </div>
               <div>
                 <h2 className="text-2xl font-bold font-headline mb-4 text-center lg:text-left">Fill in Details</h2>
-                <QuoteForm 
-                  quote={quote} 
-                  setQuote={setQuote as React.Dispatch<React.SetStateAction<Quote>>} 
+                <EstimateForm 
+                  estimate={estimate} 
+                  setEstimate={setEstimate as React.Dispatch<React.SetStateAction<Estimate>>} 
                   accentColor={accentColor}
                   setAccentColor={setAccentColor}
                   toast={toast}
@@ -264,12 +265,12 @@ export default function CreateQuotePage() {
           <div className="lg:col-span-2 lg:pl-12">
             <div className="sticky top-24">
                 <h2 className="text-2xl font-bold font-headline mb-6">Live Preview</h2>
-                <QuotePreview quote={quote} accentColor={accentColor} />
+                <EstimatePreview estimate={estimate} accentColor={accentColor} />
             </div>
           </div>
         </div>
       </div>
-      <PrintableQuote quote={quote} accentColor={accentColor} />
+      <PrintableEstimate estimate={estimate} accentColor={accentColor} />
     </>
   );
 }

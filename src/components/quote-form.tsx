@@ -2,7 +2,7 @@
 'use client';
 
 import { ChangeEvent, Dispatch, SetStateAction, useState, useEffect } from 'react';
-import type { Quote, LineItem } from '@/lib/types';
+import type { Estimate, LineItem } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -20,9 +20,9 @@ import {
 } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 
-interface QuoteFormProps {
-  quote: Quote;
-  setQuote: Dispatch<SetStateAction<Quote>>;
+interface EstimateFormProps {
+  estimate: Estimate;
+  setEstimate: Dispatch<SetStateAction<Estimate>>;
   accentColor: string;
   setAccentColor: Dispatch<SetStateAction<string>>;
   toast: (options: { title: string; description: string; variant?: "default" | "destructive" }) => void;
@@ -36,29 +36,29 @@ const currencies = [
     { value: 'PKR', label: 'PKR (₨)' },
 ]
 
-export function QuoteForm({ quote, setQuote, accentColor, setAccentColor, toast }: QuoteFormProps) {
+export function EstimateForm({ estimate, setEstimate, accentColor, setAccentColor, toast }: EstimateFormProps) {
   const [bulkAddCount, setBulkAddCount] = useState(5);
   const [colorInputValue, setColorInputValue] = useState(accentColor);
-  const [logoUrl, setLogoUrl] = useState<string | null>(quote.business.logoUrl || null);
+  const [logoUrl, setLogoUrl] = useState<string | null>(estimate.business.logoUrl || null);
 
   useEffect(() => {
     setColorInputValue(accentColor);
   }, [accentColor]);
   
   useEffect(() => {
-    setQuote(prev => ({
+    setEstimate(prev => ({
         ...prev,
         business: {
             ...prev.business,
             logoUrl: logoUrl || '',
         }
     }))
-  }, [logoUrl, setQuote]);
+  }, [logoUrl, setEstimate]);
 
 
   const handleNestedChange = (section: 'business' | 'client' | 'summary', e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    setQuote(prev => ({
+    setEstimate(prev => ({
       ...prev,
       [section]: {
         ...prev[section],
@@ -69,13 +69,13 @@ export function QuoteForm({ quote, setQuote, accentColor, setAccentColor, toast 
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    setQuote(prev => ({ ...prev, [name]: value }));
+    setEstimate(prev => ({ ...prev, [name]: value }));
   };
 
   const handleNumberChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     const [section, field] = name.split('.');
-     setQuote(prev => ({
+     setEstimate(prev => ({
       ...prev,
       [section as 'summary']: {
         ...prev[section as 'summary'],
@@ -85,29 +85,29 @@ export function QuoteForm({ quote, setQuote, accentColor, setAccentColor, toast 
   };
   
   const handleCurrencyChange = (value: string) => {
-    setQuote(prev => ({ ...prev, currency: value }));
+    setEstimate(prev => ({ ...prev, currency: value }));
   }
 
   const handleLanguageChange = (value: string) => {
-    setQuote(prev => ({ ...prev, language: value }));
+    setEstimate(prev => ({ ...prev, language: value }));
   };
 
   const handleItemChange = (index: number, field: keyof Omit<LineItem, 'id'>, value: string | number) => {
-    const newItems = [...quote.lineItems];
+    const newItems = [...estimate.lineItems];
     (newItems[index] as any)[field] = value;
-    setQuote(prev => ({ ...prev, lineItems: newItems }));
+    setEstimate(prev => ({ ...prev, lineItems: newItems }));
   };
 
   const addItem = () => {
-     if (quote.lineItems.length >= 50) {
+     if (estimate.lineItems.length >= 50) {
        toast({
         title: "Item Limit Reached",
-        description: "You cannot add more than 50 items to a single quote.",
+        description: "You cannot add more than 50 items to a single estimate.",
         variant: "destructive",
       });
       return;
     }
-    setQuote(prev => ({
+    setEstimate(prev => ({
       ...prev,
       lineItems: [...prev.lineItems, { id: crypto.randomUUID(), name: '', quantity: 1, unitPrice: 0 }],
     }));
@@ -117,10 +117,10 @@ export function QuoteForm({ quote, setQuote, accentColor, setAccentColor, toast 
     const count = Number(bulkAddCount);
     if (count <= 0) return;
 
-    if (quote.lineItems.length + count > 50) {
+    if (estimate.lineItems.length + count > 50) {
       toast({
         title: "Item Limit Exceeded",
-        description: `You can only add ${50 - quote.lineItems.length} more items. The maximum is 50.`,
+        description: `You can only add ${50 - estimate.lineItems.length} more items. The maximum is 50.`,
         variant: "destructive",
       });
       return;
@@ -133,15 +133,15 @@ export function QuoteForm({ quote, setQuote, accentColor, setAccentColor, toast 
       unitPrice: 0,
     }));
 
-    setQuote(prev => ({
+    setEstimate(prev => ({
       ...prev,
       lineItems: [...prev.lineItems, ...newItems],
     }));
   };
 
   const removeItem = (index: number) => {
-    const newItems = quote.lineItems.filter((_, i) => i !== index);
-    setQuote(prev => ({ ...prev, lineItems: newItems }));
+    const newItems = estimate.lineItems.filter((_, i) => i !== index);
+    setEstimate(prev => ({ ...prev, lineItems: newItems }));
   };
 
   const handleLogoUpload = (e: ChangeEvent<HTMLInputElement>) => {
@@ -163,7 +163,7 @@ export function QuoteForm({ quote, setQuote, accentColor, setAccentColor, toast 
     }
   };
   
-  const currencySymbol = currencies.find(c => c.value === quote.currency)?.label.split(' ')[1] || '$';
+  const currencySymbol = currencies.find(c => c.value === estimate.currency)?.label.split(' ')[1] || '$';
 
   return (
     <div className="space-y-6">
@@ -233,40 +233,40 @@ export function QuoteForm({ quote, setQuote, accentColor, setAccentColor, toast 
               <Label htmlFor="businessName">Business Name</Label>
               <div className="relative flex items-center">
                 <Briefcase className="absolute left-3 h-5 w-5 text-muted-foreground" />
-                <Input id="businessName" name="name" value={quote.business.name} onChange={(e) => handleNestedChange('business', e)} className="pl-10" />
+                <Input id="businessName" name="name" value={estimate.business.name} onChange={(e) => handleNestedChange('business', e)} className="pl-10" />
               </div>
             </div>
             <div className="space-y-2">
                 <Label htmlFor="businessAddress">Business Address</Label>
-                <Textarea id="businessAddress" name="address" value={quote.business.address} onChange={(e) => handleNestedChange('business', e)} placeholder="Street, City, State, Zip"/>
+                <Textarea id="businessAddress" name="address" value={estimate.business.address} onChange={(e) => handleNestedChange('business', e)} placeholder="Street, City, State, Zip"/>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
                     <Label htmlFor="businessPhone">Phone Number</Label>
                     <div className="relative flex items-center">
                         <Phone className="absolute left-3 h-5 w-5 text-muted-foreground" />
-                        <Input id="businessPhone" name="phone" value={quote.business.phone} onChange={(e) => handleNestedChange('business', e)} className="pl-10" />
+                        <Input id="businessPhone" name="phone" value={estimate.business.phone} onChange={(e) => handleNestedChange('business', e)} className="pl-10" />
                     </div>
                 </div>
                 <div className="space-y-2">
                     <Label htmlFor="businessEmail">Email Address</Label>
                     <div className="relative flex items-center">
                         <Mail className="absolute left-3 h-5 w-5 text-muted-foreground" />
-                        <Input id="businessEmail" name="email" value={quote.business.email} onChange={(e) => handleNestedChange('business', e)} className="pl-10" />
+                        <Input id="businessEmail" name="email" value={estimate.business.email} onChange={(e) => handleNestedChange('business', e)} className="pl-10" />
                     </div>
                 </div>
                 <div className="space-y-2">
                     <Label htmlFor="businessWebsite">Website (optional)</Label>
                     <div className="relative flex items-center">
                         <Globe className="absolute left-3 h-5 w-5 text-muted-foreground" />
-                        <Input id="businessWebsite" name="website" value={quote.business.website} onChange={(e) => handleNestedChange('business', e)} className="pl-10" />
+                        <Input id="businessWebsite" name="website" value={estimate.business.website} onChange={(e) => handleNestedChange('business', e)} className="pl-10" />
                     </div>
                 </div>
                 <div className="space-y-2">
                     <Label htmlFor="businessLicense">License Number (optional)</Label>
                     <div className="relative flex items-center">
                         <Award className="absolute left-3 h-5 w-5 text-muted-foreground" />
-                        <Input id="businessLicense" name="licenseNumber" value={quote.business.licenseNumber} onChange={(e) => handleNestedChange('business', e)} className="pl-10" />
+                        <Input id="businessLicense" name="licenseNumber" value={estimate.business.licenseNumber} onChange={(e) => handleNestedChange('business', e)} className="pl-10" />
                     </div>
                 </div>
             </div>
@@ -283,34 +283,34 @@ export function QuoteForm({ quote, setQuote, accentColor, setAccentColor, toast 
               <Label htmlFor="clientName">Client Full Name</Label>
                <div className="relative flex items-center">
                   <User className="absolute left-3 h-5 w-5 text-muted-foreground" />
-                  <Input id="clientName" name="name" value={quote.client.name} onChange={(e) => handleNestedChange('client', e)} className="pl-10" />
+                  <Input id="clientName" name="name" value={estimate.client.name} onChange={(e) => handleNestedChange('client', e)} className="pl-10" />
                 </div>
             </div>
              <div className="space-y-2">
               <Label htmlFor="clientCompanyName">Client Company Name (optional)</Label>
                <div className="relative flex items-center">
                   <Building className="absolute left-3 h-5 w-5 text-muted-foreground" />
-                  <Input id="clientCompanyName" name="companyName" value={quote.client.companyName} onChange={(e) => handleNestedChange('client', e)} className="pl-10" />
+                  <Input id="clientCompanyName" name="companyName" value={estimate.client.companyName} onChange={(e) => handleNestedChange('client', e)} className="pl-10" />
                 </div>
             </div>
           </div>
           <div className="space-y-2">
             <Label htmlFor="clientAddress">Client Address</Label>
-            <Textarea id="clientAddress" name="address" value={quote.client.address} onChange={(e) => handleNestedChange('client', e)} />
+            <Textarea id="clientAddress" name="address" value={estimate.client.address} onChange={(e) => handleNestedChange('client', e)} />
           </div>
            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="clientEmail">Client Email</Label>
               <div className="relative flex items-center">
                   <Mail className="absolute left-3 h-5 w-5 text-muted-foreground" />
-                  <Input id="clientEmail" name="email" value={quote.client.email || ''} onChange={(e) => handleNestedChange('client', e)} className="pl-10" placeholder="client@example.com" />
+                  <Input id="clientEmail" name="email" value={estimate.client.email || ''} onChange={(e) => handleNestedChange('client', e)} className="pl-10" placeholder="client@example.com" />
               </div>
             </div>
              <div className="space-y-2">
               <Label htmlFor="clientPhone">Client Phone</Label>
               <div className="relative flex items-center">
                   <Phone className="absolute left-3 h-5 w-5 text-muted-foreground" />
-                  <Input id="clientPhone" name="phone" value={quote.client.phone || ''} onChange={(e) => handleNestedChange('client', e)} className="pl-10" />
+                  <Input id="clientPhone" name="phone" value={estimate.client.phone || ''} onChange={(e) => handleNestedChange('client', e)} className="pl-10" />
               </div>
             </div>
            </div>
@@ -319,38 +319,38 @@ export function QuoteForm({ quote, setQuote, accentColor, setAccentColor, toast 
       
       <Card className="bg-card/50 backdrop-blur-sm">
         <CardHeader>
-          <CardTitle>Quote Details</CardTitle>
+          <CardTitle>Estimate Details</CardTitle>
         </CardHeader>
         <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-2">
-            <Label htmlFor="quoteNumber">Quote Number</Label>
-            <Input id="quoteNumber" name="quoteNumber" value={quote.quoteNumber} onChange={handleInputChange} />
+            <Label htmlFor="estimateNumber">Estimate Number</Label>
+            <Input id="estimateNumber" name="estimateNumber" value={estimate.estimateNumber} onChange={handleInputChange} />
           </div>
            <div className="space-y-2">
             <Label htmlFor="projectTitle">Project / Job Title</Label>
             <div className="relative flex items-center">
                 <FileText className="absolute left-3 h-5 w-5 text-muted-foreground" />
-                <Input id="projectTitle" name="projectTitle" value={quote.projectTitle} onChange={handleInputChange} className="pl-10" />
+                <Input id="projectTitle" name="projectTitle" value={estimate.projectTitle} onChange={handleInputChange} className="pl-10" />
             </div>
           </div>
           <div className="space-y-2">
             <Label>Date Issued</Label>
-            <DatePicker date={quote.quoteDate} setDate={(date) => setQuote(p => ({ ...p, quoteDate: date! }))} />
+            <DatePicker date={estimate.estimateDate} setDate={(date) => setEstimate(p => ({ ...p, estimateDate: date! }))} />
           </div>
           <div className="space-y-2">
             <Label>Expiration Date</Label>
-            <DatePicker date={quote.validUntilDate} setDate={(date) => setQuote(p => ({ ...p, validUntilDate: date! }))} />
+            <DatePicker date={estimate.validUntilDate} setDate={(date) => setEstimate(p => ({ ...p, validUntilDate: date! }))} />
           </div>
           <div className="space-y-2">
             <Label htmlFor="referenceNumber">Reference Number (optional)</Label>
             <div className="relative flex items-center">
                 <Hash className="absolute left-3 h-5 w-5 text-muted-foreground" />
-                <Input id="referenceNumber" name="referenceNumber" value={quote.referenceNumber} onChange={handleInputChange} className="pl-10" />
+                <Input id="referenceNumber" name="referenceNumber" value={estimate.referenceNumber} onChange={handleInputChange} className="pl-10" />
             </div>
           </div>
            <div className="space-y-2">
                 <Label htmlFor="currency">Currency</Label>
-                <Select value={quote.currency} onValueChange={handleCurrencyChange}>
+                <Select value={estimate.currency} onValueChange={handleCurrencyChange}>
                     <SelectTrigger id="currency">
                         <SelectValue placeholder="Select currency" />
                     </SelectTrigger>
@@ -363,7 +363,7 @@ export function QuoteForm({ quote, setQuote, accentColor, setAccentColor, toast 
             </div>
             <div className="space-y-2">
                 <Label htmlFor="language">Language</Label>
-                <Select value={quote.language} onValueChange={handleLanguageChange}>
+                <Select value={estimate.language} onValueChange={handleLanguageChange}>
                     <SelectTrigger id="language">
                         <SelectValue placeholder="Select language" />
                     </SelectTrigger>
@@ -392,7 +392,7 @@ export function QuoteForm({ quote, setQuote, accentColor, setAccentColor, toast 
             <div className="col-span-2"><Label>Total</Label></div>
             <div className="col-span-1"></div>
           </div>
-          {quote.lineItems.map((item, index) => (
+          {estimate.lineItems.map((item, index) => (
             <div key={item.id} className="grid grid-cols-12 gap-2 items-center">
               <div className="col-span-12 md:col-span-5 space-y-2">
                 <Label htmlFor={`itemName-${index}`} className="md:hidden">Item Name / Description</Label>
@@ -448,23 +448,23 @@ export function QuoteForm({ quote, setQuote, accentColor, setAccentColor, toast 
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="taxPercentage">Tax (%)</Label>
-              <Input id="taxPercentage" name="summary.taxPercentage" type="number" value={quote.summary.taxPercentage} onChange={handleNumberChange} />
+              <Input id="taxPercentage" name="summary.taxPercentage" type="number" value={estimate.summary.taxPercentage} onChange={handleNumberChange} />
             </div>
             <div className="space-y-2">
               <Label htmlFor="discount">Discount (Fixed Amount)</Label>
-              <Input id="discount" name="summary.discount" type="number" value={quote.summary.discount} onChange={handleNumberChange} />
+              <Input id="discount" name="summary.discount" type="number" value={estimate.summary.discount} onChange={handleNumberChange} />
             </div>
              <div className="space-y-2 col-span-2">
               <Label htmlFor="shippingCost">Shipping / Extra Costs</Label>
               <div className="relative flex items-center">
                   <Truck className="absolute left-3 h-5 w-5 text-muted-foreground" />
-                  <Input id="shippingCost" name="summary.shippingCost" type="number" value={quote.summary.shippingCost} onChange={handleNumberChange} className="pl-10"/>
+                  <Input id="shippingCost" name="summary.shippingCost" type="number" value={estimate.summary.shippingCost} onChange={handleNumberChange} className="pl-10"/>
               </div>
             </div>
           </div>
           <div className="space-y-2">
             <Label htmlFor="termsAndConditions">Terms & Conditions</Label>
-            <Textarea id="termsAndConditions" name="termsAndConditions" value={quote.termsAndConditions} onChange={handleInputChange} placeholder="e.g., Payment terms, validity period, warranty information..." />
+            <Textarea id="termsAndConditions" name="termsAndConditions" value={estimate.termsAndConditions} onChange={handleInputChange} placeholder="e.g., Payment terms, validity period, warranty information..." />
           </div>
           <div className="space-y-2">
             <Label htmlFor="attachments">Attachments</Label>
@@ -472,7 +472,7 @@ export function QuoteForm({ quote, setQuote, accentColor, setAccentColor, toast 
             <p className="text-xs text-muted-foreground">Upload photos, contracts, or other documents. (Non-functional)</p>
           </div>
           <div className="flex items-center space-x-2">
-            <Switch id="signatureRequired" checked={quote.signatureRequired} onCheckedChange={(checked) => setQuote(p => ({ ...p, signatureRequired: checked }))} />
+            <Switch id="signatureRequired" checked={estimate.signatureRequired} onCheckedChange={(checked) => setEstimate(p => ({ ...p, signatureRequired: checked }))} />
             <Label htmlFor="signatureRequired">Require Client Signature</Label>
           </div>
         </CardContent>

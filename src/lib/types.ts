@@ -1,5 +1,6 @@
 
 
+
 export interface LineItem {
   id: string;
   name: string;
@@ -75,28 +76,7 @@ export interface InsuranceDocument {
   template: string;
 }
 
-export interface Estimate {
-  id: string;
-  companyName: string;
-  companyPhone: string;
-  companyAddress: string;
-  clientName: string;
-  clientAddress: string;
-  clientEmail: string;
-  estimateNumber: string;
-  estimateDate: Date;
-  validUntilDate: Date;
-  items: LineItem[];
-  tax: number;
-  discount: number;
-  shippingCost: number;
-  notes: string;
-  currency: string;
-  language: string;
-  template: string;
-}
-
-// New refined Quote Structure
+// New refined Estimate Structure
 export interface BusinessInfo {
   name: string;
   address: string;
@@ -115,7 +95,7 @@ export interface ClientInfo {
   email: string;
 }
 
-export interface QuoteSummary {
+export interface EstimateSummary {
     subtotal: number;
     taxPercentage: number;
     taxAmount: number;
@@ -125,18 +105,18 @@ export interface QuoteSummary {
 }
 
 
-export interface Quote {
+export interface Estimate {
   id: string;
   userId: string;
-  quoteNumber: string;
-  quoteDate: Date;
+  estimateNumber: string;
+  estimateDate: Date;
   validUntilDate: Date;
   status: DocumentStatus;
   
   business: BusinessInfo;
   client: ClientInfo;
   lineItems: LineItem[];
-  summary: QuoteSummary;
+  summary: EstimateSummary;
   
   projectTitle: string;
   referenceNumber: string;
@@ -146,7 +126,9 @@ export interface Quote {
   signatureRequired?: boolean;
 
   template: string;
-  documentType: 'quote';
+  documentType: 'estimate';
   language: string;
   currency: string;
 }
+
+export type Quote = Estimate;

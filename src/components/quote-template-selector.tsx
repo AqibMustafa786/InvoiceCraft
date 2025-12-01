@@ -1,3 +1,4 @@
+
 'use client';
 
 import { cn } from '@/lib/utils';
@@ -11,7 +12,7 @@ interface Template {
   isPro?: boolean;
 }
 
-interface QuoteTemplateSelectorProps {
+interface EstimateTemplateSelectorProps {
   selectedTemplate: string;
   onSelectTemplate: (templateId: string) => void;
 }
@@ -19,17 +20,17 @@ interface QuoteTemplateSelectorProps {
 const templates: Template[] = [
   {
     id: 'default',
-    name: 'Modern Quote',
+    name: 'Modern Estimate',
     thumbnailUrl: '/templates/Estimate-Default.png',
   },
   {
     id: 'contractor',
-    name: 'Contractor Quote',
+    name: 'Contractor Estimate',
     thumbnailUrl: '/templates/Estimate-Contractor.png',
   },
 ];
 
-export function QuoteTemplateSelector({ selectedTemplate, onSelectTemplate }: QuoteTemplateSelectorProps) {
+export function EstimateTemplateSelector({ selectedTemplate, onSelectTemplate }: EstimateTemplateSelectorProps) {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-10 justify-center">
       {templates.map((template) => (
@@ -49,7 +50,7 @@ export function QuoteTemplateSelector({ selectedTemplate, onSelectTemplate }: Qu
           >
             <Image
               src={template.thumbnailUrl}
-              alt={`${template.name} quote template`}
+              alt={`${template.name} estimate template`}
               width={188}
               height={250}
               className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"

@@ -1,21 +1,22 @@
 
+
 'use client';
 
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState } from 'react';
 import { doc } from 'firebase/firestore';
 import { useFirebase, useDoc, useMemoFirebase } from '@/firebase';
-import type { Quote } from '@/lib/types';
-import { QuotePreview } from '@/components/quote-preview';
+import type { Estimate } from '@/lib/types';
+import { EstimatePreview } from '@/components/estimate-preview';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 
-export default function PublicQuotePage({ params }: { params: { quoteId: string } }) {
+export default function PublicEstimatePage({ params }: { params: { estimateId: string } }) {
     const { firestore } = useFirebase();
     const [accentColor, setAccentColor] = useState('hsl(var(--primary))');
     
-    const quoteRef = useMemoFirebase(() => firestore ? doc(firestore, 'quotes', params.quoteId) : null, [firestore, params.quoteId]);
-    const { data: quote, isLoading, error } = useDoc<Quote>(quoteRef);
+    const estimateRef = useMemoFirebase(() => firestore ? doc(firestore, 'estimates', params.estimateId) : null, [firestore, params.estimateId]);
+    const { data: estimate, isLoading, error } = useDoc<Estimate>(estimateRef);
 
     useEffect(() => {
         if (typeof window !== 'undefined' && document) {
@@ -27,24 +28,24 @@ export default function PublicQuotePage({ params }: { params: { quoteId: string 
     }, []);
 
     const fromJSON = (key: string, value: any) => {
-        if (key === 'quoteDate' || key === 'validUntilDate') {
+        if (key === 'estimateDate' || key === 'validUntilDate') {
             return value?.toDate ? value.toDate() : (value ? new Date(value) : value);
         }
         return value;
     };
     
-    const loadedQuote = quote ? JSON.parse(JSON.stringify(quote), fromJSON) as Quote : null;
+    const loadedEstimate = estimate ? JSON.parse(JSON.stringify(estimate), fromJSON) as Estimate : null;
 
     if (isLoading) {
-        return <div className="container mx-auto p-8 text-center">Loading quote...</div>;
+        return <div className="container mx-auto p-8 text-center">Loading estimate...</div>;
     }
 
     if (error) {
-        return <div className="container mx-auto p-8 text-center text-destructive">Error: Could not load quote. This link may be invalid or expired.</div>;
+        return <div className="container mx-auto p-8 text-center text-destructive">Error: Could not load estimate. This link may be invalid or expired.</div>;
     }
 
-    if (!loadedQuote) {
-        return <div className="container mx-auto p-8 text-center">This quote could not be found.</div>;
+    if (!loadedEstimate) {
+        return <div className="container mx-auto p-8 text-center">This estimate could not be found.</div>;
     }
     
     return (
@@ -56,8 +57,8 @@ export default function PublicQuotePage({ params }: { params: { quoteId: string 
                         Back to Dashboard
                     </Link>
                 </Button>
-                <QuotePreview 
-                    quote={loadedQuote} 
+                <EstimatePreview 
+                    estimate={loadedEstimate} 
                     accentColor={accentColor} 
                 />
             </div>
