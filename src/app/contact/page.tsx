@@ -19,7 +19,7 @@ export default function ContactPage() {
         
         {/* Contact Form */}
         <div className="lg:col-span-2">
-            <Card className="h-full bg-card shadow-lg">
+            <Card className="h-full bg-card/50 backdrop-blur-sm shadow-lg">
                 <CardHeader>
                     <CardTitle>Send a Message</CardTitle>
                     <CardDescription>Use the form below to submit your issues, feature requests, or general queries.</CardDescription>
@@ -53,7 +53,7 @@ export default function ContactPage() {
 
         {/* Contact Information */}
         <div className="lg:col-span-1 space-y-8">
-            <Card className="bg-card shadow-lg">
+            <Card className="bg-card/50 backdrop-blur-sm shadow-lg">
                 <CardHeader>
                     <CardTitle>Contact Information</CardTitle>
                 </CardHeader>
@@ -75,7 +75,7 @@ export default function ContactPage() {
                 </CardContent>
             </Card>
 
-             <Card className="bg-card shadow-lg">
+             <Card className="bg-card/50 backdrop-blur-sm shadow-lg">
                 <CardHeader>
                     <CardTitle>Follow Us</CardTitle>
                 </CardHeader>

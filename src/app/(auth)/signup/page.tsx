@@ -71,7 +71,7 @@ export default function SignupPage() {
 
     return (
         <div className="flex min-h-[calc(100vh-4rem)] items-center justify-center p-4">
-            <Card className="w-full max-w-md">
+            <Card className="w-full max-w-md bg-card/50 backdrop-blur-sm">
                 <CardHeader className="text-center">
                     <CardTitle className="text-2xl font-headline">Create an Account</CardTitle>
                     <CardDescription>Join InvoiceCraft and start creating professional invoices in minutes.</CardDescription>

@@ -228,7 +228,7 @@ export default function DashboardPage() {
             })
             .sort((a, b) => {
                 const dateA = a.documentType === 'invoice' ? (a as Invoice).invoiceDate : (a as Quote).quoteDate;
-                const dateB = b.documentType === 'invoice' ? (b as Invoice).invoiceDate : (b as Quote).quoteDate;
+                const dateB = b.documentType === 'invoice' ? (b as Invoice).invoiceDate : (b as Quote).invoiceDate;
                 if (!dateA || !isValid(dateA)) return 1;
                 if (!dateB || !isValid(dateB)) return -1;
                 return dateB.getTime() - dateA.getTime();
@@ -321,7 +321,7 @@ export default function DashboardPage() {
                 </div>
             </div>
             
-            <Card>
+            <Card className="bg-card/50 backdrop-blur-sm">
                 <CardHeader>
                     <CardTitle>My Documents</CardTitle>
                     <CardDescription>A list of your saved invoices and quotes from Firestore.</CardDescription>

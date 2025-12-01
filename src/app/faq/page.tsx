@@ -40,7 +40,7 @@ export default function FaqPage() {
         </PageHeaderDescription>
       </PageHeader>
 
-      <div className="max-w-3xl mx-auto bg-card shadow-lg rounded-lg p-4">
+      <div className="max-w-3xl mx-auto bg-card/50 backdrop-blur-sm shadow-lg rounded-lg p-4">
         <Accordion type="single" collapsible className="w-full">
           {faqItems.map((item, index) => (
              <AccordionItem value={`item-${index}`} key={item.question}>

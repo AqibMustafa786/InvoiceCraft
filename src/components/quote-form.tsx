@@ -167,7 +167,7 @@ export function QuoteForm({ quote, setQuote, accentColor, setAccentColor, toast 
 
   return (
     <div className="space-y-6">
-      <Card className="bg-card">
+      <Card className="bg-card/50 backdrop-blur-sm">
         <CardHeader>
           <CardTitle>Branding &amp; Customization</CardTitle>
         </CardHeader>
@@ -224,7 +224,7 @@ export function QuoteForm({ quote, setQuote, accentColor, setAccentColor, toast 
         </CardContent>
       </Card>
       
-      <Card className="bg-card">
+      <Card className="bg-card/50 backdrop-blur-sm">
         <CardHeader>
           <CardTitle>Business Information</CardTitle>
         </CardHeader>
@@ -273,7 +273,7 @@ export function QuoteForm({ quote, setQuote, accentColor, setAccentColor, toast 
         </CardContent>
       </Card>
 
-      <Card className="bg-card">
+      <Card className="bg-card/50 backdrop-blur-sm">
         <CardHeader>
           <CardTitle>Client Information</CardTitle>
         </CardHeader>
@@ -317,7 +317,7 @@ export function QuoteForm({ quote, setQuote, accentColor, setAccentColor, toast 
         </CardContent>
       </Card>
       
-      <Card className="bg-card">
+      <Card className="bg-card/50 backdrop-blur-sm">
         <CardHeader>
           <CardTitle>Quote Details</CardTitle>
         </CardHeader>
@@ -380,7 +380,7 @@ export function QuoteForm({ quote, setQuote, accentColor, setAccentColor, toast 
         </CardContent>
       </Card>
 
-      <Card className="bg-card">
+      <Card className="bg-card/50 backdrop-blur-sm">
         <CardHeader>
           <CardTitle>Line Items (Services / Products)</CardTitle>
         </CardHeader>
@@ -440,7 +440,7 @@ export function QuoteForm({ quote, setQuote, accentColor, setAccentColor, toast 
         </CardContent>
       </Card>
 
-      <Card className="bg-card">
+      <Card className="bg-card/50 backdrop-blur-sm">
         <CardHeader>
           <CardTitle>Pricing Summary, Terms &amp; Signature</CardTitle>
         </CardHeader>

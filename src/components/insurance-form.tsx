@@ -110,7 +110,7 @@ export function InsuranceForm({ document: doc, setDocument: setDoc, logoUrl, set
 
   return (
     <div className="space-y-6">
-      <Card className="bg-card">
+      <Card className="bg-card/50 backdrop-blur-sm">
         <CardHeader>
           <CardTitle>Branding &amp; Document Details</CardTitle>
         </CardHeader>
@@ -157,7 +157,7 @@ export function InsuranceForm({ document: doc, setDocument: setDoc, logoUrl, set
         </CardContent>
       </Card>
       
-      <Card className="bg-card">
+      <Card className="bg-card/50 backdrop-blur-sm">
         <CardHeader>
           <CardTitle>Your Details (Provider/Company)</CardTitle>
         </CardHeader>
@@ -182,7 +182,7 @@ export function InsuranceForm({ document: doc, setDocument: setDoc, logoUrl, set
         </CardContent>
       </Card>
 
-      <Card className="bg-card">
+      <Card className="bg-card/50 backdrop-blur-sm">
         <CardHeader>
           <CardTitle>Policyholder / Insured Details</CardTitle>
         </CardHeader>
@@ -226,7 +226,7 @@ export function InsuranceForm({ document: doc, setDocument: setDoc, logoUrl, set
         </CardContent>
       </Card>
 
-       <Card className="bg-card">
+       <Card className="bg-card/50 backdrop-blur-sm">
         <CardHeader>
           <CardTitle>Claim &amp; Incident Details</CardTitle>
         </CardHeader>
@@ -261,7 +261,7 @@ export function InsuranceForm({ document: doc, setDocument: setDoc, logoUrl, set
         </CardContent>
       </Card>
 
-      <Card className="bg-card">
+      <Card className="bg-card/50 backdrop-blur-sm">
         <CardHeader>
           <CardTitle>Insurance &amp; Adjuster Details</CardTitle>
         </CardHeader>
@@ -285,7 +285,7 @@ export function InsuranceForm({ document: doc, setDocument: setDoc, logoUrl, set
         </CardContent>
       </Card>
 
-      <Card className="bg-card">
+      <Card className="bg-card/50 backdrop-blur-sm">
         <CardHeader>
           <CardTitle>Services / Items</CardTitle>
         </CardHeader>
@@ -327,7 +327,7 @@ export function InsuranceForm({ document: doc, setDocument: setDoc, logoUrl, set
         </CardContent>
       </Card>
 
-      <Card className="bg-card">
+      <Card className="bg-card/50 backdrop-blur-sm">
         <CardHeader>
           <CardTitle>Totals &amp; Notes</CardTitle>
         </CardHeader>
