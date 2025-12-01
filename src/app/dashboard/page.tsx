@@ -120,7 +120,7 @@ export default function DashboardPage() {
         const { business, client, lineItems, summary, projectTitle, currency, language } = quote;
 
         const newInvoiceData: Omit<Invoice, 'id'> = {
-            userId: user.uid, // Add this line
+            userId: user.uid,
             companyName: business.name,
             companyPhone: business.phone,
             companyAddress: business.address,
@@ -254,7 +254,6 @@ export default function DashboardPage() {
     }
 
     if (!user && !isUserLoading) {
-        // This case should be handled by AuthProvider, but as a fallback
         router.push('/login');
         return null;
     }
