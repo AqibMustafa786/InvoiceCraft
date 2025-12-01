@@ -1,3 +1,4 @@
+
 'use client';
 
 import { ChangeEvent, Dispatch, SetStateAction, useState, useEffect } from 'react';
@@ -8,7 +9,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { DatePicker } from '@/components/ui/datepicker';
-import { ImageUp, Plus, Trash2, Palette, X, Mail, Truck, Hash, Phone } from 'lucide-react';
+import { ImageUp, Plus, Trash2, Palette, X, Mail, Truck, Hash, Phone, Globe, Briefcase, Award, User, FileText, Building } from 'lucide-react';
 import Image from 'next/image';
 import {
   Select,
@@ -17,12 +18,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch";
 
 interface EstimateFormProps {
   estimate: Estimate;
   setEstimate: Dispatch<SetStateAction<Estimate>>;
-  logoUrl: string | null;
-  setLogoUrl: Dispatch<SetStateAction<string | null>>;
   accentColor: string;
   setAccentColor: Dispatch<SetStateAction<string>>;
   toast: (options: { title: string; description: string; variant?: "default" | "destructive" }) => void;
@@ -36,17 +36,52 @@ const currencies = [
     { value: 'PKR', label: 'PKR (₨)' },
 ]
 
-export function EstimateForm({ estimate, setEstimate, logoUrl, setLogoUrl, accentColor, setAccentColor, toast }: EstimateFormProps) {
+export function EstimateForm({ estimate, setEstimate, accentColor, setAccentColor, toast }: EstimateFormProps) {
   const [bulkAddCount, setBulkAddCount] = useState(5);
   const [colorInputValue, setColorInputValue] = useState(accentColor);
+  const [logoUrl, setLogoUrl] = useState<string | null>(estimate.business.logoUrl || null);
 
   useEffect(() => {
     setColorInputValue(accentColor);
   }, [accentColor]);
+  
+  useEffect(() => {
+    setEstimate(prev => ({
+        ...prev,
+        business: {
+            ...prev.business,
+            logoUrl: logoUrl || '',
+        }
+    }))
+  }, [logoUrl, setEstimate]);
+
+
+  const handleNestedChange = (section: 'business' | 'client' | 'summary', e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setEstimate(prev => ({
+      ...prev,
+      [section]: {
+        ...prev[section],
+        [name]: value
+      }
+    }));
+  };
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setEstimate(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleNumberChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    const [section, field] = name.split('.');
+     setEstimate(prev => ({
+      ...prev,
+      [section as 'summary']: {
+        ...prev[section as 'summary'],
+        [field]: parseFloat(value) || 0,
+      }
+    }));
   };
   
   const handleCurrencyChange = (value: string) => {
@@ -57,19 +92,14 @@ export function EstimateForm({ estimate, setEstimate, logoUrl, setLogoUrl, accen
     setEstimate(prev => ({ ...prev, language: value }));
   };
 
-  const handleNumberChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setEstimate(prev => ({ ...prev, [name]: parseFloat(value) || 0 }));
-  }
-
-  const handleItemChange = (index: number, field: keyof LineItem, value: string | number) => {
-    const newItems = [...estimate.items];
+  const handleItemChange = (index: number, field: keyof Omit<LineItem, 'id'>, value: string | number) => {
+    const newItems = [...estimate.lineItems];
     (newItems[index] as any)[field] = value;
-    setEstimate(prev => ({ ...prev, items: newItems }));
+    setEstimate(prev => ({ ...prev, lineItems: newItems }));
   };
 
   const addItem = () => {
-     if (estimate.items.length >= 50) {
+     if (estimate.lineItems.length >= 50) {
        toast({
         title: "Item Limit Reached",
         description: "You cannot add more than 50 items to a single estimate.",
@@ -79,7 +109,7 @@ export function EstimateForm({ estimate, setEstimate, logoUrl, setLogoUrl, accen
     }
     setEstimate(prev => ({
       ...prev,
-      items: [...prev.items, { id: crypto.randomUUID(), name: '', quantity: 1, rate: 0 }],
+      lineItems: [...prev.lineItems, { id: crypto.randomUUID(), name: '', quantity: 1, unitPrice: 0 }],
     }));
   };
   
@@ -87,10 +117,10 @@ export function EstimateForm({ estimate, setEstimate, logoUrl, setLogoUrl, accen
     const count = Number(bulkAddCount);
     if (count <= 0) return;
 
-    if (estimate.items.length + count > 50) {
+    if (estimate.lineItems.length + count > 50) {
       toast({
         title: "Item Limit Exceeded",
-        description: `You can only add ${50 - estimate.items.length} more items. The maximum is 50.`,
+        description: `You can only add ${50 - estimate.lineItems.length} more items. The maximum is 50.`,
         variant: "destructive",
       });
       return;
@@ -100,18 +130,18 @@ export function EstimateForm({ estimate, setEstimate, logoUrl, setLogoUrl, accen
       id: crypto.randomUUID(),
       name: '',
       quantity: 1,
-      rate: 0,
+      unitPrice: 0,
     }));
 
     setEstimate(prev => ({
       ...prev,
-      items: [...prev.items, ...newItems],
+      lineItems: [...prev.lineItems, ...newItems],
     }));
   };
 
   const removeItem = (index: number) => {
-    const newItems = estimate.items.filter((_, i) => i !== index);
-    setEstimate(prev => ({ ...prev, items: newItems }));
+    const newItems = estimate.lineItems.filter((_, i) => i !== index);
+    setEstimate(prev => ({ ...prev, lineItems: newItems }));
   };
 
   const handleLogoUpload = (e: ChangeEvent<HTMLInputElement>) => {
@@ -196,49 +226,94 @@ export function EstimateForm({ estimate, setEstimate, logoUrl, setLogoUrl, accen
       
       <Card className="bg-card/50 backdrop-blur-sm">
         <CardHeader>
-          <CardTitle>Your Details</CardTitle>
+          <CardTitle>Business Information</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="companyName">Company Name</Label>
-              <Input id="companyName" name="companyName" value={estimate.companyName} onChange={handleInputChange} />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="companyPhone">Phone #</Label>
+              <Label htmlFor="businessName">Business Name</Label>
               <div className="relative flex items-center">
-                  <Phone className="absolute left-3 h-5 w-5 text-muted-foreground" />
-                  <Input id="companyPhone" name="companyPhone" value={estimate.companyPhone} onChange={handleInputChange} className="pl-10" />
+                <Briefcase className="absolute left-3 h-5 w-5 text-muted-foreground" />
+                <Input id="businessName" name="name" value={estimate.business.name} onChange={(e) => handleNestedChange('business', e)} className="pl-10" />
               </div>
             </div>
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="companyAddress">Company Address</Label>
-            <Textarea id="companyAddress" name="companyAddress" value={estimate.companyAddress} onChange={handleInputChange} />
-          </div>
+            <div className="space-y-2">
+                <Label htmlFor="businessAddress">Business Address</Label>
+                <Textarea id="businessAddress" name="address" value={estimate.business.address} onChange={(e) => handleNestedChange('business', e)} placeholder="Street, City, State, Zip"/>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                    <Label htmlFor="businessPhone">Phone Number</Label>
+                    <div className="relative flex items-center">
+                        <Phone className="absolute left-3 h-5 w-5 text-muted-foreground" />
+                        <Input id="businessPhone" name="phone" value={estimate.business.phone} onChange={(e) => handleNestedChange('business', e)} className="pl-10" />
+                    </div>
+                </div>
+                <div className="space-y-2">
+                    <Label htmlFor="businessEmail">Email Address</Label>
+                    <div className="relative flex items-center">
+                        <Mail className="absolute left-3 h-5 w-5 text-muted-foreground" />
+                        <Input id="businessEmail" name="email" value={estimate.business.email} onChange={(e) => handleNestedChange('business', e)} className="pl-10" />
+                    </div>
+                </div>
+                <div className="space-y-2">
+                    <Label htmlFor="businessWebsite">Website (optional)</Label>
+                    <div className="relative flex items-center">
+                        <Globe className="absolute left-3 h-5 w-5 text-muted-foreground" />
+                        <Input id="businessWebsite" name="website" value={estimate.business.website} onChange={(e) => handleNestedChange('business', e)} className="pl-10" />
+                    </div>
+                </div>
+                <div className="space-y-2">
+                    <Label htmlFor="businessLicense">License Number (optional)</Label>
+                    <div className="relative flex items-center">
+                        <Award className="absolute left-3 h-5 w-5 text-muted-foreground" />
+                        <Input id="businessLicense" name="licenseNumber" value={estimate.business.licenseNumber} onChange={(e) => handleNestedChange('business', e)} className="pl-10" />
+                    </div>
+                </div>
+            </div>
         </CardContent>
       </Card>
 
       <Card className="bg-card/50 backdrop-blur-sm">
         <CardHeader>
-          <CardTitle>Client Details</CardTitle>
+          <CardTitle>Client Information</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="clientName">Client Name</Label>
-            <Input id="clientName" name="clientName" value={estimate.clientName} onChange={handleInputChange} />
-          </div>
-           <div className="space-y-2">
-            <Label htmlFor="clientEmail">Client Email</Label>
-            <div className="relative flex items-center">
-                <Mail className="absolute left-3 h-5 w-5 text-muted-foreground" />
-                <Input id="clientEmail" name="clientEmail" value={estimate.clientEmail || ''} onChange={handleInputChange} className="pl-10" placeholder="client@example.com" />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="clientName">Client Full Name</Label>
+               <div className="relative flex items-center">
+                  <User className="absolute left-3 h-5 w-5 text-muted-foreground" />
+                  <Input id="clientName" name="name" value={estimate.client.name} onChange={(e) => handleNestedChange('client', e)} className="pl-10" />
+                </div>
+            </div>
+             <div className="space-y-2">
+              <Label htmlFor="clientCompanyName">Client Company Name (optional)</Label>
+               <div className="relative flex items-center">
+                  <Building className="absolute left-3 h-5 w-5 text-muted-foreground" />
+                  <Input id="clientCompanyName" name="companyName" value={estimate.client.companyName} onChange={(e) => handleNestedChange('client', e)} className="pl-10" />
+                </div>
             </div>
           </div>
           <div className="space-y-2">
             <Label htmlFor="clientAddress">Client Address</Label>
-            <Textarea id="clientAddress" name="clientAddress" value={estimate.clientAddress} onChange={handleInputChange} />
+            <Textarea id="clientAddress" name="address" value={estimate.client.address} onChange={(e) => handleNestedChange('client', e)} />
           </div>
+           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="clientEmail">Client Email</Label>
+              <div className="relative flex items-center">
+                  <Mail className="absolute left-3 h-5 w-5 text-muted-foreground" />
+                  <Input id="clientEmail" name="email" value={estimate.client.email || ''} onChange={(e) => handleNestedChange('client', e)} className="pl-10" placeholder="client@example.com" />
+              </div>
+            </div>
+             <div className="space-y-2">
+              <Label htmlFor="clientPhone">Client Phone</Label>
+              <div className="relative flex items-center">
+                  <Phone className="absolute left-3 h-5 w-5 text-muted-foreground" />
+                  <Input id="clientPhone" name="phone" value={estimate.client.phone || ''} onChange={(e) => handleNestedChange('client', e)} className="pl-10" />
+              </div>
+            </div>
+           </div>
         </CardContent>
       </Card>
       
@@ -251,13 +326,27 @@ export function EstimateForm({ estimate, setEstimate, logoUrl, setLogoUrl, accen
             <Label htmlFor="estimateNumber">Estimate Number</Label>
             <Input id="estimateNumber" name="estimateNumber" value={estimate.estimateNumber} onChange={handleInputChange} />
           </div>
+           <div className="space-y-2">
+            <Label htmlFor="projectTitle">Project / Job Title</Label>
+            <div className="relative flex items-center">
+                <FileText className="absolute left-3 h-5 w-5 text-muted-foreground" />
+                <Input id="projectTitle" name="projectTitle" value={estimate.projectTitle} onChange={handleInputChange} className="pl-10" />
+            </div>
+          </div>
           <div className="space-y-2">
-            <Label>Estimate Date</Label>
+            <Label>Date Issued</Label>
             <DatePicker date={estimate.estimateDate} setDate={(date) => setEstimate(p => ({ ...p, estimateDate: date! }))} />
           </div>
           <div className="space-y-2">
-            <Label>Valid Until</Label>
+            <Label>Expiration Date</Label>
             <DatePicker date={estimate.validUntilDate} setDate={(date) => setEstimate(p => ({ ...p, validUntilDate: date! }))} />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="referenceNumber">Reference Number (optional)</Label>
+            <div className="relative flex items-center">
+                <Hash className="absolute left-3 h-5 w-5 text-muted-foreground" />
+                <Input id="referenceNumber" name="referenceNumber" value={estimate.referenceNumber} onChange={handleInputChange} className="pl-10" />
+            </div>
           </div>
            <div className="space-y-2">
                 <Label htmlFor="currency">Currency</Label>
@@ -293,20 +382,20 @@ export function EstimateForm({ estimate, setEstimate, logoUrl, setLogoUrl, accen
 
       <Card className="bg-card/50 backdrop-blur-sm">
         <CardHeader>
-          <CardTitle>Items / Services</CardTitle>
+          <CardTitle>Line Items (Services / Products)</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="hidden md:grid md:grid-cols-12 gap-4 text-sm font-medium text-muted-foreground">
-            <div className="col-span-5"><Label>Item Name</Label></div>
+            <div className="col-span-5"><Label>Item Name / Description</Label></div>
             <div className="col-span-2"><Label>Quantity</Label></div>
-            <div className="col-span-2"><Label>Rate</Label></div>
-            <div className="col-span-2"><Label>Subtotal</Label></div>
+            <div className="col-span-2"><Label>Unit Price</Label></div>
+            <div className="col-span-2"><Label>Total</Label></div>
             <div className="col-span-1"></div>
           </div>
-          {estimate.items.map((item, index) => (
+          {estimate.lineItems.map((item, index) => (
             <div key={item.id} className="grid grid-cols-12 gap-2 items-center">
               <div className="col-span-12 md:col-span-5 space-y-2">
-                <Label htmlFor={`itemName-${index}`} className="md:hidden">Item Name</Label>
+                <Label htmlFor={`itemName-${index}`} className="md:hidden">Item Name / Description</Label>
                 <Textarea id={`itemName-${index}`} value={item.name} onChange={(e) => handleItemChange(index, 'name', e.target.value)} rows={1} className="min-h-0"/>
               </div>
               <div className="col-span-4 md:col-span-2 space-y-2">
@@ -314,11 +403,11 @@ export function EstimateForm({ estimate, setEstimate, logoUrl, setLogoUrl, accen
                 <Input id={`itemQuantity-${index}`} type="number" value={item.quantity} onChange={(e) => handleItemChange(index, 'quantity', parseFloat(e.target.value) || 0)} />
               </div>
               <div className="col-span-4 md:col-span-2 space-y-2">
-                <Label htmlFor={`itemRate-${index}`} className="md:hidden">Rate</Label>
-                <Input id={`itemRate-${index}`} type="number" value={item.rate} onChange={(e) => handleItemChange(index, 'rate', parseFloat(e.target.value) || 0)} />
+                <Label htmlFor={`itemRate-${index}`} className="md:hidden">Unit Price</Label>
+                <Input id={`itemRate-${index}`} type="number" value={item.unitPrice} onChange={(e) => handleItemChange(index, 'unitPrice', parseFloat(e.target.value) || 0)} />
               </div>
               <div className="col-span-3 md:col-span-2 flex items-center h-10">
-                <p className="font-medium tabular-nums">{currencySymbol}{(item.quantity * item.rate).toFixed(2)}</p>
+                <p className="font-medium tabular-nums">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</p>
               </div>
               <div className="col-span-1 flex items-center h-10">
                 <Button variant="ghost" size="icon" onClick={() => removeItem(index)}>
@@ -328,7 +417,7 @@ export function EstimateForm({ estimate, setEstimate, logoUrl, setLogoUrl, accen
             </div>
           ))}
           <div className="flex flex-wrap items-end gap-4">
-            <Button variant="outline" onClick={addItem}><Plus className="mr-2 h-4 w-4" /> Add Item</Button>
+            <Button variant="outline" onClick={addItem}><Plus className="mr-2 h-4 w-4" /> Add Line Item</Button>
             
             <div className="flex items-end gap-2">
                 <div className="space-y-2">
@@ -353,29 +442,38 @@ export function EstimateForm({ estimate, setEstimate, logoUrl, setLogoUrl, accen
 
       <Card className="bg-card/50 backdrop-blur-sm">
         <CardHeader>
-          <CardTitle>Totals & Notes</CardTitle>
+          <CardTitle>Pricing Summary, Terms &amp; Signature</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="tax">Tax (%)</Label>
-              <Input id="tax" name="tax" type="number" value={estimate.tax} onChange={handleNumberChange} />
+              <Label htmlFor="taxPercentage">Tax (%)</Label>
+              <Input id="taxPercentage" name="summary.taxPercentage" type="number" value={estimate.summary.taxPercentage} onChange={handleNumberChange} />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="discount">Discount (%)</Label>
-              <Input id="discount" name="discount" type="number" value={estimate.discount} onChange={handleNumberChange} />
+              <Label htmlFor="discount">Discount (Fixed Amount)</Label>
+              <Input id="discount" name="summary.discount" type="number" value={estimate.summary.discount} onChange={handleNumberChange} />
             </div>
              <div className="space-y-2 col-span-2">
               <Label htmlFor="shippingCost">Shipping / Extra Costs</Label>
               <div className="relative flex items-center">
                   <Truck className="absolute left-3 h-5 w-5 text-muted-foreground" />
-                  <Input id="shippingCost" name="shippingCost" type="number" value={estimate.shippingCost} onChange={handleNumberChange} className="pl-10"/>
+                  <Input id="shippingCost" name="summary.shippingCost" type="number" value={estimate.summary.shippingCost} onChange={handleNumberChange} className="pl-10"/>
               </div>
             </div>
           </div>
           <div className="space-y-2">
-            <Label htmlFor="notes">Notes / Terms & Conditions</Label>
-            <Textarea id="notes" name="notes" value={estimate.notes} onChange={handleInputChange} />
+            <Label htmlFor="termsAndConditions">Terms & Conditions</Label>
+            <Textarea id="termsAndConditions" name="termsAndConditions" value={estimate.termsAndConditions} onChange={handleInputChange} placeholder="e.g., Payment terms, validity period, warranty information..." />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="attachments">Attachments</Label>
+            <Input id="attachments" type="file" multiple />
+            <p className="text-xs text-muted-foreground">Upload photos, contracts, or other documents. (Non-functional)</p>
+          </div>
+          <div className="flex items-center space-x-2">
+            <Switch id="signatureRequired" checked={estimate.signatureRequired} onCheckedChange={(checked) => setEstimate(p => ({ ...p, signatureRequired: checked }))} />
+            <Label htmlFor="signatureRequired">Require Client Signature</Label>
           </div>
         </CardContent>
       </Card>

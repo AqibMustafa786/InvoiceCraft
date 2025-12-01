@@ -47,7 +47,7 @@ const initialFilters: DashboardFilters = {
     dateTo: null,
 };
 
-const STATUS_OPTIONS: DocumentStatus[] = ['draft', 'sent', 'paid', 'overdue', 'accepted', 'rejected'];
+const STATUS_OPTIONS: DocumentStatus[] = ['draft', 'sent', 'paid', 'overdue', 'accepted', 'rejected', 'expired'];
 
 const currencySymbols: { [key: string]: string } = {
     USD: '$',
@@ -232,7 +232,7 @@ export default function DashboardPage() {
             })
             .sort((a, b) => {
                 const dateA = a.documentType === 'invoice' ? (a as Invoice).invoiceDate : (a as Estimate).estimateDate;
-                const dateB = b.documentType === 'invoice' ? (b as Invoice).invoiceDate : (b as Estimate).estimateDate;
+                const dateB = b.documentType === 'invoice' ? (b as Invoice).invoiceDate : (b as Estimate).invoiceDate;
                 if (!dateA || !isValid(dateA)) return 1;
                 if (!dateB || !isValid(dateB)) return -1;
                 return dateB.getTime() - dateA.getTime();
@@ -258,6 +258,7 @@ export default function DashboardPage() {
             case 'sent': return 'secondary';
             case 'overdue':
             case 'rejected':
+            case 'expired':
                 return 'destructive';
             case 'draft':
             default: return 'outline';

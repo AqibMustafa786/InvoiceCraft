@@ -1,6 +1,4 @@
 
-
-
 export interface LineItem {
   id: string;
   name: string;
@@ -9,7 +7,7 @@ export interface LineItem {
   unitPrice: number;
 }
 
-export type DocumentStatus = 'draft' | 'sent' | 'paid' | 'overdue' | 'accepted' | 'rejected';
+export type DocumentStatus = 'draft' | 'sent' | 'paid' | 'overdue' | 'accepted' | 'rejected' | 'expired';
 
 export interface Invoice {
   id: string; 

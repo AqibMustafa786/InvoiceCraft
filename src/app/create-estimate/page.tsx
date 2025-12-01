@@ -1,42 +1,76 @@
+
+
 'use client';
 
 import { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import type { Estimate } from '@/lib/types';
+import type { Estimate, LineItem } from '@/lib/types';
 import { EstimateForm } from '@/components/estimate-form';
 import { EstimatePreview } from '@/components/estimate-preview';
 import { Button } from '@/components/ui/button';
-import { Printer, FilePlus, LayoutDashboard } from 'lucide-react';
+import { Printer, FilePlus, LayoutDashboard, Edit } from 'lucide-react';
 import { addDays } from 'date-fns';
 import { useToast } from '@/hooks/use-toast';
 import { EstimateTemplateSelector } from '@/components/estimate-template-selector';
 import Link from 'next/link';
+import { useFirebase, useMemoFirebase } from '@/firebase/provider';
+import { doc } from 'firebase/firestore';
+import { setDocumentNonBlocking } from '@/firebase/non-blocking-updates';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { useDoc } from '@/firebase/firestore/use-doc';
 
-const getInitialLineItem = () => ({ id: crypto.randomUUID(), name: '', quantity: 1, rate: 0 });
+const ESTIMATES_COLLECTION = 'estimates';
 
-const getInitialEstimate = (): Estimate => ({
+const getInitialLineItem = (): LineItem => ({ id: crypto.randomUUID(), name: '', quantity: 1, unitPrice: 0 });
+
+const getInitialEstimate = (): Omit<Estimate, 'userId'> => ({
   id: crypto.randomUUID(),
-  companyName: 'Your Company',
-  companyPhone: '+1 (123) 456-7890',
-  companyAddress: '123 Main St, Anytown, USA',
-  clientName: 'Client Company',
-  clientAddress: '456 Oak Ave, Someplace, USA',
-  clientEmail: '',
-  estimateNumber: 'EST-001',
+  estimateNumber: `EST-${new Date().getFullYear()}-001`,
   estimateDate: new Date(),
   validUntilDate: addDays(new Date(), 30),
-  items: [{ ...getInitialLineItem(), name: 'Sample Service (e.g., Website Development)', rate: 1500 }],
-  tax: 0,
-  discount: 0,
-  shippingCost: 0,
-  notes: 'This estimate is valid for 30 days. Prices are subject to change thereafter.',
-  currency: 'USD',
-  language: 'en',
+  status: 'draft',
+  
+  business: {
+    name: 'Your Company',
+    address: '123 Main St, Anytown, USA 12345',
+    phone: '+1 (123) 456-7890',
+    email: 'contact@yourcompany.com',
+    website: 'www.yourcompany.com',
+    licenseNumber: 'LICENSE-12345',
+  },
+
+  client: {
+    name: 'Client Name',
+    companyName: 'Client Company',
+    address: '456 Oak Ave, Someplace, USA 54321',
+    phone: '+1 (987) 654-3210',
+    email: 'client@example.com',
+  },
+  
+  lineItems: [{ ...getInitialLineItem(), name: 'Sample Service (e.g., Website Development)', unitPrice: 1500 }],
+
+  summary: {
+    subtotal: 1500,
+    taxPercentage: 0,
+    taxAmount: 0,
+    discount: 0,
+    grandTotal: 1500,
+    shippingCost: 0,
+  },
+
+  projectTitle: 'New Project',
+  referenceNumber: 'REF-001',
+  
+  termsAndConditions: 'This estimate is valid for 30 days. Prices are subject to change thereafter. Payment Terms: 50% upfront, 50% on completion.',
+  
   template: 'default',
+  documentType: 'estimate',
+  language: 'en',
+  currency: 'USD',
 });
 
 
-function PrintableEstimate({ estimate, logoUrl, accentColor }: { estimate: Estimate, logoUrl: string | null, accentColor: string }) {
+function PrintableEstimate({ estimate, accentColor }: { estimate: Estimate, accentColor: string }) {
     const [printRoot, setPrintRoot] = useState<HTMLElement | null>(null);
 
     useEffect(() => {
@@ -49,7 +83,7 @@ function PrintableEstimate({ estimate, logoUrl, accentColor }: { estimate: Estim
     }
 
     return createPortal(
-        <EstimatePreview estimate={estimate} logoUrl={logoUrl} accentColor={accentColor} id="estimate-preview-print" isPrint={true} />,
+        <EstimatePreview estimate={estimate} accentColor={accentColor} id="estimate-preview-print" isPrint={true} />,
         printRoot
     );
 }
@@ -57,43 +91,118 @@ function PrintableEstimate({ estimate, logoUrl, accentColor }: { estimate: Estim
 
 export default function CreateEstimatePage() {
   const [estimate, setEstimate] = useState<Estimate | null>(null);
-  const [logoUrl, setLogoUrl] = useState<string | null>(null);
   const [accentColor, setAccentColor] = useState<string>('hsl(var(--primary))');
   const { toast } = useToast();
+  const { firestore, user, isUserLoading } = useFirebase();
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
+  const draftId = searchParams.get('draftId');
+  const docRef = useMemoFirebase(() => draftId && firestore ? doc(firestore, ESTIMATES_COLLECTION, draftId) : null, [draftId, firestore]);
+  const { data: remoteDraft, isLoading: isDraftLoading } = useDoc<Estimate>(docRef);
 
   useEffect(() => {
-    // Initialize state on the client to avoid hydration mismatch
-    setEstimate(getInitialEstimate());
+    if (isUserLoading) return;
+    if (!user) {
+        router.push('/login');
+        return;
+    }
+
+    const initialEstimate = {...getInitialEstimate(), userId: user.uid};
+
+    if (draftId) {
+        if (remoteDraft) {
+            const fromJSON = (key: string, value: any) => {
+                if (['estimateDate', 'validUntilDate'].includes(key) && value) {
+                    return value.toDate ? value.toDate() : new Date(value);
+                }
+                return value;
+            };
+            const loadedDraft = JSON.parse(JSON.stringify(remoteDraft), fromJSON);
+            setEstimate({ ...initialEstimate, ...loadedDraft });
+        }
+    } else {
+        setEstimate(initialEstimate);
+    }
+    
     if (typeof window !== 'undefined' && document) {
         const computedColor = getComputedStyle(document.documentElement).getPropertyValue('--primary').trim();
         if (computedColor) {
            setAccentColor(`hsl(${computedColor})`);
         }
     }
-  }, []);
+  }, [draftId, remoteDraft, user, isUserLoading, router]);
 
   const handlePrint = () => {
     window.print();
   };
   
+  const handleSaveDraft = () => {
+    if (!estimate || !firestore) return;
+
+    const draftToSave = {
+      ...estimate,
+      estimateDate: estimate.estimateDate,
+      validUntilDate: estimate.validUntilDate,
+    };
+    
+    const docRef = doc(firestore, ESTIMATES_COLLECTION, estimate.id);
+    setDocumentNonBlocking(docRef, draftToSave, { merge: true });
+
+    toast({
+      title: "Estimate Draft Saved",
+      description: "Your estimate draft has been saved online.",
+    });
+    router.push(`/create-estimate?draftId=${estimate.id}`);
+  };
+
   const handleNew = () => {
-    const newEstimate = getInitialEstimate();
+    if (!user) return;
+    const newEstimate = {...getInitialEstimate(), userId: user.uid};
     newEstimate.estimateNumber = `EST-${String(Math.floor(Math.random() * 1000)).padStart(3, '0')}`;
     setEstimate(newEstimate);
-    setLogoUrl(null);
     if (typeof window !== 'undefined' && document) {
         const computedColor = getComputedStyle(document.documentElement).getPropertyValue('--primary').trim();
         if (computedColor) {
             setAccentColor(`hsl(${computedColor})`);
         }
     }
+     router.push('/create-estimate');
     toast({
         title: "New Estimate",
         description: "A new blank estimate has been created.",
       });
   };
+  
+  useEffect(() => {
+    if (estimate) {
+      const subtotal = estimate.lineItems.reduce((acc, item) => acc + item.quantity * item.unitPrice, 0);
+      const taxAmount = (subtotal * estimate.summary.taxPercentage) / 100;
+      const discountAmount = estimate.summary.discount; // Can be percentage or fixed amount
+      const grandTotal = subtotal + taxAmount - discountAmount + estimate.summary.shippingCost;
 
-  if (!estimate) {
+      setEstimate(prev => {
+        if (!prev) return null;
+        if (prev.summary.subtotal !== subtotal ||
+            prev.summary.taxAmount !== taxAmount ||
+            prev.summary.grandTotal !== grandTotal) {
+          return {
+            ...prev,
+            summary: {
+              ...prev.summary,
+              subtotal,
+              taxAmount,
+              grandTotal
+            }
+          };
+        }
+        return prev;
+      });
+    }
+  }, [estimate?.lineItems, estimate?.summary.taxPercentage, estimate?.summary.discount, estimate?.summary.shippingCost]);
+
+
+  if (!estimate || (draftId && isDraftLoading) || isUserLoading) {
     return (
         <div className="container mx-auto p-4 md:p-8">
             <h1 className="text-3xl font-bold font-headline">Loading...</h1>
@@ -106,7 +215,7 @@ export default function CreateEstimatePage() {
       <div className="container mx-auto p-4 md:p-8">
         <div className="flex flex-col md:flex-row justify-between md:items-center gap-4 mb-8">
           <div>
-            <h1 className="text-3xl font-bold font-headline">Create Estimate / Quote</h1>
+            <h1 className="text-3xl font-bold font-headline">Create Estimate</h1>
             <p className="text-muted-foreground">Select a template and fill out the form to generate your professional estimate.</p>
           </div>
           <div className="flex flex-wrap gap-2">
@@ -119,6 +228,10 @@ export default function CreateEstimatePage() {
                   <LayoutDashboard className="mr-2 h-5 w-5" />
                   Dashboard
                 </Link>
+              </Button>
+               <Button onClick={handleSaveDraft}>
+                <Edit className="mr-2 h-5 w-5" />
+                Save Draft
               </Button>
               <Button onClick={handlePrint}>
                 <Printer className="mr-2 h-5 w-5" />
@@ -142,8 +255,6 @@ export default function CreateEstimatePage() {
                 <EstimateForm 
                   estimate={estimate} 
                   setEstimate={setEstimate as React.Dispatch<React.SetStateAction<Estimate>>} 
-                  logoUrl={logoUrl}
-                  setLogoUrl={setLogoUrl}
                   accentColor={accentColor}
                   setAccentColor={setAccentColor}
                   toast={toast}
@@ -154,12 +265,12 @@ export default function CreateEstimatePage() {
           <div className="lg:col-span-2 lg:pl-12">
             <div className="sticky top-24">
                 <h2 className="text-2xl font-bold font-headline mb-6">Live Preview</h2>
-                <EstimatePreview estimate={estimate} logoUrl={logoUrl} accentColor={accentColor} />
+                <EstimatePreview estimate={estimate} accentColor={accentColor} />
             </div>
           </div>
         </div>
       </div>
-      <PrintableEstimate estimate={estimate} logoUrl={logoUrl} accentColor={accentColor} />
+      <PrintableEstimate estimate={estimate} accentColor={accentColor} />
     </>
   );
 }
