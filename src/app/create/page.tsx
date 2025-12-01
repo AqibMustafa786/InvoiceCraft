@@ -20,7 +20,7 @@ import { useDoc } from '@/firebase/firestore/use-doc';
 
 const INVOICES_COLLECTION = 'invoices';
 
-const getInitialLineItem = () => ({ id: crypto.randomUUID(), name: '', quantity: 1, unitPrice: 0, rate: 0 });
+const getInitialLineItem = () => ({ id: crypto.randomUUID(), name: '', quantity: 1, rate: 0, unitPrice: 0 });
 
 const getInitialInvoice = (): Omit<Invoice, 'userId'> => ({
   id: crypto.randomUUID(),
@@ -84,8 +84,8 @@ export default function CreateInvoicePage() {
   const { data: remoteDraft, isLoading: isDraftLoading } = useDoc<Invoice>(docRef);
 
   useEffect(() => {
-    if (isUserLoading) return; // Wait until user auth state is resolved
-    if (!user) { // If no user, redirect or handle appropriately
+    if (isUserLoading) return;
+    if (!user) {
         router.push('/login');
         return;
     }
@@ -94,8 +94,8 @@ export default function CreateInvoicePage() {
 
     if (draftId) {
         if (remoteDraft) {
-            const fromJSON = (key: string, value: any) => {
-                if (['invoiceDate', 'dueDate', 'quoteDate', 'validUntilDate'].includes(key) && value) {
+             const fromJSON = (key: string, value: any) => {
+                if (['invoiceDate', 'dueDate'].includes(key) && value) {
                     return value.toDate ? value.toDate() : new Date(value);
                 }
                 return value;
@@ -104,7 +104,10 @@ export default function CreateInvoicePage() {
             setInvoice({ ...initialInvoice, ...loadedDraft });
         }
     } else {
+      // This is the key fix: ensure invoice is always initialized
+      if (!invoice) {
         setInvoice(initialInvoice);
+      }
     }
     
     if (typeof window !== 'undefined' && document) {
@@ -113,7 +116,7 @@ export default function CreateInvoicePage() {
            setAccentColor(`hsl(${computedColor})`);
         }
     }
-  }, [draftId, remoteDraft, user, isUserLoading, router]);
+  }, [draftId, remoteDraft, user, isUserLoading, router, invoice]);
 
 
   const handlePrint = () => {
@@ -158,6 +161,7 @@ export default function CreateInvoicePage() {
       });
   };
 
+  // Stricter loading guard: do not render until invoice and user are ready.
   if (isUserLoading || !invoice || (draftId && isDraftLoading)) {
     return (
         <div className="container mx-auto p-4 md:p-8">
