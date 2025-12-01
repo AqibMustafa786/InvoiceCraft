@@ -1,3 +1,4 @@
+
 'use client';
 
 import { ChangeEvent, Dispatch, SetStateAction, useState, useEffect } from 'react';
@@ -8,7 +9,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { DatePicker } from '@/components/ui/datepicker';
-import { ImageUp, Plus, Trash2, Palette, X, Mail, Truck, Hash, Phone } from 'lucide-react';
+import { ImageUp, Plus, Trash2, Palette, X, Mail, Truck, Hash, Phone, Globe, Briefcase, Award, User, FileText } from 'lucide-react';
 import Image from 'next/image';
 import {
   Select,
@@ -196,49 +197,85 @@ export function QuoteForm({ quote, setQuote, logoUrl, setLogoUrl, accentColor, s
       
       <Card className="bg-card/50 backdrop-blur-lg border border-border/30">
         <CardHeader>
-          <CardTitle>Your Details</CardTitle>
+          <CardTitle>Business Information</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="companyName">Company Name</Label>
-              <Input id="companyName" name="companyName" value={quote.companyName} onChange={handleInputChange} />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="companyPhone">Phone #</Label>
+              <Label htmlFor="companyName">Business Name</Label>
               <div className="relative flex items-center">
-                  <Phone className="absolute left-3 h-5 w-5 text-muted-foreground" />
-                  <Input id="companyPhone" name="companyPhone" value={quote.companyPhone} onChange={handleInputChange} className="pl-10" />
+                <Briefcase className="absolute left-3 h-5 w-5 text-muted-foreground" />
+                <Input id="companyName" name="companyName" value={quote.companyName} onChange={handleInputChange} className="pl-10" />
               </div>
             </div>
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="companyAddress">Company Address</Label>
-            <Textarea id="companyAddress" name="companyAddress" value={quote.companyAddress} onChange={handleInputChange} />
-          </div>
+            <div className="space-y-2">
+                <Label htmlFor="companyAddress">Business Address</Label>
+                <Textarea id="companyAddress" name="companyAddress" value={quote.companyAddress} onChange={handleInputChange} placeholder="Street, City, State, Zip"/>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                    <Label htmlFor="companyPhone">Phone Number</Label>
+                    <div className="relative flex items-center">
+                        <Phone className="absolute left-3 h-5 w-5 text-muted-foreground" />
+                        <Input id="companyPhone" name="companyPhone" value={quote.companyPhone} onChange={handleInputChange} className="pl-10" />
+                    </div>
+                </div>
+                <div className="space-y-2">
+                    <Label htmlFor="companyEmail">Email Address</Label>
+                    <div className="relative flex items-center">
+                        <Mail className="absolute left-3 h-5 w-5 text-muted-foreground" />
+                        <Input id="companyEmail" name="companyEmail" value={quote.companyEmail} onChange={handleInputChange} className="pl-10" />
+                    </div>
+                </div>
+                <div className="space-y-2">
+                    <Label htmlFor="companyWebsite">Website (optional)</Label>
+                    <div className="relative flex items-center">
+                        <Globe className="absolute left-3 h-5 w-5 text-muted-foreground" />
+                        <Input id="companyWebsite" name="companyWebsite" value={quote.companyWebsite} onChange={handleInputChange} className="pl-10" />
+                    </div>
+                </div>
+                <div className="space-y-2">
+                    <Label htmlFor="licenseNumber">License Number (optional)</Label>
+                    <div className="relative flex items-center">
+                        <Award className="absolute left-3 h-5 w-5 text-muted-foreground" />
+                        <Input id="licenseNumber" name="licenseNumber" value={quote.licenseNumber} onChange={handleInputChange} className="pl-10" />
+                    </div>
+                </div>
+            </div>
         </CardContent>
       </Card>
 
       <Card className="bg-card/50 backdrop-blur-lg border border-border/30">
         <CardHeader>
-          <CardTitle>Client Details</CardTitle>
+          <CardTitle>Client Information</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="clientName">Client Name</Label>
-            <Input id="clientName" name="clientName" value={quote.clientName} onChange={handleInputChange} />
-          </div>
-           <div className="space-y-2">
-            <Label htmlFor="clientEmail">Client Email</Label>
-            <div className="relative flex items-center">
-                <Mail className="absolute left-3 h-5 w-5 text-muted-foreground" />
-                <Input id="clientEmail" name="clientEmail" value={quote.clientEmail || ''} onChange={handleInputChange} className="pl-10" placeholder="client@example.com" />
-            </div>
+            <Label htmlFor="clientName">Client Full Name</Label>
+             <div className="relative flex items-center">
+                <User className="absolute left-3 h-5 w-5 text-muted-foreground" />
+                <Input id="clientName" name="clientName" value={quote.clientName} onChange={handleInputChange} className="pl-10" />
+              </div>
           </div>
           <div className="space-y-2">
             <Label htmlFor="clientAddress">Client Address</Label>
             <Textarea id="clientAddress" name="clientAddress" value={quote.clientAddress} onChange={handleInputChange} />
           </div>
+           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="clientEmail">Client Email</Label>
+              <div className="relative flex items-center">
+                  <Mail className="absolute left-3 h-5 w-5 text-muted-foreground" />
+                  <Input id="clientEmail" name="clientEmail" value={quote.clientEmail || ''} onChange={handleInputChange} className="pl-10" placeholder="client@example.com" />
+              </div>
+            </div>
+             <div className="space-y-2">
+              <Label htmlFor="clientPhone">Client Phone</Label>
+              <div className="relative flex items-center">
+                  <Phone className="absolute left-3 h-5 w-5 text-muted-foreground" />
+                  <Input id="clientPhone" name="clientPhone" value={quote.clientPhone || ''} onChange={handleInputChange} className="pl-10" />
+              </div>
+            </div>
+           </div>
         </CardContent>
       </Card>
       
@@ -251,13 +288,27 @@ export function QuoteForm({ quote, setQuote, logoUrl, setLogoUrl, accentColor, s
             <Label htmlFor="quoteNumber">Quote Number</Label>
             <Input id="quoteNumber" name="quoteNumber" value={quote.quoteNumber} onChange={handleInputChange} />
           </div>
+           <div className="space-y-2">
+            <Label htmlFor="projectTitle">Project / Job Title</Label>
+            <div className="relative flex items-center">
+                <FileText className="absolute left-3 h-5 w-5 text-muted-foreground" />
+                <Input id="projectTitle" name="projectTitle" value={quote.projectTitle} onChange={handleInputChange} className="pl-10" />
+            </div>
+          </div>
           <div className="space-y-2">
-            <Label>Quote Date</Label>
+            <Label>Date Issued</Label>
             <DatePicker date={quote.quoteDate} setDate={(date) => setQuote(p => ({ ...p, quoteDate: date! }))} />
           </div>
           <div className="space-y-2">
-            <Label>Valid Until</Label>
+            <Label>Expiration Date</Label>
             <DatePicker date={quote.validUntilDate} setDate={(date) => setQuote(p => ({ ...p, validUntilDate: date! }))} />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="referenceNumber">Reference Number (optional)</Label>
+            <div className="relative flex items-center">
+                <Hash className="absolute left-3 h-5 w-5 text-muted-foreground" />
+                <Input id="referenceNumber" name="referenceNumber" value={quote.referenceNumber} onChange={handleInputChange} className="pl-10" />
+            </div>
           </div>
            <div className="space-y-2">
                 <Label htmlFor="currency">Currency</Label>
@@ -293,20 +344,20 @@ export function QuoteForm({ quote, setQuote, logoUrl, setLogoUrl, accentColor, s
 
       <Card className="bg-card/50 backdrop-blur-lg border border-border/30">
         <CardHeader>
-          <CardTitle>Items / Services</CardTitle>
+          <CardTitle>Line Items (Services / Products)</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="hidden md:grid md:grid-cols-12 gap-4 text-sm font-medium text-muted-foreground">
-            <div className="col-span-5"><Label>Item Name</Label></div>
+            <div className="col-span-5"><Label>Item Name / Description</Label></div>
             <div className="col-span-2"><Label>Quantity</Label></div>
-            <div className="col-span-2"><Label>Rate</Label></div>
-            <div className="col-span-2"><Label>Subtotal</Label></div>
+            <div className="col-span-2"><Label>Unit Price</Label></div>
+            <div className="col-span-2"><Label>Total</Label></div>
             <div className="col-span-1"></div>
           </div>
           {quote.items.map((item, index) => (
             <div key={item.id} className="grid grid-cols-12 gap-2 items-center">
               <div className="col-span-12 md:col-span-5 space-y-2">
-                <Label htmlFor={`itemName-${index}`} className="md:hidden">Item Name</Label>
+                <Label htmlFor={`itemName-${index}`} className="md:hidden">Item Name / Description</Label>
                 <Textarea id={`itemName-${index}`} value={item.name} onChange={(e) => handleItemChange(index, 'name', e.target.value)} rows={1} className="min-h-0"/>
               </div>
               <div className="col-span-4 md:col-span-2 space-y-2">
@@ -314,7 +365,7 @@ export function QuoteForm({ quote, setQuote, logoUrl, setLogoUrl, accentColor, s
                 <Input id={`itemQuantity-${index}`} type="number" value={item.quantity} onChange={(e) => handleItemChange(index, 'quantity', parseFloat(e.target.value) || 0)} />
               </div>
               <div className="col-span-4 md:col-span-2 space-y-2">
-                <Label htmlFor={`itemRate-${index}`} className="md:hidden">Rate</Label>
+                <Label htmlFor={`itemRate-${index}`} className="md:hidden">Unit Price</Label>
                 <Input id={`itemRate-${index}`} type="number" value={item.rate} onChange={(e) => handleItemChange(index, 'rate', parseFloat(e.target.value) || 0)} />
               </div>
               <div className="col-span-3 md:col-span-2 flex items-center h-10">
@@ -328,7 +379,7 @@ export function QuoteForm({ quote, setQuote, logoUrl, setLogoUrl, accentColor, s
             </div>
           ))}
           <div className="flex flex-wrap items-end gap-4">
-            <Button variant="outline" onClick={addItem}><Plus className="mr-2 h-4 w-4" /> Add Item</Button>
+            <Button variant="outline" onClick={addItem}><Plus className="mr-2 h-4 w-4" /> Add Line Item</Button>
             
             <div className="flex items-end gap-2">
                 <div className="space-y-2">
@@ -353,7 +404,7 @@ export function QuoteForm({ quote, setQuote, logoUrl, setLogoUrl, accentColor, s
 
       <Card className="bg-card/50 backdrop-blur-lg border border-border/30">
         <CardHeader>
-          <CardTitle>Totals & Notes</CardTitle>
+          <CardTitle>Pricing Summary &amp; Terms</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
@@ -374,8 +425,8 @@ export function QuoteForm({ quote, setQuote, logoUrl, setLogoUrl, accentColor, s
             </div>
           </div>
           <div className="space-y-2">
-            <Label htmlFor="notes">Notes / Terms & Conditions</Label>
-            <Textarea id="notes" name="notes" value={quote.notes} onChange={handleInputChange} />
+            <Label htmlFor="notes">Terms & Conditions</Label>
+            <Textarea id="notes" name="notes" value={quote.notes} onChange={handleInputChange} placeholder="e.g., Payment terms, validity period, warranty information..." />
           </div>
         </CardContent>
       </Card>

@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -17,19 +18,28 @@ const getInitialLineItem = () => ({ id: crypto.randomUUID(), name: '', quantity:
 const getInitialQuote = (): Quote => ({
   id: crypto.randomUUID(),
   companyName: 'Your Company',
+  companyAddress: '123 Main St, Anytown, USA 12345',
   companyPhone: '+1 (123) 456-7890',
-  companyAddress: '123 Main St, Anytown, USA',
+  companyEmail: 'contact@yourcompany.com',
+  companyWebsite: 'www.yourcompany.com',
+  licenseNumber: 'LICENSE-12345',
+  
   clientName: 'Client Company',
-  clientAddress: '456 Oak Ave, Someplace, USA',
-  clientEmail: '',
-  quoteNumber: 'Q-001',
+  clientAddress: '456 Oak Ave, Someplace, USA 54321',
+  clientEmail: 'client@example.com',
+  clientPhone: '+1 (987) 654-3210',
+
+  quoteNumber: `QUO-${new Date().getFullYear()}-001`,
   quoteDate: new Date(),
   validUntilDate: addDays(new Date(), 30),
+  projectTitle: 'New Project',
+  referenceNumber: 'REF-001',
+  
   items: [{ ...getInitialLineItem(), name: 'Sample Service (e.g., Website Development)', rate: 1500 }],
   tax: 0,
   discount: 0,
   shippingCost: 0,
-  notes: 'This quote is valid for 30 days. Prices are subject to change thereafter.',
+  notes: 'This quote is valid for 30 days. Prices are subject to change thereafter. Payment Terms: 50% upfront, 50% on completion.',
   currency: 'USD',
   language: 'en',
   template: 'default',

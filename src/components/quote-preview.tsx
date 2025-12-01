@@ -1,12 +1,11 @@
+
 'use client';
 
-import { useState, useLayoutEffect, useRef, useEffect } from 'react';
-import type { Quote, LineItem } from '@/lib/types';
+import type { Quote } from '@/lib/types';
 import { Card, CardContent } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import Image from 'next/image';
 import { format } from 'date-fns';
-import locales from '@/lib/locales';
 
 // --- PROPS ---
 interface QuotePreviewProps {
@@ -44,6 +43,9 @@ const DefaultQuoteTemplate = ({ quote, logoUrl, accentColor }: { quote: Quote, l
                     <div className="text-muted-foreground text-sm mt-2 space-y-1">
                         <p className="whitespace-pre-line">{quote.companyAddress}</p>
                         {quote.companyPhone && <p>{quote.companyPhone}</p>}
+                        {quote.companyEmail && <p>{quote.companyEmail}</p>}
+                        {quote.companyWebsite && <p>{quote.companyWebsite}</p>}
+                        {quote.licenseNumber && <p>License #: {quote.licenseNumber}</p>}
                     </div>
                 </div>
                 <div className="text-right">
@@ -52,17 +54,33 @@ const DefaultQuoteTemplate = ({ quote, logoUrl, accentColor }: { quote: Quote, l
                 </div>
             </header>
 
-            <section className="flex justify-between mb-10">
+            <section className="grid grid-cols-2 gap-4 mb-10">
                 <div className="space-y-1">
                     <p className="text-sm font-semibold text-gray-500">QUOTE FOR</p>
                     <p className="font-bold">{quote.clientName}</p>
                     <p className="text-muted-foreground text-sm whitespace-pre-line">{quote.clientAddress}</p>
+                    {quote.clientPhone && <p className="text-muted-foreground text-sm">{quote.clientPhone}</p>}
+                    {quote.clientEmail && <p className="text-muted-foreground text-sm">{quote.clientEmail}</p>}
                 </div>
                 <div className="text-right space-y-1">
-                    <p className="text-sm font-semibold text-gray-500">Quote Date</p>
-                    <p>{format(quote.quoteDate, 'MMMM d, yyyy')}</p>
-                    <p className="text-sm font-semibold text-gray-500 mt-2">Valid Until</p>
-                    <p>{format(quote.validUntilDate, 'MMMM d, yyyy')}</p>
+                     <div className="space-y-1">
+                        <p className="text-sm font-semibold text-gray-500">Project / Job Title</p>
+                        <p>{quote.projectTitle}</p>
+                    </div>
+                    <div className="space-y-1 mt-2">
+                        <p className="text-sm font-semibold text-gray-500">Quote Date</p>
+                        <p>{format(quote.quoteDate, 'MMMM d, yyyy')}</p>
+                    </div>
+                    <div className="space-y-1 mt-2">
+                        <p className="text-sm font-semibold text-gray-500">Valid Until</p>
+                        <p>{format(quote.validUntilDate, 'MMMM d, yyyy')}</p>
+                    </div>
+                    {quote.referenceNumber && (
+                        <div className="space-y-1 mt-2">
+                            <p className="text-sm font-semibold text-gray-500">Reference #</p>
+                            <p>{quote.referenceNumber}</p>
+                        </div>
+                    )}
                 </div>
             </section>
             
@@ -73,7 +91,7 @@ const DefaultQuoteTemplate = ({ quote, logoUrl, accentColor }: { quote: Quote, l
                             <th className="p-3 text-sm font-semibold w-1/2">Description</th>
                             <th className="p-3 text-sm font-semibold text-center">Qty</th>
                             <th className="p-3 text-sm font-semibold text-right">Rate</th>
-                            <th className="p-3 text-sm font-semibold text-right">Subtotal</th>
+                            <th className="p-3 text-sm font-semibold text-right">Total</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -123,7 +141,7 @@ const DefaultQuoteTemplate = ({ quote, logoUrl, accentColor }: { quote: Quote, l
             
             {quote.notes && (
                 <footer className="mt-10">
-                    <p className="text-sm font-semibold text-gray-500">Notes / Terms</p>
+                    <p className="text-sm font-semibold text-gray-500">Terms & Conditions</p>
                     <p className="text-sm text-muted-foreground mt-1 whitespace-pre-line">{quote.notes}</p>
                 </footer>
             )}
@@ -147,8 +165,11 @@ const ContractorQuoteTemplate = ({ quote, logoUrl, accentColor }: { quote: Quote
                     ) : (
                         <h1 className="text-4xl font-bold">{quote.companyName}</h1>
                     )}
-                     <p className="text-xs text-gray-500 whitespace-pre-line mt-2">{quote.companyAddress}</p>
-                     <p className="text-xs text-gray-500">{quote.companyPhone}</p>
+                     <div className="text-xs text-gray-500 whitespace-pre-line mt-2">
+                        <p>{quote.companyAddress}</p>
+                        <p>{quote.companyPhone}</p>
+                        {quote.licenseNumber && <p>Lic #: {quote.licenseNumber}</p>}
+                     </div>
                 </div>
                  <div className="text-right">
                     <h2 className="text-5xl font-light uppercase text-gray-400 tracking-wider">Quote</h2>
@@ -178,8 +199,8 @@ const ContractorQuoteTemplate = ({ quote, logoUrl, accentColor }: { quote: Quote
                         {quote.items.map(item => (
                             <tr key={item.id} className="border-b">
                                 <td className="p-2 py-3">
-                                    <p className="font-semibold">{item.name}</p>
-                                    <p className="text-xs text-gray-500">{item.quantity > 1 ? `${item.quantity} units` : ''}</p>
+                                    <p className="font-semibold whitespace-pre-line">{item.name}</p>
+                                    {item.quantity > 1 && <p className="text-xs text-gray-500">{item.quantity} units</p>}
                                 </td>
                                 <td className="p-2 py-3 text-right font-semibold tabular-nums">{currencySymbol}{(item.quantity * item.rate).toFixed(2)}</td>
                             </tr>
@@ -219,6 +240,11 @@ const ContractorQuoteTemplate = ({ quote, logoUrl, accentColor }: { quote: Quote
                     <p className="whitespace-pre-line">{quote.notes}</p>
                 </footer>
             )}
+            
+            <div className="mt-16 text-xs text-gray-500 text-center">
+                <p>Thank you for the opportunity to quote this project.</p>
+                <p className="mt-4 font-bold">Client Signature: _________________________ Date: __________</p>
+            </div>
         </div>
     );
 };

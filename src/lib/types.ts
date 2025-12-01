@@ -1,3 +1,4 @@
+
 export interface LineItem {
   id: string;
   name: string;
@@ -93,20 +94,37 @@ export interface Estimate {
 
 export interface Quote {
   id: string;
+  // Business Info
   companyName: string;
-  companyPhone: string;
   companyAddress: string;
+  companyPhone: string;
+  companyEmail: string;
+  companyWebsite: string;
+  licenseNumber: string;
+
+  // Client Info
   clientName: string;
   clientAddress: string;
   clientEmail: string;
+  clientPhone: string;
+
+  // Quote Details
   quoteNumber: string;
   quoteDate: Date;
   validUntilDate: Date;
+  projectTitle: string;
+  referenceNumber: string;
+
+  // Items & Pricing
   items: LineItem[];
   tax: number;
   discount: number;
   shippingCost: number;
-  notes: string;
+  
+  // Footer
+  notes: string; // Terms & Conditions
+  
+  // Settings
   currency: string;
   language: string;
   template: string;
