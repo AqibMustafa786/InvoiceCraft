@@ -32,7 +32,6 @@ import { useFirebase, useMemoFirebase } from '@/firebase/provider';
 import { useCollection } from '@/firebase/firestore/use-collection';
 import { collection, doc, addDoc, query, where } from 'firebase/firestore';
 import { deleteDocumentNonBlocking, updateDocumentNonBlocking } from '@/firebase';
-import { initiateAnonymousSignIn } from '@/firebase/non-blocking-login';
 
 const INVOICES_COLLECTION = 'invoices';
 const QUOTES_COLLECTION = 'quotes';
@@ -65,12 +64,6 @@ export default function DashboardPage() {
     const { toast } = useToast();
     const { firestore, auth, user, isUserLoading } = useFirebase();
     const router = useRouter();
-
-    useEffect(() => {
-        if (!isUserLoading && !user && auth) {
-            initiateAnonymousSignIn(auth);
-        }
-    }, [isUserLoading, user, auth]);
 
     const invoicesQuery = useMemoFirebase(() => {
         if (!firestore || !user) return null;
