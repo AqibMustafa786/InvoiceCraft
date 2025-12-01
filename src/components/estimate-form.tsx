@@ -378,7 +378,7 @@ export function EstimateForm({ estimate, setEstimate, accentColor, setAccentColo
             <div className="col-span-2"><Label>Total</Label></div>
           </div>
           {estimate.lineItems.map((item, index) => (
-            <div key={item.id} className="grid grid-cols-12 gap-2 items-start">
+            <div key={item.id} className="grid grid-cols-12 gap-2 items-center">
               <div className="col-span-12 md:col-span-5 space-y-2">
                 <Label htmlFor={`itemName-${index}`} className="md:hidden">Item Name / Description</Label>
                 <Textarea id={`itemName-${index}`} value={item.name} onChange={(e) => handleItemChange(index, 'name', e.target.value)} rows={1} className="min-h-0"/>
@@ -395,13 +395,10 @@ export function EstimateForm({ estimate, setEstimate, accentColor, setAccentColo
                  <Label htmlFor={`itemTaxable-${index}`} className="md:hidden sr-only">Taxable</Label>
                  <Checkbox id={`itemTaxable-${index}`} checked={item.taxable} onCheckedChange={(checked) => handleItemChange(index, 'taxable', !!checked)} />
               </div>
-              <div className="col-span-8 md:col-span-2 flex items-center h-10 gap-2">
+              <div className="col-span-8 md:col-span-1 flex items-center h-10">
                 <p className="font-medium tabular-nums text-sm">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</p>
-                <Button variant="ghost" size="icon" className="md:hidden" onClick={() => removeItem(index)}>
-                  <Trash2 className="h-4 w-4 text-destructive" />
-                </Button>
               </div>
-              <div className="hidden md:flex col-span-1 items-center h-10">
+              <div className="col-span-1 flex items-center h-10">
                 <Button variant="ghost" size="icon" onClick={() => removeItem(index)}>
                   <Trash2 className="h-4 w-4 text-destructive" />
                 </Button>

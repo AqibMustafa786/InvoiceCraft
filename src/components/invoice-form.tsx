@@ -1,3 +1,4 @@
+
 'use client';
 
 import { ChangeEvent, Dispatch, SetStateAction, useState, useEffect } from 'react';
@@ -318,8 +319,7 @@ export function InvoiceForm({ invoice, setInvoice, logoUrl, setLogoUrl, accentCo
             <div className="col-span-5"><Label>Item Name</Label></div>
             <div className="col-span-2"><Label>Quantity</Label></div>
             <div className="col-span-2"><Label>Rate</Label></div>
-            <div className="col-span-2"><Label>Subtotal</Label></div>
-            <div className="col-span-1"></div>
+            <div className="col-span-3"><Label>Subtotal</Label></div>
           </div>
           {invoice.items.map((item, index) => (
             <div key={item.id} className="grid grid-cols-12 gap-2 items-center">
