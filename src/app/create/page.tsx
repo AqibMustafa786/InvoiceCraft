@@ -49,8 +49,6 @@ const getInitialInvoice = (): Omit<Invoice, 'userId'> => ({
   documentType: 'invoice',
 });
 
-const DRAFTS_COLLECTION = 'invoices';
-
 function PrintableInvoice({ invoice, logoUrl, accentColor }: { invoice: Invoice, logoUrl: string | null, accentColor: string }) {
     const [printRoot, setPrintRoot] = useState<HTMLElement | null>(null);
 
@@ -80,7 +78,7 @@ export default function CreateInvoicePage() {
   const { firestore, user, isUserLoading } = useFirebase();
 
   const draftId = searchParams.get('draftId');
-  const docRef = useMemoFirebase(() => draftId && firestore ? doc(firestore, DRAFTS_COLLECTION, draftId) : null, [draftId, firestore]);
+  const docRef = useMemoFirebase(() => draftId && firestore ? doc(firestore, INVOICES_COLLECTION, draftId) : null, [draftId, firestore]);
   const { data: remoteDraft, isLoading: isDraftLoading } = useDoc<Invoice>(docRef);
 
   useEffect(() => {
@@ -104,10 +102,7 @@ export default function CreateInvoicePage() {
             setInvoice({ ...initialInvoice, ...loadedDraft });
         }
     } else {
-      // This is the key fix: ensure invoice is always initialized
-      if (!invoice) {
         setInvoice(initialInvoice);
-      }
     }
     
     if (typeof window !== 'undefined' && document) {
@@ -116,7 +111,7 @@ export default function CreateInvoicePage() {
            setAccentColor(`hsl(${computedColor})`);
         }
     }
-  }, [draftId, remoteDraft, user, isUserLoading, router, invoice]);
+  }, [draftId, remoteDraft, user, isUserLoading, router]);
 
 
   const handlePrint = () => {
@@ -132,7 +127,7 @@ export default function CreateInvoicePage() {
       dueDate: invoice.dueDate,
     };
     
-    const docRef = doc(collection(firestore, DRAFTS_COLLECTION), invoice.id);
+    const docRef = doc(firestore, INVOICES_COLLECTION, invoice.id);
     setDocumentNonBlocking(docRef, draftToSave, { merge: true });
 
     toast({
@@ -161,8 +156,7 @@ export default function CreateInvoicePage() {
       });
   };
 
-  // Stricter loading guard: do not render until invoice and user are ready.
-  if (isUserLoading || !invoice || (draftId && isDraftLoading)) {
+  if (!invoice || (draftId && isDraftLoading)) {
     return (
         <div className="container mx-auto p-4 md:p-8">
             <h1 className="text-3xl font-bold font-headline">Loading...</h1>

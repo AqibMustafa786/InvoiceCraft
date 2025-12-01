@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import type { Quote, LineItem } from '@/lib/types';
 import { QuoteForm } from '@/components/quote-form';
@@ -121,9 +121,7 @@ export default function CreateQuotePage() {
             setQuote({ ...initialQuote, ...loadedDraft });
         }
     } else {
-        if (!quote) {
-            setQuote(initialQuote);
-        }
+        setQuote(initialQuote);
     }
     
     if (typeof window !== 'undefined' && document) {
@@ -132,7 +130,7 @@ export default function CreateQuotePage() {
            setAccentColor(`hsl(${computedColor})`);
         }
     }
-  }, [draftId, remoteDraft, user, isUserLoading, router, quote]);
+  }, [draftId, remoteDraft, user, isUserLoading, router]);
 
   const handlePrint = () => {
     window.print();
@@ -147,7 +145,7 @@ export default function CreateQuotePage() {
       validUntilDate: quote.validUntilDate,
     };
     
-    const docRef = doc(collection(firestore, QUOTES_COLLECTION), quote.id);
+    const docRef = doc(firestore, QUOTES_COLLECTION, quote.id);
     setDocumentNonBlocking(docRef, draftToSave, { merge: true });
 
     toast({
@@ -203,7 +201,7 @@ export default function CreateQuotePage() {
   }, [quote?.lineItems, quote?.summary.taxPercentage, quote?.summary.discount, quote?.summary.shippingCost]);
 
 
-  if (isUserLoading || !quote || (draftId && isDraftLoading)) {
+  if (!quote || (draftId && isDraftLoading)) {
     return (
         <div className="container mx-auto p-4 md:p-8">
             <h1 className="text-3xl font-bold font-headline">Loading...</h1>

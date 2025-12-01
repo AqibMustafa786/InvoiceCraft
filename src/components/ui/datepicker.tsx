@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { format } from "date-fns"
+import { format, isValid } from "date-fns"
 import { Calendar as CalendarIcon } from "lucide-react"
 
 import { cn } from "@/lib/utils"
@@ -14,12 +14,18 @@ import {
 } from "@/components/ui/popover"
 
 type DatePickerProps = {
-  date?: Date;
+  date?: Date | string | number | null;
   setDate: (date?: Date) => void;
   className?: string;
 }
 
 export function DatePicker({ date, setDate, className }: DatePickerProps) {
+  const safeDate = React.useMemo(() => {
+    if (!date) return null;
+    const d = new Date(date);
+    return isValid(d) ? d : null;
+  }, [date]);
+
   return (
     <Popover>
       <PopoverTrigger asChild>
@@ -27,18 +33,18 @@ export function DatePicker({ date, setDate, className }: DatePickerProps) {
           variant={"outline"}
           className={cn(
             "w-full justify-start text-left font-normal",
-            !date && "text-muted-foreground",
+            !safeDate && "text-muted-foreground",
             className
           )}
         >
           <CalendarIcon className="mr-2 h-4 w-4" />
-          {date ? format(date, "PPP") : <span>Pick a date</span>}
+          {safeDate ? format(safeDate, "PPP") : <span>Pick a date</span>}
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-auto p-0">
         <Calendar
           mode="single"
-          selected={date}
+          selected={safeDate || undefined}
           onSelect={setDate}
           initialFocus
         />
