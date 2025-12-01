@@ -462,159 +462,6 @@ const CreativeTemplatePage = ({ pageItems, pageIndex, totalPages, ...commonProps
     );
 };
 
-const UsaServiceTemplatePage = ({ pageItems, pageIndex, totalPages, ...commonProps }: PageProps) => {
-    const { invoice, logoUrl, t, currencySymbol, balanceDue, accentColor, total, subtotal } = commonProps;
-
-    return (
-        <div className={`invoice-page font-sans text-gray-800 ${pageIndex < totalPages - 1 ? "page-break" : ""}`}>
-            <div className="p-8 m-4 border" style={{ borderColor: accentColor }}>
-                <header className="grid grid-cols-2 gap-10 mb-10" data-element="header">
-                    <div>
-                        {logoUrl ? (
-                            <Image src={logoUrl} alt={`${invoice.companyName} Logo`} width={160} height={80} className="object-contain mb-2" data-ai-hint="logo" />
-                        ) : (
-                            <h1 className="text-2xl font-bold mb-1">{invoice.companyName}</h1>
-                        )}
-                        <p className="text-xs text-gray-500 whitespace-pre-line">{invoice.companyAddress}</p>
-                    </div>
-                    <div className="text-right">
-                        <h2 className="text-4xl font-bold">INVOICE</h2>
-                        <p className="text-sm font-semibold mt-1" style={{color: accentColor}}>{invoice.clientName}</p>
-                        <div className="mt-4 text-xs space-y-1">
-                            <p><span className="font-bold">Invoice #:</span> {invoice.invoiceNumber}</p>
-                            <p><span className="font-bold">Date:</span> {format(invoice.invoiceDate, 'M/d/yyyy')}</p>
-                        </div>
-                    </div>
-                </header>
-
-                <main>
-                    <table className="w-full border-collapse border text-sm" data-element="items-table">
-                        <thead data-element="table-header">
-                            <tr className="bg-gray-100">
-                                <th className="border p-2 font-bold w-full">Description of Services</th>
-                                <th className="border p-2 font-bold text-right">Total</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {pageItems.map((item) => (
-                                <tr key={item.id} data-element="table-row">
-                                    <td className="border p-2 align-top h-8 whitespace-pre-line">{item.name}</td>
-                                    <td className="border p-2 text-right align-top">{currencySymbol}{(item.quantity * item.rate).toFixed(2)}</td>
-                                </tr>
-                            ))}
-                             {[...Array(Math.max(0, 5 - pageItems.length))].map((_, i) => (
-                                <tr key={`blank-${i}`}>
-                                    <td className="border p-2 h-8"></td>
-                                    <td className="border p-2"></td>
-                                </tr>
-                            ))}
-                        </tbody>
-                        <tfoot className="text-sm">
-                            <tr>
-                                <td className="border p-2 text-right font-bold">Subtotal</td>
-                                <td className="border p-2 text-right">{currencySymbol}{subtotal.toFixed(2)}</td>
-                            </tr>
-                            <tr>
-                                <td className="border p-2 text-right font-bold">Miscellaneous</td>
-                                <td className="border p-2 text-right">{currencySymbol}{invoice.shippingCost.toFixed(2)}</td>
-                            </tr>
-                            <tr className="bg-gray-100 font-bold">
-                                <td className="border p-2 text-right">Total Due</td>
-                                <td className="border p-2 text-right">{currencySymbol}{total.toFixed(2)}</td>
-                            </tr>
-                        </tfoot>
-                    </table>
-                </main>
-                <footer className="text-center mt-12">
-                    <p className="font-bold">Thank you!!!</p>
-                    <p className="text-sm">We Appreciate Your Business.</p>
-                </footer>
-            </div>
-        </div>
-    );
-};
-
-const UsaInsuranceTemplatePage = ({ pageItems, pageIndex, totalPages, ...commonProps }: PageProps) => {
-    const { invoice, logoUrl, currencySymbol, balanceDue, accentColor, total, subtotal } = commonProps;
-
-    return (
-        <div className={`invoice-page font-sans text-gray-800 ${pageIndex < totalPages - 1 ? "page-break" : ""}`}>
-            <div className="p-8 m-4 border" style={{ borderColor: accentColor }}>
-                <header className="grid grid-cols-2 gap-10 mb-10" data-element="header">
-                     <div>
-                        {logoUrl ? (
-                            <Image src={logoUrl} alt={`${invoice.companyName} Logo`} width={160} height={80} className="object-contain mb-2" data-ai-hint="logo" />
-                        ) : (
-                            <h1 className="text-2xl font-bold mb-1">{invoice.companyName}</h1>
-                        )}
-                        <p className="text-xs text-gray-500 whitespace-pre-line">{invoice.companyAddress}</p>
-                    </div>
-                     <div className="text-right">
-                        <h2 className="text-4xl font-bold">INVOICE</h2>
-                        <p className="text-sm font-semibold mt-1" style={{color: accentColor}}>{invoice.clientName}</p>
-                        <div className="mt-4 text-xs space-y-1">
-                            <p><span className="font-bold">Invoice #:</span> {invoice.invoiceNumber}</p>
-                            <p><span className="font-bold">Date:</span> {format(invoice.invoiceDate, 'M/d/yyyy')}</p>
-                        </div>
-                    </div>
-                </header>
-                 <section className="mb-6 text-xs" data-element="insurance-details">
-                    <div className="grid grid-cols-2 max-w-sm">
-                        <span className="font-bold">Insured:</span><span>{invoice.insuredName}</span>
-                        <span className="font-bold">Address:</span><span className="whitespace-pre-line">{invoice.clientAddress}</span>
-                        <span className="font-bold">Claim #:</span><span>{invoice.claimNumber}</span>
-                        <span className="font-bold">D.O.L.:</span><span>{invoice.dateOfLoss}</span>
-                        <span className="font-bold">Ins. Co.:</span><span>{invoice.insuranceCompany}</span>
-                    </div>
-                </section>
-                <main>
-                    <table className="w-full border-collapse border text-sm" data-element="items-table">
-                        <thead data-element="table-header">
-                            <tr className="bg-gray-100">
-                                <th className="border p-2 font-bold w-full">Description of Services</th>
-                                <th className="border p-2 font-bold text-right">Total</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {pageItems.map((item) => (
-                                <tr key={item.id} data-element="table-row">
-                                    <td className="border p-2 align-top h-8 whitespace-pre-line">{item.name}</td>
-                                    <td className="border p-2 text-right align-top">{currencySymbol}{(item.quantity * item.rate).toFixed(2)}</td>
-                                </tr>
-                            ))}
-                            {[...Array(Math.max(0, 5 - pageItems.length))].map((_, i) => (
-                                <tr key={`blank-${i}`}>
-                                    <td className="border p-2 h-8"></td>
-                                    <td className="border p-2"></td>
-                                </tr>
-                            ))}
-                        </tbody>
-                         <tfoot className="text-sm">
-                            <tr>
-                                <td className="border p-2 text-right font-bold">Subtotal</td>
-                                <td className="border p-2 text-right">{currencySymbol}{subtotal.toFixed(2)}</td>
-                            </tr>
-                            <tr>
-                                <td className="border p-2 text-right font-bold">Miscellaneous</td>
-                                <td className="border p-2 text-right">{currencySymbol}{invoice.shippingCost.toFixed(2)}</td>
-                            </tr>
-                            <tr className="bg-gray-100 font-bold">
-                                <td className="border p-2 text-right">Total Due</td>
-                                <td className="border p-2 text-right">{currencySymbol}{total.toFixed(2)}</td>
-                            </tr>
-                        </tfoot>
-                    </table>
-                </main>
-                <footer className="text-center mt-12">
-                    <p className="font-bold">Thank you!!!</p>
-                    <p className="text-sm">We Appreciate Your Business.</p>
-                </footer>
-            </div>
-        </div>
-    );
-};
-
-
 const templates = {
     default: DefaultTemplatePage,
     modern: ModernTemplatePage,
@@ -622,8 +469,6 @@ const templates = {
     usa: UsaTemplatePage,
     minimalist: MinimalistTemplatePage,
     creative: CreativeTemplatePage,
-    'usa-service': UsaServiceTemplatePage,
-    'usa-insurance': UsaInsuranceTemplatePage,
 };
 
 
@@ -786,7 +631,7 @@ export function InvoicePreview({ invoice, logoUrl, accentColor, id = 'invoice-pr
 
   // Default live preview (single page)
   return (
-    <Card id={id} className="w-full shadow-lg rounded-xl overflow-hidden print-hide" style={previewStyle}>
+    <Card id={id} className="w-full shadow-lg rounded-xl overflow-hidden print-hide bg-card/50 backdrop-blur-lg border border-border/30" style={previewStyle}>
       <CardContent className="p-0">
           <TemplateComponent
             {...commonProps}

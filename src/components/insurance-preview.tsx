@@ -293,7 +293,7 @@ export function InsurancePreview({ doc, logoUrl, accentColor, id = 'insurance-pr
 
   // Default live preview (single page)
   return (
-    <Card id={id} className="w-full shadow-lg rounded-xl overflow-hidden print-hide" style={previewStyle}>
+    <Card id={id} className="w-full shadow-lg rounded-xl overflow-hidden print-hide bg-card/50 backdrop-blur-lg border border-border/30" style={previewStyle}>
       <CardContent className="p-0">
           <TemplateComponent
             {...commonProps}

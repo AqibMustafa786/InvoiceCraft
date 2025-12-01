@@ -137,7 +137,7 @@ export function EstimateForm({ estimate, setEstimate, logoUrl, setLogoUrl, accen
 
   return (
     <div className="space-y-6">
-      <Card>
+      <Card className="bg-card/50 backdrop-blur-lg border border-border/30">
         <CardHeader>
           <CardTitle>Branding &amp; Customization</CardTitle>
         </CardHeader>
@@ -194,7 +194,7 @@ export function EstimateForm({ estimate, setEstimate, logoUrl, setLogoUrl, accen
         </CardContent>
       </Card>
       
-      <Card>
+      <Card className="bg-card/50 backdrop-blur-lg border border-border/30">
         <CardHeader>
           <CardTitle>Your Details</CardTitle>
         </CardHeader>
@@ -219,7 +219,7 @@ export function EstimateForm({ estimate, setEstimate, logoUrl, setLogoUrl, accen
         </CardContent>
       </Card>
 
-      <Card>
+      <Card className="bg-card/50 backdrop-blur-lg border border-border/30">
         <CardHeader>
           <CardTitle>Client Details</CardTitle>
         </CardHeader>
@@ -242,7 +242,7 @@ export function EstimateForm({ estimate, setEstimate, logoUrl, setLogoUrl, accen
         </CardContent>
       </Card>
       
-      <Card>
+      <Card className="bg-card/50 backdrop-blur-lg border border-border/30">
         <CardHeader>
           <CardTitle>Estimate Details</CardTitle>
         </CardHeader>
@@ -291,7 +291,7 @@ export function EstimateForm({ estimate, setEstimate, logoUrl, setLogoUrl, accen
         </CardContent>
       </Card>
 
-      <Card>
+      <Card className="bg-card/50 backdrop-blur-lg border border-border/30">
         <CardHeader>
           <CardTitle>Items / Services</CardTitle>
         </CardHeader>
@@ -351,7 +351,7 @@ export function EstimateForm({ estimate, setEstimate, logoUrl, setLogoUrl, accen
         </CardContent>
       </Card>
 
-      <Card>
+      <Card className="bg-card/50 backdrop-blur-lg border border-border/30">
         <CardHeader>
           <CardTitle>Totals & Notes</CardTitle>
         </CardHeader>
