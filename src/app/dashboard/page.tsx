@@ -62,7 +62,7 @@ export default function DashboardPage() {
     const [filters, setFilters] = useState<DashboardFilters>(initialFilters);
     const [isFilterSheetOpen, setIsFilterSheetOpen] = useState(false);
     const { toast } = useToast();
-    const { firestore, auth, user, isUserLoading } = useFirebase();
+    const { firestore, user, isUserLoading } = useFirebase();
     const router = useRouter();
 
     const invoicesQuery = useMemoFirebase(() => {
@@ -75,8 +75,8 @@ export default function DashboardPage() {
         return query(collection(firestore, QUOTES_COLLECTION), where("userId", "==", user.uid));
     }, [firestore, user]);
 
-    const { data: invoices, isLoading: isLoadingInvoices } = useCollection<Invoice>(invoicesQuery);
-    const { data: quotes, isLoading: isLoadingQuotes } = useCollection<Quote>(quotesQuery);
+    const { data: invoices, isLoading: isLoadingInvoices, error: invoicesError } = useCollection<Invoice>(invoicesQuery);
+    const { data: quotes, isLoading: isLoadingQuotes, error: quotesError } = useCollection<Quote>(quotesQuery);
 
     const calculateTotal = useCallback((doc: DocumentType): number => {
         if (doc.documentType === 'invoice') {
@@ -103,9 +103,9 @@ export default function DashboardPage() {
         });
     };
 
-    const handleStatusChange = (id: string, collection: string, newStatus: DocumentStatus) => {
+    const handleStatusChange = (id: string, collectionName: string, newStatus: DocumentStatus) => {
         if (!firestore) return;
-        const docRef = doc(firestore, collection, id);
+        const docRef = doc(firestore, collectionName, id);
         updateDocumentNonBlocking(docRef, { status: newStatus });
         toast({
             title: "Status Updated",
@@ -118,7 +118,8 @@ export default function DashboardPage() {
         
         const { business, client, lineItems, summary, projectTitle, currency, language } = quote;
 
-        const newInvoiceData: Omit<Invoice, 'id' | 'userId'> = {
+        const newInvoiceData: Omit<Invoice, 'id'> = {
+            userId: user.uid, // Add this line
             companyName: business.name,
             companyPhone: business.phone,
             companyAddress: business.address,
@@ -145,7 +146,7 @@ export default function DashboardPage() {
         };
         
         try {
-            const newDocRef = await addDoc(collection(firestore, INVOICES_COLLECTION), {...newInvoiceData, userId: user.uid});
+            const newDocRef = await addDoc(collection(firestore, INVOICES_COLLECTION), newInvoiceData);
             toast({
                 title: 'Invoice Created',
                 description: `Quote ${quote.quoteNumber} has been successfully converted to an invoice.`
@@ -175,10 +176,8 @@ export default function DashboardPage() {
     }, []);
 
     const combinedDocuments = useMemo(() => {
-        if (!user) return [];
-        const allDocs: DocumentType[] = [];
-        if (invoices) allDocs.push(...invoices);
-        if (quotes) allDocs.push(...quotes);
+        if (!user || !invoices || !quotes) return [];
+        const allDocs: DocumentType[] = [...invoices, ...quotes];
         
         const fromJSON = (key: string, value: any) => {
              if (key === 'invoiceDate' || key === 'dueDate' || key === 'quoteDate' || key === 'validUntilDate') {
@@ -245,12 +244,18 @@ export default function DashboardPage() {
     
     const isLoading = isUserLoading || isLoadingInvoices || isLoadingQuotes;
 
-    if (isUserLoading) {
+    if (isLoading && !invoices && !quotes) {
         return (
             <div className="container mx-auto p-4 md:p-8">
                 <h1 className="text-3xl font-bold font-headline">Loading Dashboard...</h1>
             </div>
         )
+    }
+
+    if (!user && !isUserLoading) {
+        // This case should be handled by AuthProvider, but as a fallback
+        router.push('/login');
+        return null;
     }
 
     return (
@@ -351,10 +356,16 @@ export default function DashboardPage() {
                                             Loading documents...
                                         </TableCell>
                                     </TableRow>
+                                ) : (invoicesError || quotesError) ? (
+                                    <TableRow>
+                                        <TableCell colSpan={7} className="text-center h-24 text-destructive">
+                                           Error loading documents. Please check your connection and security rules.
+                                        </TableCell>
+                                    </TableRow>
                                 ) : combinedDocuments.length > 0 ? combinedDocuments.map((doc) => {
                                     const isInvoice = doc.documentType === 'invoice';
                                     const docNumber = isInvoice ? (doc as Invoice).invoiceNumber : (doc as Quote).quoteNumber;
-                                    const clientName = isInvoice ? (doc as Invoice).clientName : (doc as Quote).client.name;
+                                    const clientName = doc.clientName || (doc as Quote).client.name;
                                     let docDate;
                                     if (isInvoice) {
                                       docDate = (doc as Invoice).invoiceDate;

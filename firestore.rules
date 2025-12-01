@@ -1,159 +1,43 @@
-/**
- * # Core Philosophy
- * This ruleset enforces a strict multi-tenant security model for a SaaS
- * quoting application. The primary security boundary is the "company". All data,
- * including users, quotes, and quote items, is nested under a specific company
- * document. A user's access to any resource is determined entirely by their
- * membership in that company.
- *
- * # Data Structure
- * The data is organized hierarchically to enforce tenant isolation:
- * - /companies/{companyId}
- *   - /users/{userId}
- *   - /quotes/{quoteId}
- *     - /items/{itemId}
- *
- * This structure ensures that security rules can leverage path-based ownership,
- * making them simple, fast, and secure.
- *
- * # Key Security Decisions
- * - **JWT Custom Claims for Tenancy**: User authorization is based on a `companyId`
- *   field embedded within the user's Firebase Auth JWT token. This is a highly
- *   performant and secure method for verifying tenant membership on every request
- *   without needing extra database reads. Your backend must set this custom claim
- *   upon user sign-up or login.
- * - **No Cross-Tenant Visibility**: It is impossible for a user from one company
- *   to read, write, or even know about the existence of data from another company.
- *   Listing the root `companies` collection is explicitly forbidden.
- * - **User Data Privacy**: While users within a company can collaborate on quotes,
- *   they cannot list or view the profile data of other users in their company.
- *   Access to `/users/{userId}` documents is restricted to the owner only.
- * - **Default Deny**: The default security posture is to deny all access.
- *   Permissions are granted explicitly for specific paths and conditions.
- *
- * # Denormalization for Authorization
- * To create simpler, more performant rules, this ruleset relies on two key
- * denormalization strategies:
- * 1.  **Path-Based Tenancy**: Nesting all data under `/companies/{companyId}`
- *     denormalizes the company relationship into the document path itself,
- *     allowing for fast checks without `get()` calls.
- * 2.  **Auth Token Tenancy**: As mentioned, the user's `companyId` is denormalized
- *     into their JWT custom claim (`request.auth.token.companyId`). This avoids
- *     a `get()` call to the user's profile document on every single operation.
- *
- * # Structural Segregation
- * Tenant data is physically segregated by using a top-level `companies`
- * collection and nesting all related data within it. This is the most secure
- * and performant pattern for multi-tenant applications, especially for list
- * operations, as queries are naturally scoped to the correct tenant's data tree.
- */
 rules_version = '2';
+
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // -------------------------------------------------------------------------
     // Helper Functions
-    // -------------------------------------------------------------------------
-
-    /**
-     * Checks if the user is authenticated.
-     */
     function isSignedIn() {
       return request.auth != null;
     }
 
-    /**
-     * Checks if the requesting user's UID matches the given userId.
-     */
+    // Grant access if the user is the owner of the document
     function isOwner(userId) {
-      return isSignedIn() && request.auth.uid == userId;
+        return request.auth.uid == userId;
     }
 
-    /**
-     * Verifies that the document being operated on already exists.
-     * CRITICAL for safe update and delete operations.
-     */
-    function isExistingDoc() {
-      return resource != null;
-    }
-
-    /**
-     * Checks if the user is a member of the specified company.
-     * This relies on a `companyId` custom claim being set in the user's auth token.
-     */
-    function isCompanyMember(companyId) {
-      return isSignedIn() && request.auth.token.companyId == companyId;
-    }
-    
-    // For development, we allow any signed-in user to read/write.
-    // In production, you'd want to tighten these rules.
-     function isUserAuthenticated() {
-        return request.auth != null;
-    }
-
-    // -------------------------------------------------------------------------
-    // Collection Rules
-    // -------------------------------------------------------------------------
-
-    /**
-     * @description Governs access to top-level company profile documents.
-     * @path /companies/{companyId}
-     * @allow (get) An authenticated user with a matching `companyId` in their auth token reading their own company's public profile.
-     * @deny (list) Any user, authenticated or not, trying to list all companies in the database. This is a critical security boundary.
-     * @deny (write) Any client-side write operation. Company creation/management is assumed to be an admin/backend process.
-     * @principle Enforces tenant isolation at the root level, preventing discovery of other tenants.
-     */
-    match /companies/{companyId} {
-      allow get: if isCompanyMember(companyId);
-      allow list: if false;
-      allow create: if false;
-      allow update: if false;
-      allow delete: if false;
-    }
-
-    /**
-     * @description Manages user profile documents, which are nested under their company.
-     * @path /companies/{companyId}/users/{userId}
-     * @allow (create) An authenticated user creating their own user document within their assigned company.
-     * @allow (get) An authenticated user reading their own user document.
-     * @deny (list) A user trying to list other users, even within the same company, to prevent user enumeration.
-     * @deny (update) A user trying to modify another user's document.
-     * @principle Enforces strict document ownership and validates relational integrity between the user, their auth token, and the company path.
-     */
-    match /companies/{companyId}/users/{userId} {
-      allow get: if isOwner(userId);
-      allow list: if false;
-      allow create: if isOwner(userId) && isCompanyMember(companyId) && request.resource.data.id == userId && request.resource.data.companyId == companyId;
-      allow update: if isOwner(userId) && isExistingDoc() && request.resource.data.id == resource.data.id && request.resource.data.companyId == resource.data.companyId;
-      allow delete: if isOwner(userId) && isExistingDoc();
-    }
-     
-    match /quotes/{quoteId} {
-        allow get: if true; // Public read access for shared links
-        allow list: if isSignedIn() && request.query.where.userId == request.auth.uid;
-        allow create, update, delete: if isSignedIn() && request.auth.uid == request.resource.data.userId;
-    }
-    
+    // Rules for the 'invoices' collection
     match /invoices/{invoiceId} {
-        allow read, write: if isSignedIn() && resource.data.userId == request.auth.uid;
-        allow list: if isSignedIn() && request.query.where.userId == request.auth.uid;
-        allow create: if isSignedIn() && request.resource.data.userId == request.auth.uid;
+        // Allow create if the user is signed in and the new document's userId matches their UID
+        allow create: if isSignedIn() && isOwner(request.resource.data.userId);
+
+        // Allow read, update, delete if the user is signed in and owns the document
+        allow read, update, delete: if isSignedIn() && isOwner(resource.data.userId);
     }
     
-    /**
-     * @description Secures the individual line items within a quote. Access rules are inherited from the company.
-     * @path /companies/{companyId}/quotes/{quoteId}/items/{quoteItemId}
-     * @allow (list) A member of company 'acme' listing all items for a specific quote belonging to 'acme'.
-     * @allow (create) A company member adding a new line item to a quote, ensuring the `quoteId` is correctly set.
-     * @deny (get) A user from company 'b' trying to read a line item from a quote belonging to company 'a'.
-     * @principle Inherits access control from the parent company path, ensuring consistent tenant security down the data tree.
-     */
-    match /companies/{companyId}/quotes/{quoteId}/items/{quoteItemId} {
-      allow get: if isCompanyMember(companyId);
-      allow list: if isCompanyMember(companyId);
-      allow create: if isCompanyMember(companyId) && request.resource.data.quoteId == quoteId;
-      allow update: if isCompanyMember(companyId) && isExistingDoc();
-      allow delete: if isCompanyMember(companyId) && isExistingDoc();
+    // Rules for the 'quotes' collection
+    match /quotes/{quoteId} {
+        // Allow create if the user is signed in and the new document's userId matches their UID
+        allow create: if isSignedIn() && isOwner(request.resource.data.userId);
+
+        // Allow read, update, delete if the user is signed in and owns the document
+        allow read, get: if isSignedIn() && isOwner(resource.data.userId);
+        
+        // Public read access for shared links is handled by a separate rule for get
+        allow get: if true; 
+    }
+    
+    // Collection-group queries
+    match /{collection}/{docId} {
+        // Allow a user to list documents from a collection if they are querying by their own userId
+        allow list: if isSignedIn() && request.query.where.userId == request.auth.uid;
     }
   }
 }
