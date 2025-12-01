@@ -1,13 +1,16 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { Menu } from 'lucide-react';
 import { ModeToggle } from './mode-toggle';
 import { cn } from '@/lib/utils';
 import { useEffect, useState } from 'react';
+import { useAuth } from '@/context/auth-provider';
+import { signOut } from 'firebase/auth';
+import { useFirebase } from '@/firebase';
 
 const navLinks = [
     { href: "/features", label: "Features" },
@@ -40,10 +43,18 @@ function NavLink({ href, label }: { href: string, label: string }) {
 
 export function Header() {
     const [isClient, setIsClient] = useState(false);
+    const { user } = useAuth();
+    const { auth } = useFirebase();
+    const router = useRouter();
 
     useEffect(() => {
         setIsClient(true);
     }, []);
+
+    const handleLogout = async () => {
+        await signOut(auth);
+        router.push('/login');
+    };
 
     return (
         <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur-sm">
@@ -60,14 +71,27 @@ export function Header() {
 
                 <div className="flex flex-1 items-center justify-end gap-2">
                     <ModeToggle />
-                    <div className='hidden sm:flex items-center gap-2'>
-                        <Button asChild variant="ghost">
-                            <Link href="/login">Login</Link>
-                        </Button>
-                        <Button asChild className="text-white transition-transform shadow-lg bg-gradient-to-r from-primary to-accent hover:scale-105">
-                            <Link href="/signup">Get Started</Link>
-                        </Button>
-                    </div>
+                     {isClient && (
+                        <div className='hidden sm:flex items-center gap-2'>
+                            {user ? (
+                                <>
+                                     <Button asChild variant="ghost">
+                                        <Link href="/dashboard">Dashboard</Link>
+                                    </Button>
+                                    <Button onClick={handleLogout} variant="outline">Logout</Button>
+                                </>
+                            ) : (
+                                <>
+                                    <Button asChild variant="ghost">
+                                        <Link href="/login">Login</Link>
+                                    </Button>
+                                    <Button asChild className="text-white transition-transform shadow-lg bg-gradient-to-r from-primary to-accent hover:scale-105">
+                                        <Link href="/signup">Get Started</Link>
+                                    </Button>
+                                </>
+                            )}
+                        </div>
+                    )}
                 </div>
                 
                 <Sheet>
@@ -86,12 +110,23 @@ export function Header() {
                                 <NavLink key={link.href} href={link.href} label={link.label} />
                             ))}
                              <div className='flex flex-col gap-4 mt-4'>
-                                <Button asChild variant="outline">
-                                    <Link href="/login">Login</Link>
-                                </Button>
-                                <Button asChild>
-                                    <Link href="/signup">Get Started</Link>
-                                </Button>
+                                {user ? (
+                                    <>
+                                        <Button asChild variant="outline">
+                                            <Link href="/dashboard">Dashboard</Link>
+                                        </Button>
+                                        <Button onClick={handleLogout}>Logout</Button>
+                                    </>
+                                ) : (
+                                    <>
+                                        <Button asChild variant="outline">
+                                            <Link href="/login">Login</Link>
+                                        </Button>
+                                        <Button asChild>
+                                            <Link href="/signup">Get Started</Link>
+                                        </Button>
+                                    </>
+                                )}
                             </div>
                         </nav>
                     </SheetContent>
