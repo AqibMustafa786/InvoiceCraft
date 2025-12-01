@@ -92,7 +92,7 @@ export default function CreateQuotePage() {
   const [quote, setQuote] = useState<Quote | null>(null);
   const [accentColor, setAccentColor] = useState<string>('hsl(var(--primary))');
   const { toast } = useToast();
-  const { firestore, user } = useFirebase();
+  const { firestore, user, isUserLoading } = useFirebase();
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -101,21 +101,29 @@ export default function CreateQuotePage() {
   const { data: remoteDraft, isLoading: isDraftLoading } = useDoc<Quote>(docRef);
 
   useEffect(() => {
-    if(!user) return;
-    
+    if (isUserLoading) return;
+    if (!user) {
+        router.push('/login');
+        return;
+    }
+
     const initialQuote = {...getInitialQuote(), userId: user.uid};
 
-    if (draftId && remoteDraft) {
-        const fromJSON = (key: string, value: any) => {
-            if (['quoteDate', 'validUntilDate'].includes(key) && value) {
-                return value.toDate ? value.toDate() : new Date(value);
-            }
-            return value;
-        };
-        const loadedDraft = JSON.parse(JSON.stringify(remoteDraft), fromJSON);
-        setQuote({ ...initialQuote, ...loadedDraft });
-    } else if (!draftId) {
-      setQuote(initialQuote);
+    if (draftId) {
+        if (remoteDraft) {
+            const fromJSON = (key: string, value: any) => {
+                if (['quoteDate', 'validUntilDate'].includes(key) && value) {
+                    return value.toDate ? value.toDate() : new Date(value);
+                }
+                return value;
+            };
+            const loadedDraft = JSON.parse(JSON.stringify(remoteDraft), fromJSON);
+            setQuote({ ...initialQuote, ...loadedDraft });
+        }
+    } else {
+        if (!quote) {
+            setQuote(initialQuote);
+        }
     }
     
     if (typeof window !== 'undefined' && document) {
@@ -124,7 +132,7 @@ export default function CreateQuotePage() {
            setAccentColor(`hsl(${computedColor})`);
         }
     }
-  }, [draftId, remoteDraft, user]);
+  }, [draftId, remoteDraft, user, isUserLoading, router, quote]);
 
   const handlePrint = () => {
     window.print();
@@ -195,7 +203,7 @@ export default function CreateQuotePage() {
   }, [quote?.lineItems, quote?.summary.taxPercentage, quote?.summary.discount, quote?.summary.shippingCost]);
 
 
-  if (!quote || (draftId && isDraftLoading)) {
+  if (isUserLoading || !quote || (draftId && isDraftLoading)) {
     return (
         <div className="container mx-auto p-4 md:p-8">
             <h1 className="text-3xl font-bold font-headline">Loading...</h1>
