@@ -9,7 +9,7 @@ export default function ManagingPaymentsPage() {
         <PageHeaderDescription>A complete guide on managing invoice payments. Learn how to track, organize, and automate payments to improve your cash flow.</PageHeaderDescription>
       </PageHeader>
 
-      <div className="max-w-4xl mx-auto bg-card/50 backdrop-blur-lg border border-border/30 shadow-lg rounded-lg p-8">
+      <div className="max-w-4xl mx-auto bg-card shadow-lg rounded-lg p-8">
         <div className="relative w-full h-64 md:h-96 mb-8 rounded-lg overflow-hidden">
             <Image src="https://picsum.photos/seed/guide4/1200/600" alt="Financial charts" fill style={{objectFit: 'cover'}} data-ai-hint="finance chart" />
         </div>
@@ -52,7 +52,7 @@ export default function ManagingPaymentsPage() {
                 <li>Tool automatically updates the balance.</li>
                 <li>Notes can mention payment method (bank transfer, PayPal, etc.).</li>
             </ul>
-             <div className="bg-card/50 border rounded-lg p-4 my-4 not-prose">
+             <div className="bg-card border rounded-lg p-4 my-4 not-prose">
                 <p><strong>Example:</strong></p>
                 <p>Invoice total: $1000</p>
                 <p>Payment received: $400 (Sept 10, 2025)</p>

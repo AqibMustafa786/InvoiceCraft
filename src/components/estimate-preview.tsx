@@ -67,9 +67,9 @@ const DefaultEstimateTemplate = ({ estimate, logoUrl, accentColor }: { estimate:
                 </div>
                 <div className="text-right space-y-1">
                     <p className="text-sm font-semibold text-gray-500">Estimate Date</p>
-                    <p>{safeFormat(estimate.estimateDate, 'MMMM d, yyyy')}</p>
+                    <p>{safeFormat(new Date(estimate.estimateDate || new Date()), 'MMMM d, yyyy')}</p>
                     <p className="text-sm font-semibold text-gray-500 mt-2">Valid Until</p>
-                    <p>{safeFormat(estimate.validUntilDate, 'MMMM d, yyyy')}</p>
+                    <p>{safeFormat(new Date(estimate.validUntilDate || new Date()), 'MMMM d, yyyy')}</p>
                 </div>
             </section>
             
@@ -161,8 +161,8 @@ const ContractorEstimateTemplate = ({ estimate, logoUrl, accentColor }: { estima
                     <h2 className="text-5xl font-light uppercase text-gray-400 tracking-wider">Estimate</h2>
                     <div className="mt-4 text-xs space-y-1">
                         <p><span className="font-bold text-gray-500">Estimate #:</span> {estimate.estimateNumber}</p>
-                        <p><span className="font-bold text-gray-500">Date:</span> {safeFormat(estimate.estimateDate, 'M/d/yyyy')}</p>
-                        <p><span className="font-bold text-gray-500">Valid Until:</span> {safeFormat(estimate.validUntilDate, 'M/d/yyyy')}</p>
+                        <p><span className="font-bold text-gray-500">Date:</span> {safeFormat(new Date(estimate.estimateDate || new Date()), 'M/d/yyyy')}</p>
+                        <p><span className="font-bold text-gray-500">Valid Until:</span> {safeFormat(new Date(estimate.validUntilDate || new Date()), 'M/d/yyyy')}</p>
                     </div>
                 </div>
             </header>
@@ -265,7 +265,7 @@ export function EstimatePreview({ estimate, logoUrl, accentColor, id = 'estimate
   }
 
   return (
-    <Card id={id} className="w-full shadow-lg rounded-xl overflow-hidden print-hide bg-card/50 backdrop-blur-lg border border-border/30" style={previewStyle}>
+    <Card id={id} className="w-full shadow-lg rounded-xl overflow-hidden print-hide bg-card" style={previewStyle}>
       <CardContent className="p-0">
         {renderContent()}
       </CardContent>

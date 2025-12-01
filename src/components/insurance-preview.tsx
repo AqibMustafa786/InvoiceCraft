@@ -71,7 +71,7 @@ const UsaClaimDefaultTemplatePage = ({ pageItems, pageIndex, totalPages, ...comm
                         <h2 className="text-4xl font-bold">INVOICE</h2>
                         <div className="mt-4 text-xs space-y-1">
                             <p><span className="font-bold text-gray-500">Invoice #:</span> {doc.documentNumber}</p>
-                            <p><span className="font-bold text-gray-500">Date:</span> {safeFormat(doc.documentDate, 'M/d/yyyy')}</p>
+                            <p><span className="font-bold text-gray-500">Date:</span> {safeFormat(new Date(doc.documentDate || new Date()), 'M/d/yyyy')}</p>
                         </div>
                     </div>
                 </header>
@@ -301,7 +301,7 @@ export function InsurancePreview({ doc, logoUrl, accentColor, id = 'insurance-pr
 
   // Default live preview (single page)
   return (
-    <Card id={id} className="w-full shadow-lg rounded-xl overflow-hidden print-hide bg-card/50 backdrop-blur-lg border border-border/30" style={previewStyle}>
+    <Card id={id} className="w-full shadow-lg rounded-xl overflow-hidden print-hide bg-card" style={previewStyle}>
       <CardContent className="p-0">
           <TemplateComponent
             {...commonProps}

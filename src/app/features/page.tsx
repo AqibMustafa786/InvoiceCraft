@@ -54,11 +54,11 @@ export default function FeaturesPage() {
 
       <div className="space-y-12">
         {featureCategories.map((category) => (
-          <div key={category.category} className="bg-card/50 backdrop-blur-lg border border-border/30 shadow-lg rounded-lg p-8">
+          <div key={category.category} className="bg-card shadow-lg rounded-lg p-8">
             <h2 className="text-3xl font-bold font-headline mb-8 text-center">{category.category}</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {category.features.map((feature) => (
-                 <Card key={feature.name} className="flex flex-col text-center items-center p-6 bg-card/50 backdrop-blur-lg border border-border/30 shadow-lg">
+                 <Card key={feature.name} className="flex flex-col text-center items-center p-6 bg-card shadow-lg">
                     <CardHeader className="p-0 items-center">
                         {(feature as any).icon || <CheckCircle className="h-8 w-8 text-primary" />}
                         <CardTitle className="mt-4">{feature.name}</CardTitle>

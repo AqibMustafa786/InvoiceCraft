@@ -39,7 +39,7 @@ export default function CreatingInvoicePage() {
         <PageHeaderDescription>Learn how to create your first invoice with our step-by-step guide. Perfect for freelancers & small businesses who want professional invoices and faster payments.</PageHeaderDescription>
       </PageHeader>
 
-      <div className="max-w-4xl mx-auto bg-card/50 backdrop-blur-lg border border-border/30 shadow-lg rounded-lg p-8">
+      <div className="max-w-4xl mx-auto bg-card shadow-lg rounded-lg p-8">
         <div className="relative w-full h-64 md:h-96 mb-8 rounded-lg overflow-hidden">
             <Image src="https://picsum.photos/seed/guide1/1200/600" alt="Creating an invoice guide" fill style={{objectFit: 'cover'}} data-ai-hint="desk paperwork" />
         </div>
@@ -71,7 +71,7 @@ export default function CreatingInvoicePage() {
 
             <h2 className="text-3xl font-bold">Step 1: Add Your Business Details</h2>
             <p>At the top of your invoice, include your business name or your personal name if you’re a freelancer. Adding a logo makes your invoice look more professional and helps with brand recognition.</p>
-            <div className="bg-card/50 border rounded-lg p-4 my-4 not-prose">
+            <div className="bg-card border rounded-lg p-4 my-4 not-prose">
                 <p className="font-bold">Aqib Mustafa – Freelance Web Developer</p>
                 <p>📍 Address: Larkana, Sindh, Pakistan</p>
                 <p>📧 Email: aqib@example.com</p>
@@ -80,7 +80,7 @@ export default function CreatingInvoicePage() {
 
             <h2 className="text-3xl font-bold">Step 2: Add Client Information</h2>
             <p>Next, add your client’s details. This makes the invoice personalized and avoids confusion.</p>
-             <div className="bg-card/50 border rounded-lg p-4 my-4 not-prose">
+             <div className="bg-card border rounded-lg p-4 my-4 not-prose">
                 <p><span className="font-semibold">Client Name:</span> John Doe</p>
                 <p><span className="font-semibold">Company:</span> Bright Marketing Agency</p>
                 <p>📍 <span className="font-semibold">Address:</span> 123 Main Street, New York, USA</p>
@@ -100,7 +100,7 @@ export default function CreatingInvoicePage() {
             <p>This is the most important part of your invoice. Each service or product should be itemized clearly.</p>
             <div className="overflow-x-auto my-4 not-prose">
                 <table className="w-full text-left border-collapse">
-                    <thead className="bg-card/50">
+                    <thead className="bg-card">
                         <tr>
                             <th className="p-3 border">Description</th>
                             <th className="p-3 border text-center">Quantity</th>

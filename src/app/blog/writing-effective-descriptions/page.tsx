@@ -9,7 +9,7 @@ export default function DescriptionsPage() {
         <PageHeaderDescription>Discover proven tips to write clear, effective invoice descriptions. Improve client communication, reduce disputes, and get paid faster with professional invoices.</PageHeaderDescription>
       </PageHeader>
 
-       <div className="max-w-4xl mx-auto bg-card/50 backdrop-blur-lg border border-border/30 shadow-lg rounded-lg p-8">
+       <div className="max-w-4xl mx-auto bg-card shadow-lg rounded-lg p-8">
          <div className="relative w-full h-64 mb-8 rounded-lg overflow-hidden">
             <Image src="https://picsum.photos/seed/guide2/800/400" alt="Writing notes" fill style={{objectFit: 'cover'}} data-ai-hint="writing notes" />
         </div>

@@ -81,9 +81,9 @@ const ClientDetails = ({ invoice, t }: { invoice: Invoice, t: any }) => (
         </div>
         <div className="text-right space-y-1">
             <p className="text-sm font-semibold text-gray-500">{t.invoiceDate}</p>
-            <p>{safeFormat(invoice.invoiceDate, 'MMMM d, yyyy')}</p>
+            <p>{safeFormat(new Date(invoice.invoiceDate || new Date()), 'MMMM d, yyyy')}</p>
             <p className="text-sm font-semibold text-gray-500 mt-2">{t.dueDate}</p>
-            <p>{safeFormat(invoice.dueDate, 'MMMM d, yyyy')}</p>
+            <p>{safeFormat(new Date(invoice.dueDate || new Date()), 'MMMM d, yyyy')}</p>
         </div>
     </section>
 );
@@ -246,11 +246,11 @@ const ElegantTemplatePage = ({ pageItems, pageIndex, totalPages, ...commonProps 
                         </div>
                         <div className="flex justify-end">
                             <span className="font-semibold text-gray-500 w-28 text-left">{commonProps.t.invoiceDate}: &nbsp;</span>
-                            <span className="w-24 text-right">{safeFormat(commonProps.invoice.invoiceDate, 'yyyy-MM-dd')}</span>
+                            <span className="w-24 text-right">{safeFormat(new Date(commonProps.invoice.invoiceDate || new Date()), 'yyyy-MM-dd')}</span>
                         </div>
                          <div className="flex justify-end">
                             <span className="font-semibold text-gray-500 w-28 text-left">{commonProps.t.dueDate}: &nbsp;</span>
-                            <span className="w-24 text-right">{safeFormat(commonProps.invoice.dueDate, 'yyyy-MM-dd')}</span>
+                            <span className="w-24 text-right">{safeFormat(new Date(commonProps.invoice.dueDate || new Date()), 'yyyy-MM-dd')}</span>
                         </div>
                     </div>
                 </div>
@@ -298,11 +298,11 @@ const UsaTemplatePage = ({ pageItems, pageIndex, totalPages, ...commonProps }: P
                             )}
                             <div className="flex justify-end">
                                 <span className="text-gray-500 w-28 text-right">Invoice Date</span>
-                                <span className="w-28 text-right font-medium">{safeFormat(invoice.invoiceDate, 'MMM d, yyyy')}</span>
+                                <span className="w-28 text-right font-medium">{safeFormat(new Date(invoice.invoiceDate || new Date()), 'MMM d, yyyy')}</span>
                             </div>
                             <div className="flex justify-end">
                                 <span className="text-gray-500 w-28 text-right">Due Date</span>
-                                <span className="w-28 text-right font-medium">{safeFormat(invoice.dueDate, 'MMM d, yyyy')}</span>
+                                <span className="w-28 text-right font-medium">{safeFormat(new Date(invoice.dueDate || new Date()), 'MMM d, yyyy')}</span>
                             </div>
                         </div>
                     </div>
@@ -382,9 +382,9 @@ const MinimalistTemplatePage = ({ pageItems, pageIndex, totalPages, ...commonPro
                     <p className="text-sm font-semibold text-gray-500 uppercase tracking-wider">{commonProps.t.invoice} #</p>
                     <p>{commonProps.invoice.invoiceNumber}</p>
                     <p className="text-sm font-semibold text-gray-500 uppercase tracking-wider mt-3">{commonProps.t.invoiceDate}</p>
-                    <p>{safeFormat(commonProps.invoice.invoiceDate, 'yyyy-MM-dd')}</p>
+                    <p>{safeFormat(new Date(commonProps.invoice.invoiceDate || new Date()), 'yyyy-MM-dd')}</p>
                     <p className="text-sm font-semibold text-gray-500 uppercase tracking-wider mt-3">{commonProps.t.dueDate}</p>
-                    <p>{safeFormat(commonProps.invoice.dueDate, 'yyyy-MM-dd')}</p>
+                    <p>{safeFormat(new Date(commonProps.invoice.dueDate || new Date()), 'yyyy-MM-dd')}</p>
                 </div>
             </section>
 
@@ -430,11 +430,11 @@ const CreativeTemplatePage = ({ pageItems, pageIndex, totalPages, ...commonProps
                     <div className="space-y-4 text-right self-end z-10">
                          <div className="space-y-1">
                             <p className="text-sm font-semibold text-gray-500">{t.invoiceDate}</p>
-                            <p className="font-medium">{safeFormat(invoice.invoiceDate, 'MMMM d, yyyy')}</p>
+                            <p className="font-medium">{safeFormat(new Date(invoice.invoiceDate || new Date()), 'MMMM d, yyyy')}</p>
                         </div>
                          <div className="space-y-1">
                             <p className="text-sm font-semibold text-gray-500">{t.dueDate}</p>
-                            <p className="font-medium">{safeFormat(invoice.dueDate, 'MMMM d, yyyy')}</p>
+                            <p className="font-medium">{safeFormat(new Date(invoice.dueDate || new Date()), 'MMMM d, yyyy')}</p>
                         </div>
                     </div>
                 </section>
@@ -638,7 +638,7 @@ export function InvoicePreview({ invoice, logoUrl, accentColor, id = 'invoice-pr
 
   // Default live preview (single page)
   return (
-    <Card id={id} className="w-full shadow-lg rounded-xl overflow-hidden print-hide bg-card/50 backdrop-blur-lg border border-border/30" style={previewStyle}>
+    <Card id={id} className="w-full shadow-lg rounded-xl overflow-hidden print-hide bg-card" style={previewStyle}>
       <CardContent className="p-0">
           <TemplateComponent
             {...commonProps}

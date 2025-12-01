@@ -15,7 +15,7 @@ export default function PressPage() {
         </PageHeader>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-            <Card className="bg-card/50 backdrop-blur-lg border border-border/30 shadow-lg">
+            <Card className="bg-card shadow-lg">
                 <CardHeader>
                     <CardTitle>Brand Assets</CardTitle>
                 </CardHeader>
@@ -31,7 +31,7 @@ export default function PressPage() {
                     </Button>
                 </CardContent>
             </Card>
-             <Card className="bg-card/50 backdrop-blur-lg border border-border/30 shadow-lg">
+             <Card className="bg-card shadow-lg">
                 <CardHeader>
                     <CardTitle>Media Contact</CardTitle>
                 </CardHeader>

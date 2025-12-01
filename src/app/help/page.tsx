@@ -37,7 +37,7 @@ export default function HelpPage() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
         {helpSections.map((section) => (
           <Link href={section.href} key={section.title}>
-            <Card className="h-full bg-card/50 backdrop-blur-lg border border-border/30 shadow-lg hover:shadow-primary/20 transition-shadow duration-300 flex flex-col items-center text-center p-6">
+            <Card className="h-full bg-card shadow-lg hover:shadow-primary/20 transition-shadow duration-300 flex flex-col items-center text-center p-6">
               <div className="mb-4">
                 {section.icon}
               </div>

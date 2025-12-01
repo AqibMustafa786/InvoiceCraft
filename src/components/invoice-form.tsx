@@ -137,7 +137,7 @@ export function InvoiceForm({ invoice, setInvoice, logoUrl, setLogoUrl, accentCo
 
   return (
     <div className="space-y-6">
-      <Card className="bg-card/50 backdrop-blur-lg border border-border/30">
+      <Card className="bg-card">
         <CardHeader>
           <CardTitle>Branding &amp; Customization</CardTitle>
         </CardHeader>
@@ -194,7 +194,7 @@ export function InvoiceForm({ invoice, setInvoice, logoUrl, setLogoUrl, accentCo
         </CardContent>
       </Card>
       
-      <Card className="bg-card/50 backdrop-blur-lg border border-border/30">
+      <Card className="bg-card">
         <CardHeader>
           <CardTitle>Bill From</CardTitle>
         </CardHeader>
@@ -219,7 +219,7 @@ export function InvoiceForm({ invoice, setInvoice, logoUrl, setLogoUrl, accentCo
         </CardContent>
       </Card>
 
-      <Card className="bg-card/50 backdrop-blur-lg border border-border/30">
+      <Card className="bg-card">
         <CardHeader>
           <CardTitle>Bill To</CardTitle>
         </CardHeader>
@@ -246,7 +246,7 @@ export function InvoiceForm({ invoice, setInvoice, logoUrl, setLogoUrl, accentCo
         </CardContent>
       </Card>
       
-      <Card className="bg-card/50 backdrop-blur-lg border border-border/30">
+      <Card className="bg-card">
         <CardHeader>
           <CardTitle>Invoice Details</CardTitle>
         </CardHeader>
@@ -309,7 +309,7 @@ export function InvoiceForm({ invoice, setInvoice, logoUrl, setLogoUrl, accentCo
         </CardContent>
       </Card>
 
-      <Card className="bg-card/50 backdrop-blur-lg border border-border/30">
+      <Card className="bg-card">
         <CardHeader>
           <CardTitle>Items</CardTitle>
         </CardHeader>
@@ -369,7 +369,7 @@ export function InvoiceForm({ invoice, setInvoice, logoUrl, setLogoUrl, accentCo
         </CardContent>
       </Card>
 
-      <Card className="bg-card/50 backdrop-blur-lg border border-border/30">
+      <Card className="bg-card">
         <CardHeader>
           <CardTitle>Totals & Notes</CardTitle>
         </CardHeader>

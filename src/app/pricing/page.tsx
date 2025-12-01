@@ -92,7 +92,7 @@ export default function PricingPage() {
         {plans.map((plan) => (
           <Card 
             key={plan.title} 
-            className={`flex flex-col bg-card/50 backdrop-blur-lg border shadow-lg ${plan.variant === 'primary' ? 'border-primary border-2 shadow-primary/20' : 'border-border/30'}`}
+            className={`flex flex-col bg-card shadow-lg ${plan.variant === 'primary' ? 'border-primary border-2 shadow-primary/20' : 'border'}`}
           >
             <CardHeader>
               <CardTitle>{plan.title}</CardTitle>
@@ -123,7 +123,7 @@ export default function PricingPage() {
       
        <div className="my-16 md:my-24">
          <h2 className="text-3xl md:text-4xl font-bold font-headline text-center mb-10">Feature Comparison</h2>
-         <Card className="bg-card/50 backdrop-blur-lg border border-border/30 shadow-lg">
+         <Card className="bg-card shadow-lg">
           <CardContent className="p-0">
             <Table>
                 <TableHeader>

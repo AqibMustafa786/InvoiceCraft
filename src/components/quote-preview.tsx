@@ -72,11 +72,11 @@ const DefaultQuoteTemplate = ({ quote, accentColor }: { quote: Quote, accentColo
                     </div>
                     <div className="space-y-1 mt-2">
                         <p className="text-sm font-semibold text-gray-500">Quote Date</p>
-                        <p>{safeFormat(quote.quoteDate, 'MMMM d, yyyy')}</p>
+                        <p>{safeFormat(new Date(quote.quoteDate || new Date()), 'MMMM d, yyyy')}</p>
                     </div>
                     <div className="space-y-1 mt-2">
                         <p className="text-sm font-semibold text-gray-500">Valid Until</p>
-                        <p>{safeFormat(quote.validUntilDate, 'MMMM d, yyyy')}</p>
+                        <p>{safeFormat(new Date(quote.validUntilDate || new Date()), 'MMMM d, yyyy')}</p>
                     </div>
                     {quote.referenceNumber && (
                         <div className="space-y-1 mt-2">
@@ -189,8 +189,8 @@ const ContractorQuoteTemplate = ({ quote, accentColor }: { quote: Quote, accentC
                     <h2 className="text-5xl font-light uppercase text-gray-400 tracking-wider">Quote</h2>
                     <div className="mt-4 text-xs space-y-1">
                         <p><span className="font-bold text-gray-500">Quote #:</span> {quote.quoteNumber}</p>
-                        <p><span className="font-bold text-gray-500">Date:</span> {safeFormat(quote.quoteDate, 'M/d/yyyy')}</p>
-                        <p><span className="font-bold text-gray-500">Valid Until:</span> {safeFormat(quote.validUntilDate, 'M/d/yyyy')}</p>
+                        <p><span className="font-bold text-gray-500">Date:</span> {safeFormat(new Date(quote.quoteDate || new Date()), 'M/d/yyyy')}</p>
+                        <p><span className="font-bold text-gray-500">Valid Until:</span> {safeFormat(new Date(quote.validUntilDate || new Date()), 'M/d/yyyy')}</p>
                     </div>
                 </div>
             </header>
@@ -300,7 +300,7 @@ export function QuotePreview({ quote, accentColor, id = 'quote-preview', isPrint
   }
 
   return (
-    <Card id={id} className="w-full shadow-lg rounded-xl overflow-hidden print-hide bg-card/50 backdrop-blur-lg border border-border/30" style={previewStyle}>
+    <Card id={id} className="w-full shadow-lg rounded-xl overflow-hidden print-hide bg-card" style={previewStyle}>
       <CardContent className="p-0">
         {renderContent()}
       </CardContent>

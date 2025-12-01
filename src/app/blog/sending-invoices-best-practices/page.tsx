@@ -9,7 +9,7 @@ export default function SendingInvoicesPage() {
         <PageHeaderDescription>Learn the best practices for sending invoices professionally. Discover tips to improve client trust, avoid delays, and ensure faster payments.</PageHeaderDescription>
       </PageHeader>
 
-      <div className="max-w-4xl mx-auto bg-card/50 backdrop-blur-lg border border-border/30 shadow-lg rounded-lg p-8">
+      <div className="max-w-4xl mx-auto bg-card shadow-lg rounded-lg p-8">
          <div className="relative w-full h-64 md:h-96 mb-8 rounded-lg overflow-hidden">
             <Image src="https://picsum.photos/seed/guide3/1200/600" alt="Sending an email with an invoice" fill style={{objectFit: 'cover'}} data-ai-hint="email laptop" />
         </div>
@@ -42,7 +42,7 @@ export default function SendingInvoicesPage() {
 
             <h2 className="text-3xl font-bold">Step 3: Write a Professional Email Message</h2>
             <p>Never just send an invoice attachment without context. Pair it with a polite, concise email.</p>
-            <div className="bg-card/50 border rounded-lg p-4 my-4 not-prose text-sm">
+            <div className="bg-card border rounded-lg p-4 my-4 not-prose text-sm">
                 <p><strong>Subject:</strong> Invoice #1023 – Web Design Services (September 2025)</p>
                 <br/>
                 <p>Hi [Client’s Name],</p>

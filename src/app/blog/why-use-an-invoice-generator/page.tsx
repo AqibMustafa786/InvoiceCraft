@@ -9,7 +9,7 @@ export default function WhyUseGeneratorPage() {
         <PageHeaderDescription>Wondering why you should use an invoice generator? Discover key benefits, features, and best practices for freelancers & businesses.</PageHeaderDescription>
       </PageHeader>
 
-      <div className="max-w-4xl mx-auto bg-card/50 backdrop-blur-lg border border-border/30 shadow-lg rounded-lg p-8">
+      <div className="max-w-4xl mx-auto bg-card shadow-lg rounded-lg p-8">
          <div className="relative w-full h-64 md:h-96 mb-8 rounded-lg overflow-hidden">
             <Image src="https://picsum.photos/seed/guide5/1200/600" alt="Business meeting" layout="fill" objectFit="cover" data-ai-hint="business meeting" />
         </div>
