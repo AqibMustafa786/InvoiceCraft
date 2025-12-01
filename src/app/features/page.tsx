@@ -1,16 +1,17 @@
 import { PageHeader, PageHeaderDescription, PageHeaderHeading } from "@/components/page-header";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { CheckCircle } from "lucide-react";
 
 const featureCategories = [
   {
     category: "Invoice Creation & Customization",
     features: [
-      { name: "Instant Invoice Generation", description: "Create professional invoices in seconds with an easy-to-use form." },
-      { name: "Live Real-time Preview", description: "See changes to your invoice instantly as you type." },
-      { name: "Multiple Professional Templates", description: "Choose from a selection of templates like Default, Modern, Elegant, and USA-specific." },
-      { name: "Custom Company Logo", description: "Upload your brand's logo for a personalized, professional look." },
-      { name: "Custom Accent Colors", description: "Tailor the invoice's color scheme to match your brand identity." },
-      { name: "Save as PDF", description: "Easily download and share print-ready PDF invoices with your clients." },
+      { icon: <CheckCircle className="h-8 w-8 text-primary" />, name: "Instant Invoice Generation", description: "Create professional invoices in seconds with an easy-to-use form." },
+      { icon: <CheckCircle className="h-8 w-8 text-primary" />, name: "Live Real-time Preview", description: "See changes to your invoice instantly as you type." },
+      { icon: <CheckCircle className="h-8 w-8 text-primary" />, name: "Multiple Professional Templates", description: "Choose from a selection of templates like Default, Modern, Elegant, and USA-specific." },
+      { icon: <CheckCircle className="h-8 w-8 text-primary" />, name: "Custom Company Logo", description: "Upload your brand's logo for a personalized, professional look." },
+      { icon: <CheckCircle className="h-8 w-8 text-primary" />, name: "Custom Accent Colors", description: "Tailor the invoice's color scheme to match your brand identity." },
+      { icon: <CheckCircle className="h-8 w-8 text-primary" />, name: "Save as PDF", description: "Easily download and share print-ready PDF invoices with your clients." },
     ],
   },
   {
@@ -52,9 +53,26 @@ export default function FeaturesPage() {
       </PageHeader>
 
       <div className="space-y-12">
-        {featureCategories.map((category) => (
+          <div className="bg-card/50 backdrop-blur-lg border border-border/30 shadow-lg rounded-lg p-8">
+            <h2 className="text-3xl font-bold font-headline mb-8 text-center">{featureCategories[0].category}</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {featureCategories[0].features.map((feature) => (
+                <Card key={feature.name} className="flex flex-col text-center items-center p-6 bg-card/50 backdrop-blur-lg border border-border/30 shadow-lg">
+                    <CardHeader className="p-0 items-center">
+                        {feature.icon}
+                        <CardTitle className="mt-4">{feature.name}</CardTitle>
+                    </CardHeader>
+                    <CardContent className="p-0 mt-2 flex-1">
+                        <p className="text-muted-foreground text-sm">{feature.description}</p>
+                    </CardContent>
+                </Card>
+              ))}
+            </div>
+          </div>
+
+        {featureCategories.slice(1).map((category) => (
           <div key={category.category} className="bg-card/50 backdrop-blur-lg border border-border/30 shadow-lg rounded-lg p-8">
-            <h2 className="text-3xl font-bold font-headline mb-8">{category.category}</h2>
+            <h2 className="text-3xl font-bold font-headline mb-8 text-center">{category.category}</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {category.features.map((feature) => (
                 <div key={feature.name} className="flex items-start gap-4">
