@@ -75,6 +75,8 @@ const UsaClaimDefaultTemplatePage = ({ pageItems, pageIndex, totalPages, ...comm
                         <span className="font-bold text-gray-600">Policy ID:</span><span className="font-medium">{doc.policyId}</span>
                         <span className="font-bold text-gray-600">Date of Loss:</span><span className="font-medium">{doc.dateOfLoss}</span>
                         <span className="font-bold text-gray-600">Claim Type:</span><span className="font-medium">{doc.typeOfClaim}</span>
+                        <span className="font-bold text-gray-600">Insurance Co:</span><span className="font-medium">{doc.insuranceCompany}</span>
+                         <span className="font-bold text-gray-600">Adjuster:</span><span className="whitespace-pre-line font-medium">{doc.adjusterInfo}</span>
                     </div>
                 </section>
                 <main>
@@ -147,7 +149,7 @@ const AVAILABLE_HEIGHT = PAGE_HEIGHT - PAGE_PADDING;
 
 // --- MAIN PREVIEW COMPONENT ---
 export function InsurancePreview({ doc, logoUrl, accentColor, id = 'insurance-preview', isPrint = false }: InsurancePreviewProps) {
-  const [paginatedItems, setPaginatedItems] = useState<LineItem[][]>(doc ? [doc.items] : []);
+  const [paginatedItems, setPaginatedItems] = useState<LineItem[][]>(doc ? [doc.items] : [[]]);
   const [needsRemeasure, setNeedsRemeasure] = useState(true);
   const containerRef = useRef<HTMLDivElement>(null);
   
@@ -164,7 +166,7 @@ export function InsurancePreview({ doc, logoUrl, accentColor, id = 'insurance-pr
 
   useEffect(() => {
     setNeedsRemeasure(true);
-    setPaginatedItems(doc ? [doc.items] : []);
+    setPaginatedItems(doc ? [doc.items] : [[]]);
   }, [doc, logoUrl, accentColor, t]);
 
 

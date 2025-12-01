@@ -29,6 +29,8 @@ const getInitialInsuranceDoc = (): InsuranceDocument => ({
   dateOfLoss: new Date().toISOString().split('T')[0],
   typeOfClaim: 'Property Damage',
   incidentDescription: 'Brief description of the incident.',
+  insuranceCompany: 'Example Insurance Co.',
+  adjusterInfo: 'Adjuster: Jane Smith\nPhone: 555-123-4567',
 
   documentNumber: 'DOC-001',
   documentDate: new Date(),

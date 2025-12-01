@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { DatePicker } from '@/components/ui/datepicker';
-import { ImageUp, Plus, Trash2, Palette, X, Mail, Phone, Hash, ShieldCheck, User, FolderArchive, FileText, Calendar, AlertTriangle } from 'lucide-react';
+import { ImageUp, Plus, Trash2, Palette, X, Mail, Phone, Hash, ShieldCheck, User, FolderArchive, FileText, Calendar, AlertTriangle, Building, UserCircle } from 'lucide-react';
 import Image from 'next/image';
 import {
   Select,
@@ -261,6 +261,29 @@ export function InsuranceForm({ document: doc, setDocument: setDoc, logoUrl, set
         </CardContent>
       </Card>
 
+      <Card>
+        <CardHeader>
+          <CardTitle>Insurance &amp; Adjuster Details</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="insuranceCompany">Insurance Company</Label>
+              <div className="relative flex items-center">
+                <Building className="absolute left-3 h-5 w-5 text-muted-foreground" />
+                <Input id="insuranceCompany" name="insuranceCompany" value={doc.insuranceCompany} onChange={handleInputChange} className="pl-10" />
+              </div>
+            </div>
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="adjusterInfo">Adjuster Info (Name, Phone, etc.)</Label>
+             <div className="relative flex items-center">
+                <UserCircle className="absolute left-3 top-3 h-5 w-5 text-muted-foreground" />
+                <Textarea id="adjusterInfo" name="adjusterInfo" value={doc.adjusterInfo} onChange={handleInputChange} className="pl-10"/>
+             </div>
+          </div>
+        </CardContent>
+      </Card>
 
       <Card>
         <CardHeader>

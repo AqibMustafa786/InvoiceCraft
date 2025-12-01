@@ -51,6 +51,8 @@ export interface InsuranceDocument {
   dateOfLoss: string;
   typeOfClaim: string;
   incidentDescription: string;
+  insuranceCompany: string;
+  adjusterInfo: string;
 
   // Invoice-like details
   documentNumber: string;
