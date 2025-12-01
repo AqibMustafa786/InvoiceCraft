@@ -116,9 +116,11 @@ export default function DashboardPage() {
     
     const handleConvertToInvoice = async (quote: Quote) => {
         if (!firestore || !user) return;
-        const { id, quoteNumber, quoteDate, ...restOfQuote } = quote;
+        
+        // Destructure quote to exclude quote-specific fields and prepare for invoice creation
+        const { id, quoteNumber, quoteDate, validUntilDate, documentType, ...restOfQuote } = quote;
 
-        const newInvoice: Omit<Invoice, 'id'> = {
+        const newInvoiceData: Omit<Invoice, 'id' | 'userId'> = {
             ...restOfQuote,
             invoiceNumber: `INV-${quoteNumber.replace('QUO-', '')}`,
             invoiceDate: new Date(),
@@ -128,21 +130,21 @@ export default function DashboardPage() {
             poNumber: '',
             trackingNumber: '',
             amountPaid: 0,
-            paymentInstructions: 'Thank you for your business.',
+            paymentInstructions: 'Thank you for your business. Please make payment to the details provided below.',
         };
         
         try {
-            const newDocRef = await addDoc(collection(firestore, INVOICES_COLLECTION), {...newInvoice, userId: user.uid});
+            const newDocRef = await addDoc(collection(firestore, INVOICES_COLLECTION), {...newInvoiceData, userId: user.uid});
             toast({
                 title: 'Invoice Created',
-                description: `Quote ${quote.quoteNumber} has been converted to an invoice.`
+                description: `Quote ${quote.quoteNumber} has been successfully converted to an invoice.`
             });
             router.push(`/create?draftId=${newDocRef.id}`);
         } catch (error) {
             console.error("Error converting quote to invoice:", error);
             toast({
                 title: 'Conversion Failed',
-                description: 'Could not convert the quote to an invoice.',
+                description: 'Could not convert the quote to an invoice. Please try again.',
                 variant: 'destructive'
             });
         }
@@ -157,7 +159,6 @@ export default function DashboardPage() {
         });
     };
 
-
     const resetFilters = useCallback(() => {
         setFilters(initialFilters);
     }, []);
@@ -170,7 +171,7 @@ export default function DashboardPage() {
         
         const fromJSON = (key: string, value: any) => {
              if (key === 'invoiceDate' || key === 'dueDate' || key === 'quoteDate' || key === 'validUntilDate') {
-                return value?.toDate ? value.toDate() : new Date(value);
+                return value?.toDate ? value.toDate() : (value ? new Date(value) : null);
             }
             return value;
         };
@@ -178,7 +179,16 @@ export default function DashboardPage() {
         return (JSON.parse(JSON.stringify(allDocs), fromJSON) as DocumentType[])
             .filter(doc => {
                 const total = calculateTotal(doc);
-                const date = doc.documentType === 'invoice' ? (doc as Invoice).invoiceDate : (doc as Quote).quoteDate;
+                let date;
+                if (doc.documentType === 'invoice') {
+                  date = (doc as Invoice).invoiceDate;
+                } else if (doc.documentType === 'quote') {
+                  date = (doc as Quote).quoteDate;
+                } else {
+                  return false; // Skip if documentType is not defined
+                }
+                if (!date) return false;
+
                 const clientNameMatch = filters.clientName ? doc.clientName.toLowerCase().includes(filters.clientName.toLowerCase()) : true;
                 const statusMatch = filters.status ? doc.status === filters.status : true;
                 const amountMinMatch = filters.amountMin !== null ? total >= filters.amountMin : true;
@@ -192,12 +202,20 @@ export default function DashboardPage() {
             .sort((a, b) => {
                 const dateA = a.documentType === 'invoice' ? (a as Invoice).invoiceDate : (a as Quote).quoteDate;
                 const dateB = b.documentType === 'invoice' ? (b as Invoice).invoiceDate : (b as Quote).quoteDate;
+                if (!dateA || !dateB) return 0;
                 return new Date(dateB).getTime() - new Date(dateA).getTime();
             });
     }, [invoices, quotes, filters, calculateTotal, user]);
 
     const activeFilterCount = useMemo(() => {
-        return Object.values(filters).filter(v => v !== null && v !== '').length;
+        let count = 0;
+        if (filters.clientName) count++;
+        if (filters.status) count++;
+        if (filters.amountMin !== null) count++;
+        if (filters.amountMax !== null) count++;
+        if (filters.dateFrom) count++;
+        if (filters.dateTo) count++;
+        return count;
     }, [filters]);
 
     const getStatusVariant = (status: DocumentStatus) => {
@@ -325,7 +343,12 @@ export default function DashboardPage() {
                                 ) : combinedDocuments.length > 0 ? combinedDocuments.map((doc) => {
                                     const isInvoice = doc.documentType === 'invoice';
                                     const docNumber = isInvoice ? (doc as Invoice).invoiceNumber : (doc as Quote).quoteNumber;
-                                    const docDate = isInvoice ? (doc as Invoice).invoiceDate : (doc as Quote).quoteDate;
+                                    let docDate;
+                                    if (isInvoice) {
+                                      docDate = (doc as Invoice).invoiceDate;
+                                    } else {
+                                      docDate = (doc as Quote).quoteDate;
+                                    }
                                     const docCollection = isInvoice ? INVOICES_COLLECTION : QUOTES_COLLECTION;
 
                                     return (
@@ -355,7 +378,7 @@ export default function DashboardPage() {
                                                 </DropdownMenuContent>
                                             </DropdownMenu>
                                         </TableCell>
-                                        <TableCell>{format(new Date(docDate), 'yyyy-MM-dd')}</TableCell>
+                                        <TableCell>{docDate ? format(new Date(docDate), 'yyyy-MM-dd') : 'N/A'}</TableCell>
                                         <TableCell className="text-right">
                                             <DropdownMenu>
                                                 <DropdownMenuTrigger asChild>
