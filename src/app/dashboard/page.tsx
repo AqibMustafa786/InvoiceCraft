@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo, useCallback } from 'react';
+import { useState, useMemo, useCallback, useEffect } from 'react';
 import type { Invoice, Quote, DocumentStatus } from '@/lib/types';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -30,8 +30,9 @@ import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
 import { useFirebase, useMemoFirebase } from '@/firebase/provider';
 import { useCollection } from '@/firebase/firestore/use-collection';
-import { collection, doc, addDoc } from 'firebase/firestore';
+import { collection, doc, addDoc, query, where } from 'firebase/firestore';
 import { deleteDocumentNonBlocking, updateDocumentNonBlocking } from '@/firebase';
+import { initiateAnonymousSignIn } from '@/firebase/non-blocking-login';
 
 const INVOICES_COLLECTION = 'invoices';
 const QUOTES_COLLECTION = 'quotes';
@@ -62,17 +63,23 @@ export default function DashboardPage() {
     const [filters, setFilters] = useState<DashboardFilters>(initialFilters);
     const [isFilterSheetOpen, setIsFilterSheetOpen] = useState(false);
     const { toast } = useToast();
-    const { firestore, user } = useFirebase();
+    const { firestore, auth, user, isUserLoading } = useFirebase();
     const router = useRouter();
 
+    useEffect(() => {
+        if (!isUserLoading && !user && auth) {
+            initiateAnonymousSignIn(auth);
+        }
+    }, [isUserLoading, user, auth]);
+
     const invoicesQuery = useMemoFirebase(() => {
-        if (!firestore) return null;
-        return collection(firestore, INVOICES_COLLECTION);
+        if (!firestore || !user) return null;
+        return query(collection(firestore, INVOICES_COLLECTION), where("userId", "==", user.uid));
     }, [firestore, user]);
 
     const quotesQuery = useMemoFirebase(() => {
-        if (!firestore) return null;
-        return collection(firestore, QUOTES_COLLECTION);
+        if (!firestore || !user) return null;
+        return query(collection(firestore, QUOTES_COLLECTION), where("userId", "==", user.uid));
     }, [firestore, user]);
 
     const { data: invoices, isLoading: isLoadingInvoices } = useCollection<Invoice>(invoicesQuery);
@@ -108,7 +115,7 @@ export default function DashboardPage() {
     };
     
     const handleConvertToInvoice = async (quote: Quote) => {
-        if (!firestore) return;
+        if (!firestore || !user) return;
         const { id, quoteNumber, quoteDate, ...restOfQuote } = quote;
 
         const newInvoice: Omit<Invoice, 'id'> = {
@@ -125,7 +132,7 @@ export default function DashboardPage() {
         };
         
         try {
-            const newDocRef = await addDoc(collection(firestore, INVOICES_COLLECTION), newInvoice);
+            const newDocRef = await addDoc(collection(firestore, INVOICES_COLLECTION), {...newInvoice, userId: user.uid});
             toast({
                 title: 'Invoice Created',
                 description: `Quote ${quote.quoteNumber} has been converted to an invoice.`
@@ -197,7 +204,7 @@ export default function DashboardPage() {
         }
     };
     
-    const isLoading = isLoadingInvoices || isLoadingQuotes;
+    const isLoading = isUserLoading || isLoadingInvoices || isLoadingQuotes;
 
     return (
         <div className="container mx-auto p-4 md:p-8">

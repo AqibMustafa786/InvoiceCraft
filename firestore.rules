@@ -127,24 +127,15 @@ service cloud.firestore {
       allow update: if isOwner(userId) && isExistingDoc() && request.resource.data.id == resource.data.id && request.resource.data.companyId == resource.data.companyId;
       allow delete: if isOwner(userId) && isExistingDoc();
     }
-
-    /**
-     * @description Secures quote documents, allowing any member of a company to manage them collaboratively.
-     * @path /companies/{companyId}/quotes/{quoteId}
-     * @allow (list) A user with a matching `companyId` in their auth token listing all quotes for their company.
-     * @allow (create) A member of company 'acme' creating a new quote for that company.
-     * @deny (get) A user from company 'b' trying to read a specific quote from company 'a'.
-     * @deny (delete) A user trying to delete a quote from a company they do not belong to.
-     * @principle Implements shared access within a tenant boundary, based on JWT custom claims.
-     */
-     match /quotes/{quoteId} {
-        allow read, write: if isUserAuthenticated();
-     }
+     
+    match /quotes/{quoteId} {
+        allow read, write: if isSignedIn() && resource.data.userId == request.auth.uid;
+        allow create: if isSignedIn() && request.resource.data.userId == request.auth.uid;
+    }
     
     match /invoices/{invoiceId} {
-      // For now, allow anyone signed in to do anything. 
-      // We will tighten this up later.
-      allow read, write: if isSignedIn();
+        allow read, write: if isSignedIn() && resource.data.userId == request.auth.uid;
+        allow create: if isSignedIn() && request.resource.data.userId == request.auth.uid;
     }
     
     /**

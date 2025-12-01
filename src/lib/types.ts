@@ -11,6 +11,7 @@ export type DocumentStatus = 'draft' | 'sent' | 'paid' | 'overdue' | 'accepted' 
 
 export interface Invoice {
   id: string; 
+  userId: string;
   companyName: string;
   companyPhone: string;
   companyAddress: string;
@@ -96,6 +97,7 @@ export interface Estimate {
 
 export interface Quote {
   id: string;
+  userId: string;
   // Business Info
   companyName: string;
   companyAddress: string;

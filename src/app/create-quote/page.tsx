@@ -22,7 +22,7 @@ const QUOTES_COLLECTION = 'quotes';
 
 const getInitialLineItem = () => ({ id: crypto.randomUUID(), name: '', quantity: 1, rate: 0 });
 
-const getInitialQuote = (): Quote => ({
+const getInitialQuote = (): Omit<Quote, 'userId'> => ({
   id: crypto.randomUUID(),
   companyName: 'Your Company',
   companyAddress: '123 Main St, Anytown, USA 12345',
@@ -79,7 +79,7 @@ export default function CreateQuotePage() {
   const [logoUrl, setLogoUrl] = useState<string | null>(null);
   const [accentColor, setAccentColor] = useState<string>('hsl(var(--primary))');
   const { toast } = useToast();
-  const { firestore } = useFirebase();
+  const { firestore, user } = useFirebase();
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -88,7 +88,8 @@ export default function CreateQuotePage() {
   const { data: remoteDraft, isLoading: isDraftLoading } = useDoc<Quote>(docRef);
 
   useEffect(() => {
-    const initialQuote = getInitialQuote();
+    if(!user) return;
+    const initialQuote = {...getInitialQuote(), userId: user.uid};
     if (draftId) {
       if (remoteDraft) {
         const fromJSON = (key: string, value: any) => {
@@ -110,7 +111,7 @@ export default function CreateQuotePage() {
            setAccentColor(`hsl(${computedColor})`);
         }
     }
-  }, [draftId, remoteDraft]);
+  }, [draftId, remoteDraft, user]);
 
   const handlePrint = () => {
     window.print();
@@ -121,8 +122,8 @@ export default function CreateQuotePage() {
 
     const draftToSave = {
       ...quote,
-      quoteDate: quote.quoteDate.toISOString(),
-      validUntilDate: quote.validUntilDate.toISOString(),
+      quoteDate: quote.quoteDate,
+      validUntilDate: quote.validUntilDate,
     };
     
     const docRef = doc(collection(firestore, QUOTES_COLLECTION), quote.id);
@@ -136,7 +137,8 @@ export default function CreateQuotePage() {
   };
 
   const handleNew = () => {
-    const newQuote = getInitialQuote();
+    if (!user) return;
+    const newQuote = {...getInitialQuote(), userId: user.uid};
     newQuote.quoteNumber = `Q-${String(Math.floor(Math.random() * 1000)).padStart(3, '0')}`;
     setQuote(newQuote);
     setLogoUrl(null);

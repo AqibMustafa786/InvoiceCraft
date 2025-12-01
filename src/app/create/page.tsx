@@ -21,7 +21,7 @@ const INVOICES_COLLECTION = 'invoices';
 
 const getInitialLineItem = () => ({ id: crypto.randomUUID(), name: '', quantity: 1, rate: 0 });
 
-const getInitialInvoice = (): Invoice => ({
+const getInitialInvoice = (): Omit<Invoice, 'userId'> => ({
   id: crypto.randomUUID(),
   companyName: 'Your Company',
   companyPhone: '+1 (123) 456-7890',
@@ -76,7 +76,7 @@ export default function CreateInvoicePage() {
   const { toast } = useToast();
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { firestore } = useFirebase();
+  const { firestore, user } = useFirebase();
 
   const draftId = searchParams.get('draftId');
   const docRef = draftId && firestore ? doc(firestore, DRAFTS_COLLECTION, draftId) : null;
@@ -84,7 +84,8 @@ export default function CreateInvoicePage() {
 
   useEffect(() => {
     // Initialize state on the client to avoid hydration mismatch
-    const initialInvoice = getInitialInvoice();
+    if (!user) return;
+    const initialInvoice = {...getInitialInvoice(), userId: user.uid};
     
     if (draftId) {
       if (remoteDraft) {
@@ -107,7 +108,7 @@ export default function CreateInvoicePage() {
            setAccentColor(`hsl(${computedColor})`);
         }
     }
-  }, [draftId, remoteDraft]);
+  }, [draftId, remoteDraft, user]);
 
 
   const handlePrint = () => {
@@ -119,8 +120,8 @@ export default function CreateInvoicePage() {
 
     const draftToSave = {
       ...invoice,
-      invoiceDate: invoice.invoiceDate.toISOString(),
-      dueDate: invoice.dueDate.toISOString(),
+      invoiceDate: invoice.invoiceDate,
+      dueDate: invoice.dueDate,
     };
     
     const docRef = doc(collection(firestore, DRAFTS_COLLECTION), invoice.id);
@@ -134,7 +135,8 @@ export default function CreateInvoicePage() {
   };
   
   const handleNew = () => {
-    const newInvoice = getInitialInvoice();
+    if(!user) return;
+    const newInvoice = {...getInitialInvoice(), userId: user.uid};
     newInvoice.invoiceNumber = `INV-${String(Math.floor(Math.random() * 1000)).padStart(3, '0')}`;
     setInvoice(newInvoice);
     setLogoUrl(null);
