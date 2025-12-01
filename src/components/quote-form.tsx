@@ -22,8 +22,6 @@ import {
 interface QuoteFormProps {
   quote: Quote;
   setQuote: Dispatch<SetStateAction<Quote>>;
-  logoUrl: string | null;
-  setLogoUrl: Dispatch<SetStateAction<string | null>>;
   accentColor: string;
   setAccentColor: Dispatch<SetStateAction<string>>;
   toast: (options: { title: string; description: string; variant?: "default" | "destructive" }) => void;
@@ -37,17 +35,52 @@ const currencies = [
     { value: 'PKR', label: 'PKR (₨)' },
 ]
 
-export function QuoteForm({ quote, setQuote, logoUrl, setLogoUrl, accentColor, setAccentColor, toast }: QuoteFormProps) {
+export function QuoteForm({ quote, setQuote, accentColor, setAccentColor, toast }: QuoteFormProps) {
   const [bulkAddCount, setBulkAddCount] = useState(5);
   const [colorInputValue, setColorInputValue] = useState(accentColor);
+  const [logoUrl, setLogoUrl] = useState<string | null>(quote.business.logoUrl || null);
 
   useEffect(() => {
     setColorInputValue(accentColor);
   }, [accentColor]);
+  
+  useEffect(() => {
+    setQuote(prev => ({
+        ...prev,
+        business: {
+            ...prev.business,
+            logoUrl: logoUrl || '',
+        }
+    }))
+  }, [logoUrl, setQuote]);
+
+
+  const handleNestedChange = (section: 'business' | 'client' | 'summary', e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setQuote(prev => ({
+      ...prev,
+      [section]: {
+        ...prev[section],
+        [name]: value
+      }
+    }));
+  };
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setQuote(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleNumberChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    const [section, field] = name.split('.');
+     setQuote(prev => ({
+      ...prev,
+      [section as 'summary']: {
+        ...prev[section as 'summary'],
+        [field]: parseFloat(value) || 0,
+      }
+    }));
   };
   
   const handleCurrencyChange = (value: string) => {
@@ -58,19 +91,14 @@ export function QuoteForm({ quote, setQuote, logoUrl, setLogoUrl, accentColor, s
     setQuote(prev => ({ ...prev, language: value }));
   };
 
-  const handleNumberChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setQuote(prev => ({ ...prev, [name]: parseFloat(value) || 0 }));
-  }
-
-  const handleItemChange = (index: number, field: keyof LineItem, value: string | number) => {
-    const newItems = [...quote.items];
+  const handleItemChange = (index: number, field: keyof Omit<LineItem, 'id'>, value: string | number) => {
+    const newItems = [...quote.lineItems];
     (newItems[index] as any)[field] = value;
-    setQuote(prev => ({ ...prev, items: newItems }));
+    setQuote(prev => ({ ...prev, lineItems: newItems }));
   };
 
   const addItem = () => {
-     if (quote.items.length >= 50) {
+     if (quote.lineItems.length >= 50) {
        toast({
         title: "Item Limit Reached",
         description: "You cannot add more than 50 items to a single quote.",
@@ -80,7 +108,7 @@ export function QuoteForm({ quote, setQuote, logoUrl, setLogoUrl, accentColor, s
     }
     setQuote(prev => ({
       ...prev,
-      items: [...prev.items, { id: crypto.randomUUID(), name: '', quantity: 1, rate: 0 }],
+      lineItems: [...prev.lineItems, { id: crypto.randomUUID(), name: '', quantity: 1, unitPrice: 0 }],
     }));
   };
   
@@ -88,10 +116,10 @@ export function QuoteForm({ quote, setQuote, logoUrl, setLogoUrl, accentColor, s
     const count = Number(bulkAddCount);
     if (count <= 0) return;
 
-    if (quote.items.length + count > 50) {
+    if (quote.lineItems.length + count > 50) {
       toast({
         title: "Item Limit Exceeded",
-        description: `You can only add ${50 - quote.items.length} more items. The maximum is 50.`,
+        description: `You can only add ${50 - quote.lineItems.length} more items. The maximum is 50.`,
         variant: "destructive",
       });
       return;
@@ -101,18 +129,18 @@ export function QuoteForm({ quote, setQuote, logoUrl, setLogoUrl, accentColor, s
       id: crypto.randomUUID(),
       name: '',
       quantity: 1,
-      rate: 0,
+      unitPrice: 0,
     }));
 
     setQuote(prev => ({
       ...prev,
-      items: [...prev.items, ...newItems],
+      lineItems: [...prev.lineItems, ...newItems],
     }));
   };
 
   const removeItem = (index: number) => {
-    const newItems = quote.items.filter((_, i) => i !== index);
-    setQuote(prev => ({ ...prev, items: newItems }));
+    const newItems = quote.lineItems.filter((_, i) => i !== index);
+    setQuote(prev => ({ ...prev, lineItems: newItems }));
   };
 
   const handleLogoUpload = (e: ChangeEvent<HTMLInputElement>) => {
@@ -201,43 +229,43 @@ export function QuoteForm({ quote, setQuote, logoUrl, setLogoUrl, accentColor, s
         </CardHeader>
         <CardContent className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="companyName">Business Name</Label>
+              <Label htmlFor="businessName">Business Name</Label>
               <div className="relative flex items-center">
                 <Briefcase className="absolute left-3 h-5 w-5 text-muted-foreground" />
-                <Input id="companyName" name="companyName" value={quote.companyName} onChange={handleInputChange} className="pl-10" />
+                <Input id="businessName" name="name" value={quote.business.name} onChange={(e) => handleNestedChange('business', e)} className="pl-10" />
               </div>
             </div>
             <div className="space-y-2">
-                <Label htmlFor="companyAddress">Business Address</Label>
-                <Textarea id="companyAddress" name="companyAddress" value={quote.companyAddress} onChange={handleInputChange} placeholder="Street, City, State, Zip"/>
+                <Label htmlFor="businessAddress">Business Address</Label>
+                <Textarea id="businessAddress" name="address" value={quote.business.address} onChange={(e) => handleNestedChange('business', e)} placeholder="Street, City, State, Zip"/>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                    <Label htmlFor="companyPhone">Phone Number</Label>
+                    <Label htmlFor="businessPhone">Phone Number</Label>
                     <div className="relative flex items-center">
                         <Phone className="absolute left-3 h-5 w-5 text-muted-foreground" />
-                        <Input id="companyPhone" name="companyPhone" value={quote.companyPhone} onChange={handleInputChange} className="pl-10" />
+                        <Input id="businessPhone" name="phone" value={quote.business.phone} onChange={(e) => handleNestedChange('business', e)} className="pl-10" />
                     </div>
                 </div>
                 <div className="space-y-2">
-                    <Label htmlFor="companyEmail">Email Address</Label>
+                    <Label htmlFor="businessEmail">Email Address</Label>
                     <div className="relative flex items-center">
                         <Mail className="absolute left-3 h-5 w-5 text-muted-foreground" />
-                        <Input id="companyEmail" name="companyEmail" value={quote.companyEmail} onChange={handleInputChange} className="pl-10" />
+                        <Input id="businessEmail" name="email" value={quote.business.email} onChange={(e) => handleNestedChange('business', e)} className="pl-10" />
                     </div>
                 </div>
                 <div className="space-y-2">
-                    <Label htmlFor="companyWebsite">Website (optional)</Label>
+                    <Label htmlFor="businessWebsite">Website (optional)</Label>
                     <div className="relative flex items-center">
                         <Globe className="absolute left-3 h-5 w-5 text-muted-foreground" />
-                        <Input id="companyWebsite" name="companyWebsite" value={quote.companyWebsite} onChange={handleInputChange} className="pl-10" />
+                        <Input id="businessWebsite" name="website" value={quote.business.website} onChange={(e) => handleNestedChange('business', e)} className="pl-10" />
                     </div>
                 </div>
                 <div className="space-y-2">
-                    <Label htmlFor="licenseNumber">License Number (optional)</Label>
+                    <Label htmlFor="businessLicense">License Number (optional)</Label>
                     <div className="relative flex items-center">
                         <Award className="absolute left-3 h-5 w-5 text-muted-foreground" />
-                        <Input id="licenseNumber" name="licenseNumber" value={quote.licenseNumber} onChange={handleInputChange} className="pl-10" />
+                        <Input id="businessLicense" name="licenseNumber" value={quote.business.licenseNumber} onChange={(e) => handleNestedChange('business', e)} className="pl-10" />
                     </div>
                 </div>
             </div>
@@ -253,26 +281,26 @@ export function QuoteForm({ quote, setQuote, logoUrl, setLogoUrl, accentColor, s
             <Label htmlFor="clientName">Client Full Name</Label>
              <div className="relative flex items-center">
                 <User className="absolute left-3 h-5 w-5 text-muted-foreground" />
-                <Input id="clientName" name="clientName" value={quote.clientName} onChange={handleInputChange} className="pl-10" />
+                <Input id="clientName" name="name" value={quote.client.name} onChange={(e) => handleNestedChange('client', e)} className="pl-10" />
               </div>
           </div>
           <div className="space-y-2">
             <Label htmlFor="clientAddress">Client Address</Label>
-            <Textarea id="clientAddress" name="clientAddress" value={quote.clientAddress} onChange={handleInputChange} />
+            <Textarea id="clientAddress" name="address" value={quote.client.address} onChange={(e) => handleNestedChange('client', e)} />
           </div>
            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="clientEmail">Client Email</Label>
               <div className="relative flex items-center">
                   <Mail className="absolute left-3 h-5 w-5 text-muted-foreground" />
-                  <Input id="clientEmail" name="clientEmail" value={quote.clientEmail || ''} onChange={handleInputChange} className="pl-10" placeholder="client@example.com" />
+                  <Input id="clientEmail" name="email" value={quote.client.email || ''} onChange={(e) => handleNestedChange('client', e)} className="pl-10" placeholder="client@example.com" />
               </div>
             </div>
              <div className="space-y-2">
               <Label htmlFor="clientPhone">Client Phone</Label>
               <div className="relative flex items-center">
                   <Phone className="absolute left-3 h-5 w-5 text-muted-foreground" />
-                  <Input id="clientPhone" name="clientPhone" value={quote.clientPhone || ''} onChange={handleInputChange} className="pl-10" />
+                  <Input id="clientPhone" name="phone" value={quote.client.phone || ''} onChange={(e) => handleNestedChange('client', e)} className="pl-10" />
               </div>
             </div>
            </div>
@@ -354,7 +382,7 @@ export function QuoteForm({ quote, setQuote, logoUrl, setLogoUrl, accentColor, s
             <div className="col-span-2"><Label>Total</Label></div>
             <div className="col-span-1"></div>
           </div>
-          {quote.items.map((item, index) => (
+          {quote.lineItems.map((item, index) => (
             <div key={item.id} className="grid grid-cols-12 gap-2 items-center">
               <div className="col-span-12 md:col-span-5 space-y-2">
                 <Label htmlFor={`itemName-${index}`} className="md:hidden">Item Name / Description</Label>
@@ -366,10 +394,10 @@ export function QuoteForm({ quote, setQuote, logoUrl, setLogoUrl, accentColor, s
               </div>
               <div className="col-span-4 md:col-span-2 space-y-2">
                 <Label htmlFor={`itemRate-${index}`} className="md:hidden">Unit Price</Label>
-                <Input id={`itemRate-${index}`} type="number" value={item.rate} onChange={(e) => handleItemChange(index, 'rate', parseFloat(e.target.value) || 0)} />
+                <Input id={`itemRate-${index}`} type="number" value={item.unitPrice} onChange={(e) => handleItemChange(index, 'unitPrice', parseFloat(e.target.value) || 0)} />
               </div>
               <div className="col-span-3 md:col-span-2 flex items-center h-10">
-                <p className="font-medium tabular-nums">{currencySymbol}{(item.quantity * item.rate).toFixed(2)}</p>
+                <p className="font-medium tabular-nums">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</p>
               </div>
               <div className="col-span-1 flex items-center h-10">
                 <Button variant="ghost" size="icon" onClick={() => removeItem(index)}>
@@ -409,24 +437,24 @@ export function QuoteForm({ quote, setQuote, logoUrl, setLogoUrl, accentColor, s
         <CardContent className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="tax">Tax (%)</Label>
-              <Input id="tax" name="tax" type="number" value={quote.tax} onChange={handleNumberChange} />
+              <Label htmlFor="taxPercentage">Tax (%)</Label>
+              <Input id="taxPercentage" name="summary.taxPercentage" type="number" value={quote.summary.taxPercentage} onChange={handleNumberChange} />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="discount">Discount (%)</Label>
-              <Input id="discount" name="discount" type="number" value={quote.discount} onChange={handleNumberChange} />
+              <Label htmlFor="discount">Discount (Fixed Amount)</Label>
+              <Input id="discount" name="summary.discount" type="number" value={quote.summary.discount} onChange={handleNumberChange} />
             </div>
              <div className="space-y-2 col-span-2">
               <Label htmlFor="shippingCost">Shipping / Extra Costs</Label>
               <div className="relative flex items-center">
                   <Truck className="absolute left-3 h-5 w-5 text-muted-foreground" />
-                  <Input id="shippingCost" name="shippingCost" type="number" value={quote.shippingCost} onChange={handleNumberChange} className="pl-10"/>
+                  <Input id="shippingCost" name="summary.shippingCost" type="number" value={quote.summary.shippingCost} onChange={handleNumberChange} className="pl-10"/>
               </div>
             </div>
           </div>
           <div className="space-y-2">
-            <Label htmlFor="notes">Terms & Conditions</Label>
-            <Textarea id="notes" name="notes" value={quote.notes} onChange={handleInputChange} placeholder="e.g., Payment terms, validity period, warranty information..." />
+            <Label htmlFor="termsAndConditions">Terms & Conditions</Label>
+            <Textarea id="termsAndConditions" name="termsAndConditions" value={quote.termsAndConditions} onChange={handleInputChange} placeholder="e.g., Payment terms, validity period, warranty information..." />
           </div>
         </CardContent>
       </Card>

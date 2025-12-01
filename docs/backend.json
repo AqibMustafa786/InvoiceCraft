@@ -77,60 +77,68 @@
           "type": "string",
           "description": "Unique identifier for the Quote entity."
         },
-        "companyId": {
-          "type": "string",
-          "description": "Reference to the Company. (Relationship: Company 1:N Quote)"
+        "userId": {
+            "type": "string"
         },
-        "clientName": {
-          "type": "string",
-          "description": "Name of the client the quote is for."
-        },
-        "clientAddress": {
-          "type": "string",
-          "description": "Address of the client."
+        "quoteNumber": {
+            "type": "string"
         },
         "quoteDate": {
-          "type": "string",
-          "description": "Date the quote was created.",
-          "format": "date-time"
+            "type": "string",
+            "format": "date-time"
         },
-        "taxRate": {
-          "type": "number",
-          "description": "Tax rate applied to the quote."
-        },
-        "discountRate": {
-          "type": "number",
-          "description": "Discount rate applied to the quote."
-        },
-        "subtotal": {
-          "type": "number",
-          "description": "Subtotal of the quote before tax and discount."
-        },
-        "totalAmount": {
-          "type": "number",
-          "description": "Total amount of the quote after tax and discount."
-        },
-        "termsAndConditions": {
-          "type": "string",
-          "description": "Terms and conditions of the quote."
-        },
-        "optionalAttachments": {
-          "type": "string",
-          "description": "Link to optional attachments"
+        "validUntilDate": {
+            "type": "string",
+            "format": "date-time"
         },
         "status": {
-          "type": "string",
-          "description": "Status of the quote"
-        }
+            "type": "string"
+        },
+        "business": {
+            "type": "object",
+            "properties": {
+                "name": {"type": "string"},
+                "address": {"type": "string"},
+                "phone": {"type": "string"},
+                "email": {"type": "string"},
+                "website": {"type": "string"},
+                "licenseNumber": {"type": "string"},
+                "logoUrl": {"type": "string"}
+            }
+        },
+        "client": {
+            "type": "object",
+            "properties": {
+                 "name": {"type": "string"},
+                 "companyName": {"type": "string"},
+                 "address": {"type": "string"},
+                 "phone": {"type": "string"},
+                 "email": {"type": "string"}
+            }
+        },
+        "summary": {
+            "type": "object",
+            "properties": {
+                "subtotal": {"type": "number"},
+                "taxPercentage": {"type": "number"},
+                "taxAmount": {"type": "number"},
+                "discount": {"type": "number"},
+                "grandTotal": {"type": "number"},
+                "shippingCost": {"type": "number"}
+            }
+        },
+        "projectTitle": {"type": "string"},
+        "termsAndConditions": {"type": "string"}
       },
       "required": [
         "id",
-        "companyId",
-        "clientName",
-        "clientAddress",
+        "userId",
+        "quoteNumber",
         "quoteDate",
-        "subtotal",
-        "totalAmount"
+        "business",
+        "client",
+        "lineItems",
+        "summary"
       ]
     },
     "QuoteItem": {
@@ -143,34 +151,27 @@
           "type": "string",
           "description": "Unique identifier for the QuoteItem entity."
         },
-        "quoteId": {
-          "type": "string",
-          "description": "Reference to the Quote. (Relationship: Quote 1:N QuoteItem)"
-        },
         "name": {
           "type": "string",
           "description": "Name of the item."
+        },
+        "description": {
+            "type": "string"
         },
         "quantity": {
           "type": "number",
           "description": "Quantity of the item."
         },
-        "rate": {
+        "unitPrice": {
           "type": "number",
-          "description": "Rate of the item."
-        },
-        "subtotal": {
-          "type": "number",
-          "description": "Subtotal for the individual item (quantity * rate)."
+          "description": "Price of a single unit of the item."
         }
       },
       "required": [
         "id",
-        "quoteId",
         "name",
         "quantity",
-        "rate",
-        "subtotal"
+        "unitPrice"
       ]
     }
   },
@@ -239,45 +240,17 @@
         }
       },
       {
-        "path": "companies/{companyId}/quotes/{quoteId}",
+        "path": "quotes/{quoteId}",
         "definition": {
           "entityName": "Quote",
           "schema": {
             "$ref": "#/backend/entities/Quote"
           },
-          "description": "Stores quote information. Each quote belongs to a company.",
+          "description": "Stores quote information. Each quote belongs to a user.",
           "params": [
-            {
-              "name": "companyId",
-              "description": "Unique identifier for the company."
-            },
             {
               "name": "quoteId",
               "description": "Unique identifier for the quote."
-            }
-          ]
-        }
-      },
-      {
-        "path": "companies/{companyId}/quotes/{quoteId}/items/{quoteItemId}",
-        "definition": {
-          "entityName": "QuoteItem",
-          "schema": {
-            "$ref": "#/backend/entities/QuoteItem"
-          },
-          "description": "Stores individual items within a quote.  Scoped under the quote document.",
-          "params": [
-            {
-              "name": "companyId",
-              "description": "Unique identifier for the company."
-            },
-            {
-              "name": "quoteId",
-              "description": "Unique identifier for the quote."
-            },
-            {
-              "name": "quoteItemId",
-              "description": "Unique identifier for the quote item."
             }
           ]
         }

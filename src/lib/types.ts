@@ -1,9 +1,11 @@
 
+
 export interface LineItem {
   id: string;
   name: string;
+  description?: string;
   quantity: number;
-  rate: number;
+  unitPrice: number;
 }
 
 export type DocumentStatus = 'draft' | 'sent' | 'paid' | 'overdue' | 'accepted' | 'rejected';
@@ -94,43 +96,57 @@ export interface Estimate {
   template: string;
 }
 
+// New refined Quote Structure
+export interface BusinessInfo {
+  name: string;
+  address: string;
+  phone: string;
+  email: string;
+  website: string;
+  licenseNumber: string;
+  logoUrl?: string;
+}
+
+export interface ClientInfo {
+  name: string;
+  companyName: string;
+  address: string;
+  phone: string;
+  email: string;
+}
+
+export interface QuoteSummary {
+    subtotal: number;
+    taxPercentage: number;
+    taxAmount: number;
+    discount: number; // Can be percentage or fixed amount
+    grandTotal: number;
+    shippingCost: number;
+}
+
+
 export interface Quote {
   id: string;
   userId: string;
-  // Business Info
-  companyName: string;
-  companyAddress: string;
-  companyPhone: string;
-  companyEmail: string;
-  companyWebsite: string;
-  licenseNumber: string;
-
-  // Client Info
-  clientName: string;
-  clientAddress: string;
-  clientEmail: string;
-  clientPhone: string;
-
-  // Quote Details
   quoteNumber: string;
   quoteDate: Date;
   validUntilDate: Date;
+  status: DocumentStatus;
+  
+  business: BusinessInfo;
+  client: ClientInfo;
+  lineItems: LineItem[];
+  summary: QuoteSummary;
+  
   projectTitle: string;
   referenceNumber: string;
+  
+  termsAndConditions: string;
+  attachments?: string[];
+  signatureRequired?: boolean;
 
-  // Items & Pricing
-  items: LineItem[];
-  tax: number;
-  discount: number;
-  shippingCost: number;
-  
-  // Footer
-  notes: string; // Terms & Conditions
-  
-  // Settings
-  status: DocumentStatus;
-  currency: string;
-  language: string;
   template: string;
   documentType: 'quote';
+  language: string;
+  currency: string;
 }

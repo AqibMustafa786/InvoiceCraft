@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useLayoutEffect, useRef, useEffect } from 'react';
@@ -97,8 +98,8 @@ const ItemsTable = ({ items, t, currencySymbol, accentColor, tableRef }: { items
                 <tr key={item.id} className="border-b" data-element="table-row">
                 <td className="p-3 whitespace-pre-line">{item.name || <span className="text-gray-400">{t.itemDescription}</span>}</td>
                 <td className="p-3 text-center tabular-nums">{item.quantity}</td>
-                <td className="p-3 text-right tabular-nums">{currencySymbol}{item.rate.toFixed(2)}</td>
-                <td className="p-3 text-right tabular-nums font-medium">{currencySymbol}{(item.quantity * item.rate).toFixed(2)}</td>
+                <td className="p-3 text-right tabular-nums">{currencySymbol}{(item as any).rate ? (item as any).rate.toFixed(2) : (item as any).unitPrice.toFixed(2)}</td>
+                <td className="p-3 text-right tabular-nums font-medium">{currencySymbol}{(item.quantity * ((item as any).rate || (item as any).unitPrice)).toFixed(2)}</td>
                 </tr>
             ))}
             </tbody>
@@ -332,8 +333,8 @@ const UsaTemplatePage = ({ pageItems, pageIndex, totalPages, ...commonProps }: P
                                     <p className="font-medium">{item.name || <span className="text-gray-400">Item description</span>}</p>
                                 </td>
                                 <td className="p-3 text-right tabular-nums align-top">{item.quantity}</td>
-                                <td className="p-3 text-right tabular-nums align-top">{currencySymbol}{item.rate.toFixed(2)}</td>
-                                <td className="p-3 text-right tabular-nums font-medium align-top">{currencySymbol}{(item.quantity * item.rate).toFixed(2)}</td>
+                                <td className="p-3 text-right tabular-nums align-top">{currencySymbol}{(item as any).rate ? (item as any).rate.toFixed(2) : (item as any).unitPrice.toFixed(2)}</td>
+                                <td className="p-3 text-right tabular-nums font-medium align-top">{currencySymbol}{(item.quantity * ((item as any).rate || (item as any).unitPrice)).toFixed(2)}</td>
                             </tr>
                         ))}
                         </tbody>
@@ -447,8 +448,8 @@ const CreativeTemplatePage = ({ pageItems, pageIndex, totalPages, ...commonProps
                             <tr key={item.id} className="border-b" data-element="table-row">
                                 <td className="p-3 py-4 whitespace-pre-line font-medium">{item.name || <span className="text-gray-400">{t.itemDescription}</span>}</td>
                                 <td className="p-3 py-4 text-center tabular-nums">{item.quantity}</td>
-                                <td className="p-3 py-4 text-right tabular-nums">{currencySymbol}{item.rate.toFixed(2)}</td>
-                                <td className="p-3 py-4 text-right tabular-nums font-medium">{currencySymbol}{(item.quantity * item.rate).toFixed(2)}</td>
+                                <td className="p-3 py-4 text-right tabular-nums">{currencySymbol}{(item as any).rate ? (item as any).rate.toFixed(2) : (item as any).unitPrice.toFixed(2)}</td>
+                                <td className="p-3 py-4 text-right tabular-nums font-medium">{currencySymbol}{(item.quantity * ((item as any).rate || (item as any).unitPrice)).toFixed(2)}</td>
                             </tr>
                         ))}
                         </tbody>
@@ -483,7 +484,7 @@ export function InvoicePreview({ invoice, logoUrl, accentColor, id = 'invoice-pr
   const [needsRemeasure, setNeedsRemeasure] = useState(true);
   const containerRef = useRef<HTMLDivElement>(null);
   
-  const subtotal = invoice.items.reduce((acc, item) => acc + item.quantity * item.rate, 0);
+  const subtotal = invoice.items.reduce((acc, item) => acc + item.quantity * ((item as any).rate || (item as any).unitPrice), 0);
   const taxAmount = (subtotal * invoice.tax) / 100;
   const discountAmount = (subtotal * invoice.discount) / 100;
   const total = subtotal + taxAmount - discountAmount + (invoice.shippingCost || 0);

@@ -3,7 +3,7 @@
 
 import { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import type { Quote } from '@/lib/types';
+import type { Quote, LineItem } from '@/lib/types';
 import { QuoteForm } from '@/components/quote-form';
 import { QuotePreview } from '@/components/quote-preview';
 import { Button } from '@/components/ui/button';
@@ -20,42 +20,56 @@ import { useDoc } from '@/firebase/firestore/use-doc';
 
 const QUOTES_COLLECTION = 'quotes';
 
-const getInitialLineItem = () => ({ id: crypto.randomUUID(), name: '', quantity: 1, rate: 0 });
+const getInitialLineItem = (): LineItem => ({ id: crypto.randomUUID(), name: '', quantity: 1, unitPrice: 0 });
 
 const getInitialQuote = (): Omit<Quote, 'userId'> => ({
   id: crypto.randomUUID(),
-  companyName: 'Your Company',
-  companyAddress: '123 Main St, Anytown, USA 12345',
-  companyPhone: '+1 (123) 456-7890',
-  companyEmail: 'contact@yourcompany.com',
-  companyWebsite: 'www.yourcompany.com',
-  licenseNumber: 'LICENSE-12345',
-  
-  clientName: 'Client Company',
-  clientAddress: '456 Oak Ave, Someplace, USA 54321',
-  clientEmail: 'client@example.com',
-  clientPhone: '+1 (987) 654-3210',
-
   quoteNumber: `QUO-${new Date().getFullYear()}-001`,
   quoteDate: new Date(),
   validUntilDate: addDays(new Date(), 30),
+  status: 'draft',
+  
+  business: {
+    name: 'Your Company',
+    address: '123 Main St, Anytown, USA 12345',
+    phone: '+1 (123) 456-7890',
+    email: 'contact@yourcompany.com',
+    website: 'www.yourcompany.com',
+    licenseNumber: 'LICENSE-12345',
+  },
+
+  client: {
+    name: 'Client Name',
+    companyName: 'Client Company',
+    address: '456 Oak Ave, Someplace, USA 54321',
+    phone: '+1 (987) 654-3210',
+    email: 'client@example.com',
+  },
+  
+  lineItems: [{ ...getInitialLineItem(), name: 'Sample Service (e.g., Website Development)', unitPrice: 1500 }],
+
+  summary: {
+    subtotal: 1500,
+    taxPercentage: 0,
+    taxAmount: 0,
+    discount: 0,
+    grandTotal: 1500,
+    shippingCost: 0,
+  },
+
   projectTitle: 'New Project',
   referenceNumber: 'REF-001',
   
-  items: [{ ...getInitialLineItem(), name: 'Sample Service (e.g., Website Development)', rate: 1500 }],
-  tax: 0,
-  discount: 0,
-  shippingCost: 0,
-  notes: 'This quote is valid for 30 days. Prices are subject to change thereafter. Payment Terms: 50% upfront, 50% on completion.',
-  status: 'draft',
-  currency: 'USD',
-  language: 'en',
+  termsAndConditions: 'This quote is valid for 30 days. Prices are subject to change thereafter. Payment Terms: 50% upfront, 50% on completion.',
+  
   template: 'default',
   documentType: 'quote',
+  language: 'en',
+  currency: 'USD',
 });
 
 
-function PrintableQuote({ quote, logoUrl, accentColor }: { quote: Quote, logoUrl: string | null, accentColor: string }) {
+function PrintableQuote({ quote, accentColor }: { quote: Quote, accentColor: string }) {
     const [printRoot, setPrintRoot] = useState<HTMLElement | null>(null);
 
     useEffect(() => {
@@ -68,7 +82,7 @@ function PrintableQuote({ quote, logoUrl, accentColor }: { quote: Quote, logoUrl
     }
 
     return createPortal(
-        <QuotePreview quote={quote} logoUrl={logoUrl} accentColor={accentColor} id="quote-preview-print" isPrint={true} />,
+        <QuotePreview quote={quote} accentColor={accentColor} id="quote-preview-print" isPrint={true} />,
         printRoot
     );
 }
@@ -76,7 +90,6 @@ function PrintableQuote({ quote, logoUrl, accentColor }: { quote: Quote, logoUrl
 
 export default function CreateQuotePage() {
   const [quote, setQuote] = useState<Quote | null>(null);
-  const [logoUrl, setLogoUrl] = useState<string | null>(null);
   const [accentColor, setAccentColor] = useState<string>('hsl(var(--primary))');
   const { toast } = useToast();
   const { firestore, user } = useFirebase();
@@ -141,7 +154,6 @@ export default function CreateQuotePage() {
     const newQuote = {...getInitialQuote(), userId: user.uid};
     newQuote.quoteNumber = `Q-${String(Math.floor(Math.random() * 1000)).padStart(3, '0')}`;
     setQuote(newQuote);
-    setLogoUrl(null);
     if (typeof window !== 'undefined' && document) {
         const computedColor = getComputedStyle(document.documentElement).getPropertyValue('--primary').trim();
         if (computedColor) {
@@ -154,6 +166,26 @@ export default function CreateQuotePage() {
         description: "A new blank quote has been created.",
       });
   };
+  
+  useEffect(() => {
+    if (quote) {
+      const subtotal = quote.lineItems.reduce((acc, item) => acc + item.quantity * item.unitPrice, 0);
+      const taxAmount = (subtotal * quote.summary.taxPercentage) / 100;
+      const discountAmount = quote.summary.discount; // Assuming discount is a fixed amount for now
+      const grandTotal = subtotal + taxAmount - discountAmount + quote.summary.shippingCost;
+
+      setQuote(prev => prev ? {
+        ...prev,
+        summary: {
+          ...prev.summary,
+          subtotal,
+          taxAmount,
+          grandTotal
+        }
+      } : null);
+    }
+  }, [quote?.lineItems, quote?.summary.taxPercentage, quote?.summary.discount, quote?.summary.shippingCost]);
+
 
   if (!quote || isDraftLoading) {
     return (
@@ -208,8 +240,6 @@ export default function CreateQuotePage() {
                 <QuoteForm 
                   quote={quote} 
                   setQuote={setQuote as React.Dispatch<React.SetStateAction<Quote>>} 
-                  logoUrl={logoUrl}
-                  setLogoUrl={setLogoUrl}
                   accentColor={accentColor}
                   setAccentColor={setAccentColor}
                   toast={toast}
@@ -220,12 +250,13 @@ export default function CreateQuotePage() {
           <div className="lg:col-span-2 lg:pl-12">
             <div className="sticky top-24">
                 <h2 className="text-2xl font-bold font-headline mb-6">Live Preview</h2>
-                <QuotePreview quote={quote} logoUrl={logoUrl} accentColor={accentColor} />
+                <QuotePreview quote={quote} accentColor={accentColor} />
             </div>
           </div>
         </div>
       </div>
-      <PrintableQuote quote={quote} logoUrl={logoUrl} accentColor={accentColor} />
+      <PrintableQuote quote={quote} accentColor={accentColor} />
     </>
   );
 }
+

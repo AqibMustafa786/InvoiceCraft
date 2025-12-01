@@ -10,7 +10,6 @@ import { format } from 'date-fns';
 // --- PROPS ---
 interface QuotePreviewProps {
   quote: Quote;
-  logoUrl: string | null;
   accentColor: string;
   id?: string;
   isPrint?: boolean;
@@ -24,28 +23,25 @@ const currencySymbols: { [key: string]: string } = {
     PKR: '₨',
 };
 
-const DefaultQuoteTemplate = ({ quote, logoUrl, accentColor }: { quote: Quote, logoUrl: string | null, accentColor: string }) => {
-    const subtotal = quote.items.reduce((acc, item) => acc + item.quantity * item.rate, 0);
-    const taxAmount = (subtotal * quote.tax) / 100;
-    const discountAmount = (subtotal * quote.discount) / 100;
-    const total = subtotal + taxAmount - discountAmount + (quote.shippingCost || 0);
-    const currencySymbol = currencySymbols[quote.currency] || '$';
+const DefaultQuoteTemplate = ({ quote, accentColor }: { quote: Quote, accentColor: string }) => {
+    const { business, client, lineItems, summary, currency } = quote;
+    const currencySymbol = currencySymbols[currency] || '$';
 
     return (
         <div className="p-8 md:p-10 font-sans text-gray-800">
             <header className="flex justify-between items-start mb-10">
                 <div>
-                    {logoUrl ? (
-                        <Image src={logoUrl} alt={`${quote.companyName} Logo`} width={120} height={40} className="object-contain" data-ai-hint="logo" />
+                    {business.logoUrl ? (
+                        <Image src={business.logoUrl} alt={`${business.name} Logo`} width={120} height={40} className="object-contain" data-ai-hint="logo" />
                     ) : (
-                        <h1 className="text-3xl font-bold font-headline" style={{ color: accentColor }}>{quote.companyName}</h1>
+                        <h1 className="text-3xl font-bold font-headline" style={{ color: accentColor }}>{business.name}</h1>
                     )}
                     <div className="text-muted-foreground text-sm mt-2 space-y-1">
-                        <p className="whitespace-pre-line">{quote.companyAddress}</p>
-                        {quote.companyPhone && <p>{quote.companyPhone}</p>}
-                        {quote.companyEmail && <p>{quote.companyEmail}</p>}
-                        {quote.companyWebsite && <p>{quote.companyWebsite}</p>}
-                        {quote.licenseNumber && <p>License #: {quote.licenseNumber}</p>}
+                        <p className="whitespace-pre-line">{business.address}</p>
+                        {business.phone && <p>{business.phone}</p>}
+                        {business.email && <p>{business.email}</p>}
+                        {business.website && <p>{business.website}</p>}
+                        {business.licenseNumber && <p>License #: {business.licenseNumber}</p>}
                     </div>
                 </div>
                 <div className="text-right">
@@ -57,10 +53,11 @@ const DefaultQuoteTemplate = ({ quote, logoUrl, accentColor }: { quote: Quote, l
             <section className="grid grid-cols-2 gap-4 mb-10">
                 <div className="space-y-1">
                     <p className="text-sm font-semibold text-gray-500">QUOTE FOR</p>
-                    <p className="font-bold">{quote.clientName}</p>
-                    <p className="text-muted-foreground text-sm whitespace-pre-line">{quote.clientAddress}</p>
-                    {quote.clientPhone && <p className="text-muted-foreground text-sm">{quote.clientPhone}</p>}
-                    {quote.clientEmail && <p className="text-muted-foreground text-sm">{quote.clientEmail}</p>}
+                    <p className="font-bold">{client.name}</p>
+                    {client.companyName && <p className="text-sm text-gray-600">{client.companyName}</p>}
+                    <p className="text-muted-foreground text-sm whitespace-pre-line">{client.address}</p>
+                    {client.phone && <p className="text-muted-foreground text-sm">{client.phone}</p>}
+                    {client.email && <p className="text-muted-foreground text-sm">{client.email}</p>}
                 </div>
                 <div className="text-right space-y-1">
                      <div className="space-y-1">
@@ -95,12 +92,12 @@ const DefaultQuoteTemplate = ({ quote, logoUrl, accentColor }: { quote: Quote, l
                         </tr>
                     </thead>
                     <tbody>
-                        {quote.items.map(item => (
+                        {lineItems.map(item => (
                             <tr key={item.id} className="border-b">
                                 <td className="p-3 whitespace-pre-line">{item.name || <span className="text-gray-400">Item description</span>}</td>
                                 <td className="p-3 text-center tabular-nums">{item.quantity}</td>
-                                <td className="p-3 text-right tabular-nums">{currencySymbol}{item.rate.toFixed(2)}</td>
-                                <td className="p-3 text-right tabular-nums font-medium">{currencySymbol}{(item.quantity * item.rate).toFixed(2)}</td>
+                                <td className="p-3 text-right tabular-nums">{currencySymbol}{item.unitPrice.toFixed(2)}</td>
+                                <td className="p-3 text-right tabular-nums font-medium">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</td>
                             </tr>
                         ))}
                     </tbody>
@@ -111,64 +108,61 @@ const DefaultQuoteTemplate = ({ quote, logoUrl, accentColor }: { quote: Quote, l
                 <div className="w-full max-w-xs space-y-2">
                     <div className="flex justify-between text-sm">
                         <span className="text-muted-foreground">Subtotal</span>
-                        <span className="font-medium tabular-nums">{currencySymbol}{subtotal.toFixed(2)}</span>
+                        <span className="font-medium tabular-nums">{currencySymbol}{summary.subtotal.toFixed(2)}</span>
                     </div>
-                    {quote.discount > 0 && (
+                    {summary.discount > 0 && (
                         <div className="flex justify-between text-sm">
-                            <span className="text-muted-foreground">Discount ({quote.discount}%)</span>
-                            <span className="font-medium text-destructive tabular-nums">-{currencySymbol}{discountAmount.toFixed(2)}</span>
+                            <span className="text-muted-foreground">Discount</span>
+                            <span className="font-medium text-destructive tabular-nums">-{currencySymbol}{summary.discount.toFixed(2)}</span>
                         </div>
                     )}
-                    {quote.shippingCost > 0 && (
+                    {summary.shippingCost > 0 && (
                         <div className="flex justify-between text-sm">
                             <span className="text-muted-foreground">Shipping/Extra</span>
-                            <span className="font-medium tabular-nums">{currencySymbol}{quote.shippingCost.toFixed(2)}</span>
+                            <span className="font-medium tabular-nums">{currencySymbol}{summary.shippingCost.toFixed(2)}</span>
                         </div>
                     )}
-                    {quote.tax > 0 && (
+                    {summary.taxPercentage > 0 && (
                         <div className="flex justify-between text-sm">
-                            <span className="text-muted-foreground">Tax ({quote.tax}%)</span>
-                            <span className="font-medium tabular-nums">{currencySymbol}{taxAmount.toFixed(2)}</span>
+                            <span className="text-muted-foreground">Tax ({summary.taxPercentage}%)</span>
+                            <span className="font-medium tabular-nums">{currencySymbol}{summary.taxAmount.toFixed(2)}</span>
                         </div>
                     )}
                     <Separator className="my-2" />
                     <div className="flex justify-between items-center font-bold text-lg p-3 mt-2 rounded-md" style={{ backgroundColor: accentColor, color: 'white' }}>
                         <span>Quote Total</span>
-                        <span className="tabular-nums">{currencySymbol}{total.toFixed(2)}</span>
+                        <span className="tabular-nums">{currencySymbol}{summary.grandTotal.toFixed(2)}</span>
                     </div>
                 </div>
             </section>
             
-            {quote.notes && (
+            {quote.termsAndConditions && (
                 <footer className="mt-10">
                     <p className="text-sm font-semibold text-gray-500">Terms & Conditions</p>
-                    <p className="text-sm text-muted-foreground mt-1 whitespace-pre-line">{quote.notes}</p>
+                    <p className="text-sm text-muted-foreground mt-1 whitespace-pre-line">{quote.termsAndConditions}</p>
                 </footer>
             )}
         </div>
     );
 };
 
-const ContractorQuoteTemplate = ({ quote, logoUrl, accentColor }: { quote: Quote, logoUrl: string | null, accentColor: string }) => {
-    const subtotal = quote.items.reduce((acc, item) => acc + item.quantity * item.rate, 0);
-    const taxAmount = (subtotal * quote.tax) / 100;
-    const discountAmount = (subtotal * quote.discount) / 100;
-    const total = subtotal + taxAmount - discountAmount + (quote.shippingCost || 0);
-    const currencySymbol = currencySymbols[quote.currency] || '$';
+const ContractorQuoteTemplate = ({ quote, accentColor }: { quote: Quote, accentColor: string }) => {
+    const { business, client, lineItems, summary, currency } = quote;
+    const currencySymbol = currencySymbols[currency] || '$';
 
     return (
         <div className="p-8 font-sans text-gray-800 border-t-8" style={{ borderTopColor: accentColor }}>
             <header className="grid grid-cols-2 gap-10 mb-12">
                 <div>
-                    {logoUrl ? (
-                        <Image src={logoUrl} alt={`${quote.companyName} Logo`} width={160} height={80} className="object-contain" data-ai-hint="logo" />
+                    {business.logoUrl ? (
+                        <Image src={business.logoUrl} alt={`${business.name} Logo`} width={160} height={80} className="object-contain" data-ai-hint="logo" />
                     ) : (
-                        <h1 className="text-4xl font-bold">{quote.companyName}</h1>
+                        <h1 className="text-4xl font-bold">{business.name}</h1>
                     )}
                      <div className="text-xs text-gray-500 whitespace-pre-line mt-2">
-                        <p>{quote.companyAddress}</p>
-                        <p>{quote.companyPhone}</p>
-                        {quote.licenseNumber && <p>Lic #: {quote.licenseNumber}</p>}
+                        <p>{business.address}</p>
+                        <p>{business.phone}</p>
+                        {business.licenseNumber && <p>Lic #: {business.licenseNumber}</p>}
                      </div>
                 </div>
                  <div className="text-right">
@@ -183,8 +177,8 @@ const ContractorQuoteTemplate = ({ quote, logoUrl, accentColor }: { quote: Quote
 
             <section className="mb-10 bg-gray-50 p-4 rounded-md">
                  <h3 className="font-bold text-sm uppercase text-gray-600 mb-2">Project For:</h3>
-                 <p className="font-bold text-lg">{quote.clientName}</p>
-                 <p className="text-sm text-gray-600 whitespace-pre-line">{quote.clientAddress}</p>
+                 <p className="font-bold text-lg">{client.name}</p>
+                 <p className="text-sm text-gray-600 whitespace-pre-line">{client.address}</p>
             </section>
             
              <main>
@@ -196,13 +190,13 @@ const ContractorQuoteTemplate = ({ quote, logoUrl, accentColor }: { quote: Quote
                         </tr>
                     </thead>
                     <tbody>
-                        {quote.items.map(item => (
+                        {lineItems.map(item => (
                             <tr key={item.id} className="border-b">
                                 <td className="p-2 py-3">
                                     <p className="font-semibold whitespace-pre-line">{item.name}</p>
                                     {item.quantity > 1 && <p className="text-xs text-gray-500">{item.quantity} units</p>}
                                 </td>
-                                <td className="p-2 py-3 text-right font-semibold tabular-nums">{currencySymbol}{(item.quantity * item.rate).toFixed(2)}</td>
+                                <td className="p-2 py-3 text-right font-semibold tabular-nums">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</td>
                             </tr>
                         ))}
                     </tbody>
@@ -213,31 +207,31 @@ const ContractorQuoteTemplate = ({ quote, logoUrl, accentColor }: { quote: Quote
                 <div className="w-full max-w-sm space-y-2 text-sm">
                     <div className="flex justify-between">
                         <span className="text-gray-600">Subtotal</span>
-                        <span className="font-medium tabular-nums">{currencySymbol}{subtotal.toFixed(2)}</span>
+                        <span className="font-medium tabular-nums">{currencySymbol}{summary.subtotal.toFixed(2)}</span>
                     </div>
-                    {quote.discount > 0 && (
+                    {summary.discount > 0 && (
                         <div className="flex justify-between">
-                            <span className="text-gray-600">Discount ({quote.discount}%)</span>
-                            <span className="font-medium text-red-600 tabular-nums">-{currencySymbol}{discountAmount.toFixed(2)}</span>
+                            <span className="text-gray-600">Discount</span>
+                            <span className="font-medium text-red-600 tabular-nums">-{currencySymbol}{summary.discount.toFixed(2)}</span>
                         </div>
                     )}
-                     {quote.tax > 0 && (
+                     {summary.taxPercentage > 0 && (
                         <div className="flex justify-between">
-                            <span className="text-gray-600">Tax ({quote.tax}%)</span>
-                            <span className="font-medium tabular-nums">{currencySymbol}{taxAmount.toFixed(2)}</span>
+                            <span className="text-gray-600">Tax ({summary.taxPercentage}%)</span>
+                            <span className="font-medium tabular-nums">{currencySymbol}{summary.taxAmount.toFixed(2)}</span>
                         </div>
                     )}
                      <div className="flex justify-between border-t pt-2 mt-2 font-bold text-xl">
                         <span>Project Total</span>
-                        <span className="tabular-nums">{currencySymbol}{total.toFixed(2)}</span>
+                        <span className="tabular-nums">{currencySymbol}{summary.grandTotal.toFixed(2)}</span>
                     </div>
                 </div>
             </section>
             
-            {quote.notes && (
+            {quote.termsAndConditions && (
                 <footer className="mt-12 border-t pt-6 text-xs text-gray-500">
                     <h4 className="font-bold text-sm text-gray-600 mb-2">Terms & Conditions</h4>
-                    <p className="whitespace-pre-line">{quote.notes}</p>
+                    <p className="whitespace-pre-line">{quote.termsAndConditions}</p>
                 </footer>
             )}
             
@@ -255,7 +249,7 @@ const templates = {
   'contractor': ContractorQuoteTemplate,
 };
 
-export function QuotePreview({ quote, logoUrl, accentColor, id = 'quote-preview', isPrint = false }: QuotePreviewProps) {
+export function QuotePreview({ quote, accentColor, id = 'quote-preview', isPrint = false }: QuotePreviewProps) {
   if (!quote) {
     return null;
   }
@@ -270,7 +264,6 @@ export function QuotePreview({ quote, logoUrl, accentColor, id = 'quote-preview'
   const renderContent = () => (
     <TemplateComponent
       quote={quote}
-      logoUrl={logoUrl}
       accentColor={accentColor}
     />
   );
