@@ -136,12 +136,26 @@ const DefaultQuoteTemplate = ({ quote, accentColor }: { quote: Quote, accentColo
                 </div>
             </section>
             
-            {quote.termsAndConditions && (
-                <footer className="mt-10">
-                    <p className="text-sm font-semibold text-gray-500">Terms & Conditions</p>
-                    <p className="text-sm text-muted-foreground mt-1 whitespace-pre-line">{quote.termsAndConditions}</p>
-                </footer>
-            )}
+            <footer className="mt-10">
+                {quote.termsAndConditions && (
+                    <div className="mb-8">
+                        <p className="text-sm font-semibold text-gray-500">Terms & Conditions</p>
+                        <p className="text-sm text-muted-foreground mt-1 whitespace-pre-line">{quote.termsAndConditions}</p>
+                    </div>
+                )}
+                {quote.signatureRequired && (
+                    <div className="grid grid-cols-2 gap-16 pt-8 border-t">
+                        <div>
+                            <div className="h-12 border-b"></div>
+                            <p className="text-sm text-center mt-2">Client Signature</p>
+                        </div>
+                         <div>
+                            <div className="h-12 border-b"></div>
+                            <p className="text-sm text-center mt-2">Agent Signature</p>
+                        </div>
+                    </div>
+                )}
+            </footer>
         </div>
     );
 };
@@ -228,17 +242,20 @@ const ContractorQuoteTemplate = ({ quote, accentColor }: { quote: Quote, accentC
                 </div>
             </section>
             
-            {quote.termsAndConditions && (
-                <footer className="mt-12 border-t pt-6 text-xs text-gray-500">
-                    <h4 className="font-bold text-sm text-gray-600 mb-2">Terms & Conditions</h4>
-                    <p className="whitespace-pre-line">{quote.termsAndConditions}</p>
-                </footer>
-            )}
-            
-            <div className="mt-16 text-xs text-gray-500 text-center">
-                <p>Thank you for the opportunity to quote this project.</p>
-                <p className="mt-4 font-bold">Client Signature: _________________________ Date: __________</p>
-            </div>
+            <footer className="mt-12">
+                {quote.termsAndConditions && (
+                    <div className="text-xs text-gray-500 border-t pt-6 mb-8">
+                        <h4 className="font-bold text-sm text-gray-600 mb-2">Terms & Conditions</h4>
+                        <p className="whitespace-pre-line">{quote.termsAndConditions}</p>
+                    </div>
+                )}
+                {quote.signatureRequired && (
+                    <div className="mt-16 text-xs text-gray-500 text-center">
+                        <p>Thank you for the opportunity to quote this project.</p>
+                        <p className="mt-4 font-bold">Client Signature: _________________________ Date: __________</p>
+                    </div>
+                )}
+            </footer>
         </div>
     );
 };

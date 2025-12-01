@@ -9,7 +9,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { DatePicker } from '@/components/ui/datepicker';
-import { ImageUp, Plus, Trash2, Palette, X, Mail, Truck, Hash, Phone, Globe, Briefcase, Award, User, FileText } from 'lucide-react';
+import { ImageUp, Plus, Trash2, Palette, X, Mail, Truck, Hash, Phone, Globe, Briefcase, Award, User, FileText, Building } from 'lucide-react';
 import Image from 'next/image';
 import {
   Select,
@@ -18,6 +18,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch";
 
 interface QuoteFormProps {
   quote: Quote;
@@ -277,12 +278,21 @@ export function QuoteForm({ quote, setQuote, accentColor, setAccentColor, toast 
           <CardTitle>Client Information</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="clientName">Client Full Name</Label>
-             <div className="relative flex items-center">
-                <User className="absolute left-3 h-5 w-5 text-muted-foreground" />
-                <Input id="clientName" name="name" value={quote.client.name} onChange={(e) => handleNestedChange('client', e)} className="pl-10" />
-              </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="clientName">Client Full Name</Label>
+               <div className="relative flex items-center">
+                  <User className="absolute left-3 h-5 w-5 text-muted-foreground" />
+                  <Input id="clientName" name="name" value={quote.client.name} onChange={(e) => handleNestedChange('client', e)} className="pl-10" />
+                </div>
+            </div>
+             <div className="space-y-2">
+              <Label htmlFor="clientCompanyName">Client Company Name (optional)</Label>
+               <div className="relative flex items-center">
+                  <Building className="absolute left-3 h-5 w-5 text-muted-foreground" />
+                  <Input id="clientCompanyName" name="companyName" value={quote.client.companyName} onChange={(e) => handleNestedChange('client', e)} className="pl-10" />
+                </div>
+            </div>
           </div>
           <div className="space-y-2">
             <Label htmlFor="clientAddress">Client Address</Label>
@@ -432,7 +442,7 @@ export function QuoteForm({ quote, setQuote, accentColor, setAccentColor, toast 
 
       <Card className="bg-card/50 backdrop-blur-lg border border-border/30">
         <CardHeader>
-          <CardTitle>Pricing Summary &amp; Terms</CardTitle>
+          <CardTitle>Pricing Summary, Terms &amp; Signature</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
@@ -455,6 +465,15 @@ export function QuoteForm({ quote, setQuote, accentColor, setAccentColor, toast 
           <div className="space-y-2">
             <Label htmlFor="termsAndConditions">Terms & Conditions</Label>
             <Textarea id="termsAndConditions" name="termsAndConditions" value={quote.termsAndConditions} onChange={handleInputChange} placeholder="e.g., Payment terms, validity period, warranty information..." />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="attachments">Attachments</Label>
+            <Input id="attachments" type="file" multiple />
+            <p className="text-xs text-muted-foreground">Upload photos, contracts, or other documents. (Non-functional)</p>
+          </div>
+          <div className="flex items-center space-x-2">
+            <Switch id="signatureRequired" checked={quote.signatureRequired} onCheckedChange={(checked) => setQuote(p => ({ ...p, signatureRequired: checked }))} />
+            <Label htmlFor="signatureRequired">Require Client Signature</Label>
           </div>
         </CardContent>
       </Card>
