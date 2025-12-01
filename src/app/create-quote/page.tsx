@@ -102,19 +102,19 @@ export default function CreateQuotePage() {
 
   useEffect(() => {
     if(!user) return;
+    
     const initialQuote = {...getInitialQuote(), userId: user.uid};
-    if (draftId) {
-      if (remoteDraft) {
+
+    if (draftId && remoteDraft) {
         const fromJSON = (key: string, value: any) => {
-          if (key === 'quoteDate' || key === 'validUntilDate') {
-            return value?.toDate ? value.toDate() : (value ? new Date(value) : null);
-          }
-          return value;
+            if (['quoteDate', 'validUntilDate'].includes(key) && value) {
+                return value.toDate ? value.toDate() : new Date(value);
+            }
+            return value;
         };
         const loadedDraft = JSON.parse(JSON.stringify(remoteDraft), fromJSON);
         setQuote({ ...initialQuote, ...loadedDraft });
-      }
-    } else {
+    } else if (!draftId) {
       setQuote(initialQuote);
     }
     
@@ -176,7 +176,6 @@ export default function CreateQuotePage() {
 
       setQuote(prev => {
         if (!prev) return null;
-        // Check if the values are different to prevent an infinite loop
         if (prev.summary.subtotal !== subtotal ||
             prev.summary.taxAmount !== taxAmount ||
             prev.summary.grandTotal !== grandTotal) {

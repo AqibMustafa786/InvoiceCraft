@@ -84,23 +84,21 @@ export default function CreateInvoicePage() {
   const { data: remoteDraft, isLoading: isDraftLoading } = useDoc<Invoice>(docRef);
 
   useEffect(() => {
-    // Initialize state on the client to avoid hydration mismatch
     if (!user) return;
-    const initialInvoice = {...getInitialInvoice(), userId: user.uid};
-    
-    if (draftId) {
-      if (remoteDraft) {
+
+    const initialInvoice = { ...getInitialInvoice(), userId: user.uid };
+
+    if (draftId && remoteDraft) {
         const fromJSON = (key: string, value: any) => {
-          if (key === 'invoiceDate' || key === 'dueDate' || key === 'quoteDate' || key === 'validUntilDate') {
-            return value?.toDate ? value.toDate() : (value ? new Date(value) : null);
-          }
-          return value;
+            if (['invoiceDate', 'dueDate', 'quoteDate', 'validUntilDate'].includes(key) && value) {
+                return value.toDate ? value.toDate() : new Date(value);
+            }
+            return value;
         };
         const loadedDraft = JSON.parse(JSON.stringify(remoteDraft), fromJSON);
         setInvoice({ ...initialInvoice, ...loadedDraft });
-      }
-    } else {
-      setInvoice(initialInvoice);
+    } else if (!draftId) {
+        setInvoice(initialInvoice);
     }
     
     if (typeof window !== 'undefined' && document) {
