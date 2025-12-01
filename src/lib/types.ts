@@ -69,3 +69,24 @@ export interface InsuranceDocument {
   language: string;
   template: string;
 }
+
+export interface Estimate {
+  id: string;
+  companyName: string;
+  companyPhone: string;
+  companyAddress: string;
+  clientName: string;
+  clientAddress: string;
+  clientEmail: string;
+  estimateNumber: string;
+  estimateDate: Date;
+  validUntilDate: Date;
+  items: LineItem[];
+  tax: number;
+  discount: number;
+  shippingCost: number;
+  notes: string;
+  currency: string;
+  language: string;
+  template: string;
+}

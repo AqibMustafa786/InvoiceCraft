@@ -11,6 +11,7 @@ import { cn } from '@/lib/utils';
 const navLinks = [
     { href: "/features", label: "Features" },
     { href: "/create", label: "Create Invoice" },
+    { href: "/create-estimate", label: "Create Estimate" },
     { href: "/create-insurance", label: "Create Insurance" },
     { href: "/pricing", label: "Pricing" },
     { href: "/blog", label: "Blog" },
