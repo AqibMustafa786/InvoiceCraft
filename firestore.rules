@@ -28,15 +28,17 @@ service cloud.firestore {
         allow create: if isSignedIn() && isOwner(request.resource.data.userId);
 
         // Allow read, update, delete if the user is signed in and owns the document
-        allow read, get: if isSignedIn() && isOwner(resource.data.userId);
+        allow read, update: if isSignedIn() && isOwner(resource.data.userId);
         
-        // Public read access for shared links is handled by a separate rule for get
+        // Public read access for shared links
         allow get: if true; 
     }
     
-    // Collection-group queries
-    match /{collection}/{docId} {
-        // Allow a user to list documents from a collection if they are querying by their own userId
+    // Allow a user to list documents from a collection if they are querying by their own userId
+    match /{path=**}/invoices/{invoiceId} {
+        allow list: if isSignedIn() && request.query.where.userId == request.auth.uid;
+    }
+     match /{path=**}/quotes/{quoteId} {
         allow list: if isSignedIn() && request.query.where.userId == request.auth.uid;
     }
   }
