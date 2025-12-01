@@ -90,3 +90,24 @@ export interface Estimate {
   language: string;
   template: string;
 }
+
+export interface Quote {
+  id: string;
+  companyName: string;
+  companyPhone: string;
+  companyAddress: string;
+  clientName: string;
+  clientAddress: string;
+  clientEmail: string;
+  quoteNumber: string;
+  quoteDate: Date;
+  validUntilDate: Date;
+  items: LineItem[];
+  tax: number;
+  discount: number;
+  shippingCost: number;
+  notes: string;
+  currency: string;
+  language: string;
+  template: string;
+}
