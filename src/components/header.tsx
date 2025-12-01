@@ -57,14 +57,14 @@ export function Header() {
     };
 
     return (
-        <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background">
+        <header className="sticky top-0 z-50 w-full bg-background">
             <div className="container flex h-16 items-center">
                 <Link href="/" className="mr-6 flex items-center gap-2">
                      <span className="text-lg font-bold text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent">InvoiceCraft</span>
                 </Link>
 
                 <nav className="hidden md:flex items-center space-x-6 text-sm font-medium">
-                    {isClient && navLinks.map(link => (
+                    {navLinks.map(link => (
                         <NavLink key={link.href} href={link.href} label={link.label} />
                     ))}
                 </nav>
