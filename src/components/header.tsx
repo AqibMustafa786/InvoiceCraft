@@ -24,7 +24,7 @@ export function Header() {
     const pathname = usePathname();
 
     return (
-        <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur-sm dark:bg-gradient-to-b dark:from-background dark:to-background/80 light:bg-gradient-to-b light:from-white light:to-pink-50">
+        <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur-sm">
             <div className="container flex h-16 items-center">
                 <Link href="/" className="mr-6 flex items-center gap-2">
                      <span className="text-lg font-bold text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent">InvoiceCraft</span>
@@ -38,8 +38,8 @@ export function Header() {
                                 key={link.href} 
                                 href={link.href} 
                                 className={cn(
-                                    "transition-colors hover:text-foreground/80 dark:text-white/60 dark:hover:text-white",
-                                    isActive ? "text-foreground font-semibold dark:text-white" : "text-foreground/60"
+                                    "transition-colors hover:text-foreground/80",
+                                    isActive ? "text-foreground font-semibold" : "text-foreground/60"
                                 )}
                             >
                                 {link.label}
