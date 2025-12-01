@@ -28,7 +28,7 @@ import { format, isWithinInterval } from 'date-fns';
 import { FilterSheet, type DashboardFilters } from '@/components/dashboard/filter-sheet';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
-import { useFirebase } from '@/firebase/provider';
+import { useFirebase, useMemoFirebase } from '@/firebase/provider';
 import { useCollection } from '@/firebase/firestore/use-collection';
 import { collection, doc, addDoc } from 'firebase/firestore';
 import { deleteDocumentNonBlocking, updateDocumentNonBlocking } from '@/firebase';
@@ -65,12 +65,12 @@ export default function DashboardPage() {
     const { firestore, user } = useFirebase();
     const router = useRouter();
 
-    const invoicesQuery = useMemo(() => {
+    const invoicesQuery = useMemoFirebase(() => {
         if (!firestore) return null;
         return collection(firestore, INVOICES_COLLECTION);
     }, [firestore, user]);
 
-    const quotesQuery = useMemo(() => {
+    const quotesQuery = useMemoFirebase(() => {
         if (!firestore) return null;
         return collection(firestore, QUOTES_COLLECTION);
     }, [firestore, user]);
