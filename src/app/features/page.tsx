@@ -1,5 +1,5 @@
 import { PageHeader, PageHeaderDescription, PageHeaderHeading } from "@/components/page-header";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { CheckCircle } from "lucide-react";
 
 const featureCategories = [
@@ -53,35 +53,20 @@ export default function FeaturesPage() {
       </PageHeader>
 
       <div className="space-y-12">
-          <div className="bg-card/50 backdrop-blur-lg border border-border/30 shadow-lg rounded-lg p-8">
-            <h2 className="text-3xl font-bold font-headline mb-8 text-center">{featureCategories[0].category}</h2>
+        {featureCategories.map((category) => (
+          <div key={category.category} className="bg-card/50 backdrop-blur-lg border border-border/30 shadow-lg rounded-lg p-8">
+            <h2 className="text-3xl font-bold font-headline mb-8 text-center">{category.category}</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {featureCategories[0].features.map((feature) => (
-                <Card key={feature.name} className="flex flex-col text-center items-center p-6 bg-card/50 backdrop-blur-lg border border-border/30 shadow-lg">
+              {category.features.map((feature) => (
+                 <Card key={feature.name} className="flex flex-col text-center items-center p-6 bg-card/50 backdrop-blur-lg border border-border/30 shadow-lg">
                     <CardHeader className="p-0 items-center">
-                        {feature.icon}
+                        {(feature as any).icon || <CheckCircle className="h-8 w-8 text-primary" />}
                         <CardTitle className="mt-4">{feature.name}</CardTitle>
                     </CardHeader>
                     <CardContent className="p-0 mt-2 flex-1">
                         <p className="text-muted-foreground text-sm">{feature.description}</p>
                     </CardContent>
                 </Card>
-              ))}
-            </div>
-          </div>
-
-        {featureCategories.slice(1).map((category) => (
-          <div key={category.category} className="bg-card/50 backdrop-blur-lg border border-border/30 shadow-lg rounded-lg p-8">
-            <h2 className="text-3xl font-bold font-headline mb-8 text-center">{category.category}</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {category.features.map((feature) => (
-                <div key={feature.name} className="flex items-start gap-4">
-                  <CheckCircle className="h-6 w-6 text-primary mt-1 flex-shrink-0" />
-                  <div>
-                    <h3 className="text-lg font-semibold">{feature.name}</h3>
-                    <p className="text-muted-foreground text-sm mt-1">{feature.description}</p>
-                  </div>
-                </div>
               ))}
             </div>
           </div>
