@@ -6,7 +6,7 @@ import type { Invoice, LineItem } from '@/lib/types';
 import { Card, CardContent } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import Image from 'next/image';
-import { format } from 'date-fns';
+import { format, isValid } from 'date-fns';
 import locales from '@/lib/locales';
 
 // --- PROPS ---
@@ -45,6 +45,12 @@ const currencySymbols: { [key: string]: string } = {
     PKR: '₨',
 };
 
+const safeFormat = (date: Date | string | number, formatString: string) => {
+    const d = new Date(date || new Date());
+    if (!isValid(d)) return "Invalid Date";
+    return format(d, formatString);
+}
+
 // --- SHARED COMPONENTS ---
 const InvoiceHeader = ({ invoice, logoUrl, accentColor, t }: CommonTemplateProps) => (
     <header className="flex justify-between items-start mb-10" data-element="header">
@@ -75,9 +81,9 @@ const ClientDetails = ({ invoice, t }: { invoice: Invoice, t: any }) => (
         </div>
         <div className="text-right space-y-1">
             <p className="text-sm font-semibold text-gray-500">{t.invoiceDate}</p>
-            <p>{format(invoice.invoiceDate, 'MMMM d, yyyy')}</p>
+            <p>{safeFormat(invoice.invoiceDate, 'MMMM d, yyyy')}</p>
             <p className="text-sm font-semibold text-gray-500 mt-2">{t.dueDate}</p>
-            <p>{format(invoice.dueDate, 'MMMM d, yyyy')}</p>
+            <p>{safeFormat(invoice.dueDate, 'MMMM d, yyyy')}</p>
         </div>
     </section>
 );
@@ -240,11 +246,11 @@ const ElegantTemplatePage = ({ pageItems, pageIndex, totalPages, ...commonProps 
                         </div>
                         <div className="flex justify-end">
                             <span className="font-semibold text-gray-500 w-28 text-left">{commonProps.t.invoiceDate}: &nbsp;</span>
-                            <span className="w-24 text-right">{format(commonProps.invoice.invoiceDate, 'yyyy-MM-dd')}</span>
+                            <span className="w-24 text-right">{safeFormat(commonProps.invoice.invoiceDate, 'yyyy-MM-dd')}</span>
                         </div>
                          <div className="flex justify-end">
                             <span className="font-semibold text-gray-500 w-28 text-left">{commonProps.t.dueDate}: &nbsp;</span>
-                            <span className="w-24 text-right">{format(commonProps.invoice.dueDate, 'yyyy-MM-dd')}</span>
+                            <span className="w-24 text-right">{safeFormat(commonProps.invoice.dueDate, 'yyyy-MM-dd')}</span>
                         </div>
                     </div>
                 </div>
@@ -292,11 +298,11 @@ const UsaTemplatePage = ({ pageItems, pageIndex, totalPages, ...commonProps }: P
                             )}
                             <div className="flex justify-end">
                                 <span className="text-gray-500 w-28 text-right">Invoice Date</span>
-                                <span className="w-28 text-right font-medium">{format(invoice.invoiceDate, 'MMM d, yyyy')}</span>
+                                <span className="w-28 text-right font-medium">{safeFormat(invoice.invoiceDate, 'MMM d, yyyy')}</span>
                             </div>
                             <div className="flex justify-end">
                                 <span className="text-gray-500 w-28 text-right">Due Date</span>
-                                <span className="w-28 text-right font-medium">{format(invoice.dueDate, 'MMM d, yyyy')}</span>
+                                <span className="w-28 text-right font-medium">{safeFormat(invoice.dueDate, 'MMM d, yyyy')}</span>
                             </div>
                         </div>
                     </div>
@@ -376,9 +382,9 @@ const MinimalistTemplatePage = ({ pageItems, pageIndex, totalPages, ...commonPro
                     <p className="text-sm font-semibold text-gray-500 uppercase tracking-wider">{commonProps.t.invoice} #</p>
                     <p>{commonProps.invoice.invoiceNumber}</p>
                     <p className="text-sm font-semibold text-gray-500 uppercase tracking-wider mt-3">{commonProps.t.invoiceDate}</p>
-                    <p>{format(commonProps.invoice.invoiceDate, 'yyyy-MM-dd')}</p>
+                    <p>{safeFormat(commonProps.invoice.invoiceDate, 'yyyy-MM-dd')}</p>
                     <p className="text-sm font-semibold text-gray-500 uppercase tracking-wider mt-3">{commonProps.t.dueDate}</p>
-                    <p>{format(commonProps.invoice.dueDate, 'yyyy-MM-dd')}</p>
+                    <p>{safeFormat(commonProps.invoice.dueDate, 'yyyy-MM-dd')}</p>
                 </div>
             </section>
 
@@ -424,11 +430,11 @@ const CreativeTemplatePage = ({ pageItems, pageIndex, totalPages, ...commonProps
                     <div className="space-y-4 text-right self-end z-10">
                          <div className="space-y-1">
                             <p className="text-sm font-semibold text-gray-500">{t.invoiceDate}</p>
-                            <p className="font-medium">{format(invoice.invoiceDate, 'MMMM d, yyyy')}</p>
+                            <p className="font-medium">{safeFormat(invoice.invoiceDate, 'MMMM d, yyyy')}</p>
                         </div>
                          <div className="space-y-1">
                             <p className="text-sm font-semibold text-gray-500">{t.dueDate}</p>
-                            <p className="font-medium">{format(invoice.dueDate, 'MMMM d, yyyy')}</p>
+                            <p className="font-medium">{safeFormat(invoice.dueDate, 'MMMM d, yyyy')}</p>
                         </div>
                     </div>
                 </section>
@@ -644,3 +650,5 @@ export function InvoicePreview({ invoice, logoUrl, accentColor, id = 'invoice-pr
     </Card>
   );
 }
+
+    

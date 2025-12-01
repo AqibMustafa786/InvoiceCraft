@@ -5,7 +5,7 @@ import type { Quote } from '@/lib/types';
 import { Card, CardContent } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import Image from 'next/image';
-import { format } from 'date-fns';
+import { format, isValid } from 'date-fns';
 
 // --- PROPS ---
 interface QuotePreviewProps {
@@ -22,6 +22,12 @@ const currencySymbols: { [key: string]: string } = {
     JPY: '¥',
     PKR: '₨',
 };
+
+const safeFormat = (date: Date | string | number, formatString: string) => {
+    const d = new Date(date || new Date());
+    if (!isValid(d)) return "Invalid Date";
+    return format(d, formatString);
+}
 
 const DefaultQuoteTemplate = ({ quote, accentColor }: { quote: Quote, accentColor: string }) => {
     const { business, client, lineItems, summary, currency } = quote;
@@ -66,11 +72,11 @@ const DefaultQuoteTemplate = ({ quote, accentColor }: { quote: Quote, accentColo
                     </div>
                     <div className="space-y-1 mt-2">
                         <p className="text-sm font-semibold text-gray-500">Quote Date</p>
-                        <p>{format(quote.quoteDate, 'MMMM d, yyyy')}</p>
+                        <p>{safeFormat(quote.quoteDate, 'MMMM d, yyyy')}</p>
                     </div>
                     <div className="space-y-1 mt-2">
                         <p className="text-sm font-semibold text-gray-500">Valid Until</p>
-                        <p>{format(quote.validUntilDate, 'MMMM d, yyyy')}</p>
+                        <p>{safeFormat(quote.validUntilDate, 'MMMM d, yyyy')}</p>
                     </div>
                     {quote.referenceNumber && (
                         <div className="space-y-1 mt-2">
@@ -183,8 +189,8 @@ const ContractorQuoteTemplate = ({ quote, accentColor }: { quote: Quote, accentC
                     <h2 className="text-5xl font-light uppercase text-gray-400 tracking-wider">Quote</h2>
                     <div className="mt-4 text-xs space-y-1">
                         <p><span className="font-bold text-gray-500">Quote #:</span> {quote.quoteNumber}</p>
-                        <p><span className="font-bold text-gray-500">Date:</span> {format(quote.quoteDate, 'M/d/yyyy')}</p>
-                        <p><span className="font-bold text-gray-500">Valid Until:</span> {format(quote.validUntilDate, 'M/d/yyyy')}</p>
+                        <p><span className="font-bold text-gray-500">Date:</span> {safeFormat(quote.quoteDate, 'M/d/yyyy')}</p>
+                        <p><span className="font-bold text-gray-500">Valid Until:</span> {safeFormat(quote.validUntilDate, 'M/d/yyyy')}</p>
                     </div>
                 </div>
             </header>
@@ -301,3 +307,5 @@ export function QuotePreview({ quote, accentColor, id = 'quote-preview', isPrint
     </Card>
   );
 }
+
+    

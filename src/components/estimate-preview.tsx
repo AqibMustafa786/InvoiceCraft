@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useLayoutEffect, useRef, useEffect } from 'react';
@@ -5,7 +6,7 @@ import type { Estimate, LineItem } from '@/lib/types';
 import { Card, CardContent } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import Image from 'next/image';
-import { format } from 'date-fns';
+import { format, isValid } from 'date-fns';
 import locales from '@/lib/locales';
 
 // --- PROPS ---
@@ -24,6 +25,12 @@ const currencySymbols: { [key: string]: string } = {
     JPY: '¥',
     PKR: '₨',
 };
+
+const safeFormat = (date: Date | string | number, formatString: string) => {
+    const d = new Date(date || new Date());
+    if (!isValid(d)) return "Invalid Date";
+    return format(d, formatString);
+}
 
 const DefaultEstimateTemplate = ({ estimate, logoUrl, accentColor }: { estimate: Estimate, logoUrl: string | null, accentColor: string }) => {
     const subtotal = estimate.items.reduce((acc, item) => acc + item.quantity * item.rate, 0);
@@ -60,9 +67,9 @@ const DefaultEstimateTemplate = ({ estimate, logoUrl, accentColor }: { estimate:
                 </div>
                 <div className="text-right space-y-1">
                     <p className="text-sm font-semibold text-gray-500">Estimate Date</p>
-                    <p>{format(estimate.estimateDate, 'MMMM d, yyyy')}</p>
+                    <p>{safeFormat(estimate.estimateDate, 'MMMM d, yyyy')}</p>
                     <p className="text-sm font-semibold text-gray-500 mt-2">Valid Until</p>
-                    <p>{format(estimate.validUntilDate, 'MMMM d, yyyy')}</p>
+                    <p>{safeFormat(estimate.validUntilDate, 'MMMM d, yyyy')}</p>
                 </div>
             </section>
             
@@ -154,8 +161,8 @@ const ContractorEstimateTemplate = ({ estimate, logoUrl, accentColor }: { estima
                     <h2 className="text-5xl font-light uppercase text-gray-400 tracking-wider">Estimate</h2>
                     <div className="mt-4 text-xs space-y-1">
                         <p><span className="font-bold text-gray-500">Estimate #:</span> {estimate.estimateNumber}</p>
-                        <p><span className="font-bold text-gray-500">Date:</span> {format(estimate.estimateDate, 'M/d/yyyy')}</p>
-                        <p><span className="font-bold text-gray-500">Valid Until:</span> {format(estimate.validUntilDate, 'M/d/yyyy')}</p>
+                        <p><span className="font-bold text-gray-500">Date:</span> {safeFormat(estimate.estimateDate, 'M/d/yyyy')}</p>
+                        <p><span className="font-bold text-gray-500">Valid Until:</span> {safeFormat(estimate.validUntilDate, 'M/d/yyyy')}</p>
                     </div>
                 </div>
             </header>
@@ -265,3 +272,5 @@ export function EstimatePreview({ estimate, logoUrl, accentColor, id = 'estimate
     </Card>
   );
 }
+
+    

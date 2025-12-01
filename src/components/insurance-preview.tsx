@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useLayoutEffect, useRef, useEffect } from 'react';
@@ -5,7 +6,7 @@ import type { InsuranceDocument, LineItem } from '@/lib/types';
 import { Card, CardContent } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import Image from 'next/image';
-import { format } from 'date-fns';
+import { format, isValid } from 'date-fns';
 import locales from '@/lib/locales';
 
 // --- PROPS ---
@@ -43,6 +44,13 @@ const currencySymbols: { [key: string]: string } = {
     PKR: '₨',
 };
 
+const safeFormat = (date: Date | string | number, formatString: string) => {
+    const d = new Date(date || new Date());
+    if (!isValid(d)) return "Invalid Date";
+    return format(d, formatString);
+}
+
+
 // --- TEMPLATE: USA Claim Default ---
 const UsaClaimDefaultTemplatePage = ({ pageItems, pageIndex, totalPages, ...commonProps }: PageProps) => {
     const { doc, logoUrl, accentColor, total, subtotal, currencySymbol } = commonProps;
@@ -63,7 +71,7 @@ const UsaClaimDefaultTemplatePage = ({ pageItems, pageIndex, totalPages, ...comm
                         <h2 className="text-4xl font-bold">INVOICE</h2>
                         <div className="mt-4 text-xs space-y-1">
                             <p><span className="font-bold text-gray-500">Invoice #:</span> {doc.documentNumber}</p>
-                            <p><span className="font-bold text-gray-500">Date:</span> {format(doc.documentDate, 'M/d/yyyy')}</p>
+                            <p><span className="font-bold text-gray-500">Date:</span> {safeFormat(doc.documentDate, 'M/d/yyyy')}</p>
                         </div>
                     </div>
                 </header>
@@ -305,3 +313,5 @@ export function InsurancePreview({ doc, logoUrl, accentColor, id = 'insurance-pr
     </Card>
   );
 }
+
+    
