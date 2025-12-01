@@ -375,8 +375,7 @@ export function EstimateForm({ estimate, setEstimate, accentColor, setAccentColo
             <div className="col-span-2"><Label>Quantity</Label></div>
             <div className="col-span-2"><Label>Unit Price</Label></div>
             <div className="col-span-1 text-center"><Label>Taxable</Label></div>
-            <div className="col-span-1"><Label>Total</Label></div>
-            <div className="col-span-1"></div>
+            <div className="col-span-2"><Label>Total</Label></div>
           </div>
           {estimate.lineItems.map((item, index) => (
             <div key={item.id} className="grid grid-cols-12 gap-2 items-start">
@@ -396,10 +395,13 @@ export function EstimateForm({ estimate, setEstimate, accentColor, setAccentColo
                  <Label htmlFor={`itemTaxable-${index}`} className="md:hidden sr-only">Taxable</Label>
                  <Checkbox id={`itemTaxable-${index}`} checked={item.taxable} onCheckedChange={(checked) => handleItemChange(index, 'taxable', !!checked)} />
               </div>
-              <div className="col-span-4 md:col-span-1 flex items-center h-10">
+              <div className="col-span-8 md:col-span-2 flex items-center h-10 gap-2">
                 <p className="font-medium tabular-nums text-sm">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</p>
+                <Button variant="ghost" size="icon" className="md:hidden" onClick={() => removeItem(index)}>
+                  <Trash2 className="h-4 w-4 text-destructive" />
+                </Button>
               </div>
-              <div className="col-span-2 md:col-span-1 flex items-center h-10">
+              <div className="hidden md:flex col-span-1 items-center h-10">
                 <Button variant="ghost" size="icon" onClick={() => removeItem(index)}>
                   <Trash2 className="h-4 w-4 text-destructive" />
                 </Button>
