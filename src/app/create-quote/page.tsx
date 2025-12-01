@@ -7,11 +7,18 @@ import type { Quote } from '@/lib/types';
 import { QuoteForm } from '@/components/quote-form';
 import { QuotePreview } from '@/components/quote-preview';
 import { Button } from '@/components/ui/button';
-import { Printer, FilePlus, LayoutDashboard } from 'lucide-react';
+import { Printer, FilePlus, LayoutDashboard, Edit } from 'lucide-react';
 import { addDays } from 'date-fns';
 import { useToast } from '@/hooks/use-toast';
 import { QuoteTemplateSelector } from '@/components/quote-template-selector';
 import Link from 'next/link';
+import { useFirebase } from '@/firebase/provider';
+import { doc, collection } from 'firebase/firestore';
+import { setDocumentNonBlocking } from '@/firebase/non-blocking-updates';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { useDoc } from '@/firebase/firestore/use-doc';
+
+const QUOTES_COLLECTION = 'quotes';
 
 const getInitialLineItem = () => ({ id: crypto.randomUUID(), name: '', quantity: 1, rate: 0 });
 
@@ -40,9 +47,11 @@ const getInitialQuote = (): Quote => ({
   discount: 0,
   shippingCost: 0,
   notes: 'This quote is valid for 30 days. Prices are subject to change thereafter. Payment Terms: 50% upfront, 50% on completion.',
+  status: 'draft',
   currency: 'USD',
   language: 'en',
   template: 'default',
+  documentType: 'quote',
 });
 
 
@@ -70,22 +79,62 @@ export default function CreateQuotePage() {
   const [logoUrl, setLogoUrl] = useState<string | null>(null);
   const [accentColor, setAccentColor] = useState<string>('hsl(var(--primary))');
   const { toast } = useToast();
+  const { firestore } = useFirebase();
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
+  const draftId = searchParams.get('draftId');
+  const docRef = draftId && firestore ? doc(firestore, QUOTES_COLLECTION, draftId) : null;
+  const { data: remoteDraft, isLoading: isDraftLoading } = useDoc<Quote>(docRef);
 
   useEffect(() => {
-    // Initialize state on the client to avoid hydration mismatch
-    setQuote(getInitialQuote());
+    const initialQuote = getInitialQuote();
+    if (draftId) {
+      if (remoteDraft) {
+        const fromJSON = (key: string, value: any) => {
+          if (key === 'quoteDate' || key === 'validUntilDate') {
+            return value?.toDate ? value.toDate() : (value ? new Date(value) : value);
+          }
+          return value;
+        };
+        const loadedDraft = JSON.parse(JSON.stringify(remoteDraft), fromJSON);
+        setQuote({ ...initialQuote, ...loadedDraft });
+      }
+    } else {
+      setQuote(initialQuote);
+    }
+    
     if (typeof window !== 'undefined' && document) {
         const computedColor = getComputedStyle(document.documentElement).getPropertyValue('--primary').trim();
         if (computedColor) {
            setAccentColor(`hsl(${computedColor})`);
         }
     }
-  }, []);
+  }, [draftId, remoteDraft]);
 
   const handlePrint = () => {
     window.print();
   };
   
+  const handleSaveDraft = () => {
+    if (!quote || !firestore) return;
+
+    const draftToSave = {
+      ...quote,
+      quoteDate: quote.quoteDate.toISOString(),
+      validUntilDate: quote.validUntilDate.toISOString(),
+    };
+    
+    const docRef = doc(collection(firestore, QUOTES_COLLECTION), quote.id);
+    setDocumentNonBlocking(docRef, draftToSave, { merge: true });
+
+    toast({
+      title: "Quote Draft Saved",
+      description: "Your quote draft has been saved online.",
+    });
+    router.push(`/create-quote?draftId=${quote.id}`);
+  };
+
   const handleNew = () => {
     const newQuote = getInitialQuote();
     newQuote.quoteNumber = `Q-${String(Math.floor(Math.random() * 1000)).padStart(3, '0')}`;
@@ -97,13 +146,14 @@ export default function CreateQuotePage() {
             setAccentColor(`hsl(${computedColor})`);
         }
     }
+     router.push('/create-quote');
     toast({
         title: "New Quote",
         description: "A new blank quote has been created.",
       });
   };
 
-  if (!quote) {
+  if (!quote || isDraftLoading) {
     return (
         <div className="container mx-auto p-4 md:p-8">
             <h1 className="text-3xl font-bold font-headline">Loading...</h1>
@@ -129,6 +179,10 @@ export default function CreateQuotePage() {
                   <LayoutDashboard className="mr-2 h-5 w-5" />
                   Dashboard
                 </Link>
+              </Button>
+               <Button onClick={handleSaveDraft}>
+                <Edit className="mr-2 h-5 w-5" />
+                Save Draft
               </Button>
               <Button onClick={handlePrint}>
                 <Printer className="mr-2 h-5 w-5" />

@@ -1,3 +1,4 @@
+
 {
   "entities": {
     "User": {
@@ -50,6 +51,21 @@
         "id",
         "name"
       ]
+    },
+    "Invoice": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Invoice",
+      "type": "object",
+      "description": "Represents an invoice document.",
+      "properties": {
+        "id": { "type": "string" },
+        "companyName": { "type": "string" },
+        "clientName": { "type": "string" },
+        "invoiceDate": { "type": "string", "format": "date-time" },
+        "totalAmount": { "type": "number" },
+        "status": { "type": "string", "enum": ["draft", "sent", "paid", "overdue"] }
+      },
+      "required": ["id", "companyName", "clientName", "invoiceDate", "totalAmount", "status"]
     },
     "Quote": {
       "$schema": "http://json-schema.org/draft-07/schema#",
@@ -198,6 +214,26 @@
             {
               "name": "userId",
               "description": "Unique identifier for the user."
+            }
+          ]
+        }
+      },
+      {
+        "path": "companies/{companyId}/invoices/{invoiceId}",
+        "definition": {
+          "entityName": "Invoice",
+          "schema": {
+            "$ref": "#/backend/entities/Invoice"
+          },
+          "description": "Stores invoice documents for a company.",
+          "params": [
+            {
+              "name": "companyId",
+              "description": "Unique identifier for the company."
+            },
+            {
+              "name": "invoiceId",
+              "description": "Unique identifier for the invoice."
             }
           ]
         }

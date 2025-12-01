@@ -84,6 +84,12 @@ service cloud.firestore {
     function isCompanyMember(companyId) {
       return isSignedIn() && request.auth.token.companyId == companyId;
     }
+    
+    // For development, we allow any signed-in user to read/write.
+    // In production, you'd want to tighten these rules.
+     function isUserAuthenticated() {
+        return request.auth != null;
+    }
 
     // -------------------------------------------------------------------------
     // Collection Rules
@@ -131,13 +137,9 @@ service cloud.firestore {
      * @deny (delete) A user trying to delete a quote from a company they do not belong to.
      * @principle Implements shared access within a tenant boundary, based on JWT custom claims.
      */
-    match /companies/{companyId}/quotes/{quoteId} {
-      allow get: if isCompanyMember(companyId);
-      allow list: if isCompanyMember(companyId);
-      allow create: if isCompanyMember(companyId) && request.resource.data.companyId == companyId;
-      allow update: if isCompanyMember(companyId) && isExistingDoc();
-      allow delete: if isCompanyMember(companyId) && isExistingDoc();
-    }
+     match /quotes/{quoteId} {
+        allow read, write: if isUserAuthenticated();
+     }
     
     match /invoices/{invoiceId} {
       // For now, allow anyone signed in to do anything. 
@@ -145,12 +147,6 @@ service cloud.firestore {
       allow read, write: if isSignedIn();
     }
     
-    match /quotes/{quoteId} {
-      // For now, allow anyone signed in to do anything. 
-      // We will tighten this up later.
-      allow read, write: if isSignedIn();
-    }
-
     /**
      * @description Secures the individual line items within a quote. Access rules are inherited from the company.
      * @path /companies/{companyId}/quotes/{quoteId}/items/{quoteItemId}

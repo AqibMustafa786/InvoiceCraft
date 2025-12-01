@@ -1,5 +1,5 @@
 import type { Dispatch, SetStateAction } from 'react';
-import type { InvoiceStatus } from '@/lib/types';
+import type { DocumentStatus } from '@/lib/types';
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
@@ -23,7 +23,7 @@ import { DatePicker } from "@/components/ui/datepicker";
 
 export interface DashboardFilters {
     clientName: string;
-    status: InvoiceStatus | null;
+    status: DocumentStatus | null;
     amountMin: number | null;
     amountMax: number | null;
     dateFrom: Date | null;
@@ -38,6 +38,9 @@ interface FilterSheetProps {
     onReset: () => void;
 }
 
+const STATUS_OPTIONS: DocumentStatus[] = ['draft', 'sent', 'paid', 'overdue', 'accepted', 'rejected'];
+
+
 export function FilterSheet({ open, onOpenChange, filters, onFiltersChange, onReset }: FilterSheetProps) {
     const handleReset = () => {
         onReset();
@@ -48,9 +51,9 @@ export function FilterSheet({ open, onOpenChange, filters, onFiltersChange, onRe
         <Sheet open={open} onOpenChange={onOpenChange}>
             <SheetContent>
                 <SheetHeader>
-                    <SheetTitle>Filter Invoices</SheetTitle>
+                    <SheetTitle>Filter Documents</SheetTitle>
                     <SheetDescription>
-                        Refine the list of invoices using multiple criteria.
+                        Refine the list of invoices and quotes using multiple criteria.
                     </SheetDescription>
                 </SheetHeader>
                 <div className="grid gap-6 py-6">
@@ -68,17 +71,16 @@ export function FilterSheet({ open, onOpenChange, filters, onFiltersChange, onRe
                         <Label htmlFor="filter-status">Status</Label>
                         <Select
                             value={filters.status ?? 'all'}
-                            onValueChange={(value) => onFiltersChange(f => ({ ...f, status: value === 'all' ? null : value as InvoiceStatus }))}
+                            onValueChange={(value) => onFiltersChange(f => ({ ...f, status: value === 'all' ? null : value as DocumentStatus }))}
                         >
                             <SelectTrigger id="filter-status">
                                 <SelectValue placeholder="Any Status" />
                             </SelectTrigger>
                             <SelectContent>
                                 <SelectItem value="all">Any Status</SelectItem>
-                                <SelectItem value="draft">Draft</SelectItem>
-                                <SelectItem value="sent">Sent</SelectItem>
-                                <SelectItem value="paid">Paid</SelectItem>
-                                <SelectItem value="overdue">Overdue</SelectItem>
+                                {STATUS_OPTIONS.map(status => (
+                                    <SelectItem key={status} value={status} className="capitalize">{status}</SelectItem>
+                                ))}
                             </SelectContent>
                         </Select>
                     </div>

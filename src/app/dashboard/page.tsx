@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useMemo, useCallback } from 'react';
-import type { Invoice, InvoiceStatus } from '@/lib/types';
+import type { Invoice, Quote, DocumentStatus } from '@/lib/types';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -21,18 +21,20 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { FilePlus2, Edit, Trash2, Filter, X, MoreHorizontal } from "lucide-react";
+import { FilePlus2, Edit, Trash2, Filter, X, MoreHorizontal, FileText } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from 'next/navigation';
 import { format, isWithinInterval } from 'date-fns';
 import { FilterSheet, type DashboardFilters } from '@/components/dashboard/filter-sheet';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
 import { useFirebase } from '@/firebase/provider';
 import { useCollection } from '@/firebase/firestore/use-collection';
-import { collection, doc } from 'firebase/firestore';
+import { collection, doc, addDoc } from 'firebase/firestore';
 import { deleteDocumentNonBlocking, updateDocumentNonBlocking } from '@/firebase';
 
-const DRAFTS_COLLECTION = 'invoices';
+const INVOICES_COLLECTION = 'invoices';
+const QUOTES_COLLECTION = 'quotes';
 
 const initialFilters: DashboardFilters = {
     clientName: '',
@@ -43,7 +45,7 @@ const initialFilters: DashboardFilters = {
     dateTo: null,
 };
 
-const STATUS_OPTIONS: InvoiceStatus[] = ['draft', 'sent', 'paid', 'overdue'];
+const STATUS_OPTIONS: DocumentStatus[] = ['draft', 'sent', 'paid', 'overdue', 'accepted', 'rejected'];
 
 const currencySymbols: { [key: string]: string } = {
     USD: '$',
@@ -53,95 +55,150 @@ const currencySymbols: { [key: string]: string } = {
     PKR: '₨',
 };
 
+type DocumentType = Invoice | Quote;
 
 export default function DashboardPage() {
-    const [deleteCandidateId, setDeleteCandidateId] = useState<string | null>(null);
+    const [deleteCandidate, setDeleteCandidate] = useState<{ id: string; collection: string } | null>(null);
     const [filters, setFilters] = useState<DashboardFilters>(initialFilters);
     const [isFilterSheetOpen, setIsFilterSheetOpen] = useState(false);
     const { toast } = useToast();
     const { firestore, user } = useFirebase();
+    const router = useRouter();
 
-    const draftsQuery = useMemo(() => {
+    const invoicesQuery = useMemo(() => {
         if (!firestore) return null;
-        // In a real app with auth, you would scope this query:
-        // query(collection(firestore, DRAFTS_COLLECTION), where("userId", "==", user.uid))
-        return collection(firestore, DRAFTS_COLLECTION);
+        return collection(firestore, INVOICES_COLLECTION);
     }, [firestore, user]);
 
-    const { data: drafts, isLoading } = useCollection<Invoice>(draftsQuery);
+    const quotesQuery = useMemo(() => {
+        if (!firestore) return null;
+        return collection(firestore, QUOTES_COLLECTION);
+    }, [firestore, user]);
 
-    const calculateTotal = useCallback((invoice: Invoice): number => {
-        const subtotal = invoice.items.reduce((acc, item) => acc + item.quantity * item.rate, 0);
-        const taxAmount = (subtotal * invoice.tax) / 100;
-        const discountAmount = (subtotal * invoice.discount) / 100;
-        return subtotal + taxAmount - discountAmount;
+    const { data: invoices, isLoading: isLoadingInvoices } = useCollection<Invoice>(invoicesQuery);
+    const { data: quotes, isLoading: isLoadingQuotes } = useCollection<Quote>(quotesQuery);
+
+    const calculateTotal = useCallback((doc: DocumentType): number => {
+        const subtotal = doc.items.reduce((acc, item) => acc + item.quantity * item.rate, 0);
+        const taxAmount = (subtotal * doc.tax) / 100;
+        const discountAmount = (subtotal * doc.discount) / 100;
+        return subtotal + taxAmount - discountAmount + (doc.shippingCost || 0);
     }, []);
 
-    const handleDelete = (invoiceId: string) => {
-        if (!firestore) return;
-        const docRef = doc(firestore, DRAFTS_COLLECTION, invoiceId);
+    const handleDelete = () => {
+        if (!deleteCandidate || !firestore) return;
+        const { id, collection } = deleteCandidate;
+        const docRef = doc(firestore, collection, id);
         deleteDocumentNonBlocking(docRef);
-        setDeleteCandidateId(null);
+        setDeleteCandidate(null);
         toast({
-            title: "Draft Deleted",
-            description: "The invoice draft has been deleted.",
+            title: "Document Deleted",
+            description: `The ${collection === 'invoices' ? 'invoice' : 'quote'} has been deleted.`,
         });
     };
 
-    const handleStatusChange = (invoiceId: string, newStatus: InvoiceStatus) => {
+    const handleStatusChange = (id: string, collection: string, newStatus: DocumentStatus) => {
         if (!firestore) return;
-        const docRef = doc(firestore, DRAFTS_COLLECTION, invoiceId);
+        const docRef = doc(firestore, collection, id);
         updateDocumentNonBlocking(docRef, { status: newStatus });
         toast({
             title: "Status Updated",
-            description: `Invoice status changed to "${newStatus}".`,
+            description: `Document status changed to "${newStatus}".`,
         });
     };
+    
+    const handleConvertToInvoice = async (quote: Quote) => {
+        if (!firestore) return;
+        const { id, quoteNumber, quoteDate, ...restOfQuote } = quote;
+
+        const newInvoice: Omit<Invoice, 'id'> = {
+            ...restOfQuote,
+            invoiceNumber: `INV-${quoteNumber.replace('QUO-', '')}`,
+            invoiceDate: new Date(),
+            dueDate: new Date(new Date().setDate(new Date().getDate() + 30)),
+            status: 'draft',
+            documentType: 'invoice',
+            poNumber: '',
+            trackingNumber: '',
+            amountPaid: 0,
+            paymentInstructions: 'Thank you for your business.',
+        };
+        
+        try {
+            const newDocRef = await addDoc(collection(firestore, INVOICES_COLLECTION), newInvoice);
+            toast({
+                title: 'Invoice Created',
+                description: `Quote ${quote.quoteNumber} has been converted to an invoice.`
+            });
+            router.push(`/create?draftId=${newDocRef.id}`);
+        } catch (error) {
+            console.error("Error converting quote to invoice:", error);
+            toast({
+                title: 'Conversion Failed',
+                description: 'Could not convert the quote to an invoice.',
+                variant: 'destructive'
+            });
+        }
+    };
+
 
     const resetFilters = useCallback(() => {
         setFilters(initialFilters);
     }, []);
 
-    const filteredAndSortedDrafts = useMemo(() => {
+    const combinedDocuments = useMemo(() => {
+        const allDocs: DocumentType[] = [];
+        if (invoices) allDocs.push(...invoices);
+        if (quotes) allDocs.push(...quotes);
+        
         const fromJSON = (key: string, value: any) => {
-            if (key === 'invoiceDate' || key === 'dueDate') {
-                // Firestore timestamps need to be converted to Date objects
+             if (key === 'invoiceDate' || key === 'dueDate' || key === 'quoteDate' || key === 'validUntilDate') {
                 return value?.toDate ? value.toDate() : new Date(value);
             }
             return value;
         };
-        const parsedDrafts = drafts ? JSON.parse(JSON.stringify(drafts), fromJSON) as Invoice[] : [];
 
-        return parsedDrafts
-            .filter(draft => {
-                const total = calculateTotal(draft);
-                const clientNameMatch = filters.clientName ? draft.clientName.toLowerCase().includes(filters.clientName.toLowerCase()) : true;
-                const statusMatch = filters.status ? draft.status === filters.status : true;
+        return (JSON.parse(JSON.stringify(allDocs), fromJSON) as DocumentType[])
+            .filter(doc => {
+                const total = calculateTotal(doc);
+                const date = doc.documentType === 'invoice' ? (doc as Invoice).invoiceDate : (doc as Quote).quoteDate;
+                const clientNameMatch = filters.clientName ? doc.clientName.toLowerCase().includes(filters.clientName.toLowerCase()) : true;
+                const statusMatch = filters.status ? doc.status === filters.status : true;
                 const amountMinMatch = filters.amountMin !== null ? total >= filters.amountMin : true;
                 const amountMaxMatch = filters.amountMax !== null ? total <= filters.amountMax : true;
-                const dateMatch = (filters.dateFrom && filters.dateTo) ? isWithinInterval(new Date(draft.invoiceDate), { start: filters.dateFrom, end: filters.dateTo })
-                                : filters.dateFrom ? new Date(draft.invoiceDate) >= filters.dateFrom
-                                : filters.dateTo ? new Date(draft.invoiceDate) <= filters.dateTo
+                const dateMatch = (filters.dateFrom && filters.dateTo) ? isWithinInterval(new Date(date), { start: filters.dateFrom, end: filters.dateTo })
+                                : filters.dateFrom ? new Date(date) >= filters.dateFrom
+                                : filters.dateTo ? new Date(date) <= filters.dateTo
                                 : true;
                 return clientNameMatch && statusMatch && amountMinMatch && amountMaxMatch && dateMatch;
             })
-            .sort((a, b) => new Date(b.invoiceDate).getTime() - new Date(a.invoiceDate).getTime());
-    }, [drafts, filters, calculateTotal]);
+            .sort((a, b) => {
+                const dateA = a.documentType === 'invoice' ? (a as Invoice).invoiceDate : (a as Quote).quoteDate;
+                const dateB = b.documentType === 'invoice' ? (b as Invoice).invoiceDate : (b as Quote).quoteDate;
+                return new Date(dateB).getTime() - new Date(dateA).getTime();
+            });
+    }, [invoices, quotes, filters, calculateTotal]);
 
     const activeFilterCount = useMemo(() => {
         return Object.values(filters).filter(v => v !== null && v !== '').length;
     }, [filters]);
 
-    const getStatusVariant = (status: InvoiceStatus) => {
+    const getStatusVariant = (status: DocumentStatus) => {
         switch (status) {
-            case 'paid': return 'success';
+            case 'paid':
+            case 'accepted':
+                 return 'success';
             case 'sent': return 'secondary';
-            case 'overdue': return 'destructive';
+            case 'overdue':
+            case 'rejected':
+                return 'destructive';
             case 'draft':
             default: return 'outline';
         }
     };
     
+    const isLoading = isLoadingInvoices || isLoadingQuotes;
+
     return (
         <div className="container mx-auto p-4 md:p-8">
             <FilterSheet
@@ -152,17 +209,17 @@ export default function DashboardPage() {
                 onReset={resetFilters}
             />
 
-            <AlertDialog open={deleteCandidateId !== null} onOpenChange={(open) => !open && setDeleteCandidateId(null)}>
+            <AlertDialog open={deleteCandidate !== null} onOpenChange={(open) => !open && setDeleteCandidate(null)}>
                 <AlertDialogContent>
                     <AlertDialogHeader>
                         <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
                         <AlertDialogDescription>
-                            This action cannot be undone. This will permanently delete your invoice draft from Firestore.
+                            This action cannot be undone. This will permanently delete this document.
                         </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
-                        <AlertDialogCancel onClick={() => setDeleteCandidateId(null)}>Cancel</AlertDialogCancel>
-                        <AlertDialogAction onClick={() => handleDelete(deleteCandidateId!)}>Delete</AlertDialogAction>
+                        <AlertDialogCancel onClick={() => setDeleteCandidate(null)}>Cancel</AlertDialogCancel>
+                        <AlertDialogAction onClick={handleDelete}>Delete</AlertDialogAction>
                     </AlertDialogFooter>
                 </AlertDialogContent>
             </AlertDialog>
@@ -170,20 +227,28 @@ export default function DashboardPage() {
             <div className="flex justify-between items-center mb-8 gap-4 flex-wrap">
                 <div>
                     <h1 className="text-3xl font-bold font-headline">Dashboard</h1>
-                    <p className="text-muted-foreground">Manage your invoice drafts here.</p>
+                    <p className="text-muted-foreground">Manage your invoices and quotes here.</p>
                 </div>
-                <Button asChild>
-                    <Link href="/create">
-                        <FilePlus2 className="mr-2 h-4 w-4" />
-                        New Invoice
-                    </Link>
-                </Button>
+                <div className="flex gap-2">
+                    <Button asChild>
+                        <Link href="/create">
+                            <FilePlus2 className="mr-2 h-4 w-4" />
+                            New Invoice
+                        </Link>
+                    </Button>
+                     <Button asChild variant="outline">
+                        <Link href="/create-quote">
+                            <FilePlus2 className="mr-2 h-4 w-4" />
+                            New Quote
+                        </Link>
+                    </Button>
+                </div>
             </div>
             
             <Card>
                 <CardHeader>
-                    <CardTitle>My Drafts</CardTitle>
-                    <CardDescription>A list of your saved invoice drafts from Firestore.</CardDescription>
+                    <CardTitle>My Documents</CardTitle>
+                    <CardDescription>A list of your saved invoices and quotes from Firestore.</CardDescription>
                 </CardHeader>
                 <CardContent>
                     <div className="flex justify-between items-center mb-4 gap-2 flex-wrap">
@@ -216,7 +281,8 @@ export default function DashboardPage() {
                         <Table>
                             <TableHeader>
                                 <TableRow>
-                                    <TableHead>Invoice #</TableHead>
+                                    <TableHead>Type</TableHead>
+                                    <TableHead>Number</TableHead>
                                     <TableHead>Client</TableHead>
                                     <TableHead>Amount</TableHead>
                                     <TableHead>Status</TableHead>
@@ -227,28 +293,35 @@ export default function DashboardPage() {
                             <TableBody>
                                 {isLoading ? (
                                     <TableRow>
-                                        <TableCell colSpan={6} className="text-center h-24">
-                                            Loading drafts...
+                                        <TableCell colSpan={7} className="text-center h-24">
+                                            Loading documents...
                                         </TableCell>
                                     </TableRow>
-                                ) : filteredAndSortedDrafts.length > 0 ? filteredAndSortedDrafts.map((invoice) => (
-                                    <TableRow key={invoice.id}>
-                                        <TableCell className="font-medium">{invoice.invoiceNumber}</TableCell>
-                                        <TableCell>{invoice.clientName}</TableCell>
-                                        <TableCell>{currencySymbols[invoice.currency] || '$'}{calculateTotal(invoice).toFixed(2)}</TableCell>
+                                ) : combinedDocuments.length > 0 ? combinedDocuments.map((doc) => {
+                                    const isInvoice = doc.documentType === 'invoice';
+                                    const docNumber = isInvoice ? (doc as Invoice).invoiceNumber : (doc as Quote).quoteNumber;
+                                    const docDate = isInvoice ? (doc as Invoice).invoiceDate : (doc as Quote).quoteDate;
+                                    const docCollection = isInvoice ? INVOICES_COLLECTION : QUOTES_COLLECTION;
+
+                                    return (
+                                    <TableRow key={doc.id}>
+                                        <TableCell><Badge variant={isInvoice ? 'secondary' : 'outline'}>{doc.documentType}</Badge></TableCell>
+                                        <TableCell className="font-medium">{docNumber}</TableCell>
+                                        <TableCell>{doc.clientName}</TableCell>
+                                        <TableCell>{currencySymbols[doc.currency] || '$'}{calculateTotal(doc).toFixed(2)}</TableCell>
                                         <TableCell>
                                              <DropdownMenu>
                                                 <DropdownMenuTrigger asChild>
                                                     <Button variant="outline" className="capitalize w-28 justify-start">
-                                                        <Badge variant={getStatusVariant(invoice.status)} className="w-full justify-center">{invoice.status}</Badge>
+                                                        <Badge variant={getStatusVariant(doc.status)} className="w-full justify-center">{doc.status}</Badge>
                                                     </Button>
                                                 </DropdownMenuTrigger>
                                                 <DropdownMenuContent align="start">
                                                     {STATUS_OPTIONS.map(status => (
                                                         <DropdownMenuItem
                                                             key={status}
-                                                            disabled={invoice.status === status}
-                                                            onClick={() => handleStatusChange(invoice.id, status)}
+                                                            disabled={doc.status === status}
+                                                            onClick={() => handleStatusChange(doc.id, docCollection, status)}
                                                             className="capitalize"
                                                         >
                                                             {status}
@@ -257,7 +330,7 @@ export default function DashboardPage() {
                                                 </DropdownMenuContent>
                                             </DropdownMenu>
                                         </TableCell>
-                                        <TableCell>{format(new Date(invoice.invoiceDate), 'yyyy-MM-dd')}</TableCell>
+                                        <TableCell>{format(new Date(docDate), 'yyyy-MM-dd')}</TableCell>
                                         <TableCell className="text-right">
                                             <DropdownMenu>
                                                 <DropdownMenuTrigger asChild>
@@ -268,12 +341,18 @@ export default function DashboardPage() {
                                                 </DropdownMenuTrigger>
                                                 <DropdownMenuContent align="end">
                                                      <DropdownMenuItem asChild>
-                                                        <Link href={`/create?draftId=${invoice.id}`} className="cursor-pointer">
+                                                        <Link href={`/${isInvoice ? 'create' : 'create-quote'}?draftId=${doc.id}`} className="cursor-pointer">
                                                             <Edit className="mr-2 h-4 w-4" />
                                                             <span>Edit</span>
                                                         </Link>
                                                     </DropdownMenuItem>
-                                                    <DropdownMenuItem onClick={() => setDeleteCandidateId(invoice.id)} className="text-destructive cursor-pointer">
+                                                    {!isInvoice && (
+                                                         <DropdownMenuItem onClick={() => handleConvertToInvoice(doc as Quote)} className="cursor-pointer">
+                                                            <FileText className="mr-2 h-4 w-4" />
+                                                            <span>Convert to Invoice</span>
+                                                        </DropdownMenuItem>
+                                                    )}
+                                                    <DropdownMenuItem onClick={() => setDeleteCandidate({id: doc.id, collection: docCollection})} className="text-destructive cursor-pointer">
                                                         <Trash2 className="mr-2 h-4 w-4" />
                                                         <span>Delete</span>
                                                     </DropdownMenuItem>
@@ -281,10 +360,11 @@ export default function DashboardPage() {
                                             </DropdownMenu>
                                         </TableCell>
                                     </TableRow>
-                                )) : (
+                                    )
+                                }) : (
                                     <TableRow>
-                                        <TableCell colSpan={6} className="text-center h-24">
-                                            No drafts found. Create one!
+                                        <TableCell colSpan={7} className="text-center h-24">
+                                            No documents found. Create one!
                                         </TableCell>
                                     </TableRow>
                                 )}

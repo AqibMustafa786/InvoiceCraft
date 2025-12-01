@@ -17,6 +17,8 @@ import { collection, doc } from 'firebase/firestore';
 import { setDocumentNonBlocking } from '@/firebase/non-blocking-updates';
 import { useDoc } from '@/firebase/firestore/use-doc';
 
+const INVOICES_COLLECTION = 'invoices';
+
 const getInitialLineItem = () => ({ id: crypto.randomUUID(), name: '', quantity: 1, rate: 0 });
 
 const getInitialInvoice = (): Invoice => ({
@@ -43,6 +45,7 @@ const getInitialInvoice = (): Invoice => ({
   currency: 'USD',
   language: 'en',
   template: 'default',
+  documentType: 'invoice',
 });
 
 const DRAFTS_COLLECTION = 'invoices';
@@ -86,7 +89,7 @@ export default function CreateInvoicePage() {
     if (draftId) {
       if (remoteDraft) {
         const fromJSON = (key: string, value: any) => {
-          if (key === 'invoiceDate' || key === 'dueDate') {
+          if (key === 'invoiceDate' || key === 'dueDate' || key === 'quoteDate' || key === 'validUntilDate') {
             return value?.toDate ? value.toDate() : (value ? new Date(value) : value);
           }
           return value;

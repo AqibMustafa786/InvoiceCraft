@@ -1,4 +1,5 @@
 
+
 export interface LineItem {
   id: string;
   name: string;
@@ -6,7 +7,7 @@ export interface LineItem {
   rate: number;
 }
 
-export type InvoiceStatus = 'draft' | 'sent' | 'paid' | 'overdue';
+export type DocumentStatus = 'draft' | 'sent' | 'paid' | 'overdue' | 'accepted' | 'rejected';
 
 export interface Invoice {
   id: string; 
@@ -28,10 +29,11 @@ export interface Invoice {
   shippingCost: number;
   amountPaid: number;
   paymentInstructions: string;
-  status: InvoiceStatus;
+  status: DocumentStatus;
   currency: string;
   language: string;
   template: string;
+  documentType: 'invoice';
 }
 
 export interface InsuranceDocument {
@@ -125,7 +127,9 @@ export interface Quote {
   notes: string; // Terms & Conditions
   
   // Settings
+  status: DocumentStatus;
   currency: string;
   language: string;
   template: string;
+  documentType: 'quote';
 }
