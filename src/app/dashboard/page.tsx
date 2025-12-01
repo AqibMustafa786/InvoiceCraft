@@ -86,10 +86,16 @@ export default function DashboardPage() {
     const { data: quotes, isLoading: isLoadingQuotes } = useCollection<Quote>(quotesQuery);
 
     const calculateTotal = useCallback((doc: DocumentType): number => {
-        const subtotal = doc.items.reduce((acc, item) => acc + item.quantity * item.rate, 0);
-        const taxAmount = (subtotal * doc.tax) / 100;
-        const discountAmount = (subtotal * doc.discount) / 100;
-        return subtotal + taxAmount - discountAmount + (doc.shippingCost || 0);
+        if (doc.documentType === 'invoice') {
+            const invoice = doc as Invoice;
+            const subtotal = invoice.items.reduce((acc, item) => acc + item.quantity * (item as any).rate, 0);
+            const taxAmount = (subtotal * invoice.tax) / 100;
+            const discountAmount = (subtotal * invoice.discount) / 100;
+            return subtotal + taxAmount - discountAmount + (invoice.shippingCost || 0);
+        } else {
+            const quote = doc as Quote;
+            return quote.summary.grandTotal;
+        }
     }, []);
 
     const handleDelete = () => {
@@ -117,17 +123,29 @@ export default function DashboardPage() {
     const handleConvertToInvoice = async (quote: Quote) => {
         if (!firestore || !user) return;
         
-        // Destructure quote to exclude quote-specific fields and prepare for invoice creation
-        const { id, quoteNumber, quoteDate, validUntilDate, documentType, ...restOfQuote } = quote;
+        const { business, client, lineItems, summary, projectTitle, currency, language } = quote;
 
         const newInvoiceData: Omit<Invoice, 'id' | 'userId'> = {
-            ...restOfQuote,
-            invoiceNumber: `INV-${quoteNumber.replace('QUO-', '')}`,
+            companyName: business.name,
+            companyPhone: business.phone,
+            companyAddress: business.address,
+            clientName: client.name,
+            clientAddress: client.address,
+            clientEmail: client.email,
+            invoiceNumber: `INV-${quote.quoteNumber.replace('QUO-', '')}`,
             invoiceDate: new Date(),
             dueDate: new Date(new Date().setDate(new Date().getDate() + 30)),
+            items: lineItems.map(item => ({...item, rate: item.unitPrice})),
+            tax: summary.taxPercentage,
+            discount: summary.discount, // This might need adjustment if discount is fixed vs percentage
+            shippingCost: summary.shippingCost,
             status: 'draft',
             documentType: 'invoice',
-            poNumber: '',
+            currency: currency,
+            language: language,
+            template: 'default', // default invoice template
+            shippingAddress: client.address, // Default to client address
+            poNumber: quote.referenceNumber,
             trackingNumber: '',
             amountPaid: 0,
             paymentInstructions: 'Thank you for your business. Please make payment to the details provided below.',
@@ -234,7 +252,7 @@ export default function DashboardPage() {
     
     const isLoading = isUserLoading || isLoadingInvoices || isLoadingQuotes;
 
-    if (isUserLoading || !user) {
+    if (isUserLoading) {
         return (
             <div className="container mx-auto p-4 md:p-8">
                 <h1 className="text-3xl font-bold font-headline">Loading Dashboard...</h1>
@@ -343,6 +361,7 @@ export default function DashboardPage() {
                                 ) : combinedDocuments.length > 0 ? combinedDocuments.map((doc) => {
                                     const isInvoice = doc.documentType === 'invoice';
                                     const docNumber = isInvoice ? (doc as Invoice).invoiceNumber : (doc as Quote).quoteNumber;
+                                    const clientName = isInvoice ? (doc as Invoice).clientName : (doc as Quote).client.name;
                                     let docDate;
                                     if (isInvoice) {
                                       docDate = (doc as Invoice).invoiceDate;
@@ -355,7 +374,7 @@ export default function DashboardPage() {
                                     <TableRow key={doc.id}>
                                         <TableCell><Badge variant={isInvoice ? 'secondary' : 'outline'}>{doc.documentType}</Badge></TableCell>
                                         <TableCell className="font-medium">{docNumber}</TableCell>
-                                        <TableCell>{doc.clientName}</TableCell>
+                                        <TableCell>{clientName}</TableCell>
                                         <TableCell>{currencySymbols[doc.currency] || '$'}{calculateTotal(doc).toFixed(2)}</TableCell>
                                         <TableCell>
                                              <DropdownMenu>
