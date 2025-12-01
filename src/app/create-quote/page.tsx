@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { createPortal } from 'react-dom';
 import type { Quote, LineItem } from '@/lib/types';
 import { QuoteForm } from '@/components/quote-form';
@@ -12,7 +12,7 @@ import { addDays } from 'date-fns';
 import { useToast } from '@/hooks/use-toast';
 import { QuoteTemplateSelector } from '@/components/quote-template-selector';
 import Link from 'next/link';
-import { useFirebase } from '@/firebase/provider';
+import { useFirebase, useMemoFirebase } from '@/firebase/provider';
 import { doc, collection } from 'firebase/firestore';
 import { setDocumentNonBlocking } from '@/firebase/non-blocking-updates';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -97,7 +97,7 @@ export default function CreateQuotePage() {
   const searchParams = useSearchParams();
 
   const draftId = searchParams.get('draftId');
-  const docRef = draftId && firestore ? doc(firestore, QUOTES_COLLECTION, draftId) : null;
+  const docRef = useMemoFirebase(() => draftId && firestore ? doc(firestore, QUOTES_COLLECTION, draftId) : null, [draftId, firestore]);
   const { data: remoteDraft, isLoading: isDraftLoading } = useDoc<Quote>(docRef);
 
   useEffect(() => {

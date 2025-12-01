@@ -1,8 +1,9 @@
+
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { doc } from 'firebase/firestore';
-import { useFirebase, useDoc } from '@/firebase';
+import { useFirebase, useDoc, useMemoFirebase } from '@/firebase';
 import type { Quote } from '@/lib/types';
 import { QuotePreview } from '@/components/quote-preview';
 import { Button } from '@/components/ui/button';
@@ -13,7 +14,7 @@ export default function PublicQuotePage({ params }: { params: { quoteId: string 
     const { firestore } = useFirebase();
     const [accentColor, setAccentColor] = useState('hsl(var(--primary))');
     
-    const quoteRef = doc(firestore, 'quotes', params.quoteId);
+    const quoteRef = useMemoFirebase(() => firestore ? doc(firestore, 'quotes', params.quoteId) : null, [firestore, params.quoteId]);
     const { data: quote, isLoading, error } = useDoc<Quote>(quoteRef);
 
     useEffect(() => {
@@ -57,7 +58,6 @@ export default function PublicQuotePage({ params }: { params: { quoteId: string 
                 </Button>
                 <QuotePreview 
                     quote={loadedQuote} 
-                    logoUrl={null} // We don't have a secure way to fetch logos for public pages yet
                     accentColor={accentColor} 
                 />
             </div>

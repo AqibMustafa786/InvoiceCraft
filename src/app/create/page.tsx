@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { createPortal } from 'react-dom';
 import type { Invoice } from '@/lib/types';
 import { InvoiceForm } from '@/components/invoice-form';
@@ -13,7 +13,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { TemplateSelector } from '@/components/template-selector';
-import { useFirebase } from '@/firebase';
+import { useFirebase, useMemoFirebase } from '@/firebase';
 import { collection, doc } from 'firebase/firestore';
 import { setDocumentNonBlocking } from '@/firebase/non-blocking-updates';
 import { useDoc } from '@/firebase/firestore/use-doc';
@@ -80,7 +80,7 @@ export default function CreateInvoicePage() {
   const { firestore, user } = useFirebase();
 
   const draftId = searchParams.get('draftId');
-  const docRef = draftId && firestore ? doc(firestore, DRAFTS_COLLECTION, draftId) : null;
+  const docRef = useMemoFirebase(() => draftId && firestore ? doc(firestore, DRAFTS_COLLECTION, draftId) : null, [draftId, firestore]);
   const { data: remoteDraft, isLoading: isDraftLoading } = useDoc<Invoice>(docRef);
 
   useEffect(() => {
