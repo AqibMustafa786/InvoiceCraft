@@ -21,7 +21,7 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { FilePlus2, Edit, Trash2, Filter, X, MoreHorizontal, FileText } from "lucide-react";
+import { FilePlus2, Edit, Trash2, Filter, X, MoreHorizontal, FileText, Share2 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from 'next/navigation';
 import { format, isWithinInterval } from 'date-fns';
@@ -148,12 +148,22 @@ export default function DashboardPage() {
         }
     };
 
+    const handleShare = (docId: string) => {
+        const url = `${window.location.origin}/quote/${docId}`;
+        navigator.clipboard.writeText(url);
+        toast({
+            title: "Link Copied!",
+            description: "The shareable link has been copied to your clipboard.",
+        });
+    };
+
 
     const resetFilters = useCallback(() => {
         setFilters(initialFilters);
     }, []);
 
     const combinedDocuments = useMemo(() => {
+        if (!user) return [];
         const allDocs: DocumentType[] = [];
         if (invoices) allDocs.push(...invoices);
         if (quotes) allDocs.push(...quotes);
@@ -184,7 +194,7 @@ export default function DashboardPage() {
                 const dateB = b.documentType === 'invoice' ? (b as Invoice).invoiceDate : (b as Quote).quoteDate;
                 return new Date(dateB).getTime() - new Date(dateA).getTime();
             });
-    }, [invoices, quotes, filters, calculateTotal]);
+    }, [invoices, quotes, filters, calculateTotal, user]);
 
     const activeFilterCount = useMemo(() => {
         return Object.values(filters).filter(v => v !== null && v !== '').length;
@@ -205,6 +215,14 @@ export default function DashboardPage() {
     };
     
     const isLoading = isUserLoading || isLoadingInvoices || isLoadingQuotes;
+
+    if (isUserLoading || !user) {
+        return (
+            <div className="container mx-auto p-4 md:p-8">
+                <h1 className="text-3xl font-bold font-headline">Loading Dashboard...</h1>
+            </div>
+        )
+    }
 
     return (
         <div className="container mx-auto p-4 md:p-8">
@@ -354,10 +372,16 @@ export default function DashboardPage() {
                                                         </Link>
                                                     </DropdownMenuItem>
                                                     {!isInvoice && (
-                                                         <DropdownMenuItem onClick={() => handleConvertToInvoice(doc as Quote)} className="cursor-pointer">
-                                                            <FileText className="mr-2 h-4 w-4" />
-                                                            <span>Convert to Invoice</span>
-                                                        </DropdownMenuItem>
+                                                        <>
+                                                            <DropdownMenuItem onClick={() => handleShare(doc.id)} className="cursor-pointer">
+                                                                <Share2 className="mr-2 h-4 w-4" />
+                                                                <span>Share Link</span>
+                                                            </DropdownMenuItem>
+                                                            <DropdownMenuItem onClick={() => handleConvertToInvoice(doc as Quote)} className="cursor-pointer">
+                                                                <FileText className="mr-2 h-4 w-4" />
+                                                                <span>Convert to Invoice</span>
+                                                            </DropdownMenuItem>
+                                                        </>
                                                     )}
                                                     <DropdownMenuItem onClick={() => setDeleteCandidate({id: doc.id, collection: docCollection})} className="text-destructive cursor-pointer">
                                                         <Trash2 className="mr-2 h-4 w-4" />

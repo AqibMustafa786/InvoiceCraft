@@ -129,8 +129,9 @@ service cloud.firestore {
     }
      
     match /quotes/{quoteId} {
-        allow read, write: if isSignedIn() && resource.data.userId == request.auth.uid;
-        allow create: if isSignedIn() && request.resource.data.userId == request.auth.uid;
+        allow get: if true; // Public read access for shared links
+        allow list: if false; // No one can list all quotes
+        allow create, update, delete: if isSignedIn() && request.auth.uid == request.resource.data.userId;
     }
     
     match /invoices/{invoiceId} {
