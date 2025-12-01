@@ -300,7 +300,7 @@ export function QuotePreview({ quote, accentColor, id = 'quote-preview', isPrint
   }
 
   return (
-    <Card id={id} className="w-full shadow-lg rounded-xl overflow-hidden print-hide bg-card" style={previewStyle}>
+    <Card id={id} className="w-full shadow-lg rounded-xl overflow-hidden print-hide bg-card/50 backdrop-blur-sm" style={previewStyle}>
       <CardContent className="p-0">
         {renderContent()}
       </CardContent>
