@@ -130,12 +130,13 @@ service cloud.firestore {
      
     match /quotes/{quoteId} {
         allow get: if true; // Public read access for shared links
-        allow list: if false; // No one can list all quotes
+        allow list: if isSignedIn() && request.query.where.userId == request.auth.uid;
         allow create, update, delete: if isSignedIn() && request.auth.uid == request.resource.data.userId;
     }
     
     match /invoices/{invoiceId} {
         allow read, write: if isSignedIn() && resource.data.userId == request.auth.uid;
+        allow list: if isSignedIn() && request.query.where.userId == request.auth.uid;
         allow create: if isSignedIn() && request.resource.data.userId == request.auth.uid;
     }
     
