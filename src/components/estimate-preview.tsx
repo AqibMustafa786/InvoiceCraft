@@ -23,8 +23,9 @@ const currencySymbols: { [key: string]: string } = {
     PKR: '₨',
 };
 
-const safeFormat = (date: Date | string | number, formatString: string) => {
-    const d = new Date(date || new Date());
+const safeFormat = (date: Date | string | number | undefined, formatString: string) => {
+    if (!date) return 'N/A';
+    const d = new Date(date);
     if (!isValid(d)) return "Invalid Date";
     return format(d, formatString);
 }
@@ -72,11 +73,11 @@ const DefaultEstimateTemplate = ({ estimate, accentColor }: { estimate: Estimate
                     </div>
                     <div className="space-y-1 mt-2">
                         <p className="text-sm font-semibold text-gray-500">Estimate Date</p>
-                        <p>{safeFormat(new Date(estimate.estimateDate || new Date()), 'MMMM d, yyyy')}</p>
+                        <p>{safeFormat(estimate.estimateDate, 'MMMM d, yyyy')}</p>
                     </div>
                     <div className="space-y-1 mt-2">
                         <p className="text-sm font-semibold text-gray-500">Valid Until</p>
-                        <p>{safeFormat(new Date(estimate.validUntilDate || new Date()), 'MMMM d, yyyy')}</p>
+                        <p>{safeFormat(estimate.validUntilDate, 'MMMM d, yyyy')}</p>
                     </div>
                     {estimate.referenceNumber && (
                         <div className="space-y-1 mt-2">
@@ -149,18 +150,6 @@ const DefaultEstimateTemplate = ({ estimate, accentColor }: { estimate: Estimate
                         <p className="text-sm text-muted-foreground mt-1 whitespace-pre-line">{estimate.termsAndConditions}</p>
                     </div>
                 )}
-                {estimate.signatureRequired && (
-                    <div className="grid grid-cols-2 gap-16 pt-8 border-t">
-                        <div>
-                            <div className="h-12 border-b"></div>
-                            <p className="text-sm text-center mt-2">Client Signature</p>
-                        </div>
-                         <div>
-                            <div className="h-12 border-b"></div>
-                            <p className="text-sm text-center mt-2">Agent Signature</p>
-                        </div>
-                    </div>
-                )}
             </footer>
         </div>
     );
@@ -189,8 +178,8 @@ const ContractorEstimateTemplate = ({ estimate, accentColor }: { estimate: Estim
                     <h2 className="text-5xl font-light uppercase text-gray-400 tracking-wider">Estimate</h2>
                     <div className="mt-4 text-xs space-y-1">
                         <p><span className="font-bold text-gray-500">Estimate #:</span> {estimate.estimateNumber}</p>
-                        <p><span className="font-bold text-gray-500">Date:</span> {safeFormat(new Date(estimate.estimateDate || new Date()), 'M/d/yyyy')}</p>
-                        <p><span className="font-bold text-gray-500">Valid Until:</span> {safeFormat(new Date(estimate.validUntilDate || new Date()), 'M/d/yyyy')}</p>
+                        <p><span className="font-bold text-gray-500">Date:</span> {safeFormat(estimate.estimateDate, 'M/d/yyyy')}</p>
+                        <p><span className="font-bold text-gray-500">Valid Until:</span> {safeFormat(estimate.validUntilDate, 'M/d/yyyy')}</p>
                     </div>
                 </div>
             </header>
@@ -253,12 +242,6 @@ const ContractorEstimateTemplate = ({ estimate, accentColor }: { estimate: Estim
                     <div className="text-xs text-gray-500 border-t pt-6 mb-8">
                         <h4 className="font-bold text-sm text-gray-600 mb-2">Terms & Conditions</h4>
                         <p className="whitespace-pre-line">{estimate.termsAndConditions}</p>
-                    </div>
-                )}
-                {estimate.signatureRequired && (
-                    <div className="mt-16 text-xs text-gray-500 text-center">
-                        <p>Thank you for the opportunity to estimate this project.</p>
-                        <p className="mt-4 font-bold">Client Signature: _________________________ Date: __________</p>
                     </div>
                 )}
             </footer>

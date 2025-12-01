@@ -2,26 +2,26 @@
 
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { createPortal } from 'react-dom';
 import type { Estimate, LineItem } from '@/lib/types';
 import { EstimateForm } from '@/components/estimate-form';
 import { EstimatePreview } from '@/components/estimate-preview';
 import { Button } from '@/components/ui/button';
-import { Printer, FilePlus, LayoutDashboard, Edit } from 'lucide-react';
-import { addDays } from 'date-fns';
+import { Printer, FilePlus, LayoutDashboard, Edit, Share2 } from 'lucide-react';
+import { addDays, isValid } from 'date-fns';
 import { useToast } from '@/hooks/use-toast';
 import { EstimateTemplateSelector } from '@/components/estimate-template-selector';
 import Link from 'next/link';
 import { useFirebase, useMemoFirebase } from '@/firebase/provider';
-import { doc } from 'firebase/firestore';
+import { doc, serverTimestamp } from 'firebase/firestore';
 import { setDocumentNonBlocking } from '@/firebase/non-blocking-updates';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useDoc } from '@/firebase/firestore/use-doc';
 
 const ESTIMATES_COLLECTION = 'estimates';
 
-const getInitialLineItem = (): LineItem => ({ id: crypto.randomUUID(), name: '', quantity: 1, unitPrice: 0 });
+const getInitialLineItem = (): LineItem => ({ id: crypto.randomUUID(), name: '', quantity: 1, unitPrice: 0, taxable: true });
 
 const getInitialEstimate = (): Omit<Estimate, 'userId'> => ({
   id: crypto.randomUUID(),
@@ -37,6 +37,7 @@ const getInitialEstimate = (): Omit<Estimate, 'userId'> => ({
     email: 'contact@yourcompany.com',
     website: 'www.yourcompany.com',
     licenseNumber: 'LICENSE-12345',
+    logoUrl: '',
   },
 
   client: {
@@ -51,10 +52,10 @@ const getInitialEstimate = (): Omit<Estimate, 'userId'> => ({
 
   summary: {
     subtotal: 1500,
-    taxPercentage: 0,
-    taxAmount: 0,
+    taxPercentage: 8.25,
+    taxAmount: 123.75,
     discount: 0,
-    grandTotal: 1500,
+    grandTotal: 1623.75,
     shippingCost: 0,
   },
 
@@ -101,6 +102,26 @@ export default function CreateEstimatePage() {
   const docRef = useMemoFirebase(() => draftId && firestore ? doc(firestore, ESTIMATES_COLLECTION, draftId) : null, [draftId, firestore]);
   const { data: remoteDraft, isLoading: isDraftLoading } = useDoc<Estimate>(docRef);
 
+  const computeSummary = useCallback((est: Estimate): Estimate => {
+    const subtotal = est.lineItems.reduce((acc, item) => acc + (Number(item.quantity) || 0) * (Number(item.unitPrice) || 0), 0);
+    const taxableTotal = est.lineItems.filter(i => i.taxable !== false).reduce((s, i) => s + ((Number(i.quantity) || 0) * (Number(i.unitPrice) || 0)), 0);
+    const taxPercentage = Number(est.summary.taxPercentage) || 0;
+    const taxAmount = taxableTotal * (taxPercentage / 100);
+    const discountAmount = Number(est.summary.discount) || 0;
+    const shippingCost = Number(est.summary.shippingCost) || 0;
+    const grandTotal = subtotal + taxAmount - discountAmount + shippingCost;
+
+    return {
+        ...est,
+        summary: {
+            ...est.summary,
+            subtotal,
+            taxAmount,
+            grandTotal,
+        }
+    };
+  }, []);
+
   useEffect(() => {
     if (isUserLoading) return;
     if (!user) {
@@ -138,12 +159,13 @@ export default function CreateEstimatePage() {
   };
   
   const handleSaveDraft = () => {
-    if (!estimate || !firestore) return;
-
+    if (!estimate || !firestore || !user) return;
+    
     const draftToSave = {
       ...estimate,
-      estimateDate: estimate.estimateDate,
-      validUntilDate: estimate.validUntilDate,
+      userId: user.uid,
+      updatedAt: serverTimestamp(),
+      createdAt: estimate.createdAt || serverTimestamp(),
     };
     
     const docRef = doc(firestore, ESTIMATES_COLLECTION, estimate.id);
@@ -159,7 +181,7 @@ export default function CreateEstimatePage() {
   const handleNew = () => {
     if (!user) return;
     const newEstimate = {...getInitialEstimate(), userId: user.uid};
-    newEstimate.estimateNumber = `EST-${String(Math.floor(Math.random() * 1000)).padStart(3, '0')}`;
+    newEstimate.estimateNumber = `EST-${new Date().getFullYear()}-${String(Math.floor(Math.random() * 1000)).padStart(3, '0')}`;
     setEstimate(newEstimate);
     if (typeof window !== 'undefined' && document) {
         const computedColor = getComputedStyle(document.documentElement).getPropertyValue('--primary').trim();
@@ -173,29 +195,29 @@ export default function CreateEstimatePage() {
         description: "A new blank estimate has been created.",
       });
   };
+
+  const handleShare = () => {
+      if (!estimate) return;
+      const url = `${window.location.origin}/estimate/${estimate.id}`;
+      navigator.clipboard.writeText(url);
+      toast({
+          title: "Link Copied!",
+          description: "The shareable link has been copied to your clipboard.",
+      });
+  };
   
   useEffect(() => {
     if (estimate) {
-        const subtotal = estimate.lineItems.reduce((acc, item) => acc + (Number(item.quantity) || 0) * (Number(item.unitPrice) || 0), 0);
-        const taxAmount = (subtotal * (Number(estimate.summary.taxPercentage) || 0)) / 100;
-        const discountAmount = Number(estimate.summary.discount) || 0;
-        const shippingCost = Number(estimate.summary.shippingCost) || 0;
-        const grandTotal = subtotal + taxAmount - discountAmount + shippingCost;
-
-        const newSummary = {
-            subtotal,
-            taxAmount,
-            grandTotal,
-            taxPercentage: estimate.summary.taxPercentage,
-            discount: estimate.summary.discount,
-            shippingCost: estimate.summary.shippingCost,
-        };
-
-        if (JSON.stringify(newSummary) !== JSON.stringify(estimate.summary)) {
-            setEstimate(prev => prev ? { ...prev, summary: newSummary } : null);
-        }
+        setEstimate(currentEstimate => {
+            if(!currentEstimate) return null;
+            const newEstimate = computeSummary(currentEstimate);
+             if (JSON.stringify(newEstimate.summary) !== JSON.stringify(currentEstimate.summary)) {
+                return newEstimate;
+            }
+            return currentEstimate;
+        });
     }
-}, [estimate?.lineItems, estimate?.summary.taxPercentage, estimate?.summary.discount, estimate?.summary.shippingCost]);
+  }, [estimate?.lineItems, estimate?.summary.taxPercentage, estimate?.summary.discount, estimate?.summary.shippingCost, computeSummary]);
 
 
   if (!estimate || (draftId && isDraftLoading) || isUserLoading) {
@@ -228,6 +250,10 @@ export default function CreateEstimatePage() {
                <Button onClick={handleSaveDraft}>
                 <Edit className="mr-2 h-5 w-5" />
                 Save Draft
+              </Button>
+              <Button onClick={handleShare}>
+                <Share2 className="mr-2 h-5 w-5" />
+                Share
               </Button>
               <Button onClick={handlePrint}>
                 <Printer className="mr-2 h-5 w-5" />

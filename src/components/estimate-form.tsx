@@ -19,6 +19,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
+import { Checkbox } from '@/components/ui/checkbox';
 
 interface EstimateFormProps {
   estimate: Estimate;
@@ -54,7 +55,6 @@ export function EstimateForm({ estimate, setEstimate, accentColor, setAccentColo
         }
     }))
   }, [logoUrl, setEstimate]);
-
 
   const handleNestedChange = (section: 'business' | 'client' | 'summary', e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -92,7 +92,7 @@ export function EstimateForm({ estimate, setEstimate, accentColor, setAccentColo
     setEstimate(prev => ({ ...prev, language: value }));
   };
 
-  const handleItemChange = (index: number, field: keyof Omit<LineItem, 'id'>, value: string | number) => {
+  const handleItemChange = (index: number, field: keyof Omit<LineItem, 'id'>, value: string | number | boolean) => {
     const newItems = [...estimate.lineItems];
     (newItems[index] as any)[field] = value;
     setEstimate(prev => ({ ...prev, lineItems: newItems }));
@@ -109,7 +109,7 @@ export function EstimateForm({ estimate, setEstimate, accentColor, setAccentColo
     }
     setEstimate(prev => ({
       ...prev,
-      lineItems: [...prev.lineItems, { id: crypto.randomUUID(), name: '', quantity: 1, unitPrice: 0 }],
+      lineItems: [...prev.lineItems, { id: crypto.randomUUID(), name: '', quantity: 1, unitPrice: 0, taxable: true }],
     }));
   };
   
@@ -131,6 +131,7 @@ export function EstimateForm({ estimate, setEstimate, accentColor, setAccentColo
       name: '',
       quantity: 1,
       unitPrice: 0,
+      taxable: true,
     }));
 
     setEstimate(prev => ({
@@ -361,22 +362,6 @@ export function EstimateForm({ estimate, setEstimate, accentColor, setAccentColo
                     </SelectContent>
                 </Select>
             </div>
-            <div className="space-y-2">
-                <Label htmlFor="language">Language</Label>
-                <Select value={estimate.language} onValueChange={handleLanguageChange}>
-                    <SelectTrigger id="language">
-                        <SelectValue placeholder="Select language" />
-                    </SelectTrigger>
-                    <SelectContent>
-                        <SelectItem value="en">English</SelectItem>
-                        <SelectItem value="es">Español (Spanish)</SelectItem>
-                        <SelectItem value="fr">Français (French)</SelectItem>
-                        <SelectItem value="de">Deutsch (German)</SelectItem>
-                        <SelectItem value="ar">العربية (Arabic)</SelectItem>
-                        <SelectItem value="zh">中文 (Chinese)</SelectItem>
-                    </SelectContent>
-                </Select>
-            </div>
         </CardContent>
       </Card>
 
@@ -389,11 +374,12 @@ export function EstimateForm({ estimate, setEstimate, accentColor, setAccentColo
             <div className="col-span-5"><Label>Item Name / Description</Label></div>
             <div className="col-span-2"><Label>Quantity</Label></div>
             <div className="col-span-2"><Label>Unit Price</Label></div>
-            <div className="col-span-2"><Label>Total</Label></div>
+            <div className="col-span-1 text-center"><Label>Taxable</Label></div>
+            <div className="col-span-1"><Label>Total</Label></div>
             <div className="col-span-1"></div>
           </div>
           {estimate.lineItems.map((item, index) => (
-            <div key={item.id} className="grid grid-cols-12 gap-2 items-center">
+            <div key={item.id} className="grid grid-cols-12 gap-2 items-start">
               <div className="col-span-12 md:col-span-5 space-y-2">
                 <Label htmlFor={`itemName-${index}`} className="md:hidden">Item Name / Description</Label>
                 <Textarea id={`itemName-${index}`} value={item.name} onChange={(e) => handleItemChange(index, 'name', e.target.value)} rows={1} className="min-h-0"/>
@@ -406,17 +392,21 @@ export function EstimateForm({ estimate, setEstimate, accentColor, setAccentColo
                 <Label htmlFor={`itemRate-${index}`} className="md:hidden">Unit Price</Label>
                 <Input id={`itemRate-${index}`} type="number" value={item.unitPrice} onChange={(e) => handleItemChange(index, 'unitPrice', parseFloat(e.target.value) || 0)} />
               </div>
-              <div className="col-span-3 md:col-span-2 flex items-center h-10">
-                <p className="font-medium tabular-nums">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</p>
+              <div className="col-span-2 md:col-span-1 flex items-center justify-center h-10">
+                 <Label htmlFor={`itemTaxable-${index}`} className="md:hidden sr-only">Taxable</Label>
+                 <Checkbox id={`itemTaxable-${index}`} checked={item.taxable} onCheckedChange={(checked) => handleItemChange(index, 'taxable', !!checked)} />
               </div>
-              <div className="col-span-1 flex items-center h-10">
+              <div className="col-span-4 md:col-span-1 flex items-center h-10">
+                <p className="font-medium tabular-nums text-sm">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</p>
+              </div>
+              <div className="col-span-2 md:col-span-1 flex items-center h-10">
                 <Button variant="ghost" size="icon" onClick={() => removeItem(index)}>
                   <Trash2 className="h-4 w-4 text-destructive" />
                 </Button>
               </div>
             </div>
           ))}
-          <div className="flex flex-wrap items-end gap-4">
+          <div className="flex flex-wrap items-end gap-4 pt-2 border-t border-border">
             <Button variant="outline" onClick={addItem}><Plus className="mr-2 h-4 w-4" /> Add Line Item</Button>
             
             <div className="flex items-end gap-2">
@@ -442,7 +432,7 @@ export function EstimateForm({ estimate, setEstimate, accentColor, setAccentColo
 
       <Card className="bg-card/50 backdrop-blur-sm">
         <CardHeader>
-          <CardTitle>Pricing Summary, Terms &amp; Signature</CardTitle>
+          <CardTitle>Pricing Summary & Terms</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
@@ -465,15 +455,6 @@ export function EstimateForm({ estimate, setEstimate, accentColor, setAccentColo
           <div className="space-y-2">
             <Label htmlFor="termsAndConditions">Terms & Conditions</Label>
             <Textarea id="termsAndConditions" name="termsAndConditions" value={estimate.termsAndConditions} onChange={handleInputChange} placeholder="e.g., Payment terms, validity period, warranty information..." />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="attachments">Attachments</Label>
-            <Input id="attachments" type="file" multiple />
-            <p className="text-xs text-muted-foreground">Upload photos, contracts, or other documents. (Non-functional)</p>
-          </div>
-          <div className="flex items-center space-x-2">
-            <Switch id="signatureRequired" checked={estimate.signatureRequired} onCheckedChange={(checked) => setEstimate(p => ({ ...p, signatureRequired: checked }))} />
-            <Label htmlFor="signatureRequired">Require Client Signature</Label>
           </div>
         </CardContent>
       </Card>

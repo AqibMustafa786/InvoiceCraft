@@ -1,5 +1,4 @@
 
-
 export interface LineItem {
   id: string;
   name: string;
@@ -7,6 +6,7 @@ export interface LineItem {
   quantity: number;
   unitPrice: number;
   rate?: number; // Keep for invoice compatibility
+  taxable?: boolean;
 }
 
 export type DocumentStatus = 'draft' | 'sent' | 'paid' | 'overdue' | 'accepted' | 'rejected' | 'expired';
@@ -99,7 +99,7 @@ export interface EstimateSummary {
     subtotal: number;
     taxPercentage: number;
     taxAmount: number;
-    discount: number; // Can be percentage or fixed amount
+    discount: number; // For simplicity, we'll use a fixed amount as discussed in implementation
     grandTotal: number;
     shippingCost: number;
 }
@@ -122,9 +122,7 @@ export interface Estimate {
   referenceNumber: string;
   
   termsAndConditions: string;
-  attachments?: string[];
-  signatureRequired?: boolean;
-
+  
   template: string;
   documentType: 'estimate';
   language: string;
