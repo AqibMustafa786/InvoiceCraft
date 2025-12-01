@@ -196,7 +196,7 @@ export default function CreateQuotePage() {
   }, [quote?.lineItems, quote?.summary.taxPercentage, quote?.summary.discount, quote?.summary.shippingCost]);
 
 
-  if (!quote || isDraftLoading) {
+  if (!quote || (draftId && isDraftLoading)) {
     return (
         <div className="container mx-auto p-4 md:p-8">
             <h1 className="text-3xl font-bold font-headline">Loading...</h1>

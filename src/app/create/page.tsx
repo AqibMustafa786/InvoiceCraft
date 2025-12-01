@@ -20,7 +20,7 @@ import { useDoc } from '@/firebase/firestore/use-doc';
 
 const INVOICES_COLLECTION = 'invoices';
 
-const getInitialLineItem = () => ({ id: crypto.randomUUID(), name: '', quantity: 1, rate: 0, unitPrice: 0 });
+const getInitialLineItem = () => ({ id: crypto.randomUUID(), name: '', quantity: 1, unitPrice: 0, rate: 0 });
 
 const getInitialInvoice = (): Omit<Invoice, 'userId'> => ({
   id: crypto.randomUUID(),
@@ -154,7 +154,7 @@ export default function CreateInvoicePage() {
       });
   };
 
-  if (!invoice || isDraftLoading) {
+  if (!invoice || (draftId && isDraftLoading)) {
     return (
         <div className="container mx-auto p-4 md:p-8">
             <h1 className="text-3xl font-bold font-headline">Loading...</h1>
