@@ -300,8 +300,8 @@ export function EstimatePreview({ estimate, accentColor, id = 'estimate-preview'
   }
 
   return (
-    <Card id={id} className="w-full shadow-lg rounded-xl overflow-hidden print-hide bg-card/50 backdrop-blur-sm" style={previewStyle}>
-      <CardContent className="p-0">
+    <Card id={id} className="w-full shadow-lg rounded-xl overflow-hidden print-hide bg-card/50 backdrop-blur-sm">
+      <CardContent className="p-0" style={previewStyle}>
         {renderContent()}
       </CardContent>
     </Card>

@@ -1,10 +1,12 @@
 
+
 export interface LineItem {
   id: string;
   name: string;
   description?: string;
   quantity: number;
   unitPrice: number;
+  rate?: number; // Keep for invoice compatibility
 }
 
 export type DocumentStatus = 'draft' | 'sent' | 'paid' | 'overdue' | 'accepted' | 'rejected' | 'expired';

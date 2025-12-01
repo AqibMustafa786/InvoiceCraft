@@ -176,30 +176,26 @@ export default function CreateEstimatePage() {
   
   useEffect(() => {
     if (estimate) {
-      const subtotal = estimate.lineItems.reduce((acc, item) => acc + item.quantity * item.unitPrice, 0);
-      const taxAmount = (subtotal * estimate.summary.taxPercentage) / 100;
-      const discountAmount = estimate.summary.discount; // Can be percentage or fixed amount
-      const grandTotal = subtotal + taxAmount - discountAmount + estimate.summary.shippingCost;
+        const subtotal = estimate.lineItems.reduce((acc, item) => acc + (Number(item.quantity) || 0) * (Number(item.unitPrice) || 0), 0);
+        const taxAmount = (subtotal * (Number(estimate.summary.taxPercentage) || 0)) / 100;
+        const discountAmount = Number(estimate.summary.discount) || 0;
+        const shippingCost = Number(estimate.summary.shippingCost) || 0;
+        const grandTotal = subtotal + taxAmount - discountAmount + shippingCost;
 
-      setEstimate(prev => {
-        if (!prev) return null;
-        if (prev.summary.subtotal !== subtotal ||
-            prev.summary.taxAmount !== taxAmount ||
-            prev.summary.grandTotal !== grandTotal) {
-          return {
-            ...prev,
-            summary: {
-              ...prev.summary,
-              subtotal,
-              taxAmount,
-              grandTotal
-            }
-          };
+        const newSummary = {
+            subtotal,
+            taxAmount,
+            grandTotal,
+            taxPercentage: estimate.summary.taxPercentage,
+            discount: estimate.summary.discount,
+            shippingCost: estimate.summary.shippingCost,
+        };
+
+        if (JSON.stringify(newSummary) !== JSON.stringify(estimate.summary)) {
+            setEstimate(prev => prev ? { ...prev, summary: newSummary } : null);
         }
-        return prev;
-      });
     }
-  }, [estimate?.lineItems, estimate?.summary.taxPercentage, estimate?.summary.discount, estimate?.summary.shippingCost]);
+}, [estimate?.lineItems, estimate?.summary.taxPercentage, estimate?.summary.discount, estimate?.summary.shippingCost]);
 
 
   if (!estimate || (draftId && isDraftLoading) || isUserLoading) {
