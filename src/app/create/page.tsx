@@ -12,6 +12,10 @@ import { useToast } from '@/hooks/use-toast';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { TemplateSelector } from '@/components/template-selector';
+import { useFirebase } from '@/firebase';
+import { collection, doc } from 'firebase/firestore';
+import { setDocumentNonBlocking } from '@/firebase/non-blocking-updates';
+import { useDoc } from '@/firebase/firestore/use-doc';
 
 const getInitialLineItem = () => ({ id: crypto.randomUUID(), name: '', quantity: 1, rate: 0 });
 
@@ -41,7 +45,7 @@ const getInitialInvoice = (): Invoice => ({
   template: 'default',
 });
 
-const DRAFTS_STORAGE_KEY = 'invoiceDrafts';
+const DRAFTS_COLLECTION = 'invoices';
 
 function PrintableInvoice({ invoice, logoUrl, accentColor }: { invoice: Invoice, logoUrl: string | null, accentColor: string }) {
     const [printRoot, setPrintRoot] = useState<HTMLElement | null>(null);
@@ -69,14 +73,27 @@ export default function CreateInvoicePage() {
   const { toast } = useToast();
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { firestore } = useFirebase();
+
+  const draftId = searchParams.get('draftId');
+  const docRef = draftId && firestore ? doc(firestore, DRAFTS_COLLECTION, draftId) : null;
+  const { data: remoteDraft, isLoading: isDraftLoading } = useDoc<Invoice>(docRef);
 
   useEffect(() => {
     // Initialize state on the client to avoid hydration mismatch
     const initialInvoice = getInitialInvoice();
     
-    const draftId = searchParams.get('draftId');
     if (draftId) {
-      loadDraft(draftId, initialInvoice);
+      if (remoteDraft) {
+        const fromJSON = (key: string, value: any) => {
+          if (key === 'invoiceDate' || key === 'dueDate') {
+            return value?.toDate ? value.toDate() : (value ? new Date(value) : value);
+          }
+          return value;
+        };
+        const loadedDraft = JSON.parse(JSON.stringify(remoteDraft), fromJSON);
+        setInvoice({ ...initialInvoice, ...loadedDraft });
+      }
     } else {
       setInvoice(initialInvoice);
     }
@@ -87,61 +104,7 @@ export default function CreateInvoicePage() {
            setAccentColor(`hsl(${computedColor})`);
         }
     }
-  }, []);
-
-  useEffect(() => {
-    const draftId = searchParams.get('draftId');
-    if(draftId && invoice && invoice.id !== draftId) {
-        loadDraft(draftId, getInitialInvoice());
-    }
-  }, [searchParams]);
-
-  const loadDraft = (draftId: string, baseInvoice: Invoice) => {
-    const fromJSON = (key: string, value: any) => {
-      if (key === 'invoiceDate' || key === 'dueDate') {
-        return value ? new Date(value) : value;
-      }
-      return value;
-    };
-
-    const savedData = localStorage.getItem(DRAFTS_STORAGE_KEY);
-    if (savedData) {
-      try {
-        const drafts: Invoice[] = JSON.parse(savedData, fromJSON);
-        const draftToLoad = drafts.find(d => d.id === draftId);
-        if (draftToLoad) {
-          // Ensure all fields from the latest Invoice type are present
-          const fullDraft = {...baseInvoice, ...draftToLoad};
-          setInvoice(fullDraft);
-          
-          setLogoUrl(null); 
-          if (typeof window !== 'undefined' && document) {
-            const computedColor = getComputedStyle(document.documentElement).getPropertyValue('--primary').trim();
-            if (computedColor) {
-              setAccentColor(`hsl(${computedColor})`);
-            }
-          }
-          toast({
-            title: "Draft Loaded",
-            description: `Invoice draft #${draftToLoad.invoiceNumber} has been loaded.`,
-          });
-        } else {
-          toast({
-            title: "Draft not found",
-            description: "The specified draft could not be found.",
-            variant: "destructive",
-          });
-        }
-      } catch (error) {
-        console.error("Failed to parse invoice drafts from localStorage", error);
-        toast({
-          title: "Error",
-          description: "Could not load saved draft data.",
-          variant: "destructive",
-        });
-      }
-    }
-  }
+  }, [draftId, remoteDraft]);
 
 
   const handlePrint = () => {
@@ -149,39 +112,22 @@ export default function CreateInvoicePage() {
   };
 
   const handleSaveDraft = () => {
-    if (!invoice) return;
-    try {
-      const toJSON = (key: string, value: any) => {
-          if (key === 'invoiceDate' || key === 'dueDate') {
-              return value ? new Date(value).toISOString() : value;
-          }
-          return value;
-      };
-      
-      const savedData = localStorage.getItem(DRAFTS_STORAGE_KEY);
-      let drafts: Invoice[] = savedData ? JSON.parse(savedData) : [];
-      
-      const existingDraftIndex = drafts.findIndex(d => d.id === invoice.id);
+    if (!invoice || !firestore) return;
 
-      if (existingDraftIndex !== -1) {
-        drafts[existingDraftIndex] = invoice;
-      } else {
-        drafts.push(invoice);
-      }
+    const draftToSave = {
+      ...invoice,
+      invoiceDate: invoice.invoiceDate.toISOString(),
+      dueDate: invoice.dueDate.toISOString(),
+    };
+    
+    const docRef = doc(collection(firestore, DRAFTS_COLLECTION), invoice.id);
+    setDocumentNonBlocking(docRef, draftToSave, { merge: true });
 
-      localStorage.setItem(DRAFTS_STORAGE_KEY, JSON.stringify(drafts, toJSON));
-      toast({
-        title: "Draft Saved",
-        description: "Your invoice draft has been saved.",
-      });
-    } catch (error) {
-      console.error("Failed to save invoice data to localStorage", error);
-      toast({
-        title: "Error",
-        description: "There was an error saving your draft.",
-        variant: "destructive",
-      });
-    }
+    toast({
+      title: "Draft Saved",
+      description: "Your invoice draft has been saved online.",
+    });
+    router.push(`/create?draftId=${invoice.id}`);
   };
   
   const handleNew = () => {
@@ -202,7 +148,7 @@ export default function CreateInvoicePage() {
       });
   };
 
-  if (!invoice) {
+  if (!invoice || isDraftLoading) {
     return (
         <div className="container mx-auto p-4 md:p-8">
             <h1 className="text-3xl font-bold font-headline">Loading...</h1>

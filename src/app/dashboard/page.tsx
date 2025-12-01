@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useMemo, useCallback } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import type { Invoice, InvoiceStatus } from '@/lib/types';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -27,8 +27,12 @@ import { format, isWithinInterval } from 'date-fns';
 import { FilterSheet, type DashboardFilters } from '@/components/dashboard/filter-sheet';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
+import { useFirebase } from '@/firebase/provider';
+import { useCollection } from '@/firebase/firestore/use-collection';
+import { collection, doc } from 'firebase/firestore';
+import { deleteDocumentNonBlocking, updateDocumentNonBlocking } from '@/firebase';
 
-const DRAFTS_STORAGE_KEY = 'invoiceDrafts';
+const DRAFTS_COLLECTION = 'invoices';
 
 const initialFilters: DashboardFilters = {
     clientName: '',
@@ -51,50 +55,20 @@ const currencySymbols: { [key: string]: string } = {
 
 
 export default function DashboardPage() {
-    const [drafts, setDrafts] = useState<Invoice[]>([]);
     const [deleteCandidateId, setDeleteCandidateId] = useState<string | null>(null);
     const [filters, setFilters] = useState<DashboardFilters>(initialFilters);
     const [isFilterSheetOpen, setIsFilterSheetOpen] = useState(false);
     const { toast } = useToast();
+    const { firestore, user } = useFirebase();
 
-    useEffect(() => {
-        const fromJSON = (key: string, value: any) => {
-            if (key === 'invoiceDate' || key === 'dueDate') {
-                return value ? new Date(value) : value;
-            }
-            return value;
-        };
+    const draftsQuery = useMemo(() => {
+        if (!firestore) return null;
+        // In a real app with auth, you would scope this query:
+        // query(collection(firestore, DRAFTS_COLLECTION), where("userId", "==", user.uid))
+        return collection(firestore, DRAFTS_COLLECTION);
+    }, [firestore, user]);
 
-        const savedData = localStorage.getItem(DRAFTS_STORAGE_KEY);
-        if (savedData) {
-            try {
-                const parsedData: Invoice[] = JSON.parse(savedData, fromJSON);
-                const draftsWithDefaults = parsedData.map(d => ({...d, status: d.status || 'draft', currency: d.currency || 'USD'}));
-                setDrafts(draftsWithDefaults);
-            } catch (error) {
-                console.error("Failed to parse invoice drafts from localStorage", error);
-            }
-        }
-    }, []);
-
-    const saveDraftsToStorage = (updatedDrafts: Invoice[]) => {
-        try {
-            localStorage.setItem(DRAFTS_STORAGE_KEY, JSON.stringify(updatedDrafts, (key, value) => {
-                if (key === 'invoiceDate' || key === 'dueDate') {
-                    return value ? new Date(value).toISOString() : value;
-                }
-                return value;
-            }));
-        } catch (error) {
-            console.error("Failed to save invoice data to localStorage", error);
-             toast({
-                title: "Error",
-                description: "There was an error saving your changes.",
-                variant: "destructive",
-            });
-        }
-    };
-
+    const { data: drafts, isLoading } = useCollection<Invoice>(draftsQuery);
 
     const calculateTotal = useCallback((invoice: Invoice): number => {
         const subtotal = invoice.items.reduce((acc, item) => acc + item.quantity * item.rate, 0);
@@ -104,18 +78,20 @@ export default function DashboardPage() {
     }, []);
 
     const handleDelete = (invoiceId: string) => {
-        const updatedDrafts = drafts.filter(draft => draft.id !== invoiceId);
-        setDrafts(updatedDrafts);
-        saveDraftsToStorage(updatedDrafts);
+        if (!firestore) return;
+        const docRef = doc(firestore, DRAFTS_COLLECTION, invoiceId);
+        deleteDocumentNonBlocking(docRef);
         setDeleteCandidateId(null);
+        toast({
+            title: "Draft Deleted",
+            description: "The invoice draft has been deleted.",
+        });
     };
 
     const handleStatusChange = (invoiceId: string, newStatus: InvoiceStatus) => {
-        const updatedDrafts = drafts.map(draft => 
-            draft.id === invoiceId ? { ...draft, status: newStatus } : draft
-        );
-        setDrafts(updatedDrafts);
-        saveDraftsToStorage(updatedDrafts);
+        if (!firestore) return;
+        const docRef = doc(firestore, DRAFTS_COLLECTION, invoiceId);
+        updateDocumentNonBlocking(docRef, { status: newStatus });
         toast({
             title: "Status Updated",
             description: `Invoice status changed to "${newStatus}".`,
@@ -127,20 +103,29 @@ export default function DashboardPage() {
     }, []);
 
     const filteredAndSortedDrafts = useMemo(() => {
-        return drafts
+        const fromJSON = (key: string, value: any) => {
+            if (key === 'invoiceDate' || key === 'dueDate') {
+                // Firestore timestamps need to be converted to Date objects
+                return value?.toDate ? value.toDate() : new Date(value);
+            }
+            return value;
+        };
+        const parsedDrafts = drafts ? JSON.parse(JSON.stringify(drafts), fromJSON) as Invoice[] : [];
+
+        return parsedDrafts
             .filter(draft => {
                 const total = calculateTotal(draft);
                 const clientNameMatch = filters.clientName ? draft.clientName.toLowerCase().includes(filters.clientName.toLowerCase()) : true;
                 const statusMatch = filters.status ? draft.status === filters.status : true;
                 const amountMinMatch = filters.amountMin !== null ? total >= filters.amountMin : true;
                 const amountMaxMatch = filters.amountMax !== null ? total <= filters.amountMax : true;
-                const dateMatch = (filters.dateFrom && filters.dateTo) ? isWithinInterval(draft.invoiceDate, { start: filters.dateFrom, end: filters.dateTo })
-                                : filters.dateFrom ? draft.invoiceDate >= filters.dateFrom
-                                : filters.dateTo ? draft.invoiceDate <= filters.dateTo
+                const dateMatch = (filters.dateFrom && filters.dateTo) ? isWithinInterval(new Date(draft.invoiceDate), { start: filters.dateFrom, end: filters.dateTo })
+                                : filters.dateFrom ? new Date(draft.invoiceDate) >= filters.dateFrom
+                                : filters.dateTo ? new Date(draft.invoiceDate) <= filters.dateTo
                                 : true;
                 return clientNameMatch && statusMatch && amountMinMatch && amountMaxMatch && dateMatch;
             })
-            .sort((a, b) => new Date(b.invoiceDate).getTime() - new Date(a.invoiceDate).getTime()); // Default sort by newest
+            .sort((a, b) => new Date(b.invoiceDate).getTime() - new Date(a.invoiceDate).getTime());
     }, [drafts, filters, calculateTotal]);
 
     const activeFilterCount = useMemo(() => {
@@ -172,7 +157,7 @@ export default function DashboardPage() {
                     <AlertDialogHeader>
                         <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
                         <AlertDialogDescription>
-                            This action cannot be undone. This will permanently delete your invoice draft.
+                            This action cannot be undone. This will permanently delete your invoice draft from Firestore.
                         </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
@@ -198,7 +183,7 @@ export default function DashboardPage() {
             <Card>
                 <CardHeader>
                     <CardTitle>My Drafts</CardTitle>
-                    <CardDescription>A list of your saved invoice drafts.</CardDescription>
+                    <CardDescription>A list of your saved invoice drafts from Firestore.</CardDescription>
                 </CardHeader>
                 <CardContent>
                     <div className="flex justify-between items-center mb-4 gap-2 flex-wrap">
@@ -240,7 +225,13 @@ export default function DashboardPage() {
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
-                                {filteredAndSortedDrafts.length > 0 ? filteredAndSortedDrafts.map((invoice) => (
+                                {isLoading ? (
+                                    <TableRow>
+                                        <TableCell colSpan={6} className="text-center h-24">
+                                            Loading drafts...
+                                        </TableCell>
+                                    </TableRow>
+                                ) : filteredAndSortedDrafts.length > 0 ? filteredAndSortedDrafts.map((invoice) => (
                                     <TableRow key={invoice.id}>
                                         <TableCell className="font-medium">{invoice.invoiceNumber}</TableCell>
                                         <TableCell>{invoice.clientName}</TableCell>
@@ -266,7 +257,7 @@ export default function DashboardPage() {
                                                 </DropdownMenuContent>
                                             </DropdownMenu>
                                         </TableCell>
-                                        <TableCell>{format(invoice.invoiceDate, 'yyyy-MM-dd')}</TableCell>
+                                        <TableCell>{format(new Date(invoice.invoiceDate), 'yyyy-MM-dd')}</TableCell>
                                         <TableCell className="text-right">
                                             <DropdownMenu>
                                                 <DropdownMenuTrigger asChild>
@@ -293,7 +284,7 @@ export default function DashboardPage() {
                                 )) : (
                                     <TableRow>
                                         <TableCell colSpan={6} className="text-center h-24">
-                                            No drafts match your filters.
+                                            No drafts found. Create one!
                                         </TableCell>
                                     </TableRow>
                                 )}

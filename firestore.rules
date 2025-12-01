@@ -138,6 +138,18 @@ service cloud.firestore {
       allow update: if isCompanyMember(companyId) && isExistingDoc();
       allow delete: if isCompanyMember(companyId) && isExistingDoc();
     }
+    
+    match /invoices/{invoiceId} {
+      // For now, allow anyone signed in to do anything. 
+      // We will tighten this up later.
+      allow read, write: if isSignedIn();
+    }
+    
+    match /quotes/{quoteId} {
+      // For now, allow anyone signed in to do anything. 
+      // We will tighten this up later.
+      allow read, write: if isSignedIn();
+    }
 
     /**
      * @description Secures the individual line items within a quote. Access rules are inherited from the company.
