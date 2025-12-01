@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import type { Invoice } from '@/lib/types';
 import { InvoiceForm } from '@/components/invoice-form';
@@ -77,27 +77,33 @@ export default function CreateInvoicePage() {
   const { toast } = useToast();
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { firestore, user } = useFirebase();
+  const { firestore, user, isUserLoading } = useFirebase();
 
   const draftId = searchParams.get('draftId');
   const docRef = useMemoFirebase(() => draftId && firestore ? doc(firestore, DRAFTS_COLLECTION, draftId) : null, [draftId, firestore]);
   const { data: remoteDraft, isLoading: isDraftLoading } = useDoc<Invoice>(docRef);
 
   useEffect(() => {
-    if (!user) return;
+    if (isUserLoading) return; // Wait until user auth state is resolved
+    if (!user) { // If no user, redirect or handle appropriately
+        router.push('/login');
+        return;
+    }
 
     const initialInvoice = { ...getInitialInvoice(), userId: user.uid };
 
-    if (draftId && remoteDraft) {
-        const fromJSON = (key: string, value: any) => {
-            if (['invoiceDate', 'dueDate', 'quoteDate', 'validUntilDate'].includes(key) && value) {
-                return value.toDate ? value.toDate() : new Date(value);
-            }
-            return value;
-        };
-        const loadedDraft = JSON.parse(JSON.stringify(remoteDraft), fromJSON);
-        setInvoice({ ...initialInvoice, ...loadedDraft });
-    } else if (!draftId) {
+    if (draftId) {
+        if (remoteDraft) {
+            const fromJSON = (key: string, value: any) => {
+                if (['invoiceDate', 'dueDate', 'quoteDate', 'validUntilDate'].includes(key) && value) {
+                    return value.toDate ? value.toDate() : new Date(value);
+                }
+                return value;
+            };
+            const loadedDraft = JSON.parse(JSON.stringify(remoteDraft), fromJSON);
+            setInvoice({ ...initialInvoice, ...loadedDraft });
+        }
+    } else {
         setInvoice(initialInvoice);
     }
     
@@ -107,7 +113,7 @@ export default function CreateInvoicePage() {
            setAccentColor(`hsl(${computedColor})`);
         }
     }
-  }, [draftId, remoteDraft, user]);
+  }, [draftId, remoteDraft, user, isUserLoading, router]);
 
 
   const handlePrint = () => {
@@ -152,7 +158,7 @@ export default function CreateInvoicePage() {
       });
   };
 
-  if (!invoice || (draftId && isDraftLoading)) {
+  if (isUserLoading || !invoice || (draftId && isDraftLoading)) {
     return (
         <div className="container mx-auto p-4 md:p-8">
             <h1 className="text-3xl font-bold font-headline">Loading...</h1>
