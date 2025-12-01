@@ -71,7 +71,7 @@ export function TemplateSelector({ selectedTemplate, onSelectTemplate }: Templat
           >
             <Image
               src={template.thumbnailUrl}
-              alt={template.name}
+              alt={`${template.name} invoice template`}
               width={188}
               height={250}
               className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"

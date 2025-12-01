@@ -54,7 +54,7 @@ export function InsuranceTemplateSelector({ selectedTemplate, onSelectTemplate }
           >
             <Image
               src={template.thumbnailUrl}
-              alt={template.name}
+              alt={`${template.name} insurance document template`}
               width={188}
               height={250}
               className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
