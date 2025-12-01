@@ -49,18 +49,6 @@ const templates: Template[] = [
     thumbnailUrl: '/templates/Usa.png',
     isPro: true,
   },
-  {
-    id: 'usa-service',
-    name: 'USA Service',
-    thumbnailUrl: '/templates/Usa-service.png',
-    isPro: true,
-  },
-  {
-    id: 'usa-insurance',
-    name: 'USA Insurance',
-    thumbnailUrl: '/templates/Usa-insurance.png',
-    isPro: true,
-  }
 ];
 
 export function TemplateSelector({ selectedTemplate, onSelectTemplate }: TemplateSelectorProps) {

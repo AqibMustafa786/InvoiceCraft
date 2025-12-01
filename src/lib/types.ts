@@ -31,11 +31,6 @@ export interface Invoice {
   currency: string;
   language: string;
   template: string;
-  // New Insurance Fields
-  insuredName?: string;
-  claimNumber?: string;
-  dateOfLoss?: string;
-  insuranceCompany?: string;
 }
 
 export interface InsuranceDocument {

@@ -20,9 +20,18 @@ const templates: Template[] = [
   {
     id: 'usa-claim-default',
     name: 'USA Claim Form',
-    thumbnailUrl: '/templates/Usa-insurance.png', // Re-using a thumbnail for now
+    thumbnailUrl: '/templates/Usa-insurance.png',
   },
-  // Add other insurance-specific templates here
+  {
+    id: 'usa-service',
+    name: 'USA Service',
+    thumbnailUrl: '/templates/Usa-service.png',
+  },
+  {
+    id: 'usa-insurance',
+    name: 'USA Insurance',
+    thumbnailUrl: '/templates/Usa-insurance.png',
+  }
 ];
 
 export function InsuranceTemplateSelector({ selectedTemplate, onSelectTemplate }: InsuranceTemplateSelectorProps) {
