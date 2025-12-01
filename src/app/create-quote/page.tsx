@@ -107,7 +107,7 @@ export default function CreateQuotePage() {
       if (remoteDraft) {
         const fromJSON = (key: string, value: any) => {
           if (key === 'quoteDate' || key === 'validUntilDate') {
-            return value?.toDate ? value.toDate() : (value ? new Date(value) : value);
+            return value?.toDate ? value.toDate() : (value ? new Date(value) : null);
           }
           return value;
         };
@@ -171,18 +171,27 @@ export default function CreateQuotePage() {
     if (quote) {
       const subtotal = quote.lineItems.reduce((acc, item) => acc + item.quantity * item.unitPrice, 0);
       const taxAmount = (subtotal * quote.summary.taxPercentage) / 100;
-      const discountAmount = quote.summary.discount; // Assuming discount is a fixed amount for now
+      const discountAmount = quote.summary.discount; // Can be percentage or fixed amount
       const grandTotal = subtotal + taxAmount - discountAmount + quote.summary.shippingCost;
 
-      setQuote(prev => prev ? {
-        ...prev,
-        summary: {
-          ...prev.summary,
-          subtotal,
-          taxAmount,
-          grandTotal
+      setQuote(prev => {
+        if (!prev) return null;
+        // Check if the values are different to prevent an infinite loop
+        if (prev.summary.subtotal !== subtotal ||
+            prev.summary.taxAmount !== taxAmount ||
+            prev.summary.grandTotal !== grandTotal) {
+          return {
+            ...prev,
+            summary: {
+              ...prev.summary,
+              subtotal,
+              taxAmount,
+              grandTotal
+            }
+          };
         }
-      } : null);
+        return prev;
+      });
     }
   }, [quote?.lineItems, quote?.summary.taxPercentage, quote?.summary.discount, quote?.summary.shippingCost]);
 
@@ -259,4 +268,3 @@ export default function CreateQuotePage() {
     </>
   );
 }
-

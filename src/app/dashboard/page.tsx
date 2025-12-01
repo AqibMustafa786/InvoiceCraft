@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useMemo, useCallback, useEffect } from 'react';
@@ -365,7 +366,7 @@ export default function DashboardPage() {
                                 ) : combinedDocuments.length > 0 ? combinedDocuments.map((doc) => {
                                     const isInvoice = doc.documentType === 'invoice';
                                     const docNumber = isInvoice ? (doc as Invoice).invoiceNumber : (doc as Quote).quoteNumber;
-                                    const clientName = doc.clientName || (doc as Quote).client.name;
+                                    const clientName = isInvoice ? (doc as Invoice).clientName : (doc as Quote).client.name;
                                     let docDate;
                                     if (isInvoice) {
                                       docDate = (doc as Invoice).invoiceDate;

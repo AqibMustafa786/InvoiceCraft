@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -19,7 +20,7 @@ import { useDoc } from '@/firebase/firestore/use-doc';
 
 const INVOICES_COLLECTION = 'invoices';
 
-const getInitialLineItem = () => ({ id: crypto.randomUUID(), name: '', quantity: 1, rate: 0 });
+const getInitialLineItem = () => ({ id: crypto.randomUUID(), name: '', quantity: 1, rate: 0, unitPrice: 0 });
 
 const getInitialInvoice = (): Omit<Invoice, 'userId'> => ({
   id: crypto.randomUUID(),
@@ -91,7 +92,7 @@ export default function CreateInvoicePage() {
       if (remoteDraft) {
         const fromJSON = (key: string, value: any) => {
           if (key === 'invoiceDate' || key === 'dueDate' || key === 'quoteDate' || key === 'validUntilDate') {
-            return value?.toDate ? value.toDate() : (value ? new Date(value) : value);
+            return value?.toDate ? value.toDate() : (value ? new Date(value) : null);
           }
           return value;
         };
