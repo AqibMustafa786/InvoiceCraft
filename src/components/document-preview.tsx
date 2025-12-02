@@ -27,6 +27,7 @@ interface PageProps extends CommonTemplateProps {
     pageIndex: number;
     totalPages: number;
     summary: Estimate['summary'];
+    style: React.CSSProperties;
 }
 
 const currencySymbols: { [key: string]: string } = {
@@ -330,12 +331,12 @@ const PageFooter = ({ document }: { document: Estimate }) => {
 };
 
 
-const ModernTemplatePage = ({ document, pageItems, pageIndex, totalPages }: PageProps) => {
+const ModernTemplatePage = ({ document, pageItems, pageIndex, totalPages, style }: PageProps) => {
     const currencySymbol = currencySymbols[document.currency] || '$';
     const { headingColor, textColor } = document;
 
     return (
-        <div className={`p-8 md:p-10 bg-white text-gray-800 font-sans text-[10pt] ${pageIndex < totalPages - 1 ? "page-break" : ""}`} style={{ color: textColor || undefined }}>
+        <div className={`p-8 md:p-10 bg-white text-gray-800 font-sans ${pageIndex < totalPages - 1 ? "page-break" : ""}`} style={{ ...style, color: textColor || undefined }}>
             <PageHeader document={document} />
             <PageClientDetails document={document} />
             <CategoryPreview document={document} />
@@ -397,8 +398,8 @@ export function DocumentPreview({ document, accentColor, id = 'document-preview'
   const previewStyle = {
       '--primary-hsl': accentColor,
       '--primary': accentColor,
-      fontFamily: document.fontFamily || 'Inter',
-      fontSize: `${document.fontSize || 12}pt`,
+      fontFamily: document.fontFamily || 'Inter, sans-serif',
+      fontSize: `${document.fontSize || 10}pt`,
   } as React.CSSProperties;
 
   const TemplateComponent = templates[document.template as keyof typeof templates] || templates.default;
@@ -513,7 +514,7 @@ export function DocumentPreview({ document, accentColor, id = 'document-preview'
     const itemsToRender = needsRemeasure ? [document.lineItems] : paginatedItems;
     
     return (
-      <div id={id} className="bg-white text-gray-800" style={previewStyle} ref={containerRef}>
+      <div id={id} className="bg-white text-gray-800" ref={containerRef}>
         {itemsToRender.map((pageItems, pageIndex) => (
            <TemplateComponent
             key={pageIndex}
@@ -522,6 +523,7 @@ export function DocumentPreview({ document, accentColor, id = 'document-preview'
             pageIndex={pageIndex}
             totalPages={itemsToRender.length}
             summary={document.summary}
+            style={previewStyle}
           />
         ))}
       </div>
@@ -530,13 +532,14 @@ export function DocumentPreview({ document, accentColor, id = 'document-preview'
 
   return (
     <Card id={id} className="w-full shadow-lg rounded-xl overflow-hidden print-hide">
-      <CardContent className="p-0 bg-white text-gray-800" style={previewStyle}>
+      <CardContent className="p-0 bg-white text-gray-800">
          <TemplateComponent
             {...commonProps}
             pageItems={document.lineItems}
             pageIndex={0}
             totalPages={1}
             summary={document.summary}
+            style={previewStyle}
           />
       </CardContent>
     </Card>
