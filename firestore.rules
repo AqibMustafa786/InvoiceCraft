@@ -19,7 +19,8 @@ service cloud.firestore {
     // A user can only access documents that have their userId
     match /invoices/{invoiceId} {
       // Allow owner to get, list, and delete their own documents.
-      allow get, list, delete: if isSignedIn() && resource.data.userId == request.auth.uid;
+      allow get, delete: if isSignedIn() && resource.data.userId == request.auth.uid;
+      allow list: if isSignedIn();
       // Allow owner to create and update their own documents.
       allow create, update: if isSignedIn() && request.resource.data.userId == request.auth.uid;
     }
@@ -29,7 +30,8 @@ service cloud.firestore {
       // Allow public read access to a single document for sharing.
       allow get: if true;
       // Allow owner to create, list, and delete their own documents.
-      allow list, delete: if isSignedIn() && resource.data.userId == request.auth.uid;
+      allow list: if isSignedIn();
+      allow delete: if isSignedIn() && resource.data.userId == request.auth.uid;
       allow create, update: if isSignedIn() && request.resource.data.userId == request.auth.uid;
     }
 
@@ -38,7 +40,8 @@ service cloud.firestore {
       // Allow public read access to a single document for sharing.
       allow get: if true;
       // Allow owner to create, list, and delete their own documents.
-      allow list, delete: if isSignedIn() && resource.data.userId == request.auth.uid;
+      allow list: if isSignedIn();
+      allow delete: if isSignedIn() && resource.data.userId == request.auth.uid;
       allow create, update: if isSignedIn() && request.resource.data.userId == request.auth.uid;
     }
 
