@@ -395,7 +395,7 @@ export function EstimateForm({ estimate, setEstimate, accentColor, setAccentColo
                  <Label htmlFor={`itemTaxable-${index}`} className="md:hidden sr-only">Taxable</Label>
                  <Checkbox id={`itemTaxable-${index}`} checked={item.taxable} onCheckedChange={(checked) => handleItemChange(index, 'taxable', !!checked)} />
               </div>
-              <div className="col-span-8 md:col-span-1 flex items-center h-10">
+              <div className="col-span-1 flex items-center h-10">
                 <p className="font-medium tabular-nums text-sm">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</p>
               </div>
               <div className="col-span-1 flex items-center h-10 justify-end">
