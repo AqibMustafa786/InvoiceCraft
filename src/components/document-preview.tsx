@@ -2,6 +2,7 @@
 
 'use client';
 
+import { useState, useLayoutEffect, useRef, useEffect } from 'react';
 import type { Estimate } from '@/lib/types';
 import { Card, CardContent } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
@@ -15,6 +16,18 @@ interface DocumentPreviewProps {
   accentColor: string;
   id?: string;
   isPrint?: boolean;
+}
+
+interface CommonTemplateProps {
+  document: Estimate;
+  accentColor: string;
+}
+
+interface PageProps extends CommonTemplateProps {
+    pageItems: Estimate['lineItems'];
+    pageIndex: number;
+    totalPages: number;
+    summary: Estimate['summary'];
 }
 
 const currencySymbols: { [key: string]: string } = {
@@ -35,7 +48,7 @@ const safeFormat = (date: Date | string | number | undefined | null, formatStrin
 const SignatureDisplay = ({ signature, label }: { signature: any, label: string }) => {
     if (!signature?.image) return null;
     return (
-        <div className="mt-4">
+        <div className="mt-4" data-element="signature">
             <p className="text-xs text-gray-500">{label}</p>
             <Image src={signature.image} alt="Signature" width={150} height={75} className="mt-1 border-b" />
             <p className="text-xs text-gray-600 mt-1">Signed by: {signature.signerName}</p>
@@ -53,7 +66,7 @@ const CategoryPreview = ({ document }: { document: Estimate }) => {
             case "Home Remodeling / Renovation":
                 if (!homeRemodeling) return null;
                 return (
-                    <div className="grid grid-cols-2 gap-x-8 gap-y-2 mt-4 text-xs">
+                    <div className="grid grid-cols-2 gap-x-8 gap-y-2 mt-4 text-xs" data-element="category-details">
                         <div><span className="font-bold text-gray-600">Project Type:</span> {homeRemodeling.projectType}</div>
                         <div><span className="font-bold text-gray-600">Property Type:</span> {homeRemodeling.propertyType}</div>
                         {homeRemodeling.squareFootage && <div><span className="font-bold text-gray-600">Sq. Footage:</span> {homeRemodeling.squareFootage} sq ft</div>}
@@ -69,7 +82,7 @@ const CategoryPreview = ({ document }: { document: Estimate }) => {
             case "Roofing Estimate":
                 if (!roofing) return null;
                  return (
-                    <div className="grid grid-cols-2 gap-x-8 gap-y-2 mt-4 text-xs">
+                    <div className="grid grid-cols-2 gap-x-8 gap-y-2 mt-4 text-xs" data-element="category-details">
                         <div><span className="font-bold text-gray-600">Roof Material:</span> {roofing.roofMaterial}</div>
                         {roofing.roofSize && <div><span className="font-bold text-gray-600">Roof Size:</span> {roofing.roofSize} sq ft</div>}
                         <div><span className="font-bold text-gray-600">Roof Pitch:</span> {roofing.roofPitch}</div>
@@ -85,7 +98,7 @@ const CategoryPreview = ({ document }: { document: Estimate }) => {
             case "HVAC (Air Conditioning / Heating)":
                 if (!hvac) return null;
                 return (
-                    <div className="grid grid-cols-2 gap-x-8 gap-y-2 mt-4 text-xs">
+                    <div className="grid grid-cols-2 gap-x-8 gap-y-2 mt-4 text-xs" data-element="category-details">
                         <div><span className="font-bold text-gray-600">Service Type:</span> {hvac.serviceType}</div>
                         <div><span className="font-bold text-gray-600">System Type:</span> {hvac.systemType}</div>
                         {hvac.unitSize && <div><span className="font-bold text-gray-600">Unit Size:</span> {hvac.unitSize} {hvac.systemType === 'AC' ? 'Tons' : 'BTU'}</div>}
@@ -100,7 +113,7 @@ const CategoryPreview = ({ document }: { document: Estimate }) => {
             case "Plumbing Estimate":
                  if (!plumbing) return null;
                 return (
-                    <div className="grid grid-cols-2 gap-x-8 gap-y-2 mt-4 text-xs">
+                    <div className="grid grid-cols-2 gap-x-8 gap-y-2 mt-4 text-xs" data-element="category-details">
                         <div><span className="font-bold text-gray-600">Service Type:</span> {plumbing.serviceType}</div>
                         <div><span className="font-bold text-gray-600">Fixture:</span> {plumbing.fixtureType}</div>
                         <div><span className="font-bold text-gray-600">Pipe Material:</span> {plumbing.pipeMaterial}</div>
@@ -114,7 +127,7 @@ const CategoryPreview = ({ document }: { document: Estimate }) => {
             case "Electrical Estimate":
                 if (!electrical) return null;
                 return (
-                    <div className="grid grid-cols-2 gap-x-8 gap-y-2 mt-4 text-xs">
+                    <div className="grid grid-cols-2 gap-x-8 gap-y-2 mt-4 text-xs" data-element="category-details">
                         <div><span className="font-bold text-gray-600">Service:</span> {electrical.serviceType}</div>
                         <div><span className="font-bold text-gray-600">Wiring:</span> {electrical.wiringType}</div>
                         <div><span className="font-bold text-gray-600">Panel Upgrade:</span> {electrical.panelUpgradeNeeded ? 'Yes' : 'No'}</div>
@@ -128,7 +141,7 @@ const CategoryPreview = ({ document }: { document: Estimate }) => {
             case "Landscaping Estimate":
                 if (!landscaping) return null;
                 return (
-                    <div className="grid grid-cols-2 gap-x-8 gap-y-2 mt-4 text-xs">
+                    <div className="grid grid-cols-2 gap-x-8 gap-y-2 mt-4 text-xs" data-element="category-details">
                         <div className="col-span-2"><span className="font-bold text-gray-600">Service Type:</span> {landscaping.serviceType}</div>
                         <div><span className="font-bold text-gray-600">Property Size:</span> {landscaping.propertySize}</div>
                         <div><span className="font-bold text-gray-600">Yard Condition:</span> {landscaping.yardCondition}</div>
@@ -140,7 +153,7 @@ const CategoryPreview = ({ document }: { document: Estimate }) => {
             case "Cleaning Estimate":
                 if (!cleaning) return null;
                 return (
-                    <div className="grid grid-cols-2 gap-x-8 gap-y-2 mt-4 text-xs">
+                    <div className="grid grid-cols-2 gap-x-8 gap-y-2 mt-4 text-xs" data-element="category-details">
                         <div><span className="font-bold text-gray-600">Cleaning Type:</span> {cleaning.cleaningType}</div>
                         <div><span className="font-bold text-gray-600">Frequency:</span> {cleaning.frequency}</div>
                         {cleaning.homeSize && <div><span className="font-bold text-gray-600">Home Size:</span> {cleaning.homeSize} sq ft</div>}
@@ -154,7 +167,7 @@ const CategoryPreview = ({ document }: { document: Estimate }) => {
             case "Auto Repair Estimate":
                 if (!autoRepair) return null;
                 return (
-                    <div className="grid grid-cols-2 gap-x-8 gap-y-2 mt-4 text-xs">
+                    <div className="grid grid-cols-2 gap-x-8 gap-y-2 mt-4 text-xs" data-element="category-details">
                         <div><span className="font-bold text-gray-600">Vehicle:</span> {autoRepair.vehicleMake} {autoRepair.vehicleModel} ({autoRepair.vehicleYear})</div>
                         {autoRepair.mileage && <div><span className="font-bold text-gray-600">Mileage:</span> {autoRepair.mileage.toLocaleString()}</div>}
                         <div className="col-span-2"><span className="font-bold text-gray-600">VIN:</span> {autoRepair.vin}</div>
@@ -166,7 +179,7 @@ const CategoryPreview = ({ document }: { document: Estimate }) => {
              case "Construction Estimate":
                 if (!construction) return null;
                 return (
-                    <div className="grid grid-cols-2 gap-x-8 gap-y-2 mt-4 text-xs">
+                    <div className="grid grid-cols-2 gap-x-8 gap-y-2 mt-4 text-xs" data-element="category-details">
                         <div><span className="font-bold text-gray-600">Project Type:</span> {construction.projectType}</div>
                         {construction.squareFootage && <div><span className="font-bold text-gray-600">Sq. Footage:</span> {construction.squareFootage} sq ft</div>}
                         <div><span className="font-bold text-gray-600">Lot Size:</span> {construction.lotSize}</div>
@@ -180,7 +193,7 @@ const CategoryPreview = ({ document }: { document: Estimate }) => {
             case "IT / Freelance Estimate":
                 if (!itFreelance) return null;
                 return (
-                    <div className="grid grid-cols-2 gap-x-8 gap-y-2 mt-4 text-xs">
+                    <div className="grid grid-cols-2 gap-x-8 gap-y-2 mt-4 text-xs" data-element="category-details">
                         <div><span className="font-bold text-gray-600">Project Type:</span> {itFreelance.projectType}</div>
                         <div><span className="font-bold text-gray-600">Design Style:</span> {itFreelance.designStyle}</div>
                         {itFreelance.pagesScreensCount && <div><span className="font-bold text-gray-600">Pages/Screens:</span> {itFreelance.pagesScreensCount}</div>}
@@ -196,106 +209,85 @@ const CategoryPreview = ({ document }: { document: Estimate }) => {
         }
     };
 
-    return renderContent();
+    return <div data-element="category-preview-wrapper">{renderContent()}</div>;
 };
 
-export const ModernTemplate = ({ document }: { document: Estimate }) => {
-    const { business, client, lineItems, summary, currency, documentType, category, homeRemodeling, roofing, hvac, plumbing } = document;
-    const currencySymbol = currencySymbols[currency] || '$';
-
+const PageHeader = ({ document }: { document: Estimate }) => {
+    const { business, client, category, documentType, estimateNumber, estimateDate } = document;
     const documentTitle = category === 'Generic' ? (documentType === 'quote' ? 'Quote' : 'Estimate') : category;
+    
+    return (
+        <header className="flex justify-between items-start mb-8" data-element="header">
+            <div className="w-1/2">
+                 {business.logoUrl ? (
+                    <Image src={business.logoUrl} alt={`${business.name} Logo`} width={100} height={100} className="object-contain" data-ai-hint="logo" />
+                ) : (
+                    <h2 className="text-xl font-bold">{business.name}</h2>
+                )}
+            </div>
+            <div className="w-1/2 text-right">
+                <h2 className="text-3xl font-bold mb-4">{documentTitle}</h2>
+                <div className="space-y-0.5 text-xs">
+                    <p className="font-bold">{business.name}</p>
+                    {business.licenseNumber && <p>Lic #: {business.licenseNumber}</p>}
+                    {business.taxId && <p>Tax ID: {business.taxId}</p>}
+                    <p>{business.phone}</p>
+                    <p>{business.email}</p>
+                    <p className="whitespace-pre-line">{business.address}</p>
+                </div>
+            </div>
+        </header>
+    );
+};
+
+const PageClientDetails = ({ document }: { document: Estimate }) => (
+     <section className="flex justify-between items-start mb-8 text-xs" data-element="client-details">
+        <div className="w-1/3 space-y-0.5">
+            <p className="font-bold mb-1">BILL TO</p>
+            <p className="font-semibold">{document.client.name}</p>
+            {document.client.companyName && <p>{document.client.companyName}</p>}
+            {document.client.email && <p>{document.client.email}</p>}
+            {document.client.phone && <p>{document.client.phone}</p>}
+            <p className="whitespace-pre-line">{document.client.address}</p>
+        </div>
+        <div className="w-1/3 space-y-0.5">
+            {document.client.projectLocation && (
+                <>
+                    <p className="font-bold mb-1">PROJECT LOCATION</p>
+                    <p className="whitespace-pre-line">{document.client.projectLocation}</p>
+                </>
+            )}
+        </div>
+        <div className="w-1/3 text-right">
+            <div className="flex justify-end">
+                <span className="font-bold w-24">Estimate #</span>
+                <span className="w-24 text-left">{document.estimateNumber}</span>
+            </div>
+            <div className="flex justify-end mt-1">
+                <span className="font-bold w-24">Date</span>
+                <span className="w-24 text-left">{safeFormat(document.estimateDate, 'MM/dd/yyyy')}</span>
+            </div>
+        </div>
+    </section>
+);
+
+
+const PageFooter = ({ document }: { document: Estimate }) => {
+    const { summary } = document;
+    const currencySymbol = currencySymbols[document.currency] || '$';
     const subtotalLessDiscount = summary.subtotal - (summary.discount || 0);
     const taxRate = summary.taxPercentage || 0;
 
     return (
-        <div className="p-8 md:p-10 bg-white text-gray-800 font-sans text-[10pt]">
-            <header className="flex justify-between items-start mb-8">
-                <div className="w-1/2">
-                     {business.logoUrl ? (
-                        <Image src={business.logoUrl} alt={`${business.name} Logo`} width={100} height={100} className="object-contain" data-ai-hint="logo" />
-                    ) : (
-                        <h2 className="text-xl font-bold">{business.name}</h2>
-                    )}
-                </div>
-                <div className="w-1/2 text-right">
-                    <h2 className="text-3xl font-bold mb-4">{documentTitle}</h2>
-                    <div className="space-y-0.5 text-xs">
-                        <p className="font-bold">{business.name}</p>
-                        {business.licenseNumber && <p>Lic #: {business.licenseNumber}</p>}
-                        {business.taxId && <p>Tax ID: {business.taxId}</p>}
-                        <p>{business.phone}</p>
-                        <p>{business.email}</p>
-                        <p className="whitespace-pre-line">{business.address}</p>
-                    </div>
-                </div>
-            </header>
-
-            <section className="flex justify-between items-start mb-8 text-xs">
-                 <div className="w-1/3 space-y-0.5">
-                    <p className="font-bold mb-1">BILL TO</p>
-                    <p className="font-semibold">{client.name}</p>
-                    {client.companyName && <p>{client.companyName}</p>}
-                    {client.email && <p>{client.email}</p>}
-                    {client.phone && <p>{client.phone}</p>}
-                    <p className="whitespace-pre-line">{client.address}</p>
-                </div>
-                <div className="w-1/3 space-y-0.5">
-                    {client.projectLocation && (
-                        <>
-                            <p className="font-bold mb-1">PROJECT LOCATION</p>
-                            <p className="whitespace-pre-line">{client.projectLocation}</p>
-                        </>
-                    )}
-                </div>
-                <div className="w-1/3 text-right">
-                    <div className="flex justify-end">
-                        <span className="font-bold w-24">Estimate #</span>
-                        <span className="w-24 text-left">{document.estimateNumber}</span>
-                    </div>
-                    <div className="flex justify-end mt-1">
-                        <span className="font-bold w-24">Date</span>
-                        <span className="w-24 text-left">{safeFormat(document.estimateDate, 'MM/dd/yyyy')}</span>
-                    </div>
-                </div>
-            </section>
-            
-            <CategoryPreview document={document} />
-            
-            <section className="mt-8">
-                <table className="w-full text-left text-xs">
-                    <thead className="bg-gray-100 text-gray-700">
-                        <tr>
-                            <th className="p-2 font-bold w-1/2">Item/Service Description</th>
-                            <th className="p-2 font-bold text-right">Quantity</th>
-                            <th className="p-2 font-bold text-right">Item Price</th>
-                            <th className="p-2 font-bold text-right">Amount</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {lineItems.map(item => (
-                            <tr key={item.id} className="border-b">
-                                <td className="p-2 whitespace-pre-line">{item.name || ''}</td>
-                                <td className="p-2 text-right tabular-nums">{item.quantity}</td>
-                                <td className="p-2 text-right tabular-nums">{currencySymbol}{item.unitPrice.toFixed(2)}</td>
-                                <td className="p-2 text-right tabular-nums">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</td>
-                            </tr>
-                        ))}
-                         {[...Array(Math.max(0, 7 - lineItems.length))].map((_, i) => (
-                            <tr key={`blank-${i}`} className="border-b">
-                                <td className="p-2 h-6"></td>
-                                <td className="p-2"></td>
-                                <td className="p-2"></td>
-                                <td className="p-2"></td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
-            </section>
-
-             <section className="flex justify-between items-end mt-6">
+        <div data-element="footer">
+            <section className="flex justify-between items-start mt-6">
                 <div className="w-1/2 text-xs text-gray-600">
                     <p className="font-bold mb-1">Notes</p>
                     <p className="whitespace-pre-line">{document.termsAndConditions}</p>
+                    <div className="flex gap-8">
+                        <SignatureDisplay signature={document.business.ownerSignature} label="Authorized Signature" />
+                        <SignatureDisplay signature={document.clientSignature} label="Client Signature" />
+                    </div>
                 </div>
                 <div className="w-2/5 space-y-1 text-xs">
                     <div className="flex justify-between">
@@ -339,34 +331,196 @@ export const ModernTemplate = ({ document }: { document: Estimate }) => {
 };
 
 
-const templates = {
-  'default': ModernTemplate,
-  'contractor': ModernTemplate, // Fallback to new template
+const ModernTemplatePage = ({ document, pageItems, pageIndex, totalPages }: PageProps) => {
+    const currencySymbol = currencySymbols[document.currency] || '$';
+
+    return (
+        <div className={`p-8 md:p-10 bg-white text-gray-800 font-sans text-[10pt] ${pageIndex < totalPages - 1 ? "page-break" : ""}`}>
+            <PageHeader document={document} />
+            <PageClientDetails document={document} />
+            <CategoryPreview document={document} />
+            
+            <section className="mt-8">
+                <table className="w-full text-left text-xs" data-element="items-table">
+                    <thead className="bg-gray-100 text-gray-700">
+                        <tr>
+                            <th className="p-2 font-bold w-1/2">Item/Service Description</th>
+                            <th className="p-2 font-bold text-right">Quantity</th>
+                            <th className="p-2 font-bold text-right">Item Price</th>
+                            <th className="p-2 font-bold text-right">Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {pageItems.map(item => (
+                            <tr key={item.id} className="border-b" data-element="table-row">
+                                <td className="p-2 whitespace-pre-line">{item.name || ''}</td>
+                                <td className="p-2 text-right tabular-nums">{item.quantity}</td>
+                                <td className="p-2 text-right tabular-nums">{currencySymbol}{item.unitPrice.toFixed(2)}</td>
+                                <td className="p-2 text-right tabular-nums">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</td>
+                            </tr>
+                        ))}
+                         {pageIndex === totalPages - 1 && [...Array(Math.max(0, 7 - pageItems.length))].map((_, i) => (
+                            <tr key={`blank-${i}`} className="border-b">
+                                <td className="p-2 h-6"></td><td className="p-2"></td><td className="p-2"></td><td className="p-2"></td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </section>
+
+            {pageIndex === totalPages - 1 && <PageFooter document={document} />}
+        </div>
+    );
 };
 
+const templates = {
+  'default': ModernTemplatePage,
+  'contractor': ModernTemplatePage,
+};
+
+
+const PAGE_HEIGHT = 1056; // 11 inches at 96 DPI for Letter size
+const PAGE_PADDING = 80; // 40px top + 40px bottom
+const AVAILABLE_HEIGHT = PAGE_HEIGHT - PAGE_PADDING;
+
+
 export function DocumentPreview({ document, accentColor, id = 'document-preview', isPrint = false }: DocumentPreviewProps) {
-  if (!document) {
-    return null;
-  }
+  const [paginatedItems, setPaginatedItems] = useState<Estimate['lineItems'][]>([document.lineItems]);
+  const [needsRemeasure, setNeedsRemeasure] = useState(true);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    setNeedsRemeasure(true);
+  }, [document]);
+  
 
   const previewStyle = {
       '--primary-hsl': accentColor,
       '--primary': accentColor
   } as React.CSSProperties;
 
-  // Always use the new ModernTemplate, but keep the structure for potential future templates.
-  const TemplateComponent = templates['default'];
-
-  const renderContent = () => (
-    <TemplateComponent
-      document={document}
-    />
-  );
+  const TemplateComponent = templates[document.template as keyof typeof templates] || templates.default;
   
+  useLayoutEffect(() => {
+    if (!isPrint || !containerRef.current || !needsRemeasure) return;
+
+    const measureAndPaginate = () => {
+      const container = containerRef.current!;
+      const tempRoot = document.createElement('div');
+      tempRoot.style.position = 'absolute';
+      tempRoot.style.left = '-9999px';
+      tempRoot.style.width = `${container.clientWidth}px`; // Match width for accurate measurement
+      document.body.appendChild(tempRoot);
+
+      // We create a temporary React root to render the full, unpaginated content for measurement.
+      Promise.resolve().then(() => {
+        const tempContainer = container.cloneNode(true) as HTMLElement;
+        tempContainer.querySelector('[data-element="items-table"] tbody')!.innerHTML = document.lineItems.map(item => `
+            <tr data-element="table-row" style="border-bottom: 1px solid #E5E7EB;">
+                <td style="padding: 8px; white-space: pre-line;">${item.name || ''}</td>
+                <td style="padding: 8px; text-align: right;">${item.quantity}</td>
+                <td style="padding: 8px; text-align: right;">${item.unitPrice.toFixed(2)}</td>
+                <td style="padding: 8px; text-align: right;">${(item.quantity * item.unitPrice).toFixed(2)}</td>
+            </tr>
+        `).join('');
+        tempRoot.appendChild(tempContainer);
+        
+        const header = tempContainer.querySelector('[data-element="header"]') as HTMLElement;
+        const clientDetails = tempContainer.querySelector('[data-element="client-details"]') as HTMLElement;
+        const categoryDetails = tempContainer.querySelector('[data-element="category-details"]') as HTMLElement;
+        const tableHeader = tempContainer.querySelector('[data-element="table-header"]') as HTMLElement;
+        const footer = tempContainer.querySelector('[data-element="footer"]') as HTMLElement;
+        const allRows = Array.from(tempContainer.querySelectorAll('[data-element="table-row"]')) as HTMLElement[];
+        
+        if (!header || !tableHeader || !footer || allRows.length === 0) {
+            document.body.removeChild(tempRoot);
+            return;
+        }
+
+        let firstPageHeaderHeight = header.offsetHeight + clientDetails.offsetHeight + (categoryDetails?.offsetHeight || 0);
+        let subsequentPageHeaderHeight = header.offsetHeight; // Only repeat main header
+        const tableHeaderHeight = tableHeader.offsetHeight;
+        const footerHeight = footer.offsetHeight;
+
+        let currentPage = 0;
+        let currentPageHeight = firstPageHeaderHeight;
+        let newPages: Estimate['lineItems'][] = [[]];
+
+        allRows.forEach((row, index) => {
+            const itemHeight = row.offsetHeight;
+
+            // Check if item fits on the current page
+            let heightIfAdded = currentPageHeight + (newPages[currentPage].length === 0 ? tableHeaderHeight : 0) + itemHeight;
+            
+            // Check if this is the last item and if the footer would fit
+            const isLastItem = index === allRows.length - 1;
+            if (isLastItem) {
+                heightIfAdded += footerHeight;
+            }
+
+            if (heightIfAdded > AVAILABLE_HEIGHT) {
+                currentPage++;
+                newPages[currentPage] = [];
+                currentPageHeight = subsequentPageHeaderHeight; // Reset for new page
+            }
+            
+            // Add table header height if it's the first item on the page
+            if (newPages[currentPage].length === 0) { 
+                currentPageHeight += tableHeaderHeight;
+            }
+
+            newPages[currentPage].push(document.lineItems[index]);
+            currentPageHeight += itemHeight;
+        });
+
+        // Post-pagination check: if the footer doesn't fit on the last page with items, push it to a new page.
+        const lastItemPageIdx = newPages.length - 1;
+        const lastItemPage = newPages[lastItemPageIdx];
+        if (lastItemPage && lastItemPage.length > 0) {
+            const lastPageRows = lastItemPage.map(item => allRows[document.lineItems.indexOf(item)]);
+            const lastPageItemsHeight = lastPageRows.reduce((sum, row) => sum + row.offsetHeight, 0);
+            
+            const lastPageHeaderHeight = (lastItemPageIdx === 0) ? firstPageHeaderHeight : subsequentPageHeaderHeight;
+            const contentHeightOnLastPage = lastPageHeaderHeight + tableHeaderHeight + lastPageItemsHeight + footerHeight;
+
+            if (contentHeightOnLastPage > AVAILABLE_HEIGHT) {
+                newPages.push([]); // Add a new empty page just for the footer
+            }
+        }
+        
+        setPaginatedItems(newPages);
+        setNeedsRemeasure(false);
+        document.body.removeChild(tempRoot);
+      });
+    };
+    
+    // Defer measurement to allow DOM to update
+    const timer = setTimeout(measureAndPaginate, 100);
+    return () => clearTimeout(timer);
+
+  }, [document, isPrint, needsRemeasure, TemplateComponent]);
+
+
+  const commonProps: CommonTemplateProps = {
+    document,
+    accentColor,
+  };
+
   if (isPrint) {
+    const itemsToRender = needsRemeasure ? [document.lineItems] : paginatedItems;
+    
     return (
-      <div id={id} className="bg-white text-gray-800">
-        {renderContent()}
+      <div id={id} className="bg-white text-gray-800" style={previewStyle} ref={containerRef}>
+        {itemsToRender.map((pageItems, pageIndex) => (
+           <TemplateComponent
+            key={pageIndex}
+            {...commonProps}
+            pageItems={pageItems}
+            pageIndex={pageIndex}
+            totalPages={itemsToRender.length}
+            summary={document.summary}
+          />
+        ))}
       </div>
     );
   }
@@ -374,7 +528,13 @@ export function DocumentPreview({ document, accentColor, id = 'document-preview'
   return (
     <Card id={id} className="w-full shadow-lg rounded-xl overflow-hidden print-hide">
       <CardContent className="p-0 bg-white text-gray-800" style={previewStyle}>
-        {renderContent()}
+         <TemplateComponent
+            {...commonProps}
+            pageItems={document.lineItems}
+            pageIndex={0}
+            totalPages={1}
+            summary={document.summary}
+          />
       </CardContent>
     </Card>
   );
