@@ -212,7 +212,7 @@ const CategoryPreview = ({ document }: { document: Estimate }) => {
     return <div data-element="category-preview-wrapper">{renderContent()}</div>;
 };
 
-const PageHeader = ({ document }: { document: Estimate }) => {
+const PageHeader = ({ document, style }: { document: Estimate, style: React.CSSProperties }) => {
     const { business, client, category, documentType, estimateNumber, estimateDate } = document;
     const documentTitle = category === 'Generic' ? (documentType === 'quote' ? 'Quote' : 'Estimate') : category;
     
@@ -222,11 +222,11 @@ const PageHeader = ({ document }: { document: Estimate }) => {
                  {business.logoUrl ? (
                     <Image src={business.logoUrl} alt={`${business.name} Logo`} width={100} height={100} className="object-contain" data-ai-hint="logo" />
                 ) : (
-                    <h2 className="text-xl font-bold">{business.name}</h2>
+                    <h2 className="text-xl font-bold" style={{ color: style.color }}>{business.name}</h2>
                 )}
             </div>
             <div className="w-1/2 text-right">
-                <h2 className="text-3xl font-bold mb-4">{documentTitle}</h2>
+                <h2 className="text-3xl font-bold mb-4" style={{ color: style.color }}>{documentTitle}</h2>
                 <div className="space-y-0.5 text-xs">
                     <p className="font-bold">{business.name}</p>
                     {business.licenseNumber && <p>Lic #: {business.licenseNumber}</p>}
@@ -272,7 +272,7 @@ const PageClientDetails = ({ document }: { document: Estimate }) => (
 );
 
 
-const PageFooter = ({ document }: { document: Estimate }) => {
+const PageFooter = ({ document, style }: { document: Estimate, style: React.CSSProperties }) => {
     const { summary } = document;
     const currencySymbol = currencySymbols[document.currency] || '$';
     const subtotalLessDiscount = summary.subtotal - (summary.discount || 0);
@@ -320,7 +320,7 @@ const PageFooter = ({ document }: { document: Estimate }) => {
                             <span className="font-medium tabular-nums">{currencySymbol}{summary.shippingCost.toFixed(2)}</span>
                         </div>
                     )}
-                    <div className="flex justify-between items-center font-bold text-lg pt-2 mt-2">
+                    <div className="flex justify-between items-center font-bold text-lg pt-2 mt-2" style={{ color: style.color }}>
                         <span className="uppercase">Estimate Total</span>
                         <span className="tabular-nums">{currencySymbol}{summary.grandTotal.toFixed(2)}</span>
                     </div>
@@ -333,17 +333,16 @@ const PageFooter = ({ document }: { document: Estimate }) => {
 
 const ModernTemplatePage = ({ document, pageItems, pageIndex, totalPages, style }: PageProps) => {
     const currencySymbol = currencySymbols[document.currency] || '$';
-    const { textColor } = document;
 
     return (
-        <div className={`p-8 md:p-10 bg-white text-gray-800 font-sans ${pageIndex < totalPages - 1 ? "page-break" : ""}`} style={{ ...style, color: textColor || undefined }}>
-            <PageHeader document={document} />
+        <div className={`p-8 md:p-10 bg-white text-gray-800 font-sans ${pageIndex < totalPages - 1 ? "page-break" : ""}`} style={style}>
+            <PageHeader document={document} style={style} />
             <PageClientDetails document={document} />
             <CategoryPreview document={document} />
             
             <section className="mt-8">
                 <table className="w-full text-left text-xs" data-element="items-table">
-                    <thead className="text-gray-700 bg-gray-100" data-element="table-header">
+                    <thead style={{ backgroundColor: style.color, color: 'white' }}>
                         <tr>
                             <th className="p-2 font-bold w-1/2">Item/Service Description</th>
                             <th className="p-2 font-bold text-right">Quantity</th>
@@ -369,7 +368,7 @@ const ModernTemplatePage = ({ document, pageItems, pageIndex, totalPages, style 
                 </table>
             </section>
 
-            {pageIndex === totalPages - 1 && <PageFooter document={document} />}
+            {pageIndex === totalPages - 1 && <PageFooter document={document} style={style} />}
         </div>
     );
 };
@@ -400,6 +399,7 @@ export function DocumentPreview({ document, accentColor, id = 'document-preview'
       '--primary': accentColor,
       fontFamily: document.fontFamily || 'Inter, sans-serif',
       fontSize: `${document.fontSize || 10}pt`,
+      color: accentColor,
   } as React.CSSProperties;
 
   const TemplateComponent = templates[document.template as keyof typeof templates] || templates.default;

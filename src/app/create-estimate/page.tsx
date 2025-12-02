@@ -260,7 +260,7 @@ export default function CreateEstimatePage() {
     }
     
     if (typeof window !== 'undefined' && window.document) {
-        const computedColor = window.document.documentElement.style.getPropertyValue('--primary').trim();
+        const computedColor = getComputedStyle(window.document.documentElement).getPropertyValue('--primary').trim();
         if (computedColor) {
            setAccentColor(`hsl(${computedColor})`);
         }
@@ -336,7 +336,7 @@ export default function CreateEstimatePage() {
     newEstimate.estimateNumber = `EST-${new Date().getFullYear()}-${String(Math.floor(Math.random() * 1000)).padStart(3, '0')}`;
     setDocument(newEstimate);
     if (typeof window !== 'undefined' && window.document) {
-        const computedColor = window.document.documentElement.style.getPropertyValue('--primary').trim();
+        const computedColor = getComputedStyle(window.document.documentElement).getPropertyValue('--primary').trim();
         if (computedColor) {
             setAccentColor(`hsl(${computedColor})`);
         }
