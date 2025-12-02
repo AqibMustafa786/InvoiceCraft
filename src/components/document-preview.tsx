@@ -342,7 +342,7 @@ const ModernTemplatePage = ({ document, pageItems, pageIndex, totalPages }: Page
             
             <section className="mt-8">
                 <table className="w-full text-left text-xs" data-element="items-table">
-                    <thead className="bg-gray-100 text-gray-700">
+                    <thead className="bg-gray-100 text-gray-700" data-element="table-header">
                         <tr>
                             <th className="p-2 font-bold w-1/2">Item/Service Description</th>
                             <th className="p-2 font-bold text-right">Quantity</th>
@@ -402,7 +402,7 @@ export function DocumentPreview({ document, accentColor, id = 'document-preview'
   const TemplateComponent = templates[document.template as keyof typeof templates] || templates.default;
   
   useLayoutEffect(() => {
-    if (!isPrint || !containerRef.current || !needsRemeasure) return;
+    if (!isPrint || !containerRef.current || !needsRemeasure || typeof window === 'undefined') return;
 
     const measureAndPaginate = () => {
       const container = containerRef.current!;
