@@ -1,5 +1,4 @@
 
-
 'use client';
 
 import { useState, useLayoutEffect, useRef, useEffect } from 'react';
@@ -405,6 +404,7 @@ export function DocumentPreview({ document, accentColor, id = 'document-preview'
     if (!isPrint || !containerRef.current || !needsRemeasure || typeof window === 'undefined') return;
 
     const measureAndPaginate = () => {
+      if (typeof document === 'undefined') return;
       const container = containerRef.current!;
       const tempRoot = document.createElement('div');
       tempRoot.style.position = 'absolute';
