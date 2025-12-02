@@ -86,6 +86,11 @@ export interface BusinessInfo {
   website: string;
   licenseNumber: string;
   logoUrl?: string;
+  ownerSignature?: {
+    image: string;
+    signedAt: any; // Firestore Timestamp
+    signerName: string;
+  }
 }
 
 export interface ClientInfo {
@@ -105,6 +110,19 @@ export interface EstimateSummary {
     shippingCost: number;
 }
 
+export interface SignatureInfo {
+    image: string;
+    signedAt: any; // Firestore Timestamp
+    signerName: string;
+    signerIP?: string; // Optional, can be captured server-side
+}
+
+export interface AuditLogEntry {
+    action: 'created' | 'viewed' | 'signed' | 'declined' | 'sent';
+    timestamp: any; // Firestore Timestamp
+    actor?: 'user' | 'client';
+    details?: string;
+}
 
 export interface Estimate {
   id: string;
@@ -128,6 +146,10 @@ export interface Estimate {
   documentType: 'estimate' | 'quote';
   language: string;
   currency: string;
+  isPublic?: boolean;
+  
+  clientSignature?: SignatureInfo;
+  auditLog?: AuditLogEntry[];
 }
 
 export type Quote = Estimate & { documentType: 'quote' };

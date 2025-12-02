@@ -4,28 +4,43 @@ service cloud.firestore {
   match /databases/{database}/documents {
 
     function isSignedIn(){ return request.auth != null; }
+    function isOwner(userId){ return isSignedIn() && request.auth.uid == userId; }
 
     match /estimates/{estimateId} {
-      allow create: if isSignedIn() && request.resource.data.userId == request.auth.uid;
-      allow read, update, delete: if isSignedIn() && resource.data.userId == request.auth.uid;
-       // Public read access for shared links (requires token validation in Cloud Function or secure endpoint)
+      allow create: if isOwner(request.resource.data.userId);
+      allow read, delete: if isOwner(resource.data.userId);
+      
+      // Allow a client to accept/decline (update status and signature)
+      // They cannot change any other field.
+      allow update: if (isOwner(resource.data.userId)) || 
+                       (request.resource.data.diff(resource.data).affectedKeys()
+                         .hasOnly(['status', 'clientSignature', 'auditLog']));
+
+       // Allow public read if the document is marked as public
       allow get: if resource.data.isPublic == true; 
     }
     
     match /quotes/{quoteId} {
-      allow create: if isSignedIn() && request.resource.data.userId == request.auth.uid;
-      allow read, update, delete: if isSignedIn() && resource.data.userId == request.auth.uid;
-       // Public read access for shared links (requires token validation in Cloud Function or secure endpoint)
-      allow get: if resource.data.isPublic == true; 
+      allow create: if isOwner(request.resource.data.userId);
+      allow read, delete: if isOwner(resource.data.userId);
+      
+       // Allow a client to accept/decline (update status and signature)
+      allow update: if (isOwner(resource.data.userId)) || 
+                       (request.resource.data.diff(resource.data).affectedKeys()
+                         .hasOnly(['status', 'clientSignature', 'auditLog']));
+
+       // Allow public read if the document is marked as public
+      allow get: if resource.data.isPublic == true;
     }
 
     match /users/{userId} {
-      allow read: if request.auth != null;
-      allow write: if request.auth.uid == userId;
+      allow read: if isSignedIn();
+      allow write: if isOwner(userId);
     }
-     match /invoices/{invoiceId} {
-        allow create: if isSignedIn() && request.resource.data.userId == request.auth.uid;
-        allow read, update, delete: if isSignedIn() && resource.data.userId == request.auth.uid;
+
+    match /invoices/{invoiceId} {
+        allow create: if isOwner(request.resource.data.userId);
+        allow read, update, delete: if isOwner(resource.data.userId);
     }
   }
 }

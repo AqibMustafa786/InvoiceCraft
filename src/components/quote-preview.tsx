@@ -6,6 +6,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import Image from 'next/image';
 import { format, isValid } from 'date-fns';
+import { Badge } from './ui/badge';
 
 // --- PROPS ---
 interface QuotePreviewProps {
@@ -30,8 +31,20 @@ const safeFormat = (date: Date | string | number | undefined, formatString: stri
     return format(d, formatString);
 }
 
+const SignatureDisplay = ({ signature, label }: { signature: any, label: string }) => {
+    if (!signature?.image) return null;
+    return (
+        <div className="mt-4">
+            <p className="text-xs text-gray-500">{label}</p>
+            <Image src={signature.image} alt="Signature" width={150} height={75} className="mt-1 border-b" />
+            <p className="text-xs text-gray-600 mt-1">Signed by: {signature.signerName}</p>
+            <p className="text-xs text-gray-500">Date: {safeFormat(signature.signedAt, 'MMM d, yyyy, h:mm a')}</p>
+        </div>
+    )
+}
+
 const DefaultQuoteTemplate = ({ quote, accentColor }: { quote: Quote, accentColor: string }) => {
-    const { business, client, lineItems, summary, currency } = quote;
+    const { business, client, lineItems, summary, currency, clientSignature } = quote;
     const currencySymbol = currencySymbols[currency] || '$';
 
     return (
@@ -54,6 +67,7 @@ const DefaultQuoteTemplate = ({ quote, accentColor }: { quote: Quote, accentColo
                 <div className="text-right">
                     <h2 className="text-3xl font-bold text-gray-400 uppercase tracking-wider">Quote</h2>
                     <p className="text-muted-foreground mt-1">{quote.estimateNumber}</p>
+                    {quote.status === 'accepted' && <Badge variant="success" className="mt-2 text-base">ACCEPTED</Badge>}
                 </div>
             </header>
 
@@ -144,6 +158,12 @@ const DefaultQuoteTemplate = ({ quote, accentColor }: { quote: Quote, accentColo
             </section>
             
             <footer className="mt-10">
+                 {(business.ownerSignature || clientSignature) && (
+                    <div className="grid grid-cols-2 gap-10 mb-8">
+                        <SignatureDisplay signature={business.ownerSignature} label="Authorized Signature" />
+                        <SignatureDisplay signature={clientSignature} label="Client Signature" />
+                    </div>
+                 )}
                 {quote.termsAndConditions && (
                     <div className="mb-8">
                         <p className="text-sm font-semibold text-gray-500">Terms & Conditions</p>
@@ -156,7 +176,7 @@ const DefaultQuoteTemplate = ({ quote, accentColor }: { quote: Quote, accentColo
 };
 
 const ContractorQuoteTemplate = ({ quote, accentColor }: { quote: Quote, accentColor: string }) => {
-    const { business, client, lineItems, summary, currency } = quote;
+    const { business, client, lineItems, summary, currency, clientSignature } = quote;
     const currencySymbol = currencySymbols[currency] || '$';
 
     return (
@@ -238,6 +258,12 @@ const ContractorQuoteTemplate = ({ quote, accentColor }: { quote: Quote, accentC
             </section>
             
             <footer className="mt-12">
+                 {(business.ownerSignature || clientSignature) && (
+                    <div className="grid grid-cols-2 gap-10 border-t pt-6 mb-8">
+                        <SignatureDisplay signature={business.ownerSignature} label="Authorized Signature" />
+                        <SignatureDisplay signature={clientSignature} label="Client Acceptance Signature" />
+                    </div>
+                 )}
                 {quote.termsAndConditions && (
                     <div className="text-xs text-gray-500 border-t pt-6 mb-8">
                         <h4 className="font-bold text-sm text-gray-600 mb-2">Terms & Conditions</h4>
