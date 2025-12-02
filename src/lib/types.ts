@@ -1,4 +1,5 @@
 
+
 export interface LineItem {
   id: string;
   name: string;
@@ -124,9 +125,9 @@ export interface Estimate {
   termsAndConditions: string;
   
   template: string;
-  documentType: 'estimate';
+  documentType: 'estimate' | 'quote';
   language: string;
   currency: string;
 }
 
-export type Quote = Estimate;
+export type Quote = Estimate & { documentType: 'quote' };

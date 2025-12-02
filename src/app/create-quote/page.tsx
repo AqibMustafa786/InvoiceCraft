@@ -7,7 +7,7 @@ import type { Quote, LineItem } from '@/lib/types';
 import { QuoteForm } from '@/components/quote-form';
 import { QuotePreview } from '@/components/quote-preview';
 import { Button } from '@/components/ui/button';
-import { Printer, FilePlus, LayoutDashboard, Edit } from 'lucide-react';
+import { Printer, FilePlus, LayoutDashboard, Edit, Share2 } from 'lucide-react';
 import { addDays, isValid } from 'date-fns';
 import { useToast } from '@/hooks/use-toast';
 import { QuoteTemplateSelector } from '@/components/quote-template-selector';
@@ -194,6 +194,16 @@ export default function CreateQuotePage() {
         description: "A new blank quote has been created.",
       });
   };
+
+    const handleShare = () => {
+      if (!quote) return;
+      const url = `${window.location.origin}/quote/${quote.id}`;
+      navigator.clipboard.writeText(url);
+      toast({
+          title: "Link Copied!",
+          description: "The shareable link has been copied to your clipboard.",
+      });
+  };
   
   useEffect(() => {
     if (quote) {
@@ -239,6 +249,10 @@ export default function CreateQuotePage() {
                <Button onClick={handleSaveDraft}>
                 <Edit className="mr-2 h-5 w-5" />
                 Save Draft
+              </Button>
+              <Button onClick={handleShare}>
+                <Share2 className="mr-2 h-5 w-5" />
+                Share
               </Button>
               <Button onClick={handlePrint}>
                 <Printer className="mr-2 h-5 w-5" />
