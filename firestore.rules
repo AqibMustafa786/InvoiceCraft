@@ -27,7 +27,10 @@ service cloud.firestore {
       allow create: if isSignedIn() && request.resource.data.userId == request.auth.uid;
       allow read, update, delete: if isSignedIn() && resource.data.userId == request.auth.uid;
     }
+
+    // Allow authenticated users to write to the 'mail' collection to trigger emails
+    match /mail/{docId} {
+      allow create: if isSignedIn();
+    }
   }
 }
-
-    

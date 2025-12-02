@@ -7,7 +7,7 @@ import type { Estimate, LineItem, Quote } from '@/lib/types';
 import { DocumentForm } from '@/components/document-form';
 import { DocumentPreview } from '@/components/document-preview';
 import { Button } from '@/components/ui/button';
-import { Printer, FilePlus, LayoutDashboard, Edit, Share2, Mail } from 'lucide-react';
+import { Printer, FilePlus, LayoutDashboard, Edit, Share2, Mail, Loader2 } from 'lucide-react';
 import { addDays, isValid } from 'date-fns';
 import { useToast } from '@/hooks/use-toast';
 import { DocumentTemplateSelector } from '@/components/document-template-selector';
@@ -17,6 +17,7 @@ import { doc, serverTimestamp, Timestamp } from 'firebase/firestore';
 import { setDocumentNonBlocking } from '@/firebase/non-blocking-updates';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useDoc } from '@/firebase/firestore/use-doc';
+import { sendDocumentByEmail } from '@/ai/flows/send-document-flow';
 
 const ESTIMATES_COLLECTION = 'estimates';
 
@@ -98,6 +99,7 @@ function PrintableDocument({ doc, accentColor }: { doc: Estimate | Quote, accent
 export default function CreateEstimatePage() {
   const [document, setDocument] = useState<Estimate | Quote | null>(null);
   const [accentColor, setAccentColor] = useState<string>('hsl(var(--primary))');
+  const [isSendingEmail, setIsSendingEmail] = useState(false);
   const { toast } = useToast();
   const { firestore, user, isUserLoading } = useFirebase();
   const router = useRouter();
@@ -151,7 +153,7 @@ export default function CreateEstimatePage() {
     }
     
     if (typeof window !== 'undefined' && window.document) {
-        const computedColor = getComputedStyle(window.document.documentElement).getPropertyValue('--primary').trim();
+        const computedColor = window.document.documentElement.style.getPropertyValue('--primary').trim();
         if (computedColor) {
            setAccentColor(`hsl(${computedColor})`);
         }
@@ -205,7 +207,7 @@ export default function CreateEstimatePage() {
     newEstimate.estimateNumber = `EST-${new Date().getFullYear()}-${String(Math.floor(Math.random() * 1000)).padStart(3, '0')}`;
     setDocument(newEstimate);
     if (typeof window !== 'undefined' && window.document) {
-        const computedColor = getComputedStyle(window.document.documentElement).getPropertyValue('--primary').trim();
+        const computedColor = window.document.documentElement.style.getPropertyValue('--primary').trim();
         if (computedColor) {
             setAccentColor(`hsl(${computedColor})`);
         }
@@ -227,17 +229,38 @@ export default function CreateEstimatePage() {
       });
   };
   
-  const handleEmail = () => {
+  const handleEmail = async () => {
     if (!document) return;
     if (!document.client.email) {
-      alert("Please enter the client's email address first.");
+      toast({ title: "Client Email Missing", description: "Please enter the client's email address first.", variant: 'destructive' });
       return;
     }
-    const shareUrl = `${window.location.origin}/estimate/${document.id}`;
-    const subject = `Estimate ${document.estimateNumber} from ${document.business.name}`;
-    const body = `Hello ${document.client.name},\n\nPlease find our estimate below:\n${shareUrl}\n\nThank you,\n${document.business.name}`;
-    const mailtoLink = `mailto:${document.client.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-    window.location.href = mailtoLink;
+    
+    setIsSendingEmail(true);
+    try {
+      // First, save the latest version to ensure the emailed PDF is up-to-date.
+      handleSaveDraft();
+
+      const result = await sendDocumentByEmail({ docId: document.id, docType: 'estimate' });
+      
+      if (result.success) {
+        toast({
+          title: "Email Sent",
+          description: "The estimate has been successfully sent to the client.",
+        });
+      } else {
+        throw new Error(result.message || 'An unknown error occurred.');
+      }
+    } catch (error: any) {
+      console.error("Failed to send email:", error);
+      toast({
+        title: "Email Failed",
+        description: error.message || "Could not send the email. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSendingEmail(false);
+    }
   };
 
   useEffect(() => {
@@ -281,8 +304,12 @@ export default function CreateEstimatePage() {
                 <Edit className="mr-2 h-5 w-5" />
                 Save Draft
               </Button>
-              <Button onClick={handleEmail}>
-                <Mail className="mr-2 h-5 w-5" />
+              <Button onClick={handleEmail} disabled={isSendingEmail}>
+                {isSendingEmail ? (
+                  <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                ) : (
+                  <Mail className="mr-2 h-5 w-5" />
+                )}
                 Email
               </Button>
               <Button onClick={handleShare}>
