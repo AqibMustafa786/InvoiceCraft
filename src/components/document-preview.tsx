@@ -332,16 +332,17 @@ const PageFooter = ({ document }: { document: Estimate }) => {
 
 const ModernTemplatePage = ({ document, pageItems, pageIndex, totalPages }: PageProps) => {
     const currencySymbol = currencySymbols[document.currency] || '$';
+    const { headingColor, textColor } = document;
 
     return (
-        <div className={`p-8 md:p-10 bg-white text-gray-800 font-sans text-[10pt] ${pageIndex < totalPages - 1 ? "page-break" : ""}`}>
+        <div className={`p-8 md:p-10 bg-white text-gray-800 font-sans text-[10pt] ${pageIndex < totalPages - 1 ? "page-break" : ""}`} style={{ color: textColor || undefined }}>
             <PageHeader document={document} />
             <PageClientDetails document={document} />
             <CategoryPreview document={document} />
             
             <section className="mt-8">
                 <table className="w-full text-left text-xs" data-element="items-table">
-                    <thead className="bg-gray-100 text-gray-700" data-element="table-header">
+                    <thead className="text-gray-700" style={{ backgroundColor: headingColor || '#F3F4F6' }} data-element="table-header">
                         <tr>
                             <th className="p-2 font-bold w-1/2">Item/Service Description</th>
                             <th className="p-2 font-bold text-right">Quantity</th>
@@ -395,13 +396,15 @@ export function DocumentPreview({ document, accentColor, id = 'document-preview'
 
   const previewStyle = {
       '--primary-hsl': accentColor,
-      '--primary': accentColor
+      '--primary': accentColor,
+      fontFamily: document.fontFamily || 'Inter',
+      fontSize: `${document.fontSize || 12}pt`,
   } as React.CSSProperties;
 
   const TemplateComponent = templates[document.template as keyof typeof templates] || templates.default;
   
   useLayoutEffect(() => {
-    if (!isPrint || !containerRef.current || !needsRemeasure || typeof window === 'undefined') return;
+    if (typeof window === 'undefined' || !isPrint || !containerRef.current || !needsRemeasure) return;
 
     const measureAndPaginate = () => {
       if (typeof document === 'undefined') return;
