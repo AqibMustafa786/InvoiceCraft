@@ -8,11 +8,13 @@
 
 import { ai } from '@/ai/genkit';
 import { z } from 'genkit';
-import { getFirestore } from 'firebase-admin/firestore';
 import { generatePdf } from './generate-pdf-flow';
 import { type Estimate, type Quote } from '@/lib/types';
+import { getFirestore, doc, getDoc, collection, addDoc } from 'firebase/firestore';
+import { initializeFirebase } from '@/firebase';
 
-const firestore = getFirestore();
+// Initialize firebase client-side SDK
+const { firestore } = initializeFirebase();
 
 export const SendDocumentInputSchema = z.object({
   docId: z.string().describe('The ID of the document to send.'),
@@ -38,10 +40,10 @@ const sendDocumentFlow = ai.defineFlow(
   },
   async ({ docId, docType }) => {
     const collectionName = docType === 'estimate' ? 'estimates' : 'quotes';
-    const docRef = firestore.collection(collectionName).doc(docId);
-    const docSnap = await docRef.get();
+    const docRef = doc(firestore, collectionName, docId);
+    const docSnap = await getDoc(docRef);
 
-    if (!docSnap.exists) {
+    if (!docSnap.exists()) {
       return { success: false, message: 'Document not found.' };
     }
 
@@ -58,7 +60,8 @@ const sendDocumentFlow = ai.defineFlow(
     const companyName = documentData.business.name;
     const documentTypeName = docType.charAt(0).toUpperCase() + docType.slice(1);
 
-    await firestore.collection('mail').add({
+    const mailRef = collection(firestore, 'mail');
+    await addDoc(mailRef, {
       to: [documentData.client.email],
       message: {
         subject: `${documentTypeName} ${docNumber} from ${companyName}`,
