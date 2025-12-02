@@ -1,3 +1,4 @@
+
 'use server';
 /**
  * @fileOverview A flow to send a document (estimate/quote) as a PDF attachment via email.
@@ -54,7 +55,7 @@ const sendDocumentFlow = ai.defineFlow(
     
     // This is a simplified solution. In a real app, you would pass the accentColor and other styles.
     const documentHtml = renderToStaticMarkup(
-        <DocumentPreview document={documentData} accentColor="hsl(var(--primary))" isPrint />
+      DocumentPreview({ document: documentData, accentColor: "hsl(var(--primary))", isPrint: true })
     );
 
     // Inject Tailwind styles for PDF generation
