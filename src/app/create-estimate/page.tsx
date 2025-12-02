@@ -66,6 +66,7 @@ const getInitialEstimate = (): Omit<Estimate, 'userId'> => ({
   
   template: 'default',
   documentType: 'estimate',
+  category: 'Generic',
   language: 'en',
   currency: 'USD',
   fontFamily: 'Inter',

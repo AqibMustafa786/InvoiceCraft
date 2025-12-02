@@ -3,14 +3,14 @@
 'use client';
 
 import { ChangeEvent, Dispatch, SetStateAction, useState, useEffect } from 'react';
-import type { Estimate, LineItem, Quote } from '@/lib/types';
+import type { Estimate, LineItem, Quote, EstimateCategory } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { DatePicker } from '@/components/ui/datepicker';
-import { ImageUp, Plus, Trash2, Palette, X, Mail, Truck, Hash, Phone, Globe, Briefcase, Award, User, FileText, Building, Pencil, Type } from 'lucide-react';
+import { ImageUp, Plus, Trash2, Palette, X, Mail, Truck, Hash, Phone, Globe, Briefcase, Award, User, FileText, Building, Pencil, Type, Package } from 'lucide-react';
 import Image from 'next/image';
 import {
   Select,
@@ -55,6 +55,20 @@ const fonts = [
     { value: 'Merriweather', label: 'Merriweather' },
     { value: 'system-ui', label: 'System Default' },
 ]
+
+const categories: EstimateCategory[] = [
+    "Generic",
+    "Home Remodeling / Renovation",
+    "Roofing Estimate",
+    "HVAC (Air Conditioning / Heating)",
+    "Plumbing Estimate",
+    "Electrical Estimate",
+    "Landscaping Estimate",
+    "Cleaning Estimate",
+    "Auto Repair Estimate",
+    "Construction Estimate",
+    "IT / Freelance Estimate"
+];
 
 export function DocumentForm({ document, setDocument, accentColor, setAccentColor, toast, documentType }: DocumentFormProps) {
   const [bulkAddCount, setBulkAddCount] = useState(5);
@@ -404,6 +418,23 @@ export function DocumentForm({ document, setDocument, accentColor, setAccentColo
             <CardTitle>{docName} Details</CardTitle>
             </CardHeader>
             <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
+             <div className="space-y-2 md:col-span-2">
+                <Label htmlFor="category">Estimate Category (USA)</Label>
+                <div className="relative flex items-center">
+                    <Package className="absolute left-3 h-5 w-5 text-muted-foreground" />
+                    <Select
+                        value={document.category}
+                        onValueChange={(value: EstimateCategory) => setDocument(p => ({ ...p, category: value }))}
+                    >
+                        <SelectTrigger id="category" className="pl-10">
+                            <SelectValue placeholder="Select a business category" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            {categories.map(cat => <SelectItem key={cat} value={cat}>{cat}</SelectItem>)}
+                        </SelectContent>
+                    </Select>
+                </div>
+            </div>
             <div className="space-y-2">
                 <Label htmlFor="estimateNumber">{docNumberName}</Label>
                 <Input id="estimateNumber" name="estimateNumber" value={document.estimateNumber} onChange={handleInputChange} />

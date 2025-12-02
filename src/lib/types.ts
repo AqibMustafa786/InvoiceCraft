@@ -136,6 +136,20 @@ export interface AuditLogEntry {
     details?: string;
 }
 
+export type EstimateCategory = 
+  | "Generic"
+  | "Home Remodeling / Renovation"
+  | "Roofing Estimate"
+  | "HVAC (Air Conditioning / Heating)"
+  | "Plumbing Estimate"
+  | "Electrical Estimate"
+  | "Landscaping Estimate"
+  | "Cleaning Estimate"
+  | "Auto Repair Estimate"
+  | "Construction Estimate"
+  | "IT / Freelance Estimate";
+
+
 export interface Estimate {
   id: string;
   userId: string;
@@ -155,6 +169,7 @@ export interface Estimate {
   termsAndConditions: string;
   
   template: string;
+  category: EstimateCategory;
   documentType: 'estimate' | 'quote';
   language: string;
   currency: string;

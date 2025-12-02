@@ -45,10 +45,10 @@ const SignatureDisplay = ({ signature, label }: { signature: any, label: string 
 }
 
 export const ModernTemplate = ({ document }: { document: Estimate }) => {
-    const { business, client, lineItems, summary, currency, documentType } = document;
+    const { business, client, lineItems, summary, currency, documentType, category } = document;
     const currencySymbol = currencySymbols[currency] || '$';
 
-    const documentTitle = documentType === 'quote' ? 'Quote' : 'Estimate';
+    const documentTitle = category === 'Generic' ? (documentType === 'quote' ? 'Quote' : 'Estimate') : category;
     const subtotalLessDiscount = summary.subtotal - (summary.discount || 0);
     const taxRate = summary.taxPercentage || 0;
 
