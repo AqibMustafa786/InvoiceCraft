@@ -29,9 +29,8 @@ service cloud.firestore {
       // Allow public read access to a single document for sharing.
       allow get: if true;
       // Allow owner to create, list, and delete their own documents.
-      allow create, list, delete: if isSignedIn() && request.resource.data.userId == request.auth.uid;
-      // Public client can update status, owner can update anything.
-      allow update: if (request.resource.data.status == 'accepted' || request.resource.data.status == 'rejected') || (isSignedIn() && resource.data.userId == request.auth.uid);
+      allow list, delete: if isSignedIn() && resource.data.userId == request.auth.uid;
+      allow create, update: if isSignedIn() && request.resource.data.userId == request.auth.uid;
     }
 
     // A user can only access quotes that have their userId
@@ -39,9 +38,8 @@ service cloud.firestore {
       // Allow public read access to a single document for sharing.
       allow get: if true;
       // Allow owner to create, list, and delete their own documents.
-      allow create, list, delete: if isSignedIn() && request.resource.data.userId == request.auth.uid;
-      // Public client can update status, owner can update anything.
-      allow update: if (request.resource.data.status == 'accepted' || request.resource.data.status == 'rejected') || (isSignedIn() && resource.data.userId == request.auth.uid);
+      allow list, delete: if isSignedIn() && resource.data.userId == request.auth.uid;
+      allow create, update: if isSignedIn() && request.resource.data.userId == request.auth.uid;
     }
 
     // Allow authenticated users to write to the 'mail' collection to trigger emails
