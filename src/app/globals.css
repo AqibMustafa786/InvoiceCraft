@@ -98,6 +98,8 @@
   body {
     background: white !important;
     color: black !important;
+    margin: 0;
+    padding: 0;
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;
   }
@@ -108,14 +110,16 @@
 
   #print-container {
     display: block !important;
-  }
-  
-  .page-break {
-    break-after: page;
+    margin: 0;
+    padding: 0;
   }
 
   .avoid-page-break {
     page-break-inside: avoid;
+  }
+
+  .page-break-after {
+    page-break-after: always;
   }
 }
 
