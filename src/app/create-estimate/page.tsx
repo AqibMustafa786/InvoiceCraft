@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
@@ -167,12 +168,11 @@ export default function CreateEstimatePage() {
   const handleSaveDraft = () => {
     if (!document || !firestore || !user) return;
 
-    const normalizeDate = (val: any): Date | null => {
+    const normalizeDate = (val: any): Timestamp | null => {
         if (!val) return null;
-        if (val instanceof Timestamp) return val.toDate();
-        if (val.toDate) return val.toDate();
-        const d = new Date(val);
-        return isValid(d) ? d : null;
+        if (val instanceof Timestamp) return val;
+        const d = val.toDate ? val.toDate() : new Date(val);
+        return isValid(d) ? Timestamp.fromDate(d) : null;
     };
     
     const draftToSave: any = {
@@ -182,10 +182,10 @@ export default function CreateEstimatePage() {
     };
 
     const estimateDate = normalizeDate(document.estimateDate);
-    if (estimateDate) draftToSave.estimateDate = Timestamp.fromDate(estimateDate);
+    if (estimateDate) draftToSave.estimateDate = estimateDate;
     
     const validUntilDate = normalizeDate(document.validUntilDate);
-    if (validUntilDate) draftToSave.validUntilDate = Timestamp.fromDate(validUntilDate);
+    if (validUntilDate) draftToSave.validUntilDate = validUntilDate;
 
     if (!document.createdAt) {
       draftToSave.createdAt = serverTimestamp();
@@ -198,7 +198,7 @@ export default function CreateEstimatePage() {
       title: "Estimate Draft Saved",
       description: "Your estimate draft has been saved online.",
     });
-    router.push(`/${'create-estimate'}?draftId=${document.id}`);
+    router.push(`/create-estimate?draftId=${document.id}`);
   };
 
   const handleNew = () => {
@@ -337,8 +337,8 @@ export default function CreateEstimatePage() {
               <div>
                 <h2 className="text-2xl font-bold font-headline mb-4 text-center lg:text-left">Fill in Details</h2>
                 <DocumentForm 
-                  document={document} 
-                  setDocument={setDocument as React.Dispatch<React.SetStateAction<Estimate | Quote>>} 
+                  document={document as Estimate} 
+                  setDocument={setDocument as React.Dispatch<React.SetStateAction<Estimate>>} 
                   accentColor={accentColor}
                   setAccentColor={setAccentColor}
                   toast={toast}

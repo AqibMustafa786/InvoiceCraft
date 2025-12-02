@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -123,12 +124,11 @@ export default function CreateInvoicePage() {
   const handleSaveDraft = () => {
     if (!invoice || !firestore || !user) return;
 
-    const normalizeDate = (val: any): Date | null => {
+    const normalizeDate = (val: any): Timestamp | null => {
         if (!val) return null;
-        if (val.toDate) return val; // Already a Firestore Timestamp
         if (val instanceof Timestamp) return val;
-        const d = new Date(val);
-        return isValid(d) ? d : null;
+        const d = val.toDate ? val.toDate() : new Date(val);
+        return isValid(d) ? Timestamp.fromDate(d) : null;
     };
 
     const draftToSave: any = {
@@ -154,7 +154,7 @@ export default function CreateInvoicePage() {
       title: "Draft Saved",
       description: "Your invoice draft has been saved online.",
     });
-    router.push(`/create?draftId=${invoice.id}`);
+    router.push(`/create-invoice?draftId=${invoice.id}`);
   };
   
   const handleNew = () => {
@@ -169,7 +169,7 @@ export default function CreateInvoicePage() {
             setAccentColor(`hsl(${computedColor})`);
         }
     }
-    router.push('/create');
+    router.push('/create-invoice');
     toast({
         title: "New Invoice",
         description: "A new blank invoice has been created.",

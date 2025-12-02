@@ -32,7 +32,7 @@ import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
 import { useFirebase, useMemoFirebase } from '@/firebase/provider';
 import { useCollection } from '@/firebase/firestore/use-collection';
-import { collection, doc, addDoc, query, where } from 'firebase/firestore';
+import { collection, doc, addDoc, query, where, Timestamp } from 'firebase/firestore';
 import { deleteDocumentNonBlocking, updateDocumentNonBlocking } from '@/firebase';
 
 const INVOICES_COLLECTION = 'invoices';
@@ -90,7 +90,7 @@ export default function DashboardPage() {
     const calculateTotal = useCallback((doc: DocumentType): number => {
         if (doc.documentType === 'invoice') {
             const invoice = doc as Invoice;
-            const subtotal = invoice.items.reduce((acc, item) => acc + item.quantity * (item as any).rate, 0);
+            const subtotal = invoice.items.reduce((acc, item) => acc + item.quantity * ((item as any).rate || (item.unitPrice || 0)), 0);
             const taxAmount = (subtotal * invoice.tax) / 100;
             const discountAmount = (subtotal * invoice.discount) / 100;
             return subtotal + taxAmount - discountAmount + (invoice.shippingCost || 0);
@@ -127,7 +127,7 @@ export default function DashboardPage() {
         
         const { business, client, lineItems, summary, projectTitle, currency, language, estimateNumber, referenceNumber } = estimate;
 
-        const newInvoiceData: Omit<Invoice, 'id'> = {
+        const newInvoiceData: Omit<Invoice, 'id'| 'createdAt' | 'updatedAt'> = {
             userId: user.uid,
             companyName: business.name,
             companyPhone: business.phone,
@@ -155,12 +155,16 @@ export default function DashboardPage() {
         };
         
         try {
-            const newDocRef = await addDoc(collection(firestore, INVOICES_COLLECTION), newInvoiceData);
+            const newDocRef = await addDoc(collection(firestore, INVOICES_COLLECTION), {
+                ...newInvoiceData,
+                createdAt: Timestamp.now(),
+                updatedAt: Timestamp.now(),
+            });
             toast({
                 title: 'Invoice Created',
                 description: `Document ${estimateNumber} has been successfully converted to an invoice.`
             });
-            router.push(`/create?draftId=${newDocRef.id}`);
+            router.push(`/create-invoice?draftId=${newDocRef.id}`);
         } catch (error) {
             console.error("Error converting document to invoice:", error);
             toast({
@@ -319,7 +323,7 @@ export default function DashboardPage() {
                 </div>
                 <div className="flex gap-2">
                     <Button asChild>
-                        <Link href="/create">
+                        <Link href="/create-invoice">
                             <FilePlus2 className="mr-2 h-4 w-4" />
                             New Invoice
                         </Link>
@@ -328,6 +332,12 @@ export default function DashboardPage() {
                         <Link href="/create-estimate">
                             <FilePlus2 className="mr-2 h-4 w-4" />
                             New Estimate
+                        </Link>
+                    </Button>
+                     <Button asChild variant="outline">
+                        <Link href="/create-quote">
+                            <FilePlus2 className="mr-2 h-4 w-4" />
+                            New Quote
                         </Link>
                     </Button>
                 </div>
@@ -405,7 +415,7 @@ export default function DashboardPage() {
                                     
                                     if(isInvoice) {
                                         docCollection = INVOICES_COLLECTION;
-                                        editUrl = `/create?draftId=${doc.id}`;
+                                        editUrl = `/create-invoice?draftId=${doc.id}`;
                                     } else if (isEstimate) {
                                         docCollection = ESTIMATES_COLLECTION;
                                         editUrl = `/create-estimate?draftId=${doc.id}`;
@@ -494,5 +504,3 @@ export default function DashboardPage() {
         </div>
     );
 }
-
-    

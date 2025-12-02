@@ -3,7 +3,7 @@
 'use client';
 
 import { ChangeEvent, Dispatch, SetStateAction, useState, useEffect } from 'react';
-import type { Estimate, LineItem } from '@/lib/types';
+import type { Estimate, LineItem, Quote } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -32,8 +32,8 @@ import { serverTimestamp } from 'firebase/firestore';
 import { RadioGroup, RadioGroupItem } from './ui/radio-group';
 
 interface DocumentFormProps {
-  document: Estimate;
-  setDocument: Dispatch<SetStateAction<Estimate>>;
+  document: Estimate | Quote;
+  setDocument: Dispatch<SetStateAction<Estimate | Quote>>;
   accentColor: string;
   setAccentColor: Dispatch<SetStateAction<string>>;
   toast: (options: { title: string; description: string; variant?: "default" | "destructive" }) => void;
@@ -67,14 +67,16 @@ export function DocumentForm({ document, setDocument, accentColor, setAccentColo
   }, [accentColor]);
   
   useEffect(() => {
-    setDocument(prev => ({
-        ...prev,
-        business: {
-            ...prev.business,
-            logoUrl: logoUrl || '',
-        }
-    }))
-  }, [logoUrl, setDocument]);
+    if (logoUrl !== document.business.logoUrl) {
+      setDocument(prev => ({
+          ...prev,
+          business: {
+              ...prev.business,
+              logoUrl: logoUrl || '',
+          }
+      }))
+    }
+  }, [logoUrl, setDocument, document.business.logoUrl]);
 
   const handleNestedChange = (section: 'business' | 'client' | 'summary', e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
