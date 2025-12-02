@@ -69,10 +69,12 @@ const getInitialQuote = (): Omit<Quote, 'userId'> => ({
   currency: 'USD',
   fontFamily: 'Inter',
   fontSize: 14,
+  headingColor: '',
+  textColor: '',
 });
 
 
-function PrintableDocument({ document, accentColor }: { document: Quote, accentColor: string }) {
+function PrintableDocument({ doc, accentColor }: { doc: Quote, accentColor: string }) {
     const [printRoot, setPrintRoot] = useState<HTMLElement | null>(null);
 
     useEffect(() => {
@@ -85,7 +87,7 @@ function PrintableDocument({ document, accentColor }: { document: Quote, accentC
     }
 
     return createPortal(
-        <DocumentPreview document={document} accentColor={accentColor} id="quote-preview-print" isPrint={true} />,
+        <DocumentPreview document={doc} accentColor={accentColor} id="quote-preview-print" isPrint={true} />,
         printRoot
     );
 }
@@ -160,17 +162,18 @@ export default function CreateQuotePage() {
   const handleSaveDraft = () => {
     if (!document || !firestore || !user) return;
 
-    const normalizeDate = (val: any): Date => {
-        if (!val) return new Date();
+    const normalizeDate = (val: any): Date | null => {
+        if (!val) return null;
+        if (val.toDate) return val.toDate();
         const d = new Date(val);
-        return isValid(d) ? d : new Date();
+        return isValid(d) ? d : null;
     };
     
     const draftToSave = {
       ...document,
       userId: user.uid,
-      estimateDate: normalizeDate(document.estimateDate),
-      validUntilDate: normalizeDate(document.validUntilDate),
+      estimateDate: normalizeDate(document.estimateDate) || new Date(),
+      validUntilDate: normalizeDate(document.validUntilDate) || new Date(),
       updatedAt: serverTimestamp(),
       createdAt: document.createdAt || serverTimestamp(),
     };
@@ -297,7 +300,7 @@ export default function CreateQuotePage() {
           </div>
         </div>
       </div>
-      <PrintableDocument document={document} accentColor={accentColor} />
+      <PrintableDocument doc={document} accentColor={accentColor} />
     </>
   );
 }

@@ -50,10 +50,12 @@ const getInitialInsuranceDoc = (): InsuranceDocument => ({
   template: 'usa-claim-default',
   createdAt: serverTimestamp(),
   updatedAt: serverTimestamp(),
+  headingColor: '',
+  textColor: '',
 });
 
 
-function PrintableInsuranceDoc({ insuranceDoc, logoUrl, accentColor }: { insuranceDoc: InsuranceDocument, logoUrl: string | null, accentColor: string }) {
+function PrintableInsuranceDoc({ doc, logoUrl, accentColor }: { doc: InsuranceDocument, logoUrl: string | null, accentColor: string }) {
     const [printRoot, setPrintRoot] = useState<HTMLElement | null>(null);
 
     useEffect(() => {
@@ -66,7 +68,7 @@ function PrintableInsuranceDoc({ insuranceDoc, logoUrl, accentColor }: { insuran
     }
 
     return createPortal(
-        <InsurancePreview doc={insuranceDoc} logoUrl={logoUrl} accentColor={accentColor} id="insurance-preview-print" isPrint={true} />,
+        <InsurancePreview doc={doc} logoUrl={logoUrl} accentColor={accentColor} id="insurance-preview-print" isPrint={true} />,
         printRoot
     );
 }
@@ -173,7 +175,7 @@ export default function CreateInsurancePage() {
           </div>
         </div>
       </div>
-      <PrintableInsuranceDoc insuranceDoc={doc} logoUrl={logoUrl} accentColor={accentColor} />
+      <PrintableInsuranceDoc doc={doc} logoUrl={logoUrl} accentColor={accentColor} />
     </>
   );
 }

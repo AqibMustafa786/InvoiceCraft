@@ -47,6 +47,8 @@ const getInitialInvoice = (): Omit<Invoice, 'userId'> => ({
   language: 'en',
   template: 'default',
   documentType: 'invoice',
+  headingColor: '',
+  textColor: '',
 });
 
 function PrintableInvoice({ invoice, logoUrl, accentColor }: { invoice: Invoice, logoUrl: string | null, accentColor: string }) {
@@ -119,17 +121,18 @@ export default function CreateInvoicePage() {
   const handleSaveDraft = () => {
     if (!invoice || !firestore || !user) return;
 
-    const normalizeDate = (val: any): Date => {
-        if (!val) return new Date();
+    const normalizeDate = (val: any): Date | null => {
+        if (!val) return null;
+        if (val.toDate) return val.toDate();
         const d = new Date(val);
-        return isValid(d) ? d : new Date();
+        return isValid(d) ? d : null;
     };
 
     const draftToSave = {
       ...invoice,
       userId: user.uid,
-      invoiceDate: normalizeDate(invoice.invoiceDate),
-      dueDate: normalizeDate(invoice.dueDate),
+      invoiceDate: normalizeDate(invoice.invoiceDate) || new Date(),
+      dueDate: normalizeDate(invoice.dueDate) || new Date(),
       updatedAt: serverTimestamp(),
       createdAt: invoice.createdAt ? invoice.createdAt : serverTimestamp(),
     };
@@ -233,5 +236,3 @@ export default function CreateInvoicePage() {
     </>
   );
 }
-
-    

@@ -69,10 +69,12 @@ const getInitialEstimate = (): Omit<Estimate, 'userId'> => ({
   currency: 'USD',
   fontFamily: 'Inter',
   fontSize: 14,
+  headingColor: '',
+  textColor: '',
 });
 
 
-function PrintableDocument({ document, accentColor }: { document: Estimate, accentColor: string }) {
+function PrintableDocument({ doc, accentColor }: { doc: Estimate, accentColor: string }) {
     const [printRoot, setPrintRoot] = useState<HTMLElement | null>(null);
 
     useEffect(() => {
@@ -85,7 +87,7 @@ function PrintableDocument({ document, accentColor }: { document: Estimate, acce
     }
 
     return createPortal(
-        <DocumentPreview document={document} accentColor={accentColor} id="estimate-preview-print" isPrint={true} />,
+        <DocumentPreview document={doc} accentColor={accentColor} id="estimate-preview-print" isPrint={true} />,
         printRoot
     );
 }
@@ -161,17 +163,18 @@ export default function CreateEstimatePage() {
   const handleSaveDraft = () => {
     if (!document || !firestore || !user) return;
 
-    const normalizeDate = (val: any): Date => {
-        if (!val) return new Date();
+    const normalizeDate = (val: any): Date | null => {
+        if (!val) return null;
+        if (val.toDate) return val.toDate();
         const d = new Date(val);
-        return isValid(d) ? d : new Date();
+        return isValid(d) ? d : null;
     };
     
     const draftToSave = {
       ...document,
       userId: user.uid,
-      estimateDate: normalizeDate(document.estimateDate),
-      validUntilDate: normalizeDate(document.validUntilDate),
+      estimateDate: normalizeDate(document.estimateDate) || new Date(),
+      validUntilDate: normalizeDate(document.validUntilDate) || new Date(),
       updatedAt: serverTimestamp(),
       createdAt: document.createdAt || serverTimestamp(),
     };
@@ -298,7 +301,7 @@ export default function CreateEstimatePage() {
           </div>
         </div>
       </div>
-      <PrintableDocument document={document} accentColor={accentColor} />
+      <PrintableDocument doc={document} accentColor={accentColor} />
     </>
   );
 }
