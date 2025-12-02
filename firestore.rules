@@ -11,7 +11,6 @@ service cloud.firestore {
       allow read, delete: if isOwner(resource.data.userId);
       
       // Allow a client to accept/decline (update status and signature)
-      // They cannot change any other field.
       allow update: if (isOwner(resource.data.userId)) || 
                        (request.resource.data.diff(resource.data).affectedKeys()
                          .hasOnly(['status', 'clientSignature', 'auditLog']));
@@ -22,15 +21,13 @@ service cloud.firestore {
     
     match /quotes/{quoteId} {
       allow create: if isOwner(request.resource.data.userId);
-      allow read, delete: if isOwner(resource.data.userId);
+      allow delete: if isOwner(resource.data.userId);
+      allow read: if isOwner(resource.data.userId) || resource.data.isPublic == true;
       
        // Allow a client to accept/decline (update status and signature)
       allow update: if (isOwner(resource.data.userId)) || 
                        (request.resource.data.diff(resource.data).affectedKeys()
                          .hasOnly(['status', 'clientSignature', 'auditLog']));
-
-       // Allow public read if the document is marked as public
-      allow get: if resource.data.isPublic == true;
     }
 
     match /users/{userId} {
