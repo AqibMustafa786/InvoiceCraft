@@ -3,14 +3,14 @@
 'use client';
 
 import { ChangeEvent, Dispatch, SetStateAction, useState, useEffect } from 'react';
-import type { Estimate, LineItem, Quote, EstimateCategory, HomeRemodelingInfo, RoofingInfo, HVACInfo, PlumbingInfo, ElectricalInfo, LandscapingInfo, CleaningInfo, AutoRepairInfo } from '@/lib/types';
+import type { Estimate, LineItem, Quote, EstimateCategory, HomeRemodelingInfo, RoofingInfo, HVACInfo, PlumbingInfo, ElectricalInfo, LandscapingInfo, CleaningInfo, AutoRepairInfo, ConstructionInfo, ITFreelanceInfo } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { DatePicker } from '@/components/ui/datepicker';
-import { ImageUp, Plus, Trash2, Palette, X, Mail, Truck, Hash, Phone, Globe, Briefcase, Award, User, FileText, Building, Pencil, Type, Package, Hammer, Ruler, ListTree, CheckSquare, Sparkles, Calendar, TextQuote, Wind, Thermometer, Wrench, Zap, Trees, Droplets, Car } from 'lucide-react';
+import { ImageUp, Plus, Trash2, Palette, X, Mail, Truck, Hash, Phone, Globe, Briefcase, Award, User, FileText, Building, Pencil, Type, Package, Hammer, Ruler, ListTree, CheckSquare, Sparkles, Calendar, TextQuote, Wind, Thermometer, Wrench, Zap, Trees, Droplets, Car, Code, DraftingCompass } from 'lucide-react';
 import Image from 'next/image';
 import {
   Select,
@@ -104,7 +104,7 @@ export function DocumentForm({ document, setDocument, accentColor, setAccentColo
     }));
   };
 
-  const handleCategoryDataChange = (category: 'homeRemodeling' | 'roofing' | 'hvac' | 'plumbing' | 'electrical' | 'landscaping' | 'cleaning' | 'autoRepair', e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleCategoryDataChange = (category: 'homeRemodeling' | 'roofing' | 'hvac' | 'plumbing' | 'electrical' | 'landscaping' | 'cleaning' | 'autoRepair' | 'construction' | 'itFreelance', e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value, type } = e.target;
     const isCheckbox = type === 'checkbox';
     
@@ -117,7 +117,7 @@ export function DocumentForm({ document, setDocument, accentColor, setAccentColo
     }));
   };
 
-  const handleCategorySelectChange = (category: 'homeRemodeling' | 'roofing' | 'hvac' | 'plumbing' | 'electrical' | 'landscaping' | 'cleaning' | 'autoRepair', name: string, value: string | boolean) => {
+  const handleCategorySelectChange = (category: 'homeRemodeling' | 'roofing' | 'hvac' | 'plumbing' | 'electrical' | 'landscaping' | 'cleaning' | 'autoRepair' | 'construction' | 'itFreelance', name: string, value: string | boolean) => {
      setDocument(prev => ({
         ...prev,
         [category]: {
@@ -908,6 +908,39 @@ export function DocumentForm({ document, setDocument, accentColor, setAccentColo
                     <div className="space-y-2 md:col-span-2"><Label htmlFor="issueDescription">Issue Description</Label><Textarea id="issueDescription" name="issueDescription" value={document.autoRepair.issueDescription} onChange={(e) => handleCategoryDataChange('autoRepair', e)} /></div>
                     <div className="space-y-2 md:col-span-2"><Label htmlFor="partsRequired">Parts Required</Label><Textarea id="partsRequired" name="partsRequired" value={document.autoRepair.partsRequired} onChange={(e) => handleCategoryDataChange('autoRepair', e)} /></div>
                     <div className="space-y-2 md:col-span-2"><Label>Diagnostic Type</Label><RadioGroup value={document.autoRepair.diagnosticType} onValueChange={(v) => handleCategorySelectChange('autoRepair', 'diagnosticType', v)} className="flex gap-4"><div className="flex items-center space-x-2"><RadioGroupItem value="Basic" id="diag-basic" /><Label htmlFor="diag-basic">Basic</Label></div><div className="flex items-center space-x-2"><RadioGroupItem value="Advanced" id="diag-adv" /><Label htmlFor="diag-adv">Advanced</Label></div></RadioGroup></div>
+                </CardContent>
+            </Card>
+        )}
+
+        {document.category === 'Construction Estimate' && document.construction && (
+            <Card className="bg-card/50 backdrop-blur-sm group-disabled:opacity-70">
+                <CardHeader><CardTitle>Construction Project Details</CardTitle></CardHeader>
+                <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-2"><Label htmlFor="constructionProjectType">Project Type</Label><Input id="constructionProjectType" name="projectType" value={document.construction.projectType} onChange={(e) => handleCategoryDataChange('construction', e)} placeholder="New Home, Addition..." /></div>
+                    <div className="space-y-2"><Label htmlFor="constructionSqFt">Square Footage</Label><Input id="constructionSqFt" name="squareFootage" type="number" value={document.construction.squareFootage ?? ''} onChange={(e) => handleCategoryDataChange('construction', e)} /></div>
+                    <div className="space-y-2"><Label htmlFor="lotSize">Lot Size</Label><Input id="lotSize" name="lotSize" value={document.construction.lotSize} onChange={(e) => handleCategoryDataChange('construction', e)} /></div>
+                    <div className="space-y-2"><Label htmlFor="buildingType">Building Type</Label><Input id="buildingType" name="buildingType" value={document.construction.buildingType} onChange={(e) => handleCategoryDataChange('construction', e)} /></div>
+                    <div className="space-y-2"><Label htmlFor="soilCondition">Soil Condition</Label><Input id="soilCondition" name="soilCondition" value={document.construction.soilCondition} onChange={(e) => handleCategoryDataChange('construction', e)} /></div>
+                    <div className="space-y-2"><Label htmlFor="materialPreference">Material Preference</Label><Input id="materialPreference" name="materialPreference" value={document.construction.materialPreference} onChange={(e) => handleCategoryDataChange('construction', e)} /></div>
+                    <div className="flex items-center space-x-2 pt-6"><Checkbox id="constructionPermit" name="permitRequired" checked={document.construction.permitRequired} onCheckedChange={(c) => handleCategorySelectChange('construction', 'permitRequired', !!c)} /><Label htmlFor="constructionPermit">Permit Required?</Label></div>
+                    <div className="flex items-center space-x-2 pt-6"><Checkbox id="architectDrawings" name="architectDrawingsProvided" checked={document.construction.architectDrawingsProvided} onCheckedChange={(c) => handleCategorySelectChange('construction', 'architectDrawingsProvided', !!c)} /><Label htmlFor="architectDrawings">Architect Drawings Provided?</Label></div>
+                    <div className="flex items-center space-x-2"><Checkbox id="constructionInspection" name="inspectionRequired" checked={document.construction.inspectionRequired} onCheckedChange={(c) => handleCategorySelectChange('construction', 'inspectionRequired', !!c)} /><Label htmlFor="constructionInspection">Inspection Required?</Label></div>
+                </CardContent>
+            </Card>
+        )}
+
+        {document.category === 'IT / Freelance Estimate' && document.itFreelance && (
+            <Card className="bg-card/50 backdrop-blur-sm group-disabled:opacity-70">
+                <CardHeader><CardTitle>IT/Freelance Project Details</CardTitle></CardHeader>
+                <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-2"><Label htmlFor="itProjectType">Project Type</Label><Input id="itProjectType" name="projectType" value={document.itFreelance.projectType} onChange={(e) => handleCategoryDataChange('itFreelance', e)} placeholder="Website, App, Branding..." /></div>
+                    <div className="space-y-2"><Label htmlFor="itDesignStyle">Design Style</Label><Input id="itDesignStyle" name="designStyle" value={document.itFreelance.designStyle} onChange={(e) => handleCategoryDataChange('itFreelance', e)} /></div>
+                    <div className="space-y-2"><Label htmlFor="pagesScreensCount">Number of Pages/Screens</Label><Input id="pagesScreensCount" name="pagesScreensCount" type="number" value={document.itFreelance.pagesScreensCount ?? ''} onChange={(e) => handleCategoryDataChange('itFreelance', e)} /></div>
+                    <div className="space-y-2"><Label htmlFor="revisionsIncluded">Revisions Included</Label><Input id="revisionsIncluded" name="revisionsIncluded" type="number" value={document.itFreelance.revisionsIncluded ?? ''} onChange={(e) => handleCategoryDataChange('itFreelance', e)} /></div>
+                    <div className="space-y-2 md:col-span-2"><Label htmlFor="itScope">Scope of Work</Label><Textarea id="itScope" name="scopeOfWork" value={document.itFreelance.scopeOfWork} onChange={(e) => handleCategoryDataChange('itFreelance', e)} /></div>
+                    <div className="space-y-2 md:col-span-2"><Label htmlFor="itFeatures">Features Needed</Label><Textarea id="itFeatures" name="featuresNeeded" value={document.itFreelance.featuresNeeded} onChange={(e) => handleCategoryDataChange('itFreelance', e)} /></div>
+                    <div className="space-y-2 md:col-span-2"><Label htmlFor="itIntegrations">Integrations</Label><Textarea id="itIntegrations" name="integrations" value={document.itFreelance.integrations} onChange={(e) => handleCategoryDataChange('itFreelance', e)} placeholder="Payment, APIs, Auth..." /></div>
+                    <div className="space-y-2 md:col-span-2"><Label htmlFor="itTimeline">Delivery Timeline</Label><Input id="itTimeline" name="deliveryTimeline" value={document.itFreelance.deliveryTimeline} onChange={(e) => handleCategoryDataChange('itFreelance', e)} /></div>
                 </CardContent>
             </Card>
         )}

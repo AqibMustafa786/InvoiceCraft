@@ -45,7 +45,7 @@ const SignatureDisplay = ({ signature, label }: { signature: any, label: string 
 }
 
 const CategoryPreview = ({ document }: { document: Estimate }) => {
-    const { category, homeRemodeling, roofing, hvac, plumbing, electrical, landscaping, cleaning, autoRepair } = document;
+    const { category, homeRemodeling, roofing, hvac, plumbing, electrical, landscaping, cleaning, autoRepair, construction, itFreelance } = document;
     if (category === 'Generic') return null;
 
     const renderContent = () => {
@@ -161,6 +161,34 @@ const CategoryPreview = ({ document }: { document: Estimate }) => {
                         <div className="col-span-2"><span className="font-bold text-gray-600">Issue:</span> {autoRepair.issueDescription}</div>
                         <div className="col-span-2"><span className="font-bold text-gray-600">Parts Required:</span> {autoRepair.partsRequired}</div>
                         <div><span className="font-bold text-gray-600">Diagnostic:</span> {autoRepair.diagnosticType}</div>
+                    </div>
+                );
+             case "Construction Estimate":
+                if (!construction) return null;
+                return (
+                    <div className="grid grid-cols-2 gap-x-8 gap-y-2 mt-4 text-xs">
+                        <div><span className="font-bold text-gray-600">Project Type:</span> {construction.projectType}</div>
+                        {construction.squareFootage && <div><span className="font-bold text-gray-600">Sq. Footage:</span> {construction.squareFootage} sq ft</div>}
+                        <div><span className="font-bold text-gray-600">Lot Size:</span> {construction.lotSize}</div>
+                        <div><span className="font-bold text-gray-600">Building Type:</span> {construction.buildingType}</div>
+                        <div><span className="font-bold text-gray-600">Permit:</span> {construction.permitRequired ? 'Yes' : 'No'}</div>
+                        <div><span className="font-bold text-gray-600">Drawings:</span> {construction.architectDrawingsProvided ? 'Provided' : 'Not Provided'}</div>
+                        <div><span className="font-bold text-gray-600">Inspection:</span> {construction.inspectionRequired ? 'Yes' : 'No'}</div>
+                        <div className="col-span-2"><span className="font-bold text-gray-600">Material Pref:</span> {construction.materialPreference}</div>
+                    </div>
+                );
+            case "IT / Freelance Estimate":
+                if (!itFreelance) return null;
+                return (
+                    <div className="grid grid-cols-2 gap-x-8 gap-y-2 mt-4 text-xs">
+                        <div><span className="font-bold text-gray-600">Project Type:</span> {itFreelance.projectType}</div>
+                        <div><span className="font-bold text-gray-600">Design Style:</span> {itFreelance.designStyle}</div>
+                        {itFreelance.pagesScreensCount && <div><span className="font-bold text-gray-600">Pages/Screens:</span> {itFreelance.pagesScreensCount}</div>}
+                        {itFreelance.revisionsIncluded && <div><span className="font-bold text-gray-600">Revisions:</span> {itFreelance.revisionsIncluded}</div>}
+                        <div className="col-span-2"><span className="font-bold text-gray-600">Timeline:</span> {itFreelance.deliveryTimeline}</div>
+                        <div className="col-span-2"><span className="font-bold text-gray-600">Scope:</span> <span className="whitespace-pre-line">{itFreelance.scopeOfWork}</span></div>
+                        <div className="col-span-2"><span className="font-bold text-gray-600">Features:</span> <span className="whitespace-pre-line">{itFreelance.featuresNeeded}</span></div>
+                        <div className="col-span-2"><span className="font-bold text-gray-600">Integrations:</span> <span className="whitespace-pre-line">{itFreelance.integrations}</span></div>
                     </div>
                 );
             default:

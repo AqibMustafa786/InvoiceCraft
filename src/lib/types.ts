@@ -242,6 +242,29 @@ export interface AutoRepairInfo {
     diagnosticType: 'Basic' | 'Advanced';
 }
 
+export interface ConstructionInfo {
+  projectType: string;
+  squareFootage: number | null;
+  lotSize: string;
+  buildingType: string;
+  permitRequired: boolean;
+  architectDrawingsProvided: boolean;
+  soilCondition: string;
+  materialPreference: string;
+  inspectionRequired: boolean;
+}
+
+export interface ITFreelanceInfo {
+  projectType: string;
+  scopeOfWork: string;
+  pagesScreensCount: number | null;
+  designStyle: string;
+  featuresNeeded: string;
+  integrations: string;
+  revisionsIncluded: number | null;
+  deliveryTimeline: string;
+}
+
 export interface Estimate {
   id: string;
   userId: string;
@@ -286,6 +309,8 @@ export interface Estimate {
   landscaping?: LandscapingInfo;
   cleaning?: CleaningInfo;
   autoRepair?: AutoRepairInfo;
+  construction?: ConstructionInfo;
+  itFreelance?: ITFreelanceInfo;
 }
 
 export type Quote = Estimate & { documentType: 'quote' };

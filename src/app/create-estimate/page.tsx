@@ -159,6 +159,27 @@ const getInitialEstimate = (): Omit<Estimate, 'userId'> => ({
     partsRequired: '',
     diagnosticType: 'Basic',
   },
+  construction: {
+    projectType: 'New Home',
+    squareFootage: null,
+    lotSize: '',
+    buildingType: '',
+    permitRequired: false,
+    architectDrawingsProvided: false,
+    soilCondition: '',
+    materialPreference: '',
+    inspectionRequired: false,
+  },
+  itFreelance: {
+    projectType: 'Website',
+    scopeOfWork: '',
+    pagesScreensCount: null,
+    designStyle: '',
+    featuresNeeded: '',
+    integrations: '',
+    revisionsIncluded: null,
+    deliveryTimeline: '',
+  },
 });
 
 
