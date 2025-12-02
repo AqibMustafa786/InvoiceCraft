@@ -44,16 +44,17 @@ const SignatureDisplay = ({ signature, label }: { signature: any, label: string 
     )
 }
 
-const DefaultTemplate = ({ document, accentColor }: { document: Estimate, accentColor: string }) => {
-    const { business, client, lineItems, summary, currency, clientSignature, documentType } = document;
+export const DefaultTemplate = ({ document, accentColor }: { document: Estimate, accentColor: string }) => {
+    const { business, client, lineItems, summary, currency, clientSignature, documentType, headingColor, textColor, fontFamily, fontSize } = document;
     const currencySymbol = currencySymbols[currency] || '$';
 
     const documentTitle = documentType === 'quote' ? 'Quote' : 'Estimate';
 
     const previewStyle = {
-      fontFamily: document.fontFamily || 'Inter, sans-serif',
-      '--heading-color': document.headingColor || 'inherit',
-      '--text-color': document.textColor || 'inherit',
+      fontFamily: fontFamily || 'Inter, sans-serif',
+      fontSize: `${fontSize || 14}px`,
+      '--heading-color': headingColor || 'inherit',
+      '--text-color': textColor || 'inherit',
     } as React.CSSProperties;
 
     return (
@@ -184,15 +185,16 @@ const DefaultTemplate = ({ document, accentColor }: { document: Estimate, accent
     );
 };
 
-const ContractorTemplate = ({ document, accentColor }: { document: Estimate, accentColor: string }) => {
-    const { business, client, lineItems, summary, currency, clientSignature, documentType } = document;
+export const ContractorTemplate = ({ document, accentColor }: { document: Estimate, accentColor: string }) => {
+    const { business, client, lineItems, summary, currency, clientSignature, documentType, headingColor, textColor, fontFamily, fontSize } = document;
     const currencySymbol = currencySymbols[currency] || '$';
     const documentTitle = documentType === 'quote' ? 'Quote' : 'Estimate';
 
     const previewStyle = {
-      fontFamily: document.fontFamily || 'Inter, sans-serif',
-      '--heading-color': document.headingColor || 'inherit',
-      '--text-color': document.textColor || 'inherit',
+      fontFamily: fontFamily || 'Inter, sans-serif',
+      fontSize: `${fontSize || 14}px`,
+      '--heading-color': headingColor || 'inherit',
+      '--text-color': textColor || 'inherit',
     } as React.CSSProperties;
 
     return (
