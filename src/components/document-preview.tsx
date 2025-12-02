@@ -333,7 +333,7 @@ const PageFooter = ({ document }: { document: Estimate }) => {
 
 const ModernTemplatePage = ({ document, pageItems, pageIndex, totalPages, style }: PageProps) => {
     const currencySymbol = currencySymbols[document.currency] || '$';
-    const { headingColor, textColor } = document;
+    const { textColor } = document;
 
     return (
         <div className={`p-8 md:p-10 bg-white text-gray-800 font-sans ${pageIndex < totalPages - 1 ? "page-break" : ""}`} style={{ ...style, color: textColor || undefined }}>
@@ -343,7 +343,7 @@ const ModernTemplatePage = ({ document, pageItems, pageIndex, totalPages, style 
             
             <section className="mt-8">
                 <table className="w-full text-left text-xs" data-element="items-table">
-                    <thead className="text-gray-700" style={{ backgroundColor: headingColor || '#F3F4F6' }} data-element="table-header">
+                    <thead className="text-gray-700 bg-gray-100" data-element="table-header">
                         <tr>
                             <th className="p-2 font-bold w-1/2">Item/Service Description</th>
                             <th className="p-2 font-bold text-right">Quantity</th>

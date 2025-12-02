@@ -48,7 +48,6 @@ const getInitialInvoice = (): Omit<Invoice, 'userId'> => ({
   language: 'en',
   template: 'default',
   documentType: 'invoice',
-  headingColor: '',
   textColor: '',
 });
 

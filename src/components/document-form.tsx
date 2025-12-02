@@ -401,10 +401,6 @@ export function DocumentForm({ document, setDocument, accentColor, setAccentColo
                     </Select>
                 </div>
                 <div className="space-y-2">
-                    <Label htmlFor="headingColor">Heading Color</Label>
-                    <Input id="headingColor" name="headingColor" value={document.headingColor} onChange={handleInputChange} placeholder="Default" />
-                </div>
-                <div className="space-y-2">
                     <Label htmlFor="textColor">Text Color</Label>
                     <Input id="textColor" name="textColor" value={document.textColor} onChange={handleInputChange} placeholder="Default" />
                 </div>

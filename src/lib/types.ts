@@ -40,7 +40,6 @@ export interface Invoice {
   documentType: 'invoice';
   fontFamily?: string;
   fontSize?: number;
-  headingColor?: string;
   textColor?: string;
   createdAt?: any;
   updatedAt?: any;
@@ -83,7 +82,6 @@ export interface InsuranceDocument {
   template: string;
   fontFamily?: string;
   fontSize?: number;
-  headingColor?: string;
   textColor?: string;
   createdAt?: any;
   updatedAt?: any;
@@ -165,7 +163,7 @@ export interface HomeRemodelingInfo {
 }
 
 export interface RoofingInfo {
-    roofMaterial: 'Shingle' | 'Metal' | 'Tile' | 'Flat';
+    roofMaterial: string;
     roofSize: number | null;
     roofPitch: string;
     layersToRemove: number | null;
@@ -178,21 +176,21 @@ export interface RoofingInfo {
 }
 
 export interface HVACInfo {
-    serviceType: 'Install' | 'Repair' | 'Replace' | 'Maintenance';
-    systemType: 'AC' | 'Furnace' | 'Heat Pump' | 'Boiler' | 'Ductless Mini-Split';
+    serviceType: string;
+    systemType: string;
     unitSize: number | null; // Tonnage or BTU
     seerRating: string;
-    furnaceType: 'Gas' | 'Electric' | 'Oil';
+    furnaceType: string;
     ductworkRequired: boolean;
-    thermostatType: 'Manual' | 'Programmable' | 'Smart';
+    thermostatType: string;
     existingSystemCondition: string;
     refrigerantType: string;
 }
 
 export interface PlumbingInfo {
-    serviceType: 'Leak Repair' | 'Installation' | 'Sewer Line' | 'Water Heater' | 'Drain Cleaning';
+    serviceType: string;
     fixtureType: string; // e.g., Sink, Toilet, Shower, Water Heater
-    pipeMaterial: 'Copper' | 'PVC' | 'PEX' | 'Galvanized';
+    pipeMaterial: string;
     floorLevel: string;
     emergencyService: boolean;
     waterPressureIssue: boolean;
@@ -201,10 +199,10 @@ export interface PlumbingInfo {
 }
 
 export interface ElectricalInfo {
-    serviceType: 'Install' | 'Repair' | 'Upgrade';
-    wiringType: 'Copper' | 'Aluminum';
+    serviceType: string;
+    wiringType: string;
     panelUpgradeNeeded: boolean;
-    panelSize: '100A' | '200A' | 'Other';
+    panelSize: string;
     outletsFixturesCount: number | null;
     roomsInvolved: string;
     evChargerNeeded: boolean;
@@ -221,14 +219,14 @@ export interface LandscapingInfo {
 }
 
 export interface CleaningInfo {
-    cleaningType: 'Standard' | 'Deep' | 'Move-in/Move-out' | 'Office';
+    cleaningType: string;
     homeSize: number | null;
     bedrooms: number | null;
     bathrooms: number | null;
-    kitchenSize: 'Small' | 'Medium' | 'Large';
+    kitchenSize: string;
     hasPets: boolean;
     addOns: string[];
-    frequency: 'One-time' | 'Weekly' | 'Bi-Weekly' | 'Monthly';
+    frequency: string;
 }
 
 export interface AutoRepairInfo {
@@ -295,7 +293,6 @@ export interface Estimate {
 
   fontFamily?: string;
   fontSize?: number;
-  headingColor?: string;
   textColor?: string;
   createdAt?: any;
   updatedAt?: any;

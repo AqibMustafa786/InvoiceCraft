@@ -50,7 +50,6 @@ const getInitialInsuranceDoc = (): InsuranceDocument => ({
   template: 'usa-claim-default',
   createdAt: serverTimestamp(),
   updatedAt: serverTimestamp(),
-  headingColor: '',
   textColor: '',
 });
 

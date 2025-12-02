@@ -73,7 +73,6 @@ const getInitialEstimate = (): Omit<Estimate, 'userId'> => ({
   currency: 'USD',
   fontFamily: 'Inter',
   fontSize: 14,
-  headingColor: '',
   textColor: '',
 
   homeRemodeling: {
