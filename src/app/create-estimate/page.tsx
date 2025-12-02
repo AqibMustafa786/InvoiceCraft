@@ -168,6 +168,7 @@ export default function CreateEstimatePage() {
     const normalizeDate = (val: any): Date | null => {
         if (!val) return null;
         if (val instanceof Timestamp) return val.toDate();
+        if (val.toDate) return val.toDate();
         const d = new Date(val);
         return isValid(d) ? d : null;
     };
@@ -228,6 +229,10 @@ export default function CreateEstimatePage() {
   
   const handleEmail = () => {
     if (!document) return;
+    if (!document.client.email) {
+      alert("Please enter the client's email address first.");
+      return;
+    }
     const shareUrl = `${window.location.origin}/estimate/${document.id}`;
     const subject = `Estimate ${document.estimateNumber} from ${document.business.name}`;
     const body = `Hello ${document.client.name},\n\nPlease find our estimate below:\n${shareUrl}\n\nThank you,\n${document.business.name}`;
@@ -255,7 +260,7 @@ export default function CreateEstimatePage() {
 
   return (
     <>
-      <div className="container mx-auto p-4 md:p-8">
+      <div className="container mx-auto p-4 md:px-6 md:py-8">
         <div className="flex flex-col md:flex-row justify-between md:items-center gap-4 mb-8">
           <div>
             <h1 className="text-3xl font-bold font-headline">Create Estimate</h1>
@@ -291,7 +296,7 @@ export default function CreateEstimatePage() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 xl:gap-12">
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
           <div className="lg:col-span-3">
             <div className="space-y-12">
               <div>
