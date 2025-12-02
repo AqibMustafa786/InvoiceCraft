@@ -1,5 +1,4 @@
 
-
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
@@ -133,17 +132,15 @@ export default function CreateEstimatePage() {
 
     const initialEstimate = {...getInitialEstimate(), userId: user.uid};
 
-    if (draftId) {
-        if (remoteDraft) {
-            const fromJSON = (key: string, value: any) => {
-                if (['estimateDate', 'validUntilDate', 'createdAt', 'updatedAt'].includes(key) && value) {
-                    return value.toDate ? value.toDate() : new Date(value);
-                }
-                return value;
-            };
-            const loadedDraft = JSON.parse(JSON.stringify(remoteDraft), fromJSON);
-            setEstimate({ ...initialEstimate, ...loadedDraft });
-        }
+    if (draftId && remoteDraft) {
+        const fromJSON = (key: string, value: any) => {
+           if (['estimateDate', 'validUntilDate', 'createdAt', 'updatedAt'].includes(key) && value) {
+               return value.toDate ? value.toDate() : (isValid(new Date(value)) ? new Date(value) : null);
+           }
+           return value;
+       };
+       const loadedDraft = JSON.parse(JSON.stringify(remoteDraft), fromJSON);
+       setEstimate({ ...initialEstimate, ...loadedDraft });
     } else {
         setEstimate(initialEstimate);
     }
@@ -163,7 +160,7 @@ export default function CreateEstimatePage() {
   const handleSaveDraft = () => {
     if (!estimate || !firestore || !user) return;
 
-    const normalizeDate = (val: any) => {
+    const normalizeDate = (val: any): Date => {
         if (!val) return new Date();
         const d = new Date(val);
         return isValid(d) ? d : new Date();
@@ -175,8 +172,7 @@ export default function CreateEstimatePage() {
       estimateDate: normalizeDate(estimate.estimateDate),
       validUntilDate: normalizeDate(estimate.validUntilDate),
       updatedAt: serverTimestamp(),
-      // Ensure createdAt is only set once
-      ...(!(estimate as any).createdAt && { createdAt: serverTimestamp() })
+      createdAt: estimate.createdAt ? estimate.createdAt : serverTimestamp(),
     };
     
     const docRef = doc(firestore, ESTIMATES_COLLECTION, estimate.id);
@@ -219,16 +215,12 @@ export default function CreateEstimatePage() {
   
   useEffect(() => {
     if (estimate) {
-        setEstimate(currentEstimate => {
-            if(!currentEstimate) return null;
-            const newEstimate = computeSummary(currentEstimate);
-             if (JSON.stringify(newEstimate.summary) !== JSON.stringify(currentEstimate.summary)) {
-                return newEstimate;
-            }
-            return currentEstimate;
-        });
+        const newEstimate = computeSummary(estimate);
+         if (JSON.stringify(newEstimate.summary) !== JSON.stringify(estimate.summary)) {
+            setEstimate(newEstimate);
+        }
     }
-  }, [estimate?.lineItems, estimate?.summary.taxPercentage, estimate?.summary.discount, estimate?.summary.shippingCost, computeSummary]);
+  }, [estimate, computeSummary]);
 
 
   if (!estimate || (draftId && isDraftLoading) || isUserLoading) {
@@ -307,3 +299,5 @@ export default function CreateEstimatePage() {
     </>
   );
 }
+
+    

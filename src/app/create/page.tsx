@@ -1,5 +1,4 @@
 
-
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -91,17 +90,15 @@ export default function CreateInvoicePage() {
 
     const initialInvoice = { ...getInitialInvoice(), userId: user.uid };
 
-    if (draftId) {
-        if (remoteDraft) {
-             const fromJSON = (key: string, value: any) => {
-                if (['invoiceDate', 'dueDate', 'createdAt', 'updatedAt'].includes(key) && value) {
-                    return value.toDate ? value.toDate() : new Date(value);
-                }
-                return value;
-            };
-            const loadedDraft = JSON.parse(JSON.stringify(remoteDraft), fromJSON);
-            setInvoice({ ...initialInvoice, ...loadedDraft });
-        }
+    if (draftId && remoteDraft) {
+        const fromJSON = (key: string, value: any) => {
+           if (['invoiceDate', 'dueDate', 'createdAt', 'updatedAt'].includes(key) && value) {
+               return value.toDate ? value.toDate() : (isValid(new Date(value)) ? new Date(value) : null);
+           }
+           return value;
+       };
+       const loadedDraft = JSON.parse(JSON.stringify(remoteDraft), fromJSON);
+       setInvoice({ ...initialInvoice, ...loadedDraft });
     } else {
         setInvoice(initialInvoice);
     }
@@ -120,9 +117,9 @@ export default function CreateInvoicePage() {
   };
 
   const handleSaveDraft = () => {
-    if (!invoice || !firestore) return;
+    if (!invoice || !firestore || !user) return;
 
-    const normalizeDate = (val: any) => {
+    const normalizeDate = (val: any): Date => {
         if (!val) return new Date();
         const d = new Date(val);
         return isValid(d) ? d : new Date();
@@ -130,11 +127,11 @@ export default function CreateInvoicePage() {
 
     const draftToSave = {
       ...invoice,
+      userId: user.uid,
       invoiceDate: normalizeDate(invoice.invoiceDate),
       dueDate: normalizeDate(invoice.dueDate),
       updatedAt: serverTimestamp(),
-      // Ensure createdAt is only set once
-      ...(!(invoice as any).createdAt && { createdAt: serverTimestamp() })
+      createdAt: invoice.createdAt ? invoice.createdAt : serverTimestamp(),
     };
     
     const docRef = doc(firestore, INVOICES_COLLECTION, invoice.id);
@@ -236,3 +233,5 @@ export default function CreateInvoicePage() {
     </>
   );
 }
+
+    

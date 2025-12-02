@@ -1,5 +1,4 @@
 
-
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
@@ -133,17 +132,15 @@ export default function CreateQuotePage() {
 
     const initialQuote = {...getInitialQuote(), userId: user.uid};
 
-    if (draftId) {
-        if (remoteDraft) {
-            const fromJSON = (key: string, value: any) => {
-                if (['estimateDate', 'validUntilDate', 'createdAt', 'updatedAt'].includes(key) && value) {
-                    return value.toDate ? value.toDate() : new Date(value);
-                }
-                return value;
-            };
-            const loadedDraft = JSON.parse(JSON.stringify(remoteDraft), fromJSON);
-            setQuote({ ...initialQuote, ...loadedDraft });
-        }
+    if (draftId && remoteDraft) {
+         const fromJSON = (key: string, value: any) => {
+            if (['estimateDate', 'validUntilDate', 'createdAt', 'updatedAt'].includes(key) && value) {
+                return value.toDate ? value.toDate() : (isValid(new Date(value)) ? new Date(value) : null);
+            }
+            return value;
+        };
+        const loadedDraft = JSON.parse(JSON.stringify(remoteDraft), fromJSON);
+        setQuote({ ...initialQuote, ...loadedDraft });
     } else {
         setQuote(initialQuote);
     }
@@ -163,7 +160,7 @@ export default function CreateQuotePage() {
   const handleSaveDraft = () => {
     if (!quote || !firestore || !user) return;
 
-    const normalizeDate = (val: any) => {
+    const normalizeDate = (val: any): Date => {
         if (!val) return new Date();
         const d = new Date(val);
         return isValid(d) ? d : new Date();
@@ -175,8 +172,7 @@ export default function CreateQuotePage() {
       estimateDate: normalizeDate(quote.estimateDate),
       validUntilDate: normalizeDate(quote.validUntilDate),
       updatedAt: serverTimestamp(),
-      // Ensure createdAt is only set once
-      ...(!(quote as any).createdAt && { createdAt: serverTimestamp() })
+      createdAt: quote.createdAt ? quote.createdAt : serverTimestamp(),
     };
     
     const docRef = doc(firestore, QUOTES_COLLECTION, quote.id);
@@ -219,16 +215,12 @@ export default function CreateQuotePage() {
   
   useEffect(() => {
     if (quote) {
-        setQuote(currentQuote => {
-            if(!currentQuote) return null;
-            const newQuote = computeSummary(currentQuote);
-             if (JSON.stringify(newQuote.summary) !== JSON.stringify(currentQuote.summary)) {
-                return newQuote;
-            }
-            return currentQuote;
-        });
+        const newQuote = computeSummary(quote);
+         if (JSON.stringify(newQuote.summary) !== JSON.stringify(quote.summary)) {
+            setQuote(newQuote);
+        }
     }
-  }, [quote?.lineItems, quote?.summary.taxPercentage, quote?.summary.discount, quote?.summary.shippingCost, computeSummary]);
+  }, [quote, computeSummary]);
 
 
   if (!quote || (draftId && isDraftLoading) || isUserLoading) {
@@ -307,3 +299,5 @@ export default function CreateQuotePage() {
     </>
   );
 }
+
+    
