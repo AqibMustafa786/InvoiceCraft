@@ -14,7 +14,7 @@ service cloud.firestore {
     
     match /quotes/{quoteId} {
       allow create: if isSignedIn() && request.resource.data.userId == request.auth.uid;
-      allow read, update, delete: if isSignedIn() && resource.data.ownerId == request.auth.uid;
+      allow read, update, delete: if isSignedIn() && resource.data.userId == request.auth.uid;
       allow update: if request.resource.data.status == 'accepted' || request.resource.data.status == 'rejected'; // Allow public client to accept/decline
     }
 
