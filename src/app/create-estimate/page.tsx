@@ -38,6 +38,7 @@ const getInitialEstimate = (): Omit<Estimate, 'userId'> => ({
     website: 'www.yourcompany.com',
     licenseNumber: 'LICENSE-12345',
     logoUrl: '',
+    taxId: '',
   },
 
   client: {
@@ -46,6 +47,7 @@ const getInitialEstimate = (): Omit<Estimate, 'userId'> => ({
     address: '456 Oak Ave, Someplace, USA 54321',
     phone: '+1 (987) 654-3210',
     email: 'client@example.com',
+    projectLocation: '',
   },
   
   lineItems: [{ ...getInitialLineItem(), name: 'Sample Service (e.g., Website Development)', unitPrice: 1500 }],
@@ -73,6 +75,19 @@ const getInitialEstimate = (): Omit<Estimate, 'userId'> => ({
   fontSize: 14,
   headingColor: '',
   textColor: '',
+
+  homeRemodeling: {
+    projectType: 'Kitchen Remodel',
+    propertyType: 'House',
+    squareFootage: null,
+    roomsIncluded: 'Kitchen, Dining Area',
+    materialGrade: 'Standard',
+    demolitionRequired: true,
+    permitRequired: false,
+    specialInstructions: '',
+    expectedStartDate: null,
+    expectedCompletionDate: null,
+  }
 });
 
 
@@ -142,7 +157,7 @@ export default function CreateEstimatePage() {
 
     if (draftId && remoteDraft) {
         const fromJSON = (key: string, value: any) => {
-           if (['estimateDate', 'validUntilDate', 'createdAt', 'updatedAt'].includes(key) && value) {
+           if (['estimateDate', 'validUntilDate', 'createdAt', 'updatedAt', 'expectedStartDate', 'expectedCompletionDate'].includes(key) && value) {
                return value.toDate ? value.toDate() : (isValid(new Date(value)) ? new Date(value) : null);
            }
            return value;
@@ -181,11 +196,22 @@ export default function CreateEstimatePage() {
       updatedAt: serverTimestamp(),
     };
 
-    const estimateDate = normalizeDate(document.estimateDate);
-    if (estimateDate) draftToSave.estimateDate = estimateDate;
-    
-    const validUntilDate = normalizeDate(document.validUntilDate);
-    if (validUntilDate) draftToSave.validUntilDate = validUntilDate;
+    const dateFields = ['estimateDate', 'validUntilDate', 'expectedStartDate', 'expectedCompletionDate'];
+    dateFields.forEach(field => {
+      const dateVal = (document as any)[field];
+      if (dateVal) {
+        const normalized = normalizeDate(dateVal);
+        if (normalized) draftToSave[field] = normalized;
+      }
+    });
+
+    if (document.homeRemodeling) {
+      draftToSave.homeRemodeling = { ...document.homeRemodeling };
+      const start = normalizeDate(document.homeRemodeling.expectedStartDate);
+      if(start) draftToSave.homeRemodeling.expectedStartDate = start;
+      const end = normalizeDate(document.homeRemodeling.expectedCompletionDate);
+      if(end) draftToSave.homeRemodeling.expectedCompletionDate = end;
+    }
 
     if (!document.createdAt) {
       draftToSave.createdAt = serverTimestamp();

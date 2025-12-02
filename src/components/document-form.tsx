@@ -3,14 +3,14 @@
 'use client';
 
 import { ChangeEvent, Dispatch, SetStateAction, useState, useEffect } from 'react';
-import type { Estimate, LineItem, Quote, EstimateCategory } from '@/lib/types';
+import type { Estimate, LineItem, Quote, EstimateCategory, HomeRemodelingInfo } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { DatePicker } from '@/components/ui/datepicker';
-import { ImageUp, Plus, Trash2, Palette, X, Mail, Truck, Hash, Phone, Globe, Briefcase, Award, User, FileText, Building, Pencil, Type, Package } from 'lucide-react';
+import { ImageUp, Plus, Trash2, Palette, X, Mail, Truck, Hash, Phone, Globe, Briefcase, Award, User, FileText, Building, Pencil, Type, Package, Hammer, Ruler, ListTree, CheckSquare, Sparkles, Calendar, TextQuote } from 'lucide-react';
 import Image from 'next/image';
 import {
   Select,
@@ -102,6 +102,40 @@ export function DocumentForm({ document, setDocument, accentColor, setAccentColo
       }
     }));
   };
+
+  const handleRemodelingChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value, type } = e.target;
+    const isCheckbox = type === 'checkbox';
+    
+    setDocument(prev => ({
+        ...prev,
+        homeRemodeling: {
+            ...prev.homeRemodeling!,
+            [name]: isCheckbox ? (e.target as HTMLInputElement).checked : value
+        }
+    }));
+  };
+
+  const handleRemodelingSelectChange = (name: keyof HomeRemodelingInfo, value: string) => {
+     setDocument(prev => ({
+        ...prev,
+        homeRemodeling: {
+            ...prev.homeRemodeling!,
+            [name]: value
+        }
+    }));
+  };
+
+  const handleRemodelingDateChange = (name: keyof HomeRemodelingInfo, date: Date | undefined) => {
+     setDocument(prev => ({
+        ...prev,
+        homeRemodeling: {
+            ...prev.homeRemodeling!,
+            [name]: date
+        }
+    }));
+  };
+
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -359,10 +393,17 @@ export function DocumentForm({ document, setDocument, accentColor, setAccentColo
                         </div>
                     </div>
                     <div className="space-y-2">
-                        <Label htmlFor="businessLicense">License Number (optional)</Label>
+                        <Label htmlFor="businessLicense">License Number</Label>
                         <div className="relative flex items-center">
                             <Award className="absolute left-3 h-5 w-5 text-muted-foreground" />
                             <Input id="businessLicense" name="licenseNumber" value={document.business.licenseNumber} onChange={(e) => handleNestedChange('business', e)} className="pl-10" />
+                        </div>
+                    </div>
+                    <div className="space-y-2 md:col-span-2">
+                        <Label htmlFor="businessTaxId">EIN/Tax ID (optional)</Label>
+                        <div className="relative flex items-center">
+                            <Hash className="absolute left-3 h-5 w-5 text-muted-foreground" />
+                            <Input id="businessTaxId" name="taxId" value={document.business.taxId} onChange={(e) => handleNestedChange('business', e)} className="pl-10" />
                         </div>
                     </div>
                 </div>
@@ -393,6 +434,10 @@ export function DocumentForm({ document, setDocument, accentColor, setAccentColo
             <div className="space-y-2">
                 <Label htmlFor="clientAddress">Client Address</Label>
                 <Textarea id="clientAddress" name="address" value={document.client.address} onChange={(e) => handleNestedChange('client', e)} />
+            </div>
+             <div className="space-y-2">
+                <Label htmlFor="projectLocation">Project Location (if different)</Label>
+                <Textarea id="projectLocation" name="projectLocation" value={document.client.projectLocation} onChange={(e) => handleNestedChange('client', e)} />
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
@@ -476,6 +521,88 @@ export function DocumentForm({ document, setDocument, accentColor, setAccentColo
                 </div>
             </CardContent>
         </Card>
+
+        {document.category === "Home Remodeling / Renovation" && document.homeRemodeling && (
+            <Card className="bg-card/50 backdrop-blur-sm group-disabled:opacity-70">
+                <CardHeader>
+                    <CardTitle>Home Remodeling Details</CardTitle>
+                </CardHeader>
+                <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-2">
+                        <Label htmlFor="projectType">Project Type</Label>
+                        <div className="relative flex items-center">
+                            <Hammer className="absolute left-3 h-5 w-5 text-muted-foreground" />
+                            <Input id="projectType" name="projectType" value={document.homeRemodeling.projectType} onChange={handleRemodelingChange} className="pl-10" placeholder="e.g. Kitchen, Bathroom" />
+                        </div>
+                    </div>
+                     <div className="space-y-2">
+                        <Label htmlFor="propertyType">Property Type</Label>
+                         <div className="relative flex items-center">
+                            <Building className="absolute left-3 h-5 w-5 text-muted-foreground" />
+                            <Input id="propertyType" name="propertyType" value={document.homeRemodeling.propertyType} onChange={handleRemodelingChange} className="pl-10" placeholder="e.g. House, Apartment"/>
+                        </div>
+                    </div>
+                    <div className="space-y-2">
+                        <Label htmlFor="squareFootage">Square Footage</Label>
+                        <div className="relative flex items-center">
+                            <Ruler className="absolute left-3 h-5 w-5 text-muted-foreground" />
+                            <Input id="squareFootage" name="squareFootage" type="number" value={document.homeRemodeling.squareFootage ?? ''} onChange={handleRemodelingChange} className="pl-10" />
+                        </div>
+                    </div>
+                    <div className="space-y-2">
+                        <Label htmlFor="roomsIncluded">Rooms Included</Label>
+                         <div className="relative flex items-center">
+                            <ListTree className="absolute left-3 h-5 w-5 text-muted-foreground" />
+                            <Input id="roomsIncluded" name="roomsIncluded" value={document.homeRemodeling.roomsIncluded} onChange={handleRemodelingChange} className="pl-10" placeholder="e.g. Kitchen, 2 Bedrooms" />
+                        </div>
+                    </div>
+                    <div className="space-y-2 md:col-span-2">
+                        <Label>Material Grade</Label>
+                        <RadioGroup
+                            value={document.homeRemodeling.materialGrade}
+                            onValueChange={(value) => handleRemodelingSelectChange('materialGrade', value)}
+                            className="flex gap-4"
+                        >
+                            <div className="flex items-center space-x-2">
+                                <RadioGroupItem value="Basic" id="grade-basic" />
+                                <Label htmlFor="grade-basic">Basic</Label>
+                            </div>
+                            <div className="flex items-center space-x-2">
+                                <RadioGroupItem value="Standard" id="grade-standard" />
+                                <Label htmlFor="grade-standard">Standard</Label>
+                            </div>
+                             <div className="flex items-center space-x-2">
+                                <RadioGroupItem value="Premium" id="grade-premium" />
+                                <Label htmlFor="grade-premium">Premium</Label>
+                            </div>
+                        </RadioGroup>
+                    </div>
+                     <div className="flex items-center space-x-2">
+                        <Checkbox id="demolitionRequired" name="demolitionRequired" checked={document.homeRemodeling.demolitionRequired} onCheckedChange={(checked) => handleRemodelingSelectChange('demolitionRequired', !!checked ? 'true' : 'false')} />
+                        <Label htmlFor="demolitionRequired" className="flex items-center gap-2"><Sparkles className="h-4 w-4" /> Demolition Required?</Label>
+                    </div>
+                     <div className="flex items-center space-x-2">
+                        <Checkbox id="permitRequired" name="permitRequired" checked={document.homeRemodeling.permitRequired} onCheckedChange={(checked) => handleRemodelingSelectChange('permitRequired', !!checked ? 'true' : 'false')} />
+                        <Label htmlFor="permitRequired" className="flex items-center gap-2"><CheckSquare className="h-4 w-4" /> Permit Required?</Label>
+                    </div>
+                    <div className="space-y-2">
+                        <Label>Expected Start Date</Label>
+                        <DatePicker date={document.homeRemodeling.expectedStartDate} setDate={(date) => handleRemodelingDateChange('expectedStartDate', date)} />
+                    </div>
+                    <div className="space-y-2">
+                        <Label>Expected Completion Date</Label>
+                        <DatePicker date={document.homeRemodeling.expectedCompletionDate} setDate={(date) => handleRemodelingDateChange('expectedCompletionDate', date)} />
+                    </div>
+                     <div className="space-y-2 md:col-span-2">
+                        <Label htmlFor="specialInstructions">Special Instructions</Label>
+                        <div className="relative flex items-center">
+                            <TextQuote className="absolute left-3 top-3 h-5 w-5 text-muted-foreground" />
+                            <Textarea id="specialInstructions" name="specialInstructions" value={document.homeRemodeling.specialInstructions} onChange={handleRemodelingChange} className="pl-10" />
+                        </div>
+                    </div>
+                </CardContent>
+            </Card>
+        )}
 
         <Card className="bg-card/50 backdrop-blur-sm group-disabled:opacity-70">
             <CardHeader>

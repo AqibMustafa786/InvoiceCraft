@@ -98,6 +98,7 @@ export interface BusinessInfo {
   website: string;
   licenseNumber: string;
   logoUrl?: string;
+  taxId?: string; // New field for EIN/Tax ID
   ownerSignature?: {
     image: string;
     signedAt: any; // Firestore Timestamp
@@ -111,6 +112,7 @@ export interface ClientInfo {
   address: string;
   phone: string;
   email: string;
+  projectLocation?: string; // New field for project location
 }
 
 export interface EstimateSummary {
@@ -149,6 +151,18 @@ export type EstimateCategory =
   | "Construction Estimate"
   | "IT / Freelance Estimate";
 
+export interface HomeRemodelingInfo {
+    projectType: string;
+    propertyType: string;
+    squareFootage: number | null;
+    roomsIncluded: string;
+    materialGrade: 'Basic' | 'Standard' | 'Premium';
+    demolitionRequired: boolean;
+    permitRequired: boolean;
+    specialInstructions: string;
+    expectedStartDate: Date | null;
+    expectedCompletionDate: Date | null;
+}
 
 export interface Estimate {
   id: string;
@@ -184,6 +198,9 @@ export interface Estimate {
   textColor?: string;
   createdAt?: any;
   updatedAt?: any;
+
+  // Category specific data
+  homeRemodeling?: HomeRemodelingInfo;
 }
 
 export type Quote = Estimate & { documentType: 'quote' };

@@ -25,7 +25,7 @@ const currencySymbols: { [key: string]: string } = {
     PKR: '₨',
 };
 
-const safeFormat = (date: Date | string | number | undefined, formatString: string) => {
+const safeFormat = (date: Date | string | number | undefined | null, formatString: string) => {
     if (!date) return 'N/A';
     const d = new Date(date);
     if (!isValid(d)) return "Invalid Date";
@@ -44,8 +44,26 @@ const SignatureDisplay = ({ signature, label }: { signature: any, label: string 
     )
 }
 
+const HomeRemodelingPreview = ({ data }: { data: Estimate['homeRemodeling'] }) => {
+    if (!data) return null;
+    return (
+        <div className="grid grid-cols-2 gap-x-8 gap-y-2 mt-4 text-xs">
+            <div><span className="font-bold text-gray-600">Project Type:</span> {data.projectType}</div>
+            <div><span className="font-bold text-gray-600">Property Type:</span> {data.propertyType}</div>
+            {data.squareFootage && <div><span className="font-bold text-gray-600">Sq. Footage:</span> {data.squareFootage} sq ft</div>}
+            <div className="col-span-2"><span className="font-bold text-gray-600">Rooms:</span> {data.roomsIncluded}</div>
+            <div><span className="font-bold text-gray-600">Material Grade:</span> {data.materialGrade}</div>
+            <div><span className="font-bold text-gray-600">Demolition:</span> {data.demolitionRequired ? 'Yes' : 'No'}</div>
+            <div><span className="font-bold text-gray-600">Permit:</span> {data.permitRequired ? 'Yes' : 'No'}</div>
+            {data.expectedStartDate && <div><span className="font-bold text-gray-600">Starts:</span> {safeFormat(data.expectedStartDate, 'MMM d, yyyy')}</div>}
+            {data.expectedCompletionDate && <div><span className="font-bold text-gray-600">Ends:</span> {safeFormat(data.expectedCompletionDate, 'MMM d, yyyy')}</div>}
+            {data.specialInstructions && <div className="col-span-2"><span className="font-bold text-gray-600">Instructions:</span> <span className="whitespace-pre-line">{data.specialInstructions}</span></div>}
+        </div>
+    )
+}
+
 export const ModernTemplate = ({ document }: { document: Estimate }) => {
-    const { business, client, lineItems, summary, currency, documentType, category } = document;
+    const { business, client, lineItems, summary, currency, documentType, category, homeRemodeling } = document;
     const currencySymbol = currencySymbols[currency] || '$';
 
     const documentTitle = category === 'Generic' ? (documentType === 'quote' ? 'Quote' : 'Estimate') : category;
@@ -57,18 +75,17 @@ export const ModernTemplate = ({ document }: { document: Estimate }) => {
             <header className="flex justify-between items-start mb-8">
                 <div className="w-1/2">
                      {business.logoUrl ? (
-                        <Image src={business.logoUrl} alt={`${business.name} Logo`} width={100} height={100} className="rounded-full object-contain bg-orange-400 p-2" data-ai-hint="logo" />
+                        <Image src={business.logoUrl} alt={`${business.name} Logo`} width={100} height={100} className="object-contain" data-ai-hint="logo" />
                     ) : (
-                        <div className="w-24 h-24 rounded-full bg-orange-400 flex items-center justify-center text-white font-bold text-center text-xs">
-                            YOUR BUSINESS LOGO
-                        </div>
+                        <h2 className="text-xl font-bold">{business.name}</h2>
                     )}
                 </div>
                 <div className="w-1/2 text-right">
                     <h2 className="text-3xl font-bold mb-4">{documentTitle}</h2>
                     <div className="space-y-0.5 text-xs">
                         <p className="font-bold">{business.name}</p>
-                        {business.licenseNumber && <p>{business.licenseNumber}</p>}
+                        {business.licenseNumber && <p>Lic #: {business.licenseNumber}</p>}
+                        {business.taxId && <p>Tax ID: {business.taxId}</p>}
                         <p>{business.phone}</p>
                         <p>{business.email}</p>
                         <p className="whitespace-pre-line">{business.address}</p>
@@ -85,21 +102,31 @@ export const ModernTemplate = ({ document }: { document: Estimate }) => {
                     {client.phone && <p>{client.phone}</p>}
                     <p className="whitespace-pre-line">{client.address}</p>
                 </div>
+                <div className="w-1/3 space-y-0.5">
+                    {client.projectLocation && (
+                        <>
+                            <p className="font-bold mb-1">PROJECT LOCATION</p>
+                            <p className="whitespace-pre-line">{client.projectLocation}</p>
+                        </>
+                    )}
+                </div>
                 <div className="w-1/3 text-right">
                     <div className="flex justify-end">
-                        <span className="font-bold w-20">Estimate #</span>
+                        <span className="font-bold w-24">Estimate #</span>
                         <span className="w-24 text-left">{document.estimateNumber}</span>
                     </div>
                     <div className="flex justify-end mt-1">
-                        <span className="font-bold w-20">Date</span>
+                        <span className="font-bold w-24">Date</span>
                         <span className="w-24 text-left">{safeFormat(document.estimateDate, 'MM/dd/yyyy')}</span>
                     </div>
                 </div>
             </section>
             
-            <section>
+            {category === "Home Remodeling / Renovation" && <HomeRemodelingPreview data={homeRemodeling} />}
+            
+            <section className="mt-8">
                 <table className="w-full text-left text-xs">
-                    <thead className="bg-blue-100 text-gray-700">
+                    <thead className="bg-gray-100 text-gray-700">
                         <tr>
                             <th className="p-2 font-bold w-1/2">Item/Service Description</th>
                             <th className="p-2 font-bold text-right">Quantity</th>
