@@ -18,15 +18,15 @@ service cloud.firestore {
 
     // A user can only access documents that have their userId
     match /invoices/{invoiceId} {
-      allow read, write, delete: if isSignedIn() && resource.data.userId == request.auth.uid;
+      allow get, list, write, delete: if isSignedIn() && resource.data.userId == request.auth.uid;
       allow create: if isSignedIn() && request.resource.data.userId == request.auth.uid;
     }
 
     // A user can only access estimates that have their userId
     match /estimates/{estimateId} {
       allow create: if isSignedIn() && request.resource.data.userId == request.auth.uid;
-      // Allow public client to accept/decline, but only owner can read/delete
-      allow read, delete: if isSignedIn() && resource.data.userId == request.auth.uid;
+      // Allow owner to get, list, and delete their own documents.
+      allow get, list, delete: if isSignedIn() && resource.data.userId == request.auth.uid;
       // Public client can update status, owner can update anything
       allow update: if (request.resource.data.status == 'accepted' || request.resource.data.status == 'rejected') || (isSignedIn() && resource.data.userId == request.auth.uid);
     }
@@ -34,8 +34,8 @@ service cloud.firestore {
     // A user can only access quotes that have their userId
     match /quotes/{quoteId} {
       allow create: if isSignedIn() && request.resource.data.userId == request.auth.uid;
-      // Allow public client to accept/decline, but only owner can read/delete
-      allow read, delete: if isSignedIn() && resource.data.userId == request.auth.uid;
+      // Allow owner to get, list, and delete their own documents.
+      allow get, list, delete: if isSignedIn() && resource.data.userId == request.auth.uid;
       // Public client can update status, owner can update anything
       allow update: if (request.resource.data.status == 'accepted' || request.resource.data.status == 'rejected') || (isSignedIn() && resource.data.userId == request.auth.uid);
     }
