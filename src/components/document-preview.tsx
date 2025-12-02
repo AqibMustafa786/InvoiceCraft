@@ -339,10 +339,12 @@ const ModernTemplatePage = ({ document, pageItems, pageIndex, totalPages, style 
     const currencySymbol = currencySymbols[document.currency] || '$';
 
     return (
-        <div className={`p-8 md:p-10 bg-white font-sans ${pageIndex < totalPages - 1 ? "page-break" : ""}`} style={{ color: '#374151', fontFamily: style.fontFamily, fontSize: style.fontSize }}>
-            <PageHeader document={document} style={style} />
-            <PageClientDetails document={document} />
-            <CategoryPreview document={document} />
+        <div className={`p-8 md:p-10 bg-white font-sans ${pageIndex < totalPages - 1 ? "page-break" : ""}`} style={{ color: '#374151', fontFamily: style.fontFamily, fontSize: `${style.fontSize}pt` }}>
+            <div data-element="page-header">
+                <PageHeader document={document} style={style} />
+                <PageClientDetails document={document} />
+                <CategoryPreview document={document} />
+            </div>
             
             <section className="mt-8">
                 <table className="w-full text-left text-xs" data-element="items-table">
@@ -406,6 +408,7 @@ export function DocumentPreview({ document, accentColor, id = 'document-preview'
 
   const dynamicColorStyle = {
       color: accentColor,
+      fontSize: document.fontSize || 10,
   }
 
   const TemplateComponent = templates[document.template as keyof typeof templates] || templates.default;
@@ -414,87 +417,80 @@ export function DocumentPreview({ document, accentColor, id = 'document-preview'
     if (typeof window === 'undefined' || typeof window.document === 'undefined' || !isPrint || !containerRef.current || !needsRemeasure) return;
 
     const measureAndPaginate = () => {
-      const container = containerRef.current!;
+      const container = containerRef.current;
+      if (!container) return;
+
       const tempRoot = window.document.createElement('div');
       tempRoot.style.position = 'absolute';
       tempRoot.style.left = '-9999px';
-      tempRoot.style.width = `${container.clientWidth}px`; // Match width for accurate measurement
+      tempRoot.style.width = `${container.clientWidth}px`;
       window.document.body.appendChild(tempRoot);
 
-      // We create a temporary React root to render the full, unpaginated content for measurement.
       Promise.resolve().then(() => {
-        const tempContainer = container.cloneNode(true) as HTMLElement;
-        tempContainer.querySelector('[data-element="items-table"] tbody')!.innerHTML = document.lineItems.map(item => `
-            <tr data-element="table-row" style="border-bottom: 1px solid #E5E7EB;">
-                <td style="padding: 8px; white-space: pre-line;">${item.name || ''}</td>
-                <td style="padding: 8px; text-align: right;">${item.quantity}</td>
-                <td style="padding: 8px; text-align: right;">${item.unitPrice.toFixed(2)}</td>
-                <td style="padding: 8px; text-align: right;">${(item.quantity * item.unitPrice).toFixed(2)}</td>
-            </tr>
-        `).join('');
-        tempRoot.appendChild(tempContainer);
-        
-        const header = tempContainer.querySelector('[data-element="header"]') as HTMLElement;
-        const clientDetails = tempContainer.querySelector('[data-element="client-details"]') as HTMLElement;
-        const categoryDetails = tempContainer.querySelector('[data-element="category-details"]') as HTMLElement;
-        const tableHeader = tempContainer.querySelector('[data-element="table-header"]') as HTMLElement;
-        const footer = tempContainer.querySelector('[data-element="footer"]') as HTMLElement;
-        const allRows = Array.from(tempContainer.querySelectorAll('[data-element="table-row"]')) as HTMLElement[];
-        
-        if (!header || !tableHeader || !footer || allRows.length === 0) {
-            window.document.body.removeChild(tempRoot);
-            return;
-        }
+          const tempContainer = container.cloneNode(true) as HTMLElement;
+          
+          // Clear out the table body to re-populate with all items for measurement
+          const tableBody = tempContainer.querySelector('[data-element="items-table"] tbody');
+          if (tableBody) {
+              tableBody.innerHTML = document.lineItems.map(item => `
+                  <tr data-element="table-row" style="border-bottom: 1px solid #E5E7EB;">
+                      <td style="padding: 8px; white-space: pre-line;">${item.name || ''}</td>
+                      <td style="padding: 8px; text-align: right;">${item.quantity}</td>
+                      <td style="padding: 8px; text-align: right;">${currencySymbols[document.currency] || '$'}${item.unitPrice.toFixed(2)}</td>
+                      <td style="padding: 8px; text-align: right;">${currencySymbols[document.currency] || '$'}${(item.quantity * item.unitPrice).toFixed(2)}</td>
+                  </tr>
+              `).join('');
+          }
+          tempRoot.appendChild(tempContainer);
+          
+          const pageHeader = tempContainer.querySelector('[data-element="page-header"]') as HTMLElement;
+          const tableHeader = tempContainer.querySelector('[data-element="table-header"]') as HTMLElement;
+          const footer = tempContainer.querySelector('[data-element="footer"]') as HTMLElement;
+          const allRows = Array.from(tempContainer.querySelectorAll('[data-element="table-row"]')) as HTMLElement[];
 
-        const firstPageHeaderHeight = header.offsetHeight + (clientDetails?.offsetHeight || 0) + (categoryDetails?.offsetHeight || 0);
-        const subsequentPageHeaderHeight = 0; // Don't repeat header on subsequent pages
-        const tableHeaderHeight = tableHeader.offsetHeight;
-        const footerHeight = footer.offsetHeight;
+          if (!pageHeader || !tableHeader || !footer || allRows.length === 0) {
+              window.document.body.removeChild(tempRoot);
+              return;
+          }
 
-        let currentPage = 0;
-        let currentPageHeight = firstPageHeaderHeight;
-        let newPages: Estimate['lineItems'][] = [[]];
+          const pageHeaderHeight = pageHeader.offsetHeight;
+          const tableHeaderHeight = tableHeader.offsetHeight;
+          const footerHeight = footer.offsetHeight;
+          const subsequentPageHeaderHeight = 0; // No main header on subsequent pages
 
-        allRows.forEach((row, index) => {
-            const itemHeight = row.offsetHeight;
+          let newPages: Estimate['lineItems'][] = [[]];
+          let currentPage = 0;
+          let currentPageHeight = pageHeaderHeight;
 
-            // Check if item fits on the current page. Start with current height...
-            let heightIfAdded = currentPageHeight;
+          allRows.forEach((row, index) => {
+              const itemHeight = row.offsetHeight;
 
-            // ...add table header if it's the first item on a page...
-            if (newPages[currentPage].length === 0) {
-                 heightIfAdded += tableHeaderHeight;
-            }
-            // ...add the item itself...
-            heightIfAdded += itemHeight;
-            
-            // ...and if it's the very last item, check if the footer fits too.
-            const isLastItemOfAll = index === allRows.length - 1;
-            if (isLastItemOfAll) {
-                heightIfAdded += footerHeight;
-            }
+              // If it's the first item on this page, add table header height
+              if (newPages[currentPage].length === 0) {
+                  currentPageHeight += tableHeaderHeight;
+              }
 
-            if (heightIfAdded > AVAILABLE_HEIGHT) {
-                // If it doesn't fit, start a new page
-                currentPage++;
-                newPages[currentPage] = [];
-                // Subsequent pages don't have the main header, just the table header
-                currentPageHeight = subsequentPageHeaderHeight;
-                // Since this is a new page, add the table header height
-                currentPageHeight += tableHeaderHeight;
-            }
-            
-            newPages[currentPage].push(document.lineItems[index]);
-            currentPageHeight += itemHeight;
-        });
+              // Check if adding this row OR adding this row and the footer would overflow
+              const willOverflow = currentPageHeight + itemHeight > AVAILABLE_HEIGHT;
+              const willFooterOverflow = currentPageHeight + itemHeight + footerHeight > AVAILABLE_HEIGHT;
 
-        setPaginatedItems(newPages);
-        setNeedsRemeasure(false);
-        window.document.body.removeChild(tempRoot);
+              // If the item itself won't fit, or if it's the last item and the footer also won't fit, create a new page.
+              if (willOverflow || (index === allRows.length - 1 && willFooterOverflow)) {
+                  currentPage++;
+                  newPages[currentPage] = [];
+                  currentPageHeight = subsequentPageHeaderHeight + tableHeaderHeight; // Reset height for new page
+              }
+              
+              newPages[currentPage].push(document.lineItems[index]);
+              currentPageHeight += itemHeight;
+          });
+
+          setPaginatedItems(newPages);
+          setNeedsRemeasure(false);
+          window.document.body.removeChild(tempRoot);
       });
     };
     
-    // Defer measurement to allow DOM to update
     const timer = setTimeout(measureAndPaginate, 100);
     return () => clearTimeout(timer);
 
@@ -541,5 +537,7 @@ export function DocumentPreview({ document, accentColor, id = 'document-preview'
     </Card>
   );
 }
+
+    
 
     
