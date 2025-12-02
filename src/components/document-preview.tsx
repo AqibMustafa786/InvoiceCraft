@@ -62,8 +62,27 @@ const HomeRemodelingPreview = ({ data }: { data: Estimate['homeRemodeling'] }) =
     )
 }
 
+const RoofingPreview = ({ data }: { data: Estimate['roofing'] }) => {
+    if (!data) return null;
+    return (
+        <div className="grid grid-cols-2 gap-x-8 gap-y-2 mt-4 text-xs">
+            <div><span className="font-bold text-gray-600">Roof Material:</span> {data.roofMaterial}</div>
+            {data.roofSize && <div><span className="font-bold text-gray-600">Roof Size:</span> {data.roofSize} sq ft</div>}
+            <div><span className="font-bold text-gray-600">Roof Pitch:</span> {data.roofPitch}</div>
+            {data.layersToRemove && <div><span className="font-bold text-gray-600">Layers to Remove:</span> {data.layersToRemove}</div>}
+            <div><span className="font-bold text-gray-600">Underlayment:</span> {data.underlaymentType}</div>
+            <div><span className="font-bold text-gray-600">Ventilation:</span> {data.ventilationSystem}</div>
+            {data.roofAge && <div><span className="font-bold text-gray-600">Roof Age:</span> {data.roofAge} years</div>}
+            <div><span className="font-bold text-gray-600">Flashing Replacement:</span> {data.flashingReplacement ? 'Yes' : 'No'}</div>
+            <div><span className="font-bold text-gray-600">Gutter Repair:</span> {data.gutterRepairNeeded ? 'Yes' : 'No'}</div>
+            <div><span className="font-bold text-gray-600">Inspection Required:</span> {data.inspectionRequired ? 'Yes' : 'No'}</div>
+        </div>
+    )
+}
+
+
 export const ModernTemplate = ({ document }: { document: Estimate }) => {
-    const { business, client, lineItems, summary, currency, documentType, category, homeRemodeling } = document;
+    const { business, client, lineItems, summary, currency, documentType, category, homeRemodeling, roofing } = document;
     const currencySymbol = currencySymbols[currency] || '$';
 
     const documentTitle = category === 'Generic' ? (documentType === 'quote' ? 'Quote' : 'Estimate') : category;
@@ -123,6 +142,7 @@ export const ModernTemplate = ({ document }: { document: Estimate }) => {
             </section>
             
             {category === "Home Remodeling / Renovation" && <HomeRemodelingPreview data={homeRemodeling} />}
+            {category === "Roofing Estimate" && <RoofingPreview data={roofing} />}
             
             <section className="mt-8">
                 <table className="w-full text-left text-xs">

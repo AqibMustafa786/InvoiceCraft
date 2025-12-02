@@ -87,6 +87,18 @@ const getInitialEstimate = (): Omit<Estimate, 'userId'> => ({
     specialInstructions: '',
     expectedStartDate: null,
     expectedCompletionDate: null,
+  },
+  roofing: {
+    roofMaterial: 'Shingle',
+    roofSize: null,
+    roofPitch: '4/12',
+    layersToRemove: 1,
+    underlaymentType: 'Synthetic',
+    flashingReplacement: true,
+    ventilationSystem: 'Ridge Vents',
+    gutterRepairNeeded: false,
+    roofAge: 15,
+    inspectionRequired: true,
   }
 });
 
@@ -211,6 +223,10 @@ export default function CreateEstimatePage() {
       if(start) draftToSave.homeRemodeling.expectedStartDate = start;
       const end = normalizeDate(document.homeRemodeling.expectedCompletionDate);
       if(end) draftToSave.homeRemodeling.expectedCompletionDate = end;
+    }
+    
+    if (document.roofing) {
+        draftToSave.roofing = { ...document.roofing };
     }
 
     if (!document.createdAt) {

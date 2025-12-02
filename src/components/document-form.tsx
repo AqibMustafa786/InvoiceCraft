@@ -3,14 +3,14 @@
 'use client';
 
 import { ChangeEvent, Dispatch, SetStateAction, useState, useEffect } from 'react';
-import type { Estimate, LineItem, Quote, EstimateCategory, HomeRemodelingInfo } from '@/lib/types';
+import type { Estimate, LineItem, Quote, EstimateCategory, HomeRemodelingInfo, RoofingInfo } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { DatePicker } from '@/components/ui/datepicker';
-import { ImageUp, Plus, Trash2, Palette, X, Mail, Truck, Hash, Phone, Globe, Briefcase, Award, User, FileText, Building, Pencil, Type, Package, Hammer, Ruler, ListTree, CheckSquare, Sparkles, Calendar, TextQuote } from 'lucide-react';
+import { ImageUp, Plus, Trash2, Palette, X, Mail, Truck, Hash, Phone, Globe, Briefcase, Award, User, FileText, Building, Pencil, Type, Package, Hammer, Ruler, ListTree, CheckSquare, Sparkles, Calendar, TextQuote, Wind } from 'lucide-react';
 import Image from 'next/image';
 import {
   Select,
@@ -116,11 +116,34 @@ export function DocumentForm({ document, setDocument, accentColor, setAccentColo
     }));
   };
 
+    const handleRoofingChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value, type } = e.target;
+    const isCheckbox = type === 'checkbox';
+    
+    setDocument(prev => ({
+        ...prev,
+        roofing: {
+            ...prev.roofing!,
+            [name]: isCheckbox ? (e.target as HTMLInputElement).checked : value
+        }
+    }));
+  };
+
   const handleRemodelingSelectChange = (name: keyof HomeRemodelingInfo, value: string) => {
      setDocument(prev => ({
         ...prev,
         homeRemodeling: {
             ...prev.homeRemodeling!,
+            [name]: value
+        }
+    }));
+  };
+  
+    const handleRoofingSelectChange = (name: keyof RoofingInfo, value: string | boolean) => {
+     setDocument(prev => ({
+        ...prev,
+        roofing: {
+            ...prev.roofing!,
             [name]: value
         }
     }));
@@ -599,6 +622,69 @@ export function DocumentForm({ document, setDocument, accentColor, setAccentColo
                             <TextQuote className="absolute left-3 top-3 h-5 w-5 text-muted-foreground" />
                             <Textarea id="specialInstructions" name="specialInstructions" value={document.homeRemodeling.specialInstructions} onChange={handleRemodelingChange} className="pl-10" />
                         </div>
+                    </div>
+                </CardContent>
+            </Card>
+        )}
+
+        {document.category === "Roofing Estimate" && document.roofing && (
+            <Card className="bg-card/50 backdrop-blur-sm group-disabled:opacity-70">
+                <CardHeader>
+                    <CardTitle>Roofing Project Details</CardTitle>
+                </CardHeader>
+                <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-2">
+                        <Label>Roof Material</Label>
+                        <Select value={document.roofing.roofMaterial} onValueChange={(value: RoofingInfo['roofMaterial']) => handleRoofingSelectChange('roofMaterial', value)}>
+                            <SelectTrigger>
+                                <SelectValue placeholder="Select material" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="Shingle">Shingle</SelectItem>
+                                <SelectItem value="Metal">Metal</SelectItem>
+                                <SelectItem value="Tile">Tile</SelectItem>
+                                <SelectItem value="Flat">Flat</SelectItem>
+                            </SelectContent>
+                        </Select>
+                    </div>
+                    <div className="space-y-2">
+                        <Label htmlFor="roofSize">Roof Size (sq ft)</Label>
+                        <Input id="roofSize" name="roofSize" type="number" value={document.roofing.roofSize ?? ''} onChange={handleRoofingChange} />
+                    </div>
+                    <div className="space-y-2">
+                        <Label htmlFor="roofPitch">Roof Pitch/Slope</Label>
+                        <Input id="roofPitch" name="roofPitch" value={document.roofing.roofPitch} onChange={handleRoofingChange} placeholder="e.g. 4/12" />
+                    </div>
+                    <div className="space-y-2">
+                        <Label htmlFor="layersToRemove">Layers to Remove</Label>
+                        <Input id="layersToRemove" name="layersToRemove" type="number" value={document.roofing.layersToRemove ?? ''} onChange={handleRoofingChange} />
+                    </div>
+                    <div className="space-y-2">
+                        <Label htmlFor="underlaymentType">Underlayment Type</Label>
+                        <Input id="underlaymentType" name="underlaymentType" value={document.roofing.underlaymentType} onChange={handleRoofingChange} placeholder="e.g. Synthetic, Felt" />
+                    </div>
+                     <div className="space-y-2">
+                        <Label htmlFor="ventilationSystem">Ventilation System</Label>
+                        <div className="relative flex items-center">
+                            <Wind className="absolute left-3 h-5 w-5 text-muted-foreground" />
+                            <Input id="ventilationSystem" name="ventilationSystem" value={document.roofing.ventilationSystem} onChange={handleRoofingChange} placeholder="e.g. Ridge Vents, Soffit Vents" />
+                        </div>
+                    </div>
+                    <div className="flex items-center space-x-2 pt-6">
+                        <Checkbox id="flashingReplacement" name="flashingReplacement" checked={document.roofing.flashingReplacement} onCheckedChange={(checked) => handleRoofingSelectChange('flashingReplacement', !!checked)} />
+                        <Label htmlFor="flashingReplacement">Flashing Replacement?</Label>
+                    </div>
+                    <div className="flex items-center space-x-2 pt-6">
+                        <Checkbox id="gutterRepairNeeded" name="gutterRepairNeeded" checked={document.roofing.gutterRepairNeeded} onCheckedChange={(checked) => handleRoofingSelectChange('gutterRepairNeeded', !!checked)} />
+                        <Label htmlFor="gutterRepairNeeded">Gutter Repair Needed?</Label>
+                    </div>
+                    <div className="space-y-2">
+                        <Label htmlFor="roofAge">Roof Age (years)</Label>
+                        <Input id="roofAge" name="roofAge" type="number" value={document.roofing.roofAge ?? ''} onChange={handleRoofingChange} />
+                    </div>
+                    <div className="flex items-center space-x-2 pt-6">
+                        <Checkbox id="inspectionRequired" name="inspectionRequired" checked={document.roofing.inspectionRequired} onCheckedChange={(checked) => handleRoofingSelectChange('inspectionRequired', !!checked)} />
+                        <Label htmlFor="inspectionRequired">Inspection Required?</Label>
                     </div>
                 </CardContent>
             </Card>

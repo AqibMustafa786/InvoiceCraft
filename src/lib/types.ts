@@ -164,6 +164,19 @@ export interface HomeRemodelingInfo {
     expectedCompletionDate: Date | null;
 }
 
+export interface RoofingInfo {
+    roofMaterial: 'Shingle' | 'Metal' | 'Tile' | 'Flat';
+    roofSize: number | null;
+    roofPitch: string;
+    layersToRemove: number | null;
+    underlaymentType: string;
+    flashingReplacement: boolean;
+    ventilationSystem: string;
+    gutterRepairNeeded: boolean;
+    roofAge: number | null;
+    inspectionRequired: boolean;
+}
+
 export interface Estimate {
   id: string;
   userId: string;
@@ -201,6 +214,7 @@ export interface Estimate {
 
   // Category specific data
   homeRemodeling?: HomeRemodelingInfo;
+  roofing?: RoofingInfo;
 }
 
 export type Quote = Estimate & { documentType: 'quote' };
