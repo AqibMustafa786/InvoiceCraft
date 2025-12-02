@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
@@ -67,6 +68,8 @@ const getInitialQuote = (): Omit<Quote, 'userId'> => ({
   documentType: 'quote',
   language: 'en',
   currency: 'USD',
+  fontFamily: 'Inter',
+  fontSize: 14,
 });
 
 

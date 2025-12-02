@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import { ChangeEvent, Dispatch, SetStateAction, useState, useEffect } from 'react';
@@ -28,6 +29,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { serverTimestamp } from 'firebase/firestore';
+import { RadioGroup, RadioGroupItem } from './ui/radio-group';
 
 
 interface QuoteFormProps {
@@ -46,9 +48,19 @@ const currencies = [
     { value: 'PKR', label: 'PKR (₨)' },
 ]
 
+const fonts = [
+    { value: 'Inter', label: 'Inter' },
+    { value: 'Roboto', label: 'Roboto' },
+    { value: 'Lato', label: 'Lato' },
+    { value: 'Merriweather', label: 'Merriweather' },
+    { value: 'system-ui', label: 'System Default' },
+]
+
 export function QuoteForm({ quote, setQuote, accentColor, setAccentColor, toast }: QuoteFormProps) {
   const [bulkAddCount, setBulkAddCount] = useState(5);
   const [colorInputValue, setColorInputValue] = useState(accentColor);
+  const [headingColorValue, setHeadingColorValue] = useState(quote.headingColor || '#000000');
+  const [textColorValue, setTextColorValue] = useState(quote.textColor || '#333333');
   const [logoUrl, setLogoUrl] = useState<string | null>(quote.business.logoUrl || null);
   const [isSignatureDialogOpen, setIsSignatureDialogOpen] = useState(false);
 
@@ -56,6 +68,14 @@ export function QuoteForm({ quote, setQuote, accentColor, setAccentColor, toast 
     setColorInputValue(accentColor);
   }, [accentColor]);
   
+  useEffect(() => {
+    setHeadingColorValue(quote.headingColor || '#000000');
+  }, [quote.headingColor]);
+  
+  useEffect(() => {
+    setTextColorValue(quote.textColor || '#333333');
+  }, [quote.textColor]);
+
   useEffect(() => {
     setQuote(prev => ({
         ...prev,
@@ -248,6 +268,34 @@ export function QuoteForm({ quote, setQuote, accentColor, setAccentColor, toast 
                             className="absolute right-1 top-1/2 -translate-y-1/2 h-8 w-8 p-1 rounded-md cursor-pointer bg-transparent border-none appearance-none"
                         />
                     </div>
+                </div>
+                <div className="space-y-2">
+                    <Label>Document Type</Label>
+                    <RadioGroup
+                        value={quote.documentType}
+                        onValueChange={(value) => setQuote(p => ({...p, documentType: value as 'estimate' | 'quote'}))}
+                        className="flex gap-4"
+                    >
+                        <div className="flex items-center space-x-2">
+                            <RadioGroupItem value="estimate" id="type-estimate" />
+                            <Label htmlFor="type-estimate">Estimate</Label>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                            <RadioGroupItem value="quote" id="type-quote" />
+                            <Label htmlFor="type-quote">Quote</Label>
+                        </div>
+                    </RadioGroup>
+                </div>
+                 <div className="space-y-2">
+                    <Label htmlFor="fontFamily">Font Family</Label>
+                    <Select value={quote.fontFamily} onValueChange={(value) => setQuote(p => ({...p, fontFamily: value}))}>
+                        <SelectTrigger id="fontFamily">
+                            <SelectValue placeholder="Select font" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            {fonts.map(font => <SelectItem key={font.value} value={font.value}>{font.label}</SelectItem>)}
+                        </SelectContent>
+                    </Select>
                 </div>
             </CardContent>
         </Card>

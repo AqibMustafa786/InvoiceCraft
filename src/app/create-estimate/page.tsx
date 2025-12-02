@@ -68,6 +68,8 @@ const getInitialEstimate = (): Omit<Estimate, 'userId'> => ({
   documentType: 'estimate',
   language: 'en',
   currency: 'USD',
+  fontFamily: 'Inter',
+  fontSize: 14,
 });
 
 

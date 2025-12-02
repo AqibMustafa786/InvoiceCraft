@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import { ChangeEvent, Dispatch, SetStateAction, useState, useEffect } from 'react';
@@ -9,7 +10,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { DatePicker } from '@/components/ui/datepicker';
-import { ImageUp, Plus, Trash2, Palette, X, Mail, Truck, Hash, Phone, Globe, Briefcase, Award, User, FileText, Building, Pencil } from 'lucide-react';
+import { ImageUp, Plus, Trash2, Palette, X, Mail, Truck, Hash, Phone, Globe, Briefcase, Award, User, FileText, Building, Pencil, Type, CaseUpper, CaseLower } from 'lucide-react';
 import Image from 'next/image';
 import {
   Select,
@@ -28,6 +29,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { serverTimestamp } from 'firebase/firestore';
+import { RadioGroup, RadioGroupItem } from './ui/radio-group';
 
 interface EstimateFormProps {
   estimate: Estimate;
@@ -45,9 +47,19 @@ const currencies = [
     { value: 'PKR', label: 'PKR (₨)' },
 ]
 
+const fonts = [
+    { value: 'Inter', label: 'Inter' },
+    { value: 'Roboto', label: 'Roboto' },
+    { value: 'Lato', label: 'Lato' },
+    { value: 'Merriweather', label: 'Merriweather' },
+    { value: 'system-ui', label: 'System Default' },
+]
+
 export function EstimateForm({ estimate, setEstimate, accentColor, setAccentColor, toast }: EstimateFormProps) {
   const [bulkAddCount, setBulkAddCount] = useState(5);
   const [colorInputValue, setColorInputValue] = useState(accentColor);
+  const [headingColorValue, setHeadingColorValue] = useState(estimate.headingColor || '#000000');
+  const [textColorValue, setTextColorValue] = useState(estimate.textColor || '#333333');
   const [logoUrl, setLogoUrl] = useState<string | null>(estimate.business.logoUrl || null);
   const [isSignatureDialogOpen, setIsSignatureDialogOpen] = useState(false);
 
@@ -55,6 +67,14 @@ export function EstimateForm({ estimate, setEstimate, accentColor, setAccentColo
     setColorInputValue(accentColor);
   }, [accentColor]);
   
+  useEffect(() => {
+    setHeadingColorValue(estimate.headingColor || '#000000');
+  }, [estimate.headingColor]);
+  
+  useEffect(() => {
+    setTextColorValue(estimate.textColor || '#333333');
+  }, [estimate.textColor]);
+
   useEffect(() => {
     setEstimate(prev => ({
         ...prev,
@@ -248,6 +268,35 @@ export function EstimateForm({ estimate, setEstimate, accentColor, setAccentColo
                         />
                     </div>
                 </div>
+                <div className="space-y-2">
+                    <Label>Document Type</Label>
+                    <RadioGroup
+                        value={estimate.documentType}
+                        onValueChange={(value) => setEstimate(p => ({...p, documentType: value as 'estimate' | 'quote'}))}
+                        className="flex gap-4"
+                    >
+                        <div className="flex items-center space-x-2">
+                            <RadioGroupItem value="estimate" id="type-estimate" />
+                            <Label htmlFor="type-estimate">Estimate</Label>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                            <RadioGroupItem value="quote" id="type-quote" />
+                            <Label htmlFor="type-quote">Quote</Label>
+                        </div>
+                    </RadioGroup>
+                </div>
+                 <div className="space-y-2">
+                    <Label htmlFor="fontFamily">Font Family</Label>
+                    <Select value={estimate.fontFamily} onValueChange={(value) => setEstimate(p => ({...p, fontFamily: value}))}>
+                        <SelectTrigger id="fontFamily">
+                            <SelectValue placeholder="Select font" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            {fonts.map(font => <SelectItem key={font.value} value={font.value}>{font.label}</SelectItem>)}
+                        </SelectContent>
+                    </Select>
+                </div>
+
             </CardContent>
         </Card>
         

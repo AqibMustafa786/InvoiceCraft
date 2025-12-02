@@ -38,6 +38,10 @@ export interface Invoice {
   language: string;
   template: string;
   documentType: 'invoice';
+  fontFamily?: string;
+  fontSize?: number;
+  headingColor?: string;
+  textColor?: string;
 }
 
 export interface InsuranceDocument {
@@ -75,6 +79,10 @@ export interface InsuranceDocument {
   currency: string;
   language: string;
   template: string;
+  fontFamily?: string;
+  fontSize?: number;
+  headingColor?: string;
+  textColor?: string;
 }
 
 // New refined Estimate Structure
@@ -150,6 +158,11 @@ export interface Estimate {
   
   clientSignature?: SignatureInfo;
   auditLog?: AuditLogEntry[];
+
+  fontFamily?: string;
+  fontSize?: number;
+  headingColor?: string;
+  textColor?: string;
 }
 
 export type Quote = Estimate & { documentType: 'quote' };
