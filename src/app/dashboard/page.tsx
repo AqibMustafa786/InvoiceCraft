@@ -1,5 +1,3 @@
-
-
 'use client';
 
 import { useState, useMemo, useCallback, useEffect } from 'react';
@@ -229,15 +227,17 @@ export default function DashboardPage() {
                   clientName = (doc as Estimate | Quote).client.name;
                 }
                 
-                if (!date || !isValid(date)) return false;
+                if (!date || !isValid(date)) return true; // Keep docs with invalid dates for now to avoid hiding them on error
 
-                const clientNameMatch = filters.clientName ? clientName.toLowerCase().includes(filters.clientName.toLowerCase()) : true;
+                const clientNameMatch = filters.clientName ? (clientName || '').toLowerCase().includes(filters.clientName.toLowerCase()) : true;
                 const statusMatch = filters.status ? doc.status === filters.status : true;
                 const amountMinMatch = filters.amountMin !== null ? total >= filters.amountMin : true;
                 const amountMaxMatch = filters.amountMax !== null ? total <= filters.amountMax : true;
-                const dateMatch = (filters.dateFrom && filters.dateTo) ? isWithinInterval(date, { start: filters.dateFrom, end: filters.dateTo })
-                                : filters.dateFrom ? date >= filters.dateFrom
-                                : filters.dateTo ? date <= filters.dateTo
+                const dateFrom = filters.dateFrom ? new Date(filters.dateFrom.setHours(0, 0, 0, 0)) : null;
+                const dateTo = filters.dateTo ? new Date(filters.dateTo.setHours(23, 59, 59, 999)) : null;
+                const dateMatch = (dateFrom && dateTo) ? isWithinInterval(date, { start: dateFrom, end: dateTo })
+                                : dateFrom ? date >= dateFrom
+                                : dateTo ? date <= dateTo
                                 : true;
                 return clientNameMatch && statusMatch && amountMinMatch && amountMaxMatch && dateMatch;
             })
@@ -504,5 +504,3 @@ export default function DashboardPage() {
         </div>
     );
 }
-
-    

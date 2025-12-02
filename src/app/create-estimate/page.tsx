@@ -1,5 +1,3 @@
-
-
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
@@ -243,6 +241,7 @@ export default function CreateEstimatePage() {
         return;
     }
 
+    const baseEstimate = getInitialEstimate();
     let initialEstimate: Estimate | Quote;
 
     if (draftId && remoteDraft) {
@@ -253,9 +252,29 @@ export default function CreateEstimatePage() {
            return value;
        };
        const loadedDraft = JSON.parse(JSON.stringify(remoteDraft), fromJSON);
-       initialEstimate = { ...getInitialEstimate(), ...loadedDraft, userId: user.uid };
+       
+       // Deep merge loaded draft with base estimate to ensure all fields are present
+       initialEstimate = {
+         ...baseEstimate,
+         ...loadedDraft,
+         userId: user.uid,
+         business: { ...baseEstimate.business, ...loadedDraft.business },
+         client: { ...baseEstimate.client, ...loadedDraft.client },
+         summary: { ...baseEstimate.summary, ...loadedDraft.summary },
+         homeRemodeling: { ...baseEstimate.homeRemodeling, ...loadedDraft.homeRemodeling },
+         roofing: { ...baseEstimate.roofing, ...loadedDraft.roofing },
+         hvac: { ...baseEstimate.hvac, ...loadedDraft.hvac },
+         plumbing: { ...baseEstimate.plumbing, ...loadedDraft.plumbing },
+         electrical: { ...baseEstimate.electrical, ...loadedDraft.electrical },
+         landscaping: { ...baseEstimate.landscaping, ...loadedDraft.landscaping },
+         cleaning: { ...baseEstimate.cleaning, ...loadedDraft.cleaning },
+         autoRepair: { ...baseEstimate.autoRepair, ...loadedDraft.autoRepair },
+         construction: { ...baseEstimate.construction, ...loadedDraft.construction },
+         itFreelance: { ...baseEstimate.itFreelance, ...loadedDraft.itFreelance },
+       };
+
     } else {
-        initialEstimate = {...getInitialEstimate(), userId: user.uid};
+        initialEstimate = {...baseEstimate, userId: user.uid};
     }
     
     setDocument(initialEstimate);
@@ -485,5 +504,3 @@ export default function CreateEstimatePage() {
     </>
   );
 }
-
-    
