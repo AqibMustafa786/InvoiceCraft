@@ -24,7 +24,7 @@ const plans = [
       { text: "Priority support", included: false },
     ],
     cta: "Get Started",
-    ctaLink: "/create",
+    ctaLink: "/create-invoice",
     variant: "default" as "default" | "primary",
   },
   {
