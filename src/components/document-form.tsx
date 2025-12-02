@@ -10,7 +10,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { DatePicker } from '@/components/ui/datepicker';
-import { ImageUp, Plus, Trash2, Palette, X, Mail, Truck, Hash, Phone, Globe, Briefcase, Award, User, FileText, Building, Pencil } from 'lucide-react';
+import { ImageUp, Plus, Trash2, Palette, X, Mail, Truck, Hash, Phone, Globe, Briefcase, Award, User, FileText, Building, Pencil, FontSize } from 'lucide-react';
 import Image from 'next/image';
 import {
   Select,
@@ -285,6 +285,21 @@ export function DocumentForm({ document, setDocument, accentColor, setAccentColo
                             {fonts.map(font => <SelectItem key={font.value} value={font.value}>{font.label}</SelectItem>)}
                         </SelectContent>
                     </Select>
+                </div>
+                <div className="space-y-2">
+                    <Label htmlFor="headingColor">Heading Color</Label>
+                    <Input id="headingColor" name="headingColor" value={document.headingColor} onChange={handleInputChange} placeholder="Default" />
+                </div>
+                <div className="space-y-2">
+                    <Label htmlFor="textColor">Text Color</Label>
+                    <Input id="textColor" name="textColor" value={document.textColor} onChange={handleInputChange} placeholder="Default" />
+                </div>
+                 <div className="space-y-2">
+                    <Label htmlFor="fontSize">Font Size</Label>
+                    <div className="relative flex items-center">
+                        <FontSize className="absolute left-3 h-5 w-5 text-muted-foreground" />
+                        <Input id="fontSize" name="fontSize" type="number" value={document.fontSize} onChange={(e) => setDocument(p => ({...p, fontSize: Number(e.target.value) || 14}))} className="pl-10" />
+                    </div>
                 </div>
             </CardContent>
         </Card>

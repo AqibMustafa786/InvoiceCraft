@@ -20,11 +20,22 @@ type DatePickerProps = {
 }
 
 export function DatePicker({ date, setDate, className }: DatePickerProps) {
+  const [selectedDate, setSelectedDate] = React.useState(date);
+
+  React.useEffect(() => {
+    setSelectedDate(date);
+  }, [date])
+
+  const handleSelect = (newDate?: Date) => {
+    setSelectedDate(newDate);
+    setDate(newDate);
+  }
+
   const safeDate = React.useMemo(() => {
-    if (!date) return null;
-    const d = new Date(date);
+    if (!selectedDate) return null;
+    const d = new Date(selectedDate);
     return isValid(d) ? d : null;
-  }, [date]);
+  }, [selectedDate]);
 
   return (
     <Popover>
@@ -45,7 +56,7 @@ export function DatePicker({ date, setDate, className }: DatePickerProps) {
         <Calendar
           mode="single"
           selected={safeDate || undefined}
-          onSelect={setDate}
+          onSelect={handleSelect}
           initialFocus
         />
       </PopoverContent>
