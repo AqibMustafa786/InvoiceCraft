@@ -227,7 +227,7 @@ const PageHeader = ({ document, style }: { document: Estimate, style: React.CSSP
                     )}
                 </div>
                 <div className="w-1/2 text-right">
-                    <h2 className="text-3xl font-bold mb-4" style={{ color: business.logoUrl ? style.color : 'inherit' }}>{documentTitle}</h2>
+                     <h2 className="text-3xl font-bold mb-4" style={{ color: business.logoUrl ? style.color : 'inherit' }}>{documentTitle}</h2>
                 </div>
             </div>
              <div className="flex justify-between items-start text-xs">
@@ -410,7 +410,7 @@ export function DocumentPreview({ document, accentColor, id = 'document-preview'
   const TemplateComponent = templates[document.template as keyof typeof templates] || templates.default;
   
   useLayoutEffect(() => {
-    if (typeof window === 'undefined' || typeof window.document === 'undefined' || !isPrint || !needsRemeasure) return;
+    if (typeof window.document === 'undefined' || !isPrint || !needsRemeasure) return;
 
     const measureAndPaginate = () => {
         const container = containerRef.current;
@@ -422,11 +422,9 @@ export function DocumentPreview({ document, accentColor, id = 'document-preview'
         tempRoot.style.width = `${container.clientWidth}px`;
         window.document.body.appendChild(tempRoot);
 
-        // Use a promise to ensure the DOM is updated before measuring
         Promise.resolve().then(() => {
             const tempContainer = container.cloneNode(true) as HTMLElement;
             
-            // Clear out the table body to re-populate with all items for measurement
             const tableBody = tempContainer.querySelector('[data-element="items-table"] tbody');
             if (tableBody) {
                 tableBody.innerHTML = document.lineItems.map(item => `
@@ -440,7 +438,6 @@ export function DocumentPreview({ document, accentColor, id = 'document-preview'
             }
             tempRoot.appendChild(tempContainer);
             
-            // Now, measure the constant elements
             const pageHeader = tempContainer.querySelector('[data-element="page-header"]') as HTMLElement;
             const clientDetails = tempContainer.querySelector('[data-element="client-details"]') as HTMLElement;
             const categoryPreview = tempContainer.querySelector('[data-element="category-preview-wrapper"]') as HTMLElement;
@@ -454,37 +451,31 @@ export function DocumentPreview({ document, accentColor, id = 'document-preview'
             }
             
             const firstPageHeaderHeight = pageHeader.offsetHeight + clientDetails.offsetHeight + (categoryPreview ? categoryPreview.offsetHeight : 0);
-            const subsequentPageHeaderHeight = 0; // No main header on subsequent pages
+            const subsequentPageHeaderHeight = 0;
             const tableHeaderHeight = tableHeader.offsetHeight;
             const footerHeight = footer.offsetHeight;
 
-            let newPages: Estimate['lineItems'][] = [[]];
+            let newPages: Estimate['lineItems'][][] = [[]];
             let currentPage = 0;
             let currentPageHeight = firstPageHeaderHeight;
 
             allRows.forEach((row, index) => {
                 const itemHeight = row.offsetHeight;
-
-                // On subsequent pages, reset height and add subsequent header height
+                
                 if (currentPage > 0 && newPages[currentPage].length === 0) {
                     currentPageHeight = subsequentPageHeaderHeight;
                 }
                 
-                // Add table header height for the first item on any page
                 if (newPages[currentPage].length === 0) {
                     currentPageHeight += tableHeaderHeight;
                 }
 
-                // Check if adding the current item would overflow
-                const wouldOverflow = currentPageHeight + itemHeight > AVAILABLE_HEIGHT;
-                
-                // Special check for the last item: does it and the footer fit?
-                const lastItemAndFooterOverflow = (index === allRows.length - 1) && (currentPageHeight + itemHeight + footerHeight > AVAILABLE_HEIGHT);
+                let isLastItem = index === allRows.length - 1;
+                const projectedHeight = currentPageHeight + itemHeight + (isLastItem ? footerHeight : 0);
 
-                if (wouldOverflow || lastItemAndFooterOverflow) {
+                if (projectedHeight > AVAILABLE_HEIGHT && newPages[currentPage].length > 0) {
                     currentPage++;
                     newPages[currentPage] = [];
-                    // Reset height for the new page
                     currentPageHeight = subsequentPageHeaderHeight + tableHeaderHeight;
                 }
                 
@@ -498,7 +489,6 @@ export function DocumentPreview({ document, accentColor, id = 'document-preview'
         });
     };
     
-    // Defer measurement slightly to ensure DOM is ready
     const timer = setTimeout(measureAndPaginate, 100);
     return () => clearTimeout(timer);
 
