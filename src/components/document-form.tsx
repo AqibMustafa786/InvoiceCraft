@@ -3,14 +3,14 @@
 'use client';
 
 import { ChangeEvent, Dispatch, SetStateAction, useState, useEffect } from 'react';
-import type { Estimate, LineItem, Quote, EstimateCategory, HomeRemodelingInfo, RoofingInfo, HVACInfo, PlumbingInfo } from '@/lib/types';
+import type { Estimate, LineItem, Quote, EstimateCategory, HomeRemodelingInfo, RoofingInfo, HVACInfo, PlumbingInfo, ElectricalInfo, LandscapingInfo, CleaningInfo, AutoRepairInfo } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { DatePicker } from '@/components/ui/datepicker';
-import { ImageUp, Plus, Trash2, Palette, X, Mail, Truck, Hash, Phone, Globe, Briefcase, Award, User, FileText, Building, Pencil, Type, Package, Hammer, Ruler, ListTree, CheckSquare, Sparkles, Calendar, TextQuote, Wind, Thermometer, Wrench } from 'lucide-react';
+import { ImageUp, Plus, Trash2, Palette, X, Mail, Truck, Hash, Phone, Globe, Briefcase, Award, User, FileText, Building, Pencil, Type, Package, Hammer, Ruler, ListTree, CheckSquare, Sparkles, Calendar, TextQuote, Wind, Thermometer, Wrench, Zap, Trees, Droplets, Car } from 'lucide-react';
 import Image from 'next/image';
 import {
   Select,
@@ -75,6 +75,7 @@ export function DocumentForm({ document, setDocument, accentColor, setAccentColo
   const [colorInputValue, setColorInputValue] = useState(accentColor);
   const [logoUrl, setLogoUrl] = useState<string | null>(document.business.logoUrl || null);
   const [isSignatureDialogOpen, setIsSignatureDialogOpen] = useState(false);
+  const [cleaningAddOns, setCleaningAddOns] = useState<string[]>(document.cleaning?.addOns || []);
 
   useEffect(() => {
     setColorInputValue(accentColor);
@@ -103,99 +104,28 @@ export function DocumentForm({ document, setDocument, accentColor, setAccentColo
     }));
   };
 
-  const handleRemodelingChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleCategoryDataChange = (category: 'homeRemodeling' | 'roofing' | 'hvac' | 'plumbing' | 'electrical' | 'landscaping' | 'cleaning' | 'autoRepair', e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value, type } = e.target;
     const isCheckbox = type === 'checkbox';
     
     setDocument(prev => ({
         ...prev,
-        homeRemodeling: {
-            ...prev.homeRemodeling!,
+        [category]: {
+            ...prev[category]!,
             [name]: isCheckbox ? (e.target as HTMLInputElement).checked : value
         }
     }));
   };
 
-    const handleRoofingChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value, type } = e.target;
-    const isCheckbox = type === 'checkbox';
-    
-    setDocument(prev => ({
-        ...prev,
-        roofing: {
-            ...prev.roofing!,
-            [name]: isCheckbox ? (e.target as HTMLInputElement).checked : value
-        }
-    }));
-  };
-  
-    const handleHvacChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value, type } = e.target;
-    const isCheckbox = type === 'checkbox';
-    
-    setDocument(prev => ({
-        ...prev,
-        hvac: {
-            ...prev.hvac!,
-            [name]: isCheckbox ? (e.target as HTMLInputElement).checked : value
-        }
-    }));
-  };
-
-  const handlePlumbingChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value, type } = e.target;
-    const isCheckbox = type === 'checkbox';
-    
-    setDocument(prev => ({
-        ...prev,
-        plumbing: {
-            ...prev.plumbing!,
-            [name]: isCheckbox ? (e.target as HTMLInputElement).checked : value
-        }
-    }));
-  };
-
-
-  const handleRemodelingSelectChange = (name: keyof HomeRemodelingInfo, value: string) => {
+  const handleCategorySelectChange = (category: 'homeRemodeling' | 'roofing' | 'hvac' | 'plumbing' | 'electrical' | 'landscaping' | 'cleaning' | 'autoRepair', name: string, value: string | boolean) => {
      setDocument(prev => ({
         ...prev,
-        homeRemodeling: {
-            ...prev.homeRemodeling!,
+        [category]: {
+            ...prev[category]!,
             [name]: value
         }
     }));
   };
-  
-    const handleRoofingSelectChange = (name: keyof RoofingInfo, value: string | boolean) => {
-     setDocument(prev => ({
-        ...prev,
-        roofing: {
-            ...prev.roofing!,
-            [name]: value
-        }
-    }));
-  };
-  
-    const handleHvacSelectChange = (name: keyof HVACInfo, value: string | boolean) => {
-     setDocument(prev => ({
-        ...prev,
-        hvac: {
-            ...prev.hvac!,
-            [name]: value
-        }
-    }));
-  };
-
-  const handlePlumbingSelectChange = (name: keyof PlumbingInfo, value: string | boolean) => {
-     setDocument(prev => ({
-        ...prev,
-        plumbing: {
-            ...prev.plumbing!,
-            [name]: value
-        }
-    }));
-  };
-
 
   const handleRemodelingDateChange = (name: keyof HomeRemodelingInfo, date: Date | undefined) => {
      setDocument(prev => ({
@@ -207,6 +137,20 @@ export function DocumentForm({ document, setDocument, accentColor, setAccentColo
     }));
   };
 
+  const handleCleaningAddOnChange = (addOn: string, checked: boolean) => {
+    const currentAddOns = document.cleaning?.addOns || [];
+    const newAddOns = checked
+      ? [...currentAddOns, addOn]
+      : currentAddOns.filter(item => item !== addOn);
+    setCleaningAddOns(newAddOns);
+    setDocument(prev => ({
+      ...prev,
+      cleaning: {
+        ...prev.cleaning!,
+        addOns: newAddOns
+      }
+    }));
+  }
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -603,35 +547,35 @@ export function DocumentForm({ document, setDocument, accentColor, setAccentColo
                         <Label htmlFor="projectType">Project Type</Label>
                         <div className="relative flex items-center">
                             <Hammer className="absolute left-3 h-5 w-5 text-muted-foreground" />
-                            <Input id="projectType" name="projectType" value={document.homeRemodeling.projectType} onChange={handleRemodelingChange} className="pl-10" placeholder="e.g. Kitchen, Bathroom" />
+                            <Input id="projectType" name="projectType" value={document.homeRemodeling.projectType} onChange={(e) => handleCategoryDataChange('homeRemodeling', e)} className="pl-10" placeholder="e.g. Kitchen, Bathroom" />
                         </div>
                     </div>
                      <div className="space-y-2">
                         <Label htmlFor="propertyType">Property Type</Label>
                          <div className="relative flex items-center">
                             <Building className="absolute left-3 h-5 w-5 text-muted-foreground" />
-                            <Input id="propertyType" name="propertyType" value={document.homeRemodeling.propertyType} onChange={handleRemodelingChange} className="pl-10" placeholder="e.g. House, Apartment"/>
+                            <Input id="propertyType" name="propertyType" value={document.homeRemodeling.propertyType} onChange={(e) => handleCategoryDataChange('homeRemodeling', e)} className="pl-10" placeholder="e.g. House, Apartment"/>
                         </div>
                     </div>
                     <div className="space-y-2">
                         <Label htmlFor="squareFootage">Square Footage</Label>
                         <div className="relative flex items-center">
                             <Ruler className="absolute left-3 h-5 w-5 text-muted-foreground" />
-                            <Input id="squareFootage" name="squareFootage" type="number" value={document.homeRemodeling.squareFootage ?? ''} onChange={handleRemodelingChange} className="pl-10" />
+                            <Input id="squareFootage" name="squareFootage" type="number" value={document.homeRemodeling.squareFootage ?? ''} onChange={(e) => handleCategoryDataChange('homeRemodeling', e)} className="pl-10" />
                         </div>
                     </div>
                     <div className="space-y-2">
                         <Label htmlFor="roomsIncluded">Rooms Included</Label>
                          <div className="relative flex items-center">
                             <ListTree className="absolute left-3 h-5 w-5 text-muted-foreground" />
-                            <Input id="roomsIncluded" name="roomsIncluded" value={document.homeRemodeling.roomsIncluded} onChange={handleRemodelingChange} className="pl-10" placeholder="e.g. Kitchen, 2 Bedrooms" />
+                            <Input id="roomsIncluded" name="roomsIncluded" value={document.homeRemodeling.roomsIncluded} onChange={(e) => handleCategoryDataChange('homeRemodeling', e)} className="pl-10" placeholder="e.g. Kitchen, 2 Bedrooms" />
                         </div>
                     </div>
                     <div className="space-y-2 md:col-span-2">
                         <Label>Material Grade</Label>
                         <RadioGroup
                             value={document.homeRemodeling.materialGrade}
-                            onValueChange={(value) => handleRemodelingSelectChange('materialGrade', value)}
+                            onValueChange={(value) => handleCategorySelectChange('homeRemodeling', 'materialGrade', value)}
                             className="flex gap-4"
                         >
                             <div className="flex items-center space-x-2">
@@ -649,11 +593,11 @@ export function DocumentForm({ document, setDocument, accentColor, setAccentColo
                         </RadioGroup>
                     </div>
                      <div className="flex items-center space-x-2">
-                        <Checkbox id="demolitionRequired" name="demolitionRequired" checked={document.homeRemodeling.demolitionRequired} onCheckedChange={(checked) => handleRemodelingSelectChange('demolitionRequired', !!checked ? 'true' : 'false')} />
+                        <Checkbox id="demolitionRequired" name="demolitionRequired" checked={document.homeRemodeling.demolitionRequired} onCheckedChange={(checked) => handleCategorySelectChange('homeRemodeling', 'demolitionRequired', !!checked)} />
                         <Label htmlFor="demolitionRequired" className="flex items-center gap-2"><Sparkles className="h-4 w-4" /> Demolition Required?</Label>
                     </div>
                      <div className="flex items-center space-x-2">
-                        <Checkbox id="permitRequired" name="permitRequired" checked={document.homeRemodeling.permitRequired} onCheckedChange={(checked) => handleRemodelingSelectChange('permitRequired', !!checked ? 'true' : 'false')} />
+                        <Checkbox id="permitRequired" name="permitRequired" checked={document.homeRemodeling.permitRequired} onCheckedChange={(checked) => handleCategorySelectChange('homeRemodeling', 'permitRequired', !!checked)} />
                         <Label htmlFor="permitRequired" className="flex items-center gap-2"><CheckSquare className="h-4 w-4" /> Permit Required?</Label>
                     </div>
                     <div className="space-y-2">
@@ -668,7 +612,7 @@ export function DocumentForm({ document, setDocument, accentColor, setAccentColo
                         <Label htmlFor="specialInstructions">Special Instructions</Label>
                         <div className="relative flex items-center">
                             <TextQuote className="absolute left-3 top-3 h-5 w-5 text-muted-foreground" />
-                            <Textarea id="specialInstructions" name="specialInstructions" value={document.homeRemodeling.specialInstructions} onChange={handleRemodelingChange} className="pl-10" />
+                            <Textarea id="specialInstructions" name="specialInstructions" value={document.homeRemodeling.specialInstructions} onChange={(e) => handleCategoryDataChange('homeRemodeling', e)} className="pl-10" />
                         </div>
                     </div>
                 </CardContent>
@@ -683,7 +627,7 @@ export function DocumentForm({ document, setDocument, accentColor, setAccentColo
                 <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-2">
                         <Label>Roof Material</Label>
-                        <Select value={document.roofing.roofMaterial} onValueChange={(value: RoofingInfo['roofMaterial']) => handleRoofingSelectChange('roofMaterial', value)}>
+                        <Select value={document.roofing.roofMaterial} onValueChange={(value: RoofingInfo['roofMaterial']) => handleCategorySelectChange('roofing', 'roofMaterial', value)}>
                             <SelectTrigger>
                                 <SelectValue placeholder="Select material" />
                             </SelectTrigger>
@@ -697,41 +641,41 @@ export function DocumentForm({ document, setDocument, accentColor, setAccentColo
                     </div>
                     <div className="space-y-2">
                         <Label htmlFor="roofSize">Roof Size (sq ft)</Label>
-                        <Input id="roofSize" name="roofSize" type="number" value={document.roofing.roofSize ?? ''} onChange={handleRoofingChange} />
+                        <Input id="roofSize" name="roofSize" type="number" value={document.roofing.roofSize ?? ''} onChange={(e) => handleCategoryDataChange('roofing', e)} />
                     </div>
                     <div className="space-y-2">
                         <Label htmlFor="roofPitch">Roof Pitch/Slope</Label>
-                        <Input id="roofPitch" name="roofPitch" value={document.roofing.roofPitch} onChange={handleRoofingChange} placeholder="e.g. 4/12" />
+                        <Input id="roofPitch" name="roofPitch" value={document.roofing.roofPitch} onChange={(e) => handleCategoryDataChange('roofing', e)} placeholder="e.g. 4/12" />
                     </div>
                     <div className="space-y-2">
                         <Label htmlFor="layersToRemove">Layers to Remove</Label>
-                        <Input id="layersToRemove" name="layersToRemove" type="number" value={document.roofing.layersToRemove ?? ''} onChange={handleRoofingChange} />
+                        <Input id="layersToRemove" name="layersToRemove" type="number" value={document.roofing.layersToRemove ?? ''} onChange={(e) => handleCategoryDataChange('roofing', e)} />
                     </div>
                     <div className="space-y-2">
                         <Label htmlFor="underlaymentType">Underlayment Type</Label>
-                        <Input id="underlaymentType" name="underlaymentType" value={document.roofing.underlaymentType} onChange={handleRoofingChange} placeholder="e.g. Synthetic, Felt" />
+                        <Input id="underlaymentType" name="underlaymentType" value={document.roofing.underlaymentType} onChange={(e) => handleCategoryDataChange('roofing', e)} placeholder="e.g. Synthetic, Felt" />
                     </div>
                      <div className="space-y-2">
                         <Label htmlFor="ventilationSystem">Ventilation System</Label>
                         <div className="relative flex items-center">
                             <Wind className="absolute left-3 h-5 w-5 text-muted-foreground" />
-                            <Input id="ventilationSystem" name="ventilationSystem" value={document.roofing.ventilationSystem} onChange={handleRoofingChange} placeholder="e.g. Ridge Vents, Soffit Vents" />
+                            <Input id="ventilationSystem" name="ventilationSystem" value={document.roofing.ventilationSystem} onChange={(e) => handleCategoryDataChange('roofing', e)} placeholder="e.g. Ridge Vents, Soffit Vents" />
                         </div>
                     </div>
                     <div className="flex items-center space-x-2 pt-6">
-                        <Checkbox id="flashingReplacement" name="flashingReplacement" checked={document.roofing.flashingReplacement} onCheckedChange={(checked) => handleRoofingSelectChange('flashingReplacement', !!checked)} />
+                        <Checkbox id="flashingReplacement" name="flashingReplacement" checked={document.roofing.flashingReplacement} onCheckedChange={(checked) => handleCategorySelectChange('roofing', 'flashingReplacement', !!checked)} />
                         <Label htmlFor="flashingReplacement">Flashing Replacement?</Label>
                     </div>
                     <div className="flex items-center space-x-2 pt-6">
-                        <Checkbox id="gutterRepairNeeded" name="gutterRepairNeeded" checked={document.roofing.gutterRepairNeeded} onCheckedChange={(checked) => handleRoofingSelectChange('gutterRepairNeeded', !!checked)} />
+                        <Checkbox id="gutterRepairNeeded" name="gutterRepairNeeded" checked={document.roofing.gutterRepairNeeded} onCheckedChange={(checked) => handleCategorySelectChange('roofing', 'gutterRepairNeeded', !!checked)} />
                         <Label htmlFor="gutterRepairNeeded">Gutter Repair Needed?</Label>
                     </div>
                     <div className="space-y-2">
                         <Label htmlFor="roofAge">Roof Age (years)</Label>
-                        <Input id="roofAge" name="roofAge" type="number" value={document.roofing.roofAge ?? ''} onChange={handleRoofingChange} />
+                        <Input id="roofAge" name="roofAge" type="number" value={document.roofing.roofAge ?? ''} onChange={(e) => handleCategoryDataChange('roofing', e)} />
                     </div>
                     <div className="flex items-center space-x-2 pt-6">
-                        <Checkbox id="inspectionRequired" name="inspectionRequired" checked={document.roofing.inspectionRequired} onCheckedChange={(checked) => handleRoofingSelectChange('inspectionRequired', !!checked)} />
+                        <Checkbox id="inspectionRequired" name="inspectionRequired" checked={document.roofing.inspectionRequired} onCheckedChange={(checked) => handleCategorySelectChange('roofing', 'inspectionRequired', !!checked)} />
                         <Label htmlFor="inspectionRequired">Inspection Required?</Label>
                     </div>
                 </CardContent>
@@ -746,7 +690,7 @@ export function DocumentForm({ document, setDocument, accentColor, setAccentColo
                 <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-2">
                         <Label>Service Type</Label>
-                        <Select value={document.hvac.serviceType} onValueChange={(value: HVACInfo['serviceType']) => handleHvacSelectChange('serviceType', value)}>
+                        <Select value={document.hvac.serviceType} onValueChange={(value: HVACInfo['serviceType']) => handleCategorySelectChange('hvac', 'serviceType', value)}>
                             <SelectTrigger><SelectValue/></SelectTrigger>
                             <SelectContent>
                                 <SelectItem value="Install">Install</SelectItem>
@@ -758,7 +702,7 @@ export function DocumentForm({ document, setDocument, accentColor, setAccentColo
                     </div>
                      <div className="space-y-2">
                         <Label>System Type</Label>
-                        <Select value={document.hvac.systemType} onValueChange={(value: HVACInfo['systemType']) => handleHvacSelectChange('systemType', value)}>
+                        <Select value={document.hvac.systemType} onValueChange={(value: HVACInfo['systemType']) => handleCategorySelectChange('hvac', 'systemType', value)}>
                             <SelectTrigger><SelectValue/></SelectTrigger>
                             <SelectContent>
                                 <SelectItem value="AC">AC</SelectItem>
@@ -771,15 +715,15 @@ export function DocumentForm({ document, setDocument, accentColor, setAccentColo
                     </div>
                     <div className="space-y-2">
                         <Label htmlFor="unitSize">Unit Size (Tonnage / BTU)</Label>
-                        <Input id="unitSize" name="unitSize" type="number" value={document.hvac.unitSize ?? ''} onChange={handleHvacChange} />
+                        <Input id="unitSize" name="unitSize" type="number" value={document.hvac.unitSize ?? ''} onChange={(e) => handleCategoryDataChange('hvac', e)} />
                     </div>
                      <div className="space-y-2">
                         <Label htmlFor="seerRating">SEER Rating</Label>
-                        <Input id="seerRating" name="seerRating" value={document.hvac.seerRating} onChange={handleHvacChange} />
+                        <Input id="seerRating" name="seerRating" value={document.hvac.seerRating} onChange={(e) => handleCategoryDataChange('hvac', e)} />
                     </div>
                      <div className="space-y-2">
                         <Label>Furnace Type</Label>
-                        <Select value={document.hvac.furnaceType} onValueChange={(value: HVACInfo['furnaceType']) => handleHvacSelectChange('furnaceType', value)}>
+                        <Select value={document.hvac.furnaceType} onValueChange={(value: HVACInfo['furnaceType']) => handleCategorySelectChange('hvac', 'furnaceType', value)}>
                             <SelectTrigger><SelectValue/></SelectTrigger>
                             <SelectContent>
                                 <SelectItem value="Gas">Gas</SelectItem>
@@ -790,7 +734,7 @@ export function DocumentForm({ document, setDocument, accentColor, setAccentColo
                     </div>
                      <div className="space-y-2">
                         <Label>Thermostat Type</Label>
-                        <Select value={document.hvac.thermostatType} onValueChange={(value: HVACInfo['thermostatType']) => handleHvacSelectChange('thermostatType', value)}>
+                        <Select value={document.hvac.thermostatType} onValueChange={(value: HVACInfo['thermostatType']) => handleCategorySelectChange('hvac', 'thermostatType', value)}>
                             <SelectTrigger><SelectValue/></SelectTrigger>
                             <SelectContent>
                                 <SelectItem value="Manual">Manual</SelectItem>
@@ -801,14 +745,14 @@ export function DocumentForm({ document, setDocument, accentColor, setAccentColo
                     </div>
                     <div className="space-y-2 md:col-span-2">
                         <Label htmlFor="existingSystemCondition">Existing System Condition</Label>
-                        <Input id="existingSystemCondition" name="existingSystemCondition" value={document.hvac.existingSystemCondition} onChange={handleHvacChange} />
+                        <Input id="existingSystemCondition" name="existingSystemCondition" value={document.hvac.existingSystemCondition} onChange={(e) => handleCategoryDataChange('hvac', e)} />
                     </div>
                     <div className="space-y-2">
                         <Label htmlFor="refrigerantType">Refrigerant Type</Label>
-                        <Input id="refrigerantType" name="refrigerantType" value={document.hvac.refrigerantType} onChange={handleHvacChange} />
+                        <Input id="refrigerantType" name="refrigerantType" value={document.hvac.refrigerantType} onChange={(e) => handleCategoryDataChange('hvac', e)} />
                     </div>
                     <div className="flex items-center space-x-2 pt-6">
-                        <Checkbox id="ductworkRequired" name="ductworkRequired" checked={document.hvac.ductworkRequired} onCheckedChange={(checked) => handleHvacSelectChange('ductworkRequired', !!checked)} />
+                        <Checkbox id="ductworkRequired" name="ductworkRequired" checked={document.hvac.ductworkRequired} onCheckedChange={(checked) => handleCategorySelectChange('hvac', 'ductworkRequired', !!checked)} />
                         <Label htmlFor="ductworkRequired">Ductwork Required?</Label>
                     </div>
                 </CardContent>
@@ -823,7 +767,7 @@ export function DocumentForm({ document, setDocument, accentColor, setAccentColo
                 <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-2">
                         <Label>Service Type</Label>
-                        <Select value={document.plumbing.serviceType} onValueChange={(value: PlumbingInfo['serviceType']) => handlePlumbingSelectChange('serviceType', value)}>
+                        <Select value={document.plumbing.serviceType} onValueChange={(value: PlumbingInfo['serviceType']) => handleCategorySelectChange('plumbing', 'serviceType', value)}>
                             <SelectTrigger><SelectValue/></SelectTrigger>
                             <SelectContent>
                                 <SelectItem value="Leak Repair">Leak Repair</SelectItem>
@@ -836,11 +780,11 @@ export function DocumentForm({ document, setDocument, accentColor, setAccentColo
                     </div>
                     <div className="space-y-2">
                         <Label htmlFor="fixtureType">Fixture Type</Label>
-                        <Input id="fixtureType" name="fixtureType" value={document.plumbing.fixtureType} onChange={handlePlumbingChange} placeholder="e.g. Sink, Toilet, Shower" />
+                        <Input id="fixtureType" name="fixtureType" value={document.plumbing.fixtureType} onChange={(e) => handleCategoryDataChange('plumbing', e)} placeholder="e.g. Sink, Toilet, Shower" />
                     </div>
                     <div className="space-y-2">
                         <Label>Pipe Material</Label>
-                        <Select value={document.plumbing.pipeMaterial} onValueChange={(value: PlumbingInfo['pipeMaterial']) => handlePlumbingSelectChange('pipeMaterial', value)}>
+                        <Select value={document.plumbing.pipeMaterial} onValueChange={(value: PlumbingInfo['pipeMaterial']) => handleCategorySelectChange('plumbing', 'pipeMaterial', value)}>
                             <SelectTrigger><SelectValue/></SelectTrigger>
                             <SelectContent>
                                 <SelectItem value="Copper">Copper</SelectItem>
@@ -852,26 +796,118 @@ export function DocumentForm({ document, setDocument, accentColor, setAccentColo
                     </div>
                     <div className="space-y-2">
                         <Label htmlFor="floorLevel">Floor Level</Label>
-                        <Input id="floorLevel" name="floorLevel" value={document.plumbing.floorLevel} onChange={handlePlumbingChange} placeholder="e.g. Basement, 1st Floor" />
+                        <Input id="floorLevel" name="floorLevel" value={document.plumbing.floorLevel} onChange={(e) => handleCategoryDataChange('plumbing', e)} placeholder="e.g. Basement, 1st Floor" />
                     </div>
                      <div className="space-y-2 md:col-span-2">
                         <Label htmlFor="leakLocation">Leak Location</Label>
-                        <Input id="leakLocation" name="leakLocation" value={document.plumbing.leakLocation} onChange={handlePlumbingChange} />
+                        <Input id="leakLocation" name="leakLocation" value={document.plumbing.leakLocation} onChange={(e) => handleCategoryDataChange('plumbing', e)} />
                     </div>
                      <div className="space-y-2">
                         <Label htmlFor="estimatedRepairTime">Estimated Repair Time</Label>
-                        <Input id="estimatedRepairTime" name="estimatedRepairTime" value={document.plumbing.estimatedRepairTime} onChange={handlePlumbingChange} placeholder="e.g. 2-3 hours" />
+                        <Input id="estimatedRepairTime" name="estimatedRepairTime" value={document.plumbing.estimatedRepairTime} onChange={(e) => handleCategoryDataChange('plumbing', e)} placeholder="e.g. 2-3 hours" />
                     </div>
                     <div className="pt-6 flex flex-col gap-4">
                         <div className="flex items-center space-x-2">
-                            <Checkbox id="emergencyService" name="emergencyService" checked={document.plumbing.emergencyService} onCheckedChange={(checked) => handlePlumbingSelectChange('emergencyService', !!checked)} />
+                            <Checkbox id="emergencyService" name="emergencyService" checked={document.plumbing.emergencyService} onCheckedChange={(checked) => handleCategorySelectChange('plumbing', 'emergencyService', !!checked)} />
                             <Label htmlFor="emergencyService">Emergency Service?</Label>
                         </div>
                          <div className="flex items-center space-x-2">
-                            <Checkbox id="waterPressureIssue" name="waterPressureIssue" checked={document.plumbing.waterPressureIssue} onCheckedChange={(checked) => handlePlumbingSelectChange('waterPressureIssue', !!checked)} />
+                            <Checkbox id="waterPressureIssue" name="waterPressureIssue" checked={document.plumbing.waterPressureIssue} onCheckedChange={(checked) => handleCategorySelectChange('plumbing', 'waterPressureIssue', !!checked)} />
                             <Label htmlFor="waterPressureIssue">Water Pressure Issue?</Label>
                         </div>
                     </div>
+                </CardContent>
+            </Card>
+        )}
+
+        {document.category === "Electrical Estimate" && document.electrical && (
+            <Card className="bg-card/50 backdrop-blur-sm group-disabled:opacity-70">
+                <CardHeader><CardTitle>Electrical Project Details</CardTitle></CardHeader>
+                <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-2">
+                        <Label>Service Type</Label>
+                        <Select value={document.electrical.serviceType} onValueChange={(value) => handleCategorySelectChange('electrical', 'serviceType', value)}>
+                            <SelectTrigger><SelectValue /></SelectTrigger>
+                            <SelectContent><SelectItem value="Install">Install</SelectItem><SelectItem value="Repair">Repair</SelectItem><SelectItem value="Upgrade">Upgrade</SelectItem></SelectContent>
+                        </Select>
+                    </div>
+                    <div className="space-y-2">
+                        <Label>Wiring Type</Label>
+                        <Select value={document.electrical.wiringType} onValueChange={(value) => handleCategorySelectChange('electrical', 'wiringType', value)}>
+                            <SelectTrigger><SelectValue /></SelectTrigger>
+                            <SelectContent><SelectItem value="Copper">Copper</SelectItem><SelectItem value="Aluminum">Aluminum</SelectItem></SelectContent>
+                        </Select>
+                    </div>
+                    <div className="space-y-2">
+                        <Label>Panel Size</Label>
+                        <Select value={document.electrical.panelSize} onValueChange={(value) => handleCategorySelectChange('electrical', 'panelSize', value)}>
+                            <SelectTrigger><SelectValue /></SelectTrigger>
+                            <SelectContent><SelectItem value="100A">100A</SelectItem><SelectItem value="200A">200A</SelectItem><SelectItem value="Other">Other</SelectItem></SelectContent>
+                        </Select>
+                    </div>
+                    <div className="space-y-2">
+                        <Label htmlFor="outletsFixturesCount">Outlets/Fixtures Count</Label>
+                        <Input id="outletsFixturesCount" name="outletsFixturesCount" type="number" value={document.electrical.outletsFixturesCount ?? ''} onChange={(e) => handleCategoryDataChange('electrical', e)} />
+                    </div>
+                    <div className="space-y-2 md:col-span-2">
+                        <Label htmlFor="roomsInvolved">Rooms Involved</Label>
+                        <Input id="roomsInvolved" name="roomsInvolved" value={document.electrical.roomsInvolved} onChange={(e) => handleCategoryDataChange('electrical', e)} placeholder="e.g., Kitchen, Living Room" />
+                    </div>
+                    <div className="flex items-center space-x-2 pt-6"><Checkbox id="panelUpgradeNeeded" name="panelUpgradeNeeded" checked={document.electrical.panelUpgradeNeeded} onCheckedChange={(c) => handleCategorySelectChange('electrical', 'panelUpgradeNeeded', !!c)} /><Label htmlFor="panelUpgradeNeeded">Panel Upgrade Needed?</Label></div>
+                    <div className="flex items-center space-x-2 pt-6"><Checkbox id="evChargerNeeded" name="evChargerNeeded" checked={document.electrical.evChargerNeeded} onCheckedChange={(c) => handleCategorySelectChange('electrical', 'evChargerNeeded', !!c)} /><Label htmlFor="evChargerNeeded">EV Charger Needed?</Label></div>
+                    <div className="flex items-center space-x-2"><Checkbox id="inspectionRequired-electrical" name="inspectionRequired" checked={document.electrical.inspectionRequired} onCheckedChange={(c) => handleCategorySelectChange('electrical', 'inspectionRequired', !!c)} /><Label htmlFor="inspectionRequired-electrical">Inspection Required?</Label></div>
+                </CardContent>
+            </Card>
+        )}
+
+        {document.category === "Landscaping Estimate" && document.landscaping && (
+            <Card className="bg-card/50 backdrop-blur-sm group-disabled:opacity-70">
+                <CardHeader><CardTitle>Landscaping Project Details</CardTitle></CardHeader>
+                <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-2 md:col-span-2"><Label htmlFor="serviceType-landscaping">Service Type</Label><Input id="serviceType-landscaping" name="serviceType" value={document.landscaping.serviceType} onChange={(e) => handleCategoryDataChange('landscaping', e)} placeholder="e.g., Lawn Mowing, Tree Trimming" /></div>
+                    <div className="space-y-2"><Label htmlFor="propertySize">Property Size (sq ft or acres)</Label><Input id="propertySize" name="propertySize" value={document.landscaping.propertySize} onChange={(e) => handleCategoryDataChange('landscaping', e)} /></div>
+                    <div className="space-y-2"><Label htmlFor="grassHeight">Grass Height</Label><Input id="grassHeight" name="grassHeight" value={document.landscaping.grassHeight} onChange={(e) => handleCategoryDataChange('landscaping', e)} /></div>
+                    <div className="space-y-2"><Label htmlFor="treeCount">Tree Count</Label><Input id="treeCount" name="treeCount" type="number" value={document.landscaping.treeCount ?? ''} onChange={(e) => handleCategoryDataChange('landscaping', e)} /></div>
+                    <div className="space-y-2"><Label htmlFor="fenceLengthNeeded">Fence Length Needed</Label><Input id="fenceLengthNeeded" name="fenceLengthNeeded" value={document.landscaping.fenceLengthNeeded} onChange={(e) => handleCategoryDataChange('landscaping', e)} /></div>
+                    <div className="space-y-2 md:col-span-2"><Label>Yard Condition</Label><RadioGroup value={document.landscaping.yardCondition} onValueChange={(v) => handleCategorySelectChange('landscaping', 'yardCondition', v)} className="flex gap-4"><div className="flex items-center space-x-2"><RadioGroupItem value="Good" id="cond-good" /><Label htmlFor="cond-good">Good</Label></div><div className="flex items-center space-x-2"><RadioGroupItem value="Moderate" id="cond-mod" /><Label htmlFor="cond-mod">Moderate</Label></div><div className="flex items-center space-x-2"><RadioGroupItem value="Poor" id="cond-poor" /><Label htmlFor="cond-poor">Poor</Label></div></RadioGroup></div>
+                </CardContent>
+            </Card>
+        )}
+
+        {document.category === "Cleaning Estimate" && document.cleaning && (
+            <Card className="bg-card/50 backdrop-blur-sm group-disabled:opacity-70">
+                <CardHeader><CardTitle>Cleaning Job Details</CardTitle></CardHeader>
+                <CardContent className="space-y-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className="space-y-2"><Label>Cleaning Type</Label><Select value={document.cleaning.cleaningType} onValueChange={(v) => handleCategorySelectChange('cleaning', 'cleaningType', v)}><SelectTrigger><SelectValue/></SelectTrigger><SelectContent><SelectItem value="Standard">Standard</SelectItem><SelectItem value="Deep">Deep</SelectItem><SelectItem value="Move-in/Move-out">Move-in/Move-out</SelectItem><SelectItem value="Office">Office</SelectItem></SelectContent></Select></div>
+                        <div className="space-y-2"><Label>Frequency</Label><Select value={document.cleaning.frequency} onValueChange={(v) => handleCategorySelectChange('cleaning', 'frequency', v)}><SelectTrigger><SelectValue/></SelectTrigger><SelectContent><SelectItem value="One-time">One-time</SelectItem><SelectItem value="Weekly">Weekly</SelectItem><SelectItem value="Bi-Weekly">Bi-Weekly</SelectItem><SelectItem value="Monthly">Monthly</SelectItem></SelectContent></Select></div>
+                        <div className="space-y-2"><Label htmlFor="homeSize">Home Size (sq ft)</Label><Input id="homeSize" name="homeSize" type="number" value={document.cleaning.homeSize ?? ''} onChange={(e) => handleCategoryDataChange('cleaning', e)} /></div>
+                        <div className="space-y-2"><Label>Kitchen Size</Label><Select value={document.cleaning.kitchenSize} onValueChange={(v) => handleCategorySelectChange('cleaning', 'kitchenSize', v)}><SelectTrigger><SelectValue/></SelectTrigger><SelectContent><SelectItem value="Small">Small</SelectItem><SelectItem value="Medium">Medium</SelectItem><SelectItem value="Large">Large</SelectItem></SelectContent></Select></div>
+                        <div className="space-y-2"><Label htmlFor="bedrooms">Bedrooms</Label><Input id="bedrooms" name="bedrooms" type="number" value={document.cleaning.bedrooms ?? ''} onChange={(e) => handleCategoryDataChange('cleaning', e)} /></div>
+                        <div className="space-y-2"><Label htmlFor="bathrooms">Bathrooms</Label><Input id="bathrooms" name="bathrooms" type="number" value={document.cleaning.bathrooms ?? ''} onChange={(e) => handleCategoryDataChange('cleaning', e)} /></div>
+                    </div>
+                    <div className="flex items-center space-x-2 pt-2"><Checkbox id="hasPets" name="hasPets" checked={document.cleaning.hasPets} onCheckedChange={(c) => handleCategorySelectChange('cleaning', 'hasPets', !!c)} /><Label htmlFor="hasPets">Any Pets?</Label></div>
+                    <div className="space-y-3"><Label>Add-ons</Label><div className="grid grid-cols-2 md:grid-cols-3 gap-x-4 gap-y-2">
+                        {['Carpet', 'Windows', 'Fridge', 'Oven', 'Laundry', 'Walls'].map(addOn => (
+                            <div key={addOn} className="flex items-center space-x-2"><Checkbox id={`addOn-${addOn}`} checked={cleaningAddOns.includes(addOn)} onCheckedChange={(c) => handleCleaningAddOnChange(addOn, !!c)} /><Label htmlFor={`addOn-${addOn}`}>{addOn}</Label></div>
+                        ))}
+                    </div></div>
+                </CardContent>
+            </Card>
+        )}
+
+        {document.category === "Auto Repair Estimate" && document.autoRepair && (
+            <Card className="bg-card/50 backdrop-blur-sm group-disabled:opacity-70">
+                <CardHeader><CardTitle>Auto Repair Details</CardTitle></CardHeader>
+                <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-2"><Label htmlFor="vehicleMake">Vehicle Make</Label><Input id="vehicleMake" name="vehicleMake" value={document.autoRepair.vehicleMake} onChange={(e) => handleCategoryDataChange('autoRepair', e)} /></div>
+                    <div className="space-y-2"><Label htmlFor="vehicleModel">Vehicle Model</Label><Input id="vehicleModel" name="vehicleModel" value={document.autoRepair.vehicleModel} onChange={(e) => handleCategoryDataChange('autoRepair', e)} /></div>
+                    <div className="space-y-2"><Label htmlFor="vehicleYear">Vehicle Year</Label><Input id="vehicleYear" name="vehicleYear" type="number" value={document.autoRepair.vehicleYear ?? ''} onChange={(e) => handleCategoryDataChange('autoRepair', e)} /></div>
+                    <div className="space-y-2"><Label htmlFor="mileage">Mileage</Label><Input id="mileage" name="mileage" type="number" value={document.autoRepair.mileage ?? ''} onChange={(e) => handleCategoryDataChange('autoRepair', e)} /></div>
+                    <div className="space-y-2 md:col-span-2"><Label htmlFor="vin">VIN</Label><Input id="vin" name="vin" value={document.autoRepair.vin} onChange={(e) => handleCategoryDataChange('autoRepair', e)} /></div>
+                    <div className="space-y-2 md:col-span-2"><Label htmlFor="issueDescription">Issue Description</Label><Textarea id="issueDescription" name="issueDescription" value={document.autoRepair.issueDescription} onChange={(e) => handleCategoryDataChange('autoRepair', e)} /></div>
+                    <div className="space-y-2 md:col-span-2"><Label htmlFor="partsRequired">Parts Required</Label><Textarea id="partsRequired" name="partsRequired" value={document.autoRepair.partsRequired} onChange={(e) => handleCategoryDataChange('autoRepair', e)} /></div>
+                    <div className="space-y-2 md:col-span-2"><Label>Diagnostic Type</Label><RadioGroup value={document.autoRepair.diagnosticType} onValueChange={(v) => handleCategorySelectChange('autoRepair', 'diagnosticType', v)} className="flex gap-4"><div className="flex items-center space-x-2"><RadioGroupItem value="Basic" id="diag-basic" /><Label htmlFor="diag-basic">Basic</Label></div><div className="flex items-center space-x-2"><RadioGroupItem value="Advanced" id="diag-adv" /><Label htmlFor="diag-adv">Advanced</Label></div></RadioGroup></div>
                 </CardContent>
             </Card>
         )}

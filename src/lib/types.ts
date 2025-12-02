@@ -200,6 +200,47 @@ export interface PlumbingInfo {
     estimatedRepairTime: string;
 }
 
+export interface ElectricalInfo {
+    serviceType: 'Install' | 'Repair' | 'Upgrade';
+    wiringType: 'Copper' | 'Aluminum';
+    panelUpgradeNeeded: boolean;
+    panelSize: '100A' | '200A' | 'Other';
+    outletsFixturesCount: number | null;
+    roomsInvolved: string;
+    evChargerNeeded: boolean;
+    inspectionRequired: boolean;
+}
+
+export interface LandscapingInfo {
+    serviceType: string;
+    propertySize: string;
+    grassHeight: string;
+    treeCount: number | null;
+    fenceLengthNeeded: string;
+    yardCondition: 'Good' | 'Moderate' | 'Poor';
+}
+
+export interface CleaningInfo {
+    cleaningType: 'Standard' | 'Deep' | 'Move-in/Move-out' | 'Office';
+    homeSize: number | null;
+    bedrooms: number | null;
+    bathrooms: number | null;
+    kitchenSize: 'Small' | 'Medium' | 'Large';
+    hasPets: boolean;
+    addOns: string[];
+    frequency: 'One-time' | 'Weekly' | 'Bi-Weekly' | 'Monthly';
+}
+
+export interface AutoRepairInfo {
+    vehicleMake: string;
+    vehicleModel: string;
+    vehicleYear: number | null;
+    vin: string;
+    mileage: number | null;
+    issueDescription: string;
+    partsRequired: string;
+    diagnosticType: 'Basic' | 'Advanced';
+}
 
 export interface Estimate {
   id: string;
@@ -241,6 +282,10 @@ export interface Estimate {
   roofing?: RoofingInfo;
   hvac?: HVACInfo;
   plumbing?: PlumbingInfo;
+  electrical?: ElectricalInfo;
+  landscaping?: LandscapingInfo;
+  cleaning?: CleaningInfo;
+  autoRepair?: AutoRepairInfo;
 }
 
 export type Quote = Estimate & { documentType: 'quote' };

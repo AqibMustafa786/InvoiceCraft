@@ -120,7 +120,45 @@ const getInitialEstimate = (): Omit<Estimate, 'userId'> => ({
     waterPressureIssue: false,
     leakLocation: '',
     estimatedRepairTime: '',
-  }
+  },
+  electrical: {
+    serviceType: 'Install',
+    wiringType: 'Copper',
+    panelUpgradeNeeded: false,
+    panelSize: '200A',
+    outletsFixturesCount: null,
+    roomsInvolved: '',
+    evChargerNeeded: false,
+    inspectionRequired: false,
+  },
+  landscaping: {
+    serviceType: 'Lawn Mowing',
+    propertySize: '',
+    grassHeight: '',
+    treeCount: null,
+    fenceLengthNeeded: '',
+    yardCondition: 'Good',
+  },
+  cleaning: {
+    cleaningType: 'Standard',
+    homeSize: null,
+    bedrooms: null,
+    bathrooms: null,
+    kitchenSize: 'Medium',
+    hasPets: false,
+    addOns: [],
+    frequency: 'One-time',
+  },
+  autoRepair: {
+    vehicleMake: '',
+    vehicleModel: '',
+    vehicleYear: null,
+    vin: '',
+    mileage: null,
+    issueDescription: '',
+    partsRequired: '',
+    diagnosticType: 'Basic',
+  },
 });
 
 
