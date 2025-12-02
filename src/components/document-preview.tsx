@@ -213,31 +213,40 @@ const CategoryPreview = ({ document }: { document: Estimate }) => {
 };
 
 const PageHeader = ({ document, style }: { document: Estimate, style: React.CSSProperties }) => {
-    const { business, client, category, documentType, estimateNumber, estimateDate } = document;
+    const { business, documentType } = document;
     const documentTitle = documentType === 'quote' ? 'Quote' : 'Estimate';
     
     return (
-        <header className="flex justify-between items-start mb-8" data-element="header">
-            <div className="w-1/2">
-                 {business.logoUrl ? (
-                    <Image src={business.logoUrl} alt={`${business.name} Logo`} width={100} height={100} className="object-contain" data-ai-hint="logo" />
-                ) : (
-                    <h2 className="text-xl font-bold" style={{ color: style.color }}>{business.name}</h2>
-                )}
+        <header data-element="page-header" className="flex flex-col">
+            <div className="flex justify-between items-start mb-8">
+                <div className="w-1/2">
+                    {business.logoUrl ? (
+                        <Image src={business.logoUrl} alt={`${business.name} Logo`} width={100} height={100} className="object-contain" data-ai-hint="logo" />
+                    ) : (
+                        <h2 className="text-xl font-bold" style={{ color: style.color }}>{business.name}</h2>
+                    )}
+                </div>
+                <div className="w-1/2 text-right">
+                    <h2 className="text-3xl font-bold mb-4" style={{ color: business.logoUrl ? style.color : 'inherit' }}>{documentTitle}</h2>
+                </div>
             </div>
-            <div className="w-1/2 text-right">
-                 {business.logoUrl ? (
-                    <h2 className="text-3xl font-bold mb-4" style={{ color: style.color }}>{documentTitle}</h2>
-                 ) : (
-                    <h2 className="text-3xl font-bold mb-4">{documentTitle}</h2>
-                 )}
-                <div className="space-y-0.5 text-xs">
-                    <p className="font-bold">{business.name}</p>
+             <div className="flex justify-between items-start text-xs">
+                <div className="w-1/2 space-y-0.5">
                     {business.licenseNumber && <p>Lic #: {business.licenseNumber}</p>}
                     {business.taxId && <p>Tax ID: {business.taxId}</p>}
                     <p>{business.phone}</p>
                     <p>{business.email}</p>
                     <p className="whitespace-pre-line">{business.address}</p>
+                </div>
+                 <div className="w-1/2 text-right">
+                    <div className="flex justify-end">
+                        <span className="font-bold w-24">Estimate #</span>
+                        <span className="w-24 text-left">{document.estimateNumber}</span>
+                    </div>
+                    <div className="flex justify-end mt-1">
+                        <span className="font-bold w-24">Date</span>
+                        <span className="w-24 text-left">{safeFormat(document.estimateDate, 'MM/dd/yyyy')}</span>
+                    </div>
                 </div>
             </div>
         </header>
@@ -245,7 +254,7 @@ const PageHeader = ({ document, style }: { document: Estimate, style: React.CSSP
 };
 
 const PageClientDetails = ({ document }: { document: Estimate }) => (
-     <section className="flex justify-between items-start mb-8 text-xs" data-element="client-details">
+     <section data-element="client-details" className="flex justify-between items-start my-8 text-xs">
         <div className="w-1/3 space-y-0.5">
             <p className="font-bold mb-1">BILL TO</p>
             <p className="font-semibold">{document.client.name}</p>
@@ -261,16 +270,6 @@ const PageClientDetails = ({ document }: { document: Estimate }) => (
                     <p className="whitespace-pre-line">{document.client.projectLocation}</p>
                 </>
             )}
-        </div>
-        <div className="w-1/3 text-right">
-            <div className="flex justify-end">
-                <span className="font-bold w-24">Estimate #</span>
-                <span className="w-24 text-left">{document.estimateNumber}</span>
-            </div>
-            <div className="flex justify-end mt-1">
-                <span className="font-bold w-24">Date</span>
-                <span className="w-24 text-left">{safeFormat(document.estimateDate, 'MM/dd/yyyy')}</span>
-            </div>
         </div>
     </section>
 );
@@ -340,11 +339,9 @@ const ModernTemplatePage = ({ document, pageItems, pageIndex, totalPages, style 
 
     return (
         <div className={`p-8 md:p-10 bg-white font-sans ${pageIndex < totalPages - 1 ? "page-break" : ""}`} style={{ color: '#374151', fontFamily: style.fontFamily, fontSize: `${style.fontSize}pt` }}>
-            <div data-element="page-header">
-                <PageHeader document={document} style={style} />
-                <PageClientDetails document={document} />
-                <CategoryPreview document={document} />
-            </div>
+            <PageHeader document={document} style={style} />
+            <PageClientDetails document={document} />
+            <CategoryPreview document={document} />
             
             <section className="mt-8">
                 <table className="w-full text-left text-xs" data-element="items-table">
@@ -391,7 +388,7 @@ const AVAILABLE_HEIGHT = PAGE_HEIGHT - PAGE_PADDING;
 
 
 export function DocumentPreview({ document, accentColor, id = 'document-preview', isPrint = false }: DocumentPreviewProps) {
-  const [paginatedItems, setPaginatedItems] = useState<Estimate['lineItems'][]>([document.lineItems]);
+  const [paginatedItems, setPaginatedItems] = useState<Estimate['lineItems'][][]>([document.lineItems]);
   const [needsRemeasure, setNeedsRemeasure] = useState(true);
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -408,89 +405,100 @@ export function DocumentPreview({ document, accentColor, id = 'document-preview'
 
   const dynamicColorStyle = {
       color: accentColor,
-      fontSize: document.fontSize || 10,
   }
 
   const TemplateComponent = templates[document.template as keyof typeof templates] || templates.default;
   
   useLayoutEffect(() => {
-    if (typeof window === 'undefined' || typeof window.document === 'undefined' || !isPrint || !containerRef.current || !needsRemeasure) return;
+    if (typeof window === 'undefined' || typeof window.document === 'undefined' || !isPrint || !needsRemeasure) return;
 
     const measureAndPaginate = () => {
-      const container = containerRef.current;
-      if (!container) return;
+        const container = containerRef.current;
+        if (!container) return;
 
-      const tempRoot = window.document.createElement('div');
-      tempRoot.style.position = 'absolute';
-      tempRoot.style.left = '-9999px';
-      tempRoot.style.width = `${container.clientWidth}px`;
-      window.document.body.appendChild(tempRoot);
+        const tempRoot = window.document.createElement('div');
+        tempRoot.style.position = 'absolute';
+        tempRoot.style.left = '-9999px';
+        tempRoot.style.width = `${container.clientWidth}px`;
+        window.document.body.appendChild(tempRoot);
 
-      Promise.resolve().then(() => {
-          const tempContainer = container.cloneNode(true) as HTMLElement;
-          
-          // Clear out the table body to re-populate with all items for measurement
-          const tableBody = tempContainer.querySelector('[data-element="items-table"] tbody');
-          if (tableBody) {
-              tableBody.innerHTML = document.lineItems.map(item => `
-                  <tr data-element="table-row" style="border-bottom: 1px solid #E5E7EB;">
-                      <td style="padding: 8px; white-space: pre-line;">${item.name || ''}</td>
-                      <td style="padding: 8px; text-align: right;">${item.quantity}</td>
-                      <td style="padding: 8px; text-align: right;">${currencySymbols[document.currency] || '$'}${item.unitPrice.toFixed(2)}</td>
-                      <td style="padding: 8px; text-align: right;">${currencySymbols[document.currency] || '$'}${(item.quantity * item.unitPrice).toFixed(2)}</td>
-                  </tr>
-              `).join('');
-          }
-          tempRoot.appendChild(tempContainer);
-          
-          const pageHeader = tempContainer.querySelector('[data-element="page-header"]') as HTMLElement;
-          const tableHeader = tempContainer.querySelector('[data-element="table-header"]') as HTMLElement;
-          const footer = tempContainer.querySelector('[data-element="footer"]') as HTMLElement;
-          const allRows = Array.from(tempContainer.querySelectorAll('[data-element="table-row"]')) as HTMLElement[];
+        // Use a promise to ensure the DOM is updated before measuring
+        Promise.resolve().then(() => {
+            const tempContainer = container.cloneNode(true) as HTMLElement;
+            
+            // Clear out the table body to re-populate with all items for measurement
+            const tableBody = tempContainer.querySelector('[data-element="items-table"] tbody');
+            if (tableBody) {
+                tableBody.innerHTML = document.lineItems.map(item => `
+                    <tr data-element="table-row" style="border-bottom: 1px solid #E5E7EB;">
+                        <td style="padding: 8px; white-space: pre-line;">${item.name || ''}</td>
+                        <td style="padding: 8px; text-align: right;">${item.quantity}</td>
+                        <td style="padding: 8px; text-align: right;">${currencySymbols[document.currency] || '$'}${item.unitPrice.toFixed(2)}</td>
+                        <td style="padding: 8px; text-align: right;">${currencySymbols[document.currency] || '$'}${(item.quantity * item.unitPrice).toFixed(2)}</td>
+                    </tr>
+                `).join('');
+            }
+            tempRoot.appendChild(tempContainer);
+            
+            // Now, measure the constant elements
+            const pageHeader = tempContainer.querySelector('[data-element="page-header"]') as HTMLElement;
+            const clientDetails = tempContainer.querySelector('[data-element="client-details"]') as HTMLElement;
+            const categoryPreview = tempContainer.querySelector('[data-element="category-preview-wrapper"]') as HTMLElement;
+            const tableHeader = tempContainer.querySelector('[data-element="table-header"]') as HTMLElement;
+            const footer = tempContainer.querySelector('[data-element="footer"]') as HTMLElement;
+            const allRows = Array.from(tempContainer.querySelectorAll('[data-element="table-row"]')) as HTMLElement[];
+            
+            if (!pageHeader || !tableHeader || !footer || allRows.length === 0) {
+                window.document.body.removeChild(tempRoot);
+                return;
+            }
+            
+            const firstPageHeaderHeight = pageHeader.offsetHeight + clientDetails.offsetHeight + (categoryPreview ? categoryPreview.offsetHeight : 0);
+            const subsequentPageHeaderHeight = 0; // No main header on subsequent pages
+            const tableHeaderHeight = tableHeader.offsetHeight;
+            const footerHeight = footer.offsetHeight;
 
-          if (!pageHeader || !tableHeader || !footer || allRows.length === 0) {
-              window.document.body.removeChild(tempRoot);
-              return;
-          }
+            let newPages: Estimate['lineItems'][] = [[]];
+            let currentPage = 0;
+            let currentPageHeight = firstPageHeaderHeight;
 
-          const pageHeaderHeight = pageHeader.offsetHeight;
-          const tableHeaderHeight = tableHeader.offsetHeight;
-          const footerHeight = footer.offsetHeight;
-          const subsequentPageHeaderHeight = 0; // No main header on subsequent pages
+            allRows.forEach((row, index) => {
+                const itemHeight = row.offsetHeight;
 
-          let newPages: Estimate['lineItems'][] = [[]];
-          let currentPage = 0;
-          let currentPageHeight = pageHeaderHeight;
+                // On subsequent pages, reset height and add subsequent header height
+                if (currentPage > 0 && newPages[currentPage].length === 0) {
+                    currentPageHeight = subsequentPageHeaderHeight;
+                }
+                
+                // Add table header height for the first item on any page
+                if (newPages[currentPage].length === 0) {
+                    currentPageHeight += tableHeaderHeight;
+                }
 
-          allRows.forEach((row, index) => {
-              const itemHeight = row.offsetHeight;
+                // Check if adding the current item would overflow
+                const wouldOverflow = currentPageHeight + itemHeight > AVAILABLE_HEIGHT;
+                
+                // Special check for the last item: does it and the footer fit?
+                const lastItemAndFooterOverflow = (index === allRows.length - 1) && (currentPageHeight + itemHeight + footerHeight > AVAILABLE_HEIGHT);
 
-              // If it's the first item on this page, add table header height
-              if (newPages[currentPage].length === 0) {
-                  currentPageHeight += tableHeaderHeight;
-              }
+                if (wouldOverflow || lastItemAndFooterOverflow) {
+                    currentPage++;
+                    newPages[currentPage] = [];
+                    // Reset height for the new page
+                    currentPageHeight = subsequentPageHeaderHeight + tableHeaderHeight;
+                }
+                
+                newPages[currentPage].push(document.lineItems[index]);
+                currentPageHeight += itemHeight;
+            });
 
-              // Check if adding this row OR adding this row and the footer would overflow
-              const willOverflow = currentPageHeight + itemHeight > AVAILABLE_HEIGHT;
-              const willFooterOverflow = currentPageHeight + itemHeight + footerHeight > AVAILABLE_HEIGHT;
-
-              // If the item itself won't fit, or if it's the last item and the footer also won't fit, create a new page.
-              if (willOverflow || (index === allRows.length - 1 && willFooterOverflow)) {
-                  currentPage++;
-                  newPages[currentPage] = [];
-                  currentPageHeight = subsequentPageHeaderHeight + tableHeaderHeight; // Reset height for new page
-              }
-              
-              newPages[currentPage].push(document.lineItems[index]);
-              currentPageHeight += itemHeight;
-          });
-
-          setPaginatedItems(newPages);
-          setNeedsRemeasure(false);
-          window.document.body.removeChild(tempRoot);
-      });
+            setPaginatedItems(newPages);
+            setNeedsRemeasure(false);
+            window.document.body.removeChild(tempRoot);
+        });
     };
     
+    // Defer measurement slightly to ensure DOM is ready
     const timer = setTimeout(measureAndPaginate, 100);
     return () => clearTimeout(timer);
 
@@ -537,7 +545,3 @@ export function DocumentPreview({ document, accentColor, id = 'document-preview'
     </Card>
   );
 }
-
-    
-
-    
