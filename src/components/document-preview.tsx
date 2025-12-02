@@ -212,31 +212,37 @@ const CategoryPreview = ({ document }: { document: Estimate }) => {
     return <div data-element="category-preview-wrapper">{renderContent()}</div>;
 };
 
-const PageHeader = ({ document, style }: { document: Estimate, style: React.CSSProperties }) => {
+const PageHeader = ({ document, style, pageIndex }: { document: Estimate, style: React.CSSProperties, pageIndex: number }) => {
     const { business } = document;
     const documentTitle = document.documentType === 'quote' ? 'Quote' : 'Estimate';
     
     return (
         <div data-element="page-header" className="flex flex-col">
-            <div className="flex justify-between items-start mb-8">
-                <div className="w-1/2">
-                    {business.logoUrl ? (
-                        <Image src={business.logoUrl} alt={`${business.name} Logo`} width={100} height={100} className="object-contain" data-ai-hint="logo" />
-                    ) : (
-                        <h2 className="text-xl font-bold" style={{ color: style.color }}>{business.name}</h2>
-                    )}
+            {pageIndex === 0 && (
+                 <div className="flex justify-between items-start mb-8">
+                    <div className="w-1/2">
+                        {business.logoUrl ? (
+                            <Image src={business.logoUrl} alt={`${business.name} Logo`} width={100} height={100} className="object-contain" data-ai-hint="logo" />
+                        ) : (
+                            <h2 className="text-xl font-bold" style={{ color: style.color }}>{business.name}</h2>
+                        )}
+                    </div>
+                    <div className="w-1/2 text-right">
+                        <h2 className="text-3xl font-bold mb-4" style={{ color: business.logoUrl ? style.color : 'inherit' }}>{documentTitle}</h2>
+                    </div>
                 </div>
-                <div className="w-1/2 text-right">
-                     <h2 className="text-3xl font-bold mb-4" style={{ color: business.logoUrl ? style.color : 'inherit' }}>{documentTitle}</h2>
-                </div>
-            </div>
+            )}
              <div className="flex justify-between items-start text-xs">
                 <div className="w-1/2 space-y-0.5">
-                    {business.licenseNumber && <p>Lic #: {business.licenseNumber}</p>}
-                    {business.taxId && <p>Tax ID: {business.taxId}</p>}
-                    <p>{business.phone}</p>
-                    <p>{business.email}</p>
-                    <p className="whitespace-pre-line">{business.address}</p>
+                    {pageIndex === 0 && (
+                        <>
+                            {business.licenseNumber && <p>Lic #: {business.licenseNumber}</p>}
+                            {business.taxId && <p>Tax ID: {business.taxId}</p>}
+                            <p>{business.phone}</p>
+                            <p>{business.email}</p>
+                            <p className="whitespace-pre-line">{business.address}</p>
+                        </>
+                    )}
                 </div>
                  <div className="w-1/2 text-right">
                     <div className="flex justify-end">
@@ -339,9 +345,9 @@ const ModernTemplatePage = ({ document, pageItems, pageIndex, totalPages, style 
 
     return (
         <div className={`p-8 md:p-10 bg-white font-sans ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ color: '#374151', fontFamily: style.fontFamily, fontSize: `${style.fontSize}pt` }}>
+            <PageHeader document={document} style={style} pageIndex={pageIndex}/>
             {(pageIndex === 0) && (
                 <>
-                    <PageHeader document={document} style={style} />
                     <PageClientDetails document={document} />
                     <CategoryPreview document={document} />
                 </>
@@ -414,9 +420,10 @@ export function DocumentPreview({ document, accentColor, id = 'document-preview'
   const TemplateComponent = templates[document.template as keyof typeof templates] || templates.default;
   
   useLayoutEffect(() => {
-    if (typeof window.document === 'undefined' || !isPrint || !needsRemeasure) return;
+    if (!isPrint || !needsRemeasure) return;
 
-    const measureAndPaginate = () => {
+    const measureAndPaginate = async () => {
+        if (typeof window.document === 'undefined') return;
         const container = containerRef.current;
         if (!container) return;
 
@@ -426,73 +433,100 @@ export function DocumentPreview({ document, accentColor, id = 'document-preview'
         tempRoot.style.width = `${container.clientWidth}px`;
         window.document.body.appendChild(tempRoot);
 
-        Promise.resolve().then(() => {
+        try {
+            // Render a temporary version to measure heights
             const tempContainer = container.cloneNode(true) as HTMLElement;
-            
-            const tableBody = tempContainer.querySelector('[data-element="items-table"] tbody');
-            if (tableBody) {
-                tableBody.innerHTML = document.lineItems.map(item => `
-                    <tr data-element="table-row" style="border-bottom: 1px solid #E5E7EB;">
-                        <td style="padding: 8px; white-space: pre-line;">${item.name || ''}</td>
-                        <td style="padding: 8px; text-align: right;">${item.quantity}</td>
-                        <td style="padding: 8px; text-align: right;">${currencySymbols[document.currency] || '$'}${item.unitPrice.toFixed(2)}</td>
-                        <td style="padding: 8px; text-align: right;">${currencySymbols[document.currency] || '$'}${(item.quantity * item.unitPrice).toFixed(2)}</td>
-                    </tr>
-                `).join('');
-            }
             tempRoot.appendChild(tempContainer);
             
+            // Allow the browser to render the cloned content
+            await new Promise(resolve => setTimeout(resolve, 0));
+
             const headerEl = tempContainer.querySelector('[data-element="page-header"]') as HTMLElement;
-            const clientDetailsEl = tempContainer.querySelector('[data-element="client-details"]') as HTMLElement;
-            const categoryPreviewEl = tempContainer.querySelector('[data-element="category-preview-wrapper"]') as HTMLElement;
+            const clientEl = tempContainer.querySelector('[data-element="client-details"]') as HTMLElement;
+            const categoryEl = tempContainer.querySelector('[data-element="category-preview-wrapper"]') as HTMLElement;
             const tableHeaderEl = tempContainer.querySelector('[data-element="table-header"]') as HTMLElement;
             const footerEl = tempContainer.querySelector('[data-element="footer"]') as HTMLElement;
             const allRows = Array.from(tempContainer.querySelectorAll('[data-element="table-row"]')) as HTMLElement[];
-            
+
             if (!headerEl || !tableHeaderEl || !footerEl || allRows.length === 0) {
-                window.document.body.removeChild(tempRoot);
+                 window.document.body.removeChild(tempRoot);
                 return;
             }
             
-            const firstPageHeaderHeight = headerEl.offsetHeight + (clientDetailsEl ? clientDetailsEl.offsetHeight : 0) + (categoryPreviewEl ? categoryPreviewEl.offsetHeight : 0);
-            const subsequentPageHeaderHeight = 0; // No main header on subsequent pages in this logic
+            const firstPageHeaderHeight = headerEl.offsetHeight + (clientEl?.offsetHeight || 0) + (categoryEl?.offsetHeight || 0);
+            const subsequentPageHeaderHeight = headerEl.offsetHeight; // Just the main header part
             const tableHeaderHeight = tableHeaderEl.offsetHeight;
             const footerHeight = footerEl.offsetHeight;
 
             let newPages: Estimate['lineItems'][][] = [];
             let currentPageItems: Estimate['lineItems'][] = [];
-            let currentPageHeight = firstPageHeaderHeight + tableHeaderHeight;
+            let currentPageHeight = 0;
 
-            allRows.forEach((row, index) => {
-                const itemHeight = row.offsetHeight;
-                const isLastItem = index === allRows.length - 1;
+            for (let i = 0; i < document.lineItems.length; i++) {
+                const item = document.lineItems[i];
+                const rowEl = allRows[i];
+                if (!rowEl) continue;
 
-                const potentialHeight = currentPageHeight + itemHeight + (isLastItem ? footerHeight : 0);
+                const itemHeight = rowEl.offsetHeight;
+                const isFirstPage = newPages.length === 0;
 
-                if (potentialHeight > AVAILABLE_HEIGHT && currentPageItems.length > 0) {
+                let pageHeaderHeight = isFirstPage ? firstPageHeaderHeight : subsequentPageHeaderHeight;
+                let currentContentHeight = pageHeaderHeight + currentPageHeight + tableHeaderHeight;
+                
+                // Check if adding the current item exceeds the page limit
+                if (currentContentHeight + itemHeight > AVAILABLE_HEIGHT && currentPageItems.length > 0) {
                     newPages.push(currentPageItems);
                     currentPageItems = [];
-                    currentPageHeight = subsequentPageHeaderHeight + tableHeaderHeight;
+                    currentPageHeight = 0;
+                    pageHeaderHeight = subsequentPageHeaderHeight;
+                    currentContentHeight = pageHeaderHeight + currentPageHeight + tableHeaderHeight;
                 }
                 
-                currentPageItems.push(document.lineItems[index]);
+                currentPageItems.push(item);
                 currentPageHeight += itemHeight;
-            });
-            
-            if (currentPageItems.length > 0) {
-                 newPages.push(currentPageItems);
             }
 
-            setPaginatedItems(newPages);
+            // Push any remaining items
+            if (currentPageItems.length > 0) {
+                newPages.push(currentPageItems);
+            }
+            
+            // Check if the footer fits on the last page of items
+            if (newPages.length > 0) {
+                const lastPageIndex = newPages.length - 1;
+                const lastPageItems = newPages[lastPageIndex];
+                let lastPageHeight = (lastPageIndex === 0 ? firstPageHeaderHeight : subsequentPageHeaderHeight) + tableHeaderHeight;
+                
+                for(const item of lastPageItems) {
+                    const itemIndex = document.lineItems.findIndex(i => i.id === item.id);
+                    if (allRows[itemIndex]) {
+                        lastPageHeight += allRows[itemIndex].offsetHeight;
+                    }
+                }
+
+                if (lastPageHeight + footerHeight > AVAILABLE_HEIGHT) {
+                    const lastItem = lastPageItems.pop();
+                    if(lastItem) {
+                        if (lastPageItems.length === 0) {
+                            newPages[lastPageIndex] = [lastItem];
+                        } else {
+                            newPages.push([lastItem]);
+                        }
+                    }
+                }
+            }
+
+
+            setPaginatedItems(newPages.length > 0 ? newPages : [[]]);
             setNeedsRemeasure(false);
+
+        } finally {
             window.document.body.removeChild(tempRoot);
-        });
+        }
     };
     
-    const timer = setTimeout(measureAndPaginate, 100);
-    return () => clearTimeout(timer);
-
-  }, [document, isPrint, needsRemeasure, TemplateComponent]);
+    measureAndPaginate();
+  }, [document, isPrint, needsRemeasure]);
 
 
   const commonProps: CommonTemplateProps = {
