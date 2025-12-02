@@ -3,7 +3,7 @@
 'use client';
 
 import { useState, useMemo, useCallback, useEffect } from 'react';
-import type { Invoice, Estimate, DocumentStatus } from '@/lib/types';
+import type { Invoice, Estimate, DocumentStatus, Quote } from '@/lib/types';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -37,6 +37,7 @@ import { deleteDocumentNonBlocking, updateDocumentNonBlocking } from '@/firebase
 
 const INVOICES_COLLECTION = 'invoices';
 const ESTIMATES_COLLECTION = 'estimates';
+const QUOTES_COLLECTION = 'quotes';
 
 const initialFilters: DashboardFilters = {
     clientName: '',
@@ -57,7 +58,7 @@ const currencySymbols: { [key: string]: string } = {
     PKR: '₨',
 };
 
-type DocumentType = Invoice | Estimate;
+type DocumentType = Invoice | Estimate | Quote;
 
 export default function DashboardPage() {
     const [deleteCandidate, setDeleteCandidate] = useState<{ id: string; collection: string } | null>(null);
@@ -77,8 +78,14 @@ export default function DashboardPage() {
         return query(collection(firestore, ESTIMATES_COLLECTION), where("userId", "==", user.uid));
     }, [firestore, user]);
 
+    const quotesQuery = useMemoFirebase(() => {
+        if (!firestore || !user) return null;
+        return query(collection(firestore, QUOTES_COLLECTION), where("userId", "==", user.uid));
+    }, [firestore, user]);
+
     const { data: invoices, isLoading: isLoadingInvoices, error: invoicesError } = useCollection<Invoice>(invoicesQuery);
     const { data: estimates, isLoading: isLoadingEstimates, error: estimatesError } = useCollection<Estimate>(estimatesQuery);
+    const { data: quotes, isLoading: isLoadingQuotes, error: quotesError } = useCollection<Quote>(quotesQuery);
 
     const calculateTotal = useCallback((doc: DocumentType): number => {
         if (doc.documentType === 'invoice') {
@@ -88,7 +95,7 @@ export default function DashboardPage() {
             const discountAmount = (subtotal * invoice.discount) / 100;
             return subtotal + taxAmount - discountAmount + (invoice.shippingCost || 0);
         } else {
-            const estimate = doc as Estimate;
+            const estimate = doc as Estimate | Quote;
             return estimate.summary.grandTotal;
         }
     }, []);
@@ -101,7 +108,7 @@ export default function DashboardPage() {
         setDeleteCandidate(null);
         toast({
             title: "Document Deleted",
-            description: `The ${collection === 'invoices' ? 'invoice' : 'estimate'} has been deleted.`,
+            description: `The document has been deleted.`,
         });
     };
 
@@ -115,7 +122,7 @@ export default function DashboardPage() {
         });
     };
     
-    const handleConvertToInvoice = async (estimate: Estimate) => {
+    const handleConvertToInvoice = async (estimate: Estimate | Quote) => {
         if (!firestore || !user) return;
         
         const { business, client, lineItems, summary, projectTitle, currency, language, estimateNumber, referenceNumber } = estimate;
@@ -128,7 +135,7 @@ export default function DashboardPage() {
             clientName: client.name,
             clientAddress: client.address,
             clientEmail: client.email,
-            invoiceNumber: `INV-${estimateNumber.replace('EST-', '')}`,
+            invoiceNumber: `INV-${estimateNumber.replace('EST-', '').replace('QTE-', '')}`,
             invoiceDate: new Date(),
             dueDate: new Date(new Date().setDate(new Date().getDate() + 30)),
             items: lineItems.map(item => ({...item, rate: item.unitPrice})),
@@ -151,21 +158,21 @@ export default function DashboardPage() {
             const newDocRef = await addDoc(collection(firestore, INVOICES_COLLECTION), newInvoiceData);
             toast({
                 title: 'Invoice Created',
-                description: `Estimate ${estimateNumber} has been successfully converted to an invoice.`
+                description: `Document ${estimateNumber} has been successfully converted to an invoice.`
             });
             router.push(`/create?draftId=${newDocRef.id}`);
         } catch (error) {
-            console.error("Error converting estimate to invoice:", error);
+            console.error("Error converting document to invoice:", error);
             toast({
                 title: 'Conversion Failed',
-                description: 'Could not convert the estimate to an invoice. Please try again.',
+                description: 'Could not convert the document to an invoice. Please try again.',
                 variant: 'destructive'
             });
         }
     };
 
-    const handleShare = (docId: string) => {
-        const url = `${window.location.origin}/estimate/${docId}`;
+    const handleShare = (docId: string, docType: 'estimate' | 'quote') => {
+        const url = `${window.location.origin}/${docType}/${docId}`;
         navigator.clipboard.writeText(url);
         toast({
             title: "Link Copied!",
@@ -178,10 +185,9 @@ export default function DashboardPage() {
     }, []);
 
     const combinedDocuments = useMemo(() => {
-        if (!user || !invoices || !estimates) return [];
-        const allDocs: DocumentType[] = [...invoices, ...estimates];
+        if (!user || !invoices || !estimates || !quotes) return [];
+        const allDocs: DocumentType[] = [...invoices, ...estimates, ...quotes];
         
-        // Safely parse Firestore timestamps to Date objects
         const safeParsedDocs = allDocs.map(doc => {
             const newDoc = { ...doc };
             
@@ -197,9 +203,9 @@ export default function DashboardPage() {
             if (newDoc.documentType === 'invoice') {
                 newDoc.invoiceDate = toDateSafe((newDoc as Invoice).invoiceDate) as Date;
                 newDoc.dueDate = toDateSafe((newDoc as Invoice).dueDate) as Date;
-            } else if (newDoc.documentType === 'estimate') {
-                newDoc.estimateDate = toDateSafe((newDoc as Estimate).estimateDate) as Date;
-                newDoc.validUntilDate = toDateSafe((newDoc as Estimate).validUntilDate) as Date;
+            } else if (newDoc.documentType === 'estimate' || newDoc.documentType === 'quote') {
+                (newDoc as Estimate | Quote).estimateDate = toDateSafe((newDoc as Estimate | Quote).estimateDate) as Date;
+                (newDoc as Estimate | Quote).validUntilDate = toDateSafe((newDoc as Estimate | Quote).validUntilDate) as Date;
             }
             return newDoc;
         });
@@ -212,12 +218,11 @@ export default function DashboardPage() {
                 if (doc.documentType === 'invoice') {
                   date = (doc as Invoice).invoiceDate;
                   clientName = (doc as Invoice).clientName;
-                } else if (doc.documentType === 'estimate') {
-                  date = (doc as Estimate).estimateDate;
-                  clientName = (doc as Estimate).client.name;
+                } else if (doc.documentType === 'estimate' || doc.documentType === 'quote') {
+                  date = (doc as Estimate | Quote).estimateDate;
+                  clientName = (doc as Estimate | Quote).client.name;
                 }
                 
-                // Filter out documents with invalid primary dates
                 if (!date || !isValid(date)) return false;
 
                 const clientNameMatch = filters.clientName ? clientName.toLowerCase().includes(filters.clientName.toLowerCase()) : true;
@@ -231,13 +236,13 @@ export default function DashboardPage() {
                 return clientNameMatch && statusMatch && amountMinMatch && amountMaxMatch && dateMatch;
             })
             .sort((a, b) => {
-                const dateA = a.documentType === 'invoice' ? (a as Invoice).invoiceDate : (a as Estimate).estimateDate;
-                const dateB = b.documentType === 'invoice' ? (b as Invoice).invoiceDate : (b as Estimate).invoiceDate;
+                const dateA = a.documentType === 'invoice' ? (a as Invoice).invoiceDate : (a as Estimate | Quote).estimateDate;
+                const dateB = b.documentType === 'invoice' ? (b as Invoice).invoiceDate : (b as Estimate | Quote).estimateDate;
                 if (!dateA || !isValid(dateA)) return 1;
                 if (!dateB || !isValid(dateB)) return -1;
                 return dateB.getTime() - dateA.getTime();
             });
-    }, [invoices, estimates, filters, calculateTotal, user]);
+    }, [invoices, estimates, quotes, filters, calculateTotal, user]);
 
     const activeFilterCount = useMemo(() => {
         let count = 0;
@@ -265,9 +270,9 @@ export default function DashboardPage() {
         }
     };
     
-    const isLoading = isUserLoading || isLoadingInvoices || isLoadingEstimates;
+    const isLoading = isUserLoading || isLoadingInvoices || isLoadingEstimates || isLoadingQuotes;
 
-    if (isLoading && !invoices && !estimates) {
+    if (isLoading && !invoices && !estimates && !quotes) {
         return (
             <div className="container mx-auto p-4 md:p-8">
                 <h1 className="text-3xl font-bold font-headline">Loading Dashboard...</h1>
@@ -308,7 +313,7 @@ export default function DashboardPage() {
             <div className="flex justify-between items-center mb-8 gap-4 flex-wrap">
                 <div>
                     <h1 className="text-3xl font-bold font-headline">Dashboard</h1>
-                    <p className="text-muted-foreground">Manage your invoices and estimates here.</p>
+                    <p className="text-muted-foreground">Manage your invoices, estimates, and quotes here.</p>
                 </div>
                 <div className="flex gap-2">
                     <Button asChild>
@@ -329,7 +334,7 @@ export default function DashboardPage() {
             <Card className="bg-card/50 backdrop-blur-sm">
                 <CardHeader>
                     <CardTitle>My Documents</CardTitle>
-                    <CardDescription>A list of your saved invoices and estimates from Firestore.</CardDescription>
+                    <CardDescription>A list of your saved documents from Firestore.</CardDescription>
                 </CardHeader>
                 <CardContent>
                     <div className="flex justify-between items-center mb-4 gap-2 flex-wrap">
@@ -378,7 +383,7 @@ export default function DashboardPage() {
                                             Loading documents...
                                         </TableCell>
                                     </TableRow>
-                                ) : (invoicesError || estimatesError) ? (
+                                ) : (invoicesError || estimatesError || quotesError) ? (
                                     <TableRow>
                                         <TableCell colSpan={7} className="text-center h-24 text-destructive">
                                            Error loading documents. Please check your connection and security rules.
@@ -386,14 +391,30 @@ export default function DashboardPage() {
                                     </TableRow>
                                 ) : combinedDocuments.length > 0 ? combinedDocuments.map((doc) => {
                                     const isInvoice = doc.documentType === 'invoice';
-                                    const docNumber = isInvoice ? (doc as Invoice).invoiceNumber : (doc as Estimate).estimateNumber;
-                                    const clientName = isInvoice ? (doc as Invoice).clientName : (doc as Estimate).client.name;
-                                    let docDate = isInvoice ? (doc as Invoice).invoiceDate : (doc as Estimate).estimateDate;
-                                    const docCollection = isInvoice ? INVOICES_COLLECTION : ESTIMATES_COLLECTION;
+                                    const isEstimate = doc.documentType === 'estimate';
+                                    const isQuote = doc.documentType === 'quote';
+
+                                    const docNumber = isInvoice ? (doc as Invoice).invoiceNumber : (doc as Estimate | Quote).estimateNumber;
+                                    const clientName = isInvoice ? (doc as Invoice).clientName : (doc as Estimate | Quote).client.name;
+                                    let docDate = isInvoice ? (doc as Invoice).invoiceDate : (doc as Estimate | Quote).estimateDate;
+                                    
+                                    let docCollection: string;
+                                    let editUrl: string;
+                                    
+                                    if(isInvoice) {
+                                        docCollection = INVOICES_COLLECTION;
+                                        editUrl = `/create?draftId=${doc.id}`;
+                                    } else if (isEstimate) {
+                                        docCollection = ESTIMATES_COLLECTION;
+                                        editUrl = `/create-estimate?draftId=${doc.id}`;
+                                    } else {
+                                        docCollection = QUOTES_COLLECTION;
+                                        editUrl = `/create-quote?draftId=${doc.id}`;
+                                    }
 
                                     return (
                                     <TableRow key={doc.id}>
-                                        <TableCell><Badge variant={isInvoice ? 'secondary' : 'outline'}>{doc.documentType}</Badge></TableCell>
+                                        <TableCell><Badge variant={isInvoice ? 'secondary' : (isEstimate ? 'default' : 'outline')}>{doc.documentType}</Badge></TableCell>
                                         <TableCell className="font-medium">{docNumber}</TableCell>
                                         <TableCell>{clientName}</TableCell>
                                         <TableCell>{currencySymbols[doc.currency] || '$'}{calculateTotal(doc).toFixed(2)}</TableCell>
@@ -429,18 +450,18 @@ export default function DashboardPage() {
                                                 </DropdownMenuTrigger>
                                                 <DropdownMenuContent align="end">
                                                      <DropdownMenuItem asChild>
-                                                        <Link href={`/${isInvoice ? 'create' : 'create-estimate'}?draftId=${doc.id}`} className="cursor-pointer">
+                                                        <Link href={editUrl} className="cursor-pointer">
                                                             <Edit className="mr-2 h-4 w-4" />
                                                             <span>Edit</span>
                                                         </Link>
                                                     </DropdownMenuItem>
-                                                    {!isInvoice && (
+                                                    {(isEstimate || isQuote) && (
                                                         <>
-                                                            <DropdownMenuItem onClick={() => handleShare(doc.id)} className="cursor-pointer">
+                                                            <DropdownMenuItem onClick={() => handleShare(doc.id, doc.documentType as 'estimate' | 'quote')} className="cursor-pointer">
                                                                 <Share2 className="mr-2 h-4 w-4" />
                                                                 <span>Share Link</span>
                                                             </DropdownMenuItem>
-                                                            <DropdownMenuItem onClick={() => handleConvertToInvoice(doc as Estimate)} className="cursor-pointer">
+                                                            <DropdownMenuItem onClick={() => handleConvertToInvoice(doc as Estimate | Quote)} className="cursor-pointer">
                                                                 <FileText className="mr-2 h-4 w-4" />
                                                                 <span>Convert to Invoice</span>
                                                             </DropdownMenuItem>

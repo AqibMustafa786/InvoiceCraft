@@ -11,6 +11,13 @@ service cloud.firestore {
        // Public read access for shared links (requires token validation in Cloud Function or secure endpoint)
       allow get: if resource.data.isPublic == true; 
     }
+    
+    match /quotes/{quoteId} {
+      allow create: if isSignedIn() && request.resource.data.userId == request.auth.uid;
+      allow read, update, delete: if isSignedIn() && resource.data.userId == request.auth.uid;
+       // Public read access for shared links (requires token validation in Cloud Function or secure endpoint)
+      allow get: if resource.data.isPublic == true; 
+    }
 
     match /users/{userId} {
       allow read: if request.auth != null;

@@ -17,6 +17,7 @@ const navLinks = [
     { href: "/features", label: "Features" },
     { href: "/create", label: "Create Invoice" },
     { href: "/create-estimate", label: "Create Estimate" },
+    { href: "/create-quote", label: "Create Quote" },
     { href: "/create-insurance", label: "Create Insurance" },
     { href: "/pricing", label: "Pricing" },
     { href: "/blog", label: "Blog" },

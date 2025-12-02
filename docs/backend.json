@@ -88,7 +88,7 @@
         "termsAndConditions": { "type": "string" },
         "template": { "type": "string" },
         "currency": { "type": "string" },
-        "documentType": { "type": "string" }
+        "documentType": { "type": "string", "enum": ["estimate", "quote"] }
       },
       "required": ["id", "userId", "estimateNumber", "status", "estimateDate", "business", "client", "lineItems", "summary", "template", "currency", "documentType"]
     },
@@ -226,6 +226,22 @@
             {
               "name": "estimateId",
               "description": "Unique identifier for the estimate."
+            }
+          ]
+        }
+      },
+      {
+        "path": "quotes/{quoteId}",
+        "definition": {
+          "entityName": "Estimate",
+          "schema": {
+            "$ref": "#/entities/Estimate"
+          },
+          "description": "Stores quote information. Each quote belongs to a user.",
+          "params": [
+            {
+              "name": "quoteId",
+              "description": "Unique identifier for the quote."
             }
           ]
         }
