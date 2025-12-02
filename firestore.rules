@@ -9,7 +9,8 @@ service cloud.firestore {
     match /estimates/{estimateId} {
       allow create: if isOwner(request.resource.data.userId);
       allow delete: if isOwner(resource.data.userId);
-      allow read: if isOwner(resource.data.userId) || resource.data.isPublic == true;
+      allow get: if isOwner(resource.data.userId) || resource.data.isPublic == true;
+      allow list: if isSignedIn(); // Or more restrictive rules for listing
       
       // Allow a client to accept/decline (update status and signature)
       allow update: if (isOwner(resource.data.userId)) || 
@@ -20,7 +21,8 @@ service cloud.firestore {
     match /quotes/{quoteId} {
       allow create: if isOwner(request.resource.data.userId);
       allow delete: if isOwner(resource.data.userId);
-      allow read: if isOwner(resource.data.userId) || resource.data.isPublic == true;
+      allow get: if isOwner(resource.data.userId) || resource.data.isPublic == true;
+      allow list: if isSignedIn(); // Or more restrictive rules for listing
       
        // Allow a client to accept/decline (update status and signature)
       allow update: if (isOwner(resource.data.userId)) || 
