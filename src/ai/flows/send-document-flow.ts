@@ -51,7 +51,7 @@ const sendDocumentFlow = ai.defineFlow(
       return { success: false, message: 'Client email is missing.' };
     }
 
-    // Call the generatePdf flow with the document data.
+    // Call the generatePdf flow with the raw document data.
     const { pdfBase64 } = await generatePdf(documentData);
 
     const docNumber = documentData.estimateNumber;
