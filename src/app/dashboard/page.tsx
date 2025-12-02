@@ -69,19 +69,19 @@ export default function DashboardPage() {
     const router = useRouter();
 
     const invoicesQuery = useMemoFirebase(() => {
-        if (!firestore || !user) return null;
+        if (!firestore || !user?.uid) return null;
         return query(collection(firestore, INVOICES_COLLECTION), where("userId", "==", user.uid));
-    }, [firestore, user]);
+    }, [firestore, user?.uid]);
 
     const estimatesQuery = useMemoFirebase(() => {
-        if (!firestore || !user) return null;
+        if (!firestore || !user?.uid) return null;
         return query(collection(firestore, ESTIMATES_COLLECTION), where("userId", "==", user.uid));
-    }, [firestore, user]);
+    }, [firestore, user?.uid]);
 
     const quotesQuery = useMemoFirebase(() => {
-        if (!firestore || !user) return null;
+        if (!firestore || !user?.uid) return null;
         return query(collection(firestore, QUOTES_COLLECTION), where("userId", "==", user.uid));
-    }, [firestore, user]);
+    }, [firestore, user?.uid]);
 
     const { data: invoices, isLoading: isLoadingInvoices, error: invoicesError } = useCollection<Invoice>(invoicesQuery);
     const { data: estimates, isLoading: isLoadingEstimates, error: estimatesError } = useCollection<Estimate>(estimatesQuery);
@@ -504,3 +504,5 @@ export default function DashboardPage() {
         </div>
     );
 }
+
+    

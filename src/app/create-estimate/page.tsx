@@ -243,7 +243,7 @@ export default function CreateEstimatePage() {
         return;
     }
 
-    const initialEstimate = {...getInitialEstimate(), userId: user.uid};
+    let initialEstimate: Estimate | Quote;
 
     if (draftId && remoteDraft) {
         const fromJSON = (key: string, value: any) => {
@@ -253,10 +253,12 @@ export default function CreateEstimatePage() {
            return value;
        };
        const loadedDraft = JSON.parse(JSON.stringify(remoteDraft), fromJSON);
-       setDocument({ ...initialEstimate, ...loadedDraft });
+       initialEstimate = { ...getInitialEstimate(), ...loadedDraft, userId: user.uid };
     } else {
-        setDocument(initialEstimate);
+        initialEstimate = {...getInitialEstimate(), userId: user.uid};
     }
+    
+    setDocument(initialEstimate);
     
     if (typeof window !== 'undefined' && window.document) {
         const computedColor = getComputedStyle(window.document.documentElement).getPropertyValue('--primary').trim();
@@ -282,7 +284,7 @@ export default function CreateEstimatePage() {
     
     const draftToSave: any = {
       ...document,
-      userId: user.uid,
+      userId: user.uid, // Ensure userId is always set at the top level
       updatedAt: serverTimestamp(),
     };
 
@@ -326,7 +328,10 @@ export default function CreateEstimatePage() {
       title: "Estimate Draft Saved",
       description: "Your estimate draft has been saved online.",
     });
-    router.push(`/create-estimate?draftId=${document.id}`);
+    
+    if (!searchParams.get('draftId')) {
+      router.push(`/create-estimate?draftId=${document.id}`, { scroll: false });
+    }
   };
 
   const handleNew = () => {
@@ -349,6 +354,7 @@ export default function CreateEstimatePage() {
 
   const handleShare = () => {
       if (!document) return;
+      handleSaveDraft();
       const url = `${window.location.origin}/estimate/${document.id}`;
       navigator.clipboard.writeText(url);
       toast({
@@ -479,3 +485,5 @@ export default function CreateEstimatePage() {
     </>
   );
 }
+
+    
