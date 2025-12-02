@@ -477,11 +477,11 @@ export function DocumentForm({ document, setDocument, accentColor, setAccentColo
             <CardHeader>
             <CardTitle>{docName} Details</CardTitle>
             </CardHeader>
-            <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6">
              <div className="space-y-2 md:col-span-2">
                 <Label htmlFor="category">Estimate Category (USA)</Label>
                 <div className="relative flex items-center">
-                    <Package className="absolute left-3 h-5 w-5 text-muted-foreground" />
+                    <Package className="absolute left-3 h-5 w-5 text-muted-foreground z-10" />
                     <Select
                         value={document.category}
                         onValueChange={(value: EstimateCategory) => setDocument(p => ({ ...p, category: value }))}
