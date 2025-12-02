@@ -9,7 +9,7 @@ import { InvoiceForm } from '@/components/invoice-form';
 import { InvoicePreview } from '@/components/invoice-preview';
 import { Button } from '@/components/ui/button';
 import { Printer, Edit, FilePlus, LayoutDashboard } from 'lucide-react';
-import { addDays } from 'date-fns';
+import { addDays, isValid } from 'date-fns';
 import { useToast } from '@/hooks/use-toast';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
@@ -122,8 +122,16 @@ export default function CreateInvoicePage() {
   const handleSaveDraft = () => {
     if (!invoice || !firestore) return;
 
+    const normalizeDate = (val: any) => {
+        if (!val) return new Date();
+        const d = new Date(val);
+        return isValid(d) ? d : new Date();
+    };
+
     const draftToSave = {
       ...invoice,
+      invoiceDate: normalizeDate(invoice.invoiceDate),
+      dueDate: normalizeDate(invoice.dueDate),
       updatedAt: serverTimestamp(),
       // Ensure createdAt is only set once
       ...(!(invoice as any).createdAt && { createdAt: serverTimestamp() })

@@ -162,10 +162,18 @@ export default function CreateEstimatePage() {
   
   const handleSaveDraft = () => {
     if (!estimate || !firestore || !user) return;
+
+    const normalizeDate = (val: any) => {
+        if (!val) return new Date();
+        const d = new Date(val);
+        return isValid(d) ? d : new Date();
+    };
     
     const draftToSave = {
       ...estimate,
       userId: user.uid,
+      estimateDate: normalizeDate(estimate.estimateDate),
+      validUntilDate: normalizeDate(estimate.validUntilDate),
       updatedAt: serverTimestamp(),
       // Ensure createdAt is only set once
       ...(!(estimate as any).createdAt && { createdAt: serverTimestamp() })

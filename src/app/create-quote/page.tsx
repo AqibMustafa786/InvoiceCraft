@@ -162,10 +162,18 @@ export default function CreateQuotePage() {
   
   const handleSaveDraft = () => {
     if (!quote || !firestore || !user) return;
+
+    const normalizeDate = (val: any) => {
+        if (!val) return new Date();
+        const d = new Date(val);
+        return isValid(d) ? d : new Date();
+    };
     
     const draftToSave = {
       ...quote,
       userId: user.uid,
+      estimateDate: normalizeDate(quote.estimateDate),
+      validUntilDate: normalizeDate(quote.validUntilDate),
       updatedAt: serverTimestamp(),
       // Ensure createdAt is only set once
       ...(!(quote as any).createdAt && { createdAt: serverTimestamp() })
