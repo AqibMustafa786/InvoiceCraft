@@ -1,5 +1,4 @@
 
-
 'use client';
 
 import { useState, useLayoutEffect, useRef, useEffect } from 'react';
@@ -227,7 +226,11 @@ const PageHeader = ({ document, style }: { document: Estimate, style: React.CSSP
                 )}
             </div>
             <div className="w-1/2 text-right">
-                <h2 className="text-3xl font-bold mb-4" style={{ color: style.color }}>{documentTitle}</h2>
+                 {business.logoUrl ? (
+                    <h2 className="text-3xl font-bold mb-4" style={{ color: style.color }}>{documentTitle}</h2>
+                 ) : (
+                    <h2 className="text-3xl font-bold mb-4">{documentTitle}</h2>
+                 )}
                 <div className="space-y-0.5 text-xs">
                     <p className="font-bold">{business.name}</p>
                     {business.licenseNumber && <p>Lic #: {business.licenseNumber}</p>}
@@ -443,8 +446,8 @@ export function DocumentPreview({ document, accentColor, id = 'document-preview'
             return;
         }
 
-        let firstPageHeaderHeight = header.offsetHeight + clientDetails.offsetHeight + (categoryDetails?.offsetHeight || 0);
-        let subsequentPageHeaderHeight = header.offsetHeight; // Only repeat main header
+        const firstPageHeaderHeight = header.offsetHeight + (clientDetails?.offsetHeight || 0) + (categoryDetails?.offsetHeight || 0);
+        const subsequentPageHeaderHeight = 0; // Don't repeat header on subsequent pages
         const tableHeaderHeight = tableHeader.offsetHeight;
         const footerHeight = footer.offsetHeight;
 
@@ -455,45 +458,36 @@ export function DocumentPreview({ document, accentColor, id = 'document-preview'
         allRows.forEach((row, index) => {
             const itemHeight = row.offsetHeight;
 
-            // Check if item fits on the current page
-            let heightIfAdded = currentPageHeight + (newPages[currentPage].length === 0 ? tableHeaderHeight : 0) + itemHeight;
+            // Check if item fits on the current page. Start with current height...
+            let heightIfAdded = currentPageHeight;
+
+            // ...add table header if it's the first item on a page...
+            if (newPages[currentPage].length === 0) {
+                 heightIfAdded += tableHeaderHeight;
+            }
+            // ...add the item itself...
+            heightIfAdded += itemHeight;
             
-            // Check if this is the last item and if the footer would fit
-            const isLastItem = index === allRows.length - 1;
-            if (isLastItem) {
+            // ...and if it's the very last item, check if the footer fits too.
+            const isLastItemOfAll = index === allRows.length - 1;
+            if (isLastItemOfAll) {
                 heightIfAdded += footerHeight;
             }
 
             if (heightIfAdded > AVAILABLE_HEIGHT) {
+                // If it doesn't fit, start a new page
                 currentPage++;
                 newPages[currentPage] = [];
-                currentPageHeight = subsequentPageHeaderHeight; // Reset for new page
-            }
-            
-            // Add table header height if it's the first item on the page
-            if (newPages[currentPage].length === 0) { 
+                // Subsequent pages don't have the main header, just the table header
+                currentPageHeight = subsequentPageHeaderHeight;
+                // Since this is a new page, add the table header height
                 currentPageHeight += tableHeaderHeight;
             }
-
+            
             newPages[currentPage].push(document.lineItems[index]);
             currentPageHeight += itemHeight;
         });
 
-        // Post-pagination check: if the footer doesn't fit on the last page with items, push it to a new page.
-        const lastItemPageIdx = newPages.length - 1;
-        const lastItemPage = newPages[lastItemPageIdx];
-        if (lastItemPage && lastItemPage.length > 0) {
-            const lastPageRows = lastItemPage.map(item => allRows[document.lineItems.indexOf(item)]);
-            const lastPageItemsHeight = lastPageRows.reduce((sum, row) => sum + row.offsetHeight, 0);
-            
-            const lastPageHeaderHeight = (lastItemPageIdx === 0) ? firstPageHeaderHeight : subsequentPageHeaderHeight;
-            const contentHeightOnLastPage = lastPageHeaderHeight + tableHeaderHeight + lastPageItemsHeight + footerHeight;
-
-            if (contentHeightOnLastPage > AVAILABLE_HEIGHT) {
-                newPages.push([]); // Add a new empty page just for the footer
-            }
-        }
-        
         setPaginatedItems(newPages);
         setNeedsRemeasure(false);
         window.document.body.removeChild(tempRoot);
@@ -547,3 +541,5 @@ export function DocumentPreview({ document, accentColor, id = 'document-preview'
     </Card>
   );
 }
+
+    
