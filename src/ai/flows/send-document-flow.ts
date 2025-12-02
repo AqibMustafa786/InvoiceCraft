@@ -83,5 +83,3 @@ const sendDocumentFlow = ai.defineFlow(
     return { success: true, message: `Email with ${docType} sent successfully.` };
   }
 );
-
-    

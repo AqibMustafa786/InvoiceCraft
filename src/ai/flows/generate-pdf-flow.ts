@@ -10,9 +10,8 @@ import { ai } from '@/ai/genkit';
 import { z } from 'genkit';
 import puppeteer from 'puppeteer';
 import { type Estimate } from '@/lib/types';
-import { renderToStaticMarkup } from 'react-dom/server';
-import React from 'react';
-import { DocumentPreview } from '@/components/document-preview';
+import { renderDocumentToHtml } from '@/lib/render-document';
+
 
 // The input is now the document data itself.
 export const GeneratePdfInputSchema = z.custom<Estimate>();
@@ -39,14 +38,8 @@ const generatePdfFlow = ai.defineFlow(
     
     await page.setViewport({ width: 1080, height: 1024 });
     
-    // Render the React component to an HTML string here.
-    const documentHtml = renderToStaticMarkup(
-      React.createElement(DocumentPreview, {
-        document: documentData,
-        accentColor: "hsl(var(--primary))",
-        isPrint: true,
-      })
-    );
+    // Render the React component to an HTML string using the server utility.
+    const documentHtml = renderDocumentToHtml(documentData);
 
     // Inject Tailwind styles for PDF generation
     const fullHtml = `
@@ -104,5 +97,3 @@ const generatePdfFlow = ai.defineFlow(
     };
   }
 );
-
-    
