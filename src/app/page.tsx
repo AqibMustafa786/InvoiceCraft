@@ -21,7 +21,7 @@ export default function HomePage() {
               </p>
               <div className="flex flex-col items-center justify-center gap-4 mt-8 sm:flex-row">
                 <Button asChild size="lg" className="w-full text-lg text-white transition-transform shadow-lg bg-gradient-to-r from-primary to-accent hover:scale-105 sm:w-auto">
-                  <Link href="/create">Create Invoice</Link>
+                  <Link href="/create-invoice">Create Invoice</Link>
                 </Button>
                 <Button asChild variant="outline" size="lg" className="w-full text-lg bg-transparent sm:w-auto">
                   <Link href="/features">
@@ -32,11 +32,9 @@ export default function HomePage() {
             </div>
           </div>
         </section>
-
         <section className="py-12 md:py-20">
-            <Marquee />
+          <Marquee />
         </section>
-
       </main>
     </div>
   );

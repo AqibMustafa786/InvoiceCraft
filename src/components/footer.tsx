@@ -1,3 +1,4 @@
+
 import Link from 'next/link';
 import { Twitter, Github, Linkedin, Instagram } from 'lucide-react';
 
@@ -22,54 +23,55 @@ export function Footer() {
               <Github className="w-5 h-5" />
             </Link>
             <Link href="#" aria-label="LinkedIn" rel="noopener noreferrer" target="_blank" className="transition-colors text-muted-foreground hover:text-foreground">
-              <Linkedin className="w-5 h-5" />
+                <Linkedin className="w-5 h-5" />
             </Link>
-            <Link href="#" aria-label="Instagram" rel="noopener noreferrer" target="_blank" className="transition-colors text-muted-foreground hover:text-foreground">
-              <Instagram className="w-5 h-5" />
+             <Link href="#" aria-label="Instagram" rel="noopener noreferrer" target="_blank" className="transition-colors text-muted-foreground hover:text-foreground">
+                <Instagram className="w-5 h-5" />
             </Link>
           </div>
         </div>
 
-        {/* Navigation Links */}
-        <div className="grid grid-cols-2 gap-8 md:col-span-3 md:grid-cols-3">
-          <div>
-            <h4 className="mb-4 font-semibold text-foreground">Product</h4>
-            <nav className="flex flex-col gap-3">
-              <Link href="/features" className="text-sm transition-colors text-muted-foreground hover:text-foreground">Features</Link>
-              <Link href="/create" className="text-sm transition-colors text-muted-foreground hover:text-foreground">Templates</Link>
-              <Link href="/pricing" className="text-sm transition-colors text-muted-foreground hover:text-foreground">Pricing</Link>
-              <Link href="/faq" className="text-sm transition-colors text-muted-foreground hover:text-foreground">FAQs</Link>
+        {/* Links Section */}
+        <div className="grid grid-cols-2 gap-8 text-sm md:col-span-3 sm:grid-cols-3">
+          <div className="space-y-4">
+            <h3 className="font-semibold tracking-wider uppercase text-foreground">Product</h3>
+            <nav className="space-y-3">
+              <Link href="/features" className="transition-colors text-muted-foreground hover:text-foreground">Features</Link>
+              <Link href="/pricing" className="transition-colors text-muted-foreground hover:text-foreground">Pricing</Link>
+              <Link href="/create-invoice" className="transition-colors text-muted-foreground hover:text-foreground">Create Invoice</Link>
+              <Link href="/create-estimate" className="transition-colors text-muted-foreground hover:text-foreground">Create Estimate</Link>
             </nav>
           </div>
-          <div>
-            <h4 className="mb-4 font-semibold text-foreground">Company</h4>
-            <nav className="flex flex-col gap-3">
-              <Link href="/about" className="text-sm transition-colors text-muted-foreground hover:text-foreground">About us</Link>
-              <Link href="/contact" className="text-sm transition-colors text-muted-foreground hover:text-foreground">Contact us</Link>
-              <Link href="/blog" className="text-sm transition-colors text-muted-foreground hover:text-foreground">Blogs</Link>
-              <Link href="/press" className="text-sm transition-colors text-muted-foreground hover:text-foreground">Press</Link>
+          <div className="space-y-4">
+            <h3 className="font-semibold tracking-wider uppercase text-foreground">Company</h3>
+            <nav className="space-y-3">
+              <Link href="/about" className="transition-colors text-muted-foreground hover:text-foreground">About Us</Link>
+              <Link href="/blog" className="transition-colors text-muted-foreground hover:text-foreground">Blog</Link>
+              <Link href="/careers" className="transition-colors text-muted-foreground hover:text-foreground">Careers</Link>
+              <Link href="/press" className="transition-colors text-muted-foreground hover:text-foreground">Press</Link>
             </nav>
           </div>
-          <div>
-            <h4 className="mb-4 font-semibold text-foreground">Legal</h4>
-            <nav className="flex flex-col gap-3">
-              <Link href="/security" className="text-sm transition-colors text-muted-foreground hover:text-foreground">Security</Link>
-              <Link href="/privacy" className="text-sm transition-colors text-muted-foreground hover:text-foreground">Privacy policy</Link>
-              <Link href="/terms" className="text-sm transition-colors text-muted-foreground hover:text-foreground">Terms & conditions</Link>
-              <Link href="/cookies" className="text-sm transition-colors text-muted-foreground hover:text-foreground">Cookies</Link>
+          <div className="space-y-4">
+            <h3 className="font-semibold tracking-wider uppercase text-foreground">Legal</h3>
+            <nav className="space-y-3">
+              <Link href="/terms" className="transition-colors text-muted-foreground hover:text-foreground">Terms of Service</Link>
+              <Link href="/privacy" className="transition-colors text-muted-foreground hover:text-foreground">Privacy Policy</Link>
+              <Link href="/security" className="transition-colors text-muted-foreground hover:text-foreground">Security</Link>
+              <Link href="/cookies" className="transition-colors text-muted-foreground hover:text-foreground">Cookie Policy</Link>
             </nav>
           </div>
         </div>
-
       </div>
 
       {/* Bottom Bar */}
-      <div className="border-t border-border/40">
-        <div className="container flex flex-col items-center justify-between gap-4 px-4 py-6 mx-auto sm:flex-row md:px-6">
-            <p className="text-sm text-muted-foreground">
-                &copy; {new Date().getFullYear()} InvoiceCraft. All rights reserved.
-            </p>
-        </div>
+      <div className="container flex flex-col items-center justify-between gap-4 px-4 py-6 mx-auto sm:flex-row md:px-6">
+        <p className="text-sm text-muted-foreground">
+            © {new Date().getFullYear()} InvoiceCraft. All rights reserved.
+        </p>
+         <div className="flex items-center gap-4 text-sm">
+            <Link href="/help" className="transition-colors text-muted-foreground hover:text-foreground">Help Center</Link>
+            <Link href="/contact" className="transition-colors text-muted-foreground hover:text-foreground">Contact</Link>
+         </div>
       </div>
     </footer>
   );
