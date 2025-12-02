@@ -479,7 +479,7 @@ export function DocumentForm({ document, setDocument, accentColor, setAccentColo
             </CardHeader>
             <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6">
              <div className="space-y-2 md:col-span-2">
-                <Label htmlFor="category">Estimate Category (USA)</Label>
+                <Label htmlFor="category">Estimate Category</Label>
                 <div className="relative flex items-center">
                     <Package className="absolute left-3 h-5 w-5 text-muted-foreground z-10" />
                     <Select
