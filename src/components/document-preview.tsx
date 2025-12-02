@@ -217,7 +217,7 @@ const PageHeader = ({ document, style, pageIndex }: { document: Estimate, style:
     const documentTitle = document.documentType === 'quote' ? 'Quote' : 'Estimate';
     
     return (
-        <div data-element="page-header" className="flex flex-col">
+        <div data-element="page-header-content" className="flex flex-col">
             {pageIndex === 0 && (
                  <div className="flex justify-between items-start mb-8">
                     <div className="w-1/2">
@@ -228,7 +228,7 @@ const PageHeader = ({ document, style, pageIndex }: { document: Estimate, style:
                         )}
                     </div>
                     <div className="w-1/2 text-right">
-                        <h2 className="text-3xl font-bold mb-4" style={{ color: business.logoUrl ? style.color : 'inherit' }}>{documentTitle}</h2>
+                       <h2 className="text-3xl font-bold mb-4" style={{ color: business.logoUrl ? style.color : 'inherit' }}>{documentTitle}</h2>
                     </div>
                 </div>
             )}
@@ -344,16 +344,18 @@ const ModernTemplatePage = ({ document, pageItems, pageIndex, totalPages, style 
     const currencySymbol = currencySymbols[document.currency] || '$';
 
     return (
-        <div className={`p-8 md:p-10 bg-white font-sans ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ color: '#374151', fontFamily: style.fontFamily, fontSize: `${style.fontSize}pt` }}>
-            <PageHeader document={document} style={style} pageIndex={pageIndex}/>
-            {(pageIndex === 0) && (
-                <>
-                    <PageClientDetails document={document} />
-                    <CategoryPreview document={document} />
-                </>
-            )}
+        <div className={`p-8 md:p-10 bg-white font-sans flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ color: '#374151', fontFamily: style.fontFamily, fontSize: `${style.fontSize}pt`, minHeight: '1056px' }}>
+            <div data-element="page-header">
+                <PageHeader document={document} style={style} pageIndex={pageIndex}/>
+                {(pageIndex === 0) && (
+                    <>
+                        <PageClientDetails document={document} />
+                        <CategoryPreview document={document} />
+                    </>
+                )}
+            </div>
             
-            <section className="mt-8">
+            <section className="mt-8 flex-grow">
                 <table className="w-full text-left text-xs" data-element="items-table">
                     <thead style={{ backgroundColor: style.color, color: 'white' }} data-element="table-header">
                         <tr>
@@ -370,11 +372,6 @@ const ModernTemplatePage = ({ document, pageItems, pageIndex, totalPages, style 
                                 <td className="p-2 text-right tabular-nums">{item.quantity}</td>
                                 <td className="p-2 text-right tabular-nums">{currencySymbol}{item.unitPrice.toFixed(2)}</td>
                                 <td className="p-2 text-right tabular-nums">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</td>
-                            </tr>
-                        ))}
-                         {pageIndex === totalPages - 1 && [...Array(Math.max(0, 7 - pageItems.length))].map((_, i) => (
-                            <tr key={`blank-${i}`} className="border-b">
-                                <td className="p-2 h-6"></td><td className="p-2"></td><td className="p-2"></td><td className="p-2"></td>
                             </tr>
                         ))}
                     </tbody>
@@ -441,20 +438,22 @@ export function DocumentPreview({ document, accentColor, id = 'document-preview'
             // Allow the browser to render the cloned content
             await new Promise(resolve => setTimeout(resolve, 0));
 
-            const headerEl = tempContainer.querySelector('[data-element="page-header"]') as HTMLElement;
+            const headerContentEl = tempContainer.querySelector('[data-element="page-header-content"]') as HTMLElement;
+            const clientDetailsEl = tempContainer.querySelector('[data-element="client-details"]') as HTMLElement;
+            const categoryEl = tempContainer.querySelector('[data-element="category-preview-wrapper"]') as HTMLElement;
             const tableHeaderEl = tempContainer.querySelector('[data-element="table-header"]') as HTMLElement;
             const footerEl = tempContainer.querySelector('[data-element="footer"]') as HTMLElement;
             const allRows = Array.from(tempContainer.querySelectorAll('[data-element="table-row"]')) as HTMLElement[];
 
-            if (!headerEl || !tableHeaderEl || !footerEl || allRows.length === 0) {
+            if (!headerContentEl || !tableHeaderEl || !footerEl || allRows.length === 0) {
                 setPaginatedItems([document.lineItems]);
                 setNeedsRemeasure(false);
                 window.document.body.removeChild(tempRoot);
                 return;
             }
             
-            const firstPageHeaderHeight = headerEl.offsetHeight;
-            const subsequentPageHeaderHeight = (tempContainer.querySelector('[data-element="page-header-subsequent"]') as HTMLElement)?.offsetHeight || firstPageHeaderHeight;
+            const firstPageHeaderHeight = headerContentEl.offsetHeight + (clientDetailsEl?.offsetHeight || 0) + (categoryEl?.offsetHeight || 0);
+            const subsequentPageHeaderHeight = headerContentEl.offsetHeight; // Assuming only main header repeats
             const tableHeaderHeight = tableHeaderEl.offsetHeight;
             const footerHeight = footerEl.offsetHeight;
 
@@ -462,34 +461,31 @@ export function DocumentPreview({ document, accentColor, id = 'document-preview'
             let currentPageItems: Estimate['lineItems'][] = [];
             let currentPageHeight = 0;
 
-            // --- Start Pagination Algorithm ---
             for (let i = 0; i < document.lineItems.length; i++) {
                 const item = document.lineItems[i];
-                const rowHeight = allRows[i] ? allRows[i].offsetHeight : 20; // Default height if not found
+                const rowHeight = allRows[i] ? allRows[i].offsetHeight : 20;
                 
                 const isFirstPage = pages.length === 0;
-                let currentMaxHeight = AVAILABLE_HEIGHT;
+                const isFirstItemOnNewPage = currentPageItems.length === 0;
+
                 let usedHeight = currentPageHeight;
-
-                if (isFirstPage && currentPageItems.length === 0) {
-                    usedHeight += firstPageHeaderHeight + tableHeaderHeight;
-                } else if(currentPageItems.length === 0) {
-                    usedHeight += subsequentPageHeaderHeight + tableHeaderHeight;
+                if (isFirstItemOnNewPage) {
+                    usedHeight += isFirstPage ? firstPageHeaderHeight + tableHeaderHeight : subsequentPageHeaderHeight + tableHeaderHeight;
                 }
+                
+                const isLastItem = i === document.lineItems.length - 1;
+                const spaceNeeded = rowHeight + (isLastItem ? footerHeight : 0);
 
-                // Check if the current item fits
-                if (usedHeight + rowHeight < currentMaxHeight - footerHeight) {
-                    currentPageItems.push(item);
-                    currentPageHeight += rowHeight;
-                } else {
-                    // Item doesn't fit, finalize current page and start a new one
+                if (usedHeight + spaceNeeded > AVAILABLE_HEIGHT) {
                     pages.push(currentPageItems);
                     currentPageItems = [item];
                     currentPageHeight = rowHeight;
+                } else {
+                    currentPageItems.push(item);
+                    currentPageHeight += rowHeight;
                 }
             }
 
-            // Add the last page of items
             if (currentPageItems.length > 0) {
                 pages.push(currentPageItems);
             }
@@ -510,7 +506,6 @@ export function DocumentPreview({ document, accentColor, id = 'document-preview'
         }
     };
     
-    // Defer execution to allow DOM to update
     const timer = setTimeout(measureAndPaginate, 100);
     return () => clearTimeout(timer);
 
@@ -527,11 +522,11 @@ export function DocumentPreview({ document, accentColor, id = 'document-preview'
     
     return (
       <div id={id} className="bg-white" ref={containerRef}>
-        {/* Render a hidden element with the subsequent header for measurement */}
         <div style={{ position: 'absolute', left: '-9999px' }}>
-            <div data-element="page-header-subsequent">
-                 <PageHeader document={document} style={dynamicColorStyle} pageIndex={1}/>
-            </div>
+             <PageHeader document={document} style={dynamicColorStyle} pageIndex={0}/>
+             <PageClientDetails document={document} />
+             <CategoryPreview document={document} />
+             <PageFooter document={document} style={dynamicColorStyle} />
         </div>
         {itemsToRender.map((pageItems, pageIndex) => (
            <TemplateComponent
