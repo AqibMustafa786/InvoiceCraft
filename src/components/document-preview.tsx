@@ -213,11 +213,11 @@ const CategoryPreview = ({ document }: { document: Estimate }) => {
 };
 
 const PageHeader = ({ document, style }: { document: Estimate, style: React.CSSProperties }) => {
-    const { business, documentType } = document;
-    const documentTitle = documentType === 'quote' ? 'Quote' : 'Estimate';
+    const { business } = document;
+    const documentTitle = document.documentType === 'quote' ? 'Quote' : 'Estimate';
     
     return (
-        <header data-element="page-header" className="flex flex-col">
+        <div data-element="page-header" className="flex flex-col">
             <div className="flex justify-between items-start mb-8">
                 <div className="w-1/2">
                     {business.logoUrl ? (
@@ -249,7 +249,7 @@ const PageHeader = ({ document, style }: { document: Estimate, style: React.CSSP
                     </div>
                 </div>
             </div>
-        </header>
+        </div>
     );
 };
 
@@ -282,7 +282,7 @@ const PageFooter = ({ document, style }: { document: Estimate, style: React.CSSP
     const taxRate = summary.taxPercentage || 0;
 
     return (
-        <div data-element="footer">
+        <div data-element="footer" className="avoid-page-break">
             <section className="flex justify-between items-start mt-6">
                 <div className="w-1/2 text-xs text-gray-600">
                     <p className="font-bold mb-1">Notes</p>
@@ -338,10 +338,14 @@ const ModernTemplatePage = ({ document, pageItems, pageIndex, totalPages, style 
     const currencySymbol = currencySymbols[document.currency] || '$';
 
     return (
-        <div className={`p-8 md:p-10 bg-white font-sans ${pageIndex < totalPages - 1 ? "page-break" : ""}`} style={{ color: '#374151', fontFamily: style.fontFamily, fontSize: `${style.fontSize}pt` }}>
-            <PageHeader document={document} style={style} />
-            <PageClientDetails document={document} />
-            <CategoryPreview document={document} />
+        <div className={`p-8 md:p-10 bg-white font-sans ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ color: '#374151', fontFamily: style.fontFamily, fontSize: `${style.fontSize}pt` }}>
+            {(pageIndex === 0) && (
+                <>
+                    <PageHeader document={document} style={style} />
+                    <PageClientDetails document={document} />
+                    <CategoryPreview document={document} />
+                </>
+            )}
             
             <section className="mt-8">
                 <table className="w-full text-left text-xs" data-element="items-table">
@@ -438,50 +442,46 @@ export function DocumentPreview({ document, accentColor, id = 'document-preview'
             }
             tempRoot.appendChild(tempContainer);
             
-            const pageHeader = tempContainer.querySelector('[data-element="page-header"]') as HTMLElement;
-            const clientDetails = tempContainer.querySelector('[data-element="client-details"]') as HTMLElement;
-            const categoryPreview = tempContainer.querySelector('[data-element="category-preview-wrapper"]') as HTMLElement;
-            const tableHeader = tempContainer.querySelector('[data-element="table-header"]') as HTMLElement;
-            const footer = tempContainer.querySelector('[data-element="footer"]') as HTMLElement;
+            const headerEl = tempContainer.querySelector('[data-element="page-header"]') as HTMLElement;
+            const clientDetailsEl = tempContainer.querySelector('[data-element="client-details"]') as HTMLElement;
+            const categoryPreviewEl = tempContainer.querySelector('[data-element="category-preview-wrapper"]') as HTMLElement;
+            const tableHeaderEl = tempContainer.querySelector('[data-element="table-header"]') as HTMLElement;
+            const footerEl = tempContainer.querySelector('[data-element="footer"]') as HTMLElement;
             const allRows = Array.from(tempContainer.querySelectorAll('[data-element="table-row"]')) as HTMLElement[];
             
-            if (!pageHeader || !tableHeader || !footer || allRows.length === 0) {
+            if (!headerEl || !tableHeaderEl || !footerEl || allRows.length === 0) {
                 window.document.body.removeChild(tempRoot);
                 return;
             }
             
-            const firstPageHeaderHeight = pageHeader.offsetHeight + clientDetails.offsetHeight + (categoryPreview ? categoryPreview.offsetHeight : 0);
-            const subsequentPageHeaderHeight = 0;
-            const tableHeaderHeight = tableHeader.offsetHeight;
-            const footerHeight = footer.offsetHeight;
+            const firstPageHeaderHeight = headerEl.offsetHeight + (clientDetailsEl ? clientDetailsEl.offsetHeight : 0) + (categoryPreviewEl ? categoryPreviewEl.offsetHeight : 0);
+            const subsequentPageHeaderHeight = 0; // No main header on subsequent pages in this logic
+            const tableHeaderHeight = tableHeaderEl.offsetHeight;
+            const footerHeight = footerEl.offsetHeight;
 
-            let newPages: Estimate['lineItems'][][] = [[]];
-            let currentPage = 0;
-            let currentPageHeight = firstPageHeaderHeight;
+            let newPages: Estimate['lineItems'][][] = [];
+            let currentPageItems: Estimate['lineItems'][] = [];
+            let currentPageHeight = firstPageHeaderHeight + tableHeaderHeight;
 
             allRows.forEach((row, index) => {
                 const itemHeight = row.offsetHeight;
-                
-                if (currentPage > 0 && newPages[currentPage].length === 0) {
-                    currentPageHeight = subsequentPageHeaderHeight;
-                }
-                
-                if (newPages[currentPage].length === 0) {
-                    currentPageHeight += tableHeaderHeight;
-                }
+                const isLastItem = index === allRows.length - 1;
 
-                let isLastItem = index === allRows.length - 1;
-                const projectedHeight = currentPageHeight + itemHeight + (isLastItem ? footerHeight : 0);
+                const potentialHeight = currentPageHeight + itemHeight + (isLastItem ? footerHeight : 0);
 
-                if (projectedHeight > AVAILABLE_HEIGHT && newPages[currentPage].length > 0) {
-                    currentPage++;
-                    newPages[currentPage] = [];
+                if (potentialHeight > AVAILABLE_HEIGHT && currentPageItems.length > 0) {
+                    newPages.push(currentPageItems);
+                    currentPageItems = [];
                     currentPageHeight = subsequentPageHeaderHeight + tableHeaderHeight;
                 }
                 
-                newPages[currentPage].push(document.lineItems[index]);
+                currentPageItems.push(document.lineItems[index]);
                 currentPageHeight += itemHeight;
             });
+            
+            if (currentPageItems.length > 0) {
+                 newPages.push(currentPageItems);
+            }
 
             setPaginatedItems(newPages);
             setNeedsRemeasure(false);
