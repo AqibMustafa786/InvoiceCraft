@@ -13,7 +13,7 @@ import { useToast } from '@/hooks/use-toast';
 import { DocumentTemplateSelector } from '@/components/document-template-selector';
 import Link from 'next/link';
 import { useFirebase, useMemoFirebase } from '@/firebase/provider';
-import { doc, serverTimestamp } from 'firebase/firestore';
+import { doc, serverTimestamp, Timestamp } from 'firebase/firestore';
 import { setDocumentNonBlocking } from '@/firebase/non-blocking-updates';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useDoc } from '@/firebase/firestore/use-doc';
@@ -78,8 +78,10 @@ function PrintableDocument({ doc, accentColor }: { doc: Quote, accentColor: stri
     const [printRoot, setPrintRoot] = useState<HTMLElement | null>(null);
 
     useEffect(() => {
-        const root = document.getElementById('print-container');
+      if (typeof window !== 'undefined' && window.document) {
+        const root = window.document.getElementById('print-container');
         setPrintRoot(root);
+      }
     }, []);
 
     if (!printRoot) {
@@ -164,19 +166,27 @@ export default function CreateQuotePage() {
 
     const normalizeDate = (val: any): Date | null => {
         if (!val) return null;
-        if (val.toDate) return val.toDate();
+        if (val.toDate) return val; // Already a Firestore Timestamp
+        if (val instanceof Timestamp) return val;
         const d = new Date(val);
         return isValid(d) ? d : null;
     };
     
-    const draftToSave = {
+    const draftToSave: any = {
       ...document,
       userId: user.uid,
-      estimateDate: normalizeDate(document.estimateDate) || new Date(),
-      validUntilDate: normalizeDate(document.validUntilDate) || new Date(),
       updatedAt: serverTimestamp(),
-      createdAt: document.createdAt || serverTimestamp(),
     };
+
+    const estimateDate = normalizeDate(document.estimateDate);
+    if (estimateDate) draftToSave.estimateDate = estimateDate;
+    
+    const validUntilDate = normalizeDate(document.validUntilDate);
+    if (validUntilDate) draftToSave.validUntilDate = validUntilDate;
+
+    if (!document.createdAt) {
+      draftToSave.createdAt = serverTimestamp();
+    }
     
     const docRef = doc(firestore, QUOTES_COLLECTION, document.id);
     setDocumentNonBlocking(docRef, draftToSave, { merge: true });
@@ -268,8 +278,8 @@ export default function CreateQuotePage() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 xl:gap-12">
-          <div className="lg:col-span-3 lg:pr-12 lg:border-r lg:border-border/30">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <div className="lg:pr-4">
             <div className="space-y-12">
               <div>
                 <h2 className="text-2xl font-bold font-headline mb-6 text-center">Select a Template</h2>
@@ -283,7 +293,7 @@ export default function CreateQuotePage() {
                 <h2 className="text-2xl font-bold font-headline mb-4 text-center lg:text-left">Fill in Details</h2>
                 <DocumentForm 
                   document={document} 
-                  setDocument={setDocument as React.Dispatch<React.SetStateAction<Estimate>>}
+                  setDocument={setDocument as React.Dispatch<React.SetStateAction<Estimate | Quote>>}
                   accentColor={accentColor}
                   setAccentColor={setAccentColor}
                   toast={toast}
@@ -292,7 +302,7 @@ export default function CreateQuotePage() {
               </div>
             </div>
           </div>
-          <div className="lg:col-span-2 lg:pl-12">
+          <div className="lg:pl-4">
             <div className="sticky top-24">
                 <h2 className="text-2xl font-bold font-headline mb-6">Live Preview</h2>
                 <DocumentPreview document={document} accentColor={accentColor} />
