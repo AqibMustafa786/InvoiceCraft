@@ -80,9 +80,41 @@ const RoofingPreview = ({ data }: { data: Estimate['roofing'] }) => {
     )
 }
 
+const HvacPreview = ({ data }: { data: Estimate['hvac'] }) => {
+    if (!data) return null;
+    return (
+        <div className="grid grid-cols-2 gap-x-8 gap-y-2 mt-4 text-xs">
+            <div><span className="font-bold text-gray-600">Service Type:</span> {data.serviceType}</div>
+            <div><span className="font-bold text-gray-600">System Type:</span> {data.systemType}</div>
+            {data.unitSize && <div><span className="font-bold text-gray-600">Unit Size:</span> {data.unitSize} {data.systemType === 'AC' ? 'Tons' : 'BTU'}</div>}
+            {data.seerRating && <div><span className="font-bold text-gray-600">SEER Rating:</span> {data.seerRating}</div>}
+            <div><span className="font-bold text-gray-600">Furnace Type:</span> {data.furnaceType}</div>
+            <div><span className="font-bold text-gray-600">Thermostat:</span> {data.thermostatType}</div>
+            <div><span className="font-bold text-gray-600">Ductwork:</span> {data.ductworkRequired ? 'Required' : 'Not Required'}</div>
+            {data.refrigerantType && <div><span className="font-bold text-gray-600">Refrigerant:</span> {data.refrigerantType}</div>}
+            {data.existingSystemCondition && <div className="col-span-2"><span className="font-bold text-gray-600">Existing System:</span> {data.existingSystemCondition}</div>}
+        </div>
+    )
+}
+
+const PlumbingPreview = ({ data }: { data: Estimate['plumbing'] }) => {
+    if (!data) return null;
+    return (
+        <div className="grid grid-cols-2 gap-x-8 gap-y-2 mt-4 text-xs">
+            <div><span className="font-bold text-gray-600">Service Type:</span> {data.serviceType}</div>
+            <div><span className="font-bold text-gray-600">Fixture:</span> {data.fixtureType}</div>
+            <div><span className="font-bold text-gray-600">Pipe Material:</span> {data.pipeMaterial}</div>
+            <div><span className="font-bold text-gray-600">Floor Level:</span> {data.floorLevel}</div>
+            <div><span className="font-bold text-gray-600">Emergency:</span> {data.emergencyService ? 'Yes' : 'No'}</div>
+            <div><span className="font-bold text-gray-600">Pressure Issue:</span> {data.waterPressureIssue ? 'Yes' : 'No'}</div>
+            {data.leakLocation && <div className="col-span-2"><span className="font-bold text-gray-600">Leak Location:</span> {data.leakLocation}</div>}
+            {data.estimatedRepairTime && <div><span className="font-bold text-gray-600">Est. Time:</span> {data.estimatedRepairTime}</div>}
+        </div>
+    )
+}
 
 export const ModernTemplate = ({ document }: { document: Estimate }) => {
-    const { business, client, lineItems, summary, currency, documentType, category, homeRemodeling, roofing } = document;
+    const { business, client, lineItems, summary, currency, documentType, category, homeRemodeling, roofing, hvac, plumbing } = document;
     const currencySymbol = currencySymbols[currency] || '$';
 
     const documentTitle = category === 'Generic' ? (documentType === 'quote' ? 'Quote' : 'Estimate') : category;
@@ -143,6 +175,8 @@ export const ModernTemplate = ({ document }: { document: Estimate }) => {
             
             {category === "Home Remodeling / Renovation" && <HomeRemodelingPreview data={homeRemodeling} />}
             {category === "Roofing Estimate" && <RoofingPreview data={roofing} />}
+            {category === "HVAC (Air Conditioning / Heating)" && <HvacPreview data={hvac} />}
+            {category === "Plumbing Estimate" && <PlumbingPreview data={plumbing} />}
             
             <section className="mt-8">
                 <table className="w-full text-left text-xs">

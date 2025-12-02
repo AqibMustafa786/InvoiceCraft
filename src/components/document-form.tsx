@@ -3,14 +3,14 @@
 'use client';
 
 import { ChangeEvent, Dispatch, SetStateAction, useState, useEffect } from 'react';
-import type { Estimate, LineItem, Quote, EstimateCategory, HomeRemodelingInfo, RoofingInfo } from '@/lib/types';
+import type { Estimate, LineItem, Quote, EstimateCategory, HomeRemodelingInfo, RoofingInfo, HVACInfo, PlumbingInfo } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { DatePicker } from '@/components/ui/datepicker';
-import { ImageUp, Plus, Trash2, Palette, X, Mail, Truck, Hash, Phone, Globe, Briefcase, Award, User, FileText, Building, Pencil, Type, Package, Hammer, Ruler, ListTree, CheckSquare, Sparkles, Calendar, TextQuote, Wind } from 'lucide-react';
+import { ImageUp, Plus, Trash2, Palette, X, Mail, Truck, Hash, Phone, Globe, Briefcase, Award, User, FileText, Building, Pencil, Type, Package, Hammer, Ruler, ListTree, CheckSquare, Sparkles, Calendar, TextQuote, Wind, Thermometer, Wrench } from 'lucide-react';
 import Image from 'next/image';
 import {
   Select,
@@ -128,6 +128,33 @@ export function DocumentForm({ document, setDocument, accentColor, setAccentColo
         }
     }));
   };
+  
+    const handleHvacChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value, type } = e.target;
+    const isCheckbox = type === 'checkbox';
+    
+    setDocument(prev => ({
+        ...prev,
+        hvac: {
+            ...prev.hvac!,
+            [name]: isCheckbox ? (e.target as HTMLInputElement).checked : value
+        }
+    }));
+  };
+
+  const handlePlumbingChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value, type } = e.target;
+    const isCheckbox = type === 'checkbox';
+    
+    setDocument(prev => ({
+        ...prev,
+        plumbing: {
+            ...prev.plumbing!,
+            [name]: isCheckbox ? (e.target as HTMLInputElement).checked : value
+        }
+    }));
+  };
+
 
   const handleRemodelingSelectChange = (name: keyof HomeRemodelingInfo, value: string) => {
      setDocument(prev => ({
@@ -148,6 +175,27 @@ export function DocumentForm({ document, setDocument, accentColor, setAccentColo
         }
     }));
   };
+  
+    const handleHvacSelectChange = (name: keyof HVACInfo, value: string | boolean) => {
+     setDocument(prev => ({
+        ...prev,
+        hvac: {
+            ...prev.hvac!,
+            [name]: value
+        }
+    }));
+  };
+
+  const handlePlumbingSelectChange = (name: keyof PlumbingInfo, value: string | boolean) => {
+     setDocument(prev => ({
+        ...prev,
+        plumbing: {
+            ...prev.plumbing!,
+            [name]: value
+        }
+    }));
+  };
+
 
   const handleRemodelingDateChange = (name: keyof HomeRemodelingInfo, date: Date | undefined) => {
      setDocument(prev => ({
@@ -685,6 +733,144 @@ export function DocumentForm({ document, setDocument, accentColor, setAccentColo
                     <div className="flex items-center space-x-2 pt-6">
                         <Checkbox id="inspectionRequired" name="inspectionRequired" checked={document.roofing.inspectionRequired} onCheckedChange={(checked) => handleRoofingSelectChange('inspectionRequired', !!checked)} />
                         <Label htmlFor="inspectionRequired">Inspection Required?</Label>
+                    </div>
+                </CardContent>
+            </Card>
+        )}
+
+        {document.category === "HVAC (Air Conditioning / Heating)" && document.hvac && (
+            <Card className="bg-card/50 backdrop-blur-sm group-disabled:opacity-70">
+                <CardHeader>
+                    <CardTitle>HVAC Project Details</CardTitle>
+                </CardHeader>
+                <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-2">
+                        <Label>Service Type</Label>
+                        <Select value={document.hvac.serviceType} onValueChange={(value: HVACInfo['serviceType']) => handleHvacSelectChange('serviceType', value)}>
+                            <SelectTrigger><SelectValue/></SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="Install">Install</SelectItem>
+                                <SelectItem value="Repair">Repair</SelectItem>
+                                <SelectItem value="Replace">Replace</SelectItem>
+                                <SelectItem value="Maintenance">Maintenance</SelectItem>
+                            </SelectContent>
+                        </Select>
+                    </div>
+                     <div className="space-y-2">
+                        <Label>System Type</Label>
+                        <Select value={document.hvac.systemType} onValueChange={(value: HVACInfo['systemType']) => handleHvacSelectChange('systemType', value)}>
+                            <SelectTrigger><SelectValue/></SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="AC">AC</SelectItem>
+                                <SelectItem value="Furnace">Furnace</SelectItem>
+                                <SelectItem value="Heat Pump">Heat Pump</SelectItem>
+                                <SelectItem value="Boiler">Boiler</SelectItem>
+                                <SelectItem value="Ductless Mini-Split">Ductless Mini-Split</SelectItem>
+                            </SelectContent>
+                        </Select>
+                    </div>
+                    <div className="space-y-2">
+                        <Label htmlFor="unitSize">Unit Size (Tonnage / BTU)</Label>
+                        <Input id="unitSize" name="unitSize" type="number" value={document.hvac.unitSize ?? ''} onChange={handleHvacChange} />
+                    </div>
+                     <div className="space-y-2">
+                        <Label htmlFor="seerRating">SEER Rating</Label>
+                        <Input id="seerRating" name="seerRating" value={document.hvac.seerRating} onChange={handleHvacChange} />
+                    </div>
+                     <div className="space-y-2">
+                        <Label>Furnace Type</Label>
+                        <Select value={document.hvac.furnaceType} onValueChange={(value: HVACInfo['furnaceType']) => handleHvacSelectChange('furnaceType', value)}>
+                            <SelectTrigger><SelectValue/></SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="Gas">Gas</SelectItem>
+                                <SelectItem value="Electric">Electric</SelectItem>
+                                <SelectItem value="Oil">Oil</SelectItem>
+                            </SelectContent>
+                        </Select>
+                    </div>
+                     <div className="space-y-2">
+                        <Label>Thermostat Type</Label>
+                        <Select value={document.hvac.thermostatType} onValueChange={(value: HVACInfo['thermostatType']) => handleHvacSelectChange('thermostatType', value)}>
+                            <SelectTrigger><SelectValue/></SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="Manual">Manual</SelectItem>
+                                <SelectItem value="Programmable">Programmable</SelectItem>
+                                <SelectItem value="Smart">Smart</SelectItem>
+                            </SelectContent>
+                        </Select>
+                    </div>
+                    <div className="space-y-2 md:col-span-2">
+                        <Label htmlFor="existingSystemCondition">Existing System Condition</Label>
+                        <Input id="existingSystemCondition" name="existingSystemCondition" value={document.hvac.existingSystemCondition} onChange={handleHvacChange} />
+                    </div>
+                    <div className="space-y-2">
+                        <Label htmlFor="refrigerantType">Refrigerant Type</Label>
+                        <Input id="refrigerantType" name="refrigerantType" value={document.hvac.refrigerantType} onChange={handleHvacChange} />
+                    </div>
+                    <div className="flex items-center space-x-2 pt-6">
+                        <Checkbox id="ductworkRequired" name="ductworkRequired" checked={document.hvac.ductworkRequired} onCheckedChange={(checked) => handleHvacSelectChange('ductworkRequired', !!checked)} />
+                        <Label htmlFor="ductworkRequired">Ductwork Required?</Label>
+                    </div>
+                </CardContent>
+            </Card>
+        )}
+
+        {document.category === "Plumbing Estimate" && document.plumbing && (
+             <Card className="bg-card/50 backdrop-blur-sm group-disabled:opacity-70">
+                <CardHeader>
+                    <CardTitle>Plumbing Project Details</CardTitle>
+                </CardHeader>
+                <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-2">
+                        <Label>Service Type</Label>
+                        <Select value={document.plumbing.serviceType} onValueChange={(value: PlumbingInfo['serviceType']) => handlePlumbingSelectChange('serviceType', value)}>
+                            <SelectTrigger><SelectValue/></SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="Leak Repair">Leak Repair</SelectItem>
+                                <SelectItem value="Installation">Installation</SelectItem>
+                                <SelectItem value="Sewer Line">Sewer Line</SelectItem>
+                                <SelectItem value="Water Heater">Water Heater</SelectItem>
+                                <SelectItem value="Drain Cleaning">Drain Cleaning</SelectItem>
+                            </SelectContent>
+                        </Select>
+                    </div>
+                    <div className="space-y-2">
+                        <Label htmlFor="fixtureType">Fixture Type</Label>
+                        <Input id="fixtureType" name="fixtureType" value={document.plumbing.fixtureType} onChange={handlePlumbingChange} placeholder="e.g. Sink, Toilet, Shower" />
+                    </div>
+                    <div className="space-y-2">
+                        <Label>Pipe Material</Label>
+                        <Select value={document.plumbing.pipeMaterial} onValueChange={(value: PlumbingInfo['pipeMaterial']) => handlePlumbingSelectChange('pipeMaterial', value)}>
+                            <SelectTrigger><SelectValue/></SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="Copper">Copper</SelectItem>
+                                <SelectItem value="PVC">PVC</SelectItem>
+                                <SelectItem value="PEX">PEX</SelectItem>
+                                <SelectItem value="Galvanized">Galvanized</SelectItem>
+                            </SelectContent>
+                        </Select>
+                    </div>
+                    <div className="space-y-2">
+                        <Label htmlFor="floorLevel">Floor Level</Label>
+                        <Input id="floorLevel" name="floorLevel" value={document.plumbing.floorLevel} onChange={handlePlumbingChange} placeholder="e.g. Basement, 1st Floor" />
+                    </div>
+                     <div className="space-y-2 md:col-span-2">
+                        <Label htmlFor="leakLocation">Leak Location</Label>
+                        <Input id="leakLocation" name="leakLocation" value={document.plumbing.leakLocation} onChange={handlePlumbingChange} />
+                    </div>
+                     <div className="space-y-2">
+                        <Label htmlFor="estimatedRepairTime">Estimated Repair Time</Label>
+                        <Input id="estimatedRepairTime" name="estimatedRepairTime" value={document.plumbing.estimatedRepairTime} onChange={handlePlumbingChange} placeholder="e.g. 2-3 hours" />
+                    </div>
+                    <div className="pt-6 flex flex-col gap-4">
+                        <div className="flex items-center space-x-2">
+                            <Checkbox id="emergencyService" name="emergencyService" checked={document.plumbing.emergencyService} onCheckedChange={(checked) => handlePlumbingSelectChange('emergencyService', !!checked)} />
+                            <Label htmlFor="emergencyService">Emergency Service?</Label>
+                        </div>
+                         <div className="flex items-center space-x-2">
+                            <Checkbox id="waterPressureIssue" name="waterPressureIssue" checked={document.plumbing.waterPressureIssue} onCheckedChange={(checked) => handlePlumbingSelectChange('waterPressureIssue', !!checked)} />
+                            <Label htmlFor="waterPressureIssue">Water Pressure Issue?</Label>
+                        </div>
                     </div>
                 </CardContent>
             </Card>

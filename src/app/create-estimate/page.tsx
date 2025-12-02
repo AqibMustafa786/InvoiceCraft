@@ -99,6 +99,27 @@ const getInitialEstimate = (): Omit<Estimate, 'userId'> => ({
     gutterRepairNeeded: false,
     roofAge: 15,
     inspectionRequired: true,
+  },
+  hvac: {
+    serviceType: 'Install',
+    systemType: 'AC',
+    unitSize: null,
+    seerRating: '',
+    furnaceType: 'Gas',
+    ductworkRequired: false,
+    thermostatType: 'Programmable',
+    existingSystemCondition: '',
+    refrigerantType: '',
+  },
+  plumbing: {
+    serviceType: 'Leak Repair',
+    fixtureType: 'Sink',
+    pipeMaterial: 'Copper',
+    floorLevel: '',
+    emergencyService: false,
+    waterPressureIssue: false,
+    leakLocation: '',
+    estimatedRepairTime: '',
   }
 });
 
@@ -208,7 +229,7 @@ export default function CreateEstimatePage() {
       updatedAt: serverTimestamp(),
     };
 
-    const dateFields = ['estimateDate', 'validUntilDate', 'expectedStartDate', 'expectedCompletionDate'];
+    const dateFields = ['estimateDate', 'validUntilDate'];
     dateFields.forEach(field => {
       const dateVal = (document as any)[field];
       if (dateVal) {
@@ -227,6 +248,14 @@ export default function CreateEstimatePage() {
     
     if (document.roofing) {
         draftToSave.roofing = { ...document.roofing };
+    }
+    
+    if (document.hvac) {
+        draftToSave.hvac = { ...document.hvac };
+    }
+
+    if (document.plumbing) {
+        draftToSave.plumbing = { ...document.plumbing };
     }
 
     if (!document.createdAt) {

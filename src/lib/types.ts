@@ -177,6 +177,30 @@ export interface RoofingInfo {
     inspectionRequired: boolean;
 }
 
+export interface HVACInfo {
+    serviceType: 'Install' | 'Repair' | 'Replace' | 'Maintenance';
+    systemType: 'AC' | 'Furnace' | 'Heat Pump' | 'Boiler' | 'Ductless Mini-Split';
+    unitSize: number | null; // Tonnage or BTU
+    seerRating: string;
+    furnaceType: 'Gas' | 'Electric' | 'Oil';
+    ductworkRequired: boolean;
+    thermostatType: 'Manual' | 'Programmable' | 'Smart';
+    existingSystemCondition: string;
+    refrigerantType: string;
+}
+
+export interface PlumbingInfo {
+    serviceType: 'Leak Repair' | 'Installation' | 'Sewer Line' | 'Water Heater' | 'Drain Cleaning';
+    fixtureType: string; // e.g., Sink, Toilet, Shower, Water Heater
+    pipeMaterial: 'Copper' | 'PVC' | 'PEX' | 'Galvanized';
+    floorLevel: string;
+    emergencyService: boolean;
+    waterPressureIssue: boolean;
+    leakLocation: string;
+    estimatedRepairTime: string;
+}
+
+
 export interface Estimate {
   id: string;
   userId: string;
@@ -215,6 +239,8 @@ export interface Estimate {
   // Category specific data
   homeRemodeling?: HomeRemodelingInfo;
   roofing?: RoofingInfo;
+  hvac?: HVACInfo;
+  plumbing?: PlumbingInfo;
 }
 
 export type Quote = Estimate & { documentType: 'quote' };
