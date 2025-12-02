@@ -398,7 +398,7 @@ export function EstimateForm({ estimate, setEstimate, accentColor, setAccentColo
               <div className="col-span-8 md:col-span-1 flex items-center h-10">
                 <p className="font-medium tabular-nums text-sm">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</p>
               </div>
-              <div className="col-span-1 flex items-center h-10">
+              <div className="col-span-1 flex items-center h-10 justify-end">
                 <Button variant="ghost" size="icon" onClick={() => removeItem(index)}>
                   <Trash2 className="h-4 w-4 text-destructive" />
                 </Button>
