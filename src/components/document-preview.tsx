@@ -335,7 +335,7 @@ const ModernTemplatePage = ({ document, pageItems, pageIndex, totalPages, style 
     const currencySymbol = currencySymbols[document.currency] || '$';
 
     return (
-        <div className={`p-8 md:p-10 bg-white text-gray-800 font-sans ${pageIndex < totalPages - 1 ? "page-break" : ""}`} style={style}>
+        <div className={`p-8 md:p-10 bg-white font-sans ${pageIndex < totalPages - 1 ? "page-break" : ""}`} style={{ color: document.textColor || '#374151', fontFamily: style.fontFamily, fontSize: style.fontSize }}>
             <PageHeader document={document} style={style} />
             <PageClientDetails document={document} />
             <CategoryPreview document={document} />
@@ -399,7 +399,7 @@ export function DocumentPreview({ document, accentColor, id = 'document-preview'
       '--primary': accentColor,
       fontFamily: document.fontFamily || 'Inter, sans-serif',
       fontSize: `${document.fontSize || 10}pt`,
-      color: accentColor,
+      color: document.textColor || '#374151',
   } as React.CSSProperties;
 
   const TemplateComponent = templates[document.template as keyof typeof templates] || templates.default;
@@ -514,7 +514,7 @@ export function DocumentPreview({ document, accentColor, id = 'document-preview'
     const itemsToRender = needsRemeasure ? [document.lineItems] : paginatedItems;
     
     return (
-      <div id={id} className="bg-white text-gray-800" ref={containerRef}>
+      <div id={id} className="bg-white" ref={containerRef}>
         {itemsToRender.map((pageItems, pageIndex) => (
            <TemplateComponent
             key={pageIndex}
@@ -532,7 +532,7 @@ export function DocumentPreview({ document, accentColor, id = 'document-preview'
 
   return (
     <Card id={id} className="w-full shadow-lg rounded-xl overflow-hidden print-hide">
-      <CardContent className="p-0 bg-white text-gray-800">
+      <CardContent className="p-0 bg-white dark:bg-white">
          <TemplateComponent
             {...commonProps}
             pageItems={document.lineItems}
