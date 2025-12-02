@@ -70,6 +70,55 @@ const categories: EstimateCategory[] = [
     "IT / Freelance Estimate"
 ];
 
+const plumbingServiceTypes = ["Leak Repair", "Installation", "Sewer Line", "Water Heater", "Drain Cleaning"];
+const plumbingFixtureTypes = ["Sink", "Toilet", "Shower", "Water Heater"];
+const plumbingPipeMaterials = ["Copper", "PVC", "PEX", "Galvanized"];
+
+const hvacServiceTypes = ["Install", "Repair", "Replace", "Maintenance"];
+const hvacSystemTypes = ["AC", "Furnace", "Heat Pump", "Boiler", "Ductless Mini-Split"];
+
+const CustomSelect = ({ value, onValueChange, options, placeholder, otherValue, onOtherValueChange }: { value: string; onValueChange: (value: string) => void; options: string[]; placeholder?: string; otherValue?: string; onOtherValueChange?: (e: ChangeEvent<HTMLInputElement>) => void; }) => {
+    const [isOther, setIsOther] = useState(value && !options.includes(value));
+
+    useEffect(() => {
+        setIsOther(value === 'Other' || (value && !options.includes(value)));
+    }, [value, options]);
+
+    const handleValueChange = (newValue: string) => {
+        if (newValue === 'Other') {
+            setIsOther(true);
+            onValueChange(otherValue || '');
+        } else {
+            setIsOther(false);
+            onValueChange(newValue);
+        }
+    };
+
+    return (
+        <div className="space-y-2">
+            <Select value={isOther ? 'Other' : value} onValueChange={handleValueChange}>
+                <SelectTrigger>
+                    <SelectValue placeholder={placeholder} />
+                </SelectTrigger>
+                <SelectContent>
+                    {options.map(option => <SelectItem key={option} value={option}>{option}</SelectItem>)}
+                    <SelectItem value="Other">Other (Please specify)</SelectItem>
+                </SelectContent>
+            </Select>
+            {isOther && onOtherValueChange && (
+                <Input
+                    type="text"
+                    value={value}
+                    onChange={onOtherValueChange}
+                    placeholder="Specify other value"
+                    className="mt-2"
+                />
+            )}
+        </div>
+    );
+};
+
+
 export function DocumentForm({ document, setDocument, accentColor, setAccentColor, toast, documentType }: DocumentFormProps) {
   const [bulkAddCount, setBulkAddCount] = useState(5);
   const [colorInputValue, setColorInputValue] = useState(accentColor);
@@ -627,7 +676,14 @@ export function DocumentForm({ document, setDocument, accentColor, setAccentColo
                 <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-2">
                         <Label>Roof Material</Label>
-                        <Input name="roofMaterial" value={document.roofing.roofMaterial} onChange={(e) => handleCategoryDataChange('roofing', e)} placeholder="e.g. Shingle, Metal, Tile"/>
+                        <CustomSelect
+                            value={document.roofing.roofMaterial}
+                            onValueChange={(value) => handleCategorySelectChange('roofing', 'roofMaterial', value)}
+                            options={['Shingle', 'Metal', 'Tile', 'Flat']}
+                            placeholder="Select roof material"
+                            otherValue={document.roofing.roofMaterial}
+                            onOtherValueChange={(e) => handleCategoryDataChange('roofing', e)}
+                        />
                     </div>
                     <div className="space-y-2">
                         <Label htmlFor="roofSize">Roof Size (sq ft)</Label>
@@ -680,11 +736,25 @@ export function DocumentForm({ document, setDocument, accentColor, setAccentColo
                 <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-2">
                         <Label>Service Type</Label>
-                        <Input name="serviceType" value={document.hvac.serviceType} onChange={(e) => handleCategoryDataChange('hvac', e)} placeholder="e.g. Install, Repair, Maintenance" />
+                        <CustomSelect
+                            value={document.hvac.serviceType}
+                            onValueChange={(value) => handleCategorySelectChange('hvac', 'serviceType', value)}
+                            options={hvacServiceTypes}
+                            placeholder="Select service type"
+                            otherValue={document.hvac.serviceType}
+                            onOtherValueChange={(e) => handleCategoryDataChange('hvac', e)}
+                        />
                     </div>
                      <div className="space-y-2">
                         <Label>System Type</Label>
-                        <Input name="systemType" value={document.hvac.systemType} onChange={(e) => handleCategoryDataChange('hvac', e)} placeholder="e.g. AC, Furnace, Heat Pump" />
+                        <CustomSelect
+                            value={document.hvac.systemType}
+                            onValueChange={(value) => handleCategorySelectChange('hvac', 'systemType', value)}
+                            options={hvacSystemTypes}
+                            placeholder="Select system type"
+                            otherValue={document.hvac.systemType}
+                            onOtherValueChange={(e) => handleCategoryDataChange('hvac', e)}
+                        />
                     </div>
                     <div className="space-y-2">
                         <Label htmlFor="unitSize">Unit Size (Tonnage / BTU)</Label>
@@ -726,15 +796,36 @@ export function DocumentForm({ document, setDocument, accentColor, setAccentColo
                 <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-2">
                         <Label>Service Type</Label>
-                        <Input name="serviceType" value={document.plumbing.serviceType} onChange={(e) => handleCategoryDataChange('plumbing', e)} placeholder="e.g. Leak Repair, Installation" />
+                         <CustomSelect
+                            value={document.plumbing.serviceType}
+                            onValueChange={(value) => handleCategorySelectChange('plumbing', 'serviceType', value)}
+                            options={plumbingServiceTypes}
+                            placeholder="Select service type"
+                            otherValue={document.plumbing.serviceType}
+                            onOtherValueChange={(e) => handleCategoryDataChange('plumbing', e)}
+                        />
                     </div>
                     <div className="space-y-2">
                         <Label htmlFor="fixtureType">Fixture Type</Label>
-                        <Input id="fixtureType" name="fixtureType" value={document.plumbing.fixtureType} onChange={(e) => handleCategoryDataChange('plumbing', e)} placeholder="e.g. Sink, Toilet, Shower" />
+                        <CustomSelect
+                            value={document.plumbing.fixtureType}
+                            onValueChange={(value) => handleCategorySelectChange('plumbing', 'fixtureType', value)}
+                            options={plumbingFixtureTypes}
+                            placeholder="Select fixture type"
+                            otherValue={document.plumbing.fixtureType}
+                            onOtherValueChange={(e) => handleCategoryDataChange('plumbing', e)}
+                        />
                     </div>
                     <div className="space-y-2">
                         <Label>Pipe Material</Label>
-                         <Input name="pipeMaterial" value={document.plumbing.pipeMaterial} onChange={(e) => handleCategoryDataChange('plumbing', e)} placeholder="e.g. Copper, PVC, PEX" />
+                        <CustomSelect
+                            value={document.plumbing.pipeMaterial}
+                            onValueChange={(value) => handleCategorySelectChange('plumbing', 'pipeMaterial', value)}
+                            options={plumbingPipeMaterials}
+                            placeholder="Select pipe material"
+                            otherValue={document.plumbing.pipeMaterial}
+                            onOtherValueChange={(e) => handleCategoryDataChange('plumbing', e)}
+                        />
                     </div>
                     <div className="space-y-2">
                         <Label htmlFor="floorLevel">Floor Level</Label>
@@ -997,5 +1088,3 @@ export function DocumentForm({ document, setDocument, accentColor, setAccentColo
     </div>
   );
 }
-
-    
