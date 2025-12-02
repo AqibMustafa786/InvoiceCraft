@@ -215,7 +215,7 @@ const CategoryPreview = ({ document }: { document: Estimate }) => {
 
 const PageHeader = ({ document, style }: { document: Estimate, style: React.CSSProperties }) => {
     const { business, client, category, documentType, estimateNumber, estimateDate } = document;
-    const documentTitle = category === 'Generic' ? (documentType === 'quote' ? 'Quote' : 'Estimate') : category;
+    const documentTitle = documentType === 'quote' ? 'Quote' : 'Estimate';
     
     return (
         <header className="flex justify-between items-start mb-8" data-element="header">
@@ -413,11 +413,11 @@ export function DocumentPreview({ document, accentColor, id = 'document-preview'
     const measureAndPaginate = () => {
       if (typeof document === 'undefined') return;
       const container = containerRef.current!;
-      const tempRoot = window.document.createElement('div');
+      const tempRoot = document.createElement('div');
       tempRoot.style.position = 'absolute';
       tempRoot.style.left = '-9999px';
       tempRoot.style.width = `${container.clientWidth}px`; // Match width for accurate measurement
-      window.document.body.appendChild(tempRoot);
+      document.body.appendChild(tempRoot);
 
       // We create a temporary React root to render the full, unpaginated content for measurement.
       Promise.resolve().then(() => {
@@ -440,7 +440,7 @@ export function DocumentPreview({ document, accentColor, id = 'document-preview'
         const allRows = Array.from(tempContainer.querySelectorAll('[data-element="table-row"]')) as HTMLElement[];
         
         if (!header || !tableHeader || !footer || allRows.length === 0) {
-            window.document.body.removeChild(tempRoot);
+            document.body.removeChild(tempRoot);
             return;
         }
 
@@ -497,7 +497,7 @@ export function DocumentPreview({ document, accentColor, id = 'document-preview'
         
         setPaginatedItems(newPages);
         setNeedsRemeasure(false);
-        window.document.body.removeChild(tempRoot);
+        document.body.removeChild(tempRoot);
       });
     };
     
