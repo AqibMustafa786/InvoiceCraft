@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -11,6 +12,7 @@ import { Printer, FilePlus, LayoutDashboard } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { InsuranceTemplateSelector } from '@/components/insurance-template-selector';
 import Link from 'next/link';
+import { serverTimestamp } from 'firebase/firestore';
 
 const getInitialLineItem = () => ({ id: crypto.randomUUID(), name: '', quantity: 1, unitPrice: 0, rate: 0 });
 
@@ -46,6 +48,8 @@ const getInitialInsuranceDoc = (): InsuranceDocument => ({
   currency: 'USD',
   language: 'en',
   template: 'usa-claim-default',
+  createdAt: serverTimestamp(),
+  updatedAt: serverTimestamp(),
 });
 
 

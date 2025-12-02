@@ -184,6 +184,15 @@ export default function DashboardPage() {
         setFilters(initialFilters);
     }, []);
 
+    const toDateSafe = (value: any): Date | null => {
+        if (!value) return null;
+        if (value.toDate && typeof value.toDate === 'function') {
+            return value.toDate();
+        }
+        const d = new Date(value);
+        return isValid(d) ? d : null;
+    };
+
     const combinedDocuments = useMemo(() => {
         if (!user || !invoices || !estimates || !quotes) return [];
         const allDocs: DocumentType[] = [...invoices, ...estimates, ...quotes];
@@ -191,15 +200,6 @@ export default function DashboardPage() {
         const safeParsedDocs = allDocs.map(doc => {
             const newDoc = { ...doc };
             
-            const toDateSafe = (value: any): Date | null => {
-                if (!value) return null;
-                if (value.toDate && typeof value.toDate === 'function') {
-                    return value.toDate();
-                }
-                const d = new Date(value);
-                return isValid(d) ? d : null;
-            };
-
             if (newDoc.documentType === 'invoice') {
                 newDoc.invoiceDate = toDateSafe((newDoc as Invoice).invoiceDate) as Date;
                 newDoc.dueDate = toDateSafe((newDoc as Invoice).dueDate) as Date;
@@ -207,6 +207,8 @@ export default function DashboardPage() {
                 (newDoc as Estimate | Quote).estimateDate = toDateSafe((newDoc as Estimate | Quote).estimateDate) as Date;
                 (newDoc as Estimate | Quote).validUntilDate = toDateSafe((newDoc as Estimate | Quote).validUntilDate) as Date;
             }
+            newDoc.createdAt = toDateSafe(newDoc.createdAt);
+            newDoc.updatedAt = toDateSafe(newDoc.updatedAt);
             return newDoc;
         });
 
@@ -236,8 +238,8 @@ export default function DashboardPage() {
                 return clientNameMatch && statusMatch && amountMinMatch && amountMaxMatch && dateMatch;
             })
             .sort((a, b) => {
-                const dateA = a.documentType === 'invoice' ? (a as Invoice).invoiceDate : (a as Estimate | Quote).estimateDate;
-                const dateB = b.documentType === 'invoice' ? (b as Invoice).invoiceDate : (b as Estimate | Quote).estimateDate;
+                const dateA = a.updatedAt || a.createdAt;
+                const dateB = b.updatedAt || b.createdAt;
                 if (!dateA || !isValid(dateA)) return 1;
                 if (!dateB || !isValid(dateB)) return -1;
                 return dateB.getTime() - dateA.getTime();
@@ -372,20 +374,21 @@ export default function DashboardPage() {
                                     <TableHead>Client</TableHead>
                                     <TableHead>Amount</TableHead>
                                     <TableHead>Status</TableHead>
-                                    <TableHead>Date</TableHead>
+                                    <TableHead>Updated</TableHead>
+                                    <TableHead>Created</TableHead>
                                     <TableHead className="text-right">Actions</TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
                                 {isLoading ? (
                                     <TableRow>
-                                        <TableCell colSpan={7} className="text-center h-24">
+                                        <TableCell colSpan={8} className="text-center h-24">
                                             Loading documents...
                                         </TableCell>
                                     </TableRow>
                                 ) : (invoicesError || estimatesError || quotesError) ? (
                                     <TableRow>
-                                        <TableCell colSpan={7} className="text-center h-24 text-destructive">
+                                        <TableCell colSpan={8} className="text-center h-24 text-destructive">
                                            Error loading documents. Please check your connection and security rules.
                                         </TableCell>
                                     </TableRow>
@@ -396,7 +399,6 @@ export default function DashboardPage() {
 
                                     const docNumber = isInvoice ? (doc as Invoice).invoiceNumber : (doc as Estimate | Quote).estimateNumber;
                                     const clientName = isInvoice ? (doc as Invoice).clientName : (doc as Estimate | Quote).client.name;
-                                    let docDate = isInvoice ? (doc as Invoice).invoiceDate : (doc as Estimate | Quote).estimateDate;
                                     
                                     let docCollection: string;
                                     let editUrl: string;
@@ -439,7 +441,8 @@ export default function DashboardPage() {
                                                 </DropdownMenuContent>
                                             </DropdownMenu>
                                         </TableCell>
-                                        <TableCell>{docDate && isValid(docDate) ? format(docDate, 'yyyy-MM-dd') : 'N/A'}</TableCell>
+                                        <TableCell>{doc.updatedAt ? format(doc.updatedAt, 'yyyy-MM-dd HH:mm') : 'N/A'}</TableCell>
+                                        <TableCell>{doc.createdAt ? format(doc.createdAt, 'yyyy-MM-dd') : 'N/A'}</TableCell>
                                         <TableCell className="text-right">
                                             <DropdownMenu>
                                                 <DropdownMenuTrigger asChild>
@@ -478,7 +481,7 @@ export default function DashboardPage() {
                                     )
                                 }) : (
                                     <TableRow>
-                                        <TableCell colSpan={7} className="text-center h-24">
+                                        <TableCell colSpan={8} className="text-center h-24">
                                             No documents found. Create one!
                                         </TableCell>
                                     </TableRow>

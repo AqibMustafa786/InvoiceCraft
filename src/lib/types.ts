@@ -85,6 +85,8 @@ export interface InsuranceDocument {
   fontSize?: number;
   headingColor?: string;
   textColor?: string;
+  createdAt?: any;
+  updatedAt?: any;
 }
 
 // New refined Estimate Structure
