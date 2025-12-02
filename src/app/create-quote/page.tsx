@@ -136,7 +136,7 @@ export default function CreateQuotePage() {
     if (draftId) {
         if (remoteDraft) {
             const fromJSON = (key: string, value: any) => {
-                if (['estimateDate', 'validUntilDate'].includes(key) && value) {
+                if (['estimateDate', 'validUntilDate', 'createdAt', 'updatedAt'].includes(key) && value) {
                     return value.toDate ? value.toDate() : new Date(value);
                 }
                 return value;
@@ -167,7 +167,8 @@ export default function CreateQuotePage() {
       ...quote,
       userId: user.uid,
       updatedAt: serverTimestamp(),
-      createdAt: (quote as any).createdAt || serverTimestamp(),
+      // Ensure createdAt is only set once
+      ...(!(quote as any).createdAt && { createdAt: serverTimestamp() })
     };
     
     const docRef = doc(firestore, QUOTES_COLLECTION, quote.id);

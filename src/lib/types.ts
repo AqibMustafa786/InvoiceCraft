@@ -42,6 +42,8 @@ export interface Invoice {
   fontSize?: number;
   headingColor?: string;
   textColor?: string;
+  createdAt?: any;
+  updatedAt?: any;
 }
 
 export interface InsuranceDocument {
@@ -163,6 +165,8 @@ export interface Estimate {
   fontSize?: number;
   headingColor?: string;
   textColor?: string;
+  createdAt?: any;
+  updatedAt?: any;
 }
 
 export type Quote = Estimate & { documentType: 'quote' };

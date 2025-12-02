@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -14,7 +15,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { TemplateSelector } from '@/components/template-selector';
 import { useFirebase, useMemoFirebase } from '@/firebase';
-import { collection, doc } from 'firebase/firestore';
+import { collection, doc, serverTimestamp } from 'firebase/firestore';
 import { setDocumentNonBlocking } from '@/firebase/non-blocking-updates';
 import { useDoc } from '@/firebase/firestore/use-doc';
 
@@ -93,7 +94,7 @@ export default function CreateInvoicePage() {
     if (draftId) {
         if (remoteDraft) {
              const fromJSON = (key: string, value: any) => {
-                if (['invoiceDate', 'dueDate'].includes(key) && value) {
+                if (['invoiceDate', 'dueDate', 'createdAt', 'updatedAt'].includes(key) && value) {
                     return value.toDate ? value.toDate() : new Date(value);
                 }
                 return value;
@@ -123,8 +124,9 @@ export default function CreateInvoicePage() {
 
     const draftToSave = {
       ...invoice,
-      invoiceDate: invoice.invoiceDate,
-      dueDate: invoice.dueDate,
+      updatedAt: serverTimestamp(),
+      // Ensure createdAt is only set once
+      ...(!(invoice as any).createdAt && { createdAt: serverTimestamp() })
     };
     
     const docRef = doc(firestore, INVOICES_COLLECTION, invoice.id);

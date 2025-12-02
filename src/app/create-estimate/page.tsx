@@ -136,7 +136,7 @@ export default function CreateEstimatePage() {
     if (draftId) {
         if (remoteDraft) {
             const fromJSON = (key: string, value: any) => {
-                if (['estimateDate', 'validUntilDate'].includes(key) && value) {
+                if (['estimateDate', 'validUntilDate', 'createdAt', 'updatedAt'].includes(key) && value) {
                     return value.toDate ? value.toDate() : new Date(value);
                 }
                 return value;
@@ -167,7 +167,8 @@ export default function CreateEstimatePage() {
       ...estimate,
       userId: user.uid,
       updatedAt: serverTimestamp(),
-      createdAt: estimate.createdAt || serverTimestamp(),
+      // Ensure createdAt is only set once
+      ...(!(estimate as any).createdAt && { createdAt: serverTimestamp() })
     };
     
     const docRef = doc(firestore, ESTIMATES_COLLECTION, estimate.id);
