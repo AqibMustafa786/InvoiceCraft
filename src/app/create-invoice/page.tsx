@@ -107,8 +107,8 @@ export default function CreateInvoicePage() {
         setInvoice(initialInvoice);
     }
     
-    if (typeof window !== 'undefined' && document) {
-        const computedColor = getComputedStyle(document.documentElement).getPropertyValue('--primary').trim();
+    if (typeof window !== 'undefined' && window.document) {
+        const computedColor = getComputedStyle(window.document.documentElement).getPropertyValue('--primary').trim();
         if (computedColor) {
            setAccentColor(`hsl(${computedColor})`);
         }
@@ -163,8 +163,8 @@ export default function CreateInvoicePage() {
     newInvoice.invoiceNumber = `INV-${String(Math.floor(Math.random() * 1000)).padStart(3, '0')}`;
     setInvoice(newInvoice);
     setLogoUrl(null);
-    if (typeof window !== 'undefined' && document) {
-        const computedColor = getComputedStyle(document.documentElement).getPropertyValue('--primary').trim();
+    if (typeof window !== 'undefined' && window.document) {
+        const computedColor = getComputedStyle(window.document.documentElement).getPropertyValue('--primary').trim();
         if (computedColor) {
             setAccentColor(`hsl(${computedColor})`);
         }
@@ -214,8 +214,8 @@ export default function CreateInvoicePage() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          <div className="lg:pr-4">
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 xl:gap-12">
+          <div className="lg:col-span-3">
              <div className="mb-12">
                 <h2 className="text-2xl font-bold font-headline mb-6 text-center">Select a Template</h2>
                  <TemplateSelector 
@@ -234,7 +234,7 @@ export default function CreateInvoicePage() {
               toast={toast}
             />
           </div>
-          <div className="lg:pl-4">
+          <div className="lg:col-span-2">
              <div className="sticky top-24">
                 <h2 className="text-2xl font-bold font-headline mb-6">Live Preview</h2>
                 <InvoicePreview invoice={invoice} logoUrl={logoUrl} accentColor={accentColor} />

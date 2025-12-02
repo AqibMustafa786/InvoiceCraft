@@ -149,8 +149,8 @@ export default function CreateQuotePage() {
         setDocument(initialQuote);
     }
     
-    if (typeof window !== 'undefined' && document) {
-        const computedColor = getComputedStyle(document.documentElement).getPropertyValue('--primary').trim();
+    if (typeof window !== 'undefined' && window.document) {
+        const computedColor = getComputedStyle(window.document.documentElement).getPropertyValue('--primary').trim();
         if (computedColor) {
            setAccentColor(`hsl(${computedColor})`);
         }
@@ -202,8 +202,8 @@ export default function CreateQuotePage() {
     const newQuote = {...getInitialQuote(), userId: user.uid};
     newQuote.estimateNumber = `QTE-${new Date().getFullYear()}-${String(Math.floor(Math.random() * 1000)).padStart(3, '0')}`;
     setDocument(newQuote);
-    if (typeof window !== 'undefined' && document) {
-        const computedColor = getComputedStyle(document.documentElement).getPropertyValue('--primary').trim();
+    if (typeof window !== 'undefined' && window.document) {
+        const computedColor = getComputedStyle(window.document.documentElement).getPropertyValue('--primary').trim();
         if (computedColor) {
             setAccentColor(`hsl(${computedColor})`);
         }
@@ -290,8 +290,8 @@ export default function CreateQuotePage() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          <div className="lg:pr-4">
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 xl:gap-12">
+          <div className="lg:col-span-3">
             <div className="space-y-12">
               <div>
                 <h2 className="text-2xl font-bold font-headline mb-6 text-center">Select a Template</h2>
@@ -314,7 +314,7 @@ export default function CreateQuotePage() {
               </div>
             </div>
           </div>
-          <div className="lg:pl-4">
+          <div className="lg:col-span-2">
             <div className="sticky top-24">
                 <h2 className="text-2xl font-bold font-headline mb-6">Live Preview</h2>
                 <DocumentPreview document={document} accentColor={accentColor} />
