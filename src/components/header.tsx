@@ -1,4 +1,3 @@
-
 'use client';
 
 import Link from 'next/link';
@@ -6,7 +5,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { Menu } from 'lucide-react';
-import { ModeToggle } from './mode-toggle';
+import { ModeToggle } from '@/components/mode-toggle';
 import { cn } from '@/lib/utils';
 import { useEffect, useState } from 'react';
 import { useAuth } from '@/context/auth-provider';
