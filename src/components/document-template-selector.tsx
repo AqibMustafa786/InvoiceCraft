@@ -12,25 +12,26 @@ interface Template {
   isPro?: boolean;
 }
 
-interface QuoteTemplateSelectorProps {
+interface DocumentTemplateSelectorProps {
   selectedTemplate: string;
   onSelectTemplate: (templateId: string) => void;
+  documentType: 'estimate' | 'quote';
 }
 
 const templates: Template[] = [
   {
     id: 'default',
-    name: 'Modern Quote',
+    name: 'Modern',
     thumbnailUrl: '/templates/Estimate-Default.png',
   },
   {
     id: 'contractor',
-    name: 'Contractor Quote',
+    name: 'Contractor',
     thumbnailUrl: '/templates/Estimate-Contractor.png',
   },
 ];
 
-export function QuoteTemplateSelector({ selectedTemplate, onSelectTemplate }: QuoteTemplateSelectorProps) {
+export function DocumentTemplateSelector({ selectedTemplate, onSelectTemplate, documentType }: DocumentTemplateSelectorProps) {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-10 justify-center">
       {templates.map((template) => (
@@ -50,7 +51,7 @@ export function QuoteTemplateSelector({ selectedTemplate, onSelectTemplate }: Qu
           >
             <Image
               src={template.thumbnailUrl}
-              alt={`${template.name} quote template`}
+              alt={`${template.name} ${documentType} template`}
               width={188}
               height={250}
               className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
@@ -64,7 +65,7 @@ export function QuoteTemplateSelector({ selectedTemplate, onSelectTemplate }: Qu
               </Badge>
             )}
           </div>
-          <p className="text-center text-sm font-semibold p-3">{template.name}</p>
+          <p className="text-center text-sm font-semibold p-3">{template.name} {documentType === 'quote' ? 'Quote' : 'Estimate'}</p>
         </div>
       ))}
     </div>

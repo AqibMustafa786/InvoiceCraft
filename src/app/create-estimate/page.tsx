@@ -4,13 +4,13 @@
 import { useState, useEffect, useCallback } from 'react';
 import { createPortal } from 'react-dom';
 import type { Estimate, LineItem } from '@/lib/types';
-import { EstimateForm } from '@/components/estimate-form';
-import { EstimatePreview } from '@/components/estimate-preview';
+import { DocumentForm } from '@/components/document-form';
+import { DocumentPreview } from '@/components/document-preview';
 import { Button } from '@/components/ui/button';
 import { Printer, FilePlus, LayoutDashboard, Edit, Share2 } from 'lucide-react';
 import { addDays, isValid } from 'date-fns';
 import { useToast } from '@/hooks/use-toast';
-import { EstimateTemplateSelector } from '@/components/estimate-template-selector';
+import { DocumentTemplateSelector } from '@/components/document-template-selector';
 import Link from 'next/link';
 import { useFirebase, useMemoFirebase } from '@/firebase/provider';
 import { doc, serverTimestamp } from 'firebase/firestore';
@@ -72,7 +72,7 @@ const getInitialEstimate = (): Omit<Estimate, 'userId'> => ({
 });
 
 
-function PrintableEstimate({ estimate, accentColor }: { estimate: Estimate, accentColor: string }) {
+function PrintableDocument({ document, accentColor }: { document: Estimate, accentColor: string }) {
     const [printRoot, setPrintRoot] = useState<HTMLElement | null>(null);
 
     useEffect(() => {
@@ -85,19 +85,20 @@ function PrintableEstimate({ estimate, accentColor }: { estimate: Estimate, acce
     }
 
     return createPortal(
-        <EstimatePreview estimate={estimate} accentColor={accentColor} id="estimate-preview-print" isPrint={true} />,
+        <DocumentPreview document={document} accentColor={accentColor} id="estimate-preview-print" isPrint={true} />,
         printRoot
     );
 }
 
 
 export default function CreateEstimatePage() {
-  const [estimate, setEstimate] = useState<Estimate | null>(null);
+  const [document, setDocument] = useState<Estimate | null>(null);
   const [accentColor, setAccentColor] = useState<string>('hsl(var(--primary))');
   const { toast } = useToast();
   const { firestore, user, isUserLoading } = useFirebase();
   const router = useRouter();
   const searchParams = useSearchParams();
+  const documentType = 'estimate';
 
   const draftId = searchParams.get('draftId');
   const docRef = useMemoFirebase(() => draftId && firestore ? doc(firestore, ESTIMATES_COLLECTION, draftId) : null, [draftId, firestore]);
@@ -140,9 +141,9 @@ export default function CreateEstimatePage() {
            return value;
        };
        const loadedDraft = JSON.parse(JSON.stringify(remoteDraft), fromJSON);
-       setEstimate({ ...initialEstimate, ...loadedDraft });
+       setDocument({ ...initialEstimate, ...loadedDraft });
     } else {
-        setEstimate(initialEstimate);
+        setDocument(initialEstimate);
     }
     
     if (typeof window !== 'undefined' && document) {
@@ -158,7 +159,7 @@ export default function CreateEstimatePage() {
   };
   
   const handleSaveDraft = () => {
-    if (!estimate || !firestore || !user) return;
+    if (!document || !firestore || !user) return;
 
     const normalizeDate = (val: any): Date => {
         if (!val) return new Date();
@@ -167,29 +168,29 @@ export default function CreateEstimatePage() {
     };
     
     const draftToSave = {
-      ...estimate,
+      ...document,
       userId: user.uid,
-      estimateDate: normalizeDate(estimate.estimateDate),
-      validUntilDate: normalizeDate(estimate.validUntilDate),
+      estimateDate: normalizeDate(document.estimateDate),
+      validUntilDate: normalizeDate(document.validUntilDate),
       updatedAt: serverTimestamp(),
-      createdAt: estimate.createdAt ? estimate.createdAt : serverTimestamp(),
+      createdAt: document.createdAt || serverTimestamp(),
     };
     
-    const docRef = doc(firestore, ESTIMATES_COLLECTION, estimate.id);
+    const docRef = doc(firestore, ESTIMATES_COLLECTION, document.id);
     setDocumentNonBlocking(docRef, draftToSave, { merge: true });
 
     toast({
       title: "Estimate Draft Saved",
       description: "Your estimate draft has been saved online.",
     });
-    router.push(`/create-estimate?draftId=${estimate.id}`);
+    router.push(`/${'create-estimate'}?draftId=${document.id}`);
   };
 
   const handleNew = () => {
     if (!user) return;
     const newEstimate = {...getInitialEstimate(), userId: user.uid};
     newEstimate.estimateNumber = `EST-${new Date().getFullYear()}-${String(Math.floor(Math.random() * 1000)).padStart(3, '0')}`;
-    setEstimate(newEstimate);
+    setDocument(newEstimate);
     if (typeof window !== 'undefined' && document) {
         const computedColor = getComputedStyle(document.documentElement).getPropertyValue('--primary').trim();
         if (computedColor) {
@@ -204,8 +205,8 @@ export default function CreateEstimatePage() {
   };
 
   const handleShare = () => {
-      if (!estimate) return;
-      const url = `${window.location.origin}/estimate/${estimate.id}`;
+      if (!document) return;
+      const url = `${window.location.origin}/estimate/${document.id}`;
       navigator.clipboard.writeText(url);
       toast({
           title: "Link Copied!",
@@ -214,16 +215,16 @@ export default function CreateEstimatePage() {
   };
   
   useEffect(() => {
-    if (estimate) {
-        const newEstimate = computeSummary(estimate);
-         if (JSON.stringify(newEstimate.summary) !== JSON.stringify(estimate.summary)) {
-            setEstimate(newEstimate);
+    if (document) {
+        const newDocument = computeSummary(document);
+         if (JSON.stringify(newDocument.summary) !== JSON.stringify(document.summary)) {
+            setDocument(newDocument);
         }
     }
-  }, [estimate, computeSummary]);
+  }, [document, computeSummary]);
 
 
-  if (!estimate || (draftId && isDraftLoading) || isUserLoading) {
+  if (!document || (draftId && isDraftLoading) || isUserLoading) {
     return (
         <div className="container mx-auto p-4 md:p-8">
             <h1 className="text-3xl font-bold font-headline">Loading...</h1>
@@ -270,19 +271,21 @@ export default function CreateEstimatePage() {
             <div className="space-y-12">
               <div>
                 <h2 className="text-2xl font-bold font-headline mb-6 text-center">Select a Template</h2>
-                 <EstimateTemplateSelector 
-                  selectedTemplate={estimate.template}
-                  onSelectTemplate={(template) => setEstimate(prev => prev ? ({...prev, template}) : null)}
+                 <DocumentTemplateSelector 
+                  selectedTemplate={document.template}
+                  onSelectTemplate={(template) => setDocument(prev => prev ? ({...prev, template}) : null)}
+                  documentType="estimate"
                 />
               </div>
               <div>
                 <h2 className="text-2xl font-bold font-headline mb-4 text-center lg:text-left">Fill in Details</h2>
-                <EstimateForm 
-                  estimate={estimate} 
-                  setEstimate={setEstimate as React.Dispatch<React.SetStateAction<Estimate>>} 
+                <DocumentForm 
+                  document={document} 
+                  setDocument={setDocument as React.Dispatch<React.SetStateAction<Estimate>>} 
                   accentColor={accentColor}
                   setAccentColor={setAccentColor}
                   toast={toast}
+                  documentType="estimate"
                 />
               </div>
             </div>
@@ -290,14 +293,12 @@ export default function CreateEstimatePage() {
           <div className="lg:col-span-2 lg:pl-12">
             <div className="sticky top-24">
                 <h2 className="text-2xl font-bold font-headline mb-6">Live Preview</h2>
-                <EstimatePreview estimate={estimate} accentColor={accentColor} />
+                <DocumentPreview document={document} accentColor={accentColor} />
             </div>
           </div>
         </div>
       </div>
-      <PrintableEstimate estimate={estimate} accentColor={accentColor} />
+      <PrintableDocument document={document} accentColor={accentColor} />
     </>
   );
 }
-
-    

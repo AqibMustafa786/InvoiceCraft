@@ -2,7 +2,7 @@
 
 'use client';
 
-import type { Quote } from '@/lib/types';
+import type { Estimate } from '@/lib/types';
 import { Card, CardContent } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import Image from 'next/image';
@@ -10,8 +10,8 @@ import { format, isValid } from 'date-fns';
 import { Badge } from './ui/badge';
 
 // --- PROPS ---
-interface QuotePreviewProps {
-  quote: Quote;
+interface DocumentPreviewProps {
+  document: Estimate;
   accentColor: string;
   id?: string;
   isPrint?: boolean;
@@ -44,21 +44,20 @@ const SignatureDisplay = ({ signature, label }: { signature: any, label: string 
     )
 }
 
-const DefaultQuoteTemplate = ({ quote, accentColor }: { quote: Quote, accentColor: string }) => {
-    const { business, client, lineItems, summary, currency, clientSignature, documentType } = quote;
+const DefaultTemplate = ({ document, accentColor }: { document: Estimate, accentColor: string }) => {
+    const { business, client, lineItems, summary, currency, clientSignature, documentType } = document;
     const currencySymbol = currencySymbols[currency] || '$';
 
     const documentTitle = documentType === 'quote' ? 'Quote' : 'Estimate';
-    
+
     const previewStyle = {
-      fontFamily: quote.fontFamily || 'Inter, sans-serif',
-      '--heading-color': quote.headingColor || 'inherit',
-      '--text-color': quote.textColor || 'inherit',
+      fontFamily: document.fontFamily || 'Inter, sans-serif',
+      '--heading-color': document.headingColor || 'inherit',
+      '--text-color': document.textColor || 'inherit',
     } as React.CSSProperties;
 
-
     return (
-        <div className="p-8 md:p-10 text-gray-800" style={previewStyle}>
+        <div className="p-8 md:p-10 bg-white text-gray-800" style={previewStyle}>
             <header className="flex justify-between items-start mb-10">
                 <div>
                     {business.logoUrl ? (
@@ -76,14 +75,14 @@ const DefaultQuoteTemplate = ({ quote, accentColor }: { quote: Quote, accentColo
                 </div>
                 <div className="text-right">
                     <h2 className="text-3xl font-bold text-gray-400 uppercase tracking-wider" style={{color: 'var(--heading-color)'}}>{documentTitle}</h2>
-                    <p className="text-muted-foreground mt-1" style={{color: 'var(--text-color)'}}>{quote.estimateNumber}</p>
-                    {quote.status === 'accepted' && <Badge variant="success" className="mt-2 text-base">ACCEPTED</Badge>}
+                    <p className="text-muted-foreground mt-1" style={{color: 'var(--text-color)'}}>{document.estimateNumber}</p>
+                    {document.status === 'accepted' && <Badge variant="success" className="mt-2 text-base">ACCEPTED</Badge>}
                 </div>
             </header>
 
             <section className="grid grid-cols-2 gap-4 mb-10">
                 <div className="space-y-1" style={{color: 'var(--text-color)'}}>
-                    <p className="text-sm font-semibold text-gray-500" style={{color: 'var(--heading-color)'}}>QUOTE FOR</p>
+                    <p className="text-sm font-semibold text-gray-500" style={{color: 'var(--heading-color)'}}>{documentTitle.toUpperCase()} FOR</p>
                     <p className="font-bold">{client.name}</p>
                     {client.companyName && <p className="text-sm text-gray-600">{client.companyName}</p>}
                     <p className="text-muted-foreground text-sm whitespace-pre-line">{client.address}</p>
@@ -93,20 +92,20 @@ const DefaultQuoteTemplate = ({ quote, accentColor }: { quote: Quote, accentColo
                 <div className="text-right space-y-1" style={{color: 'var(--text-color)'}}>
                      <div className="space-y-1">
                         <p className="text-sm font-semibold text-gray-500" style={{color: 'var(--heading-color)'}}>Project / Job Title</p>
-                        <p>{quote.projectTitle}</p>
+                        <p>{document.projectTitle}</p>
                     </div>
                     <div className="space-y-1 mt-2">
-                        <p className="text-sm font-semibold text-gray-500" style={{color: 'var(--heading-color)'}}>Quote Date</p>
-                        <p>{safeFormat(quote.estimateDate, 'MMMM d, yyyy')}</p>
+                        <p className="text-sm font-semibold text-gray-500" style={{color: 'var(--heading-color)'}}>{documentTitle} Date</p>
+                        <p>{safeFormat(document.estimateDate, 'MMMM d, yyyy')}</p>
                     </div>
                     <div className="space-y-1 mt-2">
                         <p className="text-sm font-semibold text-gray-500" style={{color: 'var(--heading-color)'}}>Valid Until</p>
-                        <p>{safeFormat(quote.validUntilDate, 'MMMM d, yyyy')}</p>
+                        <p>{safeFormat(document.validUntilDate, 'MMMM d, yyyy')}</p>
                     </div>
-                    {quote.referenceNumber && (
+                    {document.referenceNumber && (
                         <div className="space-y-1 mt-2">
                             <p className="text-sm font-semibold text-gray-500" style={{color: 'var(--heading-color)'}}>Reference #</p>
-                            <p>{quote.referenceNumber}</p>
+                            <p>{document.referenceNumber}</p>
                         </div>
                     )}
                 </div>
@@ -161,7 +160,7 @@ const DefaultQuoteTemplate = ({ quote, accentColor }: { quote: Quote, accentColo
                     )}
                     <Separator className="my-2" />
                     <div className="flex justify-between items-center font-bold text-lg p-3 mt-2 rounded-md" style={{ backgroundColor: accentColor, color: 'white' }}>
-                        <span>Quote Total</span>
+                        <span>{documentTitle} Total</span>
                         <span className="tabular-nums">{currencySymbol}{summary.grandTotal.toFixed(2)}</span>
                     </div>
                 </div>
@@ -174,10 +173,10 @@ const DefaultQuoteTemplate = ({ quote, accentColor }: { quote: Quote, accentColo
                         <SignatureDisplay signature={clientSignature} label="Client Signature" />
                     </div>
                  )}
-                {quote.termsAndConditions && (
+                {document.termsAndConditions && (
                     <div className="mb-8">
                         <p className="text-sm font-semibold text-gray-500" style={{color: 'var(--heading-color)'}}>Terms & Conditions</p>
-                        <p className="text-sm text-muted-foreground mt-1 whitespace-pre-line">{quote.termsAndConditions}</p>
+                        <p className="text-sm text-muted-foreground mt-1 whitespace-pre-line">{document.termsAndConditions}</p>
                     </div>
                 )}
             </footer>
@@ -185,19 +184,19 @@ const DefaultQuoteTemplate = ({ quote, accentColor }: { quote: Quote, accentColo
     );
 };
 
-const ContractorQuoteTemplate = ({ quote, accentColor }: { quote: Quote, accentColor: string }) => {
-    const { business, client, lineItems, summary, currency, clientSignature, documentType } = quote;
+const ContractorTemplate = ({ document, accentColor }: { document: Estimate, accentColor: string }) => {
+    const { business, client, lineItems, summary, currency, clientSignature, documentType } = document;
     const currencySymbol = currencySymbols[currency] || '$';
     const documentTitle = documentType === 'quote' ? 'Quote' : 'Estimate';
-    
+
     const previewStyle = {
-      fontFamily: quote.fontFamily || 'Inter, sans-serif',
-      '--heading-color': quote.headingColor || 'inherit',
-      '--text-color': quote.textColor || 'inherit',
+      fontFamily: document.fontFamily || 'Inter, sans-serif',
+      '--heading-color': document.headingColor || 'inherit',
+      '--text-color': document.textColor || 'inherit',
     } as React.CSSProperties;
 
     return (
-        <div className="p-8 text-gray-800 border-t-8" style={{...previewStyle, borderTopColor: accentColor }}>
+        <div className="p-8 bg-white text-gray-800 border-t-8" style={{...previewStyle, borderTopColor: accentColor }}>
             <header className="grid grid-cols-2 gap-10 mb-12">
                 <div>
                     {business.logoUrl ? (
@@ -214,9 +213,9 @@ const ContractorQuoteTemplate = ({ quote, accentColor }: { quote: Quote, accentC
                  <div className="text-right">
                     <h2 className="text-5xl font-light uppercase text-gray-400 tracking-wider" style={{color: 'var(--heading-color)'}}>{documentTitle}</h2>
                     <div className="mt-4 text-xs space-y-1" style={{color: 'var(--text-color)'}}>
-                        <p><span className="font-bold text-gray-500">Quote #:</span> {quote.estimateNumber}</p>
-                        <p><span className="font-bold text-gray-500">Date:</span> {safeFormat(quote.estimateDate, 'M/d/yyyy')}</p>
-                        <p><span className="font-bold text-gray-500">Valid Until:</span> {safeFormat(quote.validUntilDate, 'M/d/yyyy')}</p>
+                        <p><span className="font-bold text-gray-500">{documentTitle} #:</span> {document.estimateNumber}</p>
+                        <p><span className="font-bold text-gray-500">Date:</span> {safeFormat(document.estimateDate, 'M/d/yyyy')}</p>
+                        <p><span className="font-bold text-gray-500">Valid Until:</span> {safeFormat(document.validUntilDate, 'M/d/yyyy')}</p>
                     </div>
                 </div>
             </header>
@@ -281,10 +280,10 @@ const ContractorQuoteTemplate = ({ quote, accentColor }: { quote: Quote, accentC
                         <SignatureDisplay signature={clientSignature} label="Client Acceptance Signature" />
                     </div>
                  )}
-                {quote.termsAndConditions && (
+                {document.termsAndConditions && (
                     <div className="text-xs text-gray-500 border-t pt-6 mb-8">
                         <h4 className="font-bold text-sm text-gray-600 mb-2" style={{color: 'var(--heading-color)'}}>Terms & Conditions</h4>
-                        <p className="whitespace-pre-line">{quote.termsAndConditions}</p>
+                        <p className="whitespace-pre-line">{document.termsAndConditions}</p>
                     </div>
                 )}
             </footer>
@@ -294,12 +293,12 @@ const ContractorQuoteTemplate = ({ quote, accentColor }: { quote: Quote, accentC
 
 
 const templates = {
-  'default': DefaultQuoteTemplate,
-  'contractor': ContractorQuoteTemplate,
+  'default': DefaultTemplate,
+  'contractor': ContractorTemplate,
 };
 
-export function QuotePreview({ quote, accentColor, id = 'quote-preview', isPrint = false }: QuotePreviewProps) {
-  if (!quote) {
+export function DocumentPreview({ document, accentColor, id = 'document-preview', isPrint = false }: DocumentPreviewProps) {
+  if (!document) {
     return null;
   }
 
@@ -308,11 +307,11 @@ export function QuotePreview({ quote, accentColor, id = 'quote-preview', isPrint
       '--primary': accentColor
   } as React.CSSProperties;
 
-  const TemplateComponent = templates[quote.template as keyof typeof templates] || templates.default;
+  const TemplateComponent = templates[document.template as keyof typeof templates] || templates.default;
 
   const renderContent = () => (
     <TemplateComponent
-      quote={quote}
+      document={document}
       accentColor={accentColor}
     />
   );

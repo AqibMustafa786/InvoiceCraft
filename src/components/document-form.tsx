@@ -10,7 +10,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { DatePicker } from '@/components/ui/datepicker';
-import { ImageUp, Plus, Trash2, Palette, X, Mail, Truck, Hash, Phone, Globe, Briefcase, Award, User, FileText, Building, Pencil, Type, CaseUpper, CaseLower } from 'lucide-react';
+import { ImageUp, Plus, Trash2, Palette, X, Mail, Truck, Hash, Phone, Globe, Briefcase, Award, User, FileText, Building, Pencil } from 'lucide-react';
 import Image from 'next/image';
 import {
   Select,
@@ -31,12 +31,13 @@ import {
 import { serverTimestamp } from 'firebase/firestore';
 import { RadioGroup, RadioGroupItem } from './ui/radio-group';
 
-interface EstimateFormProps {
-  estimate: Estimate;
-  setEstimate: Dispatch<SetStateAction<Estimate>>;
+interface DocumentFormProps {
+  document: Estimate;
+  setDocument: Dispatch<SetStateAction<Estimate>>;
   accentColor: string;
   setAccentColor: Dispatch<SetStateAction<string>>;
   toast: (options: { title: string; description: string; variant?: "default" | "destructive" }) => void;
+  documentType: 'estimate' | 'quote';
 }
 
 const currencies = [
@@ -55,12 +56,10 @@ const fonts = [
     { value: 'system-ui', label: 'System Default' },
 ]
 
-export function EstimateForm({ estimate, setEstimate, accentColor, setAccentColor, toast }: EstimateFormProps) {
+export function DocumentForm({ document, setDocument, accentColor, setAccentColor, toast, documentType }: DocumentFormProps) {
   const [bulkAddCount, setBulkAddCount] = useState(5);
   const [colorInputValue, setColorInputValue] = useState(accentColor);
-  const [headingColorValue, setHeadingColorValue] = useState(estimate.headingColor || '#000000');
-  const [textColorValue, setTextColorValue] = useState(estimate.textColor || '#333333');
-  const [logoUrl, setLogoUrl] = useState<string | null>(estimate.business.logoUrl || null);
+  const [logoUrl, setLogoUrl] = useState<string | null>(document.business.logoUrl || null);
   const [isSignatureDialogOpen, setIsSignatureDialogOpen] = useState(false);
 
   useEffect(() => {
@@ -68,26 +67,18 @@ export function EstimateForm({ estimate, setEstimate, accentColor, setAccentColo
   }, [accentColor]);
   
   useEffect(() => {
-    setHeadingColorValue(estimate.headingColor || '#000000');
-  }, [estimate.headingColor]);
-  
-  useEffect(() => {
-    setTextColorValue(estimate.textColor || '#333333');
-  }, [estimate.textColor]);
-
-  useEffect(() => {
-    setEstimate(prev => ({
+    setDocument(prev => ({
         ...prev,
         business: {
             ...prev.business,
             logoUrl: logoUrl || '',
         }
     }))
-  }, [logoUrl, setEstimate]);
+  }, [logoUrl, setDocument]);
 
   const handleNestedChange = (section: 'business' | 'client' | 'summary', e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    setEstimate(prev => ({
+    setDocument(prev => ({
       ...prev,
       [section]: {
         ...prev[section],
@@ -98,13 +89,13 @@ export function EstimateForm({ estimate, setEstimate, accentColor, setAccentColo
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    setEstimate(prev => ({ ...prev, [name]: value }));
+    setDocument(prev => ({ ...prev, [name]: value }));
   };
 
   const handleNumberChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     const [section, field] = name.split('.');
-     setEstimate(prev => ({
+     setDocument(prev => ({
       ...prev,
       [section as 'summary']: {
         ...prev[section as 'summary'],
@@ -114,29 +105,25 @@ export function EstimateForm({ estimate, setEstimate, accentColor, setAccentColo
   };
   
   const handleCurrencyChange = (value: string) => {
-    setEstimate(prev => ({ ...prev, currency: value }));
+    setDocument(prev => ({ ...prev, currency: value }));
   }
 
-  const handleLanguageChange = (value: string) => {
-    setEstimate(prev => ({ ...prev, language: value }));
-  };
-
   const handleItemChange = (index: number, field: keyof Omit<LineItem, 'id'>, value: string | number | boolean) => {
-    const newItems = [...estimate.lineItems];
+    const newItems = [...document.lineItems];
     (newItems[index] as any)[field] = value;
-    setEstimate(prev => ({ ...prev, lineItems: newItems }));
+    setDocument(prev => ({ ...prev, lineItems: newItems }));
   };
 
   const addItem = () => {
-     if (estimate.lineItems.length >= 50) {
+     if (document.lineItems.length >= 50) {
        toast({
         title: "Item Limit Reached",
-        description: "You cannot add more than 50 items to a single estimate.",
+        description: `You cannot add more than 50 items to a single ${documentType}.`,
         variant: "destructive",
       });
       return;
     }
-    setEstimate(prev => ({
+    setDocument(prev => ({
       ...prev,
       lineItems: [...prev.lineItems, { id: crypto.randomUUID(), name: '', quantity: 1, unitPrice: 0, taxable: true }],
     }));
@@ -146,10 +133,10 @@ export function EstimateForm({ estimate, setEstimate, accentColor, setAccentColo
     const count = Number(bulkAddCount);
     if (count <= 0) return;
 
-    if (estimate.lineItems.length + count > 50) {
+    if (document.lineItems.length + count > 50) {
       toast({
         title: "Item Limit Exceeded",
-        description: `You can only add ${50 - estimate.lineItems.length} more items. The maximum is 50.`,
+        description: `You can only add ${50 - document.lineItems.length} more items. The maximum is 50.`,
         variant: "destructive",
       });
       return;
@@ -163,15 +150,15 @@ export function EstimateForm({ estimate, setEstimate, accentColor, setAccentColo
       taxable: true,
     }));
 
-    setEstimate(prev => ({
+    setDocument(prev => ({
       ...prev,
       lineItems: [...prev.lineItems, ...newItems],
     }));
   };
 
   const removeItem = (index: number) => {
-    const newItems = estimate.lineItems.filter((_, i) => i !== index);
-    setEstimate(prev => ({ ...prev, lineItems: newItems }));
+    const newItems = document.lineItems.filter((_, i) => i !== index);
+    setDocument(prev => ({ ...prev, lineItems: newItems }));
   };
 
   const handleLogoUpload = (e: ChangeEvent<HTMLInputElement>) => {
@@ -194,7 +181,7 @@ export function EstimateForm({ estimate, setEstimate, accentColor, setAccentColo
   };
   
   const handleOwnerSignatureSave = (image: string, signerName: string) => {
-    setEstimate(prev => ({
+    setDocument(prev => ({
         ...prev,
         business: {
             ...prev.business,
@@ -208,8 +195,11 @@ export function EstimateForm({ estimate, setEstimate, accentColor, setAccentColo
     setIsSignatureDialogOpen(false);
   };
   
-  const currencySymbol = currencies.find(c => c.value === estimate.currency)?.label.split(' ')[1] || '$';
-  const isSigned = !!estimate.clientSignature;
+  const currencySymbol = currencies.find(c => c.value === document.currency)?.label.split(' ')[1] || '$';
+  const isSigned = !!document.clientSignature;
+
+  const docName = documentType === 'quote' ? 'Quote' : 'Estimate';
+  const docNumberName = documentType === 'quote' ? 'Quote Number' : 'Estimate Number';
 
   return (
     <div className="space-y-6">
@@ -271,8 +261,8 @@ export function EstimateForm({ estimate, setEstimate, accentColor, setAccentColo
                 <div className="space-y-2">
                     <Label>Document Type</Label>
                     <RadioGroup
-                        value={estimate.documentType}
-                        onValueChange={(value) => setEstimate(p => ({...p, documentType: value as 'estimate' | 'quote'}))}
+                        value={document.documentType}
+                        onValueChange={(value) => setDocument(p => ({...p, documentType: value as 'estimate' | 'quote'}))}
                         className="flex gap-4"
                     >
                         <div className="flex items-center space-x-2">
@@ -287,7 +277,7 @@ export function EstimateForm({ estimate, setEstimate, accentColor, setAccentColo
                 </div>
                  <div className="space-y-2">
                     <Label htmlFor="fontFamily">Font Family</Label>
-                    <Select value={estimate.fontFamily} onValueChange={(value) => setEstimate(p => ({...p, fontFamily: value}))}>
+                    <Select value={document.fontFamily} onValueChange={(value) => setDocument(p => ({...p, fontFamily: value}))}>
                         <SelectTrigger id="fontFamily">
                             <SelectValue placeholder="Select font" />
                         </SelectTrigger>
@@ -296,7 +286,6 @@ export function EstimateForm({ estimate, setEstimate, accentColor, setAccentColo
                         </SelectContent>
                     </Select>
                 </div>
-
             </CardContent>
         </Card>
         
@@ -309,40 +298,40 @@ export function EstimateForm({ estimate, setEstimate, accentColor, setAccentColo
                 <Label htmlFor="businessName">Business Name</Label>
                 <div className="relative flex items-center">
                     <Briefcase className="absolute left-3 h-5 w-5 text-muted-foreground" />
-                    <Input id="businessName" name="name" value={estimate.business.name} onChange={(e) => handleNestedChange('business', e)} className="pl-10" />
+                    <Input id="businessName" name="name" value={document.business.name} onChange={(e) => handleNestedChange('business', e)} className="pl-10" />
                 </div>
                 </div>
                 <div className="space-y-2">
                     <Label htmlFor="businessAddress">Business Address</Label>
-                    <Textarea id="businessAddress" name="address" value={estimate.business.address} onChange={(e) => handleNestedChange('business', e)} placeholder="Street, City, State, Zip"/>
+                    <Textarea id="businessAddress" name="address" value={document.business.address} onChange={(e) => handleNestedChange('business', e)} placeholder="Street, City, State, Zip"/>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-2">
                         <Label htmlFor="businessPhone">Phone Number</Label>
                         <div className="relative flex items-center">
                             <Phone className="absolute left-3 h-5 w-5 text-muted-foreground" />
-                            <Input id="businessPhone" name="phone" value={estimate.business.phone} onChange={(e) => handleNestedChange('business', e)} className="pl-10" />
+                            <Input id="businessPhone" name="phone" value={document.business.phone} onChange={(e) => handleNestedChange('business', e)} className="pl-10" />
                         </div>
                     </div>
                     <div className="space-y-2">
                         <Label htmlFor="businessEmail">Email Address</Label>
                         <div className="relative flex items-center">
                             <Mail className="absolute left-3 h-5 w-5 text-muted-foreground" />
-                            <Input id="businessEmail" name="email" value={estimate.business.email} onChange={(e) => handleNestedChange('business', e)} className="pl-10" />
+                            <Input id="businessEmail" name="email" value={document.business.email} onChange={(e) => handleNestedChange('business', e)} className="pl-10" />
                         </div>
                     </div>
                     <div className="space-y-2">
                         <Label htmlFor="businessWebsite">Website (optional)</Label>
                         <div className="relative flex items-center">
                             <Globe className="absolute left-3 h-5 w-5 text-muted-foreground" />
-                            <Input id="businessWebsite" name="website" value={estimate.business.website} onChange={(e) => handleNestedChange('business', e)} className="pl-10" />
+                            <Input id="businessWebsite" name="website" value={document.business.website} onChange={(e) => handleNestedChange('business', e)} className="pl-10" />
                         </div>
                     </div>
                     <div className="space-y-2">
                         <Label htmlFor="businessLicense">License Number (optional)</Label>
                         <div className="relative flex items-center">
                             <Award className="absolute left-3 h-5 w-5 text-muted-foreground" />
-                            <Input id="businessLicense" name="licenseNumber" value={estimate.business.licenseNumber} onChange={(e) => handleNestedChange('business', e)} className="pl-10" />
+                            <Input id="businessLicense" name="licenseNumber" value={document.business.licenseNumber} onChange={(e) => handleNestedChange('business', e)} className="pl-10" />
                         </div>
                     </div>
                 </div>
@@ -359,34 +348,34 @@ export function EstimateForm({ estimate, setEstimate, accentColor, setAccentColo
                 <Label htmlFor="clientName">Client Full Name</Label>
                 <div className="relative flex items-center">
                     <User className="absolute left-3 h-5 w-5 text-muted-foreground" />
-                    <Input id="clientName" name="name" value={estimate.client.name} onChange={(e) => handleNestedChange('client', e)} className="pl-10" />
+                    <Input id="clientName" name="name" value={document.client.name} onChange={(e) => handleNestedChange('client', e)} className="pl-10" />
                     </div>
                 </div>
                 <div className="space-y-2">
                 <Label htmlFor="clientCompanyName">Client Company Name (optional)</Label>
                 <div className="relative flex items-center">
                     <Building className="absolute left-3 h-5 w-5 text-muted-foreground" />
-                    <Input id="clientCompanyName" name="companyName" value={estimate.client.companyName} onChange={(e) => handleNestedChange('client', e)} className="pl-10" />
+                    <Input id="clientCompanyName" name="companyName" value={document.client.companyName} onChange={(e) => handleNestedChange('client', e)} className="pl-10" />
                     </div>
                 </div>
             </div>
             <div className="space-y-2">
                 <Label htmlFor="clientAddress">Client Address</Label>
-                <Textarea id="clientAddress" name="address" value={estimate.client.address} onChange={(e) => handleNestedChange('client', e)} />
+                <Textarea id="clientAddress" name="address" value={document.client.address} onChange={(e) => handleNestedChange('client', e)} />
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
                 <Label htmlFor="clientEmail">Client Email</Label>
                 <div className="relative flex items-center">
                     <Mail className="absolute left-3 h-5 w-5 text-muted-foreground" />
-                    <Input id="clientEmail" name="email" value={estimate.client.email || ''} onChange={(e) => handleNestedChange('client', e)} className="pl-10" placeholder="client@example.com" />
+                    <Input id="clientEmail" name="email" value={document.client.email || ''} onChange={(e) => handleNestedChange('client', e)} className="pl-10" placeholder="client@example.com" />
                 </div>
                 </div>
                 <div className="space-y-2">
                 <Label htmlFor="clientPhone">Client Phone</Label>
                 <div className="relative flex items-center">
                     <Phone className="absolute left-3 h-5 w-5 text-muted-foreground" />
-                    <Input id="clientPhone" name="phone" value={estimate.client.phone || ''} onChange={(e) => handleNestedChange('client', e)} className="pl-10" />
+                    <Input id="clientPhone" name="phone" value={document.client.phone || ''} onChange={(e) => handleNestedChange('client', e)} className="pl-10" />
                 </div>
                 </div>
             </div>
@@ -395,38 +384,38 @@ export function EstimateForm({ estimate, setEstimate, accentColor, setAccentColo
         
         <Card className="bg-card/50 backdrop-blur-sm group-disabled:opacity-70">
             <CardHeader>
-            <CardTitle>Estimate Details</CardTitle>
+            <CardTitle>{docName} Details</CardTitle>
             </CardHeader>
             <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
-                <Label htmlFor="estimateNumber">Estimate Number</Label>
-                <Input id="estimateNumber" name="estimateNumber" value={estimate.estimateNumber} onChange={handleInputChange} />
+                <Label htmlFor="estimateNumber">{docNumberName}</Label>
+                <Input id="estimateNumber" name="estimateNumber" value={document.estimateNumber} onChange={handleInputChange} />
             </div>
             <div className="space-y-2">
                 <Label htmlFor="projectTitle">Project / Job Title</Label>
                 <div className="relative flex items-center">
                     <FileText className="absolute left-3 h-5 w-5 text-muted-foreground" />
-                    <Input id="projectTitle" name="projectTitle" value={estimate.projectTitle} onChange={handleInputChange} className="pl-10" />
+                    <Input id="projectTitle" name="projectTitle" value={document.projectTitle} onChange={handleInputChange} className="pl-10" />
                 </div>
             </div>
             <div className="space-y-2">
                 <Label>Date Issued</Label>
-                <DatePicker date={estimate.estimateDate} setDate={(date) => setEstimate(p => ({ ...p, estimateDate: date! }))} />
+                <DatePicker date={document.estimateDate} setDate={(date) => setDocument(p => ({ ...p, estimateDate: date! }))} />
             </div>
             <div className="space-y-2">
                 <Label>Expiration Date</Label>
-                <DatePicker date={estimate.validUntilDate} setDate={(date) => setEstimate(p => ({ ...p, validUntilDate: date! }))} />
+                <DatePicker date={document.validUntilDate} setDate={(date) => setDocument(p => ({ ...p, validUntilDate: date! }))} />
             </div>
             <div className="space-y-2">
                 <Label htmlFor="referenceNumber">Reference Number (optional)</Label>
                 <div className="relative flex items-center">
                     <Hash className="absolute left-3 h-5 w-5 text-muted-foreground" />
-                    <Input id="referenceNumber" name="referenceNumber" value={estimate.referenceNumber} onChange={handleInputChange} className="pl-10" />
+                    <Input id="referenceNumber" name="referenceNumber" value={document.referenceNumber} onChange={handleInputChange} className="pl-10" />
                 </div>
             </div>
             <div className="space-y-2">
                     <Label htmlFor="currency">Currency</Label>
-                    <Select value={estimate.currency} onValueChange={handleCurrencyChange}>
+                    <Select value={document.currency} onValueChange={handleCurrencyChange}>
                         <SelectTrigger id="currency">
                             <SelectValue placeholder="Select currency" />
                         </SelectTrigger>
@@ -452,7 +441,7 @@ export function EstimateForm({ estimate, setEstimate, accentColor, setAccentColo
                 <div className="col-span-1 text-center"><Label>Taxable</Label></div>
                 <div className="col-span-2"><Label>Total</Label></div>
             </div>
-            {estimate.lineItems.map((item, index) => (
+            {document.lineItems.map((item, index) => (
                 <div key={item.id} className="grid grid-cols-12 gap-2 items-start">
                 <div className="col-span-12 md:col-span-5 space-y-2">
                     <Label htmlFor={`itemName-${index}`} className="md:hidden">Item Name / Description</Label>
@@ -512,23 +501,23 @@ export function EstimateForm({ estimate, setEstimate, accentColor, setAccentColo
             <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                 <Label htmlFor="taxPercentage">Tax (%)</Label>
-                <Input id="taxPercentage" name="summary.taxPercentage" type="number" value={estimate.summary.taxPercentage} onChange={handleNumberChange} />
+                <Input id="taxPercentage" name="summary.taxPercentage" type="number" value={document.summary.taxPercentage} onChange={handleNumberChange} />
                 </div>
                 <div className="space-y-2">
                 <Label htmlFor="discount">Discount (Fixed Amount)</Label>
-                <Input id="discount" name="summary.discount" type="number" value={estimate.summary.discount} onChange={handleNumberChange} />
+                <Input id="discount" name="summary.discount" type="number" value={document.summary.discount} onChange={handleNumberChange} />
                 </div>
                 <div className="space-y-2 col-span-2">
                 <Label htmlFor="shippingCost">Shipping / Extra Costs</Label>
                 <div className="relative flex items-center">
                     <Truck className="absolute left-3 h-5 w-5 text-muted-foreground" />
-                    <Input id="shippingCost" name="summary.shippingCost" type="number" value={estimate.summary.shippingCost} onChange={handleNumberChange} className="pl-10"/>
+                    <Input id="shippingCost" name="summary.shippingCost" type="number" value={document.summary.shippingCost} onChange={handleNumberChange} className="pl-10"/>
                 </div>
                 </div>
             </div>
             <div className="space-y-2">
                 <Label htmlFor="termsAndConditions">Terms & Conditions</Label>
-                <Textarea id="termsAndConditions" name="termsAndConditions" value={estimate.termsAndConditions} onChange={handleInputChange} placeholder="e.g., Payment terms, validity period, warranty information..." />
+                <Textarea id="termsAndConditions" name="termsAndConditions" value={document.termsAndConditions} onChange={handleInputChange} placeholder="e.g., Payment terms, validity period, warranty information..." />
             </div>
              <div className="space-y-2">
                 <Label>Owner Signature</Label>
@@ -536,20 +525,20 @@ export function EstimateForm({ estimate, setEstimate, accentColor, setAccentColo
                     <DialogTrigger asChild>
                         <Button variant="outline" className="w-full">
                             <Pencil className="mr-2 h-4 w-4" />
-                            {estimate.business.ownerSignature ? 'Edit Signature' : 'Add Signature'}
+                            {document.business.ownerSignature ? 'Edit Signature' : 'Add Signature'}
                         </Button>
                     </DialogTrigger>
                     <DialogContent>
                         <DialogHeader>
                         <DialogTitle>Owner Signature</DialogTitle>
                         </DialogHeader>
-                        <SignaturePad onSave={handleOwnerSignatureSave} signerName={estimate.business.name} />
+                        <SignaturePad onSave={handleOwnerSignatureSave} signerName={document.business.name} />
                     </DialogContent>
                 </Dialog>
 
-                {estimate.business.ownerSignature && (
+                {document.business.ownerSignature && (
                     <div className="p-4 border rounded-md bg-muted/50">
-                        <Image src={estimate.business.ownerSignature.image} alt="Owner Signature" width={150} height={75} />
+                        <Image src={document.business.ownerSignature.image} alt="Owner Signature" width={150} height={75} />
                     </div>
                 )}
             </div>

@@ -3,14 +3,14 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { createPortal } from 'react-dom';
-import type { Quote, LineItem } from '@/lib/types';
-import { QuoteForm } from '@/components/quote-form';
-import { QuotePreview } from '@/components/quote-preview';
+import type { Estimate, LineItem, Quote } from '@/lib/types';
+import { DocumentForm } from '@/components/document-form';
+import { DocumentPreview } from '@/components/document-preview';
 import { Button } from '@/components/ui/button';
 import { Printer, FilePlus, LayoutDashboard, Edit, Share2 } from 'lucide-react';
 import { addDays, isValid } from 'date-fns';
 import { useToast } from '@/hooks/use-toast';
-import { QuoteTemplateSelector } from '@/components/quote-template-selector';
+import { DocumentTemplateSelector } from '@/components/document-template-selector';
 import Link from 'next/link';
 import { useFirebase, useMemoFirebase } from '@/firebase/provider';
 import { doc, serverTimestamp } from 'firebase/firestore';
@@ -72,7 +72,7 @@ const getInitialQuote = (): Omit<Quote, 'userId'> => ({
 });
 
 
-function PrintableQuote({ quote, accentColor }: { quote: Quote, accentColor: string }) {
+function PrintableDocument({ document, accentColor }: { document: Quote, accentColor: string }) {
     const [printRoot, setPrintRoot] = useState<HTMLElement | null>(null);
 
     useEffect(() => {
@@ -85,14 +85,14 @@ function PrintableQuote({ quote, accentColor }: { quote: Quote, accentColor: str
     }
 
     return createPortal(
-        <QuotePreview quote={quote} accentColor={accentColor} id="quote-preview-print" isPrint={true} />,
+        <DocumentPreview document={document} accentColor={accentColor} id="quote-preview-print" isPrint={true} />,
         printRoot
     );
 }
 
 
 export default function CreateQuotePage() {
-  const [quote, setQuote] = useState<Quote | null>(null);
+  const [document, setDocument] = useState<Quote | null>(null);
   const [accentColor, setAccentColor] = useState<string>('hsl(var(--primary))');
   const { toast } = useToast();
   const { firestore, user, isUserLoading } = useFirebase();
@@ -140,9 +140,9 @@ export default function CreateQuotePage() {
             return value;
         };
         const loadedDraft = JSON.parse(JSON.stringify(remoteDraft), fromJSON);
-        setQuote({ ...initialQuote, ...loadedDraft });
+        setDocument({ ...initialQuote, ...loadedDraft });
     } else {
-        setQuote(initialQuote);
+        setDocument(initialQuote);
     }
     
     if (typeof window !== 'undefined' && document) {
@@ -158,7 +158,7 @@ export default function CreateQuotePage() {
   };
   
   const handleSaveDraft = () => {
-    if (!quote || !firestore || !user) return;
+    if (!document || !firestore || !user) return;
 
     const normalizeDate = (val: any): Date => {
         if (!val) return new Date();
@@ -167,29 +167,29 @@ export default function CreateQuotePage() {
     };
     
     const draftToSave = {
-      ...quote,
+      ...document,
       userId: user.uid,
-      estimateDate: normalizeDate(quote.estimateDate),
-      validUntilDate: normalizeDate(quote.validUntilDate),
+      estimateDate: normalizeDate(document.estimateDate),
+      validUntilDate: normalizeDate(document.validUntilDate),
       updatedAt: serverTimestamp(),
-      createdAt: quote.createdAt ? quote.createdAt : serverTimestamp(),
+      createdAt: document.createdAt || serverTimestamp(),
     };
     
-    const docRef = doc(firestore, QUOTES_COLLECTION, quote.id);
+    const docRef = doc(firestore, QUOTES_COLLECTION, document.id);
     setDocumentNonBlocking(docRef, draftToSave, { merge: true });
 
     toast({
       title: "Quote Draft Saved",
       description: "Your quote draft has been saved online.",
     });
-    router.push(`/create-quote?draftId=${quote.id}`);
+    router.push(`/create-quote?draftId=${document.id}`);
   };
 
   const handleNew = () => {
     if (!user) return;
     const newQuote = {...getInitialQuote(), userId: user.uid};
     newQuote.estimateNumber = `QTE-${new Date().getFullYear()}-${String(Math.floor(Math.random() * 1000)).padStart(3, '0')}`;
-    setQuote(newQuote);
+    setDocument(newQuote);
     if (typeof window !== 'undefined' && document) {
         const computedColor = getComputedStyle(document.documentElement).getPropertyValue('--primary').trim();
         if (computedColor) {
@@ -204,8 +204,8 @@ export default function CreateQuotePage() {
   };
 
     const handleShare = () => {
-      if (!quote) return;
-      const url = `${window.location.origin}/quote/${quote.id}`;
+      if (!document) return;
+      const url = `${window.location.origin}/quote/${document.id}`;
       navigator.clipboard.writeText(url);
       toast({
           title: "Link Copied!",
@@ -214,16 +214,16 @@ export default function CreateQuotePage() {
   };
   
   useEffect(() => {
-    if (quote) {
-        const newQuote = computeSummary(quote);
-         if (JSON.stringify(newQuote.summary) !== JSON.stringify(quote.summary)) {
-            setQuote(newQuote);
+    if (document) {
+        const newQuote = computeSummary(document);
+         if (JSON.stringify(newQuote.summary) !== JSON.stringify(document.summary)) {
+            setDocument(newQuote);
         }
     }
-  }, [quote, computeSummary]);
+  }, [document, computeSummary]);
 
 
-  if (!quote || (draftId && isDraftLoading) || isUserLoading) {
+  if (!document || (draftId && isDraftLoading) || isUserLoading) {
     return (
         <div className="container mx-auto p-4 md:p-8">
             <h1 className="text-3xl font-bold font-headline">Loading...</h1>
@@ -270,19 +270,21 @@ export default function CreateQuotePage() {
             <div className="space-y-12">
               <div>
                 <h2 className="text-2xl font-bold font-headline mb-6 text-center">Select a Template</h2>
-                 <QuoteTemplateSelector 
-                  selectedTemplate={quote.template}
-                  onSelectTemplate={(template) => setQuote(prev => prev ? ({...prev, template}) : null)}
+                 <DocumentTemplateSelector 
+                  selectedTemplate={document.template}
+                  onSelectTemplate={(template) => setDocument(prev => prev ? ({...prev, template}) : null)}
+                  documentType="quote"
                 />
               </div>
               <div>
                 <h2 className="text-2xl font-bold font-headline mb-4 text-center lg:text-left">Fill in Details</h2>
-                <QuoteForm 
-                  quote={quote} 
-                  setQuote={setQuote as React.Dispatch<React.SetStateAction<Quote>>} 
+                <DocumentForm 
+                  document={document} 
+                  setDocument={setDocument as React.Dispatch<React.SetStateAction<Estimate>>}
                   accentColor={accentColor}
                   setAccentColor={setAccentColor}
                   toast={toast}
+                  documentType="quote"
                 />
               </div>
             </div>
@@ -290,14 +292,12 @@ export default function CreateQuotePage() {
           <div className="lg:col-span-2 lg:pl-12">
             <div className="sticky top-24">
                 <h2 className="text-2xl font-bold font-headline mb-6">Live Preview</h2>
-                <QuotePreview quote={quote} accentColor={accentColor} />
+                <DocumentPreview document={document} accentColor={accentColor} />
             </div>
           </div>
         </div>
       </div>
-      <PrintableQuote quote={quote} accentColor={accentColor} />
+      <PrintableDocument document={document} accentColor={accentColor} />
     </>
   );
 }
-
-    
