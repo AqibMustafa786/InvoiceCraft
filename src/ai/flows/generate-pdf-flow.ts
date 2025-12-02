@@ -9,10 +9,10 @@
 import { ai } from '@/ai/genkit';
 import { z } from 'genkit';
 import puppeteer from 'puppeteer';
+import { type Estimate } from '@/lib/types';
 import { renderToStaticMarkup } from 'react-dom/server';
 import React from 'react';
 import { DocumentPreview } from '@/components/document-preview';
-import { type Estimate } from '@/lib/types';
 
 // The input is now the document data itself.
 export const GeneratePdfInputSchema = z.custom<Estimate>();
