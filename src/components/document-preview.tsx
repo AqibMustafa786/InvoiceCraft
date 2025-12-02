@@ -442,90 +442,78 @@ export function DocumentPreview({ document, accentColor, id = 'document-preview'
             await new Promise(resolve => setTimeout(resolve, 0));
 
             const headerEl = tempContainer.querySelector('[data-element="page-header"]') as HTMLElement;
-            const clientEl = tempContainer.querySelector('[data-element="client-details"]') as HTMLElement;
-            const categoryEl = tempContainer.querySelector('[data-element="category-preview-wrapper"]') as HTMLElement;
             const tableHeaderEl = tempContainer.querySelector('[data-element="table-header"]') as HTMLElement;
             const footerEl = tempContainer.querySelector('[data-element="footer"]') as HTMLElement;
             const allRows = Array.from(tempContainer.querySelectorAll('[data-element="table-row"]')) as HTMLElement[];
 
             if (!headerEl || !tableHeaderEl || !footerEl || allRows.length === 0) {
-                 window.document.body.removeChild(tempRoot);
+                setPaginatedItems([document.lineItems]);
+                setNeedsRemeasure(false);
+                window.document.body.removeChild(tempRoot);
                 return;
             }
             
-            const firstPageHeaderHeight = headerEl.offsetHeight + (clientEl?.offsetHeight || 0) + (categoryEl?.offsetHeight || 0);
-            const subsequentPageHeaderHeight = headerEl.offsetHeight; // Just the main header part
+            const firstPageHeaderHeight = headerEl.offsetHeight;
+            const subsequentPageHeaderHeight = (tempContainer.querySelector('[data-element="page-header-subsequent"]') as HTMLElement)?.offsetHeight || firstPageHeaderHeight;
             const tableHeaderHeight = tableHeaderEl.offsetHeight;
             const footerHeight = footerEl.offsetHeight;
 
-            let newPages: Estimate['lineItems'][][] = [];
+            const pages: Estimate['lineItems'][][] = [];
             let currentPageItems: Estimate['lineItems'][] = [];
             let currentPageHeight = 0;
 
+            // --- Start Pagination Algorithm ---
             for (let i = 0; i < document.lineItems.length; i++) {
                 const item = document.lineItems[i];
-                const rowEl = allRows[i];
-                if (!rowEl) continue;
-
-                const itemHeight = rowEl.offsetHeight;
-                const isFirstPage = newPages.length === 0;
-
-                let pageHeaderHeight = isFirstPage ? firstPageHeaderHeight : subsequentPageHeaderHeight;
-                let currentContentHeight = pageHeaderHeight + currentPageHeight + tableHeaderHeight;
+                const rowHeight = allRows[i] ? allRows[i].offsetHeight : 20; // Default height if not found
                 
-                // Check if adding the current item exceeds the page limit
-                if (currentContentHeight + itemHeight > AVAILABLE_HEIGHT && currentPageItems.length > 0) {
-                    newPages.push(currentPageItems);
-                    currentPageItems = [];
-                    currentPageHeight = 0;
-                    pageHeaderHeight = subsequentPageHeaderHeight;
-                    currentContentHeight = pageHeaderHeight + currentPageHeight + tableHeaderHeight;
+                const isFirstPage = pages.length === 0;
+                let currentMaxHeight = AVAILABLE_HEIGHT;
+                let usedHeight = currentPageHeight;
+
+                if (isFirstPage && currentPageItems.length === 0) {
+                    usedHeight += firstPageHeaderHeight + tableHeaderHeight;
+                } else if(currentPageItems.length === 0) {
+                    usedHeight += subsequentPageHeaderHeight + tableHeaderHeight;
                 }
-                
-                currentPageItems.push(item);
-                currentPageHeight += itemHeight;
+
+                // Check if the current item fits
+                if (usedHeight + rowHeight < currentMaxHeight - footerHeight) {
+                    currentPageItems.push(item);
+                    currentPageHeight += rowHeight;
+                } else {
+                    // Item doesn't fit, finalize current page and start a new one
+                    pages.push(currentPageItems);
+                    currentPageItems = [item];
+                    currentPageHeight = rowHeight;
+                }
             }
 
-            // Push any remaining items
+            // Add the last page of items
             if (currentPageItems.length > 0) {
-                newPages.push(currentPageItems);
+                pages.push(currentPageItems);
             }
             
-            // Check if the footer fits on the last page of items
-            if (newPages.length > 0) {
-                const lastPageIndex = newPages.length - 1;
-                const lastPageItems = newPages[lastPageIndex];
-                let lastPageHeight = (lastPageIndex === 0 ? firstPageHeaderHeight : subsequentPageHeaderHeight) + tableHeaderHeight;
-                
-                for(const item of lastPageItems) {
-                    const itemIndex = document.lineItems.findIndex(i => i.id === item.id);
-                    if (allRows[itemIndex]) {
-                        lastPageHeight += allRows[itemIndex].offsetHeight;
-                    }
-                }
-
-                if (lastPageHeight + footerHeight > AVAILABLE_HEIGHT) {
-                    const lastItem = lastPageItems.pop();
-                    if(lastItem) {
-                        if (lastPageItems.length === 0) {
-                            newPages[lastPageIndex] = [lastItem];
-                        } else {
-                            newPages.push([lastItem]);
-                        }
-                    }
-                }
+            if (pages.length === 0 && document.lineItems.length > 0) {
+                pages.push(document.lineItems);
+            } else if (pages.length === 0) {
+                pages.push([]);
             }
 
-
-            setPaginatedItems(newPages.length > 0 ? newPages : [[]]);
+            setPaginatedItems(pages);
             setNeedsRemeasure(false);
 
         } finally {
-            window.document.body.removeChild(tempRoot);
+            if (window.document.body.contains(tempRoot)) {
+                window.document.body.removeChild(tempRoot);
+            }
         }
     };
     
-    measureAndPaginate();
+    // Defer execution to allow DOM to update
+    const timer = setTimeout(measureAndPaginate, 100);
+    return () => clearTimeout(timer);
+
   }, [document, isPrint, needsRemeasure]);
 
 
@@ -539,6 +527,12 @@ export function DocumentPreview({ document, accentColor, id = 'document-preview'
     
     return (
       <div id={id} className="bg-white" ref={containerRef}>
+        {/* Render a hidden element with the subsequent header for measurement */}
+        <div style={{ position: 'absolute', left: '-9999px' }}>
+            <div data-element="page-header-subsequent">
+                 <PageHeader document={document} style={dynamicColorStyle} pageIndex={1}/>
+            </div>
+        </div>
         {itemsToRender.map((pageItems, pageIndex) => (
            <TemplateComponent
             key={pageIndex}
