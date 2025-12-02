@@ -627,17 +627,7 @@ export function DocumentForm({ document, setDocument, accentColor, setAccentColo
                 <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-2">
                         <Label>Roof Material</Label>
-                        <Select value={document.roofing.roofMaterial} onValueChange={(value: RoofingInfo['roofMaterial']) => handleCategorySelectChange('roofing', 'roofMaterial', value)}>
-                            <SelectTrigger>
-                                <SelectValue placeholder="Select material" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="Shingle">Shingle</SelectItem>
-                                <SelectItem value="Metal">Metal</SelectItem>
-                                <SelectItem value="Tile">Tile</SelectItem>
-                                <SelectItem value="Flat">Flat</SelectItem>
-                            </SelectContent>
-                        </Select>
+                        <Input name="roofMaterial" value={document.roofing.roofMaterial} onChange={(e) => handleCategoryDataChange('roofing', e)} placeholder="e.g. Shingle, Metal, Tile"/>
                     </div>
                     <div className="space-y-2">
                         <Label htmlFor="roofSize">Roof Size (sq ft)</Label>
@@ -690,28 +680,11 @@ export function DocumentForm({ document, setDocument, accentColor, setAccentColo
                 <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-2">
                         <Label>Service Type</Label>
-                        <Select value={document.hvac.serviceType} onValueChange={(value: HVACInfo['serviceType']) => handleCategorySelectChange('hvac', 'serviceType', value)}>
-                            <SelectTrigger><SelectValue/></SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="Install">Install</SelectItem>
-                                <SelectItem value="Repair">Repair</SelectItem>
-                                <SelectItem value="Replace">Replace</SelectItem>
-                                <SelectItem value="Maintenance">Maintenance</SelectItem>
-                            </SelectContent>
-                        </Select>
+                        <Input name="serviceType" value={document.hvac.serviceType} onChange={(e) => handleCategoryDataChange('hvac', e)} placeholder="e.g. Install, Repair, Maintenance" />
                     </div>
                      <div className="space-y-2">
                         <Label>System Type</Label>
-                        <Select value={document.hvac.systemType} onValueChange={(value: HVACInfo['systemType']) => handleCategorySelectChange('hvac', 'systemType', value)}>
-                            <SelectTrigger><SelectValue/></SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="AC">AC</SelectItem>
-                                <SelectItem value="Furnace">Furnace</SelectItem>
-                                <SelectItem value="Heat Pump">Heat Pump</SelectItem>
-                                <SelectItem value="Boiler">Boiler</SelectItem>
-                                <SelectItem value="Ductless Mini-Split">Ductless Mini-Split</SelectItem>
-                            </SelectContent>
-                        </Select>
+                        <Input name="systemType" value={document.hvac.systemType} onChange={(e) => handleCategoryDataChange('hvac', e)} placeholder="e.g. AC, Furnace, Heat Pump" />
                     </div>
                     <div className="space-y-2">
                         <Label htmlFor="unitSize">Unit Size (Tonnage / BTU)</Label>
@@ -723,25 +696,11 @@ export function DocumentForm({ document, setDocument, accentColor, setAccentColo
                     </div>
                      <div className="space-y-2">
                         <Label>Furnace Type</Label>
-                        <Select value={document.hvac.furnaceType} onValueChange={(value: HVACInfo['furnaceType']) => handleCategorySelectChange('hvac', 'furnaceType', value)}>
-                            <SelectTrigger><SelectValue/></SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="Gas">Gas</SelectItem>
-                                <SelectItem value="Electric">Electric</SelectItem>
-                                <SelectItem value="Oil">Oil</SelectItem>
-                            </SelectContent>
-                        </Select>
+                        <Input name="furnaceType" value={document.hvac.furnaceType} onChange={(e) => handleCategoryDataChange('hvac', e)} placeholder="e.g. Gas, Electric, Oil" />
                     </div>
                      <div className="space-y-2">
                         <Label>Thermostat Type</Label>
-                        <Select value={document.hvac.thermostatType} onValueChange={(value: HVACInfo['thermostatType']) => handleCategorySelectChange('hvac', 'thermostatType', value)}>
-                            <SelectTrigger><SelectValue/></SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="Manual">Manual</SelectItem>
-                                <SelectItem value="Programmable">Programmable</SelectItem>
-                                <SelectItem value="Smart">Smart</SelectItem>
-                            </SelectContent>
-                        </Select>
+                        <Input name="thermostatType" value={document.hvac.thermostatType} onChange={(e) => handleCategoryDataChange('hvac', e)} placeholder="e.g. Manual, Programmable, Smart" />
                     </div>
                     <div className="space-y-2 md:col-span-2">
                         <Label htmlFor="existingSystemCondition">Existing System Condition</Label>
@@ -767,16 +726,7 @@ export function DocumentForm({ document, setDocument, accentColor, setAccentColo
                 <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-2">
                         <Label>Service Type</Label>
-                        <Select value={document.plumbing.serviceType} onValueChange={(value: PlumbingInfo['serviceType']) => handleCategorySelectChange('plumbing', 'serviceType', value)}>
-                            <SelectTrigger><SelectValue/></SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="Leak Repair">Leak Repair</SelectItem>
-                                <SelectItem value="Installation">Installation</SelectItem>
-                                <SelectItem value="Sewer Line">Sewer Line</SelectItem>
-                                <SelectItem value="Water Heater">Water Heater</SelectItem>
-                                <SelectItem value="Drain Cleaning">Drain Cleaning</SelectItem>
-                            </SelectContent>
-                        </Select>
+                        <Input name="serviceType" value={document.plumbing.serviceType} onChange={(e) => handleCategoryDataChange('plumbing', e)} placeholder="e.g. Leak Repair, Installation" />
                     </div>
                     <div className="space-y-2">
                         <Label htmlFor="fixtureType">Fixture Type</Label>
@@ -784,15 +734,7 @@ export function DocumentForm({ document, setDocument, accentColor, setAccentColo
                     </div>
                     <div className="space-y-2">
                         <Label>Pipe Material</Label>
-                        <Select value={document.plumbing.pipeMaterial} onValueChange={(value: PlumbingInfo['pipeMaterial']) => handleCategorySelectChange('plumbing', 'pipeMaterial', value)}>
-                            <SelectTrigger><SelectValue/></SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="Copper">Copper</SelectItem>
-                                <SelectItem value="PVC">PVC</SelectItem>
-                                <SelectItem value="PEX">PEX</SelectItem>
-                                <SelectItem value="Galvanized">Galvanized</SelectItem>
-                            </SelectContent>
-                        </Select>
+                         <Input name="pipeMaterial" value={document.plumbing.pipeMaterial} onChange={(e) => handleCategoryDataChange('plumbing', e)} placeholder="e.g. Copper, PVC, PEX" />
                     </div>
                     <div className="space-y-2">
                         <Label htmlFor="floorLevel">Floor Level</Label>
@@ -826,24 +768,15 @@ export function DocumentForm({ document, setDocument, accentColor, setAccentColo
                 <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-2">
                         <Label>Service Type</Label>
-                        <Select value={document.electrical.serviceType} onValueChange={(value) => handleCategorySelectChange('electrical', 'serviceType', value)}>
-                            <SelectTrigger><SelectValue /></SelectTrigger>
-                            <SelectContent><SelectItem value="Install">Install</SelectItem><SelectItem value="Repair">Repair</SelectItem><SelectItem value="Upgrade">Upgrade</SelectItem></SelectContent>
-                        </Select>
+                        <Input name="serviceType" value={document.electrical.serviceType} onChange={(e) => handleCategoryDataChange('electrical', e)} placeholder="e.g. Install, Repair, Upgrade" />
                     </div>
                     <div className="space-y-2">
                         <Label>Wiring Type</Label>
-                        <Select value={document.electrical.wiringType} onValueChange={(value) => handleCategorySelectChange('electrical', 'wiringType', value)}>
-                            <SelectTrigger><SelectValue /></SelectTrigger>
-                            <SelectContent><SelectItem value="Copper">Copper</SelectItem><SelectItem value="Aluminum">Aluminum</SelectItem></SelectContent>
-                        </Select>
+                        <Input name="wiringType" value={document.electrical.wiringType} onChange={(e) => handleCategoryDataChange('electrical', e)} placeholder="e.g. Copper, Aluminum" />
                     </div>
                     <div className="space-y-2">
                         <Label>Panel Size</Label>
-                        <Select value={document.electrical.panelSize} onValueChange={(value) => handleCategorySelectChange('electrical', 'panelSize', value)}>
-                            <SelectTrigger><SelectValue /></SelectTrigger>
-                            <SelectContent><SelectItem value="100A">100A</SelectItem><SelectItem value="200A">200A</SelectItem><SelectItem value="Other">Other</SelectItem></SelectContent>
-                        </Select>
+                        <Input name="panelSize" value={document.electrical.panelSize} onChange={(e) => handleCategoryDataChange('electrical', e)} placeholder="e.g. 100A, 200A" />
                     </div>
                     <div className="space-y-2">
                         <Label htmlFor="outletsFixturesCount">Outlets/Fixtures Count</Label>
@@ -879,10 +812,10 @@ export function DocumentForm({ document, setDocument, accentColor, setAccentColo
                 <CardHeader><CardTitle>Cleaning Job Details</CardTitle></CardHeader>
                 <CardContent className="space-y-6">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div className="space-y-2"><Label>Cleaning Type</Label><Select value={document.cleaning.cleaningType} onValueChange={(v) => handleCategorySelectChange('cleaning', 'cleaningType', v)}><SelectTrigger><SelectValue/></SelectTrigger><SelectContent><SelectItem value="Standard">Standard</SelectItem><SelectItem value="Deep">Deep</SelectItem><SelectItem value="Move-in/Move-out">Move-in/Move-out</SelectItem><SelectItem value="Office">Office</SelectItem></SelectContent></Select></div>
-                        <div className="space-y-2"><Label>Frequency</Label><Select value={document.cleaning.frequency} onValueChange={(v) => handleCategorySelectChange('cleaning', 'frequency', v)}><SelectTrigger><SelectValue/></SelectTrigger><SelectContent><SelectItem value="One-time">One-time</SelectItem><SelectItem value="Weekly">Weekly</SelectItem><SelectItem value="Bi-Weekly">Bi-Weekly</SelectItem><SelectItem value="Monthly">Monthly</SelectItem></SelectContent></Select></div>
+                        <div className="space-y-2"><Label>Cleaning Type</Label><Input name="cleaningType" value={document.cleaning.cleaningType} onChange={(e) => handleCategoryDataChange('cleaning', e)} placeholder="e.g. Standard, Deep Clean" /></div>
+                        <div className="space-y-2"><Label>Frequency</Label><Input name="frequency" value={document.cleaning.frequency} onChange={(e) => handleCategoryDataChange('cleaning', e)} placeholder="e.g. One-time, Weekly" /></div>
                         <div className="space-y-2"><Label htmlFor="homeSize">Home Size (sq ft)</Label><Input id="homeSize" name="homeSize" type="number" value={document.cleaning.homeSize ?? ''} onChange={(e) => handleCategoryDataChange('cleaning', e)} /></div>
-                        <div className="space-y-2"><Label>Kitchen Size</Label><Select value={document.cleaning.kitchenSize} onValueChange={(v) => handleCategorySelectChange('cleaning', 'kitchenSize', v)}><SelectTrigger><SelectValue/></SelectTrigger><SelectContent><SelectItem value="Small">Small</SelectItem><SelectItem value="Medium">Medium</SelectItem><SelectItem value="Large">Large</SelectItem></SelectContent></Select></div>
+                        <div className="space-y-2"><Label>Kitchen Size</Label><Input name="kitchenSize" value={document.cleaning.kitchenSize} onChange={(e) => handleCategoryDataChange('cleaning', e)} placeholder="e.g. Small, Medium, Large" /></div>
                         <div className="space-y-2"><Label htmlFor="bedrooms">Bedrooms</Label><Input id="bedrooms" name="bedrooms" type="number" value={document.cleaning.bedrooms ?? ''} onChange={(e) => handleCategoryDataChange('cleaning', e)} /></div>
                         <div className="space-y-2"><Label htmlFor="bathrooms">Bathrooms</Label><Input id="bathrooms" name="bathrooms" type="number" value={document.cleaning.bathrooms ?? ''} onChange={(e) => handleCategoryDataChange('cleaning', e)} /></div>
                     </div>
