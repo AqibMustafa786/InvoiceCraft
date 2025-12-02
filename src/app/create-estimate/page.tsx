@@ -7,7 +7,7 @@ import type { Estimate, LineItem, Quote } from '@/lib/types';
 import { DocumentForm } from '@/components/document-form';
 import { DocumentPreview } from '@/components/document-preview';
 import { Button } from '@/components/ui/button';
-import { Printer, FilePlus, LayoutDashboard, Edit, Share2 } from 'lucide-react';
+import { Printer, FilePlus, LayoutDashboard, Edit, Share2, Mail } from 'lucide-react';
 import { addDays, isValid } from 'date-fns';
 import { useToast } from '@/hooks/use-toast';
 import { DocumentTemplateSelector } from '@/components/document-template-selector';
@@ -167,8 +167,7 @@ export default function CreateEstimatePage() {
 
     const normalizeDate = (val: any): Date | null => {
         if (!val) return null;
-        if (val.toDate) return val; // Already a Firestore Timestamp
-        if (val instanceof Timestamp) return val;
+        if (val instanceof Timestamp) return val.toDate();
         const d = new Date(val);
         return isValid(d) ? d : null;
     };
@@ -180,10 +179,10 @@ export default function CreateEstimatePage() {
     };
 
     const estimateDate = normalizeDate(document.estimateDate);
-    if (estimateDate) draftToSave.estimateDate = estimateDate;
+    if (estimateDate) draftToSave.estimateDate = Timestamp.fromDate(estimateDate);
     
     const validUntilDate = normalizeDate(document.validUntilDate);
-    if (validUntilDate) draftToSave.validUntilDate = validUntilDate;
+    if (validUntilDate) draftToSave.validUntilDate = Timestamp.fromDate(validUntilDate);
 
     if (!document.createdAt) {
       draftToSave.createdAt = serverTimestamp();
@@ -227,6 +226,15 @@ export default function CreateEstimatePage() {
       });
   };
   
+  const handleEmail = () => {
+    if (!document) return;
+    const shareUrl = `${window.location.origin}/estimate/${document.id}`;
+    const subject = `Estimate ${document.estimateNumber} from ${document.business.name}`;
+    const body = `Hello ${document.client.name},\n\nPlease find our estimate below:\n${shareUrl}\n\nThank you,\n${document.business.name}`;
+    const mailtoLink = `mailto:${document.client.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    window.location.href = mailtoLink;
+  };
+
   useEffect(() => {
     if (document) {
         const newDocument = computeSummary(document);
@@ -267,6 +275,10 @@ export default function CreateEstimatePage() {
                <Button onClick={handleSaveDraft}>
                 <Edit className="mr-2 h-5 w-5" />
                 Save Draft
+              </Button>
+              <Button onClick={handleEmail}>
+                <Mail className="mr-2 h-5 w-5" />
+                Email
               </Button>
               <Button onClick={handleShare}>
                 <Share2 className="mr-2 h-5 w-5" />
