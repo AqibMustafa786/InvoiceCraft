@@ -638,8 +638,8 @@ export function InvoicePreview({ invoice, logoUrl, accentColor, id = 'invoice-pr
 
   // Default live preview (single page)
   return (
-    <Card id={id} className="w-full shadow-lg rounded-xl overflow-hidden print-hide bg-card/50 backdrop-blur-sm" style={previewStyle}>
-      <CardContent className="p-0">
+    <Card id={id} className="w-full shadow-lg rounded-xl overflow-hidden print-hide" style={previewStyle}>
+      <CardContent className="p-0 bg-white text-gray-800 dark:bg-white dark:text-gray-800">
           <TemplateComponent
             {...commonProps}
             pageItems={invoice.items}
@@ -650,5 +650,7 @@ export function InvoicePreview({ invoice, logoUrl, accentColor, id = 'invoice-pr
     </Card>
   );
 }
+
+    
 
     
