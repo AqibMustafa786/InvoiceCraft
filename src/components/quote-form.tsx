@@ -377,10 +377,10 @@ export function QuoteForm({ quote, setQuote, accentColor, setAccentColor, toast 
             <div className="col-span-2"><Label>Total</Label></div>
           </div>
           {quote.lineItems.map((item, index) => (
-            <div key={item.id} className="grid grid-cols-12 gap-2 items-start">
+            <div key={item.id} className="grid grid-cols-12 gap-2 items-center">
               <div className="col-span-12 md:col-span-5 space-y-2">
                 <Label htmlFor={`itemName-${index}`} className="md:hidden">Item Name / Description</Label>
-                <Textarea id={`itemName-${index}`} value={item.name} onChange={(e) => handleItemChange(index, 'name', e.target.value)} rows={2} className="min-h-0"/>
+                <Textarea id={`itemName-${index}`} value={item.name} onChange={(e) => handleItemChange(index, 'name', e.target.value)} rows={1} className="min-h-0"/>
               </div>
               <div className="col-span-4 md:col-span-2 space-y-2">
                  <Label htmlFor={`itemQuantity-${index}`} className="md:hidden">Quantity</Label>
