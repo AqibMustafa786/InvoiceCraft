@@ -44,259 +44,140 @@ const SignatureDisplay = ({ signature, label }: { signature: any, label: string 
     )
 }
 
-export const DefaultTemplate = ({ document, accentColor }: { document: Estimate, accentColor: string }) => {
-    const { business, client, lineItems, summary, currency, clientSignature, documentType, headingColor, textColor, fontFamily, fontSize } = document;
+export const ModernTemplate = ({ document }: { document: Estimate }) => {
+    const { business, client, lineItems, summary, currency, documentType } = document;
     const currencySymbol = currencySymbols[currency] || '$';
 
     const documentTitle = documentType === 'quote' ? 'Quote' : 'Estimate';
-
-    const previewStyle = {
-      fontFamily: fontFamily || 'Inter, sans-serif',
-      fontSize: `${fontSize || 14}px`,
-      '--heading-color': headingColor || 'inherit',
-      '--text-color': textColor || 'inherit',
-    } as React.CSSProperties;
+    const subtotalLessDiscount = summary.subtotal - (summary.discount || 0);
+    const taxRate = summary.taxPercentage || 0;
 
     return (
-        <div className="p-8 md:p-10 bg-white text-gray-800" style={previewStyle}>
-            <header className="flex justify-between items-start mb-10">
-                <div>
-                    {business.logoUrl ? (
-                        <Image src={business.logoUrl} alt={`${business.name} Logo`} width={120} height={40} className="object-contain" data-ai-hint="logo" />
+        <div className="p-8 md:p-10 bg-white text-gray-800 font-sans text-[10pt]">
+            <header className="flex justify-between items-start mb-8">
+                <div className="w-1/2">
+                     {business.logoUrl ? (
+                        <Image src={business.logoUrl} alt={`${business.name} Logo`} width={100} height={100} className="rounded-full object-contain bg-orange-400 p-2" data-ai-hint="logo" />
                     ) : (
-                        <h1 className="text-3xl font-bold font-headline" style={{ color: accentColor }}>{business.name}</h1>
+                        <div className="w-24 h-24 rounded-full bg-orange-400 flex items-center justify-center text-white font-bold text-center text-xs">
+                            YOUR BUSINESS LOGO
+                        </div>
                     )}
-                    <div className="text-muted-foreground text-sm mt-2 space-y-1" style={{color: 'var(--text-color)'}}>
-                        <p className="whitespace-pre-line">{business.address}</p>
-                        {business.phone && <p>{business.phone}</p>}
-                        {business.email && <p>{business.email}</p>}
-                        {business.website && <p>{business.website}</p>}
-                        {business.licenseNumber && <p>License #: {business.licenseNumber}</p>}
-                    </div>
                 </div>
-                <div className="text-right">
-                    <h2 className="text-3xl font-bold text-gray-400 uppercase tracking-wider" style={{color: 'var(--heading-color)'}}>{documentTitle}</h2>
-                    <p className="text-muted-foreground mt-1" style={{color: 'var(--text-color)'}}>{document.estimateNumber}</p>
-                    {document.status === 'accepted' && <Badge variant="success" className="mt-2 text-base">ACCEPTED</Badge>}
+                <div className="w-1/2 text-right">
+                    <h2 className="text-3xl font-bold mb-4">{documentTitle}</h2>
+                    <div className="space-y-0.5 text-xs">
+                        <p className="font-bold">{business.name}</p>
+                        {business.licenseNumber && <p>{business.licenseNumber}</p>}
+                        <p>{business.phone}</p>
+                        <p>{business.email}</p>
+                        <p className="whitespace-pre-line">{business.address}</p>
+                    </div>
                 </div>
             </header>
 
-            <section className="grid grid-cols-2 gap-4 mb-10">
-                <div className="space-y-1" style={{color: 'var(--text-color)'}}>
-                    <p className="text-sm font-semibold text-gray-500" style={{color: 'var(--heading-color)'}}>{documentTitle.toUpperCase()} FOR</p>
-                    <p className="font-bold">{client.name}</p>
-                    {client.companyName && <p className="text-sm text-gray-600">{client.companyName}</p>}
-                    <p className="text-muted-foreground text-sm whitespace-pre-line">{client.address}</p>
-                    {client.phone && <p className="text-muted-foreground text-sm">{client.phone}</p>}
-                    {client.email && <p className="text-muted-foreground text-sm">{client.email}</p>}
+            <section className="flex justify-between items-start mb-8 text-xs">
+                 <div className="w-1/3 space-y-0.5">
+                    <p className="font-bold mb-1">BILL TO</p>
+                    <p className="font-semibold">{client.name}</p>
+                    {client.companyName && <p>{client.companyName}</p>}
+                    {client.email && <p>{client.email}</p>}
+                    {client.phone && <p>{client.phone}</p>}
+                    <p className="whitespace-pre-line">{client.address}</p>
                 </div>
-                <div className="text-right space-y-1" style={{color: 'var(--text-color)'}}>
-                     <div className="space-y-1">
-                        <p className="text-sm font-semibold text-gray-500" style={{color: 'var(--heading-color)'}}>Project / Job Title</p>
-                        <p>{document.projectTitle}</p>
+                <div className="w-1/3 text-right">
+                    <div className="flex justify-end">
+                        <span className="font-bold w-20">Estimate #</span>
+                        <span className="w-24 text-left">{document.estimateNumber}</span>
                     </div>
-                    <div className="space-y-1 mt-2">
-                        <p className="text-sm font-semibold text-gray-500" style={{color: 'var(--heading-color)'}}>{documentTitle} Date</p>
-                        <p>{safeFormat(document.estimateDate, 'MMMM d, yyyy')}</p>
+                    <div className="flex justify-end mt-1">
+                        <span className="font-bold w-20">Date</span>
+                        <span className="w-24 text-left">{safeFormat(document.estimateDate, 'MM/dd/yyyy')}</span>
                     </div>
-                    <div className="space-y-1 mt-2">
-                        <p className="text-sm font-semibold text-gray-500" style={{color: 'var(--heading-color)'}}>Valid Until</p>
-                        <p>{safeFormat(document.validUntilDate, 'MMMM d, yyyy')}</p>
-                    </div>
-                    {document.referenceNumber && (
-                        <div className="space-y-1 mt-2">
-                            <p className="text-sm font-semibold text-gray-500" style={{color: 'var(--heading-color)'}}>Reference #</p>
-                            <p>{document.referenceNumber}</p>
-                        </div>
-                    )}
                 </div>
             </section>
             
             <section>
-                <table className="w-full text-left" style={{color: 'var(--text-color)'}}>
-                    <thead style={{ backgroundColor: accentColor, color: 'white' }}>
+                <table className="w-full text-left text-xs">
+                    <thead className="bg-blue-100 text-gray-700">
                         <tr>
-                            <th className="p-3 text-sm font-semibold w-1/2">Description</th>
-                            <th className="p-3 text-sm font-semibold text-center">Qty</th>
-                            <th className="p-3 text-sm font-semibold text-right">Rate</th>
-                            <th className="p-3 text-sm font-semibold text-right">Total</th>
+                            <th className="p-2 font-bold w-1/2">Item/Service Description</th>
+                            <th className="p-2 font-bold text-right">Quantity</th>
+                            <th className="p-2 font-bold text-right">Item Price</th>
+                            <th className="p-2 font-bold text-right">Amount</th>
                         </tr>
                     </thead>
                     <tbody>
                         {lineItems.map(item => (
                             <tr key={item.id} className="border-b">
-                                <td className="p-3 whitespace-pre-line">{item.name || <span className="text-gray-400">Item description</span>}</td>
-                                <td className="p-3 text-center tabular-nums">{item.quantity}</td>
-                                <td className="p-3 text-right tabular-nums">{currencySymbol}{item.unitPrice.toFixed(2)}</td>
-                                <td className="p-3 text-right tabular-nums font-medium">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</td>
+                                <td className="p-2 whitespace-pre-line">{item.name || ''}</td>
+                                <td className="p-2 text-right tabular-nums">{item.quantity}</td>
+                                <td className="p-2 text-right tabular-nums">{currencySymbol}{item.unitPrice.toFixed(2)}</td>
+                                <td className="p-2 text-right tabular-nums">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</td>
+                            </tr>
+                        ))}
+                         {[...Array(Math.max(0, 7 - lineItems.length))].map((_, i) => (
+                            <tr key={`blank-${i}`} className="border-b">
+                                <td className="p-2 h-6"></td>
+                                <td className="p-2"></td>
+                                <td className="p-2"></td>
+                                <td className="p-2"></td>
                             </tr>
                         ))}
                     </tbody>
                 </table>
             </section>
 
-             <section className="flex justify-end mt-8">
-                <div className="w-full max-w-xs space-y-2" style={{color: 'var(--text-color)'}}>
-                    <div className="flex justify-between text-sm">
-                        <span className="text-muted-foreground">Subtotal</span>
+             <section className="flex justify-between items-end mt-6">
+                <div className="w-1/2 text-xs text-gray-600">
+                    <p className="font-bold mb-1">Notes</p>
+                    <p className="whitespace-pre-line">{document.termsAndConditions}</p>
+                </div>
+                <div className="w-2/5 space-y-1 text-xs">
+                    <div className="flex justify-between">
+                        <span className="text-gray-600">Estimated Subtotal</span>
                         <span className="font-medium tabular-nums">{currencySymbol}{summary.subtotal.toFixed(2)}</span>
                     </div>
-                    {summary.discount > 0 && (
-                        <div className="flex justify-between text-sm">
-                            <span className="text-muted-foreground">Discount</span>
-                            <span className="font-medium text-destructive tabular-nums">-{currencySymbol}{summary.discount.toFixed(2)}</span>
+                     {summary.discount > 0 && (
+                        <div className="flex justify-between">
+                            <span className="text-gray-600">Discount</span>
+                            <span className="font-medium tabular-nums">-{currencySymbol}{summary.discount.toFixed(2)}</span>
                         </div>
                     )}
-                    {summary.shippingCost > 0 && (
-                        <div className="flex justify-between text-sm">
-                            <span className="text-muted-foreground">Shipping/Extra</span>
+                    <div className="flex justify-between font-bold border-b pb-1 mb-1">
+                        <span className="text-gray-800">Subtotal less discount</span>
+                        <span className="tabular-nums">{currencySymbol}{subtotalLessDiscount.toFixed(2)}</span>
+                    </div>
+                    {taxRate > 0 && (
+                         <div className="flex justify-between">
+                            <span className="text-gray-600">Tax Rate</span>
+                            <span className="tabular-nums">{taxRate.toFixed(2)}%</span>
+                        </div>
+                    )}
+                    <div className="flex justify-between">
+                        <span className="text-gray-600">Total tax</span>
+                        <span className="font-medium tabular-nums">{currencySymbol}{summary.taxAmount.toFixed(2)}</span>
+                    </div>
+                     {summary.shippingCost > 0 && (
+                        <div className="flex justify-between">
+                            <span className="text-gray-600">Shipping/Handling</span>
                             <span className="font-medium tabular-nums">{currencySymbol}{summary.shippingCost.toFixed(2)}</span>
                         </div>
                     )}
-                    {summary.taxPercentage > 0 && (
-                        <div className="flex justify-between text-sm">
-                            <span className="text-muted-foreground">Tax ({summary.taxPercentage}%)</span>
-                            <span className="font-medium tabular-nums">{currencySymbol}{summary.taxAmount.toFixed(2)}</span>
-                        </div>
-                    )}
-                    <Separator className="my-2" />
-                    <div className="flex justify-between items-center font-bold text-lg p-3 mt-2 rounded-md" style={{ backgroundColor: accentColor, color: 'white' }}>
-                        <span>{documentTitle} Total</span>
+                    <div className="flex justify-between items-center font-bold text-lg pt-2 mt-2">
+                        <span className="uppercase">Estimate Total</span>
                         <span className="tabular-nums">{currencySymbol}{summary.grandTotal.toFixed(2)}</span>
                     </div>
                 </div>
             </section>
-            
-            <footer className="mt-10" style={{color: 'var(--text-color)'}}>
-                 {(business.ownerSignature || clientSignature) && (
-                    <div className="grid grid-cols-2 gap-10 mb-8">
-                        <SignatureDisplay signature={business.ownerSignature} label="Authorized Signature" />
-                        <SignatureDisplay signature={clientSignature} label="Client Signature" />
-                    </div>
-                 )}
-                {document.termsAndConditions && (
-                    <div className="mb-8">
-                        <p className="text-sm font-semibold text-gray-500" style={{color: 'var(--heading-color)'}}>Terms & Conditions</p>
-                        <p className="text-sm text-muted-foreground mt-1 whitespace-pre-line">{document.termsAndConditions}</p>
-                    </div>
-                )}
-            </footer>
-        </div>
-    );
-};
-
-export const ContractorTemplate = ({ document, accentColor }: { document: Estimate, accentColor: string }) => {
-    const { business, client, lineItems, summary, currency, clientSignature, documentType, headingColor, textColor, fontFamily, fontSize } = document;
-    const currencySymbol = currencySymbols[currency] || '$';
-    const documentTitle = documentType === 'quote' ? 'Quote' : 'Estimate';
-
-    const previewStyle = {
-      fontFamily: fontFamily || 'Inter, sans-serif',
-      fontSize: `${fontSize || 14}px`,
-      '--heading-color': headingColor || 'inherit',
-      '--text-color': textColor || 'inherit',
-    } as React.CSSProperties;
-
-    return (
-        <div className="p-8 bg-white text-gray-800 border-t-8" style={{...previewStyle, borderTopColor: accentColor }}>
-            <header className="grid grid-cols-2 gap-10 mb-12">
-                <div>
-                    {business.logoUrl ? (
-                        <Image src={business.logoUrl} alt={`${business.name} Logo`} width={160} height={80} className="object-contain" data-ai-hint="logo" />
-                    ) : (
-                        <h1 className="text-4xl font-bold" style={{color: 'var(--heading-color)'}}>{business.name}</h1>
-                    )}
-                     <div className="text-xs text-gray-500 whitespace-pre-line mt-2" style={{color: 'var(--text-color)'}}>
-                        <p>{business.address}</p>
-                        <p>{business.phone}</p>
-                        {business.licenseNumber && <p>Lic #: {business.licenseNumber}</p>}
-                     </div>
-                </div>
-                 <div className="text-right">
-                    <h2 className="text-5xl font-light uppercase text-gray-400 tracking-wider" style={{color: 'var(--heading-color)'}}>{documentTitle}</h2>
-                    <div className="mt-4 text-xs space-y-1" style={{color: 'var(--text-color)'}}>
-                        <p><span className="font-bold text-gray-500">{documentTitle} #:</span> {document.estimateNumber}</p>
-                        <p><span className="font-bold text-gray-500">Date:</span> {safeFormat(document.estimateDate, 'M/d/yyyy')}</p>
-                        <p><span className="font-bold text-gray-500">Valid Until:</span> {safeFormat(document.validUntilDate, 'M/d/yyyy')}</p>
-                    </div>
-                </div>
-            </header>
-
-            <section className="mb-10 bg-gray-50 p-4 rounded-md" style={{color: 'var(--text-color)'}}>
-                 <h3 className="font-bold text-sm uppercase text-gray-600 mb-2" style={{color: 'var(--heading-color)'}}>Project For:</h3>
-                 <p className="font-bold text-lg">{client.name}</p>
-                 <p className="text-sm text-gray-600 whitespace-pre-line">{client.address}</p>
-            </section>
-            
-             <main>
-                <table className="w-full text-left" style={{color: 'var(--text-color)'}}>
-                    <thead>
-                        <tr className="border-b-2 border-gray-300">
-                            <th className="p-2 pb-3 text-sm font-bold uppercase text-gray-500 w-full" style={{color: 'var(--heading-color)'}}>Description of Work</th>
-                            <th className="p-2 pb-3 text-sm font-bold uppercase text-gray-500 text-right" style={{color: 'var(--heading-color)'}}>Cost</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {lineItems.map(item => (
-                            <tr key={item.id} className="border-b">
-                                <td className="p-2 py-3">
-                                    <p className="font-semibold whitespace-pre-line">{item.name}</p>
-                                    {item.quantity > 1 && <p className="text-xs text-gray-500">{item.quantity} units</p>}
-                                </td>
-                                <td className="p-2 py-3 text-right font-semibold tabular-nums">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
-            </main>
-
-            <section className="flex justify-end mt-6">
-                <div className="w-full max-w-sm space-y-2 text-sm" style={{color: 'var(--text-color)'}}>
-                    <div className="flex justify-between">
-                        <span className="text-gray-600">Subtotal</span>
-                        <span className="font-medium tabular-nums">{currencySymbol}{summary.subtotal.toFixed(2)}</span>
-                    </div>
-                    {summary.discount > 0 && (
-                        <div className="flex justify-between">
-                            <span className="text-gray-600">Discount</span>
-                            <span className="font-medium text-red-600 tabular-nums">-{currencySymbol}{summary.discount.toFixed(2)}</span>
-                        </div>
-                    )}
-                     {summary.taxPercentage > 0 && (
-                        <div className="flex justify-between">
-                            <span className="text-gray-600">Tax ({summary.taxPercentage}%)</span>
-                            <span className="font-medium tabular-nums">{currencySymbol}{summary.taxAmount.toFixed(2)}</span>
-                        </div>
-                    )}
-                     <div className="flex justify-between border-t pt-2 mt-2 font-bold text-xl">
-                        <span>Project Total</span>
-                        <span className="tabular-nums">{currencySymbol}{summary.grandTotal.toFixed(2)}</span>
-                    </div>
-                </div>
-            </section>
-            
-            <footer className="mt-12" style={{color: 'var(--text-color)'}}>
-                 {(business.ownerSignature || clientSignature) && (
-                    <div className="grid grid-cols-2 gap-10 border-t pt-6 mb-8">
-                        <SignatureDisplay signature={business.ownerSignature} label="Authorized Signature" />
-                        <SignatureDisplay signature={clientSignature} label="Client Acceptance Signature" />
-                    </div>
-                 )}
-                {document.termsAndConditions && (
-                    <div className="text-xs text-gray-500 border-t pt-6 mb-8">
-                        <h4 className="font-bold text-sm text-gray-600 mb-2" style={{color: 'var(--heading-color)'}}>Terms & Conditions</h4>
-                        <p className="whitespace-pre-line">{document.termsAndConditions}</p>
-                    </div>
-                )}
-            </footer>
         </div>
     );
 };
 
 
 const templates = {
-  'default': DefaultTemplate,
-  'contractor': ContractorTemplate,
+  'default': ModernTemplate,
+  'contractor': ModernTemplate, // Fallback to new template
 };
 
 export function DocumentPreview({ document, accentColor, id = 'document-preview', isPrint = false }: DocumentPreviewProps) {
@@ -309,12 +190,12 @@ export function DocumentPreview({ document, accentColor, id = 'document-preview'
       '--primary': accentColor
   } as React.CSSProperties;
 
-  const TemplateComponent = templates[document.template as keyof typeof templates] || templates.default;
+  // Always use the new ModernTemplate, but keep the structure for potential future templates.
+  const TemplateComponent = templates['default'];
 
   const renderContent = () => (
     <TemplateComponent
       document={document}
-      accentColor={accentColor}
     />
   );
   
@@ -334,5 +215,3 @@ export function DocumentPreview({ document, accentColor, id = 'document-preview'
     </Card>
   );
 }
-
-    

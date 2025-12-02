@@ -24,11 +24,6 @@ const templates: Template[] = [
     name: 'Modern',
     thumbnailUrl: '/templates/Estimate-Default.png',
   },
-  {
-    id: 'contractor',
-    name: 'Contractor',
-    thumbnailUrl: '/templates/Estimate-Contractor.png',
-  },
 ];
 
 export function DocumentTemplateSelector({ selectedTemplate, onSelectTemplate, documentType }: DocumentTemplateSelectorProps) {
