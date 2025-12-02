@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import { ChangeEvent, Dispatch, SetStateAction, useState, useEffect } from 'react';
@@ -398,10 +399,6 @@ export function DocumentForm({ document, setDocument, accentColor, setAccentColo
                             {fonts.map(font => <SelectItem key={font.value} value={font.value}>{font.label}</SelectItem>)}
                         </SelectContent>
                     </Select>
-                </div>
-                <div className="space-y-2">
-                    <Label htmlFor="textColor">Text Color</Label>
-                    <Input id="textColor" name="textColor" value={document.textColor} onChange={handleInputChange} placeholder="e.g. #374151" />
                 </div>
                  <div className="space-y-2">
                     <Label htmlFor="fontSize">Font Size</Label>

@@ -40,7 +40,6 @@ export interface Invoice {
   documentType: 'invoice';
   fontFamily?: string;
   fontSize?: number;
-  textColor?: string;
   createdAt?: any;
   updatedAt?: any;
 }
@@ -293,7 +292,6 @@ export interface Estimate {
 
   fontFamily?: string;
   fontSize?: number;
-  textColor?: string;
   createdAt?: any;
   updatedAt?: any;
 

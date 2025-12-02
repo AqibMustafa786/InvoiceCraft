@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import { useState, useLayoutEffect, useRef, useEffect } from 'react';
@@ -335,7 +336,7 @@ const ModernTemplatePage = ({ document, pageItems, pageIndex, totalPages, style 
     const currencySymbol = currencySymbols[document.currency] || '$';
 
     return (
-        <div className={`p-8 md:p-10 bg-white font-sans ${pageIndex < totalPages - 1 ? "page-break" : ""}`} style={{ color: document.textColor || '#374151', fontFamily: style.fontFamily, fontSize: style.fontSize }}>
+        <div className={`p-8 md:p-10 bg-white font-sans ${pageIndex < totalPages - 1 ? "page-break" : ""}`} style={{ color: '#374151', fontFamily: style.fontFamily, fontSize: style.fontSize }}>
             <PageHeader document={document} style={style} />
             <PageClientDetails document={document} />
             <CategoryPreview document={document} />
@@ -395,12 +396,14 @@ export function DocumentPreview({ document, accentColor, id = 'document-preview'
   
 
   const previewStyle = {
-      '--primary-hsl': accentColor,
-      '--primary': accentColor,
+      color: '#374151',
       fontFamily: document.fontFamily || 'Inter, sans-serif',
       fontSize: `${document.fontSize || 10}pt`,
-      color: document.textColor || '#374151',
   } as React.CSSProperties;
+
+  const dynamicColorStyle = {
+      color: accentColor,
+  }
 
   const TemplateComponent = templates[document.template as keyof typeof templates] || templates.default;
   
@@ -523,7 +526,7 @@ export function DocumentPreview({ document, accentColor, id = 'document-preview'
             pageIndex={pageIndex}
             totalPages={itemsToRender.length}
             summary={document.summary}
-            style={previewStyle}
+            style={dynamicColorStyle}
           />
         ))}
       </div>
@@ -531,7 +534,7 @@ export function DocumentPreview({ document, accentColor, id = 'document-preview'
   }
 
   return (
-    <Card id={id} className="w-full shadow-lg rounded-xl overflow-hidden print-hide">
+    <Card id={id} className="w-full shadow-lg rounded-xl overflow-hidden print-hide" style={previewStyle}>
       <CardContent className="p-0 bg-white dark:bg-white">
          <TemplateComponent
             {...commonProps}
@@ -539,7 +542,7 @@ export function DocumentPreview({ document, accentColor, id = 'document-preview'
             pageIndex={0}
             totalPages={1}
             summary={document.summary}
-            style={previewStyle}
+            style={dynamicColorStyle}
           />
       </CardContent>
     </Card>
