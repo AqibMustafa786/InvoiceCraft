@@ -343,7 +343,7 @@ const ModernTemplatePage = ({ document, pageItems, pageIndex, totalPages, style 
             
             <section className="mt-8">
                 <table className="w-full text-left text-xs" data-element="items-table">
-                    <thead style={{ backgroundColor: style.color, color: 'white' }}>
+                    <thead style={{ backgroundColor: style.color, color: 'white' }} data-element="table-header">
                         <tr>
                             <th className="p-2 font-bold w-1/2">Item/Service Description</th>
                             <th className="p-2 font-bold text-right">Quantity</th>
@@ -408,16 +408,15 @@ export function DocumentPreview({ document, accentColor, id = 'document-preview'
   const TemplateComponent = templates[document.template as keyof typeof templates] || templates.default;
   
   useLayoutEffect(() => {
-    if (typeof window === 'undefined' || !isPrint || !containerRef.current || !needsRemeasure) return;
+    if (typeof window === 'undefined' || typeof window.document === 'undefined' || !isPrint || !containerRef.current || !needsRemeasure) return;
 
     const measureAndPaginate = () => {
-      if (typeof document === 'undefined') return;
       const container = containerRef.current!;
-      const tempRoot = document.createElement('div');
+      const tempRoot = window.document.createElement('div');
       tempRoot.style.position = 'absolute';
       tempRoot.style.left = '-9999px';
       tempRoot.style.width = `${container.clientWidth}px`; // Match width for accurate measurement
-      document.body.appendChild(tempRoot);
+      window.document.body.appendChild(tempRoot);
 
       // We create a temporary React root to render the full, unpaginated content for measurement.
       Promise.resolve().then(() => {
@@ -440,7 +439,7 @@ export function DocumentPreview({ document, accentColor, id = 'document-preview'
         const allRows = Array.from(tempContainer.querySelectorAll('[data-element="table-row"]')) as HTMLElement[];
         
         if (!header || !tableHeader || !footer || allRows.length === 0) {
-            document.body.removeChild(tempRoot);
+            window.document.body.removeChild(tempRoot);
             return;
         }
 
@@ -497,7 +496,7 @@ export function DocumentPreview({ document, accentColor, id = 'document-preview'
         
         setPaginatedItems(newPages);
         setNeedsRemeasure(false);
-        document.body.removeChild(tempRoot);
+        window.document.body.removeChild(tempRoot);
       });
     };
     
