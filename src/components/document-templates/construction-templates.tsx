@@ -33,22 +33,22 @@ const SignatureDisplay = ({ signature, label }: { signature: any, label: string 
     )
 }
 
-const ConstructionDetails: React.FC<{ document: Estimate }> = ({ document }) => {
+const ConstructionDetails: React.FC<{ document: Estimate; textColor: string; }> = ({ document, textColor }) => {
     if (!document.construction) return null;
     const { construction } = document;
     return (
-         <section className="my-4 text-xs">
-            <p className="font-bold text-gray-500 mb-2 border-b">Construction Specifics</p>
-            <div className="grid grid-cols-2 gap-x-4 gap-y-1">
-                <p><span className="font-semibold text-gray-600">Project Type:</span> {construction.projectType}</p>
-                {construction.squareFootage && <p><span className="font-semibold text-gray-600">Sq Ft:</span> {construction.squareFootage}</p>}
-                <p><span className="font-semibold text-gray-600">Lot Size:</span> {construction.lotSize}</p>
-                <p><span className="font-semibold text-gray-600">Building Type:</span> {construction.buildingType}</p>
-                <p><span className="font-semibold text-gray-600">Permit Required:</span> {construction.permitRequired ? 'Yes' : 'No'}</p>
-                <p><span className="font-semibold text-gray-600">Drawings Provided:</span> {construction.architectDrawingsProvided ? 'Yes' : 'No'}</p>
-                <p><span className="font-semibold text-gray-600">Soil Condition:</span> {construction.soilCondition}</p>
-                <p><span className="font-semibold text-gray-600">Material Preference:</span> {construction.materialPreference}</p>
-                <p><span className="font-semibold text-gray-600">Inspection:</span> {construction.inspectionRequired ? 'Yes' : 'No'}</p>
+         <section className="my-4 text-xs" style={{color: textColor}}>
+            <p className="font-bold border-b">Construction Specifics</p>
+            <div className="grid grid-cols-2 gap-x-4 gap-y-1 mt-2">
+                <p><span className="font-semibold">Project Type:</span> {construction.projectType}</p>
+                {construction.squareFootage && <p><span className="font-semibold">Sq Ft:</span> {construction.squareFootage}</p>}
+                <p><span className="font-semibold">Lot Size:</span> {construction.lotSize}</p>
+                <p><span className="font-semibold">Building Type:</span> {construction.buildingType}</p>
+                <p><span className="font-semibold">Permit Required:</span> {construction.permitRequired ? 'Yes' : 'No'}</p>
+                <p><span className="font-semibold">Drawings Provided:</span> {construction.architectDrawingsProvided ? 'Yes' : 'No'}</p>
+                <p><span className="font-semibold">Soil Condition:</span> {construction.soilCondition}</p>
+                <p><span className="font-semibold">Material Preference:</span> {construction.materialPreference}</p>
+                <p><span className="font-semibold">Inspection:</span> {construction.inspectionRequired ? 'Yes' : 'No'}</p>
             </div>
         </section>
     );
@@ -57,11 +57,11 @@ const ConstructionDetails: React.FC<{ document: Estimate }> = ({ document }) => 
 
 // Template 1: Classic Professional
 export const ConstructionTemplate1: React.FC<TemplateProps> = ({ document, pageItems, pageIndex, totalPages, style }) => {
-    const { business, client, summary, currency } = document;
+    const { business, client, summary, currency, textColor } = document;
     const currencySymbol = currencySymbols[currency] || '$';
     
     return (
-        <div className={`p-10 font-sans text-gray-800 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: style.fontFamily, fontSize: `${style.fontSize}pt`, minHeight: '1056px', backgroundColor: document.backgroundColor }}>
+        <div className={`p-10 font-sans text-gray-800 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: style.fontFamily, fontSize: `${style.fontSize}pt`, minHeight: '1056px', backgroundColor: document.backgroundColor, color: textColor }}>
             <header className="flex justify-between items-start pb-4 border-b-2" style={{ borderColor: style.color }}>
                 <div>
                     <h1 className="text-3xl font-bold" style={{ color: style.color }}>{business.name}</h1>
@@ -75,13 +75,13 @@ export const ConstructionTemplate1: React.FC<TemplateProps> = ({ document, pageI
 
             <section className="grid grid-cols-3 gap-4 my-8 text-sm">
                 <div>
-                    <p className="font-bold text-gray-500">BILLED TO</p>
+                    <p className="font-bold">BILLED TO</p>
                     <p>{client.name}</p>
                     <p>{client.companyName}</p>
                     <p className="whitespace-pre-line">{client.address}</p>
                 </div>
                 <div>
-                    <p className="font-bold text-gray-500">PROJECT</p>
+                    <p className="font-bold">PROJECT</p>
                     <p>{document.projectTitle}</p>
                     <p className="whitespace-pre-line">{client.projectLocation}</p>
                 </div>
@@ -91,7 +91,7 @@ export const ConstructionTemplate1: React.FC<TemplateProps> = ({ document, pageI
                 </div>
             </section>
 
-            <ConstructionDetails document={document} />
+            <ConstructionDetails document={document} textColor={textColor || '#374151'} />
             
             <main className="flex-grow">
                  <table className="w-full text-left text-sm">
@@ -120,13 +120,13 @@ export const ConstructionTemplate1: React.FC<TemplateProps> = ({ document, pageI
                 <footer className="mt-auto pt-8">
                      <div className="flex justify-end">
                         <div className="w-2/5 text-sm">
-                            <div className="flex justify-between py-1"><span className="text-gray-600">Subtotal:</span><span>{currencySymbol}{summary.subtotal.toFixed(2)}</span></div>
-                            {summary.discount > 0 && <div className="flex justify-between py-1"><span className="text-gray-600">Discount:</span><span>-{currencySymbol}{summary.discount.toFixed(2)}</span></div>}
-                            <div className="flex justify-between py-1"><span className="text-gray-600">Tax ({summary.taxPercentage}%):</span><span>{currencySymbol}{summary.taxAmount.toFixed(2)}</span></div>
+                            <div className="flex justify-between py-1"><span>Subtotal:</span><span>{currencySymbol}{summary.subtotal.toFixed(2)}</span></div>
+                            {summary.discount > 0 && <div className="flex justify-between py-1"><span>Discount:</span><span>-{currencySymbol}{summary.discount.toFixed(2)}</span></div>}
+                            <div className="flex justify-between py-1"><span>Tax ({summary.taxPercentage}%):</span><span>{currencySymbol}{summary.taxAmount.toFixed(2)}</span></div>
                             <div className="flex justify-between font-bold py-2 mt-2 border-t-2 border-gray-800" style={{ color: style.color }}><span className="text-lg">Total Estimate:</span><span className="text-lg">{currencySymbol}{summary.grandTotal.toFixed(2)}</span></div>
                         </div>
                     </div>
-                    <div className="mt-8 text-xs text-gray-600">
+                    <div className="mt-8 text-xs">
                         <p className="font-bold mb-1">Terms &amp; Conditions</p>
                         <p className="whitespace-pre-line">{document.termsAndConditions}</p>
                     </div>
@@ -143,7 +143,7 @@ export const ConstructionTemplate1: React.FC<TemplateProps> = ({ document, pageI
 
 // Template 2: Modern Dark Header
 export const ConstructionTemplate2: React.FC<TemplateProps> = ({ document, pageItems, pageIndex, totalPages, style }) => {
-    const { business, client, summary, currency } = document;
+    const { business, client, summary, currency, textColor } = document;
     const currencySymbol = currencySymbols[currency] || '$';
 
     return (
@@ -165,7 +165,7 @@ export const ConstructionTemplate2: React.FC<TemplateProps> = ({ document, pageI
                 </div>
             </header>
 
-            <div className="p-10 flex-grow flex flex-col">
+            <div className="p-10 flex-grow flex flex-col" style={{color: textColor}}>
                  <section className="grid grid-cols-2 gap-8 mb-8 text-sm">
                     <div>
                         <p className="font-bold text-gray-500 mb-1">CLIENT INFORMATION</p>
@@ -184,7 +184,7 @@ export const ConstructionTemplate2: React.FC<TemplateProps> = ({ document, pageI
                     </div>
                 </section>
 
-                <ConstructionDetails document={document} />
+                <ConstructionDetails document={document} textColor={textColor || '#374151'} />
                 
                 <main className="flex-grow">
                     <table className="w-full text-left text-sm">
@@ -214,7 +214,7 @@ export const ConstructionTemplate2: React.FC<TemplateProps> = ({ document, pageI
                         <div className="flex justify-between items-start">
                             <div className="w-1/2 text-xs">
                                 <p className="font-bold text-gray-500 mb-2">TERMS &amp; CONDITIONS</p>
-                                <p className="text-gray-600 whitespace-pre-line">{document.termsAndConditions}</p>
+                                <p className="whitespace-pre-line">{document.termsAndConditions}</p>
                                 <div className="flex gap-16">
                                     <SignatureDisplay signature={document.business.ownerSignature} label="Authorized Signature" />
                                     <SignatureDisplay signature={document.clientSignature} label="Client Signature" />
@@ -222,9 +222,9 @@ export const ConstructionTemplate2: React.FC<TemplateProps> = ({ document, pageI
                             </div>
                             <div className="w-2/5">
                                 <div className="bg-gray-100 p-4 rounded-lg text-sm">
-                                    <div className="flex justify-between py-1"><span className="text-gray-600">Subtotal:</span><span className="font-medium">{currencySymbol}{summary.subtotal.toFixed(2)}</span></div>
-                                    <div className="flex justify-between py-1"><span className="text-gray-600">Tax ({summary.taxPercentage}%):</span><span className="font-medium">{currencySymbol}{summary.taxAmount.toFixed(2)}</span></div>
-                                    {summary.discount > 0 && <div className="flex justify-between py-1"><span className="text-gray-600">Discount:</span><span className="font-medium">-{currencySymbol}{summary.discount.toFixed(2)}</span></div>}
+                                    <div className="flex justify-between py-1"><span>Subtotal:</span><span className="font-medium">{currencySymbol}{summary.subtotal.toFixed(2)}</span></div>
+                                    <div className="flex justify-between py-1"><span>Tax ({summary.taxPercentage}%):</span><span className="font-medium">{currencySymbol}{summary.taxAmount.toFixed(2)}</span></div>
+                                    {summary.discount > 0 && <div className="flex justify-between py-1"><span>Discount:</span><span className="font-medium">-{currencySymbol}{summary.discount.toFixed(2)}</span></div>}
                                     <div className="flex justify-between font-bold text-base mt-2 pt-2 border-t-2 border-gray-300"><span>Grand Total:</span><span>{currencySymbol}{summary.grandTotal.toFixed(2)}</span></div>
                                 </div>
                             </div>
@@ -238,11 +238,11 @@ export const ConstructionTemplate2: React.FC<TemplateProps> = ({ document, pageI
 
 // Template 3: Minimalist & Clean
 export const ConstructionTemplate3: React.FC<TemplateProps> = ({ document, pageItems, pageIndex, totalPages, style }) => {
-    const { business, client, summary, currency } = document;
+    const { business, client, summary, currency, textColor } = document;
     const currencySymbol = currencySymbols[currency] || '$';
 
     return (
-        <div className={`p-10 font-sans text-gray-700 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: style.fontFamily, fontSize: `${style.fontSize}pt`, minHeight: '1056px', backgroundColor: document.backgroundColor }}>
+        <div className={`p-10 font-sans text-gray-700 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: style.fontFamily, fontSize: `${style.fontSize}pt`, minHeight: '1056px', backgroundColor: document.backgroundColor, color: textColor }}>
             <header className="mb-12">
                 <h1 className="text-4xl font-light tracking-wider mb-2">Estimate</h1>
                 <div className="flex justify-between text-sm">
@@ -264,7 +264,7 @@ export const ConstructionTemplate3: React.FC<TemplateProps> = ({ document, pageI
                 <p className="whitespace-pre-line">{client.address}</p>
             </section>
 
-             <ConstructionDetails document={document} />
+             <ConstructionDetails document={document} textColor={textColor || '#374151'} />
             
             <main className="flex-grow">
                  <table className="w-full text-left text-sm">
@@ -293,12 +293,12 @@ export const ConstructionTemplate3: React.FC<TemplateProps> = ({ document, pageI
                 <footer className="mt-auto pt-8">
                      <div className="flex justify-end mb-8">
                         <div className="w-1/3 text-sm">
-                            <div className="flex justify-between py-1"><span className="text-gray-500">Subtotal</span><span className="font-medium">{currencySymbol}{summary.subtotal.toFixed(2)}</span></div>
-                            <div className="flex justify-between py-1"><span className="text-gray-500">Tax</span><span className="font-medium">{currencySymbol}{summary.taxAmount.toFixed(2)}</span></div>
+                            <div className="flex justify-between py-1"><span>Subtotal</span><span className="font-medium">{currencySymbol}{summary.subtotal.toFixed(2)}</span></div>
+                            <div className="flex justify-between py-1"><span>Tax</span><span className="font-medium">{currencySymbol}{summary.taxAmount.toFixed(2)}</span></div>
                             <div className="flex justify-between py-2 mt-1 border-t-2 border-black font-bold"><span>Total</span><span>{currencySymbol}{summary.grandTotal.toFixed(2)}</span></div>
                         </div>
                     </div>
-                    <div className="text-xs text-gray-500">
+                    <div className="text-xs">
                         <p className="font-bold mb-1">Notes</p>
                         <p className="whitespace-pre-line">{document.termsAndConditions}</p>
                     </div>
@@ -313,7 +313,7 @@ export const ConstructionTemplate3: React.FC<TemplateProps> = ({ document, pageI
 
 // Template 4: Side Bar Color Accent
 export const ConstructionTemplate4: React.FC<TemplateProps> = ({ document, pageItems, pageIndex, totalPages, style }) => {
-    const { business, client, summary, currency } = document;
+    const { business, client, summary, currency, textColor } = document;
     const currencySymbol = currencySymbols[currency] || '$';
 
     return (
@@ -338,9 +338,9 @@ export const ConstructionTemplate4: React.FC<TemplateProps> = ({ document, pageI
                     </div>
                 </div>
             </div>
-            <div className="w-3/4 p-10 flex flex-col">
+            <div className="w-3/4 p-10 flex flex-col" style={{color: textColor}}>
                  <main className="flex-grow">
-                    <ConstructionDetails document={document} />
+                    <ConstructionDetails document={document} textColor={textColor || '#374151'} />
                     <table className="w-full text-left text-sm mt-4">
                         <thead>
                             <tr className="border-b-2 border-gray-300">
@@ -366,12 +366,12 @@ export const ConstructionTemplate4: React.FC<TemplateProps> = ({ document, pageI
                     <footer className="mt-auto pt-8">
                          <div className="flex justify-end">
                             <div className="w-1/2 text-sm">
-                                <div className="flex justify-between p-2 bg-gray-50 rounded-t-lg"><span className="text-gray-600">Subtotal:</span><span className="font-medium">{currencySymbol}{summary.subtotal.toFixed(2)}</span></div>
-                                <div className="flex justify-between p-2"><span className="text-gray-600">Tax ({summary.taxPercentage}%):</span><span className="font-medium">{currencySymbol}{summary.taxAmount.toFixed(2)}</span></div>
+                                <div className="flex justify-between p-2 bg-gray-50 rounded-t-lg"><span>Subtotal:</span><span className="font-medium">{currencySymbol}{summary.subtotal.toFixed(2)}</span></div>
+                                <div className="flex justify-between p-2"><span>Tax ({summary.taxPercentage}%):</span><span className="font-medium">{currencySymbol}{summary.taxAmount.toFixed(2)}</span></div>
                                 <div className="flex justify-between p-3 bg-gray-800 text-white rounded-b-lg font-bold text-base"><span>Total:</span><span>{currencySymbol}{summary.grandTotal.toFixed(2)}</span></div>
                             </div>
                         </div>
-                        <div className="mt-8 text-xs text-gray-500">
+                        <div className="mt-8 text-xs">
                            <p className="font-bold uppercase tracking-wider mb-2">Payment Schedule &amp; Terms</p>
                            <p className="whitespace-pre-line">{document.termsAndConditions}</p>
                         </div>
@@ -387,11 +387,11 @@ export const ConstructionTemplate4: React.FC<TemplateProps> = ({ document, pageI
 
 // Template 5: Bold & Grid
 export const ConstructionTemplate5: React.FC<TemplateProps> = ({ document, pageItems, pageIndex, totalPages, style }) => {
-    const { business, client, summary, currency } = document;
+    const { business, client, summary, currency, textColor } = document;
     const currencySymbol = currencySymbols[currency] || '$';
 
     return (
-        <div className={`p-10 font-sans text-gray-900 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: style.fontFamily, fontSize: `${style.fontSize}pt`, minHeight: '1056px', backgroundColor: document.backgroundColor }}>
+        <div className={`p-10 font-sans text-gray-900 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: style.fontFamily, fontSize: `${style.fontSize}pt`, minHeight: '1056px', backgroundColor: document.backgroundColor, color: textColor }}>
             <header className="flex justify-between items-center mb-8">
                 <div>
                      {business.logoUrl ? (
@@ -423,7 +423,7 @@ export const ConstructionTemplate5: React.FC<TemplateProps> = ({ document, pageI
                 </div>
             </section>
 
-             <ConstructionDetails document={document} />
+             <ConstructionDetails document={document} textColor={textColor || '#374151'} />
             
             <main className="flex-grow mt-4">
                 <table className="w-full text-left text-sm">
@@ -451,13 +451,13 @@ export const ConstructionTemplate5: React.FC<TemplateProps> = ({ document, pageI
             {pageIndex === totalPages - 1 && (
                 <footer className="mt-auto pt-8">
                      <div className="flex justify-between items-start">
-                         <div className="w-1/2 text-xs text-gray-600">
-                             <p className="font-bold mb-1 text-gray-800">TERMS</p>
+                         <div className="w-1/2 text-xs">
+                             <p className="font-bold mb-1">TERMS</p>
                              <p className="whitespace-pre-line">{document.termsAndConditions}</p>
                          </div>
                          <div className="w-2/5">
-                            <div className="flex justify-between p-2"><span className="text-gray-600">Subtotal</span><span className="font-medium">{currencySymbol}{summary.subtotal.toFixed(2)}</span></div>
-                            <div className="flex justify-between p-2"><span className="text-gray-600">Tax</span><span className="font-medium">{currencySymbol}{summary.taxAmount.toFixed(2)}</span></div>
+                            <div className="flex justify-between p-2"><span>Subtotal</span><span className="font-medium">{currencySymbol}{summary.subtotal.toFixed(2)}</span></div>
+                            <div className="flex justify-between p-2"><span>Tax</span><span className="font-medium">{currencySymbol}{summary.taxAmount.toFixed(2)}</span></div>
                             <div className="flex justify-between p-2 mt-2 border-t-2 border-black font-bold text-xl"><span >TOTAL</span><span >{currencySymbol}{summary.grandTotal.toFixed(2)}</span></div>
                          </div>
                      </div>

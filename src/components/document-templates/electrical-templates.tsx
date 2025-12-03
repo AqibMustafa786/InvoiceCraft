@@ -22,21 +22,21 @@ const safeFormat = (date: Date | string | number | undefined | null, formatStrin
     return format(d, formatString);
 }
 
-const ElectricalDetails: React.FC<{ document: Estimate }> = ({ document }) => {
+const ElectricalDetails: React.FC<{ document: Estimate; textColor: string; }> = ({ document, textColor }) => {
     if (!document.electrical) return null;
     const { electrical } = document;
     return (
-        <section className="my-4 text-xs">
-            <p className="font-bold text-gray-500 mb-2 border-b">Electrical Specifics</p>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-x-4 gap-y-1">
-                <p><span className="font-semibold text-gray-600">Service:</span> {electrical.serviceType}</p>
-                <p><span className="font-semibold text-gray-600">Wiring:</span> {electrical.wiringType}</p>
-                <p><span className="font-semibold text-gray-600">Panel Upgrade:</span> {electrical.panelUpgradeNeeded ? 'Yes' : 'No'}</p>
-                <p><span className="font-semibold text-gray-600">Panel Size:</span> {electrical.panelSize}</p>
-                {electrical.outletsFixturesCount && <p><span className="font-semibold text-gray-600">Outlets/Fixtures:</span> {electrical.outletsFixturesCount}</p>}
-                <p><span className="font-semibold text-gray-600">EV Charger:</span> {electrical.evChargerNeeded ? 'Yes' : 'No'}</p>
-                <p><span className="font-semibold text-gray-600">Inspection:</span> {electrical.inspectionRequired ? 'Yes' : 'No'}</p>
-                <p className="col-span-full"><span className="font-semibold text-gray-600">Rooms:</span> {electrical.roomsInvolved}</p>
+        <section className="my-4 text-xs" style={{color: textColor}}>
+            <p className="font-bold border-b">Electrical Specifics</p>
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-x-4 gap-y-1 mt-2">
+                <p><span className="font-semibold">Service:</span> {electrical.serviceType}</p>
+                <p><span className="font-semibold">Wiring:</span> {electrical.wiringType}</p>
+                <p><span className="font-semibold">Panel Upgrade:</span> {electrical.panelUpgradeNeeded ? 'Yes' : 'No'}</p>
+                <p><span className="font-semibold">Panel Size:</span> {electrical.panelSize}</p>
+                {electrical.outletsFixturesCount && <p><span className="font-semibold">Outlets/Fixtures:</span> {electrical.outletsFixturesCount}</p>}
+                <p><span className="font-semibold">EV Charger:</span> {electrical.evChargerNeeded ? 'Yes' : 'No'}</p>
+                <p><span className="font-semibold">Inspection:</span> {electrical.inspectionRequired ? 'Yes' : 'No'}</p>
+                <p className="col-span-full"><span className="font-semibold">Rooms:</span> {electrical.roomsInvolved}</p>
             </div>
         </section>
     );
@@ -45,16 +45,16 @@ const ElectricalDetails: React.FC<{ document: Estimate }> = ({ document }) => {
 
 // Template 1: Direct Interpretation
 export const ElectricalTemplate1: React.FC<TemplateProps> = ({ document, pageItems, pageIndex, totalPages, style }) => {
-    const { business, client, summary, currency } = document;
+    const { business, client, summary, currency, textColor } = document;
     const currencySymbol = currencySymbols[currency] || '$';
     const accentColor = style.color || '#1E40AF'; // Default to a navy blue
 
     return (
-        <div className={`p-10 bg-white font-sans text-gray-800 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: 'Arial, sans-serif', fontSize: '10pt', minHeight: '1056px' }}>
+        <div className={`p-10 bg-white font-sans text-gray-800 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: 'Arial, sans-serif', fontSize: '10pt', minHeight: '1056px', color: textColor }}>
             <header className="flex justify-between items-start mb-8">
                 <div>
                     <h1 className="text-xl font-bold">{business.name}</h1>
-                    <p className="text-xs text-gray-500 whitespace-pre-line">{business.address}</p>
+                    <p className="text-xs whitespace-pre-line">{business.address}</p>
                 </div>
                 <div className="text-right">
                     {business.logoUrl ?
@@ -78,7 +78,7 @@ export const ElectricalTemplate1: React.FC<TemplateProps> = ({ document, pageIte
                 </div>
             </section>
             
-            <ElectricalDetails document={document} />
+            <ElectricalDetails document={document} textColor={textColor || '#374151'}/>
 
             <main className="flex-grow">
                  <table className="w-full text-left text-sm">
@@ -107,12 +107,12 @@ export const ElectricalTemplate1: React.FC<TemplateProps> = ({ document, pageIte
                 <footer className="mt-auto pt-6">
                     <div className="flex justify-end">
                         <div className="w-2/5 text-sm space-y-1">
-                             <div className="flex justify-between p-1"><span className="text-gray-600">Subtotal</span><span>{currencySymbol}{summary.subtotal.toFixed(2)}</span></div>
-                             {summary.taxAmount > 0 && <div className="flex justify-between p-1"><span className="text-gray-600">Sales Tax ({summary.taxPercentage}%)</span><span>{currencySymbol}{summary.taxAmount.toFixed(2)}</span></div>}
+                             <div className="flex justify-between p-1"><span>Subtotal</span><span>{currencySymbol}{summary.subtotal.toFixed(2)}</span></div>
+                             {summary.taxAmount > 0 && <div className="flex justify-between p-1"><span>Sales Tax ({summary.taxPercentage}%)</span><span>{currencySymbol}{summary.taxAmount.toFixed(2)}</span></div>}
                             <div className="flex justify-between font-bold text-base mt-2 pt-2 border-t-2" style={{borderColor: accentColor}}><span>Total ({currency})</span><span style={{color: accentColor}}>{currencySymbol}{summary.grandTotal.toFixed(2)}</span></div>
                         </div>
                     </div>
-                    <div className="text-xs text-gray-500 mt-8">
+                    <div className="text-xs mt-8">
                         <p className="font-bold" style={{color: accentColor}}>Terms and Conditions</p>
                         <p className="whitespace-pre-line">{document.termsAndConditions}</p>
                     </div>
@@ -131,26 +131,26 @@ export const ElectricalTemplate1: React.FC<TemplateProps> = ({ document, pageIte
 
 // Template 2: Header Centered
 export const ElectricalTemplate2: React.FC<TemplateProps> = ({ document, pageItems, pageIndex, totalPages, style }) => {
-    const { business, client, summary, currency } = document;
+    const { business, client, summary, currency, textColor } = document;
     const currencySymbol = currencySymbols[currency] || '$';
     const accentColor = style.color || '#0B57D0';
 
     return (
-        <div className={`p-10 bg-white font-sans text-gray-800 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: 'Verdana, sans-serif', fontSize: '9.5pt', minHeight: '1056px' }}>
+        <div className={`p-10 bg-white font-sans text-gray-800 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: 'Verdana, sans-serif', fontSize: '9.5pt', minHeight: '1056px', color: textColor }}>
             <header className="text-center mb-8">
                 {business.logoUrl && <Image src={business.logoUrl} alt="Logo" width={80} height={80} className="object-contain mx-auto mb-2"/>}
                 <h1 className="text-3xl font-bold">{business.name}</h1>
-                <p className="text-xs text-gray-500 whitespace-pre-line">{business.address} • {business.phone}</p>
+                <p className="text-xs">{business.address} • {business.phone}</p>
                 <h2 className="text-2xl font-bold mt-4" style={{ color: accentColor }}>ELECTRICAL ESTIMATE</h2>
             </header>
 
             <section className="grid grid-cols-3 gap-4 mb-8 text-xs">
-                <div><p className="font-bold text-gray-500">Bill To:</p><p>{client.name}</p><p>{client.address}</p></div>
-                <div className="text-center"><p className="font-bold text-gray-500">Estimate No:</p><p>{document.estimateNumber}</p></div>
-                <div className="text-right"><p className="font-bold text-gray-500">Date:</p><p>{safeFormat(document.estimateDate, 'MM/dd/yyyy')}</p></div>
+                <div><p className="font-bold">Bill To:</p><p>{client.name}</p><p>{client.address}</p></div>
+                <div className="text-center"><p className="font-bold">Estimate No:</p><p>{document.estimateNumber}</p></div>
+                <div className="text-right"><p className="font-bold">Date:</p><p>{safeFormat(document.estimateDate, 'MM/dd/yyyy')}</p></div>
             </section>
             
-            <ElectricalDetails document={document} />
+            <ElectricalDetails document={document} textColor={textColor || '#374151'}/>
 
             <main className="flex-grow">
                  <table className="w-full text-left text-sm">
@@ -177,8 +177,8 @@ export const ElectricalTemplate2: React.FC<TemplateProps> = ({ document, pageIte
             
             {pageIndex === totalPages - 1 && (
                 <footer className="mt-auto pt-8 flex justify-between items-end">
-                    <div className="w-1/2 text-xs text-gray-500">
-                        <p className="font-bold text-gray-600 mb-1">Terms:</p>
+                    <div className="w-1/2 text-xs">
+                        <p className="font-bold mb-1">Terms:</p>
                         <p className="whitespace-pre-line">{document.termsAndConditions}</p>
                     </div>
                     <div className="w-1/3 text-sm">
@@ -194,11 +194,11 @@ export const ElectricalTemplate2: React.FC<TemplateProps> = ({ document, pageIte
 
 // Template 3: Minimalist
 export const ElectricalTemplate3: React.FC<TemplateProps> = ({ document, pageItems, pageIndex, totalPages, style }) => {
-    const { business, client, summary, currency } = document;
+    const { business, client, summary, currency, textColor } = document;
     const currencySymbol = currencySymbols[currency] || '$';
 
     return (
-        <div className={`p-12 bg-white font-['Garamond',_serif] text-gray-700 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{minHeight: '1056px' }}>
+        <div className={`p-12 bg-white font-['Garamond',_serif] text-gray-700 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{minHeight: '1056px', color: textColor }}>
             <header className="mb-12">
                 <h1 className="text-4xl font-light tracking-wider">Estimate</h1>
                 <p className="text-sm mt-1">Electrical Services by {business.name}</p>
@@ -206,7 +206,7 @@ export const ElectricalTemplate3: React.FC<TemplateProps> = ({ document, pageIte
 
             <section className="flex justify-between mb-10 text-xs">
                  <div>
-                    <p className="font-bold text-gray-500 mb-1">Prepared For</p>
+                    <p className="font-bold mb-1">Prepared For</p>
                     <p>{client.name}</p><p>{client.address}</p>
                 </div>
                  <div className="text-right">
@@ -215,7 +215,7 @@ export const ElectricalTemplate3: React.FC<TemplateProps> = ({ document, pageIte
                 </div>
             </section>
             
-            <ElectricalDetails document={document} />
+            <ElectricalDetails document={document} textColor={textColor || '#374151'}/>
 
             <main className="flex-grow">
                 <table className="w-full text-left text-xs">
@@ -245,8 +245,8 @@ export const ElectricalTemplate3: React.FC<TemplateProps> = ({ document, pageIte
                     <div className="flex justify-end">
                         <table className="w-1/3 text-xs">
                              <tbody>
-                                <tr><td className="py-1 text-gray-500">Subtotal</td><td className="text-right">{currencySymbol}{summary.subtotal.toFixed(2)}</td></tr>
-                                <tr><td className="py-1 text-gray-500">Tax</td><td className="text-right">{currencySymbol}{summary.taxAmount.toFixed(2)}</td></tr>
+                                <tr><td className="py-1">Subtotal</td><td className="text-right">{currencySymbol}{summary.subtotal.toFixed(2)}</td></tr>
+                                <tr><td className="py-1">Tax</td><td className="text-right">{currencySymbol}{summary.taxAmount.toFixed(2)}</td></tr>
                                 <tr className="font-bold text-base border-t-2 border-black"><td className="pt-2">Total</td><td className="pt-2 text-right">{currencySymbol}{summary.grandTotal.toFixed(2)}</td></tr>
                             </tbody>
                         </table>
@@ -259,13 +259,13 @@ export const ElectricalTemplate3: React.FC<TemplateProps> = ({ document, pageIte
 
 // Template 4: Side Accent
 export const ElectricalTemplate4: React.FC<TemplateProps> = ({ document, pageItems, pageIndex, totalPages, style }) => {
-    const { business, client, summary, currency } = document;
+    const { business, client, summary, currency, textColor } = document;
     const currencySymbol = currencySymbols[currency] || '$';
 
     return (
         <div className={`bg-white font-sans text-gray-800 flex ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ minHeight: '1056px' }}>
             <div className="w-10" style={{ backgroundColor: style.color }}></div>
-            <div className="p-10 flex-grow flex flex-col">
+            <div className="p-10 flex-grow flex flex-col" style={{color: textColor}}>
                 <header className="flex justify-between items-center mb-10">
                     <h1 className="text-2xl font-bold">{business.name}</h1>
                     <div className="text-right">
@@ -278,7 +278,7 @@ export const ElectricalTemplate4: React.FC<TemplateProps> = ({ document, pageIte
                     <div className="text-right"><p className="font-bold">DATE:</p><p>{safeFormat(document.estimateDate, 'yyyy-MM-dd')}</p></div>
                 </section>
 
-                <ElectricalDetails document={document} />
+                <ElectricalDetails document={document} textColor={textColor || '#374151'}/>
 
                 <main className="flex-grow">
                     <table className="w-full text-left text-sm">
@@ -306,8 +306,8 @@ export const ElectricalTemplate4: React.FC<TemplateProps> = ({ document, pageIte
                     <footer className="mt-auto pt-8">
                         <div className="flex justify-end">
                             <div className="w-2/5 text-sm space-y-2">
-                                <div className="flex justify-between"><span className="text-gray-600">Subtotal:</span><span>{currencySymbol}{summary.subtotal.toFixed(2)}</span></div>
-                                <div className="flex justify-between"><span className="text-gray-600">Tax:</span><span>{currencySymbol}{summary.taxAmount.toFixed(2)}</span></div>
+                                <div className="flex justify-between"><span>Subtotal:</span><span>{currencySymbol}{summary.subtotal.toFixed(2)}</span></div>
+                                <div className="flex justify-between"><span>Tax:</span><span>{currencySymbol}{summary.taxAmount.toFixed(2)}</span></div>
                                 <div className="flex justify-between font-bold text-lg mt-2 pt-2 border-t-2 border-black"><span>Total:</span><span>{currencySymbol}{summary.grandTotal.toFixed(2)}</span></div>
                             </div>
                         </div>
@@ -320,11 +320,11 @@ export const ElectricalTemplate4: React.FC<TemplateProps> = ({ document, pageIte
 
 // Template 5: Grid Layout
 export const ElectricalTemplate5: React.FC<TemplateProps> = ({ document, pageItems, pageIndex, totalPages, style }) => {
-    const { business, client, summary, currency } = document;
+    const { business, client, summary, currency, textColor } = document;
     const currencySymbol = currencySymbols[currency] || '$';
 
     return (
-        <div className={`p-10 bg-gray-50 font-['Roboto',_sans-serif] text-gray-900 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{minHeight: '1056px'}}>
+        <div className={`p-10 bg-gray-50 font-['Roboto',_sans-serif] text-gray-900 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{minHeight: '1056px', color: textColor}}>
             <header className="flex justify-between items-center mb-8">
                 <h1 className="text-4xl font-extrabold" style={{color: style.color}}>ESTIMATE</h1>
                 {business.logoUrl && <Image src={business.logoUrl} alt="Logo" width={100} height={40} className="object-contain" />}
@@ -337,7 +337,7 @@ export const ElectricalTemplate5: React.FC<TemplateProps> = ({ document, pageIte
                 <div><p className="font-bold text-gray-500">Date Issued:</p><p>{safeFormat(document.estimateDate, 'MMM d, yyyy')}</p></div>
             </section>
             
-            <ElectricalDetails document={document} />
+            <ElectricalDetails document={document} textColor={textColor || '#374151'}/>
 
             <main className="flex-grow bg-white p-4 rounded-lg shadow-sm">
                 <table className="w-full text-left text-xs">

@@ -33,21 +33,21 @@ const SignatureDisplay = ({ signature, label }: { signature: any, label: string 
     )
 }
 
-const CleaningDetails: React.FC<{ document: Estimate }> = ({ document }) => {
+const CleaningDetails: React.FC<{ document: Estimate; textColor: string; }> = ({ document, textColor }) => {
     if (!document.cleaning) return null;
     const { cleaning } = document;
     return (
-        <section className="my-4 text-xs">
-            <p className="font-bold text-gray-500 mb-2 border-b">Cleaning Specifics</p>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-x-4 gap-y-1">
-                <p><span className="font-semibold text-gray-600">Type:</span> {cleaning.cleaningType}</p>
-                <p><span className="font-semibold text-gray-600">Frequency:</span> {cleaning.frequency}</p>
-                {cleaning.homeSize && <p><span className="font-semibold text-gray-600">Home Size:</span> {cleaning.homeSize} sq ft</p>}
-                {cleaning.bedrooms && <p><span className="font-semibold text-gray-600">Bedrooms:</span> {cleaning.bedrooms}</p>}
-                {cleaning.bathrooms && <p><span className="font-semibold text-gray-600">Bathrooms:</span> {cleaning.bathrooms}</p>}
-                <p><span className="font-semibold text-gray-600">Kitchen Size:</span> {cleaning.kitchenSize}</p>
-                <p><span className="font-semibold text-gray-600">Has Pets:</span> {cleaning.hasPets ? 'Yes' : 'No'}</p>
-                {cleaning.addOns.length > 0 && <p className="col-span-full"><span className="font-semibold text-gray-600">Add-ons:</span> {cleaning.addOns.join(', ')}</p>}
+        <section className="my-4 text-xs" style={{color: textColor}}>
+            <p className="font-bold border-b" >Cleaning Specifics</p>
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-x-4 gap-y-1 mt-2">
+                <p><span className="font-semibold">Type:</span> {cleaning.cleaningType}</p>
+                <p><span className="font-semibold">Frequency:</span> {cleaning.frequency}</p>
+                {cleaning.homeSize && <p><span className="font-semibold">Home Size:</span> {cleaning.homeSize} sq ft</p>}
+                {cleaning.bedrooms && <p><span className="font-semibold">Bedrooms:</span> {cleaning.bedrooms}</p>}
+                {cleaning.bathrooms && <p><span className="font-semibold">Bathrooms:</span> {cleaning.bathrooms}</p>}
+                <p><span className="font-semibold">Kitchen Size:</span> {cleaning.kitchenSize}</p>
+                <p><span className="font-semibold">Has Pets:</span> {cleaning.hasPets ? 'Yes' : 'No'}</p>
+                {cleaning.addOns.length > 0 && <p className="col-span-full"><span className="font-semibold">Add-ons:</span> {cleaning.addOns.join(', ')}</p>}
             </div>
         </section>
     );
@@ -56,13 +56,13 @@ const CleaningDetails: React.FC<{ document: Estimate }> = ({ document }) => {
 
 // Template 1: Direct interpretation of user image
 export const CleaningTemplate1: React.FC<TemplateProps> = ({ document, pageItems, pageIndex, totalPages, style }) => {
-    const { business, client, summary, currency } = document;
+    const { business, client, summary, currency, textColor } = document;
     const currencySymbol = currencySymbols[currency] || '$';
     
     return (
         <div className={`bg-white font-sans text-gray-800 flex flex-col relative ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: 'Arial, sans-serif', fontSize: `10pt`, minHeight: '1056px' }}>
             <div className="absolute top-0 left-0 right-0 h-48" style={{ backgroundColor: style.color, clipPath: 'ellipse(100% 70% at 50% 0%)' }}></div>
-            <div className="p-10 relative z-10 flex-grow flex flex-col">
+            <div className="p-10 relative z-10 flex-grow flex flex-col" style={{color: textColor}}>
                 <header className="flex justify-between items-start mb-8 text-white">
                     <div>
                         <h1 className="text-3xl font-bold">CLEANING SERVICE ESTIMATE</h1>
@@ -94,7 +94,7 @@ export const CleaningTemplate1: React.FC<TemplateProps> = ({ document, pageItems
                     </div>
                 </section>
                 
-                 <CleaningDetails document={document} />
+                 <CleaningDetails document={document} textColor={textColor || '#374151'} />
 
                 <main className="flex-grow">
                      <table className="w-full text-left text-xs">
@@ -128,12 +128,12 @@ export const CleaningTemplate1: React.FC<TemplateProps> = ({ document, pageItems
                                 <tbody>
                                     <tr className="border-t-2"><td className="p-2 text-right font-bold">Subtotal</td><td className="p-2 text-right font-bold" style={{backgroundColor: style.color, color: 'white'}}>{currencySymbol}{summary.subtotal.toFixed(2)}</td></tr>
                                 </tbody>
-                            </table>
+                             </table>
                         </div>
                         <div className="grid grid-cols-2 gap-8 items-end text-xs">
                              <div>
                                 <p className="font-bold text-base mb-2">Terms and Conditions:</p>
-                                <ul className="list-disc list-inside space-y-1 text-gray-600">
+                                <ul className="list-disc list-inside space-y-1">
                                    <li className="whitespace-pre-line">{document.termsAndConditions}</li>
                                 </ul>
                             </div>
@@ -152,23 +152,23 @@ export const CleaningTemplate1: React.FC<TemplateProps> = ({ document, pageItems
 
 // Template 2: Fresh & Modern
 export const CleaningTemplate2: React.FC<TemplateProps> = ({ document, pageItems, pageIndex, totalPages, style }) => {
-    const { business, client, summary, currency } = document;
+    const { business, client, summary, currency, textColor } = document;
     const currencySymbol = currencySymbols[currency] || '$';
     const accentColor = style.color || '#10B981'; // Green
 
     return (
-        <div className={`p-10 bg-white font-sans text-gray-700 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: 'Inter, sans-serif', fontSize: '9pt', minHeight: '1056px' }}>
+        <div className={`p-10 bg-white font-sans text-gray-700 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: 'Inter, sans-serif', fontSize: '9pt', minHeight: '1056px', color: textColor }}>
             <header className="flex justify-between items-center mb-10">
                 <h1 className="text-3xl font-extrabold" style={{ color: accentColor }}>CLEANING ESTIMATE</h1>
                 <div className="text-right">
                     <p className="font-bold text-lg">{business.name}</p>
-                    <p className="text-xs text-gray-500">{business.address}</p>
+                    <p className="text-xs">{business.address}</p>
                 </div>
             </header>
 
             <section className="grid grid-cols-2 gap-8 mb-8 text-xs p-4 rounded-md" style={{backgroundColor: `${accentColor}1A`}}>
                  <div>
-                    <p className="font-bold text-gray-500 mb-1">CUSTOMER</p>
+                    <p className="font-bold mb-1">CUSTOMER</p>
                     <p>{client.name}</p>
                     <p>{client.address}</p>
                 </div>
@@ -178,7 +178,7 @@ export const CleaningTemplate2: React.FC<TemplateProps> = ({ document, pageItems
                 </div>
             </section>
             
-            <CleaningDetails document={document} />
+            <CleaningDetails document={document} textColor={textColor || '#374151'} />
 
             <main className="flex-grow">
                  <table className="w-full text-left text-xs">
@@ -222,11 +222,11 @@ export const CleaningTemplate2: React.FC<TemplateProps> = ({ document, pageItems
 
 // Template 3: Minimalist Checklist
 export const CleaningTemplate3: React.FC<TemplateProps> = ({ document, pageItems, pageIndex, totalPages, style }) => {
-    const { business, client, summary, currency } = document;
+    const { business, client, summary, currency, textColor } = document;
     const currencySymbol = currencySymbols[currency] || '$';
 
     return (
-        <div className={`p-12 bg-white font-['Garamond',_serif] text-gray-700 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ minHeight: '1056px' }}>
+        <div className={`p-12 bg-white font-['Garamond',_serif] text-gray-700 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ minHeight: '1056px', color: textColor }}>
             <header className="mb-12">
                 <h1 className="text-4xl font-light tracking-wider">Cleaning Service Proposal</h1>
                 <p className="text-sm mt-1">{business.name}</p>
@@ -234,7 +234,7 @@ export const CleaningTemplate3: React.FC<TemplateProps> = ({ document, pageItems
 
             <section className="flex justify-between mb-10 text-xs">
                  <div>
-                    <p className="font-bold text-gray-500 mb-1">Prepared For</p>
+                    <p className="font-bold mb-1">Prepared For</p>
                     <p>{client.name}</p><p>{client.address}</p>
                 </div>
                  <div className="text-right">
@@ -243,7 +243,7 @@ export const CleaningTemplate3: React.FC<TemplateProps> = ({ document, pageItems
                 </div>
             </section>
             
-            <CleaningDetails document={document} />
+            <CleaningDetails document={document} textColor={textColor || '#374151'} />
 
             <main className="flex-grow">
                 <table className="w-full text-left text-xs">
@@ -273,7 +273,7 @@ export const CleaningTemplate3: React.FC<TemplateProps> = ({ document, pageItems
                     <div className="flex justify-end">
                         <table className="w-1/3 text-xs">
                              <tbody>
-                                <tr><td className="py-1 text-gray-500">Subtotal</td><td className="text-right">{currencySymbol}{summary.subtotal.toFixed(2)}</td></tr>
+                                <tr><td className="py-1">Subtotal</td><td className="text-right">{currencySymbol}{summary.subtotal.toFixed(2)}</td></tr>
                                 <tr className="font-bold text-base border-t-2 border-black"><td className="pt-2">TOTAL</td><td className="pt-2 text-right">{currencySymbol}{summary.grandTotal.toFixed(2)}</td></tr>
                             </tbody>
                         </table>
@@ -286,7 +286,7 @@ export const CleaningTemplate3: React.FC<TemplateProps> = ({ document, pageItems
 
 // Template 4: Side Panel Bubbles
 export const CleaningTemplate4: React.FC<TemplateProps> = ({ document, pageItems, pageIndex, totalPages, style }) => {
-    const { business, client, summary, currency } = document;
+    const { business, client, summary, currency, textColor } = document;
     const currencySymbol = currencySymbols[currency] || '$';
 
     return (
@@ -295,29 +295,29 @@ export const CleaningTemplate4: React.FC<TemplateProps> = ({ document, pageItems
                 <h1 className="text-3xl font-bold mb-10">Cleaning Quote</h1>
                  <div className="text-sm space-y-6 flex-grow">
                     <div>
-                        <p className="font-bold opacity-70 mb-1">CLIENT</p>
+                        <p className="font-bold opacity-80 mb-1">CLIENT</p>
                         <p className="font-bold text-lg">{client.name}</p>
                         <p>{client.address}</p>
                     </div>
                     <div>
-                        <p className="font-bold opacity-70 mb-1">DETAILS</p>
+                        <p className="font-bold opacity-80 mb-1">DETAILS</p>
                         <p>#{document.estimateNumber}</p>
                         <p>Date: {safeFormat(document.estimateDate, 'yyyy-MM-dd')}</p>
                     </div>
                 </div>
                  {pageIndex === totalPages - 1 && (
                     <div className="mt-auto text-sm">
-                         <p className="font-bold opacity-70 mb-2">TOTAL COST</p>
+                         <p className="font-bold opacity-80 mb-2">TOTAL COST</p>
                          <p className="text-4xl font-extrabold">{currencySymbol}{summary.grandTotal.toFixed(2)}</p>
                     </div>
                 )}
             </div>
-            <div className="w-2/3 p-10 flex flex-col">
+            <div className="w-2/3 p-10 flex flex-col" style={{color: textColor}}>
                 <header className="mb-8 text-right">
                     <h2 className="text-2xl font-bold">{business.name}</h2>
-                    <p className="text-xs text-gray-500">{business.address}</p>
+                    <p className="text-xs">{business.address}</p>
                 </header>
-                 <CleaningDetails document={document} />
+                 <CleaningDetails document={document} textColor={textColor || '#374151'} />
                 <main className="flex-grow">
                     <table className="w-full text-left text-sm">
                         <thead className="border-b-2 border-gray-300">
@@ -344,23 +344,23 @@ export const CleaningTemplate4: React.FC<TemplateProps> = ({ document, pageItems
 
 // Template 5: Bold Grid
 export const CleaningTemplate5: React.FC<TemplateProps> = ({ document, pageItems, pageIndex, totalPages, style }) => {
-    const { business, client, summary, currency } = document;
+    const { business, client, summary, currency, textColor } = document;
     const currencySymbol = currencySymbols[currency] || '$';
 
     return (
-        <div className={`p-10 bg-gray-50 font-['Roboto'] text-gray-900 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ minHeight: '1056px' }}>
+        <div className={`p-10 bg-gray-50 font-['Roboto'] text-gray-900 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ minHeight: '1056px', color: textColor }}>
             <header className="grid grid-cols-2 gap-4 mb-10">
                 <div className="space-y-1"><h1 className="text-4xl font-extrabold" style={{color: style.color}}>Service Estimate</h1></div>
                  <div className="text-right"><p className="text-lg font-bold">{business.name}</p><p className="text-xs">{business.address}</p></div>
             </header>
 
             <section className="mb-8 p-4 bg-white shadow-sm rounded-md text-xs">
-                 <p className="font-bold text-gray-500 mb-2">PROJECT FOR: {client.name}</p>
+                 <p className="font-bold mb-2">PROJECT FOR: {client.name}</p>
                  <p className="font-semibold">{document.projectTitle}</p>
                  <p>{client.address}</p>
             </section>
             
-            <CleaningDetails document={document} />
+            <CleaningDetails document={document} textColor={textColor || '#374151'} />
 
             <main className="flex-grow bg-white p-4 rounded-md shadow-sm">
                 <table className="w-full text-left text-xs">
