@@ -1,0 +1,368 @@
+
+'use client';
+
+import React from 'react';
+import type { Estimate, LineItem } from '@/lib/types';
+import { format, isValid } from 'date-fns';
+import Image from 'next/image';
+
+interface TemplateProps {
+  document: Estimate;
+  pageItems: LineItem[];
+  pageIndex: number;
+  totalPages: number;
+  style: React.CSSProperties;
+}
+
+const currencySymbols: { [key: string]: string } = { USD: '$', EUR: '€', GBP: '£', JPY: '¥', PKR: '₨' };
+
+const safeFormat = (date: Date | string | number | undefined | null, formatString: string) => {
+    if (!date) return 'N/A';
+    const d = new Date(date);
+    if (!isValid(d)) return "Invalid Date";
+    return format(d, formatString);
+}
+
+const SignatureDisplay = ({ signature, label }: { signature: any, label: string }) => {
+    if (!signature?.image) return null;
+    return (
+        <div className="mt-8">
+            <Image src={signature.image} alt={label} width={150} height={75} className="border-b border-gray-400" />
+            <p className="text-xs text-gray-500 pt-1 border-t-2 border-gray-700 w-[150px]">{label}</p>
+        </div>
+    )
+}
+
+// Template 1: Tech Corporate (Based on user image)
+export const ITTemplate1: React.FC<TemplateProps> = ({ document, pageItems, pageIndex, totalPages, style }) => {
+    const { business, client, summary, currency, itFreelance } = document;
+    const currencySymbol = currencySymbols[currency] || '$';
+
+    return (
+        <div className={`p-10 bg-white font-sans text-gray-800 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: style.fontFamily, fontSize: `${style.fontSize}pt`, minHeight: '1056px' }}>
+            <header className="flex justify-between items-start pb-5 mb-5">
+                <div className="flex items-center gap-4">
+                    {business.logoUrl ? 
+                        <Image src={business.logoUrl} alt="Logo" width={50} height={50} className="object-contain" /> :
+                        <div className="w-12 h-12 bg-gray-200 rounded-md"></div>
+                    }
+                    <div>
+                        <h1 className="text-2xl font-bold">{business.name}</h1>
+                        <p className="text-xs text-gray-500">{business.address} • {business.phone}</p>
+                        <p className="text-xs text-blue-600">{business.email}</p>
+                    </div>
+                </div>
+                 <div className="text-right">
+                    <p className="text-4xl font-extrabold">{currencySymbol}{summary.grandTotal.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</p>
+                    <p className="text-sm font-bold text-gray-500 tracking-wider">TOTAL COST</p>
+                </div>
+            </header>
+
+            <section className="mb-8 p-4 bg-gray-50 rounded-md text-xs">
+                <p className="font-bold text-gray-400 tracking-widest mb-2">PROJECT INFORMATION</p>
+                <div className="grid grid-cols-[120px_1fr] gap-x-4 gap-y-1">
+                    <span className="text-gray-600">PROJECT NAME:</span><span className="font-semibold">{document.projectTitle}</span>
+                    <span className="text-gray-600">LOCATION:</span><span className="font-semibold">{client.projectLocation}</span>
+                    <span className="text-gray-600">CONTACT PERSON:</span><span className="font-semibold">{client.name}</span>
+                    <span className="text-gray-600">ESTIMATOR:</span><span className="font-semibold">{business.name}</span>
+                    <span className="text-gray-600">ESTIMATION DATE:</span><span className="font-semibold">{safeFormat(document.estimateDate, 'yyyy-MM-dd')}</span>
+                </div>
+            </section>
+            
+            <main className="flex-grow">
+                 <p className="font-bold text-gray-400 tracking-widest mb-2 text-xs">COST ESTIMATE</p>
+                 <table className="w-full text-left text-xs">
+                    <thead>
+                        <tr className="border-b-2 border-gray-200">
+                            <th className="py-2 font-bold w-1/2">DESCRIPTION</th>
+                            <th className="py-2 font-bold text-center">QUANTITY</th>
+                            <th className="py-2 font-bold text-right">UNIT PRICE</th>
+                            <th className="py-2 font-bold text-right">TOTAL</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {pageItems.map(item => (
+                            <tr key={item.id} className="border-b border-gray-100">
+                                <td className="py-2 align-top whitespace-pre-line">{item.name}</td>
+                                <td className="py-2 align-top text-center">{item.quantity}</td>
+                                <td className="py-2 align-top text-right">{currencySymbol}{item.unitPrice.toFixed(2)}</td>
+                                <td className="py-2 align-top text-right">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </main>
+            
+            {pageIndex === totalPages - 1 && (
+                <footer className="mt-auto pt-8 flex justify-between items-end text-xs">
+                    <div className="space-y-4">
+                        <div>
+                             <p className="font-bold text-gray-400 tracking-widest mb-2">NOTES</p>
+                             <p className="text-gray-600 whitespace-pre-line w-96">{document.termsAndConditions}</p>
+                        </div>
+                         <div>
+                             <p className="font-bold text-gray-400 tracking-widest mb-2">CLIENT INFORMATION</p>
+                            <p><span className="text-gray-600 w-20 inline-block">CLIENT:</span> <span className="font-semibold">{client.name}</span></p>
+                            <p><span className="text-gray-600 w-20 inline-block">ADDRESS:</span> <span className="font-semibold">{client.address}</span></p>
+                            <p><span className="text-gray-600 w-20 inline-block">CONTACT:</span> <span className="font-semibold">{client.phone}</span></p>
+                            <p><span className="text-gray-600 w-20 inline-block">EMAIL:</span> <span className="font-semibold">{client.email}</span></p>
+                        </div>
+                    </div>
+                     <div className="text-right">
+                        <SignatureDisplay signature={document.business.ownerSignature} label={business.name} />
+                         <p className="text-lg font-bold mt-4" style={{fontFamily: 'cursive'}}>Thank you!</p>
+                         <p className="text-[8px] text-gray-500 mt-2 max-w-[250px]">Thank you for considering IT Solutions Inc. for your project needs. We look forward to the opportunity to work together and deliver exceptional results.</p>
+                     </div>
+                </footer>
+            )}
+        </div>
+    );
+};
+
+// Template 2: Modern Dark Mode
+export const ITTemplate2: React.FC<TemplateProps> = ({ document, pageItems, pageIndex, totalPages, style }) => {
+    const { business, client, summary, currency } = document;
+    const currencySymbol = currencySymbols[currency] || '$';
+
+    return (
+        <div className={`p-10 bg-gray-900 text-gray-200 font-['Roboto_Mono',_monospace] flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ minHeight: '1056px' }}>
+            <header className="flex justify-between items-start mb-10">
+                <div>
+                    <h1 className="text-3xl font-bold" style={{ color: style.color || '#4C1D95' }}>{business.name}</h1>
+                    <p className="text-xs text-gray-400">Software & IT Solutions</p>
+                </div>
+                <div className="text-right">
+                    <h2 className="text-3xl font-light text-gray-400">ESTIMATE</h2>
+                    <p className="text-sm mt-1">#{document.estimateNumber}</p>
+                </div>
+            </header>
+
+            <section className="grid grid-cols-2 gap-8 mb-8 text-xs">
+                <div><p className="font-bold text-gray-500 mb-1">PROJECT FOR:</p><p className="font-medium">{client.name}</p><p className="text-gray-400">{client.address}</p></div>
+                <div className="text-right"><p className="font-bold text-gray-500 mb-1">DATE:</p><p>{safeFormat(document.estimateDate, 'MM-dd-yyyy')}</p></div>
+            </section>
+            
+            <main className="flex-grow">
+                <table className="w-full text-left text-sm">
+                    <thead>
+                        <tr className="border-b border-gray-700">
+                            <th className="py-2 font-semibold w-1/2 text-gray-400">SERVICE</th>
+                            <th className="py-2 font-semibold text-center text-gray-400">QTY</th>
+                            <th className="py-2 font-semibold text-right text-gray-400">RATE</th>
+                            <th className="py-2 font-semibold text-right text-gray-400">TOTAL</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {pageItems.map(item => (
+                            <tr key={item.id} className="border-b border-gray-800">
+                                <td className="py-2 align-top whitespace-pre-line">{item.name}</td>
+                                <td className="py-2 align-top text-center">{item.quantity}</td>
+                                <td className="py-2 align-top text-right">{currencySymbol}{item.unitPrice.toFixed(2)}</td>
+                                <td className="py-2 align-top text-right">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </main>
+            
+            {pageIndex === totalPages - 1 && (
+                <footer className="mt-auto pt-8">
+                     <div className="flex justify-end">
+                        <div className="w-2/5 text-sm space-y-1">
+                            <div className="flex justify-between"><span className="text-gray-400">Subtotal:</span><span>{currencySymbol}{summary.subtotal.toFixed(2)}</span></div>
+                            <div className="flex justify-between"><span className="text-gray-400">Tax ({summary.taxPercentage}%):</span><span>{currencySymbol}{summary.taxAmount.toFixed(2)}</span></div>
+                            <div className="flex justify-between font-bold text-lg mt-2 pt-2 border-t border-gray-600"><span>Total Estimate:</span><span style={{ color: style.color || '#4C1D95' }}>{currencySymbol}{summary.grandTotal.toFixed(2)}</span></div>
+                        </div>
+                    </div>
+                </footer>
+            )}
+        </div>
+    );
+};
+
+// Template 3: Minimalist Grid
+export const ITTemplate3: React.FC<TemplateProps> = ({ document, pageItems, pageIndex, totalPages, style }) => {
+    const { business, client, summary, currency } = document;
+    const currencySymbol = currencySymbols[currency] || '$';
+
+    return (
+        <div className={`p-12 bg-white font-['Inter',_sans-serif] text-gray-800 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ minHeight: '1056px' }}>
+            <header className="mb-12">
+                <h1 className="text-4xl font-extrabold tracking-tighter">Estimate</h1>
+                <p className="text-sm mt-1">{business.name}</p>
+            </header>
+
+            <section className="grid grid-cols-4 gap-4 mb-10 text-xs">
+                <div><p className="font-bold text-gray-500 mb-1">To</p><p>{client.name}</p></div>
+                <div><p className="font-bold text-gray-500 mb-1">Estimate #</p><p>{document.estimateNumber}</p></div>
+                <div><p className="font-bold text-gray-500 mb-1">Date</p><p>{safeFormat(document.estimateDate, 'yyyy-MM-dd')}</p></div>
+                <div><p className="font-bold text-gray-500 mb-1">Project</p><p>{document.projectTitle}</p></div>
+            </section>
+            
+            <main className="flex-grow">
+                 <table className="w-full text-left text-xs">
+                    <thead>
+                        <tr>
+                            <th className="p-2 font-bold w-3/5 border-b-2 border-gray-300">ITEM</th>
+                            <th className="p-2 font-bold text-center border-b-2 border-gray-300">QTY</th>
+                            <th className="p-2 font-bold text-right border-b-2 border-gray-300">PRICE</th>
+                            <th className="p-2 font-bold text-right border-b-2 border-gray-300">AMOUNT</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {pageItems.map(item => (
+                            <tr key={item.id}>
+                                <td className="p-2 border-b border-gray-100 whitespace-pre-line">{item.name}</td>
+                                <td className="p-2 border-b border-gray-100 text-center">{item.quantity}</td>
+                                <td className="p-2 border-b border-gray-100 text-right">{currencySymbol}{item.unitPrice.toFixed(2)}</td>
+                                <td className="p-2 border-b border-gray-100 text-right">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </main>
+
+            {pageIndex === totalPages - 1 && (
+                <footer className="mt-auto pt-8">
+                    <div className="flex justify-end">
+                        <table className="w-1/3 text-xs">
+                            <tbody>
+                                <tr><td className="py-1 text-gray-500">Subtotal</td><td className="py-1 text-right">{currencySymbol}{summary.subtotal.toFixed(2)}</td></tr>
+                                <tr className="border-b"><td className="py-1 text-gray-500">Tax</td><td className="py-1 text-right">{currencySymbol}{summary.taxAmount.toFixed(2)}</td></tr>
+                                <tr className="font-bold text-base"><td className="pt-2">TOTAL</td><td className="pt-2 text-right">{currencySymbol}{summary.grandTotal.toFixed(2)}</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </footer>
+            )}
+        </div>
+    );
+};
+
+
+// Template 4: Creative Blue
+export const ITTemplate4: React.FC<TemplateProps> = ({ document, pageItems, pageIndex, totalPages, style }) => {
+    const { business, client, summary, currency } = document;
+    const currencySymbol = currencySymbols[currency] || '$';
+
+    return (
+        <div className={`bg-white font-sans text-gray-800 flex ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ minHeight: '1056px' }}>
+            <div className="w-1/3 p-8 text-white flex flex-col" style={{ backgroundColor: style.color || '#1D4ED8' }}>
+                <h1 className="text-3xl font-bold mb-10">Estimate</h1>
+                <div className="text-sm space-y-6 flex-grow">
+                    <div>
+                        <p className="font-bold opacity-80 mb-1">CLIENT</p>
+                        <p className="font-bold text-lg">{client.name}</p>
+                        <p>{client.address}</p>
+                    </div>
+                    <div>
+                        <p className="font-bold opacity-80 mb-1">PROJECT</p>
+                        <p>{document.projectTitle}</p>
+                    </div>
+                    <div>
+                        <p className="font-bold opacity-80 mb-1">REFERENCE</p>
+                        <p>#{document.estimateNumber}</p>
+                        <p>Date: {safeFormat(document.estimateDate, 'yyyy-MM-dd')}</p>
+                    </div>
+                </div>
+                 {pageIndex === totalPages - 1 && (
+                    <div className="mt-auto text-sm">
+                         <p className="font-bold opacity-80 mb-2">TOTAL ESTIMATE</p>
+                         <p className="text-4xl font-extrabold">{currencySymbol}{summary.grandTotal.toFixed(2)}</p>
+                    </div>
+                )}
+            </div>
+            <div className="w-2/3 p-10 flex flex-col">
+                <header className="mb-8 text-right">
+                    <h2 className="text-2xl font-bold">{business.name}</h2>
+                    <p className="text-xs text-gray-500">{business.address}</p>
+                </header>
+                <main className="flex-grow">
+                    <table className="w-full text-left text-sm">
+                        <thead className="border-b-2 border-gray-300">
+                            <tr>
+                                <th className="py-2 font-bold w-1/2">SERVICE/ITEM</th>
+                                <th className="py-2 font-bold text-center">QTY</th>
+                                <th className="py-2 font-bold text-right">RATE</th>
+                                <th className="py-2 font-bold text-right">TOTAL</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {pageItems.map(item => (
+                                <tr key={item.id} className="border-b border-gray-100">
+                                    <td className="py-2 align-top whitespace-pre-line">{item.name}</td>
+                                    <td className="py-2 align-top text-center">{item.quantity}</td>
+                                    <td className="py-2 align-top text-right">{currencySymbol}{item.unitPrice.toFixed(2)}</td>
+                                    <td className="py-2 align-top text-right font-medium">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </main>
+            </div>
+        </div>
+    );
+};
+
+// Template 5: Startup Vibe
+export const ITTemplate5: React.FC<TemplateProps> = ({ document, pageItems, pageIndex, totalPages, style }) => {
+    const { business, client, summary, currency } = document;
+    const currencySymbol = currencySymbols[currency] || '$';
+
+    return (
+        <div className={`p-10 bg-gray-50 font-['Inter',_sans-serif] text-gray-800 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ minHeight: '1056px' }}>
+            <header className="flex justify-between items-center mb-10">
+                <h1 className="text-2xl font-extrabold tracking-tighter">{business.name}</h1>
+                <p className="text-xs font-mono px-2 py-1 bg-gray-200 text-gray-600 rounded">ESTIMATE</p>
+            </header>
+
+            <section className="grid grid-cols-2 gap-4 text-xs mb-8">
+                <div>
+                    <p className="text-gray-500">To:</p>
+                    <p className="font-bold">{client.name}</p>
+                    <p className="text-gray-600">{client.address}</p>
+                </div>
+                <div className="text-right">
+                    <p className="text-gray-500">Estimate <span className="font-mono text-black">#{document.estimateNumber}</span></p>
+                    <p className="text-gray-500">Date: <span className="font-mono text-black">{safeFormat(document.estimateDate, 'dd.MM.yyyy')}</span></p>
+                </div>
+            </section>
+            
+            <main className="flex-grow bg-white p-4 rounded-lg shadow-sm">
+                <table className="w-full text-left text-xs">
+                    <thead>
+                        <tr className="border-b-2 border-gray-200">
+                            <th className="py-2 font-bold w-3/5 text-gray-500">DESCRIPTION</th>
+                            <th className="py-2 font-bold text-center text-gray-500">QTY</th>
+                            <th className="py-2 font-bold text-right text-gray-500">PRICE</th>
+                            <th className="py-2 font-bold text-right text-gray-500">TOTAL</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {pageItems.map(item => (
+                            <tr key={item.id} className="border-b border-gray-100">
+                                <td className="py-2 align-top whitespace-pre-line">{item.name}</td>
+                                <td className="py-2 align-top text-center">{item.quantity}</td>
+                                <td className="py-2 align-top text-right">{currencySymbol}{item.unitPrice.toFixed(2)}</td>
+                                <td className="py-2 align-top text-right font-semibold">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </main>
+            
+            {pageIndex === totalPages - 1 && (
+                <footer className="mt-auto pt-8 flex justify-end">
+                    <div className="w-1/3 text-sm space-y-1">
+                        <p className="flex justify-between"><span>Subtotal</span><span className="font-mono">{currencySymbol}{summary.subtotal.toFixed(2)}</span></p>
+                        <p className="flex justify-between"><span>Tax</span><span className="font-mono">{currencySymbol}{summary.taxAmount.toFixed(2)}</span></p>
+                        <p className="flex justify-between font-bold text-lg mt-2 pt-2 border-t-2 border-black">
+                            <span>Total Due</span>
+                            <span className="font-mono">{currencySymbol}{summary.grandTotal.toFixed(2)}</span>
+                        </p>
+                    </div>
+                </footer>
+            )}
+        </div>
+    );
+};
