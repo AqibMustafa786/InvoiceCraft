@@ -17,14 +17,15 @@ import { setDocumentNonBlocking } from '@/firebase/non-blocking-updates';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useDoc } from '@/firebase/firestore/use-doc';
 import { sendDocumentByEmail } from '@/ai/flows/send-document-flow';
+import { DocumentTemplateSelector } from '@/components/document-template-selector';
 
 const ESTIMATES_COLLECTION = 'estimates';
 
 const getInitialLineItem = (): LineItem => ({ id: crypto.randomUUID(), name: '', quantity: 1, unitPrice: 0, taxable: true });
 
 const getInitialEstimate = (): Omit<Estimate, 'userId'> => ({
-  id: crypto.randomUUID(),
-  estimateNumber: `EST-${new Date().getFullYear()}-001`,
+  id: '', // Will be set in useEffect
+  estimateNumber: '', // Will be set in useEffect
   estimateDate: new Date(),
   validUntilDate: addDays(new Date(), 30),
   status: 'draft',
@@ -276,7 +277,10 @@ export default function CreateEstimatePage() {
        };
 
     } else {
-        initialEstimate = {...getInitialEstimate(), userId: user.uid};
+        const newEstimate = getInitialEstimate();
+        newEstimate.id = crypto.randomUUID();
+        newEstimate.estimateNumber = `EST-${new Date().getFullYear()}-${String(Math.floor(Math.random() * 1000)).padStart(3, '0')}`;
+        initialEstimate = {...newEstimate, userId: user.uid};
     }
     
     setDocument(initialEstimate);
@@ -358,6 +362,7 @@ export default function CreateEstimatePage() {
   const handleNew = () => {
     if (!user) return;
     const newEstimate = {...getInitialEstimate(), userId: user.uid};
+    newEstimate.id = crypto.randomUUID();
     newEstimate.estimateNumber = `EST-${new Date().getFullYear()}-${String(Math.floor(Math.random() * 1000)).padStart(3, '0')}`;
     setDocument(newEstimate);
     if (typeof window !== 'undefined' && window.document) {
@@ -481,6 +486,15 @@ export default function CreateEstimatePage() {
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
           <div className="lg:col-span-3">
             <div className="space-y-12">
+               <div className="mb-12">
+                <h2 className="text-2xl font-bold font-headline mb-6 text-center">Select a Template</h2>
+                 <DocumentTemplateSelector 
+                  selectedTemplate={document.template}
+                  onSelectTemplate={(template) => setDocument(prev => prev ? ({...prev, template}) : null)}
+                  documentType="estimate"
+                  category={document.category}
+                />
+              </div>
               <div>
                 <h2 className="text-2xl font-bold font-headline mb-4 text-center lg:text-left">Fill in Details</h2>
                 <DocumentForm 
@@ -506,5 +520,3 @@ export default function CreateEstimatePage() {
     </>
   );
 }
-
-    
