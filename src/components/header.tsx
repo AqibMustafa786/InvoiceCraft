@@ -60,6 +60,7 @@ export function Header() {
 
                 <div className="flex flex-1 items-center justify-end gap-2">
                     <ModeToggle />
+                    {/* Renders the desktop version of AuthNav */}
                     <AuthNav /> 
                 </div>
                 
@@ -73,16 +74,26 @@ export function Header() {
                     <SheetContent side="left">
                         <SheetHeader>
                             <SheetTitle>
-                                <Link href="/" className="flex items-center gap-2 text-lg font-semibold">
+                                <Link href="/" className="flex items-center gap-2">
                                     <span className="text-lg font-bold text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent">InvoiceCraft</span>
                                 </Link>
                             </SheetTitle>
                         </SheetHeader>
-                        <nav className="grid gap-6 text-lg font-medium mt-8">
+                        <nav className="grid gap-4 text-lg font-medium mt-8">
                             {navLinks.map(link => (
-                                <NavLink key={link.href} href={link.href} label={link.label} isActive={pathname === link.href} />
+                                <Link
+                                    key={link.href}
+                                    href={link.href}
+                                    className={cn(
+                                        "block py-2 transition",
+                                        pathname === link.href ? "text-primary font-semibold" : "text-muted-foreground hover:text-foreground"
+                                    )}
+                                >
+                                    {link.label}
+                                </Link>
                             ))}
-                            <div className='flex flex-col gap-4 mt-4'>
+                            <div className='flex flex-col gap-4 mt-4 border-t pt-6'>
+                                 {/* Renders the mobile version of AuthNav */}
                                  <AuthNav isMobile={true} />
                             </div>
                         </nav>
