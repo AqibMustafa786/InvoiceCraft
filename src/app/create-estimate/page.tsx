@@ -71,7 +71,7 @@ const getInitialEstimate = (): Omit<Estimate, 'userId'> => ({
   category: 'Generic',
   language: 'en',
   currency: 'USD',
-  isPublic?: boolean,
+  isPublic: false,
   fontFamily: 'Inter',
   fontSize: 14,
   backgroundColor: '#FFFFFF',
