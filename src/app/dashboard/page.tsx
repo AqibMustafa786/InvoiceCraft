@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useMemo, useCallback, useEffect } from 'react';
@@ -32,6 +33,7 @@ import { useFirebase, useMemoFirebase } from '@/firebase/provider';
 import { useCollection } from '@/firebase/firestore/use-collection';
 import { collection, doc, addDoc, query, where, Timestamp } from 'firebase/firestore';
 import { deleteDocumentNonBlocking, updateDocumentNonBlocking } from '@/firebase';
+import { Skeleton } from '@/components/ui/skeleton';
 
 const INVOICES_COLLECTION = 'invoices';
 const ESTIMATES_COLLECTION = 'estimates';
@@ -281,7 +283,33 @@ export default function DashboardPage() {
     if (isLoading && !invoices && !estimates && !quotes) {
         return (
             <div className="container mx-auto p-4 md:p-8">
-                <h1 className="text-3xl font-bold font-headline">Loading Dashboard...</h1>
+                 <div className="flex justify-between items-center mb-8 gap-4 flex-wrap">
+                    <div>
+                        <Skeleton className="h-9 w-64 mb-2" />
+                        <Skeleton className="h-5 w-80" />
+                    </div>
+                    <div className="flex gap-2">
+                        <Skeleton className="h-10 w-36" />
+                        <Skeleton className="h-10 w-36" />
+                        <Skeleton className="h-10 w-36" />
+                    </div>
+                </div>
+                <Card className="bg-card/50 backdrop-blur-sm">
+                    <CardHeader>
+                        <Skeleton className="h-8 w-48 mb-2" />
+                        <Skeleton className="h-5 w-72" />
+                    </CardHeader>
+                    <CardContent>
+                        <div className="flex justify-between items-center mb-4">
+                            <Skeleton className="h-10 w-28" />
+                        </div>
+                        <div className="space-y-2">
+                            {[...Array(5)].map((_, i) => (
+                                <Skeleton key={i} className="h-12 w-full" />
+                            ))}
+                        </div>
+                    </CardContent>
+                </Card>
             </div>
         )
     }
@@ -504,3 +532,5 @@ export default function DashboardPage() {
         </div>
     );
 }
+
+    
