@@ -208,6 +208,11 @@ const templates: Template[] = [
     thumbnailUrl: '/templates/landscaping-5.png',
     category: 'Landscaping Estimate',
   },
+  { id: 'roofing-1', name: 'PeakPro', thumbnailUrl: '/templates/roofing-1.png', category: 'Roofing Estimate' },
+  { id: 'roofing-2', name: 'Shingle', thumbnailUrl: '/templates/roofing-2.png', category: 'Roofing Estimate' },
+  { id: 'roofing-3', name: 'Skyline', thumbnailUrl: '/templates/roofing-3.png', category: 'Roofing Estimate' },
+  { id: 'roofing-4', name: 'Fortress', thumbnailUrl: '/templates/roofing-4.png', category: 'Roofing Estimate' },
+  { id: 'roofing-5', name: 'Ridge', thumbnailUrl: '/templates/roofing-5.png', category: 'Roofing Estimate' },
 ];
 
 export function DocumentTemplateSelector({ selectedTemplate, onSelectTemplate, documentType, category }: DocumentTemplateSelectorProps) {
