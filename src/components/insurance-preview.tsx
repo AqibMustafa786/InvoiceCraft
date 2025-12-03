@@ -157,9 +157,14 @@ const AVAILABLE_HEIGHT = PAGE_HEIGHT - PAGE_PADDING;
 
 // --- MAIN PREVIEW COMPONENT ---
 export function InsurancePreview({ doc, logoUrl, accentColor, id = 'insurance-preview', isPrint = false }: InsurancePreviewProps) {
-  const [paginatedItems, setPaginatedItems] = useState<LineItem[][]>(doc ? [doc.items] : [[]]);
+  const [paginatedItems, setPaginatedItems] = useState<LineItem[][]>([]);
   const [needsRemeasure, setNeedsRemeasure] = useState(true);
   const containerRef = useRef<HTMLDivElement>(null);
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
   
   if (!doc) {
     return null;
@@ -230,7 +235,7 @@ export function InsurancePreview({ doc, logoUrl, accentColor, id = 'insurance-pr
             if (pageHeightForCurrentItem > AVAILABLE_HEIGHT) {
                 currentPage++;
                 newPages[currentPage] = [];
-                currentPageHeight = headerHeight + tableHeaderHeight;
+                currentPageHeight = headerHeight + tableHeaderHeight; 
             }
             
             if (newPages[currentPage].length === 0) { 
@@ -280,6 +285,17 @@ export function InsurancePreview({ doc, logoUrl, accentColor, id = 'insurance-pr
     discountAmount,
     total,
   };
+  
+  if (!isClient) {
+    return (
+        <Card id={id} className="w-full shadow-lg rounded-xl overflow-hidden print-hide">
+            <CardContent className="p-8 text-center text-muted-foreground">
+                Loading Preview...
+            </CardContent>
+        </Card>
+    );
+  }
+
 
   if (isPrint) {
     const itemsToRender = needsRemeasure ? (doc ? [doc.items] : [[]]) : paginatedItems;
@@ -313,7 +329,3 @@ export function InsurancePreview({ doc, logoUrl, accentColor, id = 'insurance-pr
     </Card>
   );
 }
-
-    
-
-    

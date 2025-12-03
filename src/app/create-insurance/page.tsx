@@ -55,15 +55,17 @@ const getInitialInsuranceDoc = (): InsuranceDocument => ({
 
 
 function PrintableInsuranceDoc({ doc, logoUrl, accentColor }: { doc: InsuranceDocument, logoUrl: string | null, accentColor: string }) {
-    const [printRoot, setPrintRoot] = useState<HTMLElement | null>(null);
+    const [isMounted, setIsMounted] = useState(false);
 
     useEffect(() => {
-      if (typeof window !== 'undefined' && window.document) {
-        const root = window.document.getElementById('print-container');
-        setPrintRoot(root);
-      }
+        setIsMounted(true);
     }, []);
 
+    if (!isMounted) {
+        return null;
+    }
+    
+    const printRoot = document.getElementById('print-container');
     if (!printRoot) {
         return null;
     }
@@ -84,6 +86,7 @@ export default function CreateInsurancePage() {
   useEffect(() => {
     // Initialize state on the client to avoid hydration mismatch
     setDoc(getInitialInsuranceDoc());
+    setLogoUrl(null);
 
     if (typeof window !== 'undefined' && window.document) {
         const computedColor = getComputedStyle(window.document.documentElement).getPropertyValue('--primary').trim();

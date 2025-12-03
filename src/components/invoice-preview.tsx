@@ -486,9 +486,18 @@ const AVAILABLE_HEIGHT = PAGE_HEIGHT - PAGE_PADDING;
 
 // --- MAIN PREVIEW COMPONENT ---
 export function InvoicePreview({ invoice, logoUrl, accentColor, id = 'invoice-preview', isPrint = false }: InvoicePreviewProps) {
-  const [paginatedItems, setPaginatedItems] = useState<LineItem[][]>([invoice.items]);
+  const [paginatedItems, setPaginatedItems] = useState<LineItem[][]>([]);
   const [needsRemeasure, setNeedsRemeasure] = useState(true);
   const containerRef = useRef<HTMLDivElement>(null);
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+  
+  if (!invoice) {
+      return null;
+  }
   
   const subtotal = invoice.items.reduce((acc, item) => acc + item.quantity * ((item as any).rate || (item as any).unitPrice), 0);
   const taxAmount = (subtotal * invoice.tax) / 100;
@@ -522,7 +531,6 @@ export function InvoicePreview({ invoice, logoUrl, accentColor, id = 'invoice-pr
       tempRoot.style.left = '-9999px';
       document.body.appendChild(tempRoot);
 
-      // We create a temporary React root to render the full, unpaginated content for measurement.
       Promise.resolve().then(() => {
         const tempContainer = container.cloneNode(true) as HTMLElement;
         tempRoot.appendChild(tempContainer);
@@ -554,7 +562,6 @@ export function InvoicePreview({ invoice, logoUrl, accentColor, id = 'invoice-pr
             const itemHeight = row.offsetHeight;
             let pageHeightForCurrentItem = currentPageHeight + (newPages[currentPage].length === 0 ? tableHeaderHeight : 0) + itemHeight;
             
-            // Is this the last item? If so, add footer height.
             let isLastItem = index === allRows.length - 1;
             if (isLastItem) {
                 pageHeightForCurrentItem += footerHeight;
@@ -563,10 +570,10 @@ export function InvoicePreview({ invoice, logoUrl, accentColor, id = 'invoice-pr
             if (pageHeightForCurrentItem > AVAILABLE_HEIGHT) {
                 currentPage++;
                 newPages[currentPage] = [];
-                currentPageHeight = headerHeight + tableHeaderHeight; // Reset for new page
+                currentPageHeight = headerHeight + tableHeaderHeight; 
             }
             
-            if (newPages[currentPage].length === 0) { // First item on a page
+            if (newPages[currentPage].length === 0) { 
                 currentPageHeight += tableHeaderHeight;
             }
 
@@ -574,7 +581,6 @@ export function InvoicePreview({ invoice, logoUrl, accentColor, id = 'invoice-pr
             currentPageHeight += itemHeight;
         });
         
-        // Final check: if the last page with items doesn't have space for the footer, push footer to a new page.
         const lastPageItemHeight = newPages[currentPage].reduce((total, item) => {
             const itemIndex = invoice.items.findIndex(i => i.id === item.id);
             return total + (allRows[itemIndex]?.offsetHeight || 0);
@@ -596,7 +602,6 @@ export function InvoicePreview({ invoice, logoUrl, accentColor, id = 'invoice-pr
       });
     };
     
-    // Defer measurement to allow DOM to update
     const timer = setTimeout(measureAndPaginate, 50);
     return () => clearTimeout(timer);
 
@@ -616,9 +621,17 @@ export function InvoicePreview({ invoice, logoUrl, accentColor, id = 'invoice-pr
     balanceDue
   };
 
+  if (!isClient) {
+    return (
+      <Card id={id} className="w-full shadow-lg rounded-xl overflow-hidden print-hide">
+        <CardContent className="p-8 text-center text-muted-foreground">
+          Loading Preview...
+        </CardContent>
+      </Card>
+    );
+  }
+
   if (isPrint) {
-    // For printing, we render the paginated content.
-    // If we need to remeasure, we render all items so they can be measured.
     const itemsToRender = needsRemeasure ? [invoice.items] : paginatedItems;
     
     return (
@@ -650,7 +663,3 @@ export function InvoicePreview({ invoice, logoUrl, accentColor, id = 'invoice-pr
     </Card>
   );
 }
-
-    
-
-    

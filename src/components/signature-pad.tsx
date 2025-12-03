@@ -23,6 +23,12 @@ export function SignaturePad({ onSave, signerName: initialSignerName = '', isFor
   useEffect(() => {
     setIsClient(true);
   }, []);
+  
+  useEffect(() => {
+    if(!isForClient){
+      setSignerName(initialSignerName);
+    }
+  }, [initialSignerName, isForClient]);
 
   const clear = () => {
     sigPad.current?.clear();

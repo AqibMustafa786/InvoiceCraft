@@ -395,29 +395,33 @@ const AVAILABLE_HEIGHT = PAGE_HEIGHT - PAGE_PADDING;
 
 
 export function DocumentPreview({ document, accentColor, id = 'document-preview', isPrint = false }: DocumentPreviewProps) {
-  const [paginatedItems, setPaginatedItems] = useState<Estimate['lineItems'][][]>([document.lineItems]);
+  const [paginatedItems, setPaginatedItems] = useState<Estimate['lineItems'][][]>(document ? [document.lineItems] : [[]]);
   const [needsRemeasure, setNeedsRemeasure] = useState(true);
   const containerRef = useRef<HTMLDivElement>(null);
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   useEffect(() => {
     setNeedsRemeasure(true);
   }, [document]);
   
-
   const previewStyle = {
       color: '#374151',
-      fontFamily: document.fontFamily || 'Inter, sans-serif',
-      fontSize: `${document.fontSize || 10}pt`,
+      fontFamily: document?.fontFamily || 'Inter, sans-serif',
+      fontSize: `${document?.fontSize || 10}pt`,
   } as React.CSSProperties;
 
   const dynamicColorStyle = {
       color: accentColor,
   }
 
-  const TemplateComponent = templates[document.template as keyof typeof templates] || templates.default;
+  const TemplateComponent = document ? templates[document.template as keyof typeof templates] || templates.default : null;
   
   useLayoutEffect(() => {
-    if (!isPrint || !needsRemeasure) return;
+    if (!document || !isPrint || !needsRemeasure || !TemplateComponent) return;
 
     const measureAndPaginate = async () => {
         if (typeof window.document === 'undefined') return;
@@ -435,7 +439,6 @@ export function DocumentPreview({ document, accentColor, id = 'document-preview'
             const tempContainer = container.cloneNode(true) as HTMLElement;
             tempRoot.appendChild(tempContainer);
             
-            // Allow the browser to render the cloned content
             await new Promise(resolve => setTimeout(resolve, 0));
 
             const headerContentEl = tempContainer.querySelector('[data-element="page-header-content"]') as HTMLElement;
@@ -453,7 +456,7 @@ export function DocumentPreview({ document, accentColor, id = 'document-preview'
             }
             
             const firstPageHeaderHeight = headerContentEl.offsetHeight + (clientDetailsEl?.offsetHeight || 0) + (categoryEl?.offsetHeight || 0);
-            const subsequentPageHeaderHeight = headerContentEl.offsetHeight; // Assuming only main header repeats
+            const subsequentPageHeaderHeight = headerContentEl.offsetHeight;
             const tableHeaderHeight = tableHeaderEl.offsetHeight;
             const footerHeight = footerEl.offsetHeight;
 
@@ -509,8 +512,18 @@ export function DocumentPreview({ document, accentColor, id = 'document-preview'
     const timer = setTimeout(measureAndPaginate, 100);
     return () => clearTimeout(timer);
 
-  }, [document, isPrint, needsRemeasure]);
+  }, [document, isPrint, needsRemeasure, TemplateComponent]);
 
+
+  if (!isClient || !document || !TemplateComponent) {
+    return (
+      <Card id={id} className="w-full shadow-lg rounded-xl overflow-hidden print-hide">
+        <CardContent className="p-8 text-center text-muted-foreground">
+          Loading Preview...
+        </CardContent>
+      </Card>
+    );
+  }
 
   const commonProps: CommonTemplateProps = {
     document,

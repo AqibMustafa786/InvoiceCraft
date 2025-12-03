@@ -238,17 +238,17 @@ export default function CreateEstimatePage() {
   }, []);
 
   useEffect(() => {
-    if (isUserLoading) return;
+    if (isUserLoading || (draftId && isDraftLoading)) return;
     if (!user) {
         router.push('/login');
         return;
     }
 
-    const baseEstimate = getInitialEstimate();
     let initialEstimate: Estimate | Quote;
 
     if (draftId && remoteDraft) {
-        const fromJSON = (key: string, value: any) => {
+       const baseEstimate = getInitialEstimate();
+       const fromJSON = (key: string, value: any) => {
            if (['estimateDate', 'validUntilDate', 'createdAt', 'updatedAt', 'expectedStartDate', 'expectedCompletionDate'].includes(key) && value) {
                return value.toDate ? value.toDate() : (isValid(new Date(value)) ? new Date(value) : null);
            }
@@ -256,7 +256,6 @@ export default function CreateEstimatePage() {
        };
        const loadedDraft = JSON.parse(JSON.stringify(remoteDraft), fromJSON);
        
-       // Deep merge loaded draft with base estimate to ensure all fields are present
        initialEstimate = {
          ...baseEstimate,
          ...loadedDraft,
@@ -277,7 +276,7 @@ export default function CreateEstimatePage() {
        };
 
     } else {
-        initialEstimate = {...baseEstimate, userId: user.uid};
+        initialEstimate = {...getInitialEstimate(), userId: user.uid};
     }
     
     setDocument(initialEstimate);
@@ -288,7 +287,7 @@ export default function CreateEstimatePage() {
            setAccentColor(`hsl(${computedColor})`);
         }
     }
-  }, [draftId, remoteDraft, user, isUserLoading, router]);
+  }, [draftId, remoteDraft, isDraftLoading, user, isUserLoading, router]);
 
   const handlePrint = () => {
     window.print();
@@ -306,7 +305,7 @@ export default function CreateEstimatePage() {
     
     const draftToSave: any = {
       ...document,
-      userId: user.uid, // Ensure userId is always set at the top level
+      userId: user.uid, 
       updatedAt: serverTimestamp(),
     };
 

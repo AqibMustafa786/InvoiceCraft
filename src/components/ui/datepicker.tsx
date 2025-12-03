@@ -47,6 +47,7 @@ export function DatePicker({ date, setDate, className }: DatePickerProps) {
     return (
       <Button
         variant={"outline"}
+        disabled
         className={cn(
           "w-full justify-start text-left font-normal",
           !safeDate && "text-muted-foreground",
@@ -54,7 +55,7 @@ export function DatePicker({ date, setDate, className }: DatePickerProps) {
         )}
       >
         <CalendarIcon className="mr-2 h-4 w-4" />
-        {safeDate ? format(safeDate, "PPP") : <span>Pick a date</span>}
+        <span>Pick a date</span>
       </Button>
     )
   }

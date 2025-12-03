@@ -85,13 +85,13 @@ export default function CreateInvoicePage() {
   const { data: remoteDraft, isLoading: isDraftLoading } = useDoc<Invoice>(docRef);
 
   useEffect(() => {
-    if (isUserLoading) return;
+    if (isUserLoading || (draftId && isDraftLoading)) return;
     if (!user) {
         router.push('/login');
         return;
     }
 
-    const initialInvoice = { ...getInitialInvoice(), userId: user.uid };
+    let initialInvoice: Invoice;
 
     if (draftId && remoteDraft) {
         const fromJSON = (key: string, value: any) => {
@@ -101,10 +101,13 @@ export default function CreateInvoicePage() {
            return value;
        };
        const loadedDraft = JSON.parse(JSON.stringify(remoteDraft), fromJSON);
-       setInvoice({ ...initialInvoice, ...loadedDraft });
+       initialInvoice = { ...getInitialInvoice(), ...loadedDraft, userId: user.uid };
     } else {
-        setInvoice(initialInvoice);
+        initialInvoice = { ...getInitialInvoice(), userId: user.uid };
     }
+    
+    setInvoice(initialInvoice);
+    setLogoUrl(null);
     
     if (typeof window !== 'undefined' && window.document) {
         const computedColor = getComputedStyle(window.document.documentElement).getPropertyValue('--primary').trim();
@@ -112,7 +115,7 @@ export default function CreateInvoicePage() {
            setAccentColor(`hsl(${computedColor})`);
         }
     }
-  }, [draftId, remoteDraft, user, isUserLoading, router]);
+  }, [draftId, remoteDraft, isDraftLoading, user, isUserLoading, router]);
 
 
   const handlePrint = () => {

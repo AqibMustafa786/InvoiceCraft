@@ -3,7 +3,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { createPortal } from 'react-dom';
-import type { Estimate, LineItem, Quote } from '@/lib/types';
+import type { Quote, LineItem } from '@/lib/types';
 import { DocumentForm } from '@/components/document-form';
 import { DocumentPreview } from '@/components/document-preview';
 import { Button } from '@/components/ui/button';
@@ -130,13 +130,13 @@ export default function CreateQuotePage() {
   }, []);
 
   useEffect(() => {
-    if (isUserLoading) return;
+    if (isUserLoading || (draftId && isDraftLoading)) return;
     if (!user) {
         router.push('/login');
         return;
     }
 
-    const initialQuote = {...getInitialQuote(), userId: user.uid};
+    let initialQuote: Quote;
 
     if (draftId && remoteDraft) {
          const fromJSON = (key: string, value: any) => {
@@ -146,10 +146,12 @@ export default function CreateQuotePage() {
             return value;
         };
         const loadedDraft = JSON.parse(JSON.stringify(remoteDraft), fromJSON);
-        setDocument({ ...initialQuote, ...loadedDraft });
+        initialQuote = { ...getInitialQuote(), ...loadedDraft, userId: user.uid };
     } else {
-        setDocument(initialQuote);
+        initialQuote = {...getInitialQuote(), userId: user.uid};
     }
+
+    setDocument(initialQuote);
     
     if (typeof window !== 'undefined' && window.document) {
         const computedColor = getComputedStyle(window.document.documentElement).getPropertyValue('--primary').trim();
@@ -157,7 +159,7 @@ export default function CreateQuotePage() {
            setAccentColor(`hsl(${computedColor})`);
         }
     }
-  }, [draftId, remoteDraft, user, isUserLoading, router]);
+  }, [draftId, remoteDraft, isDraftLoading, user, isUserLoading, router]);
 
   const handlePrint = () => {
     window.print();
