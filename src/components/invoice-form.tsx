@@ -285,11 +285,7 @@ export function InvoiceForm({ invoice, setInvoice, logoUrl, setLogoUrl, accentCo
                     </SelectTrigger>
                     <SelectContent>
                         <SelectItem value="en">English</SelectItem>
-                        <SelectItem value="es">Español (Spanish)</SelectItem>
-                        <SelectItem value="fr">Français (French)</SelectItem>
-                        <SelectItem value="de">Deutsch (German)</SelectItem>
-                        <SelectItem value="ar">العربية (Arabic)</SelectItem>
-                        <SelectItem value="zh">中文 (Chinese)</SelectItem>
+                        <SelectItem value="ur">Urdu (اردو)</SelectItem>
                     </SelectContent>
                 </Select>
             </div>
