@@ -16,6 +16,7 @@ import { useFirebase, useMemoFirebase } from '@/firebase';
 import { doc, serverTimestamp, Timestamp } from 'firebase/firestore';
 import { setDocumentNonBlocking } from '@/firebase/non-blocking-updates';
 import { useDoc } from '@/firebase/firestore/use-doc';
+import { TemplateSelector } from '@/components/template-selector';
 
 const INVOICES_COLLECTION = 'invoices';
 
@@ -249,5 +250,3 @@ export default function CreateInvoicePage() {
     </>
   );
 }
-
-    
