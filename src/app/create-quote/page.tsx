@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
@@ -73,15 +74,17 @@ const getInitialQuote = (): Omit<Quote, 'userId'> => ({
 
 
 function PrintableDocument({ doc, accentColor }: { doc: Quote, accentColor: string }) {
-    const [printRoot, setPrintRoot] = useState<HTMLElement | null>(null);
+    const [isMounted, setIsMounted] = useState(false);
 
     useEffect(() => {
-      if (typeof window !== 'undefined' && window.document) {
-        const root = window.document.getElementById('print-container');
-        setPrintRoot(root);
-      }
+        setIsMounted(true);
     }, []);
 
+    if (!isMounted) {
+        return null;
+    }
+    
+    const printRoot = document.getElementById('print-container');
     if (!printRoot) {
         return null;
     }

@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -48,15 +49,17 @@ const getInitialInvoice = (): Omit<Invoice, 'userId'> => ({
 });
 
 function PrintableInvoice({ doc, logoUrl, accentColor }: { doc: Invoice, logoUrl: string | null, accentColor: string }) {
-    const [printRoot, setPrintRoot] = useState<HTMLElement | null>(null);
+    const [isMounted, setIsMounted] = useState(false);
 
     useEffect(() => {
-      if (typeof window !== 'undefined' && window.document) {
-        const root = window.document.getElementById('print-container');
-        setPrintRoot(root);
-      }
+        setIsMounted(true);
     }, []);
 
+    if (!isMounted) {
+        return null;
+    }
+
+    const printRoot = document.getElementById('print-container');
     if (!printRoot) {
         return null;
     }
