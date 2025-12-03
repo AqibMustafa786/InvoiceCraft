@@ -310,6 +310,16 @@ export function DocumentForm({ document, setDocument, accentColor, setAccentColo
     setIsSignatureDialogOpen(false);
   };
   
+  const handleDeleteSignature = () => {
+    const { ownerSignature, ...businessRest } = document.business;
+    setDocument(prev => ({
+      ...prev,
+      business: {
+        ...businessRest
+      }
+    }));
+  };
+
   const currencySymbol = currencies.find(c => c.value === document.currency)?.label.split(' ')[1] || '$';
   const isSigned = !!document.clientSignature;
 
@@ -1054,23 +1064,31 @@ export function DocumentForm({ document, setDocument, accentColor, setAccentColo
             </div>
              <div className="space-y-2">
                 <Label>Owner Signature</Label>
-                 <Dialog open={isSignatureDialogOpen} onOpenChange={setIsSignatureDialogOpen}>
-                    <DialogTrigger asChild>
-                        <Button variant="outline" className="w-full">
-                            <Pencil className="mr-2 h-4 w-4" />
-                            {document.business.ownerSignature ? 'Edit Signature' : 'Add Signature'}
-                        </Button>
-                    </DialogTrigger>
-                    <DialogContent>
-                        <DialogHeader>
-                            <DialogTitle>Owner Signature</DialogTitle>
-                            <DialogDescription>
-                                Draw your signature below. This will be saved with the document.
-                            </DialogDescription>
-                        </DialogHeader>
-                        <SignaturePad onSave={handleOwnerSignatureSave} signerName={document.business.name} />
-                    </DialogContent>
-                </Dialog>
+                <div className="flex gap-2">
+                    <Dialog open={isSignatureDialogOpen} onOpenChange={setIsSignatureDialogOpen}>
+                        <DialogTrigger asChild>
+                            <Button variant="outline" className="w-full">
+                                <Pencil className="mr-2 h-4 w-4" />
+                                {document.business.ownerSignature ? 'Edit Signature' : 'Add Signature'}
+                            </Button>
+                        </DialogTrigger>
+                        <DialogContent>
+                            <DialogHeader>
+                                <DialogTitle>Owner Signature</DialogTitle>
+                                <DialogDescription>
+                                    Draw your signature below. This will be saved with the document.
+                                </DialogDescription>
+                            </DialogHeader>
+                            <SignaturePad onSave={handleOwnerSignatureSave} signerName={document.business.name} />
+                        </DialogContent>
+                    </Dialog>
+                    {document.business.ownerSignature && (
+                      <Button variant="destructive" onClick={handleDeleteSignature}>
+                          <Trash2 className="mr-2 h-4 w-4" />
+                          Delete
+                      </Button>
+                    )}
+                </div>
 
                 {document.business.ownerSignature && (
                     <div className="p-4 border rounded-md bg-muted/50">
