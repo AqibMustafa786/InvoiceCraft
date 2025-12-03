@@ -203,7 +203,7 @@ export const LandscapingTemplate3: React.FC<TemplateProps> = ({ document, pageIt
         <div className={`bg-white font-sans text-gray-800 flex ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ minHeight: '1056px' }}>
             <div className="w-1/3 p-8 text-white" style={{ backgroundColor: style.color }}>
                 <h1 className="text-3xl font-bold mb-10">Estimate</h1>
-                <div className="text-sm space-y-6">
+                <div className="text-sm space-y-6 flex-grow">
                     <div>
                         <p className="font-bold opacity-80 mb-1">CLIENT</p>
                         <p className="font-bold text-lg">{client.name}</p>
@@ -335,6 +335,7 @@ export const LandscapingTemplate5: React.FC<TemplateProps> = ({ document, pageIt
             <section className="mb-8 p-4 bg-white shadow-sm rounded-md text-xs">
                  <p className="font-bold text-gray-500 mb-2">PROJECT FOR: {client.name}</p>
                  <p className="font-semibold">{document.projectTitle}</p>
+                 <p>{client.address}</p>
             </section>
             
              <LandscapingDetails document={document} />

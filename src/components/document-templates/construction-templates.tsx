@@ -164,7 +164,7 @@ export const ConstructionTemplate2: React.FC<TemplateProps> = ({ document, pageI
                 </div>
             </header>
 
-            <div className="p-10 flex-grow">
+            <div className="p-10 flex-grow flex flex-col">
                  <section className="grid grid-cols-2 gap-8 mb-8 text-sm">
                     <div>
                         <p className="font-bold text-gray-500 mb-1">CLIENT INFORMATION</p>
@@ -185,7 +185,7 @@ export const ConstructionTemplate2: React.FC<TemplateProps> = ({ document, pageI
 
                 <ConstructionDetails document={document} />
                 
-                <main>
+                <main className="flex-grow">
                     <table className="w-full text-left text-sm">
                         <thead>
                             <tr className="border-b-2 border-gray-300">
@@ -207,30 +207,30 @@ export const ConstructionTemplate2: React.FC<TemplateProps> = ({ document, pageI
                         </tbody>
                     </table>
                 </main>
-            </div>
             
-            {pageIndex === totalPages - 1 && (
-                <footer className="p-10 mt-auto">
-                    <div className="flex justify-between items-start">
-                        <div className="w-1/2 text-xs">
-                             <p className="font-bold text-gray-500 mb-2">TERMS & CONDITIONS</p>
-                             <p className="text-gray-600 whitespace-pre-line">{document.termsAndConditions}</p>
-                              <div className="flex gap-16">
-                                <SignatureDisplay signature={document.business.ownerSignature} label="Authorized Signature" />
-                                <SignatureDisplay signature={document.clientSignature} label="Client Signature" />
+                {pageIndex === totalPages - 1 && (
+                    <footer className="mt-auto pt-8">
+                        <div className="flex justify-between items-start">
+                            <div className="w-1/2 text-xs">
+                                <p className="font-bold text-gray-500 mb-2">TERMS & CONDITIONS</p>
+                                <p className="text-gray-600 whitespace-pre-line">{document.termsAndConditions}</p>
+                                <div className="flex gap-16">
+                                    <SignatureDisplay signature={document.business.ownerSignature} label="Authorized Signature" />
+                                    <SignatureDisplay signature={document.clientSignature} label="Client Signature" />
+                                </div>
+                            </div>
+                            <div className="w-2/5">
+                                <div className="bg-gray-100 p-4 rounded-lg text-sm">
+                                    <div className="flex justify-between py-1"><span className="text-gray-600">Subtotal:</span><span className="font-medium">{currencySymbol}{summary.subtotal.toFixed(2)}</span></div>
+                                    <div className="flex justify-between py-1"><span className="text-gray-600">Tax ({summary.taxPercentage}%):</span><span className="font-medium">{currencySymbol}{summary.taxAmount.toFixed(2)}</span></div>
+                                    {summary.discount > 0 && <div className="flex justify-between py-1"><span className="text-gray-600">Discount:</span><span className="font-medium">-{currencySymbol}{summary.discount.toFixed(2)}</span></div>}
+                                    <div className="flex justify-between font-bold text-base mt-2 pt-2 border-t-2 border-gray-300"><span>Grand Total:</span><span>{currencySymbol}{summary.grandTotal.toFixed(2)}</span></div>
+                                </div>
                             </div>
                         </div>
-                        <div className="w-2/5">
-                            <div className="bg-gray-100 p-4 rounded-lg text-sm">
-                                <div className="flex justify-between py-1"><span className="text-gray-600">Subtotal:</span><span className="font-medium">{currencySymbol}{summary.subtotal.toFixed(2)}</span></div>
-                                <div className="flex justify-between py-1"><span className="text-gray-600">Tax ({summary.taxPercentage}%):</span><span className="font-medium">{currencySymbol}{summary.taxAmount.toFixed(2)}</span></div>
-                                {summary.discount > 0 && <div className="flex justify-between py-1"><span className="text-gray-600">Discount:</span><span className="font-medium">-{currencySymbol}{summary.discount.toFixed(2)}</span></div>}
-                                <div className="flex justify-between font-bold text-base mt-2 pt-2 border-t-2 border-gray-300"><span>Grand Total:</span><span>{currencySymbol}{summary.grandTotal.toFixed(2)}</span></div>
-                            </div>
-                        </div>
-                    </div>
-                </footer>
-            )}
+                    </footer>
+                )}
+            </div>
         </div>
     );
 };

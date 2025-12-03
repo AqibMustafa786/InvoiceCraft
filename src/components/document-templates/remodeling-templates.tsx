@@ -75,7 +75,7 @@ export const RemodelingTemplate1: React.FC<TemplateProps> = ({ document, pageIte
                 </div>
             </header>
 
-            <div className="p-10 flex-grow">
+            <div className="p-10 flex-grow flex flex-col">
                  <section className="grid grid-cols-2 gap-8 text-xs mb-8">
                     <div>
                         <p>{business.phone}</p>
@@ -101,7 +101,7 @@ export const RemodelingTemplate1: React.FC<TemplateProps> = ({ document, pageIte
 
                 <RemodelingDetails document={document} />
 
-                <main>
+                <main className="flex-grow">
                     <table className="w-full text-left text-sm">
                         <thead style={{ backgroundColor: '#0A2D4D', color: 'white' }}>
                             <tr>
@@ -129,29 +129,29 @@ export const RemodelingTemplate1: React.FC<TemplateProps> = ({ document, pageIte
                         )}
                     </table>
                 </main>
-            </div>
             
-            {pageIndex === totalPages - 1 && (
-                <footer className="p-10 pt-0 mt-auto">
-                    <div className="w-full h-px bg-gray-300 my-8"></div>
-                    <div className="flex justify-between items-start text-xs">
-                        <div className="w-1/2">
-                            <p className="font-bold mb-2">Additional Notes:</p>
-                            <ul className="list-disc list-inside text-gray-600 space-y-1">
-                                <li className="whitespace-pre-line">{document.termsAndConditions}</li>
-                            </ul>
-                            <div className="mt-4">
-                                <p className="font-bold mb-2">Payment Information:</p>
-                                <p className="text-gray-600">Details provided upon acceptance.</p>
+                {pageIndex === totalPages - 1 && (
+                    <footer className="pt-8 mt-auto">
+                        <div className="w-full h-px bg-gray-300 my-8"></div>
+                        <div className="flex justify-between items-start text-xs">
+                            <div className="w-1/2">
+                                <p className="font-bold mb-2">Additional Notes:</p>
+                                <ul className="list-disc list-inside text-gray-600 space-y-1">
+                                   <li className="whitespace-pre-line">{document.termsAndConditions}</li>
+                                </ul>
+                                <div className="mt-4">
+                                    <p className="font-bold mb-2">Payment Information:</p>
+                                    <p className="text-gray-600">Details provided upon acceptance.</p>
+                                </div>
                             </div>
+                             <div className="text-right">
+                                 <p className="mb-1">Date: {safeFormat(document.estimateDate, 'MMMM d, yyyy')}</p>
+                                 <SignatureDisplay signature={document.business.ownerSignature} label="Supervisor's Signature" style={{alignItems: 'flex-end', textAlign: 'right'}} />
+                             </div>
                         </div>
-                         <div className="text-right">
-                             <p className="mb-1">Date: {safeFormat(document.estimateDate, 'MMMM d, yyyy')}</p>
-                             <SignatureDisplay signature={document.business.ownerSignature} label="Supervisor's Signature" style={{alignItems: 'flex-end', textAlign: 'right'}} />
-                         </div>
-                    </div>
-                </footer>
-            )}
+                    </footer>
+                )}
+            </div>
         </div>
     );
 };
@@ -323,8 +323,8 @@ export const RemodelingTemplate4: React.FC<TemplateProps> = ({ document, pageIte
 
             <main className="flex-grow">
                  <table className="w-full text-left text-sm">
-                    <thead>
-                        <tr className="bg-gray-100">
+                    <thead className="bg-gray-100">
+                        <tr>
                             <th className="p-2 font-bold w-[60%]">DESCRIPTION</th>
                             <th className="p-2 font-bold text-center">QTY</th>
                             <th className="p-2 font-bold text-right">PRICE</th>
