@@ -33,11 +33,11 @@ const SignatureDisplay = ({ signature, label, style }: { signature: any, label: 
     )
 }
 
-const RemodelingDetails: React.FC<{ document: Estimate }> = ({ document }) => {
+const RemodelingDetails: React.FC<{ document: Estimate; textColor: string }> = ({ document, textColor }) => {
     if (!document.homeRemodeling) return null;
     const { homeRemodeling } = document;
     return (
-        <section className="my-4 text-xs">
+        <section className="my-4 text-xs" style={{color: textColor}}>
             <p className="font-bold text-gray-500 mb-2 border-b">Project Specifics</p>
             <div className="grid grid-cols-2 gap-x-4 gap-y-1">
                 <p><span className="font-semibold text-gray-600">Project Type:</span> {homeRemodeling.projectType}</p>
@@ -58,7 +58,7 @@ const RemodelingDetails: React.FC<{ document: Estimate }> = ({ document }) => {
 
 // Template 1: Precision (Based on user image)
 export const RemodelingTemplate1: React.FC<TemplateProps> = ({ document, pageItems, pageIndex, totalPages, style }) => {
-    const { business, client, summary, currency, category } = document;
+    const { business, client, summary, currency, category, textColor } = document;
     const currencySymbol = currencySymbols[currency] || '$';
     const docTitle = document.documentType === 'quote' ? 'Quote' : 'Estimate';
     
@@ -80,7 +80,7 @@ export const RemodelingTemplate1: React.FC<TemplateProps> = ({ document, pageIte
                 </div>
             </header>
 
-            <div className="p-10 flex-grow flex flex-col">
+            <div className="p-10 flex-grow flex flex-col" style={{color: textColor}}>
                  <section className="grid grid-cols-2 gap-8 text-xs mb-8">
                     <div>
                         <p>{business.phone}</p>
@@ -104,7 +104,7 @@ export const RemodelingTemplate1: React.FC<TemplateProps> = ({ document, pageIte
                     </div>
                 </div>
 
-                <RemodelingDetails document={document} />
+                <RemodelingDetails document={document} textColor={textColor} />
 
                 <main className="flex-grow">
                     <table className="w-full text-left text-sm">
@@ -119,7 +119,7 @@ export const RemodelingTemplate1: React.FC<TemplateProps> = ({ document, pageIte
                             {pageItems.map(item => (
                                 <tr key={item.id} className="border-b border-gray-200">
                                     <td className="p-2 align-top font-semibold">{item.name}</td>
-                                    <td className="p-2 align-top text-gray-600 whitespace-pre-line">{item.description}</td>
+                                    <td className="p-2 align-top text-gray-600 whitespace-pre-line" style={{color: textColor}}>{item.description}</td>
                                     <td className="p-2 align-top text-right font-semibold">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</td>
                                 </tr>
                             ))}
@@ -141,12 +141,12 @@ export const RemodelingTemplate1: React.FC<TemplateProps> = ({ document, pageIte
                         <div className="flex justify-between items-start text-xs">
                             <div className="w-1/2">
                                 <p className="font-bold mb-2">Additional Notes:</p>
-                                <ul className="list-disc list-inside text-gray-600 space-y-1">
+                                <ul className="list-disc list-inside text-gray-600 space-y-1" style={{color: textColor}}>
                                    <li className="whitespace-pre-line">{document.termsAndConditions}</li>
                                 </ul>
                                 <div className="mt-4">
                                     <p className="font-bold mb-2">Payment Information:</p>
-                                    <p className="text-gray-600">Details provided upon acceptance.</p>
+                                    <p className="text-gray-600" style={{color: textColor}}>Details provided upon acceptance.</p>
                                 </div>
                             </div>
                              <div className="text-right">
@@ -163,17 +163,17 @@ export const RemodelingTemplate1: React.FC<TemplateProps> = ({ document, pageIte
 
 // Template 2: Light & Modern
 export const RemodelingTemplate2: React.FC<TemplateProps> = ({ document, pageItems, pageIndex, totalPages, style }) => {
-    const { business, client, summary, currency, category } = document;
+    const { business, client, summary, currency, category, textColor } = document;
     const currencySymbol = currencySymbols[currency] || '$';
     const docTitle = document.documentType === 'quote' ? 'QUOTE' : 'ESTIMATE';
 
     return (
-        <div className={`p-10 font-sans text-gray-700 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: style.fontFamily, fontSize: `${style.fontSize}pt`, minHeight: '1056px', backgroundColor: document.backgroundColor }}>
+        <div className={`p-10 font-sans text-gray-700 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: style.fontFamily, fontSize: `${style.fontSize}pt`, minHeight: '1056px', backgroundColor: document.backgroundColor, color: textColor }}>
             <header className="flex justify-between items-start mb-10">
                 <div>
                      {business.logoUrl && <Image src={business.logoUrl} alt="Logo" width={100} height={50} className="mb-2 object-contain"/>}
                     <h1 className="text-2xl font-bold">{business.name}</h1>
-                    <p className="text-xs text-gray-500 whitespace-pre-line">{business.address}</p>
+                    <p className="text-xs text-gray-500 whitespace-pre-line" style={{color: textColor}}>{business.address}</p>
                 </div>
                 <div className="text-right">
                     <h2 className="text-4xl font-light" style={{color: style.color}}>{docTitle}</h2>
@@ -185,18 +185,18 @@ export const RemodelingTemplate2: React.FC<TemplateProps> = ({ document, pageIte
             
             <section className="p-4 rounded-md mb-8 grid grid-cols-2 gap-4" style={{backgroundColor: `${style.color}1A`}}>
                 <div className="text-xs">
-                     <p className="font-bold text-gray-500 mb-1">CLIENT</p>
+                     <p className="font-bold text-gray-500 mb-1" style={{color: textColor}}>CLIENT</p>
                      <p className="font-semibold">{client.name}</p>
                      <p>{client.address}</p>
                 </div>
                  <div className="text-xs text-right">
-                     <p className="font-bold text-gray-500 mb-1">PROJECT</p>
+                     <p className="font-bold text-gray-500 mb-1" style={{color: textColor}}>PROJECT</p>
                      <p className="font-semibold">{document.projectTitle}</p>
                      <p>{client.projectLocation}</p>
                 </div>
             </section>
             
-            <RemodelingDetails document={document} />
+            <RemodelingDetails document={document} textColor={textColor} />
 
             <main className="flex-grow">
                  <table className="w-full text-left text-sm">
@@ -230,7 +230,7 @@ export const RemodelingTemplate2: React.FC<TemplateProps> = ({ document, pageIte
                              <div className="flex justify-between font-bold text-base mt-2 pt-2 border-t" style={{borderColor: style.color}}><span>Estimate Total</span><span>{currencySymbol}{summary.grandTotal.toFixed(2)}</span></div>
                         </div>
                     </div>
-                     <div className="text-xs text-gray-500 border-t pt-4">
+                     <div className="text-xs text-gray-500 border-t pt-4" style={{color: textColor}}>
                          <p className="font-bold mb-1">Notes and Terms</p>
                          <p className="whitespace-pre-line">{document.termsAndConditions}</p>
                      </div>
@@ -242,16 +242,16 @@ export const RemodelingTemplate2: React.FC<TemplateProps> = ({ document, pageIte
 
 // Template 3: Formal with Grid
 export const RemodelingTemplate3: React.FC<TemplateProps> = ({ document, pageItems, pageIndex, totalPages, style }) => {
-    const { business, client, summary, currency, category } = document;
+    const { business, client, summary, currency, category, textColor } = document;
     const currencySymbol = currencySymbols[currency] || '$';
-    const docTitle = document.documentType === 'quote' ? 'ESTIMATE OF COST' : 'ESTIMATE OF COST';
+    const docTitle = document.documentType === 'quote' ? 'QUOTE' : 'ESTIMATE';
 
     return (
-        <div className={`p-10 font-['Times_New_Roman',_serif] text-gray-900 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontSize: `${style.fontSize}pt`, minHeight: '1056px', backgroundColor: document.backgroundColor }}>
+        <div className={`p-10 font-['Times_New_Roman',_serif] text-gray-900 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontSize: `${style.fontSize}pt`, minHeight: '1056px', backgroundColor: document.backgroundColor, color: textColor }}>
             <header className="text-center mb-10">
                 <h1 className="text-4xl font-bold">{docTitle}</h1>
-                {category !== 'Generic' && <p className="text-sm text-gray-600">{category.replace(' / ', ' / ')}</p>}
-                <p className="text-sm text-gray-600 mt-1">{business.name} • {business.phone} • {business.email}</p>
+                {category !== 'Generic' && <p className="text-sm text-gray-600" style={{color: textColor}}>{category.replace(' / ', ' / ')}</p>}
+                <p className="text-sm text-gray-600 mt-1" style={{color: textColor}}>{business.name} • {business.phone} • {business.email}</p>
             </header>
 
             <section className="mb-8 p-4 border border-gray-200 rounded grid grid-cols-3 gap-4 text-xs">
@@ -260,7 +260,7 @@ export const RemodelingTemplate3: React.FC<TemplateProps> = ({ document, pageIte
                 <div><p className="font-bold">Estimate #:</p><p>{document.estimateNumber}</p><p className="font-bold mt-1">Date:</p><p>{safeFormat(document.estimateDate, 'MM/dd/yyyy')}</p></div>
             </section>
             
-            <RemodelingDetails document={document} />
+            <RemodelingDetails document={document} textColor={textColor} />
 
             <main className="flex-grow">
                 <table className="w-full text-left text-xs">
@@ -288,13 +288,13 @@ export const RemodelingTemplate3: React.FC<TemplateProps> = ({ document, pageIte
             {pageIndex === totalPages - 1 && (
                  <footer className="mt-auto pt-8">
                      <div className="flex justify-between">
-                         <div className="w-2/3 text-xs text-gray-600">
+                         <div className="w-2/3 text-xs text-gray-600" style={{color: textColor}}>
                             <p className="font-bold mb-1">TERMS</p>
                             <p className="whitespace-pre-line">{document.termsAndConditions}</p>
                          </div>
                          <div className="w-1/3 text-right text-sm">
-                            <p className="py-1"><span className="text-gray-500">Subtotal: </span>{currencySymbol}{summary.subtotal.toFixed(2)}</p>
-                            <p className="py-1"><span className="text-gray-500">Tax: </span>{currencySymbol}{summary.taxAmount.toFixed(2)}</p>
+                            <p className="py-1"><span className="text-gray-500" style={{color: textColor}}>Subtotal: </span>{currencySymbol}{summary.subtotal.toFixed(2)}</p>
+                            <p className="py-1"><span className="text-gray-500" style={{color: textColor}}>Tax: </span>{currencySymbol}{summary.taxAmount.toFixed(2)}</p>
                             <p className="py-2 mt-1 border-t-2 border-black font-bold"><span className="text-base">TOTAL: </span><span className="text-base">{currencySymbol}{summary.grandTotal.toFixed(2)}</span></p>
                          </div>
                      </div>
@@ -310,12 +310,12 @@ export const RemodelingTemplate3: React.FC<TemplateProps> = ({ document, pageIte
 
 // Template 4: Bold & Blue
 export const RemodelingTemplate4: React.FC<TemplateProps> = ({ document, pageItems, pageIndex, totalPages, style }) => {
-    const { business, client, summary, currency, category } = document;
+    const { business, client, summary, currency, category, textColor } = document;
     const currencySymbol = currencySymbols[currency] || '$';
     const docTitle = document.documentType === 'quote' ? 'ESTIMATE' : 'ESTIMATE';
 
     return (
-        <div className={`p-10 font-sans text-gray-800 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: 'Arial', fontSize: `${style.fontSize}pt`, minHeight: '1056px', backgroundColor: document.backgroundColor }}>
+        <div className={`p-10 font-sans text-gray-800 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: 'Arial', fontSize: `${style.fontSize}pt`, minHeight: '1056px', backgroundColor: document.backgroundColor, color: textColor }}>
             <header className="flex justify-between items-center mb-8 pb-4 border-b-4" style={{borderColor: style.color}}>
                 <div className="text-right">
                     <h1 className="text-4xl font-extrabold" style={{color: style.color}}>{docTitle}</h1>
@@ -323,16 +323,16 @@ export const RemodelingTemplate4: React.FC<TemplateProps> = ({ document, pageIte
                 </div>
                 <div className="text-right">
                     <p className="font-bold text-lg">{business.name}</p>
-                    <p className="text-xs text-gray-500">{business.address}</p>
+                    <p className="text-xs text-gray-500" style={{color: textColor}}>{business.address}</p>
                 </div>
             </header>
             
             <section className="mb-8 grid grid-cols-2 gap-4 text-xs">
-                 <div><p><span className="font-bold text-gray-500">TO: </span>{client.name}</p><p>{client.address}</p></div>
-                 <div className="text-right"><p><span className="font-bold text-gray-500">ESTIMATE #: </span>{document.estimateNumber}</p><p><span className="font-bold text-gray-500">DATE: </span>{safeFormat(document.estimateDate, 'yyyy-MM-dd')}</p></div>
+                 <div><p><span className="font-bold text-gray-500" style={{color: textColor}}>TO: </span>{client.name}</p><p>{client.address}</p></div>
+                 <div className="text-right"><p><span className="font-bold text-gray-500" style={{color: textColor}}>ESTIMATE #: </span>{document.estimateNumber}</p><p><span className="font-bold text-gray-500" style={{color: textColor}}>DATE: </span>{safeFormat(document.estimateDate, 'yyyy-MM-dd')}</p></div>
             </section>
             
-            <RemodelingDetails document={document} />
+            <RemodelingDetails document={document} textColor={textColor} />
 
             <main className="flex-grow">
                  <table className="w-full text-left text-sm">
@@ -362,8 +362,8 @@ export const RemodelingTemplate4: React.FC<TemplateProps> = ({ document, pageIte
                      <div className="flex justify-end">
                         <table className="w-1/3 text-sm">
                             <tbody>
-                                <tr><td className="py-1 text-gray-600">Subtotal</td><td className="py-1 text-right">{currencySymbol}{summary.subtotal.toFixed(2)}</td></tr>
-                                {summary.taxAmount > 0 && <tr><td className="py-1 text-gray-600">Taxes</td><td className="py-1 text-right">{currencySymbol}{summary.taxAmount.toFixed(2)}</td></tr>}
+                                <tr><td className="py-1 text-gray-600" style={{color: textColor}}>Subtotal</td><td className="py-1 text-right">{currencySymbol}{summary.subtotal.toFixed(2)}</td></tr>
+                                {summary.taxAmount > 0 && <tr><td className="py-1 text-gray-600" style={{color: textColor}}>Taxes</td><td className="py-1 text-right">{currencySymbol}{summary.taxAmount.toFixed(2)}</td></tr>}
                                 <tr className="font-bold text-base border-t-2 border-black"><td className="py-2">Total</td><td className="py-2 text-right">{currencySymbol}{summary.grandTotal.toFixed(2)}</td></tr>
                             </tbody>
                         </table>
@@ -376,12 +376,12 @@ export const RemodelingTemplate4: React.FC<TemplateProps> = ({ document, pageIte
 
 // Template 5: Minimal Side-by-Side
 export const RemodelingTemplate5: React.FC<TemplateProps> = ({ document, pageItems, pageIndex, totalPages, style }) => {
-    const { business, client, summary, currency, category } = document;
+    const { business, client, summary, currency, category, textColor } = document;
     const currencySymbol = currencySymbols[currency] || '$';
     const docTitle = document.documentType === 'quote' ? 'QUOTE' : 'ESTIMATE';
 
     return (
-        <div className={`p-12 font-sans text-gray-800 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: style.fontFamily, fontSize: `${style.fontSize}pt`, minHeight: '1056px', backgroundColor: document.backgroundColor }}>
+        <div className={`p-12 font-sans text-gray-800 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: style.fontFamily, fontSize: `${style.fontSize}pt`, minHeight: '1056px', backgroundColor: document.backgroundColor, color: textColor }}>
             <header className="mb-12">
                 <h1 className="text-3xl font-bold">{business.name}</h1>
                 <p className="text-xs" style={{color: style.color}}>{docTitle}</p>
@@ -390,19 +390,19 @@ export const RemodelingTemplate5: React.FC<TemplateProps> = ({ document, pageIte
 
             <section className="grid grid-cols-2 gap-10 text-xs mb-10">
                 <div>
-                    <p className="font-bold text-gray-500">CLIENT</p>
+                    <p className="font-bold text-gray-500" style={{color: textColor}}>CLIENT</p>
                     <p>{client.name}</p>
                     <p>{client.address}</p>
                     <p>{client.email}</p>
                 </div>
                 <div>
-                     <p className="font-bold text-gray-500">DETAILS</p>
+                     <p className="font-bold text-gray-500" style={{color: textColor}}>DETAILS</p>
                      <p>Estimate: {document.estimateNumber}</p>
                      <p>Date: {safeFormat(document.estimateDate, 'MMM d, yyyy')}</p>
                 </div>
             </section>
             
-            <RemodelingDetails document={document} />
+            <RemodelingDetails document={document} textColor={textColor} />
 
             <main className="flex-grow">
                 <table className="w-full text-left text-sm">
@@ -431,8 +431,8 @@ export const RemodelingTemplate5: React.FC<TemplateProps> = ({ document, pageIte
                 <footer className="mt-auto pt-8">
                     <div className="flex justify-end">
                         <div className="w-2/5 text-sm space-y-2">
-                             <div className="flex justify-between"><span className="text-gray-600">Subtotal</span><span>{currencySymbol}{summary.subtotal.toFixed(2)}</span></div>
-                             <div className="flex justify-between"><span className="text-gray-600">Tax</span><span>{currencySymbol}{summary.taxAmount.toFixed(2)}</span></div>
+                             <div className="flex justify-between"><span className="text-gray-600" style={{color: textColor}}>Subtotal</span><span>{currencySymbol}{summary.subtotal.toFixed(2)}</span></div>
+                             <div className="flex justify-between"><span className="text-gray-600" style={{color: textColor}}>Tax</span><span>{currencySymbol}{summary.taxAmount.toFixed(2)}</span></div>
                              <div className="flex justify-between font-bold text-lg mt-2 pt-2 border-t border-gray-800"><span>TOTAL</span><span>{currencySymbol}{summary.grandTotal.toFixed(2)}</span></div>
                         </div>
                     </div>
@@ -441,3 +441,5 @@ export const RemodelingTemplate5: React.FC<TemplateProps> = ({ document, pageIte
         </div>
     );
 };
+
+    
