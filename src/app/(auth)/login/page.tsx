@@ -39,6 +39,9 @@ export default function LoginPage() {
     const onSubmit = async (data: LoginFormValues) => {
         setIsLoading(true);
         try {
+            if (!auth) {
+                throw new Error("Authentication service is not available.");
+            }
             await signInWithEmailAndPassword(auth, data.email, data.password);
             toast({
                 title: "Login Successful",

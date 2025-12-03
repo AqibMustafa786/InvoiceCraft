@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useEffect, useState } from 'react';
@@ -55,7 +54,7 @@ export default function PublicEstimatePage({ params }: { params: { estimateId: s
     const isOwner = user && loadedEstimate && user.uid === loadedEstimate.userId;
 
     const handleDecline = async () => {
-        if (!estimateRef) return;
+        if (!estimateRef || !firestore) return;
         await updateDoc(estimateRef, {
             status: 'rejected',
             auditLog: arrayUnion({

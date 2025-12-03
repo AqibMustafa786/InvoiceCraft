@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useEffect, useState } from 'react';
@@ -55,7 +54,7 @@ export default function PublicQuotePage({ params }: { params: { quoteId: string 
     const isOwner = user && loadedQuote && user.uid === loadedQuote.userId;
 
     const handleDecline = async () => {
-        if (!quoteRef) return;
+        if (!quoteRef || !firestore) return;
         await updateDoc(quoteRef, {
             status: 'rejected',
             auditLog: arrayUnion({

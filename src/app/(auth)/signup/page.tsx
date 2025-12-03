@@ -42,10 +42,12 @@ export default function SignupPage() {
     const onSubmit = async (data: SignupFormValues) => {
         setIsLoading(true);
         try {
+            if (!auth || !firestore) {
+                throw new Error("Firebase services are not available.");
+            }
             const userCredential = await createUserWithEmailAndPassword(auth, data.email, data.password);
             const user = userCredential.user;
 
-            // Here you would typically create a user profile document in Firestore
             await setDoc(doc(firestore, "users", user.uid), {
                 uid: user.uid,
                 email: user.email,
