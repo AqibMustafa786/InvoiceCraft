@@ -9,6 +9,7 @@ import { format, isValid } from 'date-fns';
 import { ConstructionTemplate1, ConstructionTemplate2, ConstructionTemplate3, ConstructionTemplate4, ConstructionTemplate5 } from './document-templates/construction-templates';
 import { RemodelingTemplate1, RemodelingTemplate2, RemodelingTemplate3, RemodelingTemplate4, RemodelingTemplate5 } from './document-templates/remodeling-templates';
 import { HVACTemplate1, HVACTemplate2, HVACTemplate3, HVACTemplate4, HVACTemplate5 } from './document-templates/hvac-templates';
+import { PlumbingTemplate1, PlumbingTemplate2, PlumbingTemplate3, PlumbingTemplate4, PlumbingTemplate5 } from './document-templates/plumbing-templates';
 
 
 // --- PROPS ---
@@ -402,6 +403,11 @@ const templates: { [key: string]: FC<PageProps> } = {
   'hvac-3': HVACTemplate3,
   'hvac-4': HVACTemplate4,
   'hvac-5': HVACTemplate5,
+  'plumbing-1': PlumbingTemplate1,
+  'plumbing-2': PlumbingTemplate2,
+  'plumbing-3': PlumbingTemplate3,
+  'plumbing-4': PlumbingTemplate4,
+  'plumbing-5': PlumbingTemplate5,
 };
 
 

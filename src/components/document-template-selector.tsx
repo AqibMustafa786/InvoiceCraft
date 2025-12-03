@@ -118,6 +118,36 @@ const templates: Template[] = [
     thumbnailUrl: '/templates/hvac-5.png',
     category: 'HVAC (Air Conditioning / Heating)',
   },
+  {
+    id: 'plumbing-1',
+    name: 'Pipework',
+    thumbnailUrl: '/templates/plumbing-1.png',
+    category: 'Plumbing Estimate',
+  },
+  {
+    id: 'plumbing-2',
+    name: 'Flow',
+    thumbnailUrl: '/templates/plumbing-2.png',
+    category: 'Plumbing Estimate',
+  },
+  {
+    id: 'plumbing-3',
+    name: 'Aqua',
+    thumbnailUrl: '/templates/plumbing-3.png',
+    category: 'Plumbing Estimate',
+  },
+  {
+    id: 'plumbing-4',
+    name: 'Pressure',
+    thumbnailUrl: '/templates/plumbing-4.png',
+    category: 'Plumbing Estimate',
+  },
+  {
+    id: 'plumbing-5',
+    name: 'LeakFree',
+    thumbnailUrl: '/templates/plumbing-5.png',
+    category: 'Plumbing Estimate',
+  },
 ];
 
 export function DocumentTemplateSelector({ selectedTemplate, onSelectTemplate, documentType, category }: DocumentTemplateSelectorProps) {
