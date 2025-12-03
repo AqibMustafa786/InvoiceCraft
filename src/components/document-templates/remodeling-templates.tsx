@@ -104,7 +104,7 @@ export const RemodelingTemplate1: React.FC<TemplateProps> = ({ document, pageIte
                     </div>
                 </div>
 
-                <RemodelingDetails document={document} textColor={textColor} />
+                <RemodelingDetails document={document} textColor={textColor || '#374151'} />
 
                 <main className="flex-grow">
                     <table className="w-full text-left text-sm">
@@ -196,7 +196,7 @@ export const RemodelingTemplate2: React.FC<TemplateProps> = ({ document, pageIte
                 </div>
             </section>
             
-            <RemodelingDetails document={document} textColor={textColor} />
+            <RemodelingDetails document={document} textColor={textColor || '#374151'} />
 
             <main className="flex-grow">
                  <table className="w-full text-left text-sm">
@@ -262,7 +262,7 @@ export const RemodelingTemplate3: React.FC<TemplateProps> = ({ document, pageIte
                 <div><p className="font-bold">Estimate #:</p><p>{document.estimateNumber}</p><p className="font-bold mt-1">Date:</p><p>{safeFormat(document.estimateDate, 'MM/dd/yyyy')}</p></div>
             </section>
             
-            <RemodelingDetails document={document} textColor={textColor} />
+            <RemodelingDetails document={document} textColor={textColor || '#374151'} />
 
             <main className="flex-grow">
                 <table className="w-full text-left text-xs">
@@ -334,7 +334,7 @@ export const RemodelingTemplate4: React.FC<TemplateProps> = ({ document, pageIte
                  <div className="text-right"><p><span className="font-bold text-gray-500" style={{color: textColor}}>ESTIMATE #: </span>{document.estimateNumber}</p><p><span className="font-bold text-gray-500" style={{color: textColor}}>DATE: </span>{safeFormat(document.estimateDate, 'yyyy-MM-dd')}</p></div>
             </section>
             
-            <RemodelingDetails document={document} textColor={textColor} />
+            <RemodelingDetails document={document} textColor={textColor || '#374151'} />
 
             <main className="flex-grow">
                  <table className="w-full text-left text-sm">
@@ -408,7 +408,7 @@ export const RemodelingTemplate5: React.FC<TemplateProps> = ({ document, pageIte
                 </div>
             </section>
             
-            <RemodelingDetails document={document} textColor={textColor} />
+            <RemodelingDetails document={document} textColor={textColor || '#374151'} />
 
             <main className="flex-grow">
                 <table className="w-full text-left text-sm">

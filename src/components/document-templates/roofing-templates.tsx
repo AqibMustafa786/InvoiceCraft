@@ -55,8 +55,9 @@ const RoofingDetails: React.FC<{ document: Estimate }> = ({ document }) => {
 
 // Template 1: Direct Interpretation of user image
 export const RoofingTemplate1: React.FC<TemplateProps> = ({ document, pageItems, pageIndex, totalPages, style }) => {
-    const { business, client, summary, currency } = document;
+    const { business, client, summary, currency, category } = document;
     const currencySymbol = currencySymbols[currency] || '$';
+    const docTitle = document.documentType === 'quote' ? 'QUOTE' : 'ESTIMATE';
     
     return (
         <div className={`bg-white font-sans text-gray-800 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: 'Lato, sans-serif', fontSize: `10pt`, minHeight: '1056px' }}>
@@ -65,10 +66,11 @@ export const RoofingTemplate1: React.FC<TemplateProps> = ({ document, pageItems,
                     <div>
                          {business.logoUrl && <Image src={business.logoUrl} alt="Logo" width={80} height={40} className="object-contain" />}
                          <p className="font-bold text-lg mt-2">{business.name}</p>
-                         <p className="text-xs opacity-80">Estimates</p>
+                         <p className="text-xs opacity-80">{document.documentType === 'quote' ? 'Quotation Services' : 'Estimation Services'}</p>
                     </div>
                     <div className="text-right">
-                        <h1 className="text-4xl font-extrabold tracking-wider">ROOFING ESTIMATE</h1>
+                        <h1 className="text-4xl font-extrabold tracking-wider">{docTitle}</h1>
+                        {category !== 'Generic' && <p className="text-sm opacity-90">{category}</p>}
                          <div className="w-full h-0.5 mt-2" style={{backgroundImage: 'linear-gradient(to right, #111827 50%, white 50%)', backgroundSize: '10px 1px', backgroundRepeat: 'repeat-x'}}></div>
                     </div>
                 </div>
@@ -160,8 +162,9 @@ export const RoofingTemplate1: React.FC<TemplateProps> = ({ document, pageItems,
 
 // Template 2: Light and Professional
 export const RoofingTemplate2: React.FC<TemplateProps> = ({ document, pageItems, pageIndex, totalPages, style }) => {
-    const { business, client, summary, currency } = document;
+    const { business, client, summary, currency, category } = document;
     const currencySymbol = currencySymbols[currency] || '$';
+    const docTitle = document.documentType === 'quote' ? 'QUOTE' : 'ESTIMATE';
 
     return (
         <div className={`p-10 bg-white font-sans text-gray-700 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: 'Verdana, sans-serif', fontSize: '9.5pt', minHeight: '1056px' }}>
@@ -170,7 +173,10 @@ export const RoofingTemplate2: React.FC<TemplateProps> = ({ document, pageItems,
                     <h1 className="text-2xl font-bold" style={{ color: style.color }}>{business.name}</h1>
                     <p className="text-xs text-gray-500">Roofing Professionals</p>
                 </div>
-                <h2 className="text-3xl font-light text-gray-400">ROOFING ESTIMATE</h2>
+                <div className="text-right">
+                    <h2 className="text-3xl font-light text-gray-400">{docTitle}</h2>
+                    {category !== 'Generic' && <p className="text-sm text-gray-400">{category}</p>}
+                </div>
             </header>
 
             <section className="grid grid-cols-2 gap-8 mb-8 text-xs">
@@ -232,15 +238,19 @@ export const RoofingTemplate2: React.FC<TemplateProps> = ({ document, pageItems,
 
 // Template 3: Blue-tinted Grid
 export const RoofingTemplate3: React.FC<TemplateProps> = ({ document, pageItems, pageIndex, totalPages, style }) => {
-    const { business, client, summary, currency } = document;
+    const { business, client, summary, currency, category } = document;
     const currencySymbol = currencySymbols[currency] || '$';
     const accentColor = style.color || '#3B82F6';
+    const docTitle = document.documentType === 'quote' ? 'QUOTE' : 'ESTIMATE';
 
     return (
         <div className={`p-10 bg-gray-50 font-['Roboto'] text-gray-800 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ minHeight: '1056px' }}>
             <header className="flex justify-between items-center mb-8">
-                <h1 className="text-4xl font-extrabold" style={{color: accentColor}}>Roofing Estimate</h1>
-                <p className="text-sm text-gray-500">{business.name}</p>
+                <h1 className="text-4xl font-extrabold" style={{color: accentColor}}>{business.name}</h1>
+                <div className="text-right">
+                    <h2 className="text-2xl font-bold">{docTitle}</h2>
+                    {category !== 'Generic' && <p className="text-sm">{category}</p>}
+                </div>
             </header>
 
             <section className="grid grid-cols-3 gap-4 mb-8 text-xs p-4 bg-white rounded-lg shadow-sm">
@@ -295,8 +305,9 @@ export const RoofingTemplate3: React.FC<TemplateProps> = ({ document, pageItems,
 
 // Template 4: Corporate Clean
 export const RoofingTemplate4: React.FC<TemplateProps> = ({ document, pageItems, pageIndex, totalPages, style }) => {
-    const { business, client, summary, currency } = document;
+    const { business, client, summary, currency, category } = document;
     const currencySymbol = currencySymbols[currency] || '$';
+    const docTitle = document.documentType === 'quote' ? 'QUOTE' : 'ESTIMATE';
 
     return (
         <div className={`p-10 bg-white font-sans text-gray-800 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: 'Helvetica, sans-serif', fontSize: '9pt', minHeight: '1056px' }}>
@@ -307,7 +318,8 @@ export const RoofingTemplate4: React.FC<TemplateProps> = ({ document, pageItems,
                 </div>
                 <div className="text-right">
                     {business.logoUrl && <Image src={business.logoUrl} alt="Logo" width={90} height={45} className="object-contain ml-auto mb-2"/>}
-                    <h2 className="text-2xl font-semibold text-gray-400">ROOFING ESTIMATE</h2>
+                    <h2 className="text-2xl font-semibold text-gray-400">{docTitle}</h2>
+                    {category !== 'Generic' && <p className="text-xs text-gray-400">{category}</p>}
                 </div>
             </header>
 
@@ -366,14 +378,18 @@ export const RoofingTemplate4: React.FC<TemplateProps> = ({ document, pageItems,
 
 // Template 5: Minimal & Wide
 export const RoofingTemplate5: React.FC<TemplateProps> = ({ document, pageItems, pageIndex, totalPages, style }) => {
-    const { business, client, summary, currency } = document;
+    const { business, client, summary, currency, category } = document;
     const currencySymbol = currencySymbols[currency] || '$';
+    const docTitle = document.documentType === 'quote' ? 'QUOTE' : 'ESTIMATE';
 
     return (
         <div className={`p-12 bg-white font-['Garamond',_serif] text-gray-700 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ minHeight: '1056px' }}>
             <header className="flex justify-between items-center mb-16">
                 <h1 className="text-2xl font-bold tracking-widest">{business.name}</h1>
-                <p className="text-sm">ESTIMATE</p>
+                <div className="text-right">
+                    <p className="text-sm">{docTitle}</p>
+                    {category !== 'Generic' && <p className="text-xs text-gray-500">{category}</p>}
+                </div>
             </header>
 
             <section className="flex justify-between mb-10 text-xs">
