@@ -52,46 +52,14 @@ const safeFormat = (date: Date | string | number, formatString: string) => {
 }
 
 // --- SHARED COMPONENTS ---
-const InvoiceHeader = ({ invoice, logoUrl, accentColor, t }: CommonTemplateProps) => (
-    <header className="flex justify-between items-start mb-10" data-element="header">
-        <div>
-            {logoUrl ? (
-                <Image src={logoUrl} alt={`${invoice.companyName} Logo`} width={120} height={40} className="object-contain" data-ai-hint="logo" />
-            ) : (
-                <h1 className="text-3xl font-bold font-headline" style={{ color: accentColor }}>{invoice.companyName}</h1>
-            )}
-            <div className="text-muted-foreground text-sm mt-2 space-y-1">
-              <p className="whitespace-pre-line">{invoice.companyAddress}</p>
-              {invoice.companyPhone && <p>{invoice.companyPhone}</p>}
-            </div>
-        </div>
-        <div className="text-right">
-            <h2 className="text-3xl font-bold text-gray-400 uppercase tracking-wider">{t.invoice}</h2>
-            <p className="text-muted-foreground mt-1">{invoice.invoiceNumber}</p>
-        </div>
-    </header>
-);
-
-const ClientDetails = ({ invoice, t }: { invoice: Invoice, t: any }) => (
-     <section className="flex justify-between mb-10" data-element="client-details">
-        <div className="space-y-1">
-            <p className="text-sm font-semibold text-gray-500">{t.billTo}</p>
-            <p className="font-bold">{invoice.clientName}</p>
-            <p className="text-muted-foreground text-sm whitespace-pre-line">{invoice.clientAddress}</p>
-        </div>
-        <div className="text-right space-y-1">
-            <p className="text-sm font-semibold text-gray-500">{t.invoiceDate}</p>
-            <p>{safeFormat(new Date(invoice.invoiceDate || new Date()), 'MMMM d, yyyy')}</p>
-            <p className="text-sm font-semibold text-gray-500 mt-2">{t.dueDate}</p>
-            <p>{safeFormat(new Date(invoice.dueDate || new Date()), 'MMMM d, yyyy')}</p>
-        </div>
-    </section>
-);
-
-const ItemsTable: FC<{ items: LineItem[], t: any, currencySymbol: string, accentColor?: string }> = ({ items, t, currencySymbol, accentColor }) => (
+const ItemsTable: FC<{ items: LineItem[], t: any, currencySymbol: string, accentColor?: string, headerStyle?: 'filled' | 'underline' }> = ({ items, t, currencySymbol, accentColor, headerStyle = 'filled' }) => (
     <section>
         <table className="w-full text-left">
-            <thead style={accentColor ? {backgroundColor: accentColor, color: 'white'} : {}} className={accentColor ? '' : "bg-gray-50"} data-element="table-header">
+            <thead 
+              data-element="table-header"
+              style={headerStyle === 'filled' ? {backgroundColor: accentColor, color: 'white'} : {}} 
+              className={headerStyle === 'filled' ? '' : 'border-b-2'}
+            >
             <tr>
                 <th className="p-3 text-sm font-semibold w-1/2">{t.item}</th>
                 <th className="p-3 text-sm font-semibold text-center">{t.quantity}</th>
@@ -104,7 +72,7 @@ const ItemsTable: FC<{ items: LineItem[], t: any, currencySymbol: string, accent
                 <tr key={item.id} className="border-b" data-element="table-row">
                 <td className="p-3 whitespace-pre-line">{item.name || <span className="text-gray-400">{t.itemDescription}</span>}</td>
                 <td className="p-3 text-center tabular-nums">{item.quantity}</td>
-                <td className="p-3 text-right tabular-nums">{currencySymbol}{(item as any).rate ? (item as any).rate.toFixed(2) : '0.00'}</td>
+                <td className="p-3 text-right tabular-nums">{currencySymbol}{((item as any).rate || 0).toFixed(2)}</td>
                 <td className="p-3 text-right tabular-nums font-medium">{currencySymbol}{(item.quantity * ((item as any).rate || 0)).toFixed(2)}</td>
                 </tr>
             ))}
@@ -172,8 +140,36 @@ const InvoiceFooter: FC<{
 const DefaultTemplatePage: FC<PageProps> = ({ pageItems, pageIndex, totalPages, ...commonProps }) => (
     <div className={`p-8 md:p-10 bg-white font-sans text-gray-800 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{minHeight: '1056px'}}>
         <div data-element="page-content" className="flex-grow">
-            <InvoiceHeader {...commonProps} />
-            <ClientDetails {...commonProps} />
+            <header className="flex justify-between items-start mb-10" data-element="header">
+                <div>
+                    {commonProps.logoUrl ? (
+                        <Image src={commonProps.logoUrl} alt={`${commonProps.invoice.companyName} Logo`} width={120} height={40} className="object-contain" data-ai-hint="logo" />
+                    ) : (
+                        <h1 className="text-3xl font-bold font-headline" style={{ color: commonProps.accentColor }}>{commonProps.invoice.companyName}</h1>
+                    )}
+                    <div className="text-muted-foreground text-sm mt-2 space-y-1">
+                      <p className="whitespace-pre-line">{commonProps.invoice.companyAddress}</p>
+                      {commonProps.invoice.companyPhone && <p>{commonProps.invoice.companyPhone}</p>}
+                    </div>
+                </div>
+                <div className="text-right">
+                    <h2 className="text-3xl font-bold text-gray-400 uppercase tracking-wider">{commonProps.t.invoice}</h2>
+                    <p className="text-muted-foreground mt-1">{commonProps.invoice.invoiceNumber}</p>
+                </div>
+            </header>
+             <section className="flex justify-between mb-10" data-element="client-details">
+                <div className="space-y-1">
+                    <p className="text-sm font-semibold text-gray-500">{commonProps.t.billTo}</p>
+                    <p className="font-bold">{commonProps.invoice.clientName}</p>
+                    <p className="text-muted-foreground text-sm whitespace-pre-line">{commonProps.invoice.clientAddress}</p>
+                </div>
+                <div className="text-right space-y-1">
+                    <p className="text-sm font-semibold text-gray-500">{commonProps.t.invoiceDate}</p>
+                    <p>{safeFormat(new Date(commonProps.invoice.invoiceDate || new Date()), 'MMMM d, yyyy')}</p>
+                    <p className="text-sm font-semibold text-gray-500 mt-2">{commonProps.t.dueDate}</p>
+                    <p>{safeFormat(new Date(commonProps.invoice.dueDate || new Date()), 'MMMM d, yyyy')}</p>
+                </div>
+            </section>
             <ItemsTable items={pageItems} {...commonProps} />
         </div>
         {pageIndex === totalPages - 1 && <InvoiceFooter {...commonProps} />}
@@ -225,14 +221,186 @@ const ModernTemplatePage = ({ pageItems, pageIndex, totalPages, ...commonProps }
     </div>
 );
 
+// --- TEMPLATE: Minimalist ---
+const MinimalistTemplatePage: FC<PageProps> = ({ pageItems, pageIndex, totalPages, ...commonProps }) => (
+    <div className={`p-12 bg-white font-sans text-gray-900 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{minHeight: '1056px'}}>
+        <div data-element="page-content" className="flex-grow">
+            <header data-element="header" className="mb-12">
+                <div className="flex justify-between items-start">
+                    <h1 className="text-2xl font-bold">{commonProps.invoice.companyName}</h1>
+                    <h2 className="text-2xl font-light uppercase text-gray-500">{commonProps.t.invoice}</h2>
+                </div>
+                <p className="text-xs text-gray-500 mt-1">{commonProps.invoice.companyAddress}</p>
+            </header>
+            <section data-element="client-details" className="grid grid-cols-3 gap-4 mb-12 text-xs">
+                <div className="space-y-1">
+                    <p className="text-gray-500 uppercase tracking-widest">Billed To</p>
+                    <p className="font-medium">{commonProps.invoice.clientName}</p>
+                    <p>{commonProps.invoice.clientAddress}</p>
+                </div>
+                <div className="space-y-1">
+                    <p className="text-gray-500 uppercase tracking-widest">Invoice #</p>
+                    <p className="font-medium">{commonProps.invoice.invoiceNumber}</p>
+                </div>
+                <div className="space-y-1">
+                    <p className="text-gray-500 uppercase tracking-widest">Date</p>
+                    <p className="font-medium">{safeFormat(new Date(commonProps.invoice.invoiceDate || new Date()), 'yyyy-MM-dd')}</p>
+                </div>
+            </section>
+            <ItemsTable items={pageItems} {...commonProps} headerStyle="underline" />
+        </div>
+        {pageIndex === totalPages - 1 && <InvoiceFooter {...commonProps} />}
+    </div>
+);
+
+// --- TEMPLATE: Creative ---
+const CreativeTemplatePage: FC<PageProps> = ({ pageItems, pageIndex, totalPages, ...commonProps }) => (
+    <div className={`p-8 bg-white font-['Lato'] text-gray-800 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{minHeight: '1056px'}}>
+        <div className="absolute top-0 left-0 w-full h-48" style={{backgroundColor: commonProps.accentColor, opacity: 0.1}}></div>
+        <div data-element="page-content" className="flex-grow z-10">
+            <header data-element="header" className="flex justify-between items-center mb-12">
+                <div>
+                    {commonProps.logoUrl && <Image src={commonProps.logoUrl} alt="logo" width={80} height={80} className="rounded-full" />}
+                    <h1 className="text-3xl font-bold mt-2">{commonProps.invoice.companyName}</h1>
+                </div>
+                <div className="text-right">
+                    <h2 className="text-4xl font-extrabold uppercase" style={{color: commonProps.accentColor}}>{commonProps.t.invoice}</h2>
+                    <p className="text-sm mt-1">{commonProps.invoice.invoiceNumber}</p>
+                </div>
+            </header>
+            <section data-element="client-details" className="mb-10 text-sm">
+                <p className="text-gray-500">Billed to:</p>
+                <p className="font-bold text-lg">{commonProps.invoice.clientName}</p>
+                <p>{commonProps.invoice.clientAddress}</p>
+            </section>
+            <ItemsTable items={pageItems} {...commonProps} accentColor={commonProps.accentColor} />
+        </div>
+        {pageIndex === totalPages - 1 && <InvoiceFooter {...commonProps} />}
+    </div>
+);
+
+// --- TEMPLATE: Elegant ---
+const ElegantTemplatePage: FC<PageProps> = ({ pageItems, pageIndex, totalPages, ...commonProps }) => (
+    <div className={`p-10 bg-white font-['Merriweather'] text-gray-700 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{minHeight: '1056px'}}>
+        <div data-element="page-content" className="flex-grow">
+            <header data-element="header" className="text-center mb-16">
+                {commonProps.logoUrl && <Image src={commonProps.logoUrl} alt="logo" width={100} height={50} className="mx-auto mb-4 object-contain" />}
+                <h1 className="text-4xl font-bold tracking-tight">{commonProps.invoice.companyName}</h1>
+                <p className="text-xs text-gray-500 mt-2 tracking-widest">{commonProps.invoice.companyAddress}</p>
+            </header>
+            <div className="w-full h-px bg-gray-300 mb-10"></div>
+            <section data-element="meta" className="flex justify-between items-center mb-10 text-sm">
+                <div>
+                    <p className="font-bold">Billed to: {commonProps.invoice.clientName}</p>
+                    <p>{commonProps.invoice.clientAddress}</p>
+                </div>
+                <div className="text-right">
+                    <p><span className="font-bold">Invoice Number:</span> {commonProps.invoice.invoiceNumber}</p>
+                    <p><span className="font-bold">Date of Issue:</span> {safeFormat(new Date(commonProps.invoice.invoiceDate || new Date()), 'MMMM dd, yyyy')}</p>
+                </div>
+            </section>
+            <ItemsTable items={pageItems} {...commonProps} headerStyle="underline" />
+        </div>
+        {pageIndex === totalPages - 1 && <InvoiceFooter {...commonProps} />}
+    </div>
+);
+
+// --- TEMPLATE: USA ---
+const UsaTemplatePage: FC<PageProps> = ({ pageItems, pageIndex, totalPages, ...commonProps }) => {
+    const { invoice, logoUrl, accentColor, total, subtotal, currencySymbol } = commonProps;
+
+    return (
+        <div className={`invoice-page font-sans text-gray-800 ${pageIndex < totalPages - 1 ? "page-break" : ""}`}>
+            <div className="p-8 m-4 border-2" style={{ borderColor: accentColor }}>
+                <header className="grid grid-cols-2 gap-10 mb-8" data-element="header">
+                     <div>
+                        {logoUrl ? (
+                            <Image src={logoUrl} alt={`${invoice.companyName} Logo`} width={160} height={80} className="object-contain mb-2" data-ai-hint="logo" />
+                        ) : (
+                            <h1 className="text-3xl font-bold mb-1" style={{color: accentColor}}>{invoice.companyName}</h1>
+                        )}
+                        <p className="text-xs text-gray-600 whitespace-pre-line">{invoice.companyAddress}</p>
+                    </div>
+                     <div className="text-right">
+                        <h2 className="text-4xl font-bold">INVOICE</h2>
+                        <div className="mt-4 text-xs space-y-1">
+                            <p><span className="font-bold text-gray-500">Invoice #:</span> {invoice.invoiceNumber}</p>
+                            <p><span className="font-bold text-gray-500">Date:</span> {safeFormat(new Date(invoice.invoiceDate || new Date()), 'M/d/yyyy')}</p>
+                        </div>
+                    </div>
+                </header>
+                 <section className="mb-6 text-xs" data-element="client-details">
+                    <div className="grid grid-cols-[max-content_1fr] gap-x-4 gap-y-1 p-3 bg-gray-50 rounded-md">
+                        <span className="font-bold text-gray-600">Billed To:</span><span className="font-medium">{invoice.clientName}</span>
+                        <span className="font-bold text-gray-600">Address:</span><span className="whitespace-pre-line font-medium">{invoice.clientAddress}</span>
+                        {invoice.poNumber && <><span className="font-bold text-gray-600">PO Number:</span><span className="font-medium">{invoice.poNumber}</span></>}
+                    </div>
+                </section>
+                <main>
+                    <table className="w-full border-collapse border text-sm" data-element="items-table">
+                        <thead data-element="table-header">
+                            <tr className="bg-gray-100">
+                                <th className="border p-2 font-bold w-full text-left">Description</th>
+                                <th className="border p-2 font-bold text-right">Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {pageItems?.filter(Boolean).map((item) => (
+                                <tr key={item.id} data-element="table-row">
+                                    <td className="border p-2 align-top h-8 whitespace-pre-line pl-6">{item.name}</td>
+                                    <td className="border p-2 text-right align-top">{currencySymbol}{(item.quantity * ((item as any).rate || 0)).toFixed(2)}</td>
+                                </tr>
+                            ))}
+                             {[...Array(Math.max(0, 10 - (pageItems?.length || 0)))].map((_, i) => (
+                                <tr key={`blank-${i}`}>
+                                    <td className="border p-2 h-8"></td>
+                                    <td className="border p-2"></td>
+                                </tr>
+                            ))}
+                        </tbody>
+                         <tfoot className="text-sm font-medium">
+                            <tr>
+                                <td className="border p-2 text-right font-bold">Subtotal</td>
+                                <td className="border p-2 text-right">{currencySymbol}{subtotal.toFixed(2)}</td>
+                            </tr>
+                            {invoice.tax > 0 && <tr>
+                                <td className="border p-2 text-right font-bold">Tax ({invoice.tax}%)</td>
+                                <td className="border p-2 text-right">{currencySymbol}{commonProps.taxAmount.toFixed(2)}</td>
+                            </tr>}
+                            {invoice.discount > 0 && <tr>
+                                <td className="border p-2 text-right font-bold">Discount ({invoice.discount}%)</td>
+                                <td className="border p-2 text-right text-red-600">-{currencySymbol}{commonProps.discountAmount.toFixed(2)}</td>
+                            </tr>}
+                             {invoice.amountPaid > 0 && <tr>
+                                <td className="border p-2 text-right font-bold">Amount Paid</td>
+                                <td className="border p-2 text-right text-green-600">-{currencySymbol}{invoice.amountPaid.toFixed(2)}</td>
+                            </tr>}
+                            <tr className="bg-gray-100 font-bold text-base">
+                                <td className="border p-2 text-right">Total Due</td>
+                                <td className="border p-2 text-right">{currencySymbol}{commonProps.balanceDue.toFixed(2)}</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </main>
+                {invoice.paymentInstructions && (
+                    <footer className="mt-8 text-xs" data-element="footer">
+                        <p className="font-bold">Notes:</p>
+                        <p className="text-gray-600 whitespace-pre-line">{invoice.paymentInstructions}</p>
+                    </footer>
+                )}
+            </div>
+        </div>
+    );
+};
+
 
 const templates = {
   'default': DefaultTemplatePage,
   'modern': ModernTemplatePage,
-  'minimalist': DefaultTemplatePage,
-  'creative': ModernTemplatePage,
-  'elegant': DefaultTemplatePage,
-  'usa': ModernTemplatePage,
+  'minimalist': MinimalistTemplatePage,
+  'creative': CreativeTemplatePage,
+  'elegant': ElegantTemplatePage,
+  'usa': UsaTemplatePage,
 };
 
 
