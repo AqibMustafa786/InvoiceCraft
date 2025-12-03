@@ -10,6 +10,7 @@ import { ConstructionTemplate1, ConstructionTemplate2, ConstructionTemplate3, Co
 import { RemodelingTemplate1, RemodelingTemplate2, RemodelingTemplate3, RemodelingTemplate4, RemodelingTemplate5 } from './document-templates/remodeling-templates';
 import { HVACTemplate1, HVACTemplate2, HVACTemplate3, HVACTemplate4, HVACTemplate5 } from './document-templates/hvac-templates';
 import { PlumbingTemplate1, PlumbingTemplate2, PlumbingTemplate3, PlumbingTemplate4, PlumbingTemplate5 } from './document-templates/plumbing-templates';
+import { ElectricalTemplate1, ElectricalTemplate2, ElectricalTemplate3, ElectricalTemplate4, ElectricalTemplate5 } from './document-templates/electrical-templates';
 
 
 // --- PROPS ---
@@ -408,6 +409,11 @@ const templates: { [key: string]: FC<PageProps> } = {
   'plumbing-3': PlumbingTemplate3,
   'plumbing-4': PlumbingTemplate4,
   'plumbing-5': PlumbingTemplate5,
+  'electrical-1': ElectricalTemplate1,
+  'electrical-2': ElectricalTemplate2,
+  'electrical-3': ElectricalTemplate3,
+  'electrical-4': ElectricalTemplate4,
+  'electrical-5': ElectricalTemplate5,
 };
 
 

@@ -148,6 +148,36 @@ const templates: Template[] = [
     thumbnailUrl: '/templates/plumbing-5.png',
     category: 'Plumbing Estimate',
   },
+  {
+    id: 'electrical-1',
+    name: 'Voltage',
+    thumbnailUrl: '/templates/electrical-1.png',
+    category: 'Electrical Estimate',
+  },
+  {
+    id: 'electrical-2',
+    name: 'Circuit',
+    thumbnailUrl: '/templates/electrical-2.png',
+    category: 'Electrical Estimate',
+  },
+  {
+    id: 'electrical-3',
+    name: 'Spark',
+    thumbnailUrl: '/templates/electrical-3.png',
+    category: 'Electrical Estimate',
+  },
+  {
+    id: 'electrical-4',
+    name: 'Wired',
+    thumbnailUrl: '/templates/electrical-4.png',
+    category: 'Electrical Estimate',
+  },
+  {
+    id: 'electrical-5',
+    name: 'Power Grid',
+    thumbnailUrl: '/templates/electrical-5.png',
+    category: 'Electrical Estimate',
+  },
 ];
 
 export function DocumentTemplateSelector({ selectedTemplate, onSelectTemplate, documentType, category }: DocumentTemplateSelectorProps) {
