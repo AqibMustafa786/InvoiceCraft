@@ -382,9 +382,8 @@ const ModernTemplatePage: FC<PageProps> = ({ document, pageItems, pageIndex, tot
     );
 };
 
-const templates = {
+const templates: { [key: string]: FC<PageProps> } = {
   'default': ModernTemplatePage,
-  'contractor': ModernTemplatePage,
   'construction-1': ConstructionTemplate1,
   'construction-2': ConstructionTemplate2,
   'construction-3': ConstructionTemplate3,
@@ -417,12 +416,7 @@ const DocumentPreviewInternal: FC<DocumentPreviewProps> = ({ document, accentCol
       color: accentColor,
   }
 
-  let TemplateComponent;
-  if (document.category === 'Construction Estimate') {
-    TemplateComponent = templates[document.template as keyof typeof templates] || templates['construction-1'];
-  } else {
-    TemplateComponent = templates[document.template as keyof typeof templates] || templates.default;
-  }
+  const TemplateComponent = templates[document.template] || templates.default;
   
   useLayoutEffect(() => {
     if (!document || !isPrint || !needsRemeasure || !TemplateComponent) return;
@@ -594,3 +588,5 @@ export const ClientDocumentPreview: FC<DocumentPreviewProps> = (props) => {
 };
 
 export { DocumentPreviewInternal as DocumentPreview };
+
+    
