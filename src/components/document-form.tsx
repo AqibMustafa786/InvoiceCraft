@@ -9,7 +9,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { DatePicker } from '@/components/ui/datepicker';
-import { ImageUp, Plus, Trash2, Palette, X, Mail, Truck, Hash, Phone, Globe, Briefcase, Award, User, FileText, Building, Pencil, Type, Package, Hammer, Ruler, ListTree, CheckSquare, Sparkles, Calendar, TextQuote, Wind, Thermometer, Wrench, Zap, Trees, Droplets, Car, Code, DraftingCompass, PaintBucket } from 'lucide-react';
+import { ImageUp, Plus, Trash2, Palette, X, Mail, Truck, Hash, Phone, Globe, Briefcase, Award, User, FileText, Building, Pencil, Type, Package, Hammer, Ruler, ListTree, CheckSquare, Sparkles, Calendar, TextQuote, Wind, Thermometer, Wrench, Zap, Trees, Droplets, Car, Code, DraftingCompass, PaintBrush, PaintBucket } from 'lucide-react';
 import Image from 'next/image';
 import {
   Select,
@@ -38,6 +38,8 @@ interface DocumentFormProps {
   setAccentColor: Dispatch<SetStateAction<string>>;
   backgroundColor: string;
   setBackgroundColor: Dispatch<SetStateAction<string>>;
+  textColor: string;
+  setTextColor: Dispatch<SetStateAction<string>>;
   toast: (options: { title: string; description: string; variant?: "default" | "destructive" }) => void;
   documentType: 'estimate' | 'quote';
 }
@@ -121,10 +123,11 @@ const CustomSelect = ({ value, onValueChange, options, placeholder, otherValue, 
 };
 
 
-export function DocumentForm({ document, setDocument, accentColor, setAccentColor, backgroundColor, setBackgroundColor, toast, documentType }: DocumentFormProps) {
+export function DocumentForm({ document, setDocument, accentColor, setAccentColor, backgroundColor, setBackgroundColor, textColor, setTextColor, toast, documentType }: DocumentFormProps) {
   const [bulkAddCount, setBulkAddCount] = useState(5);
   const [accentColorInput, setAccentColorInput] = useState(accentColor);
   const [bgColorInput, setBgColorInput] = useState(backgroundColor);
+  const [textColorInput, setTextColorInput] = useState(textColor);
   const [logoUrl, setLogoUrl] = useState<string | null>(document.business.logoUrl || null);
   const [isSignatureDialogOpen, setIsSignatureDialogOpen] = useState(false);
   const [cleaningAddOns, setCleaningAddOns] = useState<string[]>(document.cleaning?.addOns || []);
@@ -136,6 +139,10 @@ export function DocumentForm({ document, setDocument, accentColor, setAccentColo
   useEffect(() => {
     setBgColorInput(backgroundColor);
   }, [backgroundColor]);
+
+  useEffect(() => {
+    setTextColorInput(textColor);
+  }, [textColor]);
   
   useEffect(() => {
     if (logoUrl !== document.business.logoUrl) {
@@ -152,6 +159,10 @@ export function DocumentForm({ document, setDocument, accentColor, setAccentColo
   useEffect(() => {
      setDocument(prev => ({ ...prev, backgroundColor: backgroundColor }));
   }, [backgroundColor, setDocument]);
+
+  useEffect(() => {
+    setDocument(prev => ({ ...prev, textColor: textColor }));
+ }, [textColor, setDocument]);
 
 
   const handleNestedChange = (section: 'business' | 'client' | 'summary', e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -413,6 +424,30 @@ export function DocumentForm({ document, setDocument, accentColor, setAccentColo
                             onChange={(e) => {
                                 setBackgroundColor(e.target.value);
                                 setBgColorInput(e.target.value);
+                            }}
+                            className="absolute right-1 top-1/2 -translate-y-1/2 h-8 w-8 p-1 rounded-md cursor-pointer bg-transparent border-none appearance-none"
+                        />
+                    </div>
+                </div>
+                 <div className="space-y-2">
+                    <Label htmlFor="textColor">Text Color</Label>
+                    <div className="relative flex items-center">
+                        <PaintBrush className="absolute left-3 h-5 w-5 text-muted-foreground" />
+                        <Input 
+                            id="textColor"
+                            type="text" 
+                            value={textColorInput} 
+                            onChange={(e) => setTextColorInput(e.target.value)}
+                            onBlur={(e) => setTextColor(e.target.value)}
+                            className="pl-10"
+                            placeholder="#374151"
+                        />
+                        <input 
+                            type="color" 
+                            value={textColor}
+                            onChange={(e) => {
+                                setTextColor(e.target.value);
+                                setTextColorInput(e.target.value);
                             }}
                             className="absolute right-1 top-1/2 -translate-y-1/2 h-8 w-8 p-1 rounded-md cursor-pointer bg-transparent border-none appearance-none"
                         />

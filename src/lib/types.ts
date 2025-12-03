@@ -284,7 +284,7 @@ export interface Estimate {
   documentType: 'estimate' | 'quote';
   language: string;
   currency: string;
-  isPublic?: boolean;
+  isPublic: boolean;
   
   clientSignature?: SignatureInfo;
   auditLog?: AuditLogEntry[];
@@ -292,6 +292,7 @@ export interface Estimate {
   fontFamily?: string;
   fontSize?: number;
   backgroundColor?: string;
+  textColor?: string;
   createdAt?: any;
   updatedAt?: any;
 

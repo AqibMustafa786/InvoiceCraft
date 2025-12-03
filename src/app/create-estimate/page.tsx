@@ -75,6 +75,7 @@ const getInitialEstimate = (): Omit<Estimate, 'userId'> => ({
   fontFamily: 'Inter',
   fontSize: 14,
   backgroundColor: '#FFFFFF',
+  textColor: '#374151',
 
   homeRemodeling: {
     projectType: 'Kitchen Remodel',
@@ -183,7 +184,7 @@ const getInitialEstimate = (): Omit<Estimate, 'userId'> => ({
 });
 
 
-function PrintableDocument({ doc, accentColor, backgroundColor }: { doc: Estimate | Quote, accentColor: string, backgroundColor: string }) {
+function PrintableDocument({ doc, accentColor, backgroundColor, textColor }: { doc: Estimate | Quote, accentColor: string, backgroundColor: string, textColor: string }) {
     const [isMounted, setIsMounted] = useState(false);
 
     useEffect(() => {
@@ -200,7 +201,7 @@ function PrintableDocument({ doc, accentColor, backgroundColor }: { doc: Estimat
     }
 
     return createPortal(
-        <ClientDocumentPreview document={doc} accentColor={accentColor} backgroundColor={backgroundColor} id="estimate-preview-print" isPrint={true} />,
+        <ClientDocumentPreview document={doc} accentColor={accentColor} backgroundColor={backgroundColor} textColor={textColor} id="estimate-preview-print" isPrint={true} />,
         printRoot
     );
 }
@@ -210,6 +211,7 @@ export default function CreateEstimatePage() {
   const [document, setDocument] = useState<Estimate | Quote | null>(null);
   const [accentColor, setAccentColor] = useState<string>('hsl(var(--primary))');
   const [backgroundColor, setBackgroundColor] = useState<string>('#FFFFFF');
+  const [textColor, setTextColor] = useState<string>('#374151');
   const [isSendingEmail, setIsSendingEmail] = useState(false);
   const { toast } = useToast();
   const { firestore, user, isUserLoading } = useFirebase();
@@ -288,6 +290,7 @@ export default function CreateEstimatePage() {
     
     setDocument(initialEstimate);
     setBackgroundColor(initialEstimate.backgroundColor || '#FFFFFF');
+    setTextColor(initialEstimate.textColor || '#374151');
     
     if (typeof window !== 'undefined' && window.document) {
         const computedColor = getComputedStyle(window.document.documentElement).getPropertyValue('--primary').trim();
@@ -370,6 +373,7 @@ export default function CreateEstimatePage() {
     newEstimate.estimateNumber = `EST-${new Date().getFullYear()}-${String(Math.floor(Math.random() * 1000)).padStart(3, '0')}`;
     setDocument(newEstimate);
     setBackgroundColor('#FFFFFF');
+    setTextColor('#374151');
     if (typeof window !== 'undefined' && window.document) {
         const computedColor = getComputedStyle(window.document.documentElement).getPropertyValue('--primary').trim();
         if (computedColor) {
@@ -509,6 +513,8 @@ export default function CreateEstimatePage() {
                   setAccentColor={setAccentColor}
                   backgroundColor={backgroundColor}
                   setBackgroundColor={setBackgroundColor}
+                  textColor={textColor}
+                  setTextColor={setTextColor}
                   toast={toast}
                   documentType="estimate"
                 />
@@ -518,12 +524,12 @@ export default function CreateEstimatePage() {
           <div className="lg:col-span-2">
             <div className="sticky top-24">
                 <h2 className="text-2xl font-bold font-headline mb-6">Live Preview</h2>
-                <ClientDocumentPreview document={document} accentColor={accentColor} backgroundColor={backgroundColor} />
+                <ClientDocumentPreview document={document} accentColor={accentColor} backgroundColor={backgroundColor} textColor={textColor} />
             </div>
           </div>
         </div>
       </div>
-      {document && <PrintableDocument doc={document} accentColor={accentColor} backgroundColor={backgroundColor} />}
+      {document && <PrintableDocument doc={document} accentColor={accentColor} backgroundColor={backgroundColor} textColor={textColor} />}
     </>
   );
 }

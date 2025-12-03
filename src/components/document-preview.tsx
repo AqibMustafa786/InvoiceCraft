@@ -23,6 +23,7 @@ interface DocumentPreviewProps {
   document: Estimate;
   accentColor: string;
   backgroundColor: string;
+  textColor: string;
   id?: string;
   isPrint?: boolean;
 }
@@ -31,6 +32,7 @@ interface CommonTemplateProps {
   document: Estimate;
   accentColor: string;
   backgroundColor: string;
+  textColor: string;
 }
 
 interface PageProps extends CommonTemplateProps {
@@ -355,7 +357,7 @@ const ModernTemplatePage: FC<PageProps> = ({ document, pageItems, pageIndex, tot
     const currencySymbol = currencySymbols[document.currency] || '$';
 
     return (
-        <div className={`p-8 md:p-10 font-sans flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ color: '#374151', fontFamily: style.fontFamily, fontSize: `${style.fontSize}pt`, backgroundColor: document.backgroundColor, minHeight: '1056px' }}>
+        <div className={`p-8 md:p-10 font-sans flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ color: document.textColor, fontFamily: style.fontFamily, fontSize: `${style.fontSize}pt`, backgroundColor: document.backgroundColor, minHeight: '1056px' }}>
             <div data-element="page-header">
                 <PageHeader document={document} style={style} pageIndex={pageIndex}/>
                 {(pageIndex === 0) && (
@@ -454,7 +456,7 @@ const PAGE_PADDING = 80; // 40px top + 40px bottom
 const AVAILABLE_HEIGHT = PAGE_HEIGHT - PAGE_PADDING;
 
 
-const DocumentPreviewInternal: FC<DocumentPreviewProps> = ({ document, accentColor, backgroundColor, id = 'document-preview', isPrint = false }) => {
+const DocumentPreviewInternal: FC<DocumentPreviewProps> = ({ document, accentColor, backgroundColor, textColor, id = 'document-preview', isPrint = false }) => {
   const [paginatedItems, setPaginatedItems] = useState<Estimate['lineItems'][][]>(document ? [document.lineItems] : [[]]);
   const [needsRemeasure, setNeedsRemeasure] = useState(true);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -464,7 +466,7 @@ const DocumentPreviewInternal: FC<DocumentPreviewProps> = ({ document, accentCol
   }, [document]);
   
   const previewStyle = {
-      color: '#374151',
+      color: document?.textColor || '#374151',
       fontFamily: document?.fontFamily || 'Inter, sans-serif',
       fontSize: `${document?.fontSize || 10}pt`,
       backgroundColor: document?.backgroundColor || '#FFFFFF',
@@ -584,6 +586,7 @@ const DocumentPreviewInternal: FC<DocumentPreviewProps> = ({ document, accentCol
     document,
     accentColor,
     backgroundColor,
+    textColor,
   };
 
   if (isPrint) {
