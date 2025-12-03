@@ -37,18 +37,18 @@ const RoofingDetails: React.FC<{ document: Estimate }> = ({ document }) => {
     if (!document.roofing) return null;
     const { roofing } = document;
     return (
-        <>
-            <p className="grid grid-cols-[120px_1fr]"><span className="text-gray-500">Roof Material:</span> <span>{roofing.roofMaterial}</span></p>
-            {roofing.roofSize && <p className="grid grid-cols-[120px_1fr]"><span className="text-gray-500">Roof Size:</span> <span>{roofing.roofSize} sq. ft.</span></p>}
-            <p className="grid grid-cols-[120px_1fr]"><span className="text-gray-500">Roof Pitch:</span> <span>{roofing.roofPitch}</span></p>
-            {roofing.layersToRemove && <p className="grid grid-cols-[120px_1fr]"><span className="text-gray-500">Layers to Remove:</span> <span>{roofing.layersToRemove}</span></p>}
-            <p className="grid grid-cols-[120px_1fr]"><span className="text-gray-500">Underlayment:</span> <span>{roofing.underlaymentType}</span></p>
-            <p className="grid grid-cols-[120px_1fr]"><span className="text-gray-500">Ventilation:</span> <span>{roofing.ventilationSystem}</span></p>
-            <p className="grid grid-cols-[120px_1fr]"><span className="text-gray-500">Flashing:</span> <span>{roofing.flashingReplacement ? 'Replacement Included' : 'No Replacement'}</span></p>
-            <p className="grid grid-cols-[120px_1fr]"><span className="text-gray-500">Gutter Repair:</span> <span>{roofing.gutterRepairNeeded ? 'Needed' : 'Not Needed'}</span></p>
-            {roofing.roofAge && <p className="grid grid-cols-[120px_1fr]"><span className="text-gray-500">Roof Age:</span> <span>{roofing.roofAge} years</span></p>}
-            <p className="grid grid-cols-[120px_1fr]"><span className="text-gray-500">Inspection:</span> <span>{roofing.inspectionRequired ? 'Required' : 'Not Required'}</span></p>
-        </>
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-4 gap-y-1">
+            <p><span className="text-gray-500">Roof Material:</span> <span className="font-semibold">{roofing.roofMaterial}</span></p>
+            {roofing.roofSize && <p><span className="text-gray-500">Roof Size:</span> <span className="font-semibold">{roofing.roofSize} sq. ft.</span></p>}
+            <p><span className="text-gray-500">Roof Pitch:</span> <span className="font-semibold">{roofing.roofPitch}</span></p>
+            {roofing.layersToRemove && <p><span className="text-gray-500">Layers to Remove:</span> <span className="font-semibold">{roofing.layersToRemove}</span></p>}
+            <p><span className="text-gray-500">Underlayment:</span> <span className="font-semibold">{roofing.underlaymentType}</span></p>
+            <p><span className="text-gray-500">Ventilation:</span> <span className="font-semibold">{roofing.ventilationSystem}</span></p>
+            <p><span className="text-gray-500">Flashing:</span> <span className="font-semibold">{roofing.flashingReplacement ? 'Replacement Included' : 'No Replacement'}</span></p>
+            <p><span className="text-gray-500">Gutter Repair:</span> <span className="font-semibold">{roofing.gutterRepairNeeded ? 'Needed' : 'Not Needed'}</span></p>
+            {roofing.roofAge && <p><span className="text-gray-500">Roof Age:</span> <span className="font-semibold">{roofing.roofAge} years</span></p>}
+            <p><span className="text-gray-500">Inspection:</span> <span className="font-semibold">{roofing.inspectionRequired ? 'Required' : 'Not Required'}</span></p>
+        </div>
     );
 };
 
@@ -78,17 +78,24 @@ export const RoofingTemplate1: React.FC<TemplateProps> = ({ document, pageItems,
                  <section className="mb-8 p-6 bg-white border border-gray-200 rounded-lg shadow-sm grid grid-cols-2 gap-8 text-xs">
                     <div>
                         <p className="font-bold text-gray-500 mb-2">Customer Information</p>
-                        <p className="grid grid-cols-[60px_1fr]"><span className="text-gray-500">Name:</span> <span className="font-semibold">{client.name}</span></p>
-                        <p className="grid grid-cols-[60px_1fr]"><span className="text-gray-500">Address:</span> <span className="whitespace-pre-line">{client.address}</span></p>
-                        <p className="grid grid-cols-[60px_1fr]"><span className="text-gray-500">Email:</span> <span>{client.email}</span></p>
-                        <p className="grid grid-cols-[60px_1fr]"><span className="text-gray-500">Phone:</span> <span>{client.phone}</span></p>
+                        <p className="grid grid-cols-[80px_1fr]"><span className="text-gray-500">Name:</span> <span className="font-semibold">{client.name}</span></p>
+                        <p className="grid grid-cols-[80px_1fr]"><span className="text-gray-500">Address:</span> <span className="whitespace-pre-line">{client.address}</span></p>
+                        <p className="grid grid-cols-[80px_1fr]"><span className="text-gray-500">Email:</span> <span>{client.email}</span></p>
+                        <p className="grid grid-cols-[80px_1fr]"><span className="text-gray-500">Phone:</span> <span>{client.phone}</span></p>
                     </div>
                     <div>
                          <p className="font-bold text-gray-500 mb-2">Property & Project Information</p>
                          <p className="grid grid-cols-[120px_1fr]"><span className="text-gray-500">Address:</span> <span className="font-semibold whitespace-pre-line">{client.projectLocation || client.address}</span></p>
-                         <RoofingDetails document={document} />
                     </div>
                 </section>
+                
+                 {document.roofing && (
+                    <section className="mb-8 p-6 bg-white border border-gray-200 rounded-lg shadow-sm text-xs">
+                        <p className="font-bold text-gray-500 mb-2">Project Details</p>
+                        <RoofingDetails document={document} />
+                    </section>
+                )}
+
 
                 <section className="mb-8 p-6 bg-white border border-gray-200 rounded-lg shadow-sm text-xs">
                     <p className="font-bold text-gray-500 mb-2">Description of Work</p>
@@ -181,9 +188,7 @@ export const RoofingTemplate2: React.FC<TemplateProps> = ({ document, pageItems,
              {document.roofing && (
                 <section className="mb-8 p-4 bg-gray-50 rounded-md text-xs">
                     <p className="font-bold text-gray-500 mb-2">Project Details</p>
-                    <div className="grid grid-cols-3 gap-x-4 gap-y-1">
-                        <RoofingDetails document={document} />
-                    </div>
+                    <RoofingDetails document={document} />
                 </section>
             )}
             
@@ -247,9 +252,7 @@ export const RoofingTemplate3: React.FC<TemplateProps> = ({ document, pageItems,
              {document.roofing && (
                 <section className="mb-8 p-4 bg-white rounded-lg shadow-sm text-xs">
                     <p className="font-bold text-gray-500 mb-2">Roofing Specifications</p>
-                    <div className="grid grid-cols-4 gap-x-4 gap-y-1">
-                        <RoofingDetails document={document} />
-                    </div>
+                    <RoofingDetails document={document} />
                 </section>
             )}
 
@@ -316,9 +319,7 @@ export const RoofingTemplate4: React.FC<TemplateProps> = ({ document, pageItems,
                  {document.roofing && (
                     <div className="mt-4 pt-4 border-t border-gray-200">
                         <p className="font-bold mb-1">PROJECT SPECS</p>
-                         <div className="grid grid-cols-2 gap-x-4 gap-y-1">
-                           <RoofingDetails document={document} />
-                        </div>
+                        <RoofingDetails document={document} />
                     </div>
                 )}
             </section>
@@ -383,9 +384,7 @@ export const RoofingTemplate5: React.FC<TemplateProps> = ({ document, pageItems,
              {document.roofing && (
                 <section className="mb-8 text-xs">
                     <p className="font-bold border-b border-gray-500 pb-1 mb-2">Project Information</p>
-                    <div className="grid grid-cols-2 gap-x-4 gap-y-1">
-                        <RoofingDetails document={document} />
-                    </div>
+                    <RoofingDetails document={document} />
                 </section>
             )}
 
