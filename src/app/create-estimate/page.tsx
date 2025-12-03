@@ -5,7 +5,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { createPortal } from 'react-dom';
 import type { Estimate, LineItem, Quote } from '@/lib/types';
 import { DocumentForm } from '@/components/document-form';
-import { DocumentPreview } from '@/components/document-preview';
+import { ClientDocumentPreview } from '@/components/document-preview';
 import { Button } from '@/components/ui/button';
 import { Printer, FilePlus, LayoutDashboard, Edit, Share2, Mail, Loader2 } from 'lucide-react';
 import { addDays, isValid } from 'date-fns';
@@ -197,7 +197,7 @@ function PrintableDocument({ doc, accentColor }: { doc: Estimate | Quote, accent
     }
 
     return createPortal(
-        <DocumentPreview document={doc} accentColor={accentColor} id="estimate-preview-print" isPrint={true} />,
+        <ClientDocumentPreview document={doc} accentColor={accentColor} id="estimate-preview-print" isPrint={true} />,
         printRoot
     );
 }
@@ -497,12 +497,12 @@ export default function CreateEstimatePage() {
           <div className="lg:col-span-2">
             <div className="sticky top-24">
                 <h2 className="text-2xl font-bold font-headline mb-6">Live Preview</h2>
-                <DocumentPreview document={document} accentColor={accentColor} />
+                <ClientDocumentPreview document={document} accentColor={accentColor} />
             </div>
           </div>
         </div>
       </div>
-      <PrintableDocument doc={document} accentColor={accentColor} />
+      {document && <PrintableDocument doc={document} accentColor={accentColor} />}
     </>
   );
 }

@@ -5,7 +5,7 @@ import { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import type { Invoice, LineItem } from '@/lib/types';
 import { InvoiceForm } from '@/components/invoice-form';
-import { InvoicePreview } from '@/components/invoice-preview';
+import { ClientInvoicePreview } from '@/components/invoice-preview';
 import { Button } from '@/components/ui/button';
 import { Printer, Edit, FilePlus, LayoutDashboard } from 'lucide-react';
 import { addDays, isValid } from 'date-fns';
@@ -13,7 +13,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { useFirebase, useMemoFirebase } from '@/firebase';
-import { collection, doc, serverTimestamp, Timestamp } from 'firebase/firestore';
+import { doc, serverTimestamp, Timestamp } from 'firebase/firestore';
 import { setDocumentNonBlocking } from '@/firebase/non-blocking-updates';
 import { useDoc } from '@/firebase/firestore/use-doc';
 
@@ -65,7 +65,7 @@ function PrintableInvoice({ doc, logoUrl, accentColor }: { doc: Invoice, logoUrl
     }
 
     return createPortal(
-        <InvoicePreview invoice={doc} logoUrl={logoUrl} accentColor={accentColor} id="invoice-preview-print" isPrint={true} />,
+        <ClientInvoicePreview invoice={doc} logoUrl={logoUrl} accentColor={accentColor} id="invoice-preview-print" isPrint={true} />,
         printRoot
     );
 }
@@ -240,12 +240,12 @@ export default function CreateInvoicePage() {
           <div className="lg:col-span-2">
              <div className="sticky top-24">
                 <h2 className="text-2xl font-bold font-headline mb-6">Live Preview</h2>
-                <InvoicePreview invoice={invoice} logoUrl={logoUrl} accentColor={accentColor} />
+                <ClientInvoicePreview invoice={invoice} logoUrl={logoUrl} accentColor={accentColor} />
             </div>
           </div>
         </div>
       </div>
-      <PrintableInvoice doc={invoice} logoUrl={logoUrl} accentColor={accentColor} />
+      {invoice && <PrintableInvoice doc={invoice} logoUrl={logoUrl} accentColor={accentColor} />}
     </>
   );
 }

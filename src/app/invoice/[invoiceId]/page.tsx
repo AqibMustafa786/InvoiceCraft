@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 import { doc } from 'firebase/firestore';
 import { useFirebase, useDoc, useMemoFirebase } from '@/firebase';
 import type { Invoice } from '@/lib/types';
-import { InvoicePreview } from '@/components/invoice-preview';
+import { ClientInvoicePreview } from '@/components/invoice-preview';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
@@ -81,7 +81,7 @@ export default function PublicInvoicePage({ params }: { params: { invoiceId: str
                     </div>
                 </div>
 
-                <InvoicePreview 
+                <ClientInvoicePreview 
                     invoice={invoice}
                     logoUrl={logoUrl} 
                     accentColor={accentColor} 

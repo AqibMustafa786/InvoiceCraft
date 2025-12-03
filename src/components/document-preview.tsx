@@ -1,13 +1,11 @@
 
 'use client';
 
-import { useState, useLayoutEffect, useRef, useEffect } from 'react';
+import { useState, useLayoutEffect, useRef, useEffect, FC } from 'react';
 import type { Estimate } from '@/lib/types';
 import { Card, CardContent } from '@/components/ui/card';
-import { Separator } from '@/components/ui/separator';
 import Image from 'next/image';
 import { format, isValid } from 'date-fns';
-import { Badge } from './ui/badge';
 
 // --- PROPS ---
 interface DocumentPreviewProps {
@@ -340,7 +338,7 @@ const PageFooter = ({ document, style }: { document: Estimate, style: React.CSSP
 };
 
 
-const ModernTemplatePage = ({ document, pageItems, pageIndex, totalPages, style }: PageProps) => {
+const ModernTemplatePage: FC<PageProps> = ({ document, pageItems, pageIndex, totalPages, style }) => {
     const currencySymbol = currencySymbols[document.currency] || '$';
 
     return (
@@ -394,16 +392,11 @@ const PAGE_PADDING = 80; // 40px top + 40px bottom
 const AVAILABLE_HEIGHT = PAGE_HEIGHT - PAGE_PADDING;
 
 
-export function DocumentPreview({ document, accentColor, id = 'document-preview', isPrint = false }: DocumentPreviewProps) {
+const DocumentPreviewInternal: FC<DocumentPreviewProps> = ({ document, accentColor, id = 'document-preview', isPrint = false }) => {
   const [paginatedItems, setPaginatedItems] = useState<Estimate['lineItems'][][]>(document ? [document.lineItems] : [[]]);
   const [needsRemeasure, setNeedsRemeasure] = useState(true);
   const containerRef = useRef<HTMLDivElement>(null);
-  const [isClient, setIsClient] = useState(false);
-
-  useEffect(() => {
-    setIsClient(true);
-  }, []);
-
+  
   useEffect(() => {
     setNeedsRemeasure(true);
   }, [document]);
@@ -435,7 +428,6 @@ export function DocumentPreview({ document, accentColor, id = 'document-preview'
         window.document.body.appendChild(tempRoot);
 
         try {
-            // Render a temporary version to measure heights
             const tempContainer = container.cloneNode(true) as HTMLElement;
             tempRoot.appendChild(tempContainer);
             
@@ -515,7 +507,7 @@ export function DocumentPreview({ document, accentColor, id = 'document-preview'
   }, [document, isPrint, needsRemeasure, TemplateComponent]);
 
 
-  if (!isClient || !document || !TemplateComponent) {
+  if (!document || !TemplateComponent) {
     return (
       <Card id={id} className="w-full shadow-lg rounded-xl overflow-hidden print-hide">
         <CardContent className="p-8 text-center text-muted-foreground">
@@ -571,3 +563,23 @@ export function DocumentPreview({ document, accentColor, id = 'document-preview'
     </Card>
   );
 }
+
+export const ClientDocumentPreview: FC<DocumentPreviewProps> = (props) => {
+  const [isClient, setIsClient] = useState(false);
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  if (!isClient) {
+    return (
+        <Card id={props.id} className="w-full shadow-lg rounded-xl overflow-hidden print-hide">
+            <CardContent className="p-8 text-center text-muted-foreground">
+            Loading Preview...
+            </CardContent>
+        </Card>
+    );
+  }
+  return <DocumentPreviewInternal {...props} />;
+};
+
+export { DocumentPreviewInternal as DocumentPreview };
