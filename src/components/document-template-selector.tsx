@@ -4,18 +4,21 @@
 import { cn } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
 import Image from 'next/image';
+import type { EstimateCategory } from '@/lib/types';
 
 interface Template {
   id: string;
   name: string;
   thumbnailUrl: string;
   isPro?: boolean;
+  category: EstimateCategory | 'all';
 }
 
 interface DocumentTemplateSelectorProps {
   selectedTemplate: string;
   onSelectTemplate: (templateId: string) => void;
   documentType: 'estimate' | 'quote';
+  category: EstimateCategory;
 }
 
 const templates: Template[] = [
@@ -23,13 +26,47 @@ const templates: Template[] = [
     id: 'default',
     name: 'Modern',
     thumbnailUrl: '/templates/Estimate-Default.png',
+    category: 'all',
   },
+  {
+    id: 'construction-1',
+    name: 'Foundation',
+    thumbnailUrl: '/templates/construction-1.png',
+    category: 'Construction Estimate',
+  },
+  {
+    id: 'construction-2',
+    name: 'Blueprint',
+    thumbnailUrl: '/templates/construction-2.png',
+    category: 'Construction Estimate',
+  },
+  {
+    id: 'construction-3',
+    name: 'Contractor',
+    thumbnailUrl: '/templates/construction-3.png',
+    category: 'Construction Estimate',
+  },
+  {
+    id: 'construction-4',
+    name: 'High-Rise',
+    thumbnailUrl: '/templates/construction-4.png',
+    category: 'Construction Estimate',
+  },
+  {
+    id: 'construction-5',
+    name: 'Steel-Frame',
+    thumbnailUrl: '/templates/construction-5.png',
+    category: 'Construction Estimate',
+  }
 ];
 
-export function DocumentTemplateSelector({ selectedTemplate, onSelectTemplate, documentType }: DocumentTemplateSelectorProps) {
+export function DocumentTemplateSelector({ selectedTemplate, onSelectTemplate, documentType, category }: DocumentTemplateSelectorProps) {
+  
+  const filteredTemplates = templates.filter(t => t.category === category || t.category === 'all');
+  
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-10 justify-center">
-      {templates.map((template) => (
+      {filteredTemplates.map((template) => (
         <div
           key={template.id}
           onClick={() => onSelectTemplate(template.id)}

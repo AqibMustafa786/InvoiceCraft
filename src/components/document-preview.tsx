@@ -6,6 +6,7 @@ import type { Estimate } from '@/lib/types';
 import { Card, CardContent } from '@/components/ui/card';
 import Image from 'next/image';
 import { format, isValid } from 'date-fns';
+import { ConstructionTemplate1, ConstructionTemplate2, ConstructionTemplate3, ConstructionTemplate4, ConstructionTemplate5 } from './document-templates/construction-templates';
 
 // --- PROPS ---
 interface DocumentPreviewProps {
@@ -384,6 +385,11 @@ const ModernTemplatePage: FC<PageProps> = ({ document, pageItems, pageIndex, tot
 const templates = {
   'default': ModernTemplatePage,
   'contractor': ModernTemplatePage,
+  'construction-1': ConstructionTemplate1,
+  'construction-2': ConstructionTemplate2,
+  'construction-3': ConstructionTemplate3,
+  'construction-4': ConstructionTemplate4,
+  'construction-5': ConstructionTemplate5,
 };
 
 
@@ -411,7 +417,12 @@ const DocumentPreviewInternal: FC<DocumentPreviewProps> = ({ document, accentCol
       color: accentColor,
   }
 
-  const TemplateComponent = document ? templates[document.template as keyof typeof templates] || templates.default : null;
+  let TemplateComponent;
+  if (document.category === 'Construction Estimate') {
+    TemplateComponent = templates[document.template as keyof typeof templates] || templates['construction-1'];
+  } else {
+    TemplateComponent = templates[document.template as keyof typeof templates] || templates.default;
+  }
   
   useLayoutEffect(() => {
     if (!document || !isPrint || !needsRemeasure || !TemplateComponent) return;
