@@ -1,3 +1,4 @@
+
 "use client"
 
 import * as React from "react"
@@ -21,6 +22,11 @@ type DatePickerProps = {
 
 export function DatePicker({ date, setDate, className }: DatePickerProps) {
   const [selectedDate, setSelectedDate] = React.useState(date);
+  const [isClient, setIsClient] = React.useState(false);
+
+  React.useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   React.useEffect(() => {
     setSelectedDate(date);
@@ -36,6 +42,22 @@ export function DatePicker({ date, setDate, className }: DatePickerProps) {
     const d = new Date(selectedDate);
     return isValid(d) ? d : null;
   }, [selectedDate]);
+
+  if (!isClient) {
+    return (
+      <Button
+        variant={"outline"}
+        className={cn(
+          "w-full justify-start text-left font-normal",
+          !safeDate && "text-muted-foreground",
+          className
+        )}
+      >
+        <CalendarIcon className="mr-2 h-4 w-4" />
+        {safeDate ? format(safeDate, "PPP") : <span>Pick a date</span>}
+      </Button>
+    )
+  }
 
   return (
     <Popover>

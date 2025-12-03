@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useRef, useState } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import SignatureCanvas from 'react-signature-canvas';
 import { Button } from './ui/button';
 import { cn } from '@/lib/utils';
@@ -18,6 +18,11 @@ export function SignaturePad({ onSave, signerName: initialSignerName = '', isFor
   const sigPad = useRef<SignatureCanvas>(null);
   const [signerName, setSignerName] = useState(initialSignerName);
   const [isEmpty, setIsEmpty] = useState(true);
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   const clear = () => {
     sigPad.current?.clear();
@@ -34,6 +39,10 @@ export function SignaturePad({ onSave, signerName: initialSignerName = '', isFor
       onSave(dataUrl, signerName);
     }
   };
+
+  if (!isClient) {
+    return <div className="h-56 w-full rounded-md border border-input bg-muted"></div>
+  }
 
   return (
     <div className="space-y-4">
