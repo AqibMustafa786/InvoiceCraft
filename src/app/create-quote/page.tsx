@@ -1,5 +1,3 @@
-
-
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
@@ -11,7 +9,6 @@ import { Button } from '@/components/ui/button';
 import { Printer, FilePlus, LayoutDashboard, Edit, Share2, Mail, Loader2 } from 'lucide-react';
 import { addDays, isValid } from 'date-fns';
 import { useToast } from '@/hooks/use-toast';
-import { DocumentTemplateSelector } from '@/components/document-template-selector';
 import Link from 'next/link';
 import { useFirebase, useMemoFirebase } from '@/firebase/provider';
 import { doc, serverTimestamp, Timestamp } from 'firebase/firestore';
@@ -67,6 +64,7 @@ const getInitialQuote = (): Omit<Quote, 'userId'> => ({
   
   template: 'default',
   documentType: 'quote',
+  category: 'Generic',
   language: 'en',
   currency: 'USD',
   fontFamily: 'Inter',
@@ -195,7 +193,9 @@ export default function CreateQuotePage() {
       title: "Quote Draft Saved",
       description: "Your quote draft has been saved online.",
     });
-    router.push(`/create-quote?draftId=${document.id}`);
+    if (!searchParams.get('draftId')) {
+      router.push(`/create-quote?draftId=${document.id}`, { scroll: false });
+    }
   };
 
   const handleNew = () => {
@@ -218,6 +218,7 @@ export default function CreateQuotePage() {
 
     const handleShare = () => {
       if (!document) return;
+      handleSaveDraft();
       const url = `${window.location.origin}/quote/${document.id}`;
       navigator.clipboard.writeText(url);
       toast({
@@ -282,7 +283,7 @@ export default function CreateQuotePage() {
         <div className="flex flex-col md:flex-row justify-between md:items-center gap-4 mb-8">
           <div>
             <h1 className="text-3xl font-bold font-headline">Create Quote</h1>
-            <p className="text-muted-foreground">Select a template and fill out the form to generate your professional quote.</p>
+            <p className="text-muted-foreground">Fill out the form to generate your professional quote.</p>
           </div>
           <div className="flex flex-wrap gap-2">
               <Button onClick={handleNew} variant="outline">
@@ -321,14 +322,6 @@ export default function CreateQuotePage() {
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
           <div className="lg:col-span-3">
             <div className="space-y-12">
-              <div>
-                <h2 className="text-2xl font-bold font-headline mb-6 text-center">Select a Template</h2>
-                 <DocumentTemplateSelector 
-                  selectedTemplate={document.template}
-                  onSelectTemplate={(template) => setDocument(prev => prev ? ({...prev, template}) : null)}
-                  documentType="quote"
-                />
-              </div>
               <div>
                 <h2 className="text-2xl font-bold font-headline mb-4 text-center lg:text-left">Fill in Details</h2>
                 <DocumentForm 

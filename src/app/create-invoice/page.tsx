@@ -1,10 +1,8 @@
-
-
 'use client';
 
 import { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import type { Invoice } from '@/lib/types';
+import type { Invoice, LineItem } from '@/lib/types';
 import { InvoiceForm } from '@/components/invoice-form';
 import { InvoicePreview } from '@/components/invoice-preview';
 import { Button } from '@/components/ui/button';
@@ -13,7 +11,6 @@ import { addDays, isValid } from 'date-fns';
 import { useToast } from '@/hooks/use-toast';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
-import { TemplateSelector } from '@/components/template-selector';
 import { useFirebase, useMemoFirebase } from '@/firebase';
 import { collection, doc, serverTimestamp, Timestamp } from 'firebase/firestore';
 import { setDocumentNonBlocking } from '@/firebase/non-blocking-updates';
@@ -21,7 +18,7 @@ import { useDoc } from '@/firebase/firestore/use-doc';
 
 const INVOICES_COLLECTION = 'invoices';
 
-const getInitialLineItem = () => ({ id: crypto.randomUUID(), name: '', quantity: 1, rate: 0, unitPrice: 0 });
+const getInitialLineItem = (): LineItem => ({ id: crypto.randomUUID(), name: '', quantity: 1, rate: 0, unitPrice: 0 });
 
 const getInitialInvoice = (): Omit<Invoice, 'userId'> => ({
   id: crypto.randomUUID(),
@@ -48,7 +45,6 @@ const getInitialInvoice = (): Omit<Invoice, 'userId'> => ({
   language: 'en',
   template: 'default',
   documentType: 'invoice',
-  textColor: '',
 });
 
 function PrintableInvoice({ doc, logoUrl, accentColor }: { doc: Invoice, logoUrl: string | null, accentColor: string }) {
@@ -153,7 +149,9 @@ export default function CreateInvoicePage() {
       title: "Draft Saved",
       description: "Your invoice draft has been saved online.",
     });
-    router.push(`/create-invoice?draftId=${invoice.id}`);
+    if (!searchParams.get('draftId')) {
+      router.push(`/create-invoice?draftId=${invoice.id}`, { scroll: false });
+    }
   };
   
   const handleNew = () => {
@@ -175,7 +173,7 @@ export default function CreateInvoicePage() {
       });
   };
 
-  if (!invoice || (draftId && isDraftLoading)) {
+  if (!invoice || (draftId && isDraftLoading) || isUserLoading) {
     return (
         <div className="container mx-auto p-4 md:p-8">
             <h1 className="text-3xl font-bold font-headline">Loading...</h1>
@@ -217,7 +215,7 @@ export default function CreateInvoicePage() {
           <div className="lg:col-span-3">
              <div className="mb-12">
                 <h2 className="text-2xl font-bold font-headline mb-6 text-center">Select a Template</h2>
-                 <TemplateSelector 
+                <TemplateSelector 
                   selectedTemplate={invoice.template}
                   onSelectTemplate={(template) => setInvoice(prev => prev ? ({...prev, template}) : null)}
                 />
@@ -225,7 +223,7 @@ export default function CreateInvoicePage() {
             <h2 className="text-2xl font-bold font-headline mb-4 text-center lg:text-left">Fill in Details</h2>
             <InvoiceForm 
               invoice={invoice} 
-              setInvoice={setInvoice as React.Dispatch<React.SetStateAction<Invoice>>} 
+              setInvoice={setInvoice} 
               logoUrl={logoUrl}
               setLogoUrl={setLogoUrl}
               accentColor={accentColor}

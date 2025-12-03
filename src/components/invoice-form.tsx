@@ -1,4 +1,3 @@
-
 'use client';
 
 import { ChangeEvent, Dispatch, SetStateAction, useState, useEffect } from 'react';
@@ -80,7 +79,7 @@ export function InvoiceForm({ invoice, setInvoice, logoUrl, setLogoUrl, accentCo
     }
     setInvoice(prev => ({
       ...prev,
-      items: [...prev.items, { id: crypto.randomUUID(), name: '', quantity: 1, rate: 0 }],
+      items: [...prev.items, { id: crypto.randomUUID(), name: '', quantity: 1, rate: 0, unitPrice: 0 }],
     }));
   };
   
@@ -102,6 +101,7 @@ export function InvoiceForm({ invoice, setInvoice, logoUrl, setLogoUrl, accentCo
       name: '',
       quantity: 1,
       rate: 0,
+      unitPrice: 0,
     }));
 
     setInvoice(prev => ({
@@ -285,7 +285,7 @@ export function InvoiceForm({ invoice, setInvoice, logoUrl, setLogoUrl, accentCo
                     </SelectTrigger>
                     <SelectContent>
                         <SelectItem value="en">English</SelectItem>
-                        <SelectItem value="ur">Urdu (اردو)</SelectItem>
+                        <SelectItem value="ur">Urdu</SelectItem>
                     </SelectContent>
                 </Select>
             </div>
@@ -332,7 +332,7 @@ export function InvoiceForm({ invoice, setInvoice, logoUrl, setLogoUrl, accentCo
                 <Input id={`itemRate-${index}`} type="number" value={item.rate} onChange={(e) => handleItemChange(index, 'rate', parseFloat(e.target.value) || 0)} />
               </div>
               <div className="col-span-3 md:col-span-2 flex items-center h-10">
-                <p className="font-medium tabular-nums">{currencySymbol}{(item.quantity * item.rate).toFixed(2)}</p>
+                <p className="font-medium tabular-nums">{currencySymbol}{(item.quantity * (item.rate || 0)).toFixed(2)}</p>
               </div>
               <div className="col-span-1 flex items-center h-10">
                 <Button variant="ghost" size="icon" onClick={() => removeItem(index)}>
