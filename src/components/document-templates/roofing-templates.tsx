@@ -37,7 +37,7 @@ const RoofingDetails: React.FC<{ document: Estimate }> = ({ document }) => {
     if (!document.roofing) return null;
     const { roofing } = document;
     return (
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-4 gap-y-1">
+       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-4 gap-y-1 text-xs">
             <p><span className="text-gray-500">Roof Material:</span> <span className="font-semibold">{roofing.roofMaterial}</span></p>
             {roofing.roofSize && <p><span className="text-gray-500">Roof Size:</span> <span className="font-semibold">{roofing.roofSize} sq. ft.</span></p>}
             <p><span className="text-gray-500">Roof Pitch:</span> <span className="font-semibold">{roofing.roofPitch}</span></p>
@@ -238,7 +238,7 @@ export const RoofingTemplate3: React.FC<TemplateProps> = ({ document, pageItems,
 
     return (
         <div className={`p-10 bg-gray-50 font-['Roboto'] text-gray-800 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ minHeight: '1056px' }}>
-            <header className="mb-8">
+            <header className="flex justify-between items-center mb-8">
                 <h1 className="text-4xl font-extrabold" style={{color: accentColor}}>Roofing Estimate</h1>
                 <p className="text-sm text-gray-500">{business.name}</p>
             </header>
@@ -372,8 +372,8 @@ export const RoofingTemplate5: React.FC<TemplateProps> = ({ document, pageItems,
     return (
         <div className={`p-12 bg-white font-['Garamond',_serif] text-gray-700 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ minHeight: '1056px' }}>
             <header className="flex justify-between items-center mb-16">
-                <h1 className="text-2xl font-bold tracking-widest">ESTIMATE</h1>
-                <p className="text-sm">{business.name}</p>
+                <h1 className="text-2xl font-bold tracking-widest">{business.name}</h1>
+                <p className="text-sm">ESTIMATE</p>
             </header>
 
             <section className="flex justify-between mb-10 text-xs">

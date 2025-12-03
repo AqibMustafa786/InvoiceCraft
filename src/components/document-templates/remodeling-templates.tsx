@@ -248,10 +248,12 @@ export const RemodelingTemplate3: React.FC<TemplateProps> = ({ document, pageIte
 
     return (
         <div className={`p-10 font-['Times_New_Roman',_serif] text-gray-900 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontSize: `${style.fontSize}pt`, minHeight: '1056px', backgroundColor: document.backgroundColor, color: textColor }}>
-            <header className="text-center mb-10">
-                <h1 className="text-4xl font-bold">{docTitle}</h1>
-                {category !== 'Generic' && <p className="text-sm text-gray-600" style={{color: textColor}}>{category.replace(' / ', ' / ')}</p>}
-                <p className="text-sm text-gray-600 mt-1" style={{color: textColor}}>{business.name} • {business.phone} • {business.email}</p>
+            <header className="flex justify-between items-center mb-10">
+                <h1 className="text-4xl font-bold">{business.name}</h1>
+                <div className="text-right">
+                    <h2 className="text-2xl font-bold text-gray-500">{docTitle}</h2>
+                    {category !== 'Generic' && <p className="text-sm text-gray-500">{category.replace(' / ', ' / ')}</p>}
+                </div>
             </header>
 
             <section className="mb-8 p-4 border border-gray-200 rounded grid grid-cols-3 gap-4 text-xs">
@@ -317,13 +319,13 @@ export const RemodelingTemplate4: React.FC<TemplateProps> = ({ document, pageIte
     return (
         <div className={`p-10 font-sans text-gray-800 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: 'Arial', fontSize: `${style.fontSize}pt`, minHeight: '1056px', backgroundColor: document.backgroundColor, color: textColor }}>
             <header className="flex justify-between items-center mb-8 pb-4 border-b-4" style={{borderColor: style.color}}>
+                <div>
+                    <p className="font-bold text-lg">{business.name}</p>
+                    <p className="text-xs text-gray-500" style={{color: textColor}}>{business.address}</p>
+                </div>
                 <div className="text-right">
                     <h1 className="text-4xl font-extrabold" style={{color: style.color}}>{docTitle}</h1>
                      {category !== 'Generic' && <p className="text-sm" style={{color: style.color}}>{category.replace(' / ', ' / ')}</p>}
-                </div>
-                <div className="text-right">
-                    <p className="font-bold text-lg">{business.name}</p>
-                    <p className="text-xs text-gray-500" style={{color: textColor}}>{business.address}</p>
                 </div>
             </header>
             
@@ -382,10 +384,14 @@ export const RemodelingTemplate5: React.FC<TemplateProps> = ({ document, pageIte
 
     return (
         <div className={`p-12 font-sans text-gray-800 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: style.fontFamily, fontSize: `${style.fontSize}pt`, minHeight: '1056px', backgroundColor: document.backgroundColor, color: textColor }}>
-            <header className="mb-12">
-                <h1 className="text-3xl font-bold">{business.name}</h1>
-                <p className="text-xs" style={{color: style.color}}>{docTitle}</p>
-                {category !== 'Generic' && <p className="text-xs" style={{color: style.color}}>{category.replace(' / ', ' / ')}</p>}
+            <header className="flex justify-between items-start mb-12">
+                <div>
+                    <h1 className="text-3xl font-bold">{business.name}</h1>
+                </div>
+                <div className="text-right">
+                    <h2 className="text-3xl font-bold">{docTitle}</h2>
+                    {category !== 'Generic' && <p className="text-sm" style={{color: style.color}}>{category.replace(' / ', ' / ')}</p>}
+                </div>
             </header>
 
             <section className="grid grid-cols-2 gap-10 text-xs mb-10">
@@ -441,5 +447,3 @@ export const RemodelingTemplate5: React.FC<TemplateProps> = ({ document, pageIte
         </div>
     );
 };
-
-    

@@ -249,14 +249,14 @@ export const ConstructionTemplate3: React.FC<TemplateProps> = ({ document, pageI
     return (
         <div className={`p-10 font-sans text-gray-700 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: style.fontFamily, fontSize: `${style.fontSize}pt`, minHeight: '1056px', backgroundColor: document.backgroundColor, color: textColor }}>
             <header className="mb-12">
-                <h1 className="text-4xl font-light tracking-wider mb-1">{docTitle}</h1>
-                {category !== 'Generic' && <p className="text-sm">{category}</p>}
                 <div className="flex justify-between text-sm mt-4">
                     <div>
-                        <p className="font-bold">{business.name}</p>
+                        <h1 className="text-4xl font-light tracking-wider mb-1">{business.name}</h1>
                         <p className="whitespace-pre-line">{business.address}</p>
                     </div>
                     <div className="text-right">
+                        <h2 className="text-4xl font-light tracking-wider mb-1">{docTitle}</h2>
+                        {category !== 'Generic' && <p className="text-sm">{category}</p>}
                         <p><span className="font-bold">Estimate #:</span> {document.estimateNumber}</p>
                         <p><span className="font-bold">Date:</span> {safeFormat(document.estimateDate, 'MM-dd-yyyy')}</p>
                     </div>
@@ -326,13 +326,10 @@ export const ConstructionTemplate4: React.FC<TemplateProps> = ({ document, pageI
     return (
         <div className={`font-sans text-gray-800 flex ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: style.fontFamily, fontSize: `${style.fontSize}pt`, minHeight: '1056px', backgroundColor: document.backgroundColor }}>
             <div className="w-1/4 p-8 text-white" style={{ backgroundColor: style.color }}>
-                <h1 className="text-3xl font-bold mb-2">{docTitle}</h1>
-                {category !== 'Generic' && <p className="text-sm mb-8">{category}</p>}
-
+                <h1 className="text-3xl font-bold mb-2">{business.name}</h1>
                 <div className="text-sm space-y-4">
                     <div>
                         <p className="font-bold opacity-80 mb-1">FROM</p>
-                        <p className="font-bold text-base">{business.name}</p>
                         <p className="whitespace-pre-line">{business.address}</p>
                     </div>
                     <div>
@@ -349,6 +346,12 @@ export const ConstructionTemplate4: React.FC<TemplateProps> = ({ document, pageI
             </div>
             <div className="w-3/4 p-10 flex flex-col" style={{color: textColor}}>
                  <main className="flex-grow">
+                    <div className='flex justify-end mb-4'>
+                        <div className="text-right">
+                            <h2 className="text-3xl font-bold">{docTitle}</h2>
+                            {category !== 'Generic' && <p className="text-sm">{category}</p>}
+                        </div>
+                    </div>
                     <ConstructionDetails document={document} textColor={textColor || '#374151'} />
                     <table className="w-full text-left text-sm mt-4">
                         <thead>

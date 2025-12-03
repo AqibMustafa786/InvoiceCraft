@@ -218,10 +218,12 @@ export const PlumbingTemplate3: React.FC<TemplateProps> = ({ document, pageItems
 
     return (
         <div className={`p-12 bg-white font-['Helvetica'] text-gray-700 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ minHeight: '1056px' }}>
-            <header className="mb-12 text-center">
+            <header className="flex justify-between items-center mb-12 text-center">
                 <h1 className="text-4xl font-light tracking-widest">{docTitle.toUpperCase()}</h1>
-                {category !== 'Generic' && <p className="text-sm text-gray-500 mt-2">{category}</p>}
-                <p className="text-sm text-gray-500 mt-2">Services by {business.name}</p>
+                <div>
+                    {category !== 'Generic' && <p className="text-sm text-gray-500 mt-2">{category}</p>}
+                    <p className="text-sm text-gray-500 mt-2">Services by {business.name}</p>
+                </div>
             </header>
 
             <section className="flex justify-between mb-8 text-xs">
@@ -287,7 +289,7 @@ export const PlumbingTemplate4: React.FC<TemplateProps> = ({ document, pageItems
     return (
         <div className={`bg-white font-sans text-gray-800 flex ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ minHeight: '1056px' }}>
             <div className="w-1/3 p-8 text-white bg-gray-800 flex flex-col">
-                <h1 className="text-2xl font-bold mb-2">{docTitle}</h1>
+                <h1 className="text-2xl font-bold mb-2">{business.name}</h1>
                 {category !== 'Generic' && <p className="text-xs mb-8">{category}</p>}
                  <div className="text-xs space-y-4 flex-grow">
                     <div>
@@ -297,7 +299,6 @@ export const PlumbingTemplate4: React.FC<TemplateProps> = ({ document, pageItems
                     </div>
                      <div>
                         <p className="font-bold opacity-70 mb-1">FROM</p>
-                        <p>{business.name}</p>
                         <p>{business.address}</p>
                     </div>
                      <div>
@@ -314,6 +315,9 @@ export const PlumbingTemplate4: React.FC<TemplateProps> = ({ document, pageItems
                 )}
             </div>
             <div className="w-2/3 p-10 flex flex-col">
+                <div className='flex justify-end mb-4'>
+                    <h2 className='text-3xl font-bold'>{docTitle}</h2>
+                </div>
                  <PlumbingDetails document={document} />
                 <main className="flex-grow">
                     <table className="w-full text-left text-sm">
@@ -364,11 +368,10 @@ export const PlumbingTemplate5: React.FC<TemplateProps> = ({ document, pageItems
             <header className="grid grid-cols-2 gap-4 mb-10">
                 <div className="space-y-1">
                     <h1 className="text-4xl font-extrabold">{business.name}</h1>
-                    <p className="text-sm text-gray-500">{docTitle}</p>
-                     {category !== 'Generic' && <p className="text-xs text-gray-500">{category}</p>}
                 </div>
                  <div className="text-right">
-                     <p className="text-lg font-bold">ESTIMATE</p>
+                     <p className="text-lg font-bold">{docTitle}</p>
+                    {category !== 'Generic' && <p className="text-xs text-gray-500">{category}</p>}
                      <p className="text-xs"># {document.estimateNumber}</p>
                      <p className="text-xs">Date: {safeFormat(document.estimateDate, 'MMM d, yyyy')}</p>
                 </div>

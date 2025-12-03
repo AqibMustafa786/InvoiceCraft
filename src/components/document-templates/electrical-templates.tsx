@@ -205,10 +205,12 @@ export const ElectricalTemplate3: React.FC<TemplateProps> = ({ document, pageIte
 
     return (
         <div className={`p-12 bg-white font-['Garamond',_serif] text-gray-700 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{minHeight: '1056px', color: textColor }}>
-            <header className="mb-12">
-                <h1 className="text-4xl font-light tracking-wider">{docTitle}</h1>
-                {category !== 'Generic' && <p className="text-sm mt-1">{category}</p>}
-                <p className="text-sm mt-1">Electrical Services by {business.name}</p>
+            <header className="flex justify-between items-center mb-12">
+                <h1 className="text-4xl font-light tracking-wider">{business.name}</h1>
+                <div>
+                    <h2 className="text-2xl font-light tracking-wider">{docTitle}</h2>
+                    {category !== 'Generic' && <p className="text-sm mt-1">{category}</p>}
+                </div>
             </header>
 
             <section className="flex justify-between mb-10 text-xs">

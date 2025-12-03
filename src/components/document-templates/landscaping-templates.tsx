@@ -51,16 +51,16 @@ export const LandscapingTemplate1: React.FC<TemplateProps> = ({ document, pageIt
     return (
         <div className={`p-10 bg-white font-sans text-gray-800 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: 'Arial, sans-serif', fontSize: '10pt', minHeight: '1056px' }}>
             <header className="flex justify-between items-start pb-4 border-b-2" style={{ borderColor: style.color }}>
-                <div className="text-right">
-                    <h1 className="text-4xl font-bold">{docTitle.split(' ')[1]}</h1>
-                    <p className="text-sm">{docTitle.split(' ')[0]}</p>
-                </div>
-                <div className="text-right">
-                    {business.logoUrl ? (
+                <div>
+                     {business.logoUrl ? (
                         <Image src={business.logoUrl} alt="Logo" width={100} height={50} className="object-contain ml-auto"/>
                     ) : (
                         <h2 className="text-2xl font-bold" style={{ color: style.color }}>{business.name}</h2>
                     )}
+                </div>
+                <div className="text-right">
+                    <h1 className="text-4xl font-bold">{docTitle.split(' ')[1]}</h1>
+                    <p className="text-sm">{docTitle.split(' ')[0]}</p>
                 </div>
             </header>
 
@@ -210,7 +210,8 @@ export const LandscapingTemplate3: React.FC<TemplateProps> = ({ document, pageIt
     return (
         <div className={`bg-white font-sans text-gray-800 flex ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ minHeight: '1056px' }}>
             <div className="w-1/3 p-8 text-white" style={{ backgroundColor: style.color }}>
-                <h1 className="text-3xl font-bold mb-2">{docTitle}</h1>
+                <h1 className="text-3xl font-bold mb-2">{business.name}</h1>
+                <h2 className='text-xl font-light mb-8'>{docTitle}</h2>
                 {category !== 'Generic' && <p className="text-sm mb-8">{category}</p>}
 
                 <div className="text-sm space-y-6 flex-grow">
@@ -231,10 +232,6 @@ export const LandscapingTemplate3: React.FC<TemplateProps> = ({ document, pageIt
                 </div>
             </div>
             <div className="w-2/3 p-10 flex flex-col">
-                <header className="mb-8">
-                    <h2 className="text-2xl font-bold">{business.name}</h2>
-                    <p className="text-xs text-gray-500">{business.address}</p>
-                </header>
                  <LandscapingDetails document={document} />
                 <main className="flex-grow">
                     <table className="w-full text-left text-sm">
@@ -285,9 +282,9 @@ export const LandscapingTemplate4: React.FC<TemplateProps> = ({ document, pageIt
     return (
         <div className={`p-12 bg-white font-['Garamond',_serif] text-gray-700 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ minHeight: '1056px' }}>
             <header className="mb-16 text-center">
-                <h1 className="text-5xl font-light tracking-widest">{docTitle.toUpperCase()}</h1>
+                <h1 className="text-5xl font-light tracking-widest">{business.name}</h1>
+                <h2 className="text-2xl font-light tracking-widest mt-2">{docTitle.toUpperCase()}</h2>
                 {category !== 'Generic' && <p className="text-sm text-gray-500">{category}</p>}
-                <p className="text-sm text-gray-500 mt-2">{business.name}</p>
             </header>
 
             <section className="flex justify-between mb-10 text-xs">
@@ -342,10 +339,13 @@ export const LandscapingTemplate5: React.FC<TemplateProps> = ({ document, pageIt
         <div className={`p-10 bg-gray-50 font-['Roboto'] text-gray-900 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ minHeight: '1056px' }}>
             <header className="grid grid-cols-2 gap-4 mb-8">
                 <div className="space-y-1">
-                  <h1 className="text-4xl font-extrabold" style={{ color: style.color }}>{docTitle.split(' ')[0]}</h1>
-                  <p className="text-2xl font-extrabold" style={{ color: style.color }}>{docTitle.split(' ')[1]}</p>
+                  <h1 className="text-4xl font-extrabold" style={{ color: style.color }}>{business.name}</h1>
                 </div>
-                <div className="text-right"><p className="text-lg font-bold">{business.name}</p><p className="text-xs">{business.address}</p></div>
+                 <div className="text-right">
+                    <p className="text-2xl font-extrabold">{docTitle.split(' ')[1]}</p>
+                    <p className="text-lg font-extrabold">{docTitle.split(' ')[0]}</p>
+                    {category !== 'Generic' && <p className="text-xs text-gray-500">{category}</p>}
+                </div>
             </header>
 
             <section className="mb-8 p-4 bg-white shadow-sm rounded-md text-xs">

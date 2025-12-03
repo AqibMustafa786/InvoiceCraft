@@ -64,13 +64,15 @@ export const AutoRepairTemplate1: React.FC<TemplateProps> = ({ document, pageIte
             <header className="p-10 pb-5" style={{ backgroundColor: accentColor }}>
                 <div className="flex justify-between items-center text-white">
                     <div>
-                        <h1 className="text-3xl font-bold">{docTitle}</h1>
-                         {category !== 'Generic' && <p className="text-xs opacity-90">{category}</p>}
+                        {business.logoUrl ? 
+                            <Image src={business.logoUrl} alt="Logo" width={80} height={80} className="object-contain" /> :
+                            <div className="text-right"><p className="font-bold text-lg">{business.name}</p></div>
+                        }
                     </div>
-                    {business.logoUrl ? 
-                        <Image src={business.logoUrl} alt="Logo" width={80} height={80} className="object-contain" /> :
-                        <div className="text-right"><p className="font-bold text-lg">{business.name}</p></div>
-                    }
+                    <div className="text-right">
+                        <h1 className="text-3xl font-bold">{docTitle}</h1>
+                        {category !== 'Generic' && <p className="text-xs opacity-90">{category}</p>}
+                    </div>
                 </div>
             </header>
             <div className="p-10 pt-5 flex-grow flex flex-col" style={{color: textColor}}>
@@ -163,12 +165,12 @@ export const AutoRepairTemplate2: React.FC<TemplateProps> = ({ document, pageIte
             <header className="p-10">
                 <div className="flex justify-between items-center">
                     <div>
-                        <h1 className="text-4xl font-extrabold tracking-wider">{docTitle}</h1>
-                        {category !== 'Generic' && <p className="text-xs">{category}</p>}
+                        <h1 className="text-lg font-bold">{business.name}</h1>
+                        <p className="text-xs text-gray-300">{business.address}</p>
                     </div>
                     <div className="text-right">
-                        <p className="font-bold text-lg">{business.name}</p>
-                        <p className="text-xs text-gray-300">{business.address}</p>
+                        <h2 className="text-4xl font-extrabold tracking-wider">{docTitle}</h2>
+                        {category !== 'Generic' && <p className="text-xs">{category}</p>}
                     </div>
                 </div>
             </header>
@@ -235,10 +237,12 @@ export const AutoRepairTemplate3: React.FC<TemplateProps> = ({ document, pageIte
 
     return (
         <div className={`p-12 bg-white font-['Garamond',_serif] text-gray-700 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{minHeight: '1056px', color: textColor }}>
-            <header className="mb-12">
-                <h1 className="text-4xl font-light tracking-wider">{docTitle}</h1>
-                {category !== 'Generic' && <p className="text-sm mt-1">{category}</p>}
-                <p className="text-sm mt-1">{business.name}</p>
+            <header className="flex justify-between items-center mb-12">
+                <h1 className="text-4xl font-light tracking-wider">{business.name}</h1>
+                <div>
+                    <h2 className="text-2xl font-light tracking-wider">{docTitle}</h2>
+                    {category !== 'Generic' && <p className="text-sm mt-1">{category}</p>}
+                </div>
             </header>
 
             <section className="flex justify-between mb-10 text-xs">
@@ -305,12 +309,12 @@ export const AutoRepairTemplate4: React.FC<TemplateProps> = ({ document, pageIte
         <div className={`p-10 bg-white font-sans text-gray-800 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ minHeight: '1056px', color: textColor }}>
             <header className="flex justify-between items-center pb-4 border-b-2" style={{borderColor: accentColor}}>
                 <div className="text-right">
-                  <h1 className="text-3xl font-extrabold" style={{color: accentColor}}>{docTitle}</h1>
-                  {category !== 'Generic' && <p className="text-sm">{category}</p>}
+                  <h1 className="text-lg font-bold">{business.name}</h1>
+                  <p className="text-xs">{business.address}</p>
                 </div>
                 <div className="text-right">
-                    <p className="font-bold text-lg">{business.name}</p>
-                    <p className="text-xs">{business.address}</p>
+                    <h2 className="text-3xl font-extrabold" style={{color: accentColor}}>{docTitle}</h2>
+                    {category !== 'Generic' && <p className="text-sm">{category}</p>}
                 </div>
             </header>
             
@@ -371,10 +375,12 @@ export const AutoRepairTemplate5: React.FC<TemplateProps> = ({ document, pageIte
         <div className={`p-10 bg-gray-50 font-['Roboto',_sans-serif] text-gray-900 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{minHeight: '1056px', color: textColor}}>
             <header className="flex justify-between items-center mb-8">
                 <div>
-                  <h1 className="text-4xl font-extrabold" style={{color: style.color}}>{docTitle}</h1>
-                  {category !== 'Generic' && <p className="text-sm" style={{color: style.color}}>{category}</p>}
+                  {business.logoUrl && <Image src={business.logoUrl} alt="Logo" width={100} height={40} className="object-contain" />}
                 </div>
-                {business.logoUrl && <Image src={business.logoUrl} alt="Logo" width={100} height={40} className="object-contain" />}
+                 <div className="text-right">
+                    <h1 className="text-4xl font-extrabold" style={{color: style.color}}>{docTitle}</h1>
+                    {category !== 'Generic' && <p className="text-sm" style={{color: style.color}}>{category}</p>}
+                </div>
             </header>
 
             <section className="grid grid-cols-2 gap-4 mb-8 text-xs p-4 bg-white rounded-lg shadow-sm">

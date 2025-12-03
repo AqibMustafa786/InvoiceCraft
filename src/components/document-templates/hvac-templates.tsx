@@ -236,9 +236,12 @@ export const HVACTemplate3: React.FC<TemplateProps> = ({ document, pageItems, pa
 
     return (
         <div className={`p-10 bg-white font-sans text-gray-700 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: 'Roboto, sans-serif', fontSize: `9pt`, minHeight: '1056px', color: textColor }}>
-            <header className="mb-10">
-                <h1 className="text-4xl font-light tracking-wide">{docTitle}</h1>
-                {category !== 'Generic' && <p className="text-sm" style={{ color: style.color }}>{category.replace(' (Air Conditioning / Heating)', '')}</p>}
+            <header className="flex justify-between items-center mb-10">
+                 <h1 className="text-4xl font-light tracking-wide">{business.name}</h1>
+                <div className="text-right">
+                    <h2 className="text-2xl font-bold">{docTitle}</h2>
+                    {category !== 'Generic' && <p className="text-sm" style={{ color: style.color }}>{category.replace(' (Air Conditioning / Heating)', '')}</p>}
+                </div>
             </header>
 
             <section className="mb-8 p-4 border rounded-md grid grid-cols-3 gap-4 text-xs">
@@ -299,13 +302,12 @@ export const HVACTemplate4: React.FC<TemplateProps> = ({ document, pageItems, pa
         <div className={`bg-white font-sans text-gray-800 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: 'Arial, sans-serif', fontSize: `9pt`, minHeight: '1056px', color: textColor }}>
             <div className="p-10">
                 <header className="flex justify-between items-center pb-5 mb-5 border-b-8" style={{ borderColor: style.color }}>
-                    <div className="text-right">
+                    <div>
                         <h1 className="text-3xl font-extrabold">{business.name}</h1>
-                        <p className="text-sm">{docTitle}</p>
-                        {category !== 'Generic' && <p className="text-xs">{category.replace(' (Air Conditioning / Heating)', '')}</p>}
                     </div>
                     <div className="text-right">
                         <h2 className="text-3xl font-bold">ESTIMATE</h2>
+                        {category !== 'Generic' && <p className="text-xs">{category.replace(' (Air Conditioning / Heating)', '')}</p>}
                         <p className="text-xs"># {document.estimateNumber}</p>
                     </div>
                 </header>

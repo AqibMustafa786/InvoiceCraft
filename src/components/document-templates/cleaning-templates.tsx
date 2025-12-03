@@ -59,7 +59,7 @@ const CleaningDetails: React.FC<{ document: Estimate; textColor: string; }> = ({
 export const CleaningTemplate1: React.FC<TemplateProps> = ({ document, pageItems, pageIndex, totalPages, style }) => {
     const { business, client, summary, currency, textColor, category } = document;
     const currencySymbol = currencySymbols[currency] || '$';
-    const docTitle = document.documentType === 'quote' ? 'CLEANING SERVICE QUOTE' : 'CLEANING SERVICE ESTIMATE';
+    const docTitle = document.documentType === 'quote' ? 'QUOTE' : 'ESTIMATE';
 
     return (
         <div className={`bg-white font-sans text-gray-800 flex flex-col relative ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: 'Arial, sans-serif', fontSize: `10pt`, minHeight: '1056px' }}>
@@ -67,16 +67,16 @@ export const CleaningTemplate1: React.FC<TemplateProps> = ({ document, pageItems
             <div className="p-10 relative z-10 flex-grow flex flex-col" style={{color: textColor}}>
                 <header className="flex justify-between items-start mb-8 text-white">
                     <div>
-                        <h1 className="text-3xl font-bold">{docTitle.split(' ')[2]}</h1>
-                        <p className="text-sm">{`${docTitle.split(' ')[0]} ${docTitle.split(' ')[1]}`}</p>
-                        <p className="text-sm mt-4">Estimate Code: <span className="font-semibold">{document.estimateNumber}</span></p>
-                        <p className="text-sm">Estimate Date: <span className="font-semibold">{safeFormat(document.estimateDate, 'dd/MM/yyyy')}</span></p>
-                    </div>
-                    <div className="text-right">
                         {business.logoUrl ? 
                             <Image src={business.logoUrl} alt="Logo" width={80} height={80} className="object-contain bg-white/20 p-2 rounded-md" /> :
                             <p className="font-bold text-lg">{business.name}</p>
                         }
+                    </div>
+                    <div className="text-right">
+                        <h1 className="text-3xl font-bold">{docTitle}</h1>
+                        {category !== 'Generic' && <p className="text-sm">Cleaning Service</p>}
+                        <p className="text-sm mt-4">Estimate Code: <span className="font-semibold">{document.estimateNumber}</span></p>
+                        <p className="text-sm">Estimate Date: <span className="font-semibold">{safeFormat(document.estimateDate, 'dd/MM/yyyy')}</span></p>
                     </div>
                 </header>
 
@@ -163,11 +163,11 @@ export const CleaningTemplate2: React.FC<TemplateProps> = ({ document, pageItems
     return (
         <div className={`p-10 bg-white font-sans text-gray-700 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: 'Inter, sans-serif', fontSize: '9pt', minHeight: '1056px', color: textColor }}>
             <header className="flex justify-between items-center mb-10">
-                <h1 className="text-3xl font-extrabold" style={{ color: accentColor }}>{docTitle}</h1>
-                {category !== 'Generic' && <p className="text-sm" style={{ color: accentColor }}>{category}</p>}
-                <div className="text-right">
-                    <p className="font-bold text-lg">{business.name}</p>
-                    <p className="text-xs">{business.address}</p>
+                <h1 className="text-2xl font-bold" style={{ color: accentColor }}>{business.name}</h1>
+                <div className='text-right'>
+                    <h2 className="text-3xl font-extrabold" >{docTitle}</h2>
+                    <p className="text-xs text-gray-500">Landscaping Services</p>
+                    {category !== 'Generic' && <p className="text-sm text-gray-400">{category}</p>}
                 </div>
             </header>
 
@@ -233,10 +233,12 @@ export const CleaningTemplate3: React.FC<TemplateProps> = ({ document, pageItems
 
     return (
         <div className={`p-12 bg-white font-['Garamond',_serif] text-gray-700 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ minHeight: '1056px', color: textColor }}>
-            <header className="mb-12">
-                <h1 className="text-4xl font-light tracking-wider">Cleaning Service {docTitle}</h1>
-                {category !== 'Generic' && <p className="text-sm mt-1">{category}</p>}
-                <p className="text-sm mt-1">{business.name}</p>
+            <header className="flex justify-between items-center mb-12">
+                <h1 className="text-4xl font-light tracking-wider">{business.name}</h1>
+                <div>
+                    <h2 className="text-2xl font-light tracking-wider">Cleaning Service {docTitle}</h2>
+                    {category !== 'Generic' && <p className="text-sm mt-1">{category}</p>}
+                </div>
             </header>
 
             <section className="flex justify-between mb-10 text-xs">
@@ -300,7 +302,8 @@ export const CleaningTemplate4: React.FC<TemplateProps> = ({ document, pageItems
     return (
         <div className={`bg-white font-sans text-gray-800 flex ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ minHeight: '1056px' }}>
             <div className="w-1/3 p-8 text-white flex flex-col" style={{ backgroundColor: style.color }}>
-                <h1 className="text-3xl font-bold mb-2">{docTitle}</h1>
+                <h1 className="text-3xl font-bold mb-2">{business.name}</h1>
+                <h2 className="text-2xl font-light mb-8">{docTitle}</h2>
                 {category !== 'Generic' && <p className="text-sm mb-8">{category}</p>}
                  <div className="text-sm space-y-6 flex-grow">
                     <div>
@@ -327,8 +330,7 @@ export const CleaningTemplate4: React.FC<TemplateProps> = ({ document, pageItems
             </div>
             <div className="w-2/3 p-10 flex flex-col" style={{color: textColor}}>
                 <header className="mb-8 text-right">
-                    <h2 className="text-2xl font-bold">{business.name}</h2>
-                    <p className="text-xs text-gray-500">{business.address}</p>
+                    <p className="text-2xl font-bold">Cleaning Services</p>
                 </header>
                  <CleaningDetails document={document} textColor={textColor || '#374151'} />
                 <main className="flex-grow">
@@ -359,21 +361,22 @@ export const CleaningTemplate4: React.FC<TemplateProps> = ({ document, pageItems
 export const CleaningTemplate5: React.FC<TemplateProps> = ({ document, pageItems, pageIndex, totalPages, style }) => {
     const { business, client, summary, currency, textColor, category } = document;
     const currencySymbol = currencySymbols[currency] || '$';
-    const docTitle = document.documentType === 'quote' ? 'Service Estimate' : 'Service Estimate';
+    const docTitle = document.documentType === 'quote' ? 'Estimate' : 'Estimate';
 
     return (
         <div className={`p-10 bg-gray-50 font-['Roboto'] text-gray-900 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ minHeight: '1056px', color: textColor }}>
             <header className="grid grid-cols-2 gap-4 mb-10">
                 <div className="space-y-1">
-                    <h1 className="text-4xl font-extrabold" style={{color: style.color}}>{docTitle.split(' ')[1]}</h1>
-                    <p className="text-lg" style={{color: style.color}}>{docTitle.split(' ')[0]}</p>
-                    {category !== 'Generic' && <p className="text-xs" style={{color: style.color}}>{category}</p>}
+                    <h1 className="text-lg font-bold">{business.name}</h1>
                 </div>
-                 <div className="text-right"><p className="text-lg font-bold">{business.name}</p><p className="text-xs">{business.address}</p></div>
+                 <div className="text-right">
+                    <h2 className="text-4xl font-extrabold" style={{color: style.color}}>{docTitle.toUpperCase()}</h2>
+                    {category !== 'Generic' && <p className="text-xs" style={{color: style.color}}>Service Estimate</p>}
+                </div>
             </header>
 
             <section className="mb-8 p-4 bg-white shadow-sm rounded-md text-xs">
-                 <p className="font-bold mb-2">PROJECT FOR: {client.name}</p>
+                 <p className="font-bold text-gray-500 mb-2">PROJECT FOR: {client.name}</p>
                  <p className="font-semibold">{document.projectTitle}</p>
                  <p>{client.address}</p>
             </section>
