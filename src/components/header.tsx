@@ -4,12 +4,12 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Button } from '@/components/ui/button';
-import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { Menu } from 'lucide-react';
 import { ModeToggle } from '@/components/mode-toggle';
 import { cn } from '@/lib/utils';
 import { motion } from 'framer-motion';
-import { AuthNav } from './auth-nav'; // Import the new client component
+import { AuthNav } from './auth-nav'; 
 
 const navLinks = [
     { href: "/features", label: "Features" },
@@ -71,10 +71,14 @@ export function Header() {
                         </Button>
                     </SheetTrigger>
                     <SheetContent side="left">
+                        <SheetHeader>
+                            <SheetTitle>
+                                <Link href="/" className="flex items-center gap-2 text-lg font-semibold">
+                                    <span className="text-lg font-bold text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent">InvoiceCraft</span>
+                                </Link>
+                            </SheetTitle>
+                        </SheetHeader>
                         <nav className="grid gap-6 text-lg font-medium mt-8">
-                            <Link href="/" className="flex items-center gap-2 text-lg font-semibold">
-                                <span className="text-lg font-bold text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent">InvoiceCraft</span>
-                            </Link>
                             {navLinks.map(link => (
                                 <NavLink key={link.href} href={link.href} label={link.label} isActive={pathname === link.href} />
                             ))}
