@@ -60,7 +60,7 @@ const HvacDetails: React.FC<{ document: Estimate; textColor: string; }> = ({ doc
 export const HVACTemplate1: React.FC<TemplateProps> = ({ document, pageItems, pageIndex, totalPages, style }) => {
     const { business, client, summary, currency, textColor, category } = document;
     const currencySymbol = currencySymbols[currency] || '$';
-    const docTitle = document.documentType === 'quote' ? 'HVAC QUOTE' : 'HVAC ESTIMATE';
+    const docTitle = document.documentType === 'quote' ? 'QUOTE' : 'ESTIMATE';
     
     return (
         <div className={`p-8 bg-white font-sans text-gray-800 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: 'Arial, sans-serif', fontSize: `9pt`, minHeight: '1056px', color: textColor }}>
@@ -74,9 +74,8 @@ export const HVACTemplate1: React.FC<TemplateProps> = ({ document, pageItems, pa
                     </div>
                 </div>
                 <div className="text-right">
-                  <h2 className="text-3xl font-bold text-gray-700">{docTitle.split(' ')[0]}</h2>
-                  <p className="text-sm">{docTitle.split(' ')[1]}</p>
-                  {category !== 'Generic' && <p className="text-xs">{category.replace(' (Air Conditioning / Heating)', '')}</p>}
+                  <h2 className="text-3xl font-bold text-gray-700">{docTitle}</h2>
+                  {category !== 'Generic' && <p className="text-sm">{category.replace(' (Air Conditioning / Heating)', '')}</p>}
                 </div>
             </header>
 

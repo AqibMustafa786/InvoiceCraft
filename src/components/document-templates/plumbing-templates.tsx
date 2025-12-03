@@ -48,7 +48,7 @@ const PlumbingDetails: React.FC<{ document: Estimate }> = ({ document }) => {
 export const PlumbingTemplate1: React.FC<TemplateProps> = ({ document, pageItems, pageIndex, totalPages, style }) => {
     const { business, client, summary, currency, category } = document;
     const currencySymbol = currencySymbols[currency] || '$';
-    const docTitle = document.documentType === 'quote' ? 'PLUMBING QUOTE' : 'PLUMBING ESTIMATE';
+    const docTitle = document.documentType === 'quote' ? 'QUOTE' : 'ESTIMATE';
 
 
     return (
@@ -59,8 +59,8 @@ export const PlumbingTemplate1: React.FC<TemplateProps> = ({ document, pageItems
                     <p className="text-2xl font-bold">{business.name}</p>
                 </div>
                 <div className="text-right">
-                    <h1 className="text-3xl font-bold">{docTitle.split(' ')[1]}</h1>
-                    <p className="text-sm">{docTitle.split(' ')[0]}</p>
+                    <h1 className="text-3xl font-bold">{docTitle}</h1>
+                    {category !== 'Generic' && <p className="text-sm">{category}</p>}
                     <p className="text-sm mt-2">DATE: {safeFormat(document.estimateDate, 'MM/dd/yyyy')}</p>
                     <p className="text-sm">ESTIMATE #: {document.estimateNumber}</p>
                 </div>
@@ -214,13 +214,14 @@ export const PlumbingTemplate2: React.FC<TemplateProps> = ({ document, pageItems
 export const PlumbingTemplate3: React.FC<TemplateProps> = ({ document, pageItems, pageIndex, totalPages, style }) => {
     const { business, client, summary, currency, category } = document;
     const currencySymbol = currencySymbols[currency] || '$';
-    const docTitle = document.documentType === 'quote' ? 'Plumbing Quote' : 'Plumbing Estimate';
+    const docTitle = document.documentType === 'quote' ? 'Quote' : 'Estimate';
 
     return (
         <div className={`p-12 bg-white font-['Helvetica'] text-gray-700 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ minHeight: '1056px' }}>
             <header className="mb-12 text-center">
-                <h1 className="text-4xl font-light tracking-widest">{docTitle.split(' ')[1].toUpperCase()}</h1>
-                <p className="text-sm text-gray-500 mt-2">{docTitle.split(' ')[0]} Services by {business.name}</p>
+                <h1 className="text-4xl font-light tracking-widest">{docTitle.toUpperCase()}</h1>
+                {category !== 'Generic' && <p className="text-sm text-gray-500 mt-2">{category}</p>}
+                <p className="text-sm text-gray-500 mt-2">Services by {business.name}</p>
             </header>
 
             <section className="flex justify-between mb-8 text-xs">

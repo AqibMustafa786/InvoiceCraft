@@ -60,7 +60,7 @@ const RemodelingDetails: React.FC<{ document: Estimate }> = ({ document }) => {
 export const RemodelingTemplate1: React.FC<TemplateProps> = ({ document, pageItems, pageIndex, totalPages, style }) => {
     const { business, client, summary, currency, category } = document;
     const currencySymbol = currencySymbols[currency] || '$';
-    const docTitle = document.documentType === 'quote' ? 'Remodel Quote' : 'Remodel Estimate';
+    const docTitle = document.documentType === 'quote' ? 'Quote' : 'Estimate';
     
     return (
         <div className={`font-sans text-gray-800 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: style.fontFamily, fontSize: `${style.fontSize}pt`, minHeight: '1056px', backgroundColor: document.backgroundColor }}>
@@ -225,8 +225,8 @@ export const RemodelingTemplate2: React.FC<TemplateProps> = ({ document, pageIte
                 <footer className="mt-auto pt-8">
                      <div className="flex justify-end mb-8">
                         <div className="w-2/5 text-sm space-y-1">
-                            <div className="flex justify-between"><span className="text-gray-500">Subtotal</span><span>{currencySymbol}{summary.subtotal.toFixed(2)}</span></div>
-                            {summary.taxAmount > 0 && <div className="flex justify-between"><span className="text-gray-500">Tax</span><span>{currencySymbol}{summary.taxAmount.toFixed(2)}</span></div>}
+                            <div className="flex justify-between"><span>Subtotal</span><span>{currencySymbol}{summary.subtotal.toFixed(2)}</span></div>
+                            {summary.taxAmount > 0 && <div className="flex justify-between"><span>Tax</span><span>{currencySymbol}{summary.taxAmount.toFixed(2)}</span></div>}
                              <div className="flex justify-between font-bold text-base mt-2 pt-2 border-t" style={{borderColor: style.color}}><span>Estimate Total</span><span>{currencySymbol}{summary.grandTotal.toFixed(2)}</span></div>
                         </div>
                     </div>
@@ -378,7 +378,7 @@ export const RemodelingTemplate4: React.FC<TemplateProps> = ({ document, pageIte
 export const RemodelingTemplate5: React.FC<TemplateProps> = ({ document, pageItems, pageIndex, totalPages, style }) => {
     const { business, client, summary, currency, category } = document;
     const currencySymbol = currencySymbols[currency] || '$';
-    const docTitle = document.documentType === 'quote' ? 'REMODELING QUOTE' : 'REMODELING ESTIMATE';
+    const docTitle = document.documentType === 'quote' ? 'QUOTE' : 'ESTIMATE';
 
     return (
         <div className={`p-12 font-sans text-gray-800 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: style.fontFamily, fontSize: `${style.fontSize}pt`, minHeight: '1056px', backgroundColor: document.backgroundColor }}>

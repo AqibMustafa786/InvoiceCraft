@@ -49,7 +49,7 @@ export const ElectricalTemplate1: React.FC<TemplateProps> = ({ document, pageIte
     const { business, client, summary, currency, textColor, category } = document;
     const currencySymbol = currencySymbols[currency] || '$';
     const accentColor = style.color || '#1E40AF'; // Default to a navy blue
-    const docTitle = document.documentType === 'quote' ? 'ELECTRICAL QUOTE' : 'ELECTRICAL ESTIMATE';
+    const docTitle = document.documentType === 'quote' ? 'QUOTE' : 'ESTIMATE';
 
     return (
         <div className={`p-10 bg-white font-sans text-gray-800 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: 'Arial, sans-serif', fontSize: '10pt', minHeight: '1056px', color: textColor }}>
@@ -63,8 +63,8 @@ export const ElectricalTemplate1: React.FC<TemplateProps> = ({ document, pageIte
                         <Image src={business.logoUrl} alt="Logo" width={120} height={50} className="object-contain ml-auto mb-2"/>
                         : <div className="w-32 h-16 border rounded-md flex items-center justify-center text-xs text-gray-400 ml-auto mb-2">Upload Logo</div>
                     }
-                    <h2 className="text-3xl font-extrabold" style={{ color: accentColor }}>{docTitle.split(' ')[0]}</h2>
-                    <p className="text-sm" style={{ color: accentColor }}>{docTitle.split(' ')[1]}</p>
+                    <h2 className="text-3xl font-extrabold" style={{ color: accentColor }}>{docTitle}</h2>
+                    {category !== 'Generic' && <p className="text-sm" style={{ color: accentColor }}>{category}</p>}
                 </div>
             </header>
 

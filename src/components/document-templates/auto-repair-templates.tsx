@@ -57,15 +57,14 @@ export const AutoRepairTemplate1: React.FC<TemplateProps> = ({ document, pageIte
     const { business, client, summary, currency, textColor, category } = document;
     const currencySymbol = currencySymbols[currency] || '$';
     const accentColor = style.color || '#FBBF24'; // Default to a gold/yellow
-    const docTitle = document.documentType === 'quote' ? 'Repair Quote' : 'Repair Estimate';
+    const docTitle = document.documentType === 'quote' ? 'Quote' : 'Estimate';
 
     return (
         <div className={`bg-white font-sans text-gray-800 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: 'Arial, sans-serif', fontSize: '9pt', minHeight: '1056px' }}>
             <header className="p-10 pb-5" style={{ backgroundColor: accentColor }}>
                 <div className="flex justify-between items-center text-white">
                     <div>
-                        <h1 className="text-3xl font-bold">{docTitle.split(' ')[1]}</h1>
-                        <p className="text-sm opacity-90">{docTitle.split(' ')[0]}</p>
+                        <h1 className="text-3xl font-bold">{docTitle}</h1>
                          {category !== 'Generic' && <p className="text-xs opacity-90">{category}</p>}
                     </div>
                     {business.logoUrl ? 
@@ -157,15 +156,14 @@ export const AutoRepairTemplate1: React.FC<TemplateProps> = ({ document, pageIte
 export const AutoRepairTemplate2: React.FC<TemplateProps> = ({ document, pageItems, pageIndex, totalPages, style }) => {
     const { business, client, summary, currency, textColor, category } = document;
     const currencySymbol = currencySymbols[currency] || '$';
-    const docTitle = document.documentType === 'quote' ? 'REPAIR QUOTE' : 'REPAIR ESTIMATE';
+    const docTitle = document.documentType === 'quote' ? 'QUOTE' : 'ESTIMATE';
 
     return (
         <div className={`bg-gray-800 text-white font-sans flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: 'Roboto, sans-serif', fontSize: '9.5pt', minHeight: '1056px', color: textColor }}>
             <header className="p-10">
                 <div className="flex justify-between items-center">
                     <div>
-                        <h1 className="text-4xl font-extrabold tracking-wider">{docTitle.split(' ')[0]}</h1>
-                        <p className="text-xl tracking-wider">{docTitle.split(' ')[1]}</p>
+                        <h1 className="text-4xl font-extrabold tracking-wider">{docTitle}</h1>
                         {category !== 'Generic' && <p className="text-xs">{category}</p>}
                     </div>
                     <div className="text-right">
@@ -233,13 +231,12 @@ export const AutoRepairTemplate2: React.FC<TemplateProps> = ({ document, pageIte
 export const AutoRepairTemplate3: React.FC<TemplateProps> = ({ document, pageItems, pageIndex, totalPages, style }) => {
     const { business, client, summary, currency, textColor, category } = document;
     const currencySymbol = currencySymbols[currency] || '$';
-    const docTitle = document.documentType === 'quote' ? 'Repair Quote' : 'Repair Estimate';
+    const docTitle = document.documentType === 'quote' ? 'Quote' : 'Estimate';
 
     return (
         <div className={`p-12 bg-white font-['Garamond',_serif] text-gray-700 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{minHeight: '1056px', color: textColor }}>
             <header className="mb-12">
-                <h1 className="text-4xl font-light tracking-wider">{docTitle.split(' ')[1]}</h1>
-                <p className="text-lg font-light tracking-wider">{docTitle.split(' ')[0]}</p>
+                <h1 className="text-4xl font-light tracking-wider">{docTitle}</h1>
                 {category !== 'Generic' && <p className="text-sm mt-1">{category}</p>}
                 <p className="text-sm mt-1">{business.name}</p>
             </header>
@@ -302,14 +299,14 @@ export const AutoRepairTemplate4: React.FC<TemplateProps> = ({ document, pageIte
     const { business, client, summary, currency, textColor, category } = document;
     const currencySymbol = currencySymbols[currency] || '$';
     const accentColor = style.color || '#3B82F6';
-    const docTitle = document.documentType === 'quote' ? 'REPAIR QUOTE' : 'REPAIR ESTIMATE';
+    const docTitle = document.documentType === 'quote' ? 'QUOTE' : 'ESTIMATE';
 
     return (
         <div className={`p-10 bg-white font-sans text-gray-800 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ minHeight: '1056px', color: textColor }}>
             <header className="flex justify-between items-center pb-4 border-b-2" style={{borderColor: accentColor}}>
                 <div className="text-right">
-                  <h1 className="text-3xl font-extrabold" style={{color: accentColor}}>{docTitle.split(' ')[0]}</h1>
-                  <p className="text-lg font-extrabold" style={{color: accentColor}}>{docTitle.split(' ')[1]}</p>
+                  <h1 className="text-3xl font-extrabold" style={{color: accentColor}}>{docTitle}</h1>
+                  {category !== 'Generic' && <p className="text-sm">{category}</p>}
                 </div>
                 <div className="text-right">
                     <p className="font-bold text-lg">{business.name}</p>
