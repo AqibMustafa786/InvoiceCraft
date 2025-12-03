@@ -1,5 +1,4 @@
 
-
 export interface LineItem {
   id: string;
   name: string;
@@ -292,6 +291,7 @@ export interface Estimate {
 
   fontFamily?: string;
   fontSize?: number;
+  backgroundColor?: string;
   createdAt?: any;
   updatedAt?: any;
 

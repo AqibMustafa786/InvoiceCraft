@@ -1,3 +1,4 @@
+
 'use client';
 
 import React from 'react';
@@ -61,7 +62,7 @@ export const RemodelingTemplate1: React.FC<TemplateProps> = ({ document, pageIte
     const currencySymbol = currencySymbols[currency] || '$';
     
     return (
-        <div className={`bg-white font-sans text-gray-800 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: style.fontFamily, fontSize: `${style.fontSize}pt`, minHeight: '1056px' }}>
+        <div className={`font-sans text-gray-800 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: style.fontFamily, fontSize: `${style.fontSize}pt`, minHeight: '1056px', backgroundColor: document.backgroundColor }}>
             <header className="p-10 text-white" style={{ backgroundColor: '#0A2D4D' }}>
                 <div className="flex justify-between items-center">
                     <div className="flex items-center gap-3">
@@ -162,7 +163,7 @@ export const RemodelingTemplate2: React.FC<TemplateProps> = ({ document, pageIte
     const currencySymbol = currencySymbols[currency] || '$';
 
     return (
-        <div className={`p-10 bg-white font-sans text-gray-700 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: style.fontFamily, fontSize: `${style.fontSize}pt`, minHeight: '1056px' }}>
+        <div className={`p-10 font-sans text-gray-700 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: style.fontFamily, fontSize: `${style.fontSize}pt`, minHeight: '1056px', backgroundColor: document.backgroundColor }}>
             <header className="flex justify-between items-start mb-10">
                 <div>
                      {business.logoUrl && <Image src={business.logoUrl} alt="Logo" width={100} height={50} className="mb-2 object-contain"/>}
@@ -239,7 +240,7 @@ export const RemodelingTemplate3: React.FC<TemplateProps> = ({ document, pageIte
     const currencySymbol = currencySymbols[currency] || '$';
 
     return (
-        <div className={`p-10 bg-gray-50 font-['Times_New_Roman',_serif] text-gray-900 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontSize: `${style.fontSize}pt`, minHeight: '1056px' }}>
+        <div className={`p-10 font-['Times_New_Roman',_serif] text-gray-900 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontSize: `${style.fontSize}pt`, minHeight: '1056px', backgroundColor: document.backgroundColor }}>
             <header className="text-center mb-10">
                 <h1 className="text-4xl font-bold">ESTIMATE OF COST</h1>
                 <p className="text-sm text-gray-600 mt-1">{business.name} • {business.phone} • {business.email}</p>
@@ -305,7 +306,7 @@ export const RemodelingTemplate4: React.FC<TemplateProps> = ({ document, pageIte
     const currencySymbol = currencySymbols[currency] || '$';
 
     return (
-        <div className={`p-10 bg-white font-sans text-gray-800 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: 'Arial', fontSize: `${style.fontSize}pt`, minHeight: '1056px' }}>
+        <div className={`p-10 font-sans text-gray-800 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: 'Arial', fontSize: `${style.fontSize}pt`, minHeight: '1056px', backgroundColor: document.backgroundColor }}>
             <header className="flex justify-between items-center mb-8 pb-4 border-b-4" style={{borderColor: style.color}}>
                 <h1 className="text-4xl font-extrabold" style={{color: style.color}}>ESTIMATE</h1>
                 <div className="text-right">
@@ -367,7 +368,7 @@ export const RemodelingTemplate5: React.FC<TemplateProps> = ({ document, pageIte
     const currencySymbol = currencySymbols[currency] || '$';
 
     return (
-        <div className={`p-12 bg-white font-sans text-gray-800 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: style.fontFamily, fontSize: `${style.fontSize}pt`, minHeight: '1056px' }}>
+        <div className={`p-12 font-sans text-gray-800 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: style.fontFamily, fontSize: `${style.fontSize}pt`, minHeight: '1056px', backgroundColor: document.backgroundColor }}>
             <header className="mb-12">
                 <h1 className="text-3xl font-bold">{business.name}</h1>
                 <p className="text-xs" style={{color: style.color}}>REMODELING ESTIMATE</p>

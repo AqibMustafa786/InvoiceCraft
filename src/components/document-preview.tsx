@@ -22,6 +22,7 @@ import { ITTemplate1, ITTemplate2, ITTemplate3, ITTemplate4, ITTemplate5 } from 
 interface DocumentPreviewProps {
   document: Estimate;
   accentColor: string;
+  backgroundColor: string;
   id?: string;
   isPrint?: boolean;
 }
@@ -29,6 +30,7 @@ interface DocumentPreviewProps {
 interface CommonTemplateProps {
   document: Estimate;
   accentColor: string;
+  backgroundColor: string;
 }
 
 interface PageProps extends CommonTemplateProps {
@@ -353,7 +355,7 @@ const ModernTemplatePage: FC<PageProps> = ({ document, pageItems, pageIndex, tot
     const currencySymbol = currencySymbols[document.currency] || '$';
 
     return (
-        <div className={`p-8 md:p-10 bg-white font-sans flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ color: '#374151', fontFamily: style.fontFamily, fontSize: `${style.fontSize}pt`, minHeight: '1056px' }}>
+        <div className={`p-8 md:p-10 font-sans flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ color: '#374151', fontFamily: style.fontFamily, fontSize: `${style.fontSize}pt`, backgroundColor: document.backgroundColor, minHeight: '1056px' }}>
             <div data-element="page-header">
                 <PageHeader document={document} style={style} pageIndex={pageIndex}/>
                 {(pageIndex === 0) && (
@@ -452,7 +454,7 @@ const PAGE_PADDING = 80; // 40px top + 40px bottom
 const AVAILABLE_HEIGHT = PAGE_HEIGHT - PAGE_PADDING;
 
 
-const DocumentPreviewInternal: FC<DocumentPreviewProps> = ({ document, accentColor, id = 'document-preview', isPrint = false }) => {
+const DocumentPreviewInternal: FC<DocumentPreviewProps> = ({ document, accentColor, backgroundColor, id = 'document-preview', isPrint = false }) => {
   const [paginatedItems, setPaginatedItems] = useState<Estimate['lineItems'][][]>(document ? [document.lineItems] : [[]]);
   const [needsRemeasure, setNeedsRemeasure] = useState(true);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -465,6 +467,7 @@ const DocumentPreviewInternal: FC<DocumentPreviewProps> = ({ document, accentCol
       color: '#374151',
       fontFamily: document?.fontFamily || 'Inter, sans-serif',
       fontSize: `${document?.fontSize || 10}pt`,
+      backgroundColor: document?.backgroundColor || '#FFFFFF',
   } as React.CSSProperties;
 
   const dynamicColorStyle = {
@@ -580,13 +583,14 @@ const DocumentPreviewInternal: FC<DocumentPreviewProps> = ({ document, accentCol
   const commonProps: CommonTemplateProps = {
     document,
     accentColor,
+    backgroundColor,
   };
 
   if (isPrint) {
     const itemsToRender = needsRemeasure ? [document.lineItems] : paginatedItems;
     
     return (
-      <div id={id} className="bg-white" ref={containerRef}>
+      <div id={id} style={{backgroundColor: backgroundColor}} ref={containerRef}>
         <div style={{ position: 'absolute', left: '-9999px' }}>
              <PageHeader document={document} style={dynamicColorStyle} pageIndex={0}/>
              <PageClientDetails document={document} />
@@ -610,7 +614,7 @@ const DocumentPreviewInternal: FC<DocumentPreviewProps> = ({ document, accentCol
 
   return (
     <Card id={id} className="w-full shadow-lg rounded-xl overflow-hidden print-hide" style={previewStyle}>
-      <CardContent className="p-0 bg-white dark:bg-white">
+      <CardContent className="p-0" style={{backgroundColor: backgroundColor}}>
          <TemplateComponent
             {...commonProps}
             pageItems={document.lineItems}

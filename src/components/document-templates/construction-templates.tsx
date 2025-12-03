@@ -1,3 +1,4 @@
+
 'use client';
 
 import React from 'react';
@@ -60,7 +61,7 @@ export const ConstructionTemplate1: React.FC<TemplateProps> = ({ document, pageI
     const currencySymbol = currencySymbols[currency] || '$';
     
     return (
-        <div className={`p-10 bg-white font-sans text-gray-800 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: style.fontFamily, fontSize: `${style.fontSize}pt`, minHeight: '1056px' }}>
+        <div className={`p-10 font-sans text-gray-800 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: style.fontFamily, fontSize: `${style.fontSize}pt`, minHeight: '1056px', backgroundColor: document.backgroundColor }}>
             <header className="flex justify-between items-start pb-4 border-b-2" style={{ borderColor: style.color }}>
                 <div>
                     <h1 className="text-3xl font-bold" style={{ color: style.color }}>{business.name}</h1>
@@ -126,7 +127,7 @@ export const ConstructionTemplate1: React.FC<TemplateProps> = ({ document, pageI
                         </div>
                     </div>
                     <div className="mt-8 text-xs text-gray-600">
-                        <p className="font-bold mb-1">Terms & Conditions</p>
+                        <p className="font-bold mb-1">Terms &amp; Conditions</p>
                         <p className="whitespace-pre-line">{document.termsAndConditions}</p>
                     </div>
                     <div className="flex justify-between mt-8">
@@ -146,7 +147,7 @@ export const ConstructionTemplate2: React.FC<TemplateProps> = ({ document, pageI
     const currencySymbol = currencySymbols[currency] || '$';
 
     return (
-        <div className={`p-0 bg-white font-sans text-gray-800 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: style.fontFamily, fontSize: `${style.fontSize}pt`, minHeight: '1056px' }}>
+        <div className={`p-0 font-sans text-gray-800 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: style.fontFamily, fontSize: `${style.fontSize}pt`, minHeight: '1056px', backgroundColor: document.backgroundColor }}>
             <header className="p-10 text-white" style={{ backgroundColor: '#1F2937' }}>
                 <div className="flex justify-between items-center">
                     <div>
@@ -212,7 +213,7 @@ export const ConstructionTemplate2: React.FC<TemplateProps> = ({ document, pageI
                     <footer className="mt-auto pt-8">
                         <div className="flex justify-between items-start">
                             <div className="w-1/2 text-xs">
-                                <p className="font-bold text-gray-500 mb-2">TERMS & CONDITIONS</p>
+                                <p className="font-bold text-gray-500 mb-2">TERMS &amp; CONDITIONS</p>
                                 <p className="text-gray-600 whitespace-pre-line">{document.termsAndConditions}</p>
                                 <div className="flex gap-16">
                                     <SignatureDisplay signature={document.business.ownerSignature} label="Authorized Signature" />
@@ -241,7 +242,7 @@ export const ConstructionTemplate3: React.FC<TemplateProps> = ({ document, pageI
     const currencySymbol = currencySymbols[currency] || '$';
 
     return (
-        <div className={`p-10 bg-white font-sans text-gray-700 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: style.fontFamily, fontSize: `${style.fontSize}pt`, minHeight: '1056px' }}>
+        <div className={`p-10 font-sans text-gray-700 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: style.fontFamily, fontSize: `${style.fontSize}pt`, minHeight: '1056px', backgroundColor: document.backgroundColor }}>
             <header className="mb-12">
                 <h1 className="text-4xl font-light tracking-wider mb-2">Estimate</h1>
                 <div className="flex justify-between text-sm">
@@ -316,7 +317,7 @@ export const ConstructionTemplate4: React.FC<TemplateProps> = ({ document, pageI
     const currencySymbol = currencySymbols[currency] || '$';
 
     return (
-        <div className={`bg-white font-sans text-gray-800 flex ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: style.fontFamily, fontSize: `${style.fontSize}pt`, minHeight: '1056px' }}>
+        <div className={`font-sans text-gray-800 flex ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: style.fontFamily, fontSize: `${style.fontSize}pt`, minHeight: '1056px', backgroundColor: document.backgroundColor }}>
             <div className="w-1/4 p-8 text-white" style={{ backgroundColor: style.color }}>
                 <h1 className="text-3xl font-bold mb-10">ESTIMATE</h1>
                 <div className="text-sm space-y-4">
@@ -371,7 +372,7 @@ export const ConstructionTemplate4: React.FC<TemplateProps> = ({ document, pageI
                             </div>
                         </div>
                         <div className="mt-8 text-xs text-gray-500">
-                           <p className="font-bold uppercase tracking-wider mb-2">Payment Schedule & Terms</p>
+                           <p className="font-bold uppercase tracking-wider mb-2">Payment Schedule &amp; Terms</p>
                            <p className="whitespace-pre-line">{document.termsAndConditions}</p>
                         </div>
                         <div className="flex justify-end mt-8">
@@ -390,7 +391,7 @@ export const ConstructionTemplate5: React.FC<TemplateProps> = ({ document, pageI
     const currencySymbol = currencySymbols[currency] || '$';
 
     return (
-        <div className={`p-10 bg-white font-sans text-gray-900 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: style.fontFamily, fontSize: `${style.fontSize}pt`, minHeight: '1056px' }}>
+        <div className={`p-10 font-sans text-gray-900 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: style.fontFamily, fontSize: `${style.fontSize}pt`, minHeight: '1056px', backgroundColor: document.backgroundColor }}>
             <header className="flex justify-between items-center mb-8">
                 <div>
                      {business.logoUrl ? (

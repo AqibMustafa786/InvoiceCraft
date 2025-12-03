@@ -1,5 +1,4 @@
 
-
 'use client';
 
 import { ChangeEvent, Dispatch, SetStateAction, useState, useEffect } from 'react';
@@ -10,7 +9,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { DatePicker } from '@/components/ui/datepicker';
-import { ImageUp, Plus, Trash2, Palette, X, Mail, Truck, Hash, Phone, Globe, Briefcase, Award, User, FileText, Building, Pencil, Type, Package, Hammer, Ruler, ListTree, CheckSquare, Sparkles, Calendar, TextQuote, Wind, Thermometer, Wrench, Zap, Trees, Droplets, Car, Code, DraftingCompass } from 'lucide-react';
+import { ImageUp, Plus, Trash2, Palette, X, Mail, Truck, Hash, Phone, Globe, Briefcase, Award, User, FileText, Building, Pencil, Type, Package, Hammer, Ruler, ListTree, CheckSquare, Sparkles, Calendar, TextQuote, Wind, Thermometer, Wrench, Zap, Trees, Droplets, Car, Code, DraftingCompass, PaintBucket } from 'lucide-react';
 import Image from 'next/image';
 import {
   Select,
@@ -37,6 +36,8 @@ interface DocumentFormProps {
   setDocument: Dispatch<SetStateAction<Estimate | Quote>>;
   accentColor: string;
   setAccentColor: Dispatch<SetStateAction<string>>;
+  backgroundColor: string;
+  setBackgroundColor: Dispatch<SetStateAction<string>>;
   toast: (options: { title: string; description: string; variant?: "default" | "destructive" }) => void;
   documentType: 'estimate' | 'quote';
 }
@@ -120,16 +121,21 @@ const CustomSelect = ({ value, onValueChange, options, placeholder, otherValue, 
 };
 
 
-export function DocumentForm({ document, setDocument, accentColor, setAccentColor, toast, documentType }: DocumentFormProps) {
+export function DocumentForm({ document, setDocument, accentColor, setAccentColor, backgroundColor, setBackgroundColor, toast, documentType }: DocumentFormProps) {
   const [bulkAddCount, setBulkAddCount] = useState(5);
-  const [colorInputValue, setColorInputValue] = useState(accentColor);
+  const [accentColorInput, setAccentColorInput] = useState(accentColor);
+  const [bgColorInput, setBgColorInput] = useState(backgroundColor);
   const [logoUrl, setLogoUrl] = useState<string | null>(document.business.logoUrl || null);
   const [isSignatureDialogOpen, setIsSignatureDialogOpen] = useState(false);
   const [cleaningAddOns, setCleaningAddOns] = useState<string[]>(document.cleaning?.addOns || []);
 
   useEffect(() => {
-    setColorInputValue(accentColor);
+    setAccentColorInput(accentColor);
   }, [accentColor]);
+
+  useEffect(() => {
+    setBgColorInput(backgroundColor);
+  }, [backgroundColor]);
   
   useEffect(() => {
     if (logoUrl !== document.business.logoUrl) {
@@ -142,6 +148,11 @@ export function DocumentForm({ document, setDocument, accentColor, setAccentColo
       }))
     }
   }, [logoUrl, setDocument, document.business.logoUrl]);
+
+  useEffect(() => {
+     setDocument(prev => ({ ...prev, backgroundColor: backgroundColor }));
+  }, [backgroundColor, setDocument]);
+
 
   const handleNestedChange = (section: 'business' | 'client' | 'summary', e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -366,8 +377,8 @@ export function DocumentForm({ document, setDocument, accentColor, setAccentColo
                         <Input 
                             id="accentColor"
                             type="text" 
-                            value={colorInputValue} 
-                            onChange={(e) => setColorInputValue(e.target.value)}
+                            value={accentColorInput} 
+                            onChange={(e) => setAccentColorInput(e.target.value)}
                             onBlur={(e) => setAccentColor(e.target.value)}
                             className="pl-10"
                             placeholder="hsl(260 85% 66%)"
@@ -377,7 +388,31 @@ export function DocumentForm({ document, setDocument, accentColor, setAccentColo
                             value={accentColor.startsWith('hsl') ? '#000000' : accentColor}
                             onChange={(e) => {
                                 setAccentColor(e.target.value);
-                                setColorInputValue(e.target.value);
+                                setAccentColorInput(e.target.value);
+                            }}
+                            className="absolute right-1 top-1/2 -translate-y-1/2 h-8 w-8 p-1 rounded-md cursor-pointer bg-transparent border-none appearance-none"
+                        />
+                    </div>
+                </div>
+                 <div className="space-y-2">
+                    <Label htmlFor="backgroundColor">Background Color</Label>
+                    <div className="relative flex items-center">
+                        <PaintBucket className="absolute left-3 h-5 w-5 text-muted-foreground" />
+                        <Input 
+                            id="backgroundColor"
+                            type="text" 
+                            value={bgColorInput} 
+                            onChange={(e) => setBgColorInput(e.target.value)}
+                            onBlur={(e) => setBackgroundColor(e.target.value)}
+                            className="pl-10"
+                            placeholder="#FFFFFF"
+                        />
+                        <input 
+                            type="color" 
+                            value={backgroundColor}
+                            onChange={(e) => {
+                                setBackgroundColor(e.target.value);
+                                setBgColorInput(e.target.value);
                             }}
                             className="absolute right-1 top-1/2 -translate-y-1/2 h-8 w-8 p-1 rounded-md cursor-pointer bg-transparent border-none appearance-none"
                         />
@@ -1038,7 +1073,7 @@ export function DocumentForm({ document, setDocument, accentColor, setAccentColo
 
         <Card className="bg-card/50 backdrop-blur-sm group-disabled:opacity-70">
             <CardHeader>
-            <CardTitle>Pricing Summary & Terms</CardTitle>
+            <CardTitle>Pricing Summary &amp; Terms</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
@@ -1059,7 +1094,7 @@ export function DocumentForm({ document, setDocument, accentColor, setAccentColo
                 </div>
             </div>
             <div className="space-y-2">
-                <Label htmlFor="termsAndConditions">Terms & Conditions</Label>
+                <Label htmlFor="termsAndConditions">Terms &amp; Conditions</Label>
                 <Textarea id="termsAndConditions" name="termsAndConditions" value={document.termsAndConditions} onChange={handleInputChange} placeholder="e.g., Payment terms, validity period, warranty information..." />
             </div>
              <div className="space-y-2">
