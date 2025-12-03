@@ -1,46 +1,125 @@
-import { PageHeader, PageHeaderDescription, PageHeaderHeading } from "@/components/page-header";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { CheckCircle } from "lucide-react";
+
+'use client';
+
+import {
+  BarChart,
+  BookUser,
+  Bot,
+  Brush,
+  CheckCircle,
+  Cloud,
+  Edit,
+  FileDown,
+  Filter,
+  Palette,
+  Send,
+  Share2,
+  ShieldCheck,
+  Smartphone,
+  Users,
+  Wrench,
+} from 'lucide-react';
+import { PageHeader, PageHeaderDescription, PageHeaderHeading } from '@/components/page-header';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { motion } from 'framer-motion';
 
 const featureCategories = [
   {
-    category: "Invoice Creation & Customization",
+    category: 'Advanced Document Creation',
     features: [
-      { icon: <CheckCircle className="h-8 w-8 text-primary" />, name: "Instant Invoice Generation", description: "Create professional invoices in seconds with an easy-to-use form." },
-      { icon: <CheckCircle className="h-8 w-8 text-primary" />, name: "Live Real-time Preview", description: "See changes to your invoice instantly as you type." },
-      { icon: <CheckCircle className="h-8 w-8 text-primary" />, name: "Multiple Professional Templates", description: "Choose from a selection of templates like Default, Modern, Elegant, and USA-specific." },
-      { icon: <CheckCircle className="h-8 w-8 text-primary" />, name: "Custom Company Logo", description: "Upload your brand's logo for a personalized, professional look." },
-      { icon: <CheckCircle className="h-8 w-8 text-primary" />, name: "Custom Accent Colors", description: "Tailor the invoice's color scheme to match your brand identity." },
-      { icon: <CheckCircle className="h-8 w-8 text-primary" />, name: "Save as PDF", description: "Easily download and share print-ready PDF invoices with your clients." },
+      {
+        icon: <Brush className="h-8 w-8 text-primary" />,
+        name: 'Multiple Document Types',
+        description:
+          'Generate not just invoices, but also professional estimates, quotes, and insurance claim documents tailored to your needs.',
+      },
+      {
+        icon: <Palette className="h-8 w-8 text-primary" />,
+        name: 'Deep Customization',
+        description:
+          "Personalize documents with your logo, brand colors, and choice of professional templates and fonts to match your business's identity.",
+      },
+      {
+        icon: <Wrench className="h-8 w-8 text-primary" />,
+        name: 'Industry-Specific Fields',
+        description:
+          'Create detailed estimates for various industries like construction, IT, HVAC, and more, using specialized data fields.',
+      },
     ],
   },
   {
-    category: "Financials & Item Management",
+    category: 'Cloud-Powered Dashboard & Management',
     features: [
-      { name: "Flexible Item Management", description: "Add, remove, and even bulk-add line items to speed up creation." },
-      { name: "Automatic Calculations", description: "Subtotals, taxes, and discounts are calculated for you, reducing errors." },
-      { name: "Multi-Currency Support", description: "Bill clients in their local currency with support for USD, EUR, GBP, JPY, and PKR." },
-      { name: "Shipping Cost & Amount Paid", description: "Include additional costs like shipping and track partial payments." },
+      {
+        icon: <Users className="h-8 w-8 text-primary" />,
+        name: 'User Authentication',
+        description: 'Sign up and log in to securely access your private dashboard and manage all your documents in one place.',
+      },
+      {
+        icon: <Cloud className="h-8 w-8 text-primary" />,
+        name: 'Firestore-Backed Storage',
+        description: 'All your invoices, estimates, and quotes are saved securely in the cloud with Firestore, accessible from anywhere.',
+      },
+      {
+        icon: <Filter className="h-8 w-8 text-primary" />,
+        name: 'Advanced Filtering & Search',
+        description: 'Quickly find any document in your dashboard by client, status, amount, or date range with powerful filtering tools.',
+      },
+      {
+        icon: <Edit className="h-8 w-8 text-primary" />,
+        name: 'Real-Time Status Tracking',
+        description:
+          'Manage your workflow by tracking document statuses like Draft, Sent, Paid, Accepted, or Rejected.',
+      },
     ],
   },
   {
-    category: "Productivity & Management (Locally Saved)",
+    category: 'Collaboration & Workflow Automation',
     features: [
-      { name: "Save Invoice Drafts", description: "Save your work locally in your browser and pick up where you left off." },
-      { name: "Invoice Dashboard", description: "A central place to view, manage, and track all your saved invoices." },
-      { name: "Advanced Filtering & Search", description: "Quickly find any invoice by client name, status, amount, or date range." },
-      { name: "Payment Status Tracking", description: "Mark invoices as Draft, Sent, Paid, or Overdue to manage your cash flow." },
+      {
+        icon: <Send className="h-8 w-8 text-primary" />,
+        name: 'AI-Powered Emailing',
+        description: 'Email estimates or quotes directly to clients as PDF attachments, powered by Genkit AI flows.',
+      },
+      {
+        icon: <Share2 className="h-8 w-8 text-primary" />,
+        name: 'Shareable Public Links',
+        description: 'Generate unique, public URLs for your estimates and quotes to easily share them with clients for viewing and approval.',
+      },
+      {
+        icon: <BookUser className="h-8 w-8 text-primary" />,
+        name: 'Online Document Acceptance',
+        description: 'Allow clients to accept estimates and quotes directly online with a legally binding digital signature.',
+      },
+      {
+        icon: <FileDown className="h-8 w-8 text-primary" />,
+        name: 'Instant PDF Generation',
+        description: 'Download print-ready PDF versions of any document directly from your browser or have them generated on the server.',
+      },
     ],
   },
-  {
-    category: "Localization & Accessibility",
+   {
+    category: "General & Quality-of-Life",
     features: [
-      { name: "Multi-Language Support", description: "Generate invoices in English, Spanish, French, German, Arabic, and Chinese." },
-      { name: "Light & Dark Mode", description: "Work comfortably at any time of day with automatic theme switching." },
-      { name: "Fully Responsive Design", description: "Create and manage invoices on any device, from desktop to mobile." },
+      { icon: <Bot className="h-8 w-8 text-primary" />, name: 'AI Integration', description: "Leverage Genkit AI for intelligent features like automated PDF generation for emails." },
+      { icon: <ShieldCheck className="h-8 w-8 text-primary" />, name: 'Secure & Private', description: "Built with Firebase, ensuring robust security and authentication for your data." },
+      { icon: <Smartphone className="h-8 w-8 text-primary" />, name: 'Fully Responsive', description: "Create and manage documents seamlessly on any device, from desktop to mobile." },
     ],
-  }
+  },
 ];
+
+const cardVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: (i: number) => ({
+    opacity: 1,
+    y: 0,
+    transition: {
+      delay: i * 0.05,
+      duration: 0.3,
+      ease: "easeOut"
+    },
+  }),
+};
 
 export default function FeaturesPage() {
   return (
@@ -52,24 +131,33 @@ export default function FeaturesPage() {
         </PageHeaderDescription>
       </PageHeader>
 
-      <div className="space-y-12">
+      <div className="space-y-16">
         {featureCategories.map((category) => (
-          <div key={category.category} className="bg-card/50 backdrop-blur-sm shadow-lg rounded-lg p-8">
+          <motion.div
+            key={category.category}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.2 }}
+            transition={{ staggerChildren: 0.2 }}
+            className="bg-card/50 backdrop-blur-sm shadow-lg rounded-lg p-8"
+          >
             <h2 className="text-3xl font-bold font-headline mb-8 text-center">{category.category}</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {category.features.map((feature) => (
-                 <Card key={feature.name} className="flex flex-col text-center items-center p-6 bg-card/50 backdrop-blur-sm shadow-lg">
+              {category.features.map((feature, index) => (
+                <motion.div key={feature.name} custom={index} variants={cardVariants}>
+                  <Card className="flex flex-col text-center items-center p-6 bg-card/50 backdrop-blur-sm shadow-lg h-full">
                     <CardHeader className="p-0 items-center">
-                        {(feature as any).icon || <CheckCircle className="h-8 w-8 text-primary" />}
-                        <CardTitle className="mt-4">{feature.name}</CardTitle>
+                      {feature.icon}
+                      <CardTitle className="mt-4 text-xl">{feature.name}</CardTitle>
                     </CardHeader>
                     <CardContent className="p-0 mt-2 flex-1">
-                        <p className="text-muted-foreground text-sm">{feature.description}</p>
+                      <p className="text-muted-foreground text-sm">{feature.description}</p>
                     </CardContent>
-                </Card>
+                  </Card>
+                </motion.div>
               ))}
             </div>
-          </div>
+          </motion.div>
         ))}
       </div>
     </div>
