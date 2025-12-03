@@ -35,7 +35,7 @@ export function Footer() {
         <div className="grid grid-cols-2 gap-8 text-sm md:col-span-3 sm:grid-cols-3">
           <div className="space-y-4">
             <h3 className="font-semibold tracking-wider uppercase text-foreground">Product</h3>
-            <nav className="space-y-3">
+            <nav className="flex flex-col space-y-3">
               <Link href="/features" className="transition-colors text-muted-foreground hover:text-foreground">Features</Link>
               <Link href="/pricing" className="transition-colors text-muted-foreground hover:text-foreground">Pricing</Link>
               <Link href="/create-invoice" className="transition-colors text-muted-foreground hover:text-foreground">Create Invoice</Link>
@@ -44,7 +44,7 @@ export function Footer() {
           </div>
           <div className="space-y-4">
             <h3 className="font-semibold tracking-wider uppercase text-foreground">Company</h3>
-            <nav className="space-y-3">
+            <nav className="flex flex-col space-y-3">
               <Link href="/about" className="transition-colors text-muted-foreground hover:text-foreground">About Us</Link>
               <Link href="/blog" className="transition-colors text-muted-foreground hover:text-foreground">Blog</Link>
               <Link href="/careers" className="transition-colors text-muted-foreground hover:text-foreground">Careers</Link>
@@ -53,7 +53,7 @@ export function Footer() {
           </div>
           <div className="space-y-4">
             <h3 className="font-semibold tracking-wider uppercase text-foreground">Legal</h3>
-            <nav className="space-y-3">
+            <nav className="flex flex-col space-y-3">
               <Link href="/terms" className="transition-colors text-muted-foreground hover:text-foreground">Terms of Service</Link>
               <Link href="/privacy" className="transition-colors text-muted-foreground hover:text-foreground">Privacy Policy</Link>
               <Link href="/security" className="transition-colors text-muted-foreground hover:text-foreground">Security</Link>
