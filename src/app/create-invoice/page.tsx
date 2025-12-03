@@ -88,6 +88,7 @@ export default function CreateInvoicePage() {
   useEffect(() => {
     if (isUserLoading || (draftId && isDraftLoading)) return;
     if (!user) {
+        // This check will be handled by AuthProvider, but as a fallback:
         router.push('/login');
         return;
     }
