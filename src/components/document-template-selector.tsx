@@ -87,7 +87,37 @@ const templates: Template[] = [
     name: 'Urban Build',
     thumbnailUrl: '/templates/remodeling-5.png',
     category: 'Home Remodeling / Renovation',
-  }
+  },
+   {
+    id: 'hvac-1',
+    name: 'Coolant',
+    thumbnailUrl: '/templates/hvac-1.png',
+    category: 'HVAC (Air Conditioning / Heating)',
+  },
+  {
+    id: 'hvac-2',
+    name: 'Ventura',
+    thumbnailUrl: '/templates/hvac-2.png',
+    category: 'HVAC (Air Conditioning / Heating)',
+  },
+  {
+    id: 'hvac-3',
+    name: 'EcoLink',
+    thumbnailUrl: '/templates/hvac-3.png',
+    category: 'HVAC (Air Conditioning / Heating)',
+  },
+  {
+    id: 'hvac-4',
+    name: 'ClimateControl',
+    thumbnailUrl: '/templates/hvac-4.png',
+    category: 'HVAC (Air Conditioning / Heating)',
+  },
+  {
+    id: 'hvac-5',
+    name: 'Airflow',
+    thumbnailUrl: '/templates/hvac-5.png',
+    category: 'HVAC (Air Conditioning / Heating)',
+  },
 ];
 
 export function DocumentTemplateSelector({ selectedTemplate, onSelectTemplate, documentType, category }: DocumentTemplateSelectorProps) {

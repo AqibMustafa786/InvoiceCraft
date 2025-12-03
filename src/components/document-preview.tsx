@@ -8,6 +8,7 @@ import Image from 'next/image';
 import { format, isValid } from 'date-fns';
 import { ConstructionTemplate1, ConstructionTemplate2, ConstructionTemplate3, ConstructionTemplate4, ConstructionTemplate5 } from './document-templates/construction-templates';
 import { RemodelingTemplate1, RemodelingTemplate2, RemodelingTemplate3, RemodelingTemplate4, RemodelingTemplate5 } from './document-templates/remodeling-templates';
+import { HVACTemplate1, HVACTemplate2, HVACTemplate3, HVACTemplate4, HVACTemplate5 } from './document-templates/hvac-templates';
 
 
 // --- PROPS ---
@@ -396,6 +397,11 @@ const templates: { [key: string]: FC<PageProps> } = {
   'remodeling-3': RemodelingTemplate3,
   'remodeling-4': RemodelingTemplate4,
   'remodeling-5': RemodelingTemplate5,
+  'hvac-1': HVACTemplate1,
+  'hvac-2': HVACTemplate2,
+  'hvac-3': HVACTemplate3,
+  'hvac-4': HVACTemplate4,
+  'hvac-5': HVACTemplate5,
 };
 
 
