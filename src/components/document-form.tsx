@@ -27,6 +27,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+  DialogDescription,
 } from "@/components/ui/dialog";
 import { serverTimestamp } from 'firebase/firestore';
 import { RadioGroup, RadioGroupItem } from './ui/radio-group';
@@ -1062,7 +1063,10 @@ export function DocumentForm({ document, setDocument, accentColor, setAccentColo
                     </DialogTrigger>
                     <DialogContent>
                         <DialogHeader>
-                        <DialogTitle>Owner Signature</DialogTitle>
+                            <DialogTitle>Owner Signature</DialogTitle>
+                            <DialogDescription>
+                                Draw your signature below. This will be saved with the document.
+                            </DialogDescription>
                         </DialogHeader>
                         <SignaturePad onSave={handleOwnerSignatureSave} signerName={document.business.name} />
                     </DialogContent>

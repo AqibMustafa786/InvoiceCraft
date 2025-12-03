@@ -7,45 +7,26 @@ service cloud.firestore {
       return request.auth != null;
     }
 
-    function isOwner(userId) {
-      return isSignedIn() && request.auth.uid == userId;
-    }
-
-    // A user can read/write their own user document
     match /users/{userId} {
-      allow read, write: if isOwner(userId);
+      allow read, write: if isSignedIn() && request.auth.uid == userId;
     }
 
-    // A user can only access documents that have their userId
     match /invoices/{invoiceId} {
-      // Allow owner to get, list, and delete their own documents.
-      allow get, delete: if isSignedIn() && resource.data.userId == request.auth.uid;
-      allow list: if isSignedIn();
-      // Allow owner to create and update their own documents.
-      allow create, update: if isSignedIn() && request.resource.data.userId == request.auth.uid;
+      allow read, write: if isSignedIn() && request.auth.uid == resource.data.userId;
     }
 
-    // A user can only access estimates that have their userId
     match /estimates/{estimateId} {
-      // Allow public read access to a single document for sharing.
+      // Public can read, owner can write
       allow get: if true;
-      // Allow owner to create, list, and delete their own documents.
-      allow list: if isSignedIn();
-      allow delete: if isSignedIn() && resource.data.userId == request.auth.uid;
-      allow create, update: if isSignedIn() && request.resource.data.userId == request.auth.uid;
+      allow list, create, update, delete: if isSignedIn() && request.auth.uid == resource.data.userId;
     }
 
-    // A user can only access quotes that have their userId
     match /quotes/{quoteId} {
-      // Allow public read access to a single document for sharing.
+      // Public can read, owner can write
       allow get: if true;
-      // Allow owner to create, list, and delete their own documents.
-      allow list: if isSignedIn();
-      allow delete: if isSignedIn() && resource.data.userId == request.auth.uid;
-      allow create, update: if isSignedIn() && request.resource.data.userId == request.auth.uid;
+      allow list, create, update, delete: if isSignedIn() && request.auth.uid == resource.data.userId;
     }
 
-    // Allow authenticated users to write to the 'mail' collection to trigger emails
     match /mail/{docId} {
       allow create: if isSignedIn();
     }
