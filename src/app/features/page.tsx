@@ -114,11 +114,23 @@ const cardVariants = {
     opacity: 1,
     y: 0,
     transition: {
-      delay: i * 0.05,
-      duration: 0.3,
+      delay: i * 0.1,
+      duration: 0.5,
       ease: "easeOut"
     },
   }),
+};
+
+const categoryVariants = {
+    hidden: { opacity: 0, y: 30 },
+    visible: {
+        opacity: 1,
+        y: 0,
+        transition: {
+            duration: 0.5,
+            staggerChildren: 0.2
+        }
+    }
 };
 
 export default function FeaturesPage() {
@@ -138,14 +150,14 @@ export default function FeaturesPage() {
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, amount: 0.2 }}
-            transition={{ staggerChildren: 0.2 }}
+            variants={categoryVariants}
             className="bg-card/50 backdrop-blur-sm shadow-lg rounded-lg p-8"
           >
             <h2 className="text-3xl font-bold font-headline mb-8 text-center">{category.category}</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {category.features.map((feature, index) => (
                 <motion.div key={feature.name} custom={index} variants={cardVariants}>
-                  <Card className="flex flex-col text-center items-center p-6 bg-card/50 backdrop-blur-sm shadow-lg h-full">
+                  <Card className="flex flex-col text-center items-center p-6 bg-card/50 backdrop-blur-sm shadow-lg h-full transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-1">
                     <CardHeader className="p-0 items-center">
                       {feature.icon}
                       <CardTitle className="mt-4 text-xl">{feature.name}</CardTitle>
