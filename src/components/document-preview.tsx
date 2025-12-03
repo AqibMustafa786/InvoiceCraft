@@ -13,6 +13,7 @@ import { PlumbingTemplate1, PlumbingTemplate2, PlumbingTemplate3, PlumbingTempla
 import { ElectricalTemplate1, ElectricalTemplate2, ElectricalTemplate3, ElectricalTemplate4, ElectricalTemplate5 } from './document-templates/electrical-templates';
 import { LandscapingTemplate1, LandscapingTemplate2, LandscapingTemplate3, LandscapingTemplate4, LandscapingTemplate5 } from './document-templates/landscaping-templates';
 import { RoofingTemplate1, RoofingTemplate2, RoofingTemplate3, RoofingTemplate4, RoofingTemplate5 } from './document-templates/roofing-templates';
+import { AutoRepairTemplate1, AutoRepairTemplate2, AutoRepairTemplate3, AutoRepairTemplate4, AutoRepairTemplate5 } from './document-templates/auto-repair-templates';
 
 
 // --- PROPS ---
@@ -426,6 +427,11 @@ const templates: { [key: string]: FC<PageProps> } = {
   'roofing-3': RoofingTemplate3,
   'roofing-4': RoofingTemplate4,
   'roofing-5': RoofingTemplate5,
+  'auto-repair-1': AutoRepairTemplate1,
+  'auto-repair-2': AutoRepairTemplate2,
+  'auto-repair-3': AutoRepairTemplate3,
+  'auto-repair-4': AutoRepairTemplate4,
+  'auto-repair-5': AutoRepairTemplate5,
 };
 
 

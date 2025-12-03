@@ -213,6 +213,11 @@ const templates: Template[] = [
   { id: 'roofing-3', name: 'Skyline', thumbnailUrl: '/templates/roofing-3.png', category: 'Roofing Estimate' },
   { id: 'roofing-4', name: 'Fortress', thumbnailUrl: '/templates/roofing-4.png', category: 'Roofing Estimate' },
   { id: 'roofing-5', name: 'Ridge', thumbnailUrl: '/templates/roofing-5.png', category: 'Roofing Estimate' },
+  { id: 'auto-repair-1', name: 'Gold Standard', thumbnailUrl: '/templates/auto-repair-1.png', category: 'Auto Repair Estimate' },
+  { id: 'auto-repair-2', name: 'Night Shift', thumbnailUrl: '/templates/auto-repair-2.png', category: 'Auto Repair Estimate' },
+  { id: 'auto-repair-3', name: 'Classic Garage', thumbnailUrl: '/templates/auto-repair-3.png', category: 'Auto Repair Estimate' },
+  { id: 'auto-repair-4', name: 'Pro Service', thumbnailUrl: '/templates/auto-repair-4.png', category: 'Auto Repair Estimate' },
+  { id: 'auto-repair-5', name: 'Gridline', thumbnailUrl: '/templates/auto-repair-5.png', category: 'Auto Repair Estimate' },
 ];
 
 export function DocumentTemplateSelector({ selectedTemplate, onSelectTemplate, documentType, category }: DocumentTemplateSelectorProps) {
