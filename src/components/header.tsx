@@ -1,3 +1,4 @@
+
 'use client';
 
 import Link from 'next/link';
@@ -11,32 +12,35 @@ import { useEffect, useState } from 'react';
 import { useAuth } from '@/context/auth-provider';
 import { signOut } from 'firebase/auth';
 import { useFirebase } from '@/firebase';
+import { motion } from 'framer-motion';
 
 const navLinks = [
     { href: "/features", label: "Features" },
     { href: "/create-invoice", label: "Create Invoice" },
     { href: "/create-estimate", label: "Create Estimate" },
     { href: "/create-quote", label: "Create Quote" },
-    { href: "/create-insurance", label: "Create Insurance" },
     { href: "/pricing", label: "Pricing" },
     { href: "/blog", label: "Blog" },
     { href: "/about", label: "About" },
     { href: "/contact", label: "Contact" },
 ]
 
-function NavLink({ href, label }: { href: string, label: string }) {
-    const pathname = usePathname();
-    const isActive = pathname === href;
-
+function NavLink({ href, label, isActive }: { href: string, label: string, isActive: boolean }) {
     return (
         <Link
             href={href}
             className={cn(
-                "transition-colors hover:text-foreground/80",
-                isActive ? "text-foreground font-semibold" : "text-foreground/60"
+                "relative block px-3 py-2 transition",
+                isActive ? "text-primary" : "hover:text-primary/80"
             )}
         >
             {label}
+            {isActive && (
+                <motion.span
+                    className="absolute inset-x-1 -bottom-0.5 h-0.5 bg-gradient-to-r from-primary to-accent"
+                    layoutId="underline"
+                />
+            )}
         </Link>
     );
 }
@@ -46,6 +50,7 @@ export function Header() {
     const { user } = useAuth();
     const { auth } = useFirebase();
     const router = useRouter();
+    const pathname = usePathname();
 
     useEffect(() => {
         setIsClient(true);
@@ -63,9 +68,9 @@ export function Header() {
                      <span className="text-lg font-bold text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent">InvoiceCraft</span>
                 </Link>
 
-                <nav className="hidden md:flex items-center space-x-6 text-sm font-medium">
+                <nav className="hidden md:flex items-center space-x-1 text-sm font-medium">
                     {navLinks.map(link => (
-                        <NavLink key={link.href} href={link.href} label={link.label} />
+                        <NavLink key={link.href} href={link.href} label={link.label} isActive={pathname === link.href} />
                     ))}
                 </nav>
 
@@ -108,7 +113,7 @@ export function Header() {
                                     <span className="text-lg font-bold text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent">InvoiceCraft</span>
                                 </Link>
                                 {navLinks.map(link => (
-                                    <NavLink key={link.href} href={link.href} label={link.label} />
+                                    <NavLink key={link.href} href={link.href} label={link.label} isActive={pathname === link.href} />
                                 ))}
                                 <div className='flex flex-col gap-4 mt-4'>
                                     {user ? (
