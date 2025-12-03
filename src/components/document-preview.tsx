@@ -7,6 +7,8 @@ import { Card, CardContent } from '@/components/ui/card';
 import Image from 'next/image';
 import { format, isValid } from 'date-fns';
 import { ConstructionTemplate1, ConstructionTemplate2, ConstructionTemplate3, ConstructionTemplate4, ConstructionTemplate5 } from './document-templates/construction-templates';
+import { RemodelingTemplate1, RemodelingTemplate2, RemodelingTemplate3, RemodelingTemplate4, RemodelingTemplate5 } from './document-templates/remodeling-templates';
+
 
 // --- PROPS ---
 interface DocumentPreviewProps {
@@ -389,6 +391,11 @@ const templates: { [key: string]: FC<PageProps> } = {
   'construction-3': ConstructionTemplate3,
   'construction-4': ConstructionTemplate4,
   'construction-5': ConstructionTemplate5,
+  'remodeling-1': RemodelingTemplate1,
+  'remodeling-2': RemodelingTemplate2,
+  'remodeling-3': RemodelingTemplate3,
+  'remodeling-4': RemodelingTemplate4,
+  'remodeling-5': RemodelingTemplate5,
 };
 
 
@@ -588,5 +595,3 @@ export const ClientDocumentPreview: FC<DocumentPreviewProps> = (props) => {
 };
 
 export { DocumentPreviewInternal as DocumentPreview };
-
-    

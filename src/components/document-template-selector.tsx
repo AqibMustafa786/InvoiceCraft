@@ -57,6 +57,36 @@ const templates: Template[] = [
     name: 'Steel-Frame',
     thumbnailUrl: '/templates/construction-5.png',
     category: 'Construction Estimate',
+  },
+  {
+    id: 'remodeling-1',
+    name: 'Precision',
+    thumbnailUrl: '/templates/remodeling-1.png',
+    category: 'Home Remodeling / Renovation',
+  },
+  {
+    id: 'remodeling-2',
+    name: 'Modern Reno',
+    thumbnailUrl: '/templates/remodeling-2.png',
+    category: 'Home Remodeling / Renovation',
+  },
+  {
+    id: 'remodeling-3',
+    name: 'Blueprint',
+    thumbnailUrl: '/templates/remodeling-3.png',
+    category: 'Home Remodeling / Renovation',
+  },
+  {
+    id: 'remodeling-4',
+    name: 'Craftsman',
+    thumbnailUrl: '/templates/remodeling-4.png',
+    category: 'Home Remodeling / Renovation',
+  },
+  {
+    id: 'remodeling-5',
+    name: 'Urban Build',
+    thumbnailUrl: '/templates/remodeling-5.png',
+    category: 'Home Remodeling / Renovation',
   }
 ];
 
