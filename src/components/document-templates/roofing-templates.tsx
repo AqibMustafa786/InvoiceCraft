@@ -33,6 +33,26 @@ const SignatureDisplay = ({ signature, label }: { signature: any, label: string 
     )
 }
 
+const RoofingDetails: React.FC<{ document: Estimate }> = ({ document }) => {
+    if (!document.roofing) return null;
+    const { roofing } = document;
+    return (
+        <>
+            <p className="grid grid-cols-[120px_1fr]"><span className="text-gray-500">Roof Material:</span> <span>{roofing.roofMaterial}</span></p>
+            {roofing.roofSize && <p className="grid grid-cols-[120px_1fr]"><span className="text-gray-500">Roof Size:</span> <span>{roofing.roofSize} sq. ft.</span></p>}
+            <p className="grid grid-cols-[120px_1fr]"><span className="text-gray-500">Roof Pitch:</span> <span>{roofing.roofPitch}</span></p>
+            {roofing.layersToRemove && <p className="grid grid-cols-[120px_1fr]"><span className="text-gray-500">Layers to Remove:</span> <span>{roofing.layersToRemove}</span></p>}
+            <p className="grid grid-cols-[120px_1fr]"><span className="text-gray-500">Underlayment:</span> <span>{roofing.underlaymentType}</span></p>
+            <p className="grid grid-cols-[120px_1fr]"><span className="text-gray-500">Ventilation:</span> <span>{roofing.ventilationSystem}</span></p>
+            <p className="grid grid-cols-[120px_1fr]"><span className="text-gray-500">Flashing:</span> <span>{roofing.flashingReplacement ? 'Replacement Included' : 'No Replacement'}</span></p>
+            <p className="grid grid-cols-[120px_1fr]"><span className="text-gray-500">Gutter Repair:</span> <span>{roofing.gutterRepairNeeded ? 'Needed' : 'Not Needed'}</span></p>
+            {roofing.roofAge && <p className="grid grid-cols-[120px_1fr]"><span className="text-gray-500">Roof Age:</span> <span>{roofing.roofAge} years</span></p>}
+            <p className="grid grid-cols-[120px_1fr]"><span className="text-gray-500">Inspection:</span> <span>{roofing.inspectionRequired ? 'Required' : 'Not Required'}</span></p>
+        </>
+    );
+};
+
+
 // Template 1: Direct Interpretation of user image
 export const RoofingTemplate1: React.FC<TemplateProps> = ({ document, pageItems, pageIndex, totalPages, style }) => {
     const { business, client, summary, currency } = document;
@@ -64,12 +84,9 @@ export const RoofingTemplate1: React.FC<TemplateProps> = ({ document, pageItems,
                         <p className="grid grid-cols-[60px_1fr]"><span className="text-gray-500">Phone:</span> <span>{client.phone}</span></p>
                     </div>
                     <div>
-                         <p className="font-bold text-gray-500 mb-2">Property Information</p>
-                         <p className="grid grid-cols-[90px_1fr]"><span className="text-gray-500">Address:</span> <span className="font-semibold whitespace-pre-line">{client.projectLocation || client.address}</span></p>
-                         {document.roofing && <>
-                            <p className="grid grid-cols-[90px_1fr]"><span className="text-gray-500">Type of Roof:</span> <span>{document.roofing.roofMaterial}</span></p>
-                            <p className="grid grid-cols-[90px_1fr]"><span className="text-gray-500">Roof Size:</span> <span>{document.roofing.roofSize} sq. ft.</span></p>
-                         </>}
+                         <p className="font-bold text-gray-500 mb-2">Property & Project Information</p>
+                         <p className="grid grid-cols-[120px_1fr]"><span className="text-gray-500">Address:</span> <span className="font-semibold whitespace-pre-line">{client.projectLocation || client.address}</span></p>
+                         <RoofingDetails document={document} />
                     </div>
                 </section>
 
@@ -160,6 +177,15 @@ export const RoofingTemplate2: React.FC<TemplateProps> = ({ document, pageItems,
                     <p><span className="font-bold">Date:</span> {safeFormat(document.estimateDate, 'MMM d, yyyy')}</p>
                 </div>
             </section>
+
+             {document.roofing && (
+                <section className="mb-8 p-4 bg-gray-50 rounded-md text-xs">
+                    <p className="font-bold text-gray-500 mb-2">Project Details</p>
+                    <div className="grid grid-cols-3 gap-x-4 gap-y-1">
+                        <RoofingDetails document={document} />
+                    </div>
+                </section>
+            )}
             
             <main className="flex-grow">
                  <table className="w-full text-left text-xs">
@@ -218,6 +244,15 @@ export const RoofingTemplate3: React.FC<TemplateProps> = ({ document, pageItems,
                 <div><p className="font-bold text-gray-500">Reference:</p><p>#{document.estimateNumber}</p><p>Date: {safeFormat(document.estimateDate, 'dd-MMM-yyyy')}</p></div>
             </section>
             
+             {document.roofing && (
+                <section className="mb-8 p-4 bg-white rounded-lg shadow-sm text-xs">
+                    <p className="font-bold text-gray-500 mb-2">Roofing Specifications</p>
+                    <div className="grid grid-cols-4 gap-x-4 gap-y-1">
+                        <RoofingDetails document={document} />
+                    </div>
+                </section>
+            )}
+
             <main className="flex-grow bg-white p-4 rounded-lg shadow-sm">
                 <table className="w-full text-left text-xs">
                     <thead>
@@ -278,6 +313,14 @@ export const RoofingTemplate4: React.FC<TemplateProps> = ({ document, pageItems,
                     <div><p className="font-bold">CUSTOMER:</p><p>{client.name}<br/>{client.address}</p></div>
                     <div><p className="font-bold">ESTIMATE #:</p><p>{document.estimateNumber}</p><p className="font-bold mt-2">DATE:</p><p>{safeFormat(document.estimateDate, 'MM/dd/yyyy')}</p></div>
                 </div>
+                 {document.roofing && (
+                    <div className="mt-4 pt-4 border-t border-gray-200">
+                        <p className="font-bold mb-1">PROJECT SPECS</p>
+                         <div className="grid grid-cols-2 gap-x-4 gap-y-1">
+                           <RoofingDetails document={document} />
+                        </div>
+                    </div>
+                )}
             </section>
             
             <main className="flex-grow">
@@ -337,6 +380,15 @@ export const RoofingTemplate5: React.FC<TemplateProps> = ({ document, pageItems,
                 <div className="text-right"><p><span className="font-bold">ESTIMATE NO:</span> {document.estimateNumber}</p><p><span className="font-bold">DATE:</span> {safeFormat(document.estimateDate, 'MMM dd, yyyy')}</p></div>
             </section>
             
+             {document.roofing && (
+                <section className="mb-8 text-xs">
+                    <p className="font-bold border-b border-gray-500 pb-1 mb-2">Project Information</p>
+                    <div className="grid grid-cols-2 gap-x-4 gap-y-1">
+                        <RoofingDetails document={document} />
+                    </div>
+                </section>
+            )}
+
             <main className="flex-grow">
                 <table className="w-full text-left text-xs">
                     <thead>
