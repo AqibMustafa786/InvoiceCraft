@@ -1,3 +1,4 @@
+
 'use client';
 
 import React from 'react';
@@ -57,8 +58,9 @@ const HvacDetails: React.FC<{ document: Estimate; textColor: string; }> = ({ doc
 
 // Base Template inspired by user image
 export const HVACTemplate1: React.FC<TemplateProps> = ({ document, pageItems, pageIndex, totalPages, style }) => {
-    const { business, client, summary, currency, textColor } = document;
+    const { business, client, summary, currency, textColor, category } = document;
     const currencySymbol = currencySymbols[currency] || '$';
+    const docTitle = document.documentType === 'quote' ? 'HVAC QUOTE' : 'HVAC ESTIMATE';
     
     return (
         <div className={`p-8 bg-white font-sans text-gray-800 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: 'Arial, sans-serif', fontSize: `9pt`, minHeight: '1056px', color: textColor }}>
@@ -71,7 +73,11 @@ export const HVACTemplate1: React.FC<TemplateProps> = ({ document, pageItems, pa
                         <p className="text-xs">{business.email} | {business.phone}</p>
                     </div>
                 </div>
-                <h2 className="text-3xl font-bold text-gray-700">HVAC ESTIMATE</h2>
+                <div className="text-right">
+                  <h2 className="text-3xl font-bold text-gray-700">{docTitle.split(' ')[0]}</h2>
+                  <p className="text-sm">{docTitle.split(' ')[1]}</p>
+                  {category !== 'Generic' && <p className="text-xs">{category.replace(' (Air Conditioning / Heating)', '')}</p>}
+                </div>
             </header>
 
             <section className="grid grid-cols-2 gap-4 my-6 text-xs border-b pb-6">
@@ -142,9 +148,10 @@ export const HVACTemplate1: React.FC<TemplateProps> = ({ document, pageItems, pa
 
 // Template 2: Blue Accents, Modern
 export const HVACTemplate2: React.FC<TemplateProps> = ({ document, pageItems, pageIndex, totalPages, style }) => {
-    const { business, client, summary, currency, textColor } = document;
+    const { business, client, summary, currency, textColor, category } = document;
     const currencySymbol = currencySymbols[currency] || '$';
     const accentColor = style.color || '#3B82F6';
+    const docTitle = document.documentType === 'quote' ? 'QUOTE' : 'ESTIMATE';
 
     return (
         <div className={`p-8 bg-white font-sans text-gray-800 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: 'Inter, sans-serif', fontSize: `9pt`, minHeight: '1056px', color: textColor }}>
@@ -154,7 +161,8 @@ export const HVACTemplate2: React.FC<TemplateProps> = ({ document, pageItems, pa
                     <p className="text-xs">{business.address}</p>
                 </div>
                 <div className="text-right">
-                    <h2 className="text-2xl font-bold">HVAC Estimate</h2>
+                    <h2 className="text-2xl font-bold">{docTitle}</h2>
+                     {category !== 'Generic' && <p className="text-xs">{category.replace(' (Air Conditioning / Heating)', '')}</p>}
                     <p className="text-xs">#{document.estimateNumber}</p>
                     <p className="text-xs mt-1">Date: {safeFormat(document.estimateDate, 'MMM d, yyyy')}</p>
                 </div>
@@ -223,14 +231,15 @@ export const HVACTemplate2: React.FC<TemplateProps> = ({ document, pageItems, pa
 
 // Template 3: Clean & Grid-based
 export const HVACTemplate3: React.FC<TemplateProps> = ({ document, pageItems, pageIndex, totalPages, style }) => {
-    const { business, client, summary, currency, textColor } = document;
+    const { business, client, summary, currency, textColor, category } = document;
     const currencySymbol = currencySymbols[currency] || '$';
+    const docTitle = document.documentType === 'quote' ? 'Quote' : 'Estimate';
 
     return (
         <div className={`p-10 bg-white font-sans text-gray-700 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: 'Roboto, sans-serif', fontSize: `9pt`, minHeight: '1056px', color: textColor }}>
             <header className="mb-10">
-                <h1 className="text-4xl font-light tracking-wide">Estimate</h1>
-                <p className="text-sm" style={{ color: style.color }}>For HVAC Services</p>
+                <h1 className="text-4xl font-light tracking-wide">{docTitle}</h1>
+                {category !== 'Generic' && <p className="text-sm" style={{ color: style.color }}>{category.replace(' (Air Conditioning / Heating)', '')}</p>}
             </header>
 
             <section className="mb-8 p-4 border rounded-md grid grid-cols-3 gap-4 text-xs">
@@ -283,14 +292,19 @@ export const HVACTemplate3: React.FC<TemplateProps> = ({ document, pageItems, pa
 
 // Template 4: Corporate Blue
 export const HVACTemplate4: React.FC<TemplateProps> = ({ document, pageItems, pageIndex, totalPages, style }) => {
-    const { business, client, summary, currency, textColor } = document;
+    const { business, client, summary, currency, textColor, category } = document;
     const currencySymbol = currencySymbols[currency] || '$';
+    const docTitle = document.documentType === 'quote' ? 'ESTIMATE' : 'ESTIMATE';
 
     return (
         <div className={`bg-white font-sans text-gray-800 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: 'Arial, sans-serif', fontSize: `9pt`, minHeight: '1056px', color: textColor }}>
             <div className="p-10">
                 <header className="flex justify-between items-center pb-5 mb-5 border-b-8" style={{ borderColor: style.color }}>
-                    <h1 className="text-3xl font-extrabold">{business.name}</h1>
+                    <div className="text-right">
+                        <h1 className="text-3xl font-extrabold">{business.name}</h1>
+                        <p className="text-sm">{docTitle}</p>
+                        {category !== 'Generic' && <p className="text-xs">{category.replace(' (Air Conditioning / Heating)', '')}</p>}
+                    </div>
                     <div className="text-right">
                         <h2 className="text-3xl font-bold">ESTIMATE</h2>
                         <p className="text-xs"># {document.estimateNumber}</p>
@@ -350,13 +364,15 @@ export const HVACTemplate4: React.FC<TemplateProps> = ({ document, pageItems, pa
 
 // Template 5: Minimal with side details
 export const HVACTemplate5: React.FC<TemplateProps> = ({ document, pageItems, pageIndex, totalPages, style }) => {
-    const { business, client, summary, currency, textColor } = document;
+    const { business, client, summary, currency, textColor, category } = document;
     const currencySymbol = currencySymbols[currency] || '$';
+    const docTitle = document.documentType === 'quote' ? 'ESTIMATE' : 'ESTIMATE';
 
     return (
         <div className={`p-10 bg-white font-sans text-gray-800 flex ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: 'Helvetica, sans-serif', fontSize: `9pt`, minHeight: '1056px' }}>
             <div className="w-1/4 pr-8 border-r border-gray-200" style={{color: textColor}}>
-                <h1 className="text-2xl font-bold" style={{ color: style.color }}>ESTIMATE</h1>
+                <h1 className="text-2xl font-bold" style={{ color: style.color }}>{docTitle}</h1>
+                {category !== 'Generic' && <p className="text-xs" style={{ color: style.color }}>{category.replace(' (Air Conditioning / Heating)', '')}</p>}
                 {business.logoUrl && <Image src={business.logoUrl} alt="Logo" width={80} height={40} className="mt-4 object-contain" />}
                 <div className="text-xs mt-8 space-y-4">
                     <div><p className="font-bold">Estimate #</p><p>{document.estimateNumber}</p></div>

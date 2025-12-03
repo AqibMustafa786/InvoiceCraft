@@ -1,3 +1,4 @@
+
 'use client';
 
 import React from 'react';
@@ -53,17 +54,19 @@ const AutoRepairDetails: React.FC<{ document: Estimate; textColor: string; }> = 
 
 // Template 1: Direct Interpretation
 export const AutoRepairTemplate1: React.FC<TemplateProps> = ({ document, pageItems, pageIndex, totalPages, style }) => {
-    const { business, client, summary, currency, textColor } = document;
+    const { business, client, summary, currency, textColor, category } = document;
     const currencySymbol = currencySymbols[currency] || '$';
     const accentColor = style.color || '#FBBF24'; // Default to a gold/yellow
+    const docTitle = document.documentType === 'quote' ? 'Repair Quote' : 'Repair Estimate';
 
     return (
         <div className={`bg-white font-sans text-gray-800 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: 'Arial, sans-serif', fontSize: '9pt', minHeight: '1056px' }}>
             <header className="p-10 pb-5" style={{ backgroundColor: accentColor }}>
                 <div className="flex justify-between items-center text-white">
                     <div>
-                        <h1 className="text-3xl font-bold">Repair Estimate</h1>
-                        <p className="text-sm opacity-90">Restoring Vehicles, Reviving Peace of Mind</p>
+                        <h1 className="text-3xl font-bold">{docTitle.split(' ')[1]}</h1>
+                        <p className="text-sm opacity-90">{docTitle.split(' ')[0]}</p>
+                         {category !== 'Generic' && <p className="text-xs opacity-90">{category}</p>}
                     </div>
                     {business.logoUrl ? 
                         <Image src={business.logoUrl} alt="Logo" width={80} height={80} className="object-contain" /> :
@@ -112,7 +115,7 @@ export const AutoRepairTemplate1: React.FC<TemplateProps> = ({ document, pageIte
                         </tbody>
                          {pageIndex === totalPages - 1 && (
                             <tfoot>
-                                <tr>
+                                 <tr>
                                     <td colSpan={3} className="p-2 pt-2 text-right font-bold text-base">Total</td>
                                     <td className="p-2 pt-2 text-right font-bold text-base">{currencySymbol}{summary.subtotal.toFixed(2)}</td>
                                 </tr>
@@ -152,14 +155,19 @@ export const AutoRepairTemplate1: React.FC<TemplateProps> = ({ document, pageIte
 
 // Template 2: Modern Dark
 export const AutoRepairTemplate2: React.FC<TemplateProps> = ({ document, pageItems, pageIndex, totalPages, style }) => {
-    const { business, client, summary, currency, textColor } = document;
+    const { business, client, summary, currency, textColor, category } = document;
     const currencySymbol = currencySymbols[currency] || '$';
+    const docTitle = document.documentType === 'quote' ? 'REPAIR QUOTE' : 'REPAIR ESTIMATE';
 
     return (
         <div className={`bg-gray-800 text-white font-sans flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: 'Roboto, sans-serif', fontSize: '9.5pt', minHeight: '1056px', color: textColor }}>
             <header className="p-10">
                 <div className="flex justify-between items-center">
-                    <h1 className="text-4xl font-extrabold tracking-wider">REPAIR ESTIMATE</h1>
+                    <div>
+                        <h1 className="text-4xl font-extrabold tracking-wider">{docTitle.split(' ')[0]}</h1>
+                        <p className="text-xl tracking-wider">{docTitle.split(' ')[1]}</p>
+                        {category !== 'Generic' && <p className="text-xs">{category}</p>}
+                    </div>
                     <div className="text-right">
                         <p className="font-bold text-lg">{business.name}</p>
                         <p className="text-xs text-gray-300">{business.address}</p>
@@ -223,13 +231,16 @@ export const AutoRepairTemplate2: React.FC<TemplateProps> = ({ document, pageIte
 
 // Template 3: Minimalist & Clean
 export const AutoRepairTemplate3: React.FC<TemplateProps> = ({ document, pageItems, pageIndex, totalPages, style }) => {
-    const { business, client, summary, currency, textColor } = document;
+    const { business, client, summary, currency, textColor, category } = document;
     const currencySymbol = currencySymbols[currency] || '$';
+    const docTitle = document.documentType === 'quote' ? 'Repair Quote' : 'Repair Estimate';
 
     return (
         <div className={`p-12 bg-white font-['Garamond',_serif] text-gray-700 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{minHeight: '1056px', color: textColor }}>
             <header className="mb-12">
-                <h1 className="text-4xl font-light tracking-wider">Repair Estimate</h1>
+                <h1 className="text-4xl font-light tracking-wider">{docTitle.split(' ')[1]}</h1>
+                <p className="text-lg font-light tracking-wider">{docTitle.split(' ')[0]}</p>
+                {category !== 'Generic' && <p className="text-sm mt-1">{category}</p>}
                 <p className="text-sm mt-1">{business.name}</p>
             </header>
 
@@ -288,14 +299,18 @@ export const AutoRepairTemplate3: React.FC<TemplateProps> = ({ document, pageIte
 
 // Template 4: Corporate Blue Accents
 export const AutoRepairTemplate4: React.FC<TemplateProps> = ({ document, pageItems, pageIndex, totalPages, style }) => {
-    const { business, client, summary, currency, textColor } = document;
+    const { business, client, summary, currency, textColor, category } = document;
     const currencySymbol = currencySymbols[currency] || '$';
     const accentColor = style.color || '#3B82F6';
+    const docTitle = document.documentType === 'quote' ? 'REPAIR QUOTE' : 'REPAIR ESTIMATE';
 
     return (
         <div className={`p-10 bg-white font-sans text-gray-800 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ minHeight: '1056px', color: textColor }}>
             <header className="flex justify-between items-center pb-4 border-b-2" style={{borderColor: accentColor}}>
-                <h1 className="text-3xl font-extrabold" style={{color: accentColor}}>REPAIR ESTIMATE</h1>
+                <div className="text-right">
+                  <h1 className="text-3xl font-extrabold" style={{color: accentColor}}>{docTitle.split(' ')[0]}</h1>
+                  <p className="text-lg font-extrabold" style={{color: accentColor}}>{docTitle.split(' ')[1]}</p>
+                </div>
                 <div className="text-right">
                     <p className="font-bold text-lg">{business.name}</p>
                     <p className="text-xs">{business.address}</p>
@@ -351,21 +366,25 @@ export const AutoRepairTemplate4: React.FC<TemplateProps> = ({ document, pageIte
 
 // Template 5: Grid Layout
 export const AutoRepairTemplate5: React.FC<TemplateProps> = ({ document, pageItems, pageIndex, totalPages, style }) => {
-    const { business, client, summary, currency, textColor } = document;
+    const { business, client, summary, currency, textColor, category } = document;
     const currencySymbol = currencySymbols[currency] || '$';
+    const docTitle = document.documentType === 'quote' ? 'ESTIMATE' : 'ESTIMATE';
 
     return (
         <div className={`p-10 bg-gray-50 font-['Roboto',_sans-serif] text-gray-900 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{minHeight: '1056px', color: textColor}}>
             <header className="flex justify-between items-center mb-8">
-                <h1 className="text-4xl font-extrabold" style={{color: style.color || '#DC2626'}}>ESTIMATE</h1>
+                <div>
+                  <h1 className="text-4xl font-extrabold" style={{color: style.color}}>{docTitle}</h1>
+                  {category !== 'Generic' && <p className="text-sm" style={{color: style.color}}>{category}</p>}
+                </div>
                 {business.logoUrl && <Image src={business.logoUrl} alt="Logo" width={100} height={40} className="object-contain" />}
             </header>
 
             <section className="grid grid-cols-2 gap-4 mb-8 text-xs p-4 bg-white rounded-lg shadow-sm">
-                <div><p className="font-bold">From:</p><p className="font-semibold">{business.name}</p><p>{business.address}</p></div>
-                <div><p className="font-bold">To:</p><p className="font-semibold">{client.name}</p><p>{client.address}</p></div>
-                <div><p className="font-bold">Estimate No:</p><p>{document.estimateNumber}</p></div>
-                <div><p className="font-bold">Date Issued:</p><p>{safeFormat(document.estimateDate, 'MMM d, yyyy')}</p></div>
+                <div><p className="font-bold text-gray-500">From:</p><p className="font-semibold">{business.name}</p><p>{business.address}</p></div>
+                <div><p className="font-bold text-gray-500">To:</p><p className="font-semibold">{client.name}</p><p>{client.address}</p></div>
+                <div><p className="font-bold text-gray-500">Estimate No:</p><p>{document.estimateNumber}</p></div>
+                <div><p className="font-bold text-gray-500">Date Issued:</p><p>{safeFormat(document.estimateDate, 'MMM d, yyyy')}</p></div>
             </section>
             
              <AutoRepairDetails document={document} textColor={textColor || '#374151'} />

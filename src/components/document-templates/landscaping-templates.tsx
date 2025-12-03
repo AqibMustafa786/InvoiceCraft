@@ -1,3 +1,4 @@
+
 'use client';
 
 import React from 'react';
@@ -43,14 +44,16 @@ const LandscapingDetails: React.FC<{ document: Estimate }> = ({ document }) => {
 
 // Template 1: Based on user-provided image
 export const LandscapingTemplate1: React.FC<TemplateProps> = ({ document, pageItems, pageIndex, totalPages, style }) => {
-    const { business, client, summary, currency } = document;
+    const { business, client, summary, currency, category } = document;
     const currencySymbol = currencySymbols[currency] || '$';
+    const docTitle = document.documentType === 'quote' ? 'Landscape Quote' : 'Landscape Estimate';
 
     return (
         <div className={`p-10 bg-white font-sans text-gray-800 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: 'Arial, sans-serif', fontSize: '10pt', minHeight: '1056px' }}>
             <header className="flex justify-between items-start pb-4 border-b-2" style={{ borderColor: style.color }}>
-                <div>
-                    <h1 className="text-4xl font-bold">Landscape Estimate</h1>
+                <div className="text-right">
+                    <h1 className="text-4xl font-bold">{docTitle.split(' ')[1]}</h1>
+                    <p className="text-sm">{docTitle.split(' ')[0]}</p>
                 </div>
                 <div className="text-right">
                     {business.logoUrl ? (
@@ -125,8 +128,9 @@ export const LandscapingTemplate1: React.FC<TemplateProps> = ({ document, pageIt
 
 // Template 2: Modern & Clean
 export const LandscapingTemplate2: React.FC<TemplateProps> = ({ document, pageItems, pageIndex, totalPages, style }) => {
-    const { business, client, summary, currency } = document;
+    const { business, client, summary, currency, category } = document;
     const currencySymbol = currencySymbols[currency] || '$';
+    const docTitle = document.documentType === 'quote' ? 'ESTIMATE' : 'ESTIMATE';
 
     return (
         <div className={`p-10 bg-white font-sans text-gray-700 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: 'Verdana, sans-serif', fontSize: '9.5pt', minHeight: '1056px' }}>
@@ -135,7 +139,10 @@ export const LandscapingTemplate2: React.FC<TemplateProps> = ({ document, pageIt
                     <h1 className="text-2xl font-bold" style={{ color: style.color }}>{business.name}</h1>
                     <p className="text-xs text-gray-500">Landscaping Services</p>
                 </div>
-                <h2 className="text-3xl font-light text-gray-400">ESTIMATE</h2>
+                <div className="text-right">
+                    <h2 className="text-3xl font-light text-gray-400">{docTitle}</h2>
+                    {category !== 'Generic' && <p className="text-sm text-gray-400">{category}</p>}
+                </div>
             </header>
 
             <section className="grid grid-cols-3 gap-4 mb-8 text-xs">
@@ -196,13 +203,16 @@ export const LandscapingTemplate2: React.FC<TemplateProps> = ({ document, pageIt
 
 // Template 3: Side Panel Design
 export const LandscapingTemplate3: React.FC<TemplateProps> = ({ document, pageItems, pageIndex, totalPages, style }) => {
-    const { business, client, summary, currency } = document;
+    const { business, client, summary, currency, category } = document;
     const currencySymbol = currencySymbols[currency] || '$';
+    const docTitle = document.documentType === 'quote' ? 'ESTIMATE' : 'ESTIMATE';
 
     return (
         <div className={`bg-white font-sans text-gray-800 flex ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ minHeight: '1056px' }}>
             <div className="w-1/3 p-8 text-white" style={{ backgroundColor: style.color }}>
-                <h1 className="text-3xl font-bold mb-10">Estimate</h1>
+                <h1 className="text-3xl font-bold mb-2">{docTitle}</h1>
+                {category !== 'Generic' && <p className="text-sm mb-8">{category}</p>}
+
                 <div className="text-sm space-y-6 flex-grow">
                     <div>
                         <p className="font-bold opacity-80 mb-1">CLIENT</p>
@@ -268,13 +278,15 @@ export const LandscapingTemplate3: React.FC<TemplateProps> = ({ document, pageIt
 
 // Template 4: Minimalist Elegant
 export const LandscapingTemplate4: React.FC<TemplateProps> = ({ document, pageItems, pageIndex, totalPages, style }) => {
-    const { business, client, summary, currency } = document;
+    const { business, client, summary, currency, category } = document;
     const currencySymbol = currencySymbols[currency] || '$';
+    const docTitle = document.documentType === 'quote' ? 'Estimate' : 'Estimate';
 
     return (
         <div className={`p-12 bg-white font-['Garamond',_serif] text-gray-700 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ minHeight: '1056px' }}>
             <header className="mb-16 text-center">
-                <h1 className="text-5xl font-light tracking-widest">ESTIMATE</h1>
+                <h1 className="text-5xl font-light tracking-widest">{docTitle.toUpperCase()}</h1>
+                {category !== 'Generic' && <p className="text-sm text-gray-500">{category}</p>}
                 <p className="text-sm text-gray-500 mt-2">{business.name}</p>
             </header>
 
@@ -322,13 +334,17 @@ export const LandscapingTemplate4: React.FC<TemplateProps> = ({ document, pageIt
 
 // Template 5: Bold & Green
 export const LandscapingTemplate5: React.FC<TemplateProps> = ({ document, pageItems, pageIndex, totalPages, style }) => {
-    const { business, client, summary, currency } = document;
+    const { business, client, summary, currency, category } = document;
     const currencySymbol = currencySymbols[currency] || '$';
+    const docTitle = document.documentType === 'quote' ? 'Landscape Estimate' : 'Landscape Estimate';
 
     return (
         <div className={`p-10 bg-gray-50 font-['Roboto'] text-gray-900 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ minHeight: '1056px' }}>
             <header className="grid grid-cols-2 gap-4 mb-8">
-                <div className="space-y-1"><h1 className="text-4xl font-extrabold" style={{ color: style.color }}>Landscape Estimate</h1></div>
+                <div className="space-y-1">
+                  <h1 className="text-4xl font-extrabold" style={{ color: style.color }}>{docTitle.split(' ')[0]}</h1>
+                  <p className="text-2xl font-extrabold" style={{ color: style.color }}>{docTitle.split(' ')[1]}</p>
+                </div>
                 <div className="text-right"><p className="text-lg font-bold">{business.name}</p><p className="text-xs">{business.address}</p></div>
             </header>
 

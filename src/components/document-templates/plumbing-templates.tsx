@@ -1,3 +1,4 @@
+
 'use client';
 
 import React from 'react';
@@ -45,8 +46,10 @@ const PlumbingDetails: React.FC<{ document: Estimate }> = ({ document }) => {
 
 // Template 1: Direct Replica
 export const PlumbingTemplate1: React.FC<TemplateProps> = ({ document, pageItems, pageIndex, totalPages, style }) => {
-    const { business, client, summary, currency } = document;
+    const { business, client, summary, currency, category } = document;
     const currencySymbol = currencySymbols[currency] || '$';
+    const docTitle = document.documentType === 'quote' ? 'PLUMBING QUOTE' : 'PLUMBING ESTIMATE';
+
 
     return (
         <div className={`p-8 bg-white font-sans text-gray-800 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: 'Arial, sans-serif', fontSize: `9pt`, minHeight: '1056px' }}>
@@ -56,7 +59,8 @@ export const PlumbingTemplate1: React.FC<TemplateProps> = ({ document, pageItems
                     <p className="text-2xl font-bold">{business.name}</p>
                 </div>
                 <div className="text-right">
-                    <h1 className="text-3xl font-bold">PLUMBING ESTIMATE</h1>
+                    <h1 className="text-3xl font-bold">{docTitle.split(' ')[1]}</h1>
+                    <p className="text-sm">{docTitle.split(' ')[0]}</p>
                     <p className="text-sm mt-2">DATE: {safeFormat(document.estimateDate, 'MM/dd/yyyy')}</p>
                     <p className="text-sm">ESTIMATE #: {document.estimateNumber}</p>
                 </div>
@@ -141,9 +145,10 @@ export const PlumbingTemplate1: React.FC<TemplateProps> = ({ document, pageItems
 
 // Template 2: Modern Blue
 export const PlumbingTemplate2: React.FC<TemplateProps> = ({ document, pageItems, pageIndex, totalPages, style }) => {
-    const { business, client, summary, currency } = document;
+    const { business, client, summary, currency, category } = document;
     const currencySymbol = currencySymbols[currency] || '$';
     const accentColor = style.color || '#2563EB';
+    const docTitle = document.documentType === 'quote' ? 'QUOTE' : 'ESTIMATE';
 
     return (
         <div className={`p-10 bg-white font-sans text-gray-800 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ minHeight: '1056px' }}>
@@ -153,7 +158,8 @@ export const PlumbingTemplate2: React.FC<TemplateProps> = ({ document, pageItems
                     <p className="text-xs whitespace-pre-line text-gray-500">{business.address}</p>
                 </div>
                 <div className="text-right">
-                    <h2 className="text-3xl font-bold text-gray-400">PLUMBING ESTIMATE</h2>
+                    <h2 className="text-3xl font-bold text-gray-400">{docTitle}</h2>
+                    {category !== 'Generic' && <p className="text-sm text-gray-400">{category}</p>}
                     <p className="text-sm"># {document.estimateNumber}</p>
                 </div>
             </header>
@@ -206,14 +212,15 @@ export const PlumbingTemplate2: React.FC<TemplateProps> = ({ document, pageItems
 
 // Template 3: Clean & Minimal
 export const PlumbingTemplate3: React.FC<TemplateProps> = ({ document, pageItems, pageIndex, totalPages, style }) => {
-    const { business, client, summary, currency } = document;
+    const { business, client, summary, currency, category } = document;
     const currencySymbol = currencySymbols[currency] || '$';
+    const docTitle = document.documentType === 'quote' ? 'Plumbing Quote' : 'Plumbing Estimate';
 
     return (
         <div className={`p-12 bg-white font-['Helvetica'] text-gray-700 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ minHeight: '1056px' }}>
             <header className="mb-12 text-center">
-                <h1 className="text-4xl font-light tracking-widest">PLUMBING ESTIMATE</h1>
-                <p className="text-sm text-gray-500 mt-2">{business.name}</p>
+                <h1 className="text-4xl font-light tracking-widest">{docTitle.split(' ')[1].toUpperCase()}</h1>
+                <p className="text-sm text-gray-500 mt-2">{docTitle.split(' ')[0]} Services by {business.name}</p>
             </header>
 
             <section className="flex justify-between mb-8 text-xs">
@@ -272,13 +279,15 @@ export const PlumbingTemplate3: React.FC<TemplateProps> = ({ document, pageItems
 
 // Template 4: Side Panel
 export const PlumbingTemplate4: React.FC<TemplateProps> = ({ document, pageItems, pageIndex, totalPages, style }) => {
-    const { business, client, summary, currency } = document;
+    const { business, client, summary, currency, category } = document;
     const currencySymbol = currencySymbols[currency] || '$';
+    const docTitle = document.documentType === 'quote' ? 'QUOTE' : 'ESTIMATE';
 
     return (
         <div className={`bg-white font-sans text-gray-800 flex ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ minHeight: '1056px' }}>
             <div className="w-1/3 p-8 text-white bg-gray-800 flex flex-col">
-                <h1 className="text-2xl font-bold mb-10">PLUMBING ESTIMATE</h1>
+                <h1 className="text-2xl font-bold mb-2">{docTitle}</h1>
+                {category !== 'Generic' && <p className="text-xs mb-8">{category}</p>}
                  <div className="text-xs space-y-4 flex-grow">
                     <div>
                         <p className="font-bold opacity-70 mb-1">ESTIMATE FOR</p>
@@ -345,15 +354,17 @@ export const PlumbingTemplate4: React.FC<TemplateProps> = ({ document, pageItems
 
 // Template 5: Bold Grid
 export const PlumbingTemplate5: React.FC<TemplateProps> = ({ document, pageItems, pageIndex, totalPages, style }) => {
-    const { business, client, summary, currency } = document;
+    const { business, client, summary, currency, category } = document;
     const currencySymbol = currencySymbols[currency] || '$';
+    const docTitle = document.documentType === 'quote' ? 'Estimate' : 'Estimate';
 
     return (
         <div className={`p-10 bg-gray-50 font-['Roboto'] text-gray-900 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ minHeight: '1056px' }}>
             <header className="grid grid-cols-2 gap-4 mb-10">
                 <div className="space-y-1">
                     <h1 className="text-4xl font-extrabold">{business.name}</h1>
-                    <p className="text-sm text-gray-500">Plumbing & Heating Services</p>
+                    <p className="text-sm text-gray-500">{docTitle}</p>
+                     {category !== 'Generic' && <p className="text-xs text-gray-500">{category}</p>}
                 </div>
                  <div className="text-right">
                      <p className="text-lg font-bold">ESTIMATE</p>

@@ -57,8 +57,9 @@ const ConstructionDetails: React.FC<{ document: Estimate; textColor: string; }> 
 
 // Template 1: Classic Professional
 export const ConstructionTemplate1: React.FC<TemplateProps> = ({ document, pageItems, pageIndex, totalPages, style }) => {
-    const { business, client, summary, currency, textColor } = document;
+    const { business, client, summary, currency, textColor, category } = document;
     const currencySymbol = currencySymbols[currency] || '$';
+    const docTitle = document.documentType === 'quote' ? 'QUOTE' : 'ESTIMATE';
     
     return (
         <div className={`p-10 font-sans text-gray-800 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: style.fontFamily, fontSize: `${style.fontSize}pt`, minHeight: '1056px', backgroundColor: document.backgroundColor, color: textColor }}>
@@ -68,7 +69,8 @@ export const ConstructionTemplate1: React.FC<TemplateProps> = ({ document, pageI
                     <p className="text-xs whitespace-pre-line">{business.address}</p>
                 </div>
                 <div className="text-right">
-                    <h2 className="text-3xl font-bold">ESTIMATE</h2>
+                    <h2 className="text-3xl font-bold">{docTitle}</h2>
+                    {category !== 'Generic' && <p className="text-sm">{category}</p>}
                     <p className="text-sm">#{document.estimateNumber}</p>
                 </div>
             </header>
@@ -143,8 +145,9 @@ export const ConstructionTemplate1: React.FC<TemplateProps> = ({ document, pageI
 
 // Template 2: Modern Dark Header
 export const ConstructionTemplate2: React.FC<TemplateProps> = ({ document, pageItems, pageIndex, totalPages, style }) => {
-    const { business, client, summary, currency, textColor } = document;
+    const { business, client, summary, currency, textColor, category } = document;
     const currencySymbol = currencySymbols[currency] || '$';
+    const docTitle = document.documentType === 'quote' ? 'QUOTE' : 'ESTIMATE';
 
     return (
         <div className={`p-0 font-sans text-gray-800 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: style.fontFamily, fontSize: `${style.fontSize}pt`, minHeight: '1056px', backgroundColor: document.backgroundColor }}>
@@ -159,7 +162,8 @@ export const ConstructionTemplate2: React.FC<TemplateProps> = ({ document, pageI
                         <p className="text-xs whitespace-pre-line mt-2 text-gray-300">{business.address}</p>
                     </div>
                     <div className="text-right">
-                        <h2 className="text-4xl font-bold">ESTIMATE</h2>
+                        <h2 className="text-4xl font-bold">{docTitle}</h2>
+                        {category !== 'Generic' && <p className="text-sm">{category}</p>}
                         <p className="text-sm mt-1"># {document.estimateNumber}</p>
                     </div>
                 </div>
@@ -238,14 +242,16 @@ export const ConstructionTemplate2: React.FC<TemplateProps> = ({ document, pageI
 
 // Template 3: Minimalist & Clean
 export const ConstructionTemplate3: React.FC<TemplateProps> = ({ document, pageItems, pageIndex, totalPages, style }) => {
-    const { business, client, summary, currency, textColor } = document;
+    const { business, client, summary, currency, textColor, category } = document;
     const currencySymbol = currencySymbols[currency] || '$';
+    const docTitle = document.documentType === 'quote' ? 'Quote' : 'Estimate';
 
     return (
         <div className={`p-10 font-sans text-gray-700 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: style.fontFamily, fontSize: `${style.fontSize}pt`, minHeight: '1056px', backgroundColor: document.backgroundColor, color: textColor }}>
             <header className="mb-12">
-                <h1 className="text-4xl font-light tracking-wider mb-2">Estimate</h1>
-                <div className="flex justify-between text-sm">
+                <h1 className="text-4xl font-light tracking-wider mb-1">{docTitle}</h1>
+                {category !== 'Generic' && <p className="text-sm">{category}</p>}
+                <div className="flex justify-between text-sm mt-4">
                     <div>
                         <p className="font-bold">{business.name}</p>
                         <p className="whitespace-pre-line">{business.address}</p>
@@ -313,13 +319,16 @@ export const ConstructionTemplate3: React.FC<TemplateProps> = ({ document, pageI
 
 // Template 4: Side Bar Color Accent
 export const ConstructionTemplate4: React.FC<TemplateProps> = ({ document, pageItems, pageIndex, totalPages, style }) => {
-    const { business, client, summary, currency, textColor } = document;
+    const { business, client, summary, currency, textColor, category } = document;
     const currencySymbol = currencySymbols[currency] || '$';
+    const docTitle = document.documentType === 'quote' ? 'QUOTE' : 'ESTIMATE';
 
     return (
         <div className={`font-sans text-gray-800 flex ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: style.fontFamily, fontSize: `${style.fontSize}pt`, minHeight: '1056px', backgroundColor: document.backgroundColor }}>
             <div className="w-1/4 p-8 text-white" style={{ backgroundColor: style.color }}>
-                <h1 className="text-3xl font-bold mb-10">ESTIMATE</h1>
+                <h1 className="text-3xl font-bold mb-2">{docTitle}</h1>
+                {category !== 'Generic' && <p className="text-sm mb-8">{category}</p>}
+
                 <div className="text-sm space-y-4">
                     <div>
                         <p className="font-bold opacity-80 mb-1">FROM</p>
@@ -387,8 +396,9 @@ export const ConstructionTemplate4: React.FC<TemplateProps> = ({ document, pageI
 
 // Template 5: Bold & Grid
 export const ConstructionTemplate5: React.FC<TemplateProps> = ({ document, pageItems, pageIndex, totalPages, style }) => {
-    const { business, client, summary, currency, textColor } = document;
+    const { business, client, summary, currency, textColor, category } = document;
     const currencySymbol = currencySymbols[currency] || '$';
+    const docTitle = document.documentType === 'quote' ? 'QUOTE' : 'ESTIMATE';
 
     return (
         <div className={`p-10 font-sans text-gray-900 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: style.fontFamily, fontSize: `${style.fontSize}pt`, minHeight: '1056px', backgroundColor: document.backgroundColor, color: textColor }}>
@@ -400,7 +410,10 @@ export const ConstructionTemplate5: React.FC<TemplateProps> = ({ document, pageI
                         <h1 className="text-2xl font-bold">{business.name}</h1>
                     )}
                 </div>
-                 <h2 className="text-4xl font-extrabold text-gray-400">ESTIMATE</h2>
+                 <div className="text-right">
+                    <h2 className="text-4xl font-extrabold text-gray-400">{docTitle}</h2>
+                    {category !== 'Generic' && <p className="text-sm text-gray-400">{category}</p>}
+                </div>
             </header>
 
             <section className="grid grid-cols-3 gap-8 mb-10 text-xs">
