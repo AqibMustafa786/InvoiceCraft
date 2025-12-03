@@ -1,4 +1,3 @@
-
 'use client';
 
 import React from 'react';
@@ -33,9 +32,28 @@ const SignatureDisplay = ({ signature, label }: { signature: any, label: string 
     )
 }
 
+const AutoRepairDetails: React.FC<{ document: Estimate }> = ({ document }) => {
+    if (!document.autoRepair) return null;
+    const { autoRepair } = document;
+    return (
+        <section className="my-4 text-xs">
+            <p className="font-bold text-gray-500 mb-2 border-b">Vehicle Information</p>
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-x-4 gap-y-1">
+                 <p><span className="font-semibold text-gray-600">Vehicle:</span> {autoRepair.vehicleMake} {autoRepair.vehicleModel} ({autoRepair.vehicleYear})</p>
+                {autoRepair.mileage && <p><span className="font-semibold text-gray-600">Mileage:</span> {autoRepair.mileage.toLocaleString()}</p>}
+                <p className="col-span-full"><span className="font-semibold text-gray-600">VIN:</span> {autoRepair.vin}</p>
+                <p className="col-span-full"><span className="font-semibold text-gray-600">Issue:</span> {autoRepair.issueDescription}</p>
+                <p className="col-span-full"><span className="font-semibold text-gray-600">Parts Required:</span> {autoRepair.partsRequired}</p>
+                <p><span className="font-semibold text-gray-600">Diagnostic:</span> {autoRepair.diagnosticType}</p>
+            </div>
+        </section>
+    );
+};
+
+
 // Template 1: Direct Interpretation
 export const AutoRepairTemplate1: React.FC<TemplateProps> = ({ document, pageItems, pageIndex, totalPages, style }) => {
-    const { business, client, summary, currency, autoRepair } = document;
+    const { business, client, summary, currency } = document;
     const currencySymbol = currencySymbols[currency] || '$';
     const accentColor = style.color || '#FBBF24'; // Default to a gold/yellow
 
@@ -62,17 +80,15 @@ export const AutoRepairTemplate1: React.FC<TemplateProps> = ({ document, pageIte
                         <p><span className="font-bold w-20 inline-block">Phone:</span> {client.phone}</p>
                         <p><span className="font-bold w-20 inline-block">Email:</span> {client.email}</p>
                     </div>
-                    {autoRepair &&
                     <div>
-                        <p className="p-1 text-sm font-bold rounded" style={{ backgroundColor: `${accentColor}40`}}>Vehicle Information</p>
-                        <p className="mt-2"><span className="font-bold w-20 inline-block">Make:</span> {autoRepair.vehicleMake}</p>
-                        <p><span className="font-bold w-20 inline-block">Model:</span> {autoRepair.vehicleModel}</p>
-                        <p><span className="font-bold w-20 inline-block">Year:</span> {autoRepair.vehicleYear}</p>
-                        <p><span className="font-bold w-20 inline-block">VIN:</span> {autoRepair.vin}</p>
+                       <p className="p-1 text-sm font-bold rounded" style={{ backgroundColor: `${accentColor}40`}}>Estimate Details</p>
+                        <p className="mt-2"><span className="font-bold w-20 inline-block">Estimate #:</span> {document.estimateNumber}</p>
+                        <p><span className="font-bold w-20 inline-block">Date:</span> {safeFormat(document.estimateDate, 'MM/dd/yyyy')}</p>
                     </div>
-                    }
                 </section>
-            
+                
+                 <AutoRepairDetails document={document} />
+
                 <main className="flex-grow">
                      <p className="p-1 mb-2 text-sm font-bold rounded" style={{ backgroundColor: `${accentColor}40`}}>Repair Details</p>
                      <table className="w-full text-left text-xs">
@@ -136,7 +152,7 @@ export const AutoRepairTemplate1: React.FC<TemplateProps> = ({ document, pageIte
 
 // Template 2: Modern Dark
 export const AutoRepairTemplate2: React.FC<TemplateProps> = ({ document, pageItems, pageIndex, totalPages, style }) => {
-    const { business, client, summary, currency, autoRepair } = document;
+    const { business, client, summary, currency } = document;
     const currencySymbol = currencySymbols[currency] || '$';
 
     return (
@@ -157,14 +173,14 @@ export const AutoRepairTemplate2: React.FC<TemplateProps> = ({ document, pageIte
                         <p className="font-medium">{client.name}</p>
                         <p className="text-gray-300">{client.address}</p>
                     </div>
-                    {autoRepair && 
                     <div className="text-right">
-                        <p className="font-bold text-gray-400 mb-1">VEHICLE</p>
-                        <p className="font-medium">{autoRepair.vehicleMake} {autoRepair.vehicleModel} ({autoRepair.vehicleYear})</p>
-                        <p className="text-gray-300">VIN: {autoRepair.vin}</p>
-                    </div>}
+                        <p><span className="font-bold text-gray-400">ESTIMATE #: </span>{document.estimateNumber}</p>
+                        <p><span className="font-bold text-gray-400">DATE: </span>{safeFormat(document.estimateDate, 'yyyy-MM-dd')}</p>
+                    </div>
                 </section>
-            
+                
+                <AutoRepairDetails document={document} />
+
                 <main className="flex-grow">
                      <table className="w-full text-left text-sm">
                         <thead className="text-gray-300">
@@ -227,6 +243,8 @@ export const AutoRepairTemplate3: React.FC<TemplateProps> = ({ document, pageIte
                     <p><span className="font-bold">Date:</span> {safeFormat(document.estimateDate, 'MMM dd, yyyy')}</p>
                 </div>
             </section>
+
+             <AutoRepairDetails document={document} />
             
             <main className="flex-grow">
                 <table className="w-full text-left text-xs">
@@ -288,6 +306,8 @@ export const AutoRepairTemplate4: React.FC<TemplateProps> = ({ document, pageIte
                  <div><p><span className="font-bold text-gray-500">TO: </span>{client.name}</p><p>{client.address}</p></div>
                  <div className="text-right"><p><span className="font-bold text-gray-500">ESTIMATE #: </span>{document.estimateNumber}</p><p><span className="font-bold text-gray-500">DATE: </span>{safeFormat(document.estimateDate, 'yyyy-MM-dd')}</p></div>
             </section>
+
+             <AutoRepairDetails document={document} />
             
             <main className="flex-grow">
                  <table className="w-full text-left text-sm">
@@ -348,6 +368,8 @@ export const AutoRepairTemplate5: React.FC<TemplateProps> = ({ document, pageIte
                 <div><p className="font-bold text-gray-500">Date Issued:</p><p>{safeFormat(document.estimateDate, 'MMM d, yyyy')}</p></div>
             </section>
             
+             <AutoRepairDetails document={document} />
+
             <main className="flex-grow bg-white p-4 rounded-lg shadow-sm">
                 <table className="w-full text-left text-xs">
                     <thead>

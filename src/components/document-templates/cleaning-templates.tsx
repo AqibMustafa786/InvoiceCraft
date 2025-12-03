@@ -1,4 +1,3 @@
-
 'use client';
 
 import React from 'react';
@@ -33,6 +32,27 @@ const SignatureDisplay = ({ signature, label }: { signature: any, label: string 
         </div>
     )
 }
+
+const CleaningDetails: React.FC<{ document: Estimate }> = ({ document }) => {
+    if (!document.cleaning) return null;
+    const { cleaning } = document;
+    return (
+        <section className="my-4 text-xs">
+            <p className="font-bold text-gray-500 mb-2 border-b">Cleaning Specifics</p>
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-x-4 gap-y-1">
+                <p><span className="font-semibold text-gray-600">Type:</span> {cleaning.cleaningType}</p>
+                <p><span className="font-semibold text-gray-600">Frequency:</span> {cleaning.frequency}</p>
+                {cleaning.homeSize && <p><span className="font-semibold text-gray-600">Home Size:</span> {cleaning.homeSize} sq ft</p>}
+                {cleaning.bedrooms && <p><span className="font-semibold text-gray-600">Bedrooms:</span> {cleaning.bedrooms}</p>}
+                {cleaning.bathrooms && <p><span className="font-semibold text-gray-600">Bathrooms:</span> {cleaning.bathrooms}</p>}
+                <p><span className="font-semibold text-gray-600">Kitchen Size:</span> {cleaning.kitchenSize}</p>
+                <p><span className="font-semibold text-gray-600">Has Pets:</span> {cleaning.hasPets ? 'Yes' : 'No'}</p>
+                {cleaning.addOns.length > 0 && <p className="col-span-full"><span className="font-semibold text-gray-600">Add-ons:</span> {cleaning.addOns.join(', ')}</p>}
+            </div>
+        </section>
+    );
+};
+
 
 // Template 1: Direct interpretation of user image
 export const CleaningTemplate1: React.FC<TemplateProps> = ({ document, pageItems, pageIndex, totalPages, style }) => {
@@ -74,6 +94,8 @@ export const CleaningTemplate1: React.FC<TemplateProps> = ({ document, pageItems
                     </div>
                 </section>
                 
+                 <CleaningDetails document={document} />
+
                 <main className="flex-grow">
                      <table className="w-full text-left text-xs">
                         <thead style={{ backgroundColor: style.color }} className="text-white">
@@ -156,6 +178,8 @@ export const CleaningTemplate2: React.FC<TemplateProps> = ({ document, pageItems
                 </div>
             </section>
             
+            <CleaningDetails document={document} />
+
             <main className="flex-grow">
                  <table className="w-full text-left text-xs">
                     <thead>
@@ -219,6 +243,8 @@ export const CleaningTemplate3: React.FC<TemplateProps> = ({ document, pageItems
                 </div>
             </section>
             
+            <CleaningDetails document={document} />
+
             <main className="flex-grow">
                 <table className="w-full text-left text-xs">
                     <thead>
@@ -291,6 +317,7 @@ export const CleaningTemplate4: React.FC<TemplateProps> = ({ document, pageItems
                     <h2 className="text-2xl font-bold">{business.name}</h2>
                     <p className="text-xs text-gray-500">{business.address}</p>
                 </header>
+                 <CleaningDetails document={document} />
                 <main className="flex-grow">
                     <table className="w-full text-left text-sm">
                         <thead className="border-b-2 border-gray-300">
@@ -333,6 +360,8 @@ export const CleaningTemplate5: React.FC<TemplateProps> = ({ document, pageItems
                  <p>{client.address}</p>
             </section>
             
+            <CleaningDetails document={document} />
+
             <main className="flex-grow bg-white p-4 rounded-md shadow-sm">
                 <table className="w-full text-left text-xs">
                     <thead>

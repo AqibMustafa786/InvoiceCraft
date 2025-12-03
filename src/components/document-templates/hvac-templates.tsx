@@ -1,4 +1,3 @@
-
 'use client';
 
 import React from 'react';
@@ -33,6 +32,28 @@ const SignatureDisplay = ({ signature, label }: { signature: any, label: string 
         </div>
     );
 }
+
+const HvacDetails: React.FC<{ document: Estimate }> = ({ document }) => {
+    if (!document.hvac) return null;
+    const { hvac } = document;
+    return (
+        <section className="my-4 text-xs">
+            <p className="font-bold text-gray-500 mb-2 border-b">HVAC Specifications</p>
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-x-4 gap-y-1">
+                <p><span className="font-semibold text-gray-600">Service:</span> {hvac.serviceType}</p>
+                <p><span className="font-semibold text-gray-600">System:</span> {hvac.systemType}</p>
+                {hvac.unitSize && <p><span className="font-semibold text-gray-600">Unit Size:</span> {hvac.unitSize}</p>}
+                {hvac.seerRating && <p><span className="font-semibold text-gray-600">SEER:</span> {hvac.seerRating}</p>}
+                <p><span className="font-semibold text-gray-600">Furnace:</span> {hvac.furnaceType}</p>
+                <p><span className="font-semibold text-gray-600">Thermostat:</span> {hvac.thermostatType}</p>
+                <p><span className="font-semibold text-gray-600">Ductwork:</span> {hvac.ductworkRequired ? 'Required' : 'Not Required'}</p>
+                {hvac.refrigerantType && <p><span className="font-semibold text-gray-600">Refrigerant:</span> {hvac.refrigerantType}</p>}
+                {hvac.existingSystemCondition && <p className="col-span-full"><span className="font-semibold text-gray-600">Existing System:</span> {hvac.existingSystemCondition}</p>}
+            </div>
+        </section>
+    );
+};
+
 
 // Base Template inspired by user image
 export const HVACTemplate1: React.FC<TemplateProps> = ({ document, pageItems, pageIndex, totalPages, style }) => {
@@ -70,6 +91,8 @@ export const HVACTemplate1: React.FC<TemplateProps> = ({ document, pageItems, pa
                 </div>
             </section>
             
+            <HvacDetails document={document} />
+
             <main className="flex-grow">
                  <table className="w-full text-left text-xs">
                     <thead>
@@ -151,6 +174,8 @@ export const HVACTemplate2: React.FC<TemplateProps> = ({ document, pageItems, pa
                 </div>
             </section>
             
+             <HvacDetails document={document} />
+
             <main className="flex-grow">
                  <table className="w-full text-left text-xs">
                     <thead>
@@ -214,6 +239,8 @@ export const HVACTemplate3: React.FC<TemplateProps> = ({ document, pageItems, pa
                 <div><p className="font-bold text-gray-500">Details:</p><p># {document.estimateNumber}</p><p>Date: {safeFormat(document.estimateDate, 'MM-dd-yyyy')}</p></div>
             </section>
             
+             <HvacDetails document={document} />
+
             <main className="flex-grow">
                  <table className="w-full text-left text-xs">
                     <thead>
@@ -274,6 +301,8 @@ export const HVACTemplate4: React.FC<TemplateProps> = ({ document, pageItems, pa
                     <div className="space-y-0.5"><p className="font-bold">CLIENT:</p><p>{client.name}</p><p>{client.address}</p></div>
                     <div className="text-right space-y-0.5"><p className="font-bold">DATE:</p><p>{safeFormat(document.estimateDate, 'MMMM dd, yyyy')}</p></div>
                 </section>
+
+                <HvacDetails document={document} />
                 
                 <main className="flex-grow">
                      <table className="w-full text-left text-xs">
@@ -337,6 +366,7 @@ export const HVACTemplate5: React.FC<TemplateProps> = ({ document, pageItems, pa
                 </div>
             </div>
             <div className="w-3/4 pl-8 flex flex-col">
+                <HvacDetails document={document} />
                 <main className="flex-grow">
                     <table className="w-full text-left text-xs">
                         <thead>

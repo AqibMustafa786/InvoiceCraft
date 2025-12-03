@@ -1,4 +1,3 @@
-
 'use client';
 
 import React from 'react';
@@ -33,9 +32,39 @@ const SignatureDisplay = ({ signature, label }: { signature: any, label: string 
     )
 }
 
+const ITFreelanceDetails: React.FC<{ document: Estimate }> = ({ document }) => {
+    if (!document.itFreelance) return null;
+    const { itFreelance } = document;
+    return (
+        <section className="my-4 text-xs">
+            <p className="font-bold text-gray-500 mb-2 border-b">Project Specifications</p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-1">
+                <p><span className="font-semibold text-gray-600">Project Type:</span> {itFreelance.projectType}</p>
+                <p><span className="font-semibold text-gray-600">Design Style:</span> {itFreelance.designStyle}</p>
+                {itFreelance.pagesScreensCount && <p><span className="font-semibold text-gray-600">Pages/Screens:</span> {itFreelance.pagesScreensCount}</p>}
+                {itFreelance.revisionsIncluded && <p><span className="font-semibold text-gray-600">Revisions:</span> {itFreelance.revisionsIncluded}</p>}
+                <p className="col-span-full"><span className="font-semibold text-gray-600">Timeline:</span> {itFreelance.deliveryTimeline}</p>
+                <div className="col-span-full mt-2">
+                    <p className="font-semibold text-gray-600">Scope:</p>
+                    <p className="whitespace-pre-line pl-2">{itFreelance.scopeOfWork}</p>
+                </div>
+                 <div className="col-span-full mt-2">
+                    <p className="font-semibold text-gray-600">Features:</p>
+                    <p className="whitespace-pre-line pl-2">{itFreelance.featuresNeeded}</p>
+                </div>
+                 <div className="col-span-full mt-2">
+                    <p className="font-semibold text-gray-600">Integrations:</p>
+                    <p className="whitespace-pre-line pl-2">{itFreelance.integrations}</p>
+                </div>
+            </div>
+        </section>
+    );
+};
+
+
 // Template 1: Tech Corporate (Based on user image)
 export const ITTemplate1: React.FC<TemplateProps> = ({ document, pageItems, pageIndex, totalPages, style }) => {
-    const { business, client, summary, currency, itFreelance } = document;
+    const { business, client, summary, currency } = document;
     const currencySymbol = currencySymbols[currency] || '$';
 
     return (
@@ -69,6 +98,8 @@ export const ITTemplate1: React.FC<TemplateProps> = ({ document, pageItems, page
                 </div>
             </section>
             
+            <ITFreelanceDetails document={document} />
+
             <main className="flex-grow">
                  <p className="font-bold text-gray-400 tracking-widest mb-2 text-xs">COST ESTIMATE</p>
                  <table className="w-full text-left text-xs">
@@ -142,6 +173,8 @@ export const ITTemplate2: React.FC<TemplateProps> = ({ document, pageItems, page
                 <div className="text-right"><p className="font-bold text-gray-500 mb-1">DATE:</p><p>{safeFormat(document.estimateDate, 'MM-dd-yyyy')}</p></div>
             </section>
             
+            <ITFreelanceDetails document={document} />
+
             <main className="flex-grow">
                 <table className="w-full text-left text-sm">
                     <thead>
@@ -199,6 +232,8 @@ export const ITTemplate3: React.FC<TemplateProps> = ({ document, pageItems, page
                 <div><p className="font-bold text-gray-500 mb-1">Project</p><p>{document.projectTitle}</p></div>
             </section>
             
+            <ITFreelanceDetails document={document} />
+
             <main className="flex-grow">
                  <table className="w-full text-left text-xs">
                     <thead>
@@ -277,6 +312,7 @@ export const ITTemplate4: React.FC<TemplateProps> = ({ document, pageItems, page
                     <h2 className="text-2xl font-bold">{business.name}</h2>
                     <p className="text-xs text-gray-500">{business.address}</p>
                 </header>
+                 <ITFreelanceDetails document={document} />
                 <main className="flex-grow">
                     <table className="w-full text-left text-sm">
                         <thead className="border-b-2 border-gray-300">
@@ -328,6 +364,8 @@ export const ITTemplate5: React.FC<TemplateProps> = ({ document, pageItems, page
                 </div>
             </section>
             
+             <ITFreelanceDetails document={document} />
+
             <main className="flex-grow bg-white p-4 rounded-lg shadow-sm">
                 <table className="w-full text-left text-xs">
                     <thead>

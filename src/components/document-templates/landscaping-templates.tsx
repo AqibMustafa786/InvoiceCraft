@@ -1,4 +1,3 @@
-
 'use client';
 
 import React from 'react';
@@ -22,6 +21,25 @@ const safeFormat = (date: Date | string | number | undefined | null, formatStrin
     if (!isValid(d)) return "Invalid Date";
     return format(d, formatString);
 }
+
+const LandscapingDetails: React.FC<{ document: Estimate }> = ({ document }) => {
+    if (!document.landscaping) return null;
+    const { landscaping } = document;
+    return (
+        <section className="my-4 text-xs">
+            <p className="font-bold text-gray-500 mb-2 border-b">Landscaping Specifics</p>
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-x-4 gap-y-1">
+                <p className="col-span-full"><span className="font-semibold text-gray-600">Service:</span> {landscaping.serviceType}</p>
+                <p><span className="font-semibold text-gray-600">Property Size:</span> {landscaping.propertySize}</p>
+                <p><span className="font-semibold text-gray-600">Yard Condition:</span> {landscaping.yardCondition}</p>
+                {landscaping.grassHeight && <p><span className="font-semibold text-gray-600">Grass Height:</span> {landscaping.grassHeight}</p>}
+                {landscaping.treeCount && <p><span className="font-semibold text-gray-600">Tree Count:</span> {landscaping.treeCount}</p>}
+                {landscaping.fenceLengthNeeded && <p><span className="font-semibold text-gray-600">Fence Length:</span> {landscaping.fenceLengthNeeded}</p>}
+            </div>
+        </section>
+    );
+};
+
 
 // Template 1: Based on user-provided image
 export const LandscapingTemplate1: React.FC<TemplateProps> = ({ document, pageItems, pageIndex, totalPages, style }) => {
@@ -55,6 +73,8 @@ export const LandscapingTemplate1: React.FC<TemplateProps> = ({ document, pageIt
                     <p><span className="font-bold">Estimate Date:</span> {safeFormat(document.estimateDate, 'MMMM d, yyyy')}</p>
                 </div>
             </section>
+
+             <LandscapingDetails document={document} />
             
             <main className="flex-grow">
                  <table className="w-full text-left text-xs">
@@ -134,6 +154,8 @@ export const LandscapingTemplate2: React.FC<TemplateProps> = ({ document, pageIt
                 </div>
             </section>
             
+             <LandscapingDetails document={document} />
+
             <main className="flex-grow">
                  <table className="w-full text-left text-xs">
                     <thead>
@@ -203,6 +225,7 @@ export const LandscapingTemplate3: React.FC<TemplateProps> = ({ document, pageIt
                     <h2 className="text-2xl font-bold">{business.name}</h2>
                     <p className="text-xs text-gray-500">{business.address}</p>
                 </header>
+                 <LandscapingDetails document={document} />
                 <main className="flex-grow">
                     <table className="w-full text-left text-sm">
                         <thead className="border-b-2 border-gray-300">
@@ -260,6 +283,8 @@ export const LandscapingTemplate4: React.FC<TemplateProps> = ({ document, pageIt
                 <div className="text-right"><p><span className="font-bold">No:</span> {document.estimateNumber}</p><p><span className="font-bold">Date:</span> {safeFormat(document.estimateDate, 'MMM dd, yyyy')}</p></div>
             </section>
             
+             <LandscapingDetails document={document} />
+
             <main className="flex-grow">
                 <table className="w-full text-left text-xs">
                     <thead>
@@ -308,10 +333,12 @@ export const LandscapingTemplate5: React.FC<TemplateProps> = ({ document, pageIt
             </header>
 
             <section className="mb-8 p-4 bg-white shadow-sm rounded-md text-xs">
-                <p className="font-bold text-gray-500 mb-2">PROJECT FOR: {client.name}</p>
-                <p className="font-semibold">{document.projectTitle}</p>
+                 <p className="font-bold text-gray-500 mb-2">PROJECT FOR: {client.name}</p>
+                 <p className="font-semibold">{document.projectTitle}</p>
             </section>
             
+             <LandscapingDetails document={document} />
+
             <main className="flex-grow bg-white p-4 rounded-md shadow-sm">
                 <table className="w-full text-left text-xs">
                     <thead>

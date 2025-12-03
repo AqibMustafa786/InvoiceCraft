@@ -1,4 +1,3 @@
-
 'use client';
 
 import React from 'react';
@@ -32,6 +31,29 @@ const SignatureDisplay = ({ signature, label, style }: { signature: any, label: 
         </div>
     )
 }
+
+const RemodelingDetails: React.FC<{ document: Estimate }> = ({ document }) => {
+    if (!document.homeRemodeling) return null;
+    const { homeRemodeling } = document;
+    return (
+        <section className="my-4 text-xs">
+            <p className="font-bold text-gray-500 mb-2 border-b">Project Specifics</p>
+            <div className="grid grid-cols-2 gap-x-4 gap-y-1">
+                <p><span className="font-semibold text-gray-600">Project Type:</span> {homeRemodeling.projectType}</p>
+                <p><span className="font-semibold text-gray-600">Property Type:</span> {homeRemodeling.propertyType}</p>
+                {homeRemodeling.squareFootage && <p><span className="font-semibold text-gray-600">Sq Ft:</span> {homeRemodeling.squareFootage}</p>}
+                <p><span className="font-semibold text-gray-600">Material Grade:</span> {homeRemodeling.materialGrade}</p>
+                <p><span className="font-semibold text-gray-600">Demolition:</span> {homeRemodeling.demolitionRequired ? 'Yes' : 'No'}</p>
+                <p><span className="font-semibold text-gray-600">Permit:</span> {homeRemodeling.permitRequired ? 'Yes' : 'No'}</p>
+                {homeRemodeling.expectedStartDate && <p><span className="font-semibold text-gray-600">Start Date:</span> {safeFormat(homeRemodeling.expectedStartDate, 'MMM d, yyyy')}</p>}
+                {homeRemodeling.expectedCompletionDate && <p><span className="font-semibold text-gray-600">End Date:</span> {safeFormat(homeRemodeling.expectedCompletionDate, 'MMM d, yyyy')}</p>}
+                <p className="col-span-2"><span className="font-semibold text-gray-600">Rooms:</span> {homeRemodeling.roomsIncluded}</p>
+                {homeRemodeling.specialInstructions && <p className="col-span-2"><span className="font-semibold text-gray-600">Instructions:</span> {homeRemodeling.specialInstructions}</p>}
+            </div>
+        </section>
+    );
+};
+
 
 // Template 1: Precision (Based on user image)
 export const RemodelingTemplate1: React.FC<TemplateProps> = ({ document, pageItems, pageIndex, totalPages, style }) => {
@@ -76,6 +98,8 @@ export const RemodelingTemplate1: React.FC<TemplateProps> = ({ document, pageIte
                         <p className="p-2 px-4 text-white font-bold rounded" style={{ backgroundColor: '#0A2D4D' }}>{document.estimateNumber}</p>
                     </div>
                 </div>
+
+                <RemodelingDetails document={document} />
 
                 <main>
                     <table className="w-full text-left text-sm">
@@ -165,6 +189,8 @@ export const RemodelingTemplate2: React.FC<TemplateProps> = ({ document, pageIte
                 </div>
             </section>
             
+            <RemodelingDetails document={document} />
+
             <main className="flex-grow">
                  <table className="w-full text-left text-sm">
                     <thead>
@@ -225,6 +251,8 @@ export const RemodelingTemplate3: React.FC<TemplateProps> = ({ document, pageIte
                 <div><p className="font-bold">Estimate #:</p><p>{document.estimateNumber}</p><p className="font-bold mt-1">Date:</p><p>{safeFormat(document.estimateDate, 'MM/dd/yyyy')}</p></div>
             </section>
             
+            <RemodelingDetails document={document} />
+
             <main className="flex-grow">
                 <table className="w-full text-left text-xs">
                     <thead className="bg-gray-200">
@@ -291,6 +319,8 @@ export const RemodelingTemplate4: React.FC<TemplateProps> = ({ document, pageIte
                  <div className="text-right"><p><span className="font-bold text-gray-500">ESTIMATE #: </span>{document.estimateNumber}</p><p><span className="font-bold text-gray-500">DATE: </span>{safeFormat(document.estimateDate, 'yyyy-MM-dd')}</p></div>
             </section>
             
+            <RemodelingDetails document={document} />
+
             <main className="flex-grow">
                  <table className="w-full text-left text-sm">
                     <thead>
@@ -357,6 +387,8 @@ export const RemodelingTemplate5: React.FC<TemplateProps> = ({ document, pageIte
                 </div>
             </section>
             
+            <RemodelingDetails document={document} />
+
             <main className="flex-grow">
                 <table className="w-full text-left text-sm">
                     <thead>

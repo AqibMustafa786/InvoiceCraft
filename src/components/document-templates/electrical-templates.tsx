@@ -1,4 +1,3 @@
-
 'use client';
 
 import React from 'react';
@@ -22,6 +21,27 @@ const safeFormat = (date: Date | string | number | undefined | null, formatStrin
     if (!isValid(d)) return "Invalid Date";
     return format(d, formatString);
 }
+
+const ElectricalDetails: React.FC<{ document: Estimate }> = ({ document }) => {
+    if (!document.electrical) return null;
+    const { electrical } = document;
+    return (
+        <section className="my-4 text-xs">
+            <p className="font-bold text-gray-500 mb-2 border-b">Electrical Specifics</p>
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-x-4 gap-y-1">
+                <p><span className="font-semibold text-gray-600">Service:</span> {electrical.serviceType}</p>
+                <p><span className="font-semibold text-gray-600">Wiring:</span> {electrical.wiringType}</p>
+                <p><span className="font-semibold text-gray-600">Panel Upgrade:</span> {electrical.panelUpgradeNeeded ? 'Yes' : 'No'}</p>
+                <p><span className="font-semibold text-gray-600">Panel Size:</span> {electrical.panelSize}</p>
+                {electrical.outletsFixturesCount && <p><span className="font-semibold text-gray-600">Outlets/Fixtures:</span> {electrical.outletsFixturesCount}</p>}
+                <p><span className="font-semibold text-gray-600">EV Charger:</span> {electrical.evChargerNeeded ? 'Yes' : 'No'}</p>
+                <p><span className="font-semibold text-gray-600">Inspection:</span> {electrical.inspectionRequired ? 'Yes' : 'No'}</p>
+                <p className="col-span-full"><span className="font-semibold text-gray-600">Rooms:</span> {electrical.roomsInvolved}</p>
+            </div>
+        </section>
+    );
+};
+
 
 // Template 1: Direct Interpretation
 export const ElectricalTemplate1: React.FC<TemplateProps> = ({ document, pageItems, pageIndex, totalPages, style }) => {
@@ -58,6 +78,8 @@ export const ElectricalTemplate1: React.FC<TemplateProps> = ({ document, pageIte
                 </div>
             </section>
             
+            <ElectricalDetails document={document} />
+
             <main className="flex-grow">
                  <table className="w-full text-left text-sm">
                     <thead style={{ backgroundColor: accentColor, color: 'white' }}>
@@ -128,6 +150,8 @@ export const ElectricalTemplate2: React.FC<TemplateProps> = ({ document, pageIte
                 <div className="text-right"><p className="font-bold text-gray-500">Date:</p><p>{safeFormat(document.estimateDate, 'MM/dd/yyyy')}</p></div>
             </section>
             
+            <ElectricalDetails document={document} />
+
             <main className="flex-grow">
                  <table className="w-full text-left text-sm">
                     <thead>
@@ -191,6 +215,8 @@ export const ElectricalTemplate3: React.FC<TemplateProps> = ({ document, pageIte
                 </div>
             </section>
             
+            <ElectricalDetails document={document} />
+
             <main className="flex-grow">
                 <table className="w-full text-left text-xs">
                     <thead>
@@ -251,6 +277,9 @@ export const ElectricalTemplate4: React.FC<TemplateProps> = ({ document, pageIte
                     <div><p className="font-bold">CLIENT:</p><p>{client.name}, {client.address}</p></div>
                     <div className="text-right"><p className="font-bold">DATE:</p><p>{safeFormat(document.estimateDate, 'yyyy-MM-dd')}</p></div>
                 </section>
+
+                <ElectricalDetails document={document} />
+
                 <main className="flex-grow">
                     <table className="w-full text-left text-sm">
                         <thead className="bg-gray-50">
@@ -308,6 +337,8 @@ export const ElectricalTemplate5: React.FC<TemplateProps> = ({ document, pageIte
                 <div><p className="font-bold text-gray-500">Date Issued:</p><p>{safeFormat(document.estimateDate, 'MMM d, yyyy')}</p></div>
             </section>
             
+            <ElectricalDetails document={document} />
+
             <main className="flex-grow bg-white p-4 rounded-lg shadow-sm">
                 <table className="w-full text-left text-xs">
                     <thead>

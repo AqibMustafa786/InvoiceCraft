@@ -1,4 +1,3 @@
-
 'use client';
 
 import React from 'react';
@@ -22,6 +21,27 @@ const safeFormat = (date: Date | string | number | undefined | null, formatStrin
     if (!isValid(d)) return "Invalid Date";
     return format(d, formatString);
 }
+
+const PlumbingDetails: React.FC<{ document: Estimate }> = ({ document }) => {
+    if (!document.plumbing) return null;
+    const { plumbing } = document;
+    return (
+        <section className="my-4 text-xs">
+            <p className="font-bold text-gray-500 mb-2 border-b">Plumbing Specifics</p>
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-x-4 gap-y-1">
+                <p><span className="font-semibold text-gray-600">Service:</span> {plumbing.serviceType}</p>
+                <p><span className="font-semibold text-gray-600">Fixture:</span> {plumbing.fixtureType}</p>
+                <p><span className="font-semibold text-gray-600">Pipe Material:</span> {plumbing.pipeMaterial}</p>
+                <p><span className="font-semibold text-gray-600">Floor:</span> {plumbing.floorLevel}</p>
+                <p><span className="font-semibold text-gray-600">Emergency:</span> {plumbing.emergencyService ? 'Yes' : 'No'}</p>
+                <p><span className="font-semibold text-gray-600">Pressure Issue:</span> {plumbing.waterPressureIssue ? 'Yes' : 'No'}</p>
+                {plumbing.leakLocation && <p className="col-span-full"><span className="font-semibold text-gray-600">Leak Location:</span> {plumbing.leakLocation}</p>}
+                {plumbing.estimatedRepairTime && <p><span className="font-semibold text-gray-600">Est. Time:</span> {plumbing.estimatedRepairTime}</p>}
+            </div>
+        </section>
+    );
+};
+
 
 // Template 1: Direct Replica
 export const PlumbingTemplate1: React.FC<TemplateProps> = ({ document, pageItems, pageIndex, totalPages, style }) => {
@@ -63,9 +83,13 @@ export const PlumbingTemplate1: React.FC<TemplateProps> = ({ document, pageItems
                 </div>
             </section>
             
-            <section className="p-2 border border-black bg-black text-white text-xs font-bold mb-0">PROJECT DESCRIPTION</section>
-            <section className="p-2 border border-t-0 border-black text-xs mb-4">{document.projectTitle}</section>
+            <section className="p-2 border border-t-0 border-black text-xs mb-4">
+              <span className="font-bold">PROJECT DESCRIPTION: </span>
+              {document.projectTitle}
+            </section>
             
+            <PlumbingDetails document={document} />
+
             <main className="flex-grow">
                  <table className="w-full text-left text-xs">
                     <thead>
@@ -140,6 +164,8 @@ export const PlumbingTemplate2: React.FC<TemplateProps> = ({ document, pageItems
                 <div className="text-right"><p className="font-bold text-gray-500">DATE</p><p>{safeFormat(document.estimateDate, 'MMM d, yyyy')}</p></div>
             </section>
             
+            <PlumbingDetails document={document} />
+
             <main className="flex-grow mt-4">
                  <table className="w-full text-left text-sm">
                     <thead>
@@ -202,6 +228,8 @@ export const PlumbingTemplate3: React.FC<TemplateProps> = ({ document, pageItems
                 </div>
             </section>
             
+             <PlumbingDetails document={document} />
+
             <main className="flex-grow">
                 <table className="w-full text-left text-xs">
                     <thead>
@@ -276,6 +304,7 @@ export const PlumbingTemplate4: React.FC<TemplateProps> = ({ document, pageItems
                 )}
             </div>
             <div className="w-2/3 p-10 flex flex-col">
+                 <PlumbingDetails document={document} />
                 <main className="flex-grow">
                     <table className="w-full text-left text-sm">
                         <thead>
@@ -339,6 +368,8 @@ export const PlumbingTemplate5: React.FC<TemplateProps> = ({ document, pageItems
                  <p>{client.address}</p>
             </section>
             
+            <PlumbingDetails document={document} />
+
             <main className="flex-grow bg-white p-4 rounded-md shadow-sm">
                 <table className="w-full text-left text-xs">
                     <thead>

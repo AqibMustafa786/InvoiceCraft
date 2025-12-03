@@ -1,4 +1,3 @@
-
 'use client';
 
 import React from 'react';
@@ -32,6 +31,28 @@ const SignatureDisplay = ({ signature, label }: { signature: any, label: string 
         </div>
     )
 }
+
+const ConstructionDetails: React.FC<{ document: Estimate }> = ({ document }) => {
+    if (!document.construction) return null;
+    const { construction } = document;
+    return (
+         <section className="my-4 text-xs">
+            <p className="font-bold text-gray-500 mb-2 border-b">Construction Specifics</p>
+            <div className="grid grid-cols-2 gap-x-4 gap-y-1">
+                <p><span className="font-semibold text-gray-600">Project Type:</span> {construction.projectType}</p>
+                {construction.squareFootage && <p><span className="font-semibold text-gray-600">Sq Ft:</span> {construction.squareFootage}</p>}
+                <p><span className="font-semibold text-gray-600">Lot Size:</span> {construction.lotSize}</p>
+                <p><span className="font-semibold text-gray-600">Building Type:</span> {construction.buildingType}</p>
+                <p><span className="font-semibold text-gray-600">Permit Required:</span> {construction.permitRequired ? 'Yes' : 'No'}</p>
+                <p><span className="font-semibold text-gray-600">Drawings Provided:</span> {construction.architectDrawingsProvided ? 'Yes' : 'No'}</p>
+                <p><span className="font-semibold text-gray-600">Soil Condition:</span> {construction.soilCondition}</p>
+                <p><span className="font-semibold text-gray-600">Material Preference:</span> {construction.materialPreference}</p>
+                <p><span className="font-semibold text-gray-600">Inspection:</span> {construction.inspectionRequired ? 'Yes' : 'No'}</p>
+            </div>
+        </section>
+    );
+};
+
 
 // Template 1: Classic Professional
 export const ConstructionTemplate1: React.FC<TemplateProps> = ({ document, pageItems, pageIndex, totalPages, style }) => {
@@ -68,6 +89,8 @@ export const ConstructionTemplate1: React.FC<TemplateProps> = ({ document, pageI
                     <p><span className="font-bold">Valid Until:</span> {safeFormat(document.validUntilDate, 'MMM d, yyyy')}</p>
                 </div>
             </section>
+
+            <ConstructionDetails document={document} />
             
             <main className="flex-grow">
                  <table className="w-full text-left text-sm">
@@ -159,6 +182,8 @@ export const ConstructionTemplate2: React.FC<TemplateProps> = ({ document, pageI
                         <p><span className="font-bold">Expires:</span> {safeFormat(document.validUntilDate, 'MMM d, yyyy')}</p>
                     </div>
                 </section>
+
+                <ConstructionDetails document={document} />
                 
                 <main>
                     <table className="w-full text-left text-sm">
@@ -237,6 +262,8 @@ export const ConstructionTemplate3: React.FC<TemplateProps> = ({ document, pageI
                 <p>{client.companyName}</p>
                 <p className="whitespace-pre-line">{client.address}</p>
             </section>
+
+             <ConstructionDetails document={document} />
             
             <main className="flex-grow">
                  <table className="w-full text-left text-sm">
@@ -312,7 +339,8 @@ export const ConstructionTemplate4: React.FC<TemplateProps> = ({ document, pageI
             </div>
             <div className="w-3/4 p-10 flex flex-col">
                  <main className="flex-grow">
-                    <table className="w-full text-left text-sm">
+                    <ConstructionDetails document={document} />
+                    <table className="w-full text-left text-sm mt-4">
                         <thead>
                             <tr className="border-b-2 border-gray-300">
                                 <th className="py-2 font-bold w-[50%]">SERVICE / ITEM</th>
@@ -393,8 +421,10 @@ export const ConstructionTemplate5: React.FC<TemplateProps> = ({ document, pageI
                     <p>{business.website}</p>
                 </div>
             </section>
+
+             <ConstructionDetails document={document} />
             
-            <main className="flex-grow">
+            <main className="flex-grow mt-4">
                 <table className="w-full text-left text-sm">
                     <thead>
                         <tr style={{ backgroundColor: style.color, color: 'white' }}>
