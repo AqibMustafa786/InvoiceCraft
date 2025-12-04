@@ -129,7 +129,7 @@ export const ConstructionTemplate1: React.FC<TemplateProps> = ({ document, pageI
                     </div>
                     <div className="mt-8 text-xs">
                         <p className="font-bold mb-1">Terms &amp; Conditions</p>
-                        <p className="whitespace-pre-line">{document.termsAndConditions}</p>
+                        <p className="whitespace-pre-line" style={{ color: textColor || '#6B7280' }}>{document.termsAndConditions}</p>
                     </div>
                     <div className="flex justify-between mt-8">
                         <SignatureDisplay signature={document.business.ownerSignature} label="Authorized Signature" />
@@ -168,7 +168,7 @@ export const ConstructionTemplate2: React.FC<TemplateProps> = ({ document, pageI
             <div className="p-10 flex-grow flex flex-col" style={{color: textColor}}>
                  <section className="grid grid-cols-2 gap-8 mb-8 text-sm">
                     <div>
-                        <p className="font-bold text-gray-500 mb-1">CLIENT INFORMATION</p>
+                        <p className="font-bold text-gray-500 mb-1" style={{ color: textColor ? textColor : undefined }}>CLIENT INFORMATION</p>
                         <p className="font-bold">{client.name}</p>
                         <p>{client.companyName}</p>
                         <p className="whitespace-pre-line">{client.address}</p>
@@ -176,7 +176,7 @@ export const ConstructionTemplate2: React.FC<TemplateProps> = ({ document, pageI
                         <p>{client.email}</p>
                     </div>
                     <div className="text-right">
-                        <p className="font-bold text-gray-500 mb-1">PROJECT DETAILS</p>
+                        <p className="font-bold text-gray-500 mb-1" style={{ color: textColor ? textColor : undefined }}>PROJECT DETAILS</p>
                         <p>{document.projectTitle}</p>
                         <p className="whitespace-pre-line">{client.projectLocation}</p>
                         <p className="mt-2"><span className="font-bold">Date Issued:</span> {safeFormat(document.estimateDate, 'MMM d, yyyy')}</p>
@@ -213,8 +213,8 @@ export const ConstructionTemplate2: React.FC<TemplateProps> = ({ document, pageI
                     <footer className="mt-auto pt-8">
                         <div className="flex justify-between items-start">
                             <div className="w-1/2 text-xs">
-                                <p className="font-bold text-gray-500 mb-2">TERMS &amp; CONDITIONS</p>
-                                <p className="whitespace-pre-line">{document.termsAndConditions}</p>
+                                <p className="font-bold text-gray-500 mb-2" style={{ color: textColor ? textColor : undefined }}>TERMS & CONDITIONS</p>
+                                <p className="whitespace-pre-line" style={{ color: textColor || '#6B7280' }}>{document.termsAndConditions}</p>
                                 <div className="flex gap-16">
                                     <SignatureDisplay signature={document.business.ownerSignature} label="Authorized Signature" />
                                     <SignatureDisplay signature={document.clientSignature} label="Client Signature" />
@@ -298,7 +298,7 @@ export const ConstructionTemplate3: React.FC<TemplateProps> = ({ document, pageI
                     </div>
                     <div className="text-xs">
                         <p className="font-bold mb-1">Notes</p>
-                        <p className="whitespace-pre-line">{document.termsAndConditions}</p>
+                        <p className="whitespace-pre-line" style={{ color: textColor || '#6B7280' }}>{document.termsAndConditions}</p>
                     </div>
                      <div className="flex justify-end mt-8">
                         <SignatureDisplay signature={document.business.ownerSignature} label="Authorized Signature" />
@@ -376,8 +376,8 @@ export const ConstructionTemplate4: React.FC<TemplateProps> = ({ document, pageI
                             </div>
                         </div>
                         <div className="mt-8 text-xs">
-                           <p className="font-bold uppercase tracking-wider mb-2">Payment Schedule &amp; Terms</p>
-                           <p className="whitespace-pre-line">{document.termsAndConditions}</p>
+                           <p className="font-bold uppercase tracking-wider mb-2">Payment Schedule & Terms</p>
+                           <p className="whitespace-pre-line" style={{ color: textColor || '#6B7280' }}>{document.termsAndConditions}</p>
                         </div>
                         <div className="flex justify-end mt-8">
                             <SignatureDisplay signature={document.business.ownerSignature} label="Authorized Signature" />
@@ -400,7 +400,7 @@ export const ConstructionTemplate5: React.FC<TemplateProps> = ({ document, pageI
             <header className="flex justify-between items-start mb-8">
                 <div>
                      {business.logoUrl ? (
-                        <Image src={business.logoUrl} alt="Logo" width={100} height={40} />
+                        <Image src={business.logoUrl} alt="Logo" width={100} height={40} className="object-contain" />
                     ) : (
                         <h1 className="text-3xl font-bold">{business.name}</h1>
                     )}
@@ -413,18 +413,18 @@ export const ConstructionTemplate5: React.FC<TemplateProps> = ({ document, pageI
 
             <section className="grid grid-cols-3 gap-8 mb-10 text-xs">
                 <div className="p-4 bg-gray-50 rounded">
-                    <p className="font-bold text-gray-500 mb-2">CLIENT</p>
+                    <p className="font-bold text-gray-500 mb-2" style={{color: textColor}}>CLIENT</p>
                     <p className="font-bold text-base">{client.name}</p>
                     <p className="whitespace-pre-line">{client.address}</p>
                 </div>
                 <div className="p-4 bg-gray-50 rounded">
-                    <p className="font-bold text-gray-500 mb-2">DETAILS</p>
+                    <p className="font-bold text-gray-500 mb-2" style={{color: textColor}}>DETAILS</p>
                     <p><span className="font-semibold">Estimate No:</span> {document.estimateNumber}</p>
                     <p><span className="font-semibold">Date:</span> {safeFormat(document.estimateDate, 'MMM dd, yyyy')}</p>
                     <p><span className="font-semibold">Expires:</span> {safeFormat(document.validUntilDate, 'MMM dd, yyyy')}</p>
                 </div>
-                <div className="p-4 bg-gray-50 rounded">
-                    <p className="font-bold text-gray-500 mb-2">CONTACT</p>
+                <div className="p-4 bg-gray-50 rounded break-words">
+                    <p className="font-bold text-gray-500 mb-2" style={{color: textColor}}>CONTACT</p>
                     <p>{business.phone}</p>
                     <p>{business.email}</p>
                     <p>{business.website}</p>
@@ -461,7 +461,7 @@ export const ConstructionTemplate5: React.FC<TemplateProps> = ({ document, pageI
                      <div className="flex justify-between items-start">
                          <div className="w-1/2 text-xs">
                              <p className="font-bold mb-1">TERMS</p>
-                             <p className="whitespace-pre-line">{document.termsAndConditions}</p>
+                             <p className="whitespace-pre-line" style={{ color: textColor || '#6B7280' }}>{document.termsAndConditions}</p>
                          </div>
                          <div className="w-2/5">
                             <div className="flex justify-between p-2"><span>Subtotal</span><span className="font-medium">{currencySymbol}{summary.subtotal.toFixed(2)}</span></div>
