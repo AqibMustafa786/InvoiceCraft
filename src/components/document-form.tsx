@@ -95,7 +95,7 @@ const plumbingPipeMaterials = ["Copper", "PVC", "PEX", "Galvanized"];
 const hvacServiceTypes = ["Install", "Repair", "Replace", "Maintenance"];
 const hvacSystemTypes = ["AC", "Furnace", "Heat Pump", "Boiler", "Ductless Mini-Split"];
 
-const roofTypes = [
+const roofMaterials = [
     "Asphalt Shingle", "Architectural Shingle", "3-Tab Shingle", "Metal Roofing – Standing Seam", 
     "Metal – Corrugated Panels", "Metal Shingles", "Clay Tile", "Concrete Tile", "Slate", 
     "Synthetic Slate", "Wood Shingles / Shakes", "TPO", "EPDM", "PVC", "Modified Bitumen", 
@@ -841,8 +841,8 @@ export function DocumentForm({ document, setDocument, accentColor, setAccentColo
                 <CardContent className="space-y-6">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div className="space-y-2">
-                           <Label>Roof Type</Label>
-                           <CustomSelect value={document.roofing.roofType} onValueChange={(name, value) => handleCategorySelectChange('roofing', name, value)} options={roofTypes} placeholder="Select roof type" name="roofType" />
+                           <Label>Roof Material</Label>
+                           <CustomSelect value={document.roofing.roofMaterial} onValueChange={(name, value) => handleCategorySelectChange('roofing', name, value)} options={roofMaterials} placeholder="Select roof material" name="roofMaterial" />
                         </div>
                         <div className="space-y-2">
                            <Label>Shingle/Material Brand</Label>

@@ -91,7 +91,7 @@ const getInitialEstimate = (): Omit<Estimate, 'userId'> => ({
     expectedCompletionDate: null,
   },
   roofing: {
-    roofType: 'Asphalt Shingle',
+    roofMaterial: 'Asphalt Shingle',
     shingleBrand: 'GAF',
     roofSize: null,
     layersToRemove: '1 layer',

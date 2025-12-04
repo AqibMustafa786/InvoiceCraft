@@ -162,7 +162,7 @@ export interface HomeRemodelingInfo {
 }
 
 export interface RoofingInfo {
-  roofType: string;
+  roofMaterial: string;
   shingleBrand: string;
   roofSize: number | null; // in sq ft
   layersToRemove: string;

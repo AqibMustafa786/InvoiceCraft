@@ -39,7 +39,7 @@ const RoofingDetails: React.FC<{ document: Estimate }> = ({ document }) => {
     const { roofing } = document;
     return (
        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-4 gap-y-1 text-xs">
-            <p><span className="text-gray-500">Roof Type:</span> <span className="font-semibold">{roofing.roofType}</span></p>
+            <p><span className="text-gray-500">Roof Material:</span> <span className="font-semibold">{roofing.roofMaterial}</span></p>
             <p><span className="text-gray-500">Shingle Brand:</span> <span className="font-semibold">{roofing.shingleBrand}</span></p>
             {roofing.roofSize && <p><span className="text-gray-500">Roof Size:</span> <span className="font-semibold">{roofing.roofSize} sq. ft.</span></p>}
             <p><span className="text-gray-500">Roof Pitch:</span> <span className="font-semibold">{roofing.roofPitch}</span></p>
