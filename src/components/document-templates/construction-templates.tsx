@@ -65,13 +65,12 @@ export const ConstructionTemplate1: React.FC<TemplateProps> = ({ document, pageI
         <div className={`p-10 font-sans text-gray-800 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: style.fontFamily, fontSize: `${style.fontSize}pt`, minHeight: '1056px', backgroundColor: document.backgroundColor, color: textColor }}>
             <header className="flex justify-between items-start pb-4 border-b-2" style={{ borderColor: style.color }}>
                 <div>
-                    <h1 className="text-3xl font-bold" style={{ color: style.color }}>{business.name}</h1>
+                    <h1 className="text-3xl font-bold">{business.name}</h1>
                     <p className="text-xs whitespace-pre-line">{business.address}</p>
                 </div>
                 <div className="text-right">
                     <h2 className="text-3xl font-bold">{docTitle}</h2>
                     {category !== 'Generic' && <p className="text-sm">{category}</p>}
-                    <p className="text-sm">#{document.estimateNumber}</p>
                 </div>
             </header>
 
@@ -151,21 +150,18 @@ export const ConstructionTemplate2: React.FC<TemplateProps> = ({ document, pageI
 
     return (
         <div className={`p-0 font-sans text-gray-800 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: style.fontFamily, fontSize: `${style.fontSize}pt`, minHeight: '1056px', backgroundColor: document.backgroundColor }}>
-            <header className="p-10 text-white" style={{ backgroundColor: '#1F2937' }}>
-                <div className="flex justify-between items-center">
-                    <div>
-                         {business.logoUrl ? (
-                            <Image src={business.logoUrl} alt="Logo" width={120} height={50} />
-                        ) : (
-                            <h1 className="text-3xl font-bold">{business.name}</h1>
-                        )}
-                        <p className="text-xs whitespace-pre-line mt-2 text-gray-300">{business.address}</p>
-                    </div>
-                    <div className="text-right">
-                        <h2 className="text-4xl font-bold">{docTitle}</h2>
-                        {category !== 'Generic' && <p className="text-sm">{category}</p>}
-                        <p className="text-sm mt-1"># {document.estimateNumber}</p>
-                    </div>
+            <header className="p-10 text-white flex justify-between items-start" style={{ backgroundColor: '#1F2937' }}>
+                <div>
+                     {business.logoUrl ? (
+                        <Image src={business.logoUrl} alt="Logo" width={120} height={50} />
+                    ) : (
+                        <h1 className="text-3xl font-bold">{business.name}</h1>
+                    )}
+                    <p className="text-xs whitespace-pre-line mt-2 text-gray-300">{business.address}</p>
+                </div>
+                <div className="text-right">
+                    <h2 className="text-4xl font-bold">{docTitle}</h2>
+                    {category !== 'Generic' && <p className="text-sm">{category}</p>}
                 </div>
             </header>
 
@@ -248,22 +244,18 @@ export const ConstructionTemplate3: React.FC<TemplateProps> = ({ document, pageI
 
     return (
         <div className={`p-10 font-sans text-gray-700 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: style.fontFamily, fontSize: `${style.fontSize}pt`, minHeight: '1056px', backgroundColor: document.backgroundColor, color: textColor }}>
-            <header className="mb-12">
-                <div className="flex justify-between text-sm mt-4">
-                    <div>
-                        <h1 className="text-4xl font-light tracking-wider mb-1">{business.name}</h1>
-                        <p className="whitespace-pre-line">{business.address}</p>
-                    </div>
-                    <div className="text-right">
-                        <h2 className="text-4xl font-light tracking-wider mb-1">{docTitle}</h2>
-                        {category !== 'Generic' && <p className="text-sm">{category}</p>}
-                        <p><span className="font-bold">Estimate #:</span> {document.estimateNumber}</p>
-                        <p><span className="font-bold">Date:</span> {safeFormat(document.estimateDate, 'MM-dd-yyyy')}</p>
-                    </div>
+            <header className="flex justify-between items-start mb-12">
+                 <div>
+                    <h1 className="text-3xl font-light tracking-wider mb-1">{business.name}</h1>
+                    <p className="text-xs whitespace-pre-line">{business.address}</p>
+                </div>
+                <div className="text-right">
+                    <h2 className="text-3xl font-light tracking-wider mb-1">{docTitle}</h2>
+                    {category !== 'Generic' && <p className="text-sm">{category}</p>}
                 </div>
             </header>
 
-            <section className="mb-10 text-sm p-4 border" style={{ borderColor: style.color }}>
+            <section className="mb-10 text-sm">
                 <p className="font-bold mb-1">CLIENT:</p>
                 <p>{client.name}</p>
                 <p>{client.companyName}</p>
@@ -405,12 +397,12 @@ export const ConstructionTemplate5: React.FC<TemplateProps> = ({ document, pageI
 
     return (
         <div className={`p-10 font-sans text-gray-900 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: style.fontFamily, fontSize: `${style.fontSize}pt`, minHeight: '1056px', backgroundColor: document.backgroundColor, color: textColor }}>
-            <header className="flex justify-between items-center mb-8">
+            <header className="flex justify-between items-start mb-8">
                 <div>
                      {business.logoUrl ? (
                         <Image src={business.logoUrl} alt="Logo" width={100} height={40} />
                     ) : (
-                        <h1 className="text-2xl font-bold">{business.name}</h1>
+                        <h1 className="text-3xl font-bold">{business.name}</h1>
                     )}
                 </div>
                  <div className="text-right">
@@ -443,8 +435,8 @@ export const ConstructionTemplate5: React.FC<TemplateProps> = ({ document, pageI
             
             <main className="flex-grow mt-4">
                 <table className="w-full text-left text-sm">
-                    <thead>
-                        <tr style={{ backgroundColor: style.color, color: 'white' }}>
+                    <thead style={{ backgroundColor: style.color, color: 'white' }}>
+                        <tr>
                             <th className="p-3 font-bold w-1/2">ITEM DESCRIPTION</th>
                             <th className="p-3 font-bold text-center">QTY</th>
                             <th className="p-3 font-bold text-right">UNIT PRICE</th>

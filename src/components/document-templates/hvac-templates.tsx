@@ -64,7 +64,7 @@ export const HVACTemplate1: React.FC<TemplateProps> = ({ document, pageItems, pa
     
     return (
         <div className={`p-8 bg-white font-sans text-gray-800 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: 'Arial, sans-serif', fontSize: `9pt`, minHeight: '1056px', color: textColor }}>
-            <header className="flex justify-between items-center pb-4 border-b-2" style={{ borderColor: style.color }}>
+            <header className="flex justify-between items-start pb-4 border-b-2" style={{ borderColor: style.color }}>
                 <div className="flex items-center gap-4">
                      {business.logoUrl && <Image src={business.logoUrl} alt="Logo" width={50} height={50} className="object-contain" />}
                     <div>
@@ -162,8 +162,6 @@ export const HVACTemplate2: React.FC<TemplateProps> = ({ document, pageItems, pa
                 <div className="text-right">
                     <h2 className="text-2xl font-bold">{docTitle}</h2>
                      {category !== 'Generic' && <p className="text-xs">{category.replace(' (Air Conditioning / Heating)', '')}</p>}
-                    <p className="text-xs">#{document.estimateNumber}</p>
-                    <p className="text-xs mt-1">Date: {safeFormat(document.estimateDate, 'MMM d, yyyy')}</p>
                 </div>
             </header>
 
@@ -187,19 +185,19 @@ export const HVACTemplate2: React.FC<TemplateProps> = ({ document, pageItems, pa
                  <table className="w-full text-left text-xs">
                     <thead>
                         <tr className="border-b-2" style={{ borderColor: accentColor }}>
-                            <th className="p-2 font-bold w-1/2">DESCRIPTION</th>
-                            <th className="p-2 font-bold text-center">QTY</th>
-                            <th className="p-2 font-bold text-right">UNIT PRICE</th>
-                            <th className="p-2 font-bold text-right">TOTAL</th>
+                            <th className="py-2 font-bold w-1/2">DESCRIPTION</th>
+                            <th className="py-2 font-bold text-center">QTY</th>
+                            <th className="py-2 font-bold text-right">UNIT PRICE</th>
+                            <th className="py-2 font-bold text-right">TOTAL</th>
                         </tr>
                     </thead>
                     <tbody>
                         {pageItems.map(item => (
                             <tr key={item.id} className="border-b border-gray-100">
-                                <td className="p-2 align-top whitespace-pre-line">{item.name}</td>
-                                <td className="p-2 align-top text-center">{item.quantity}</td>
-                                <td className="p-2 align-top text-right">{currencySymbol}{item.unitPrice.toFixed(2)}</td>
-                                <td className="p-2 align-top text-right">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</td>
+                                <td className="py-2 align-top whitespace-pre-line">{item.name}</td>
+                                <td className="py-2 align-top text-center">{item.quantity}</td>
+                                <td className="py-2 align-top text-right">{currencySymbol}{item.unitPrice.toFixed(2)}</td>
+                                <td className="py-2 align-top text-right">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</td>
                             </tr>
                         ))}
                     </tbody>
@@ -210,12 +208,9 @@ export const HVACTemplate2: React.FC<TemplateProps> = ({ document, pageItems, pa
                 <footer className="mt-auto pt-8">
                      <div className="flex justify-end">
                         <div className="w-1/3 text-sm space-y-1">
-                            <div className="flex justify-between p-1"><span>Subtotal</span><span className="">{currencySymbol}{summary.subtotal.toFixed(2)}</span></div>
+                             <div className="flex justify-between p-1"><span>Subtotal</span><span className="">{currencySymbol}{summary.subtotal.toFixed(2)}</span></div>
                             <div className="flex justify-between p-1"><span>Tax</span><span className="">{currencySymbol}{summary.taxAmount.toFixed(2)}</span></div>
-                            <div className="flex justify-between p-2 mt-2 font-bold text-white rounded" style={{ backgroundColor: accentColor }}>
-                                <span className="text-base">Total</span>
-                                <span className="text-base">{currencySymbol}{summary.grandTotal.toFixed(2)}</span>
-                            </div>
+                            <div className="flex justify-between font-bold text-base mt-2 pt-2 border-t-2" style={{ borderColor: accentColor }}><span style={{ color: accentColor }}>Total:</span><span>{currencySymbol}{summary.grandTotal.toFixed(2)}</span></div>
                         </div>
                     </div>
                     <div className="mt-8 text-xs">
@@ -236,8 +231,11 @@ export const HVACTemplate3: React.FC<TemplateProps> = ({ document, pageItems, pa
 
     return (
         <div className={`p-10 bg-white font-sans text-gray-700 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: 'Roboto, sans-serif', fontSize: `9pt`, minHeight: '1056px', color: textColor }}>
-            <header className="flex justify-between items-center mb-10">
-                 <h1 className="text-4xl font-light tracking-wide">{business.name}</h1>
+            <header className="flex justify-between items-start mb-10">
+                <div>
+                     <h1 className="text-3xl font-light tracking-wide">{business.name}</h1>
+                     <p className="text-xs">{business.address}</p>
+                </div>
                 <div className="text-right">
                     <h2 className="text-2xl font-bold">{docTitle}</h2>
                     {category !== 'Generic' && <p className="text-sm" style={{ color: style.color }}>{category.replace(' (Air Conditioning / Heating)', '')}</p>}
@@ -301,14 +299,14 @@ export const HVACTemplate4: React.FC<TemplateProps> = ({ document, pageItems, pa
     return (
         <div className={`bg-white font-sans text-gray-800 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: 'Arial, sans-serif', fontSize: `9pt`, minHeight: '1056px', color: textColor }}>
             <div className="p-10">
-                <header className="flex justify-between items-center pb-5 mb-5 border-b-8" style={{ borderColor: style.color }}>
+                <header className="flex justify-between items-start mb-5 pb-5 border-b-8" style={{ borderColor: style.color }}>
                     <div>
                         <h1 className="text-3xl font-extrabold">{business.name}</h1>
+                        <p className="text-xs">{business.address}</p>
                     </div>
                     <div className="text-right">
                         <h2 className="text-3xl font-bold">ESTIMATE</h2>
                         {category !== 'Generic' && <p className="text-xs">{category.replace(' (Air Conditioning / Heating)', '')}</p>}
-                        <p className="text-xs"># {document.estimateNumber}</p>
                     </div>
                 </header>
                 

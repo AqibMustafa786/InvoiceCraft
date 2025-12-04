@@ -1,3 +1,4 @@
+
 'use client';
 
 import React from 'react';
@@ -152,8 +153,9 @@ export const ITTemplate1: React.FC<TemplateProps> = ({ document, pageItems, page
 
 // Template 2: Modern Dark Mode
 export const ITTemplate2: React.FC<TemplateProps> = ({ document, pageItems, pageIndex, totalPages, style }) => {
-    const { business, client, summary, currency } = document;
+    const { business, client, summary, currency, category } = document;
     const currencySymbol = currencySymbols[currency] || '$';
+    const docTitle = document.documentType === 'quote' ? 'QUOTE' : 'ESTIMATE';
 
     return (
         <div className={`p-10 bg-gray-900 text-gray-200 font-['Roboto_Mono',_monospace] flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ minHeight: '1056px' }}>
@@ -163,8 +165,8 @@ export const ITTemplate2: React.FC<TemplateProps> = ({ document, pageItems, page
                     <p className="text-xs text-gray-400">Software & IT Solutions</p>
                 </div>
                 <div className="text-right">
-                    <h2 className="text-3xl font-light text-gray-400">ESTIMATE</h2>
-                    <p className="text-sm mt-1">#{document.estimateNumber}</p>
+                    <h2 className="text-3xl font-light text-gray-400">{docTitle}</h2>
+                    {category !== 'Generic' && <p className="text-sm text-gray-400">{category}</p>}
                 </div>
             </header>
 
@@ -215,14 +217,21 @@ export const ITTemplate2: React.FC<TemplateProps> = ({ document, pageItems, page
 
 // Template 3: Minimalist Grid
 export const ITTemplate3: React.FC<TemplateProps> = ({ document, pageItems, pageIndex, totalPages, style }) => {
-    const { business, client, summary, currency } = document;
+    const { business, client, summary, currency, category } = document;
     const currencySymbol = currencySymbols[currency] || '$';
+    const docTitle = document.documentType === 'quote' ? 'QUOTE' : 'ESTIMATE';
 
     return (
         <div className={`p-12 bg-white font-['Inter',_sans-serif] text-gray-800 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ minHeight: '1056px' }}>
-            <header className="mb-12">
-                <h1 className="text-4xl font-extrabold tracking-tighter">Estimate</h1>
-                <p className="text-sm mt-1">{business.name}</p>
+            <header className="flex justify-between items-start mb-12">
+                <div>
+                    <h1 className="text-2xl font-bold tracking-tighter">{business.name}</h1>
+                    <p className="text-xs">{business.address}</p>
+                </div>
+                 <div className="text-right">
+                    <h2 className="text-4xl font-extrabold tracking-tighter">{docTitle}</h2>
+                    {category !== 'Generic' && <p className="text-sm">{category}</p>}
+                </div>
             </header>
 
             <section className="grid grid-cols-4 gap-4 mb-10 text-xs">
@@ -277,13 +286,14 @@ export const ITTemplate3: React.FC<TemplateProps> = ({ document, pageItems, page
 
 // Template 4: Creative Blue
 export const ITTemplate4: React.FC<TemplateProps> = ({ document, pageItems, pageIndex, totalPages, style }) => {
-    const { business, client, summary, currency } = document;
+    const { business, client, summary, currency, category } = document;
     const currencySymbol = currencySymbols[currency] || '$';
+    const docTitle = document.documentType === 'quote' ? 'QUOTE' : 'ESTIMATE';
 
     return (
         <div className={`bg-white font-sans text-gray-800 flex ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ minHeight: '1056px' }}>
             <div className="w-1/3 p-8 text-white flex flex-col" style={{ backgroundColor: style.color || '#1D4ED8' }}>
-                <h1 className="text-3xl font-bold mb-10">Estimate</h1>
+                <h1 className="text-3xl font-bold mb-10">{docTitle}</h1>
                 <div className="text-sm space-y-6 flex-grow">
                     <div>
                         <p className="font-bold opacity-80 mb-1">CLIENT</p>
@@ -342,14 +352,21 @@ export const ITTemplate4: React.FC<TemplateProps> = ({ document, pageItems, page
 
 // Template 5: Startup Vibe
 export const ITTemplate5: React.FC<TemplateProps> = ({ document, pageItems, pageIndex, totalPages, style }) => {
-    const { business, client, summary, currency } = document;
+    const { business, client, summary, currency, category } = document;
     const currencySymbol = currencySymbols[currency] || '$';
+    const docTitle = document.documentType === 'quote' ? 'QUOTE' : 'ESTIMATE';
 
     return (
         <div className={`p-10 bg-gray-50 font-['Inter',_sans-serif] text-gray-800 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ minHeight: '1056px' }}>
-            <header className="flex justify-between items-center mb-10">
-                <h1 className="text-2xl font-extrabold tracking-tighter">{business.name}</h1>
-                <p className="text-xs font-mono px-2 py-1 bg-gray-200 text-gray-600 rounded">ESTIMATE</p>
+            <header className="flex justify-between items-start mb-10">
+                <div>
+                    <h1 className="text-2xl font-extrabold tracking-tighter">{business.name}</h1>
+                    <p className="text-xs">{business.address}</p>
+                </div>
+                 <div className="text-right">
+                    <p className="text-3xl font-extrabold tracking-tighter text-gray-400">{docTitle}</p>
+                    {category !== 'Generic' && <p className="text-xs text-gray-400">{category}</p>}
+                </div>
             </header>
 
             <section className="grid grid-cols-2 gap-4 text-xs mb-8">
