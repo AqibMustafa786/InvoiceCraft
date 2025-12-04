@@ -9,7 +9,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { DatePicker } from '@/components/ui/datepicker';
-import { ImageUp, Plus, Trash2, Palette, X, Mail, Truck, Hash, Phone, Globe, Briefcase, Award, User, FileText, Building, Pencil, Type, Package, Hammer, Ruler, ListTree, CheckSquare, Sparkles, Calendar, TextQuote, Wind, Thermometer, Wrench, Zap, Trees, Droplets, Car, Code, DraftingCompass, PaintBucket } from 'lucide-react';
+import { ImageUp, Plus, Trash2, Palette, X, Mail, Truck, Hash, Phone, Globe, Briefcase, Award, User, FileText, Building, Pencil, Type, Package, Hammer, Ruler, ListTree, CheckSquare, Sparkles, Calendar, TextQuote, Wind, Thermometer, Wrench, Zap, Trees, Droplets, Car, Code, DraftingCompass, PaintBucket, Paintbrush } from 'lucide-react';
 import Image from 'next/image';
 import {
   Select,
@@ -782,7 +782,7 @@ export function DocumentForm({ document, setDocument, accentColor, setAccentColo
                         </div>
                         <div className="space-y-2">
                             <Label>Number of layers to remove</Label>
-                            <Select value={document.roofing.layersToRemove} onValueChange={(v) => handleCategorySelectChange('roofing', 'layersToRemove', v)}>
+                            <Select value={document.roofing.layersToRemove ?? ''} onValueChange={(v) => handleCategorySelectChange('roofing', 'layersToRemove', v)}>
                                 <SelectTrigger><SelectValue placeholder="Select layers" /></SelectTrigger>
                                 <SelectContent>
                                     <SelectItem value="0 layers">0 layers</SelectItem>
@@ -794,7 +794,7 @@ export function DocumentForm({ document, setDocument, accentColor, setAccentColo
                         </div>
                         <div className="space-y-2">
                             <Label>Roof Pitch</Label>
-                            <Select value={document.roofing.roofPitch} onValueChange={(v) => handleCategorySelectChange('roofing', 'roofPitch', v)}>
+                            <Select value={document.roofing.roofPitch ?? ''} onValueChange={(v) => handleCategorySelectChange('roofing', 'roofPitch', v)}>
                                 <SelectTrigger><SelectValue placeholder="Select pitch" /></SelectTrigger>
                                 <SelectContent>
                                     <SelectItem value="Low (2/12 – 4/12)">Low (2/12 – 4/12)</SelectItem>
@@ -855,11 +855,14 @@ export function DocumentForm({ document, setDocument, accentColor, setAccentColo
                     </div>
                     <div className="space-y-2">
                         <Label htmlFor="refrigerantType">Refrigerant Type</Label>
-                        <Input id="refrigerantType" name="refrigerantType" value={document.hvac.refrigerantType} onChange={(e) => handleCategoryDataChange('hvac', e)} />
+                        <div className="relative flex items-center">
+                            <Wind className="absolute left-3 h-5 w-5 text-muted-foreground" />
+                            <Input id="refrigerantType" name="refrigerantType" value={document.hvac.refrigerantType} onChange={(e) => handleCategoryDataChange('hvac', e)} className="pl-10" />
+                        </div>
                     </div>
                     <div className="flex items-center space-x-2 pt-6">
                         <Checkbox id="ductworkRequired" name="ductworkRequired" checked={document.hvac.ductworkRequired} onCheckedChange={(checked) => handleCategorySelectChange('hvac', 'ductworkRequired', !!checked)} />
-                        <Label htmlFor="ductworkRequired">Ductwork Required?</Label>
+                        <Label htmlFor="ductworkRequired" className="flex items-center gap-2"><Thermometer className="h-4 w-4" /> Ductwork Required?</Label>
                     </div>
                 </CardContent>
             </Card>
@@ -913,11 +916,11 @@ export function DocumentForm({ document, setDocument, accentColor, setAccentColo
                     <div className="pt-6 flex flex-col gap-4">
                         <div className="flex items-center space-x-2">
                             <Checkbox id="emergencyService" name="emergencyService" checked={document.plumbing.emergencyService} onCheckedChange={(checked) => handleCategorySelectChange('plumbing', 'emergencyService', !!checked)} />
-                            <Label htmlFor="emergencyService">Emergency Service?</Label>
+                            <Label htmlFor="emergencyService" className="flex items-center gap-2"><Wrench className="h-4 w-4" /> Emergency Service?</Label>
                         </div>
                          <div className="flex items-center space-x-2">
                             <Checkbox id="waterPressureIssue" name="waterPressureIssue" checked={document.plumbing.waterPressureIssue} onCheckedChange={(checked) => handleCategorySelectChange('plumbing', 'waterPressureIssue', !!checked)} />
-                            <Label htmlFor="waterPressureIssue">Water Pressure Issue?</Label>
+                            <Label htmlFor="waterPressureIssue" className="flex items-center gap-2"><Droplets className="h-4 w-4" />Water Pressure Issue?</Label>
                         </div>
                     </div>
                 </CardContent>
@@ -948,9 +951,9 @@ export function DocumentForm({ document, setDocument, accentColor, setAccentColo
                         <Label htmlFor="roomsInvolved">Rooms Involved</Label>
                         <Input id="roomsInvolved" name="roomsInvolved" value={document.electrical.roomsInvolved} onChange={(e) => handleCategoryDataChange('electrical', e)} placeholder="e.g., Kitchen, Living Room" />
                     </div>
-                    <div className="flex items-center space-x-2 pt-6"><Checkbox id="panelUpgradeNeeded" name="panelUpgradeNeeded" checked={document.electrical.panelUpgradeNeeded} onCheckedChange={(c) => handleCategorySelectChange('electrical', 'panelUpgradeNeeded', !!c)} /><Label htmlFor="panelUpgradeNeeded">Panel Upgrade Needed?</Label></div>
-                    <div className="flex items-center space-x-2 pt-6"><Checkbox id="evChargerNeeded" name="evChargerNeeded" checked={document.electrical.evChargerNeeded} onCheckedChange={(c) => handleCategorySelectChange('electrical', 'evChargerNeeded', !!c)} /><Label htmlFor="evChargerNeeded">EV Charger Needed?</Label></div>
-                    <div className="flex items-center space-x-2"><Checkbox id="inspectionRequired-electrical" name="inspectionRequired" checked={document.electrical.inspectionRequired} onCheckedChange={(c) => handleCategorySelectChange('electrical', 'inspectionRequired', !!c)} /><Label htmlFor="inspectionRequired-electrical">Inspection Required?</Label></div>
+                    <div className="flex items-center space-x-2 pt-6"><Checkbox id="panelUpgradeNeeded" name="panelUpgradeNeeded" checked={document.electrical.panelUpgradeNeeded} onCheckedChange={(c) => handleCategorySelectChange('electrical', 'panelUpgradeNeeded', !!c)} /><Label htmlFor="panelUpgradeNeeded" className="flex items-center gap-2"><Zap className="h-4 w-4" /> Panel Upgrade Needed?</Label></div>
+                    <div className="flex items-center space-x-2 pt-6"><Checkbox id="evChargerNeeded" name="evChargerNeeded" checked={document.electrical.evChargerNeeded} onCheckedChange={(c) => handleCategorySelectChange('electrical', 'evChargerNeeded', !!c)} /><Label htmlFor="evChargerNeeded" className="flex items-center gap-2"><Car className="h-4 w-4" /> EV Charger Needed?</Label></div>
+                    <div className="flex items-center space-x-2"><Checkbox id="inspectionRequired-electrical" name="inspectionRequired" checked={document.electrical.inspectionRequired} onCheckedChange={(c) => handleCategorySelectChange('electrical', 'inspectionRequired', !!c)} /><Label htmlFor="inspectionRequired-electrical" className="flex items-center gap-2"><CheckSquare className="h-4 w-4" /> Inspection Required?</Label></div>
                 </CardContent>
             </Card>
         )}
@@ -964,7 +967,7 @@ export function DocumentForm({ document, setDocument, accentColor, setAccentColo
                     <div className="space-y-2"><Label htmlFor="grassHeight">Grass Height</Label><Input id="grassHeight" name="grassHeight" value={document.landscaping.grassHeight} onChange={(e) => handleCategoryDataChange('landscaping', e)} /></div>
                     <div className="space-y-2"><Label htmlFor="treeCount">Tree Count</Label><Input id="treeCount" name="treeCount" type="number" value={document.landscaping.treeCount ?? ''} onChange={(e) => handleCategoryDataChange('landscaping', e)} /></div>
                     <div className="space-y-2"><Label htmlFor="fenceLengthNeeded">Fence Length Needed</Label><Input id="fenceLengthNeeded" name="fenceLengthNeeded" value={document.landscaping.fenceLengthNeeded} onChange={(e) => handleCategoryDataChange('landscaping', e)} /></div>
-                    <div className="space-y-2 md:col-span-2"><Label>Yard Condition</Label><RadioGroup value={document.landscaping.yardCondition} onValueChange={(v) => handleCategorySelectChange('landscaping', 'yardCondition', v)} className="flex gap-4"><div className="flex items-center space-x-2"><RadioGroupItem value="Good" id="cond-good" /><Label htmlFor="cond-good">Good</Label></div><div className="flex items-center space-x-2"><RadioGroupItem value="Moderate" id="cond-mod" /><Label htmlFor="cond-mod">Moderate</Label></div><div className="flex items-center space-x-2"><RadioGroupItem value="Poor" id="cond-poor" /><Label htmlFor="cond-poor">Poor</Label></div></RadioGroup></div>
+                    <div className="space-y-2 md:col-span-2"><Label>Yard Condition</Label><RadioGroup value={document.landscaping.yardCondition} onValueChange={(v) => handleCategorySelectChange('landscaping', 'yardCondition', v)} className="flex gap-4"><div className="flex items-center space-x-2"><RadioGroupItem value="Good" id="cond-good" /><Label htmlFor="cond-good" className="flex items-center gap-2"><Trees className="h-4 w-4" /> Good</Label></div><div className="flex items-center space-x-2"><RadioGroupItem value="Moderate" id="cond-mod" /><Label htmlFor="cond-mod">Moderate</Label></div><div className="flex items-center space-x-2"><RadioGroupItem value="Poor" id="cond-poor" /><Label htmlFor="cond-poor">Poor</Label></div></RadioGroup></div>
                 </CardContent>
             </Card>
         )}
@@ -1017,9 +1020,9 @@ export function DocumentForm({ document, setDocument, accentColor, setAccentColo
                     <div className="space-y-2"><Label htmlFor="buildingType">Building Type</Label><Input id="buildingType" name="buildingType" value={document.construction.buildingType} onChange={(e) => handleCategoryDataChange('construction', e)} /></div>
                     <div className="space-y-2"><Label htmlFor="soilCondition">Soil Condition</Label><Input id="soilCondition" name="soilCondition" value={document.construction.soilCondition} onChange={(e) => handleCategoryDataChange('construction', e)} /></div>
                     <div className="space-y-2"><Label htmlFor="materialPreference">Material Preference</Label><Input id="materialPreference" name="materialPreference" value={document.construction.materialPreference} onChange={(e) => handleCategoryDataChange('construction', e)} /></div>
-                    <div className="flex items-center space-x-2 pt-6"><Checkbox id="constructionPermit" name="permitRequired" checked={document.construction.permitRequired} onCheckedChange={(c) => handleCategorySelectChange('construction', 'permitRequired', !!c)} /><Label htmlFor="constructionPermit">Permit Required?</Label></div>
-                    <div className="flex items-center space-x-2 pt-6"><Checkbox id="architectDrawings" name="architectDrawingsProvided" checked={document.construction.architectDrawingsProvided} onCheckedChange={(c) => handleCategorySelectChange('construction', 'architectDrawingsProvided', !!c)} /><Label htmlFor="architectDrawings">Architect Drawings Provided?</Label></div>
-                    <div className="flex items-center space-x-2"><Checkbox id="constructionInspection" name="inspectionRequired" checked={document.construction.inspectionRequired} onCheckedChange={(c) => handleCategorySelectChange('construction', 'inspectionRequired', !!c)} /><Label htmlFor="constructionInspection">Inspection Required?</Label></div>
+                    <div className="flex items-center space-x-2 pt-6"><Checkbox id="constructionPermit" name="permitRequired" checked={document.construction.permitRequired} onCheckedChange={(c) => handleCategorySelectChange('construction', 'permitRequired', !!c)} /><Label htmlFor="constructionPermit" className="flex items-center gap-2"><DraftingCompass className="h-4 w-4" /> Permit Required?</Label></div>
+                    <div className="flex items-center space-x-2 pt-6"><Checkbox id="architectDrawings" name="architectDrawingsProvided" checked={document.construction.architectDrawingsProvided} onCheckedChange={(c) => handleCategorySelectChange('construction', 'architectDrawingsProvided', !!c)} /><Label htmlFor="architectDrawings" className="flex items-center gap-2"><Pencil className="h-4 w-4" /> Architect Drawings Provided?</Label></div>
+                    <div className="flex items-center space-x-2"><Checkbox id="constructionInspection" name="inspectionRequired" checked={document.construction.inspectionRequired} onCheckedChange={(c) => handleCategorySelectChange('construction', 'inspectionRequired', !!c)} /><Label htmlFor="constructionInspection" className="flex items-center gap-2"><CheckSquare className="h-4 w-4" /> Inspection Required?</Label></div>
                 </CardContent>
             </Card>
         )}
