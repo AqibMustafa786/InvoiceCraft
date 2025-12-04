@@ -47,7 +47,7 @@ import { RadioGroup, RadioGroupItem } from './ui/radio-group';
 
 interface DocumentFormProps {
   document: Estimate | Quote;
-  setDocument: Dispatch<React.SetStateAction<Estimate | Quote>>;
+  setDocument: Dispatch<SetStateAction<Estimate | Quote>>;
   accentColor: string;
   setAccentColor: Dispatch<SetStateAction<string>>;
   backgroundColor: string;
@@ -257,21 +257,6 @@ export function DocumentForm({ document, setDocument, accentColor, setAccentColo
         }
     }));
   };
-  
-  const handleNestedCategoryChange = (category: 'roofing', section: keyof RoofingInfo, name: string, value: string | boolean | number | null | Date) => {
-      setDocument(prev => {
-          const catData = prev[category];
-          if (!catData) return prev;
-          
-          return {
-              ...prev,
-              [category]: {
-                  ...catData,
-                  [name]: value
-              }
-          }
-      })
-  }
 
   const handleRemodelingDateChange = (name: keyof HomeRemodelingInfo, date: Date | undefined) => {
      setDocument(prev => ({
@@ -868,10 +853,6 @@ export function DocumentForm({ document, setDocument, accentColor, setAccentColo
                             <Input id="roofSize" name="roofSize" type="number" value={document.roofing.roofSize ?? ''} onChange={(e) => handleCategorySelectChange('roofing', 'roofSize', e.target.value ? parseFloat(e.target.value) : null)} />
                         </div>
                         <div className="space-y-2">
-                            <Label htmlFor="roofSquares">Roof Squares</Label>
-                            <Input id="roofSquares" name="roofSquares" type="number" value={document.roofing.roofSquares ?? ''} onChange={(e) => handleCategorySelectChange('roofing', 'roofSquares', e.target.value ? parseFloat(e.target.value) : null)} />
-                        </div>
-                        <div className="space-y-2">
                             <Label>Number of layers to remove</Label>
                             <Select value={document.roofing.layersToRemove} onValueChange={(v) => handleCategorySelectChange('roofing', 'layersToRemove', v)}>
                                 <SelectTrigger><SelectValue placeholder="Select layers" /></SelectTrigger>
@@ -898,7 +879,7 @@ export function DocumentForm({ document, setDocument, accentColor, setAccentColo
                             <Label>Underlayment Type</Label>
                             <CustomSelect value={document.roofing.underlaymentType} onValueChange={(name, value) => handleCategorySelectChange('roofing', name, value)} options={underlaymentTypes} placeholder="Select underlayment" name="underlaymentType"/>
                         </div>
-                        <div className="space-y-2">
+                        <div className="space-y-2 md:col-span-2">
                             <Label htmlFor="flashingDetails">Flashing Details</Label>
                             <Input id="flashingDetails" name="flashingDetails" value={document.roofing.flashingDetails} onChange={(e) => handleCategorySelectChange('roofing', 'flashingDetails', e.target.value)} placeholder="e.g., Step, Counter, Apron" />
                         </div>

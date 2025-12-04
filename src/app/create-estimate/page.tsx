@@ -94,52 +94,14 @@ const getInitialEstimate = (): Omit<Estimate, 'userId'> => ({
     roofType: 'Asphalt Shingle',
     shingleBrand: 'GAF',
     roofSize: null,
-    roofSquares: null,
     layersToRemove: '1 layer',
     roofPitch: 'Medium (5/12 – 7/12)',
-    tearOffDetails: {
-        removeExistingShingles: true,
-        removeUnderlayment: true,
-        removeFlashing: false,
-        removeGutters: false,
-        removeVents: false,
-        removeSkylights: false,
-    },
-    installationDetails: {
-        underlaymentType: 'Synthetic Underlayment',
-        flashingMaterial: 'Aluminum',
-        dripEdgeInstallation: true,
-        starterStripInstallation: true,
-        ridgeCapShingles: true,
-    },
-    ventilation: {
-        type: 'Ridge Vent',
-        addNewVentQuantity: null,
-    },
-    skylightsAndChimneys: {
-        numberOfSkylights: null,
-        replaceSkylights: false,
-        chimneyFlashingRequired: false,
-    },
-    guttersAndDownspouts: {
-        replaceGutters: false,
-        gutterType: 'K-Style',
-        material: 'Aluminum',
-        linearFeet: null,
-    },
-    wasteAndCleanup: {
-        dumpsterIncluded: true,
-        roofDebrisRemoval: true,
-        landscapeProtection: true,
-        magnetSweepForNails: true,
-        finalCleanup: true,
-    },
-    projectTimeline: {
-        estimatedStartDate: null,
-        estimatedCompletionDate: null,
-        estimatedDurationDays: null,
-    },
-    warranty: '5 Year Workmanship Warranty',
+    underlaymentType: 'Synthetic Underlayment',
+    flashingDetails: 'Replace all wall and chimney flashing.',
+    ventilationDetails: 'Install new ridge vent system.',
+    gutterDetails: 'Clean existing gutters and downspouts.',
+    warranty: '5-Year Workmanship Warranty',
+    estimatedTimeline: 'Approx. 3-5 business days, weather permitting.',
   },
   hvac: {
     serviceType: 'Install',
@@ -379,13 +341,6 @@ export default function CreateEstimatePage() {
     
     if (document.roofing) {
         draftToSave.roofing = { ...document.roofing };
-        if (document.roofing.projectTimeline) {
-            draftToSave.roofing.projectTimeline = { ...document.roofing.projectTimeline };
-            const start = normalizeDate(document.roofing.projectTimeline.estimatedStartDate);
-            if(start) draftToSave.roofing.projectTimeline.estimatedStartDate = start;
-            const end = normalizeDate(document.roofing.projectTimeline.estimatedCompletionDate);
-            if(end) draftToSave.roofing.projectTimeline.estimatedCompletionDate = end;
-        }
     }
     
     if (document.hvac) {

@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import React from 'react';
@@ -41,7 +42,6 @@ const RoofingDetails: React.FC<{ document: Estimate }> = ({ document }) => {
             <p><span className="text-gray-500">Roof Type:</span> <span className="font-semibold">{roofing.roofType}</span></p>
             <p><span className="text-gray-500">Shingle Brand:</span> <span className="font-semibold">{roofing.shingleBrand}</span></p>
             {roofing.roofSize && <p><span className="text-gray-500">Roof Size:</span> <span className="font-semibold">{roofing.roofSize} sq. ft.</span></p>}
-            {roofing.roofSquares && <p><span className="text-gray-500">Squares:</span> <span className="font-semibold">{roofing.roofSquares}</span></p>}
             <p><span className="text-gray-500">Roof Pitch:</span> <span className="font-semibold">{roofing.roofPitch}</span></p>
             <p><span className="text-gray-500">Layers to Remove:</span> <span className="font-semibold">{roofing.layersToRemove}</span></p>
             <p><span className="text-gray-500">Underlayment:</span> <span className="font-semibold">{roofing.underlaymentType}</span></p>

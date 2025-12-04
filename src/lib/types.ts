@@ -165,7 +165,6 @@ export interface RoofingInfo {
   roofType: string;
   shingleBrand: string;
   roofSize: number | null; // in sq ft
-  roofSquares: number | null; // 1 square = 100 sq ft
   layersToRemove: string;
   roofPitch: string;
   underlaymentType: string;
