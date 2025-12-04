@@ -9,7 +9,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { DatePicker } from '@/components/ui/datepicker';
-import { ImageUp, Plus, Trash2, Palette, X, Mail, Truck, Hash, Phone, Globe, Briefcase, Award, User, FileText, Building, Pencil, Type, Package, Hammer, Ruler, ListTree, CheckSquare, Sparkles, Calendar, TextQuote, Wind, Thermometer, Wrench, Zap, Trees, Droplets, Car, Code, DraftingCompass, PaintBucket, Paintbrush } from 'lucide-react';
+import { ImageUp, Plus, Trash2, Palette, X, Mail, Truck, Hash, Phone, Globe, Briefcase, Award, User, FileText, Building, Pencil, Type, Package, Hammer, Ruler, ListTree, CheckSquare, Sparkles, Calendar, TextQuote, Wind, Thermometer, Wrench, Zap, Trees, Droplets, Car, Code, DraftingCompass, PaintBucket, Paintbrush, Save } from 'lucide-react';
 import Image from 'next/image';
 import {
   Select,
@@ -18,6 +18,17 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { Checkbox } from '@/components/ui/checkbox';
 import { SignaturePad } from './signature-pad';
 import {
@@ -27,6 +38,8 @@ import {
   DialogTitle,
   DialogTrigger,
   DialogDescription,
+  DialogClose,
+  DialogFooter
 } from "@/components/ui/dialog";
 import { serverTimestamp } from 'firebase/firestore';
 import { RadioGroup, RadioGroupItem } from './ui/radio-group';
@@ -95,6 +108,11 @@ const ventilationTypes = ["Ridge Vent", "Box Vent", "Turbine Vent", "Power Vent"
 const gutterTypes = ["K-Style", "Half-Round"];
 const gutterMaterials = ["Aluminum", "Steel", "Copper"];
 
+interface Preset {
+  name: string;
+  items: Omit<LineItem, 'id'>[];
+}
+
 const CustomSelect = ({ value, onValueChange, options, placeholder, name }: { value: string; onValueChange: (name: string, value: string) => void; options: string[]; placeholder?: string; name: string; }) => {
     const [isOther, setIsOther] = useState(false);
     const [otherValue, setOtherValue] = useState('');
@@ -159,6 +177,22 @@ export function DocumentForm({ document, setDocument, accentColor, setAccentColo
   const [logoUrl, setLogoUrl] = useState<string | null>(document.business.logoUrl || null);
   const [isSignatureDialogOpen, setIsSignatureDialogOpen] = useState(false);
   const [cleaningAddOns, setCleaningAddOns] = useState<string[]>(document.cleaning?.addOns || []);
+  const [presets, setPresets] = useState<Preset[]>([]);
+  const [selectedPreset, setSelectedPreset] = useState<string>('');
+  const [isSavePresetOpen, setIsSavePresetOpen] = useState(false);
+  const [newPresetName, setNewPresetName] = useState('');
+
+  // Load presets from localStorage on mount
+  useEffect(() => {
+    try {
+      const savedPresets = localStorage.getItem('lineItemPresets');
+      if (savedPresets) {
+        setPresets(JSON.parse(savedPresets));
+      }
+    } catch (error) {
+      console.error("Could not load presets from localStorage", error);
+    }
+  }, []);
 
   useEffect(() => {
     setAccentColorInput(accentColor);
@@ -400,6 +434,34 @@ export function DocumentForm({ document, setDocument, accentColor, setAccentColo
       }
     }));
   };
+
+  const handleSavePreset = () => {
+    if (!newPresetName.trim()) {
+      toast({ title: 'Preset Name Required', description: 'Please enter a name for your preset.', variant: 'destructive' });
+      return;
+    }
+    const newPreset: Preset = {
+      name: newPresetName.trim(),
+      items: document.lineItems.map(({ id, ...item }) => item), // Exclude IDs
+    };
+    const updatedPresets = [...presets, newPreset];
+    setPresets(updatedPresets);
+    localStorage.setItem('lineItemPresets', JSON.stringify(updatedPresets));
+    toast({ title: 'Preset Saved', description: `"${newPreset.name}" has been saved.` });
+    setIsSavePresetOpen(false);
+    setNewPresetName('');
+  };
+
+  const handleLoadPreset = () => {
+    if (!selectedPreset) return;
+    const preset = presets.find(p => p.name === selectedPreset);
+    if (preset) {
+      const newItems = preset.items.map(item => ({ ...item, id: crypto.randomUUID() }));
+      setDocument(prev => ({ ...prev, lineItems: newItems }));
+      toast({ title: 'Preset Loaded', description: `Items from "${preset.name}" have been loaded.` });
+    }
+  };
+
 
   const currencySymbol = currencies.find(c => c.value === document.currency)?.label.split(' ')[1] || '$';
   const isSigned = !!document.clientSignature;
@@ -806,12 +868,12 @@ export function DocumentForm({ document, setDocument, accentColor, setAccentColo
                 <CardContent className="space-y-6">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div className="space-y-2">
-                            <Label>Roof Type</Label>
-                            <CustomSelect value={document.roofing.roofType ?? ''} onValueChange={(name, value) => handleCategorySelectChange('roofing', name, value)} options={roofTypes} placeholder="Select roof type" name="roofType" />
+                           <Label>Roof Type</Label>
+                           <CustomSelect value={document.roofing.roofType ?? ''} onValueChange={(name, value) => handleCategorySelectChange('roofing', name, value)} options={roofTypes} placeholder="Select roof type" name="roofType" />
                         </div>
                         <div className="space-y-2">
-                            <Label>Shingle/Material Brand</Label>
-                            <CustomSelect value={document.roofing.shingleBrand ?? ''} onValueChange={(name, value) => handleCategorySelectChange('roofing', name, value)} options={shingleBrands} placeholder="Select brand" name="shingleBrand"/>
+                           <Label>Shingle/Material Brand</Label>
+                           <CustomSelect value={document.roofing.shingleBrand ?? ''} onValueChange={(name, value) => handleCategorySelectChange('roofing', name, value)} options={shingleBrands} placeholder="Select brand" name="shingleBrand"/>
                         </div>
                         <div className="space-y-2">
                             <Label htmlFor="roofSize">Roof Size (sq ft)</Label>
@@ -884,10 +946,13 @@ export function DocumentForm({ document, setDocument, accentColor, setAccentColo
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
                              <div className="space-y-2">
                                 <Label className="text-xs">Ventilation Type</Label>
-                                <Select value={document.roofing.ventilation.type ?? ''} onValueChange={(v) => handleNestedCategoryChange('roofing', 'ventilation', 'type', v)}>
-                                    <SelectTrigger><SelectValue placeholder="Select type" /></SelectTrigger>
-                                    <SelectContent>{ventilationTypes.map(o => <SelectItem key={o} value={o}>{o}</SelectItem>)}</SelectContent>
-                                </Select>
+                                <div className="relative flex items-center">
+                                    <Wind className="absolute left-3 h-5 w-5 text-muted-foreground z-10" />
+                                    <Select value={document.roofing.ventilation.type ?? ''} onValueChange={(v) => handleNestedCategoryChange('roofing', 'ventilation', 'type', v)}>
+                                        <SelectTrigger className="pl-10"><SelectValue placeholder="Select type" /></SelectTrigger>
+                                        <SelectContent>{ventilationTypes.map(o => <SelectItem key={o} value={o}>{o}</SelectItem>)}</SelectContent>
+                                    </Select>
+                                </div>
                             </div>
                              <div className="space-y-2">
                                 <Label htmlFor="addVentQty" className="text-xs">Add New Vent Quantity</Label>
@@ -1081,26 +1146,11 @@ export function DocumentForm({ document, setDocument, accentColor, setAccentColo
             <Card className="bg-card/50 backdrop-blur-sm group-disabled:opacity-70">
                 <CardHeader><CardTitle>Electrical Project Details</CardTitle></CardHeader>
                 <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="space-y-2">
-                        <Label>Service Type</Label>
-                        <Input name="serviceType" value={document.electrical.serviceType} onChange={(e) => handleCategoryDataChange('electrical', e)} placeholder="e.g. Install, Repair, Upgrade" />
-                    </div>
-                    <div className="space-y-2">
-                        <Label>Wiring Type</Label>
-                        <Input name="wiringType" value={document.electrical.wiringType} onChange={(e) => handleCategoryDataChange('electrical', e)} placeholder="e.g. Copper, Aluminum" />
-                    </div>
-                    <div className="space-y-2">
-                        <Label>Panel Size</Label>
-                        <Input name="panelSize" value={document.electrical.panelSize} onChange={(e) => handleCategoryDataChange('electrical', e)} placeholder="e.g. 100A, 200A" />
-                    </div>
-                    <div className="space-y-2">
-                        <Label htmlFor="outletsFixturesCount">Outlets/Fixtures Count</Label>
-                        <Input id="outletsFixturesCount" name="outletsFixturesCount" type="number" value={document.electrical.outletsFixturesCount ?? ''} onChange={(e) => handleCategoryDataChange('electrical', e)} />
-                    </div>
-                    <div className="space-y-2 md:col-span-2">
-                        <Label htmlFor="roomsInvolved">Rooms Involved</Label>
-                        <Input id="roomsInvolved" name="roomsInvolved" value={document.electrical.roomsInvolved} onChange={(e) => handleCategoryDataChange('electrical', e)} placeholder="e.g., Kitchen, Living Room" />
-                    </div>
+                    <div className="space-y-2"><Label>Service Type</Label><Input name="serviceType" value={document.electrical.serviceType} onChange={(e) => handleCategoryDataChange('electrical', e)} placeholder="e.g. Install, Repair, Upgrade" /></div>
+                    <div className="space-y-2"><Label>Wiring Type</Label><Input name="wiringType" value={document.electrical.wiringType} onChange={(e) => handleCategoryDataChange('electrical', e)} placeholder="e.g. Copper, Aluminum" /></div>
+                    <div className="space-y-2"><Label>Panel Size</Label><Input name="panelSize" value={document.electrical.panelSize} onChange={(e) => handleCategoryDataChange('electrical', e)} placeholder="e.g. 100A, 200A" /></div>
+                    <div className="space-y-2"><Label htmlFor="outletsFixturesCount">Outlets/Fixtures Count</Label><Input id="outletsFixturesCount" name="outletsFixturesCount" type="number" value={document.electrical.outletsFixturesCount ?? ''} onChange={(e) => handleCategoryDataChange('electrical', e)} /></div>
+                    <div className="space-y-2 md:col-span-2"><Label htmlFor="roomsInvolved">Rooms Involved</Label><Input id="roomsInvolved" name="roomsInvolved" value={document.electrical.roomsInvolved} onChange={(e) => handleCategoryDataChange('electrical', e)} placeholder="e.g., Kitchen, Living Room" /></div>
                     <div className="flex items-center space-x-2 pt-6"><Checkbox id="panelUpgradeNeeded" name="panelUpgradeNeeded" checked={document.electrical.panelUpgradeNeeded} onCheckedChange={(c) => handleCategorySelectChange('electrical', 'panelUpgradeNeeded', !!c)} /><Label htmlFor="panelUpgradeNeeded" className="flex items-center gap-2"><Zap className="h-4 w-4" /> Panel Upgrade Needed?</Label></div>
                     <div className="flex items-center space-x-2 pt-6"><Checkbox id="evChargerNeeded" name="evChargerNeeded" checked={document.electrical.evChargerNeeded} onCheckedChange={(c) => handleCategorySelectChange('electrical', 'evChargerNeeded', !!c)} /><Label htmlFor="evChargerNeeded" className="flex items-center gap-2"><Car className="h-4 w-4" /> EV Charger Needed?</Label></div>
                     <div className="flex items-center space-x-2"><Checkbox id="inspectionRequired-electrical" name="inspectionRequired" checked={document.electrical.inspectionRequired} onCheckedChange={(c) => handleCategorySelectChange('electrical', 'inspectionRequired', !!c)} /><Label htmlFor="inspectionRequired-electrical" className="flex items-center gap-2"><CheckSquare className="h-4 w-4" /> Inspection Required?</Label></div>
@@ -1198,7 +1248,66 @@ export function DocumentForm({ document, setDocument, accentColor, setAccentColo
             <CardTitle>Line Items (Services / Products)</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-            <div className="hidden md:grid md:grid-cols-12 gap-4 text-sm font-medium text-muted-foreground">
+
+            {/* Presets UI */}
+            <div className="p-4 border rounded-lg bg-background/50 space-y-4">
+              <Label className="font-semibold">Line Item Presets</Label>
+              <div className="flex flex-wrap items-end gap-2">
+                <div className="flex-grow space-y-2">
+                    <Label htmlFor="preset-select" className="text-xs text-muted-foreground">Load a saved group of items</Label>
+                    <Select value={selectedPreset} onValueChange={setSelectedPreset} disabled={presets.length === 0}>
+                        <SelectTrigger id="preset-select">
+                            <SelectValue placeholder="Select a preset..." />
+                        </SelectTrigger>
+                        <SelectContent>
+                            {presets.map(p => <SelectItem key={p.name} value={p.name}>{p.name}</SelectItem>)}
+                        </SelectContent>
+                    </Select>
+                </div>
+                
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                      <Button variant="secondary" disabled={!selectedPreset}>Load Preset</Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                      <AlertDialogHeader>
+                          <AlertDialogTitle>Overwrite existing items?</AlertDialogTitle>
+                          <AlertDialogDescription>
+                              Loading this preset will replace all current line items. Are you sure you want to continue?
+                          </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                          <AlertDialogCancel>Cancel</AlertDialogCancel>
+                          <AlertDialogAction onClick={handleLoadPreset}>Load</AlertDialogAction>
+                      </AlertDialogFooter>
+                  </AlertDialogContent>
+              </AlertDialog>
+
+                <Dialog open={isSavePresetOpen} onOpenChange={setIsSavePresetOpen}>
+                  <DialogTrigger asChild>
+                    <Button variant="outline"><Save className="mr-2 h-4 w-4" /> Save as Preset</Button>
+                  </DialogTrigger>
+                  <DialogContent>
+                      <DialogHeader>
+                          <DialogTitle>Save Line Item Preset</DialogTitle>
+                          <DialogDescription>
+                              Save the current set of line items for quick use in the future.
+                          </DialogDescription>
+                      </DialogHeader>
+                      <div className="space-y-2">
+                          <Label htmlFor="preset-name">Preset Name</Label>
+                          <Input id="preset-name" value={newPresetName} onChange={(e) => setNewPresetName(e.target.value)} placeholder="e.g., Standard Roof Repair"/>
+                      </div>
+                      <DialogFooter>
+                          <DialogClose asChild><Button variant="ghost">Cancel</Button></DialogClose>
+                          <Button onClick={handleSavePreset}>Save Preset</Button>
+                      </DialogFooter>
+                  </DialogContent>
+                </Dialog>
+              </div>
+            </div>
+
+            <div className="hidden md:grid md:grid-cols-12 gap-4 text-sm font-medium text-muted-foreground pt-4">
                 <div className="col-span-5"><Label>Item Name / Description</Label></div>
                 <div className="col-span-2"><Label>Quantity</Label></div>
                 <div className="col-span-2"><Label>Unit Price</Label></div>
