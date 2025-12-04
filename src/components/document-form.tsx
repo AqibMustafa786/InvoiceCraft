@@ -46,7 +46,7 @@ import { RadioGroup, RadioGroupItem } from './ui/radio-group';
 
 interface DocumentFormProps {
   document: Estimate | Quote;
-  setDocument: Dispatch<SetStateAction<Estimate | Quote>>;
+  setDocument: Dispatch<React.SetStateAction<Estimate | Quote>>;
   accentColor: string;
   setAccentColor: Dispatch<SetStateAction<string>>;
   backgroundColor: string;
