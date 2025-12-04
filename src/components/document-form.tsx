@@ -88,15 +88,25 @@ const roofTypes = [
     "Built-Up (BUR)", "Stone-Coated Steel"
 ];
 
+const shingleBrands = ["GAF", "Owens Corning", "CertainTeed", "Tamko", "IKO", "Atlas", "Malarkey"];
+const underlaymentTypes = ["Synthetic Underlayment", "15# Felt", "30# Felt", "Ice & Water Shield (Full Roof)", "Ice & Water Shield (Eaves Only)"];
+const flashingMaterials = ["Aluminum", "Steel", "Copper"];
+const ventilationTypes = ["Ridge Vent", "Box Vent", "Turbine Vent", "Power Vent", "Soffit Vent", "Existing Vent – No Change"];
+const gutterTypes = ["K-Style", "Half-Round"];
+const gutterMaterials = ["Aluminum", "Steel", "Copper"];
+
 const CustomSelect = ({ value, onValueChange, options, placeholder, name }: { value: string; onValueChange: (name: string, value: string) => void; options: string[]; placeholder?: string; name: string; }) => {
-    const [isOther, setIsOther] = useState(value && !options.includes(value));
-    const [otherValue, setOtherValue] = useState(isOther ? value : '');
-    
+    const [isOther, setIsOther] = useState(false);
+    const [otherValue, setOtherValue] = useState('');
+
     useEffect(() => {
-        const isCurrentlyOther = value && !options.includes(value);
-        setIsOther(isCurrentlyOther);
-        if (isCurrentlyOther) {
+        const isValueInOptions = options.includes(value);
+        if (value && !isValueInOptions) {
+            setIsOther(true);
             setOtherValue(value);
+        } else {
+            setIsOther(false);
+            setOtherValue('');
         }
     }, [value, options]);
 
@@ -216,6 +226,24 @@ export function DocumentForm({ document, setDocument, accentColor, setAccentColo
         }
     }));
   };
+  
+  const handleNestedCategoryChange = (category: 'roofing', section: 'tearOffDetails' | 'installationDetails' | 'ventilation' | 'skylightsAndChimneys' | 'guttersAndDownspouts' | 'wasteAndCleanup' | 'projectTimeline', name: string, value: string | boolean | number | null | Date) => {
+      setDocument(prev => {
+          const catData = prev[category];
+          if (!catData) return prev;
+          
+          return {
+              ...prev,
+              [category]: {
+                  ...catData,
+                  [section]: {
+                      ...(catData as any)[section],
+                      [name]: value
+                  }
+              }
+          }
+      })
+  }
 
   const handleRemodelingDateChange = (name: keyof HomeRemodelingInfo, date: Date | undefined) => {
      setDocument(prev => ({
@@ -226,6 +254,19 @@ export function DocumentForm({ document, setDocument, accentColor, setAccentColo
         }
     }));
   };
+  
+   const handleRoofingDateChange = (name: keyof RoofingInfo['projectTimeline'], date: Date | undefined) => {
+        setDocument(prev => ({
+            ...prev,
+            roofing: {
+                ...prev.roofing,
+                projectTimeline: {
+                    ...prev.roofing.projectTimeline,
+                    [name]: date,
+                }
+            }
+        }));
+    };
 
   const handleCleaningAddOnChange = (addOn: string, checked: boolean) => {
     const currentAddOns = document.cleaning?.addOns || [];
@@ -558,7 +599,7 @@ export function DocumentForm({ document, setDocument, accentColor, setAccentColo
                         <Label htmlFor="businessTaxId">EIN/Tax ID (optional)</Label>
                         <div className="relative flex items-center">
                             <Hash className="absolute left-3 h-5 w-5 text-muted-foreground" />
-                            <Input id="businessTaxId" name="taxId" value={document.business.taxId} onChange={(e) => handleNestedChange('business', e)} className="pl-10" />
+                            <Input id="businessTaxId" name="taxId" value={document.business.taxId ?? ''} onChange={(e) => handleNestedChange('business', e)} className="pl-10" />
                         </div>
                     </div>
                 </div>
@@ -592,7 +633,7 @@ export function DocumentForm({ document, setDocument, accentColor, setAccentColo
             </div>
              <div className="space-y-2">
                 <Label htmlFor="projectLocation">Project Location (if different)</Label>
-                <Textarea id="projectLocation" name="projectLocation" value={document.client.projectLocation} onChange={(e) => handleNestedChange('client', e)} />
+                <Textarea id="projectLocation" name="projectLocation" value={document.client.projectLocation ?? ''} onChange={(e) => handleNestedChange('client', e)} />
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
@@ -770,7 +811,7 @@ export function DocumentForm({ document, setDocument, accentColor, setAccentColo
                         </div>
                         <div className="space-y-2">
                             <Label>Shingle/Material Brand</Label>
-                            <CustomSelect value={document.roofing.shingleBrand ?? ''} onValueChange={(name, value) => handleCategorySelectChange('roofing', name, value)} options={["GAF", "Owens Corning", "CertainTeed", "Tamko", "IKO", "Atlas", "Malarkey"]} placeholder="Select brand" name="shingleBrand"/>
+                            <CustomSelect value={document.roofing.shingleBrand ?? ''} onValueChange={(name, value) => handleCategorySelectChange('roofing', name, value)} options={shingleBrands} placeholder="Select brand" name="shingleBrand"/>
                         </div>
                         <div className="space-y-2">
                             <Label htmlFor="roofSize">Roof Size (sq ft)</Label>
@@ -804,7 +845,120 @@ export function DocumentForm({ document, setDocument, accentColor, setAccentColo
                             </Select>
                         </div>
                     </div>
-                    {/* ... other roofing fields ... */}
+
+                    <div>
+                        <Label className="font-semibold">Tear-Off Details</Label>
+                        <div className="grid grid-cols-2 gap-2 mt-2 text-sm">
+                            <div className="flex items-center gap-2"><Checkbox id="removeShingles" checked={document.roofing.tearOffDetails.removeExistingShingles} onCheckedChange={(c) => handleNestedCategoryChange('roofing', 'tearOffDetails', 'removeExistingShingles', !!c)} /> <Label htmlFor="removeShingles">Remove Shingles</Label></div>
+                            <div className="flex items-center gap-2"><Checkbox id="removeUnderlayment" checked={document.roofing.tearOffDetails.removeUnderlayment} onCheckedChange={(c) => handleNestedCategoryChange('roofing', 'tearOffDetails', 'removeUnderlayment', !!c)} /> <Label htmlFor="removeUnderlayment">Remove Underlayment</Label></div>
+                            <div className="flex items-center gap-2"><Checkbox id="removeFlashing" checked={document.roofing.tearOffDetails.removeFlashing} onCheckedChange={(c) => handleNestedCategoryChange('roofing', 'tearOffDetails', 'removeFlashing', !!c)} /> <Label htmlFor="removeFlashing">Remove Flashing</Label></div>
+                            <div className="flex items-center gap-2"><Checkbox id="removeGutters" checked={document.roofing.tearOffDetails.removeGutters} onCheckedChange={(c) => handleNestedCategoryChange('roofing', 'tearOffDetails', 'removeGutters', !!c)} /> <Label htmlFor="removeGutters">Remove Gutters</Label></div>
+                            <div className="flex items-center gap-2"><Checkbox id="removeVents" checked={document.roofing.tearOffDetails.removeVents} onCheckedChange={(c) => handleNestedCategoryChange('roofing', 'tearOffDetails', 'removeVents', !!c)} /> <Label htmlFor="removeVents">Remove Vents</Label></div>
+                            <div className="flex items-center gap-2"><Checkbox id="removeSkylights" checked={document.roofing.tearOffDetails.removeSkylights} onCheckedChange={(c) => handleNestedCategoryChange('roofing', 'tearOffDetails', 'removeSkylights', !!c)} /> <Label htmlFor="removeSkylights">Remove Skylights</Label></div>
+                        </div>
+                    </div>
+                     <div>
+                        <Label className="font-semibold">Installation Details</Label>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
+                             <div className="space-y-2">
+                                <Label className="text-xs">Underlayment Type</Label>
+                                <Select value={document.roofing.installationDetails.underlaymentType ?? ''} onValueChange={(v) => handleNestedCategoryChange('roofing', 'installationDetails', 'underlaymentType', v)}>
+                                    <SelectTrigger><SelectValue placeholder="Select type" /></SelectTrigger>
+                                    <SelectContent>{underlaymentTypes.map(o => <SelectItem key={o} value={o}>{o}</SelectItem>)}</SelectContent>
+                                </Select>
+                            </div>
+                            <div className="space-y-2">
+                                <Label className="text-xs">Flashing Material</Label>
+                                <Select value={document.roofing.installationDetails.flashingMaterial ?? ''} onValueChange={(v) => handleNestedCategoryChange('roofing', 'installationDetails', 'flashingMaterial', v)}>
+                                    <SelectTrigger><SelectValue placeholder="Select material" /></SelectTrigger>
+                                    <SelectContent>{flashingMaterials.map(o => <SelectItem key={o} value={o}>{o}</SelectItem>)}</SelectContent>
+                                </Select>
+                            </div>
+                            <div className="flex items-center gap-2 text-sm"><Checkbox id="dripEdge" checked={document.roofing.installationDetails.dripEdgeInstallation} onCheckedChange={(c) => handleNestedCategoryChange('roofing', 'installationDetails', 'dripEdgeInstallation', !!c)} /> <Label htmlFor="dripEdge">Drip Edge Installation</Label></div>
+                            <div className="flex items-center gap-2 text-sm"><Checkbox id="starterStrip" checked={document.roofing.installationDetails.starterStripInstallation} onCheckedChange={(c) => handleNestedCategoryChange('roofing', 'installationDetails', 'starterStripInstallation', !!c)} /> <Label htmlFor="starterStrip">Starter Strip Installation</Label></div>
+                            <div className="flex items-center gap-2 text-sm"><Checkbox id="ridgeCap" checked={document.roofing.installationDetails.ridgeCapShingles} onCheckedChange={(c) => handleNestedCategoryChange('roofing', 'installationDetails', 'ridgeCapShingles', !!c)} /> <Label htmlFor="ridgeCap">Ridge Cap Shingles</Label></div>
+                        </div>
+                    </div>
+                    <div>
+                        <Label className="font-semibold">Ventilation</Label>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
+                             <div className="space-y-2">
+                                <Label className="text-xs">Ventilation Type</Label>
+                                <Select value={document.roofing.ventilation.type ?? ''} onValueChange={(v) => handleNestedCategoryChange('roofing', 'ventilation', 'type', v)}>
+                                    <SelectTrigger><SelectValue placeholder="Select type" /></SelectTrigger>
+                                    <SelectContent>{ventilationTypes.map(o => <SelectItem key={o} value={o}>{o}</SelectItem>)}</SelectContent>
+                                </Select>
+                            </div>
+                             <div className="space-y-2">
+                                <Label htmlFor="addVentQty" className="text-xs">Add New Vent Quantity</Label>
+                                <Input id="addVentQty" type="number" value={document.roofing.ventilation.addNewVentQuantity ?? ''} onChange={(e) => handleNestedCategoryChange('roofing', 'ventilation', 'addNewVentQuantity', e.target.value ? parseFloat(e.target.value) : null)} />
+                            </div>
+                        </div>
+                    </div>
+                     <div>
+                        <Label className="font-semibold">Skylights & Chimneys</Label>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
+                             <div className="space-y-2">
+                                <Label htmlFor="skylightQty" className="text-xs">Number of Skylights</Label>
+                                <Input id="skylightQty" type="number" value={document.roofing.skylightsAndChimneys.numberOfSkylights ?? ''} onChange={(e) => handleNestedCategoryChange('roofing', 'skylightsAndChimneys', 'numberOfSkylights', e.target.value ? parseFloat(e.target.value) : null)} />
+                            </div>
+                             <div className="space-y-2 pt-6 flex items-center gap-2 text-sm"><Checkbox id="replaceSkylights" checked={document.roofing.skylightsAndChimneys.replaceSkylights} onCheckedChange={(c) => handleNestedCategoryChange('roofing', 'skylightsAndChimneys', 'replaceSkylights', !!c)} /><Label htmlFor="replaceSkylights">Replace Skylights?</Label></div>
+                             <div className="space-y-2 pt-6 flex items-center gap-2 text-sm"><Checkbox id="chimneyFlashing" checked={document.roofing.skylightsAndChimneys.chimneyFlashingRequired} onCheckedChange={(c) => handleNestedCategoryChange('roofing', 'skylightsAndChimneys', 'chimneyFlashingRequired', !!c)} /><Label htmlFor="chimneyFlashing">Chimney Flashing Required?</Label></div>
+                        </div>
+                    </div>
+                     <div>
+                        <Label className="font-semibold">Gutters & Downspouts</Label>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
+                            <div className="flex items-center gap-2 text-sm"><Checkbox id="replaceGuttersCheck" checked={document.roofing.guttersAndDownspouts.replaceGutters} onCheckedChange={(c) => handleNestedCategoryChange('roofing', 'guttersAndDownspouts', 'replaceGutters', !!c)} /> <Label htmlFor="replaceGuttersCheck">Replace Gutters?</Label></div>
+                            <div className="space-y-2">
+                                <Label className="text-xs">Gutter Type</Label>
+                                <Select value={document.roofing.guttersAndDownspouts.gutterType ?? ''} onValueChange={(v) => handleNestedCategoryChange('roofing', 'guttersAndDownspouts', 'gutterType', v)}>
+                                    <SelectTrigger><SelectValue placeholder="Select type" /></SelectTrigger>
+                                    <SelectContent>{gutterTypes.map(o => <SelectItem key={o} value={o}>{o}</SelectItem>)}</SelectContent>
+                                </Select>
+                            </div>
+                            <div className="space-y-2">
+                                <Label className="text-xs">Material</Label>
+                                <Select value={document.roofing.guttersAndDownspouts.material ?? ''} onValueChange={(v) => handleNestedCategoryChange('roofing', 'guttersAndDownspouts', 'material', v)}>
+                                    <SelectTrigger><SelectValue placeholder="Select material" /></SelectTrigger>
+                                    <SelectContent>{gutterMaterials.map(o => <SelectItem key={o} value={o}>{o}</SelectItem>)}</SelectContent>
+                                </Select>
+                            </div>
+                            <div className="space-y-2">
+                                <Label htmlFor="gutterFeet" className="text-xs">Linear Feet of Gutters</Label>
+                                <Input id="gutterFeet" type="number" value={document.roofing.guttersAndDownspouts.linearFeet ?? ''} onChange={(e) => handleNestedCategoryChange('roofing', 'guttersAndDownspouts', 'linearFeet', e.target.value ? parseFloat(e.target.value) : null)} />
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <Label className="font-semibold">Waste & Cleanup</Label>
+                        <div className="grid grid-cols-2 gap-2 mt-2 text-sm">
+                            <div className="flex items-center gap-2"><Checkbox id="dumpster" checked={document.roofing.wasteAndCleanup.dumpsterIncluded} onCheckedChange={(c) => handleNestedCategoryChange('roofing', 'wasteAndCleanup', 'dumpsterIncluded', !!c)} /> <Label htmlFor="dumpster">Dumpster Included</Label></div>
+                            <div className="flex items-center gap-2"><Checkbox id="debrisRemoval" checked={document.roofing.wasteAndCleanup.roofDebrisRemoval} onCheckedChange={(c) => handleNestedCategoryChange('roofing', 'wasteAndCleanup', 'roofDebrisRemoval', !!c)} /> <Label htmlFor="debrisRemoval">Roof Debris Removal</Label></div>
+                            <div className="flex items-center gap-2"><Checkbox id="landscapeProtection" checked={document.roofing.wasteAndCleanup.landscapeProtection} onCheckedChange={(c) => handleNestedCategoryChange('roofing', 'wasteAndCleanup', 'landscapeProtection', !!c)} /> <Label htmlFor="landscapeProtection">Landscape Protection</Label></div>
+                            <div className="flex items-center gap-2"><Checkbox id="magnetSweep" checked={document.roofing.wasteAndCleanup.magnetSweepForNails} onCheckedChange={(c) => handleNestedCategoryChange('roofing', 'wasteAndCleanup', 'magnetSweepForNails', !!c)} /> <Label htmlFor="magnetSweep">Magnet Sweep For Nails</Label></div>
+                            <div className="flex items-center gap-2"><Checkbox id="finalCleanup" checked={document.roofing.wasteAndCleanup.finalCleanup} onCheckedChange={(c) => handleNestedCategoryChange('roofing', 'wasteAndCleanup', 'finalCleanup', !!c)} /> <Label htmlFor="finalCleanup">Final Cleanup</Label></div>
+                        </div>
+                    </div>
+                     <div>
+                        <Label className="font-semibold">Project Timeline</Label>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
+                            <div className="space-y-2"><Label className="text-xs">Estimated Start Date</Label><DatePicker date={document.roofing.projectTimeline.estimatedStartDate} setDate={(date) => handleRoofingDateChange('estimatedStartDate', date)} /></div>
+                            <div className="space-y-2"><Label className="text-xs">Estimated Completion Date</Label><DatePicker date={document.roofing.projectTimeline.estimatedCompletionDate} setDate={(date) => handleRoofingDateChange('estimatedCompletionDate', date)} /></div>
+                            <div className="space-y-2 md:col-span-2">
+                                <Label htmlFor="durationDays" className="text-xs">Estimated Duration (days)</Label>
+                                <Input id="durationDays" type="number" value={document.roofing.projectTimeline.estimatedDurationDays ?? ''} onChange={(e) => handleNestedCategoryChange('roofing', 'projectTimeline', 'estimatedDurationDays', e.target.value ? parseFloat(e.target.value) : null)} />
+                            </div>
+                        </div>
+                    </div>
+                     <div className="space-y-2">
+                        <Label>Warranty</Label>
+                        <Input name="warranty" value={document.roofing.warranty} onChange={(e) => handleCategorySelectChange('roofing', 'warranty', e.target.value)} />
+                    </div>
+                     <div className="space-y-2">
+                        <Label>Additional Notes</Label>
+                        <Textarea name="additionalNotes" value={document.roofing.additionalNotes} onChange={(e) => handleCategorySelectChange('roofing', 'additionalNotes', e.target.value)} />
+                    </div>
                 </CardContent>
             </Card>
         )}
