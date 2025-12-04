@@ -211,7 +211,6 @@ export interface RoofingInfo {
     estimatedDurationDays: number | null;
   };
   warranty: string;
-  additionalNotes: string;
 }
 
 export interface HVACInfo {

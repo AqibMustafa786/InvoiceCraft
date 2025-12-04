@@ -140,7 +140,6 @@ const getInitialEstimate = (): Omit<Estimate, 'userId'> => ({
         estimatedDurationDays: null,
     },
     warranty: '5 Year Workmanship Warranty',
-    additionalNotes: '',
   },
   hvac: {
     serviceType: 'Install',

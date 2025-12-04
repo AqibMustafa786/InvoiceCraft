@@ -953,11 +953,7 @@ export function DocumentForm({ document, setDocument, accentColor, setAccentColo
                     </div>
                      <div className="space-y-2">
                         <Label>Warranty</Label>
-                        <Input name="warranty" value={document.roofing.warranty} onChange={(e) => handleCategorySelectChange('roofing', 'warranty', e.target.value)} />
-                    </div>
-                     <div className="space-y-2">
-                        <Label>Additional Notes</Label>
-                        <Textarea name="additionalNotes" value={document.roofing.additionalNotes} onChange={(e) => handleCategorySelectChange('roofing', 'additionalNotes', e.target.value)} />
+                        <Input name="warranty" value={document.roofing.warranty ?? ''} onChange={(e) => handleCategorySelectChange('roofing', 'warranty', e.target.value)} />
                     </div>
                 </CardContent>
             </Card>
