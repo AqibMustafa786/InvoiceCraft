@@ -1,4 +1,5 @@
 
+
 export interface LineItem {
   id: string;
   name: string;
@@ -161,16 +162,56 @@ export interface HomeRemodelingInfo {
 }
 
 export interface RoofingInfo {
-    roofMaterial: string;
-    roofSize: number | null;
-    roofPitch: string;
-    layersToRemove: number | null;
+  roofType: string;
+  shingleBrand: string;
+  roofSize: number | null;
+  roofSquares: number | null;
+  layersToRemove: string;
+  roofPitch: string;
+  tearOffDetails: {
+    removeExistingShingles: boolean;
+    removeUnderlayment: boolean;
+    removeFlashing: boolean;
+    removeGutters: boolean;
+    removeVents: boolean;
+    removeSkylights: boolean;
+  };
+  installationDetails: {
     underlaymentType: string;
-    flashingReplacement: boolean;
-    ventilationSystem: string;
-    gutterRepairNeeded: boolean;
-    roofAge: number | null;
-    inspectionRequired: boolean;
+    flashingMaterial: string;
+    dripEdgeInstallation: boolean;
+    starterStripInstallation: boolean;
+    ridgeCapShingles: boolean;
+  };
+  ventilation: {
+    type: string;
+    addNewVentQuantity: number | null;
+  };
+  skylightsAndChimneys: {
+    numberOfSkylights: number | null;
+    replaceSkylights: boolean;
+    chimneyFlashingRequired: boolean;
+  };
+  guttersAndDownspouts: {
+    replaceGutters: boolean;
+    gutterType: string;
+    material: string;
+    linearFeet: number | null;
+  };
+  wasteAndCleanup: {
+    dumpsterIncluded: boolean;
+    roofDebrisRemoval: boolean;
+    landscapeProtection: boolean;
+    magnetSweepForNails: boolean;
+    finalCleanup: boolean;
+  };
+  projectTimeline: {
+    estimatedStartDate: Date | null;
+    estimatedCompletionDate: Date | null;
+    estimatedDurationDays: number | null;
+  };
+  warranty: string;
+  additionalNotes: string;
 }
 
 export interface HVACInfo {
@@ -298,7 +339,7 @@ export interface Estimate {
 
   // Category specific data
   homeRemodeling?: HomeRemodelingInfo;
-  roofing?: RoofingInfo;
+  roofing: RoofingInfo;
   hvac?: HVACInfo;
   plumbing?: PlumbingInfo;
   electrical?: ElectricalInfo;

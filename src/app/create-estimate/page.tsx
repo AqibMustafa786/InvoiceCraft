@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
@@ -90,16 +91,56 @@ const getInitialEstimate = (): Omit<Estimate, 'userId'> => ({
     expectedCompletionDate: null,
   },
   roofing: {
-    roofMaterial: 'Shingle',
+    roofType: 'Asphalt Shingle',
+    shingleBrand: 'GAF',
     roofSize: null,
-    roofPitch: '4/12',
-    layersToRemove: 1,
-    underlaymentType: 'Synthetic',
-    flashingReplacement: true,
-    ventilationSystem: 'Ridge Vents',
-    gutterRepairNeeded: false,
-    roofAge: 15,
-    inspectionRequired: true,
+    roofSquares: null,
+    layersToRemove: '1 layer',
+    roofPitch: 'Medium (5/12 – 7/12)',
+    tearOffDetails: {
+        removeExistingShingles: true,
+        removeUnderlayment: true,
+        removeFlashing: false,
+        removeGutters: false,
+        removeVents: false,
+        removeSkylights: false,
+    },
+    installationDetails: {
+        underlaymentType: 'Synthetic Underlayment',
+        flashingMaterial: 'Aluminum',
+        dripEdgeInstallation: true,
+        starterStripInstallation: true,
+        ridgeCapShingles: true,
+    },
+    ventilation: {
+        type: 'Ridge Vent',
+        addNewVentQuantity: null,
+    },
+    skylightsAndChimneys: {
+        numberOfSkylights: null,
+        replaceSkylights: false,
+        chimneyFlashingRequired: false,
+    },
+    guttersAndDownspouts: {
+        replaceGutters: false,
+        gutterType: 'K-Style',
+        material: 'Aluminum',
+        linearFeet: null,
+    },
+    wasteAndCleanup: {
+        dumpsterIncluded: true,
+        roofDebrisRemoval: true,
+        landscapeProtection: true,
+        magnetSweepForNails: true,
+        finalCleanup: true,
+    },
+    projectTimeline: {
+        estimatedStartDate: null,
+        estimatedCompletionDate: null,
+        estimatedDurationDays: null,
+    },
+    warranty: '5 Year Workmanship Warranty',
+    additionalNotes: '',
   },
   hvac: {
     serviceType: 'Install',
@@ -255,7 +296,7 @@ export default function CreateEstimatePage() {
     if (draftId && remoteDraft) {
        const baseEstimate = getInitialEstimate();
        const fromJSON = (key: string, value: any) => {
-           if (['estimateDate', 'validUntilDate', 'createdAt', 'updatedAt', 'expectedStartDate', 'expectedCompletionDate'].includes(key) && value) {
+           if (['estimateDate', 'validUntilDate', 'createdAt', 'updatedAt', 'expectedStartDate', 'expectedCompletionDate', 'estimatedStartDate', 'estimatedCompletionDate'].includes(key) && value) {
                return value.toDate ? value.toDate() : (isValid(new Date(value)) ? new Date(value) : null);
            }
            return value;
@@ -339,6 +380,13 @@ export default function CreateEstimatePage() {
     
     if (document.roofing) {
         draftToSave.roofing = { ...document.roofing };
+        if (document.roofing.projectTimeline) {
+            draftToSave.roofing.projectTimeline = { ...document.roofing.projectTimeline };
+            const start = normalizeDate(document.roofing.projectTimeline.estimatedStartDate);
+            if(start) draftToSave.roofing.projectTimeline.estimatedStartDate = start;
+            const end = normalizeDate(document.roofing.projectTimeline.estimatedCompletionDate);
+            if(end) draftToSave.roofing.projectTimeline.estimatedCompletionDate = end;
+        }
     }
     
     if (document.hvac) {
