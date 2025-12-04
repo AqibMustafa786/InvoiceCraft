@@ -458,8 +458,8 @@ export function DocumentForm({ document, setDocument, accentColor, setAccentColo
     const preset = presets.find(p => p.name === selectedPreset);
     if (preset) {
       const newItems = preset.items.map(item => ({ ...item, id: crypto.randomUUID() }));
-      setDocument(prev => ({ ...prev, lineItems: newItems }));
-      toast({ title: 'Preset Loaded', description: `Items from "${preset.name}" have been loaded.` });
+      setDocument(prev => ({ ...prev, lineItems: [...prev.lineItems, ...newItems] }));
+      toast({ title: 'Preset Loaded', description: `Items from "${preset.name}" have been added.` });
     }
   };
 
@@ -1279,9 +1279,9 @@ export function DocumentForm({ document, setDocument, accentColor, setAccentColo
                   </AlertDialogTrigger>
                   <AlertDialogContent>
                       <AlertDialogHeader>
-                          <AlertDialogTitle>Overwrite existing items?</AlertDialogTitle>
+                          <AlertDialogTitle>Add items from preset?</AlertDialogTitle>
                           <AlertDialogDescription>
-                              Loading this preset will replace all current line items. Are you sure you want to continue?
+                              This will add the items from the preset to your current list. It will not replace them.
                           </AlertDialogDescription>
                       </AlertDialogHeader>
                       <AlertDialogFooter>
