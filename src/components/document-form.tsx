@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import { ChangeEvent, Dispatch, SetStateAction, useState, useEffect } from 'react';
@@ -460,6 +461,15 @@ export function DocumentForm({ document, setDocument, accentColor, setAccentColo
       setDocument(prev => ({ ...prev, lineItems: newItems }));
       toast({ title: 'Preset Loaded', description: `Items from "${preset.name}" have been loaded.` });
     }
+  };
+
+  const handleDeletePreset = () => {
+    if (!selectedPreset) return;
+    const updatedPresets = presets.filter(p => p.name !== selectedPreset);
+    setPresets(updatedPresets);
+    localStorage.setItem('lineItemPresets', JSON.stringify(updatedPresets));
+    toast({ title: 'Preset Deleted', description: `"${selectedPreset}" has been deleted.` });
+    setSelectedPreset(''); // Clear selection
   };
 
 
@@ -1279,7 +1289,25 @@ export function DocumentForm({ document, setDocument, accentColor, setAccentColo
                           <AlertDialogAction onClick={handleLoadPreset}>Load</AlertDialogAction>
                       </AlertDialogFooter>
                   </AlertDialogContent>
-              </AlertDialog>
+                </AlertDialog>
+
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <Button variant="destructive" disabled={!selectedPreset}><Trash2 className="mr-2 h-4 w-4" />Delete Preset</Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                      <AlertDialogHeader>
+                          <AlertDialogTitle>Delete this preset?</AlertDialogTitle>
+                          <AlertDialogDescription>
+                              This will permanently delete the "{selectedPreset}" preset. This action cannot be undone.
+                          </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                          <AlertDialogCancel>Cancel</AlertDialogCancel>
+                          <AlertDialogAction onClick={handleDeletePreset}>Delete</AlertDialogAction>
+                      </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
 
                 <Dialog open={isSavePresetOpen} onOpenChange={setIsSavePresetOpen}>
                   <DialogTrigger asChild>
