@@ -924,14 +924,14 @@ export function DocumentForm({ document, setDocument, accentColor, setAccentColo
                                 <Label className="text-xs">Underlayment Type</Label>
                                 <Select value={document.roofing.installationDetails.underlaymentType ?? ''} onValueChange={(v) => handleNestedCategoryChange('roofing', 'installationDetails', 'underlaymentType', v)}>
                                     <SelectTrigger><SelectValue placeholder="Select type" /></SelectTrigger>
-                                    <SelectContent>{underlaymentTypes.map(o => <SelectItem key={o} value={o}>{o}</SelectItem>)}</SelectContent>
+                                    <SelectContent>{underlaymentTypes.map((o, i) => <SelectItem key={`${o}-${i}`} value={o}>{o}</SelectItem>)}</SelectContent>
                                 </Select>
                             </div>
                             <div className="space-y-2">
                                 <Label className="text-xs">Flashing Material</Label>
                                 <Select value={document.roofing.installationDetails.flashingMaterial ?? ''} onValueChange={(v) => handleNestedCategoryChange('roofing', 'installationDetails', 'flashingMaterial', v)}>
                                     <SelectTrigger><SelectValue placeholder="Select material" /></SelectTrigger>
-                                    <SelectContent>{flashingMaterials.map(o => <SelectItem key={o} value={o}>{o}</SelectItem>)}</SelectContent>
+                                    <SelectContent>{flashingMaterials.map((o, i) => <SelectItem key={`${o}-${i}`} value={o}>{o}</SelectItem>)}</SelectContent>
                                 </Select>
                             </div>
                             <div className="flex items-center gap-2 text-sm"><Checkbox id="dripEdge" checked={document.roofing.installationDetails.dripEdgeInstallation} onCheckedChange={(c) => handleNestedCategoryChange('roofing', 'installationDetails', 'dripEdgeInstallation', !!c)} /> <Label htmlFor="dripEdge">Drip Edge Installation</Label></div>
@@ -948,7 +948,7 @@ export function DocumentForm({ document, setDocument, accentColor, setAccentColo
                                     <Wind className="absolute left-3 h-5 w-5 text-muted-foreground z-10" />
                                     <Select value={document.roofing.ventilation.type ?? ''} onValueChange={(v) => handleNestedCategoryChange('roofing', 'ventilation', 'type', v)}>
                                         <SelectTrigger className="pl-10"><SelectValue placeholder="Select type" /></SelectTrigger>
-                                        <SelectContent>{ventilationTypes.map(o => <SelectItem key={o} value={o}>{o}</SelectItem>)}</SelectContent>
+                                        <SelectContent>{ventilationTypes.map((o, i) => <SelectItem key={`${o}-${i}`} value={o}>{o}</SelectItem>)}</SelectContent>
                                     </Select>
                                 </div>
                             </div>
@@ -977,14 +977,14 @@ export function DocumentForm({ document, setDocument, accentColor, setAccentColo
                                 <Label className="text-xs">Gutter Type</Label>
                                 <Select value={document.roofing.guttersAndDownspouts.gutterType ?? ''} onValueChange={(v) => handleNestedCategoryChange('roofing', 'guttersAndDownspouts', 'gutterType', v)}>
                                     <SelectTrigger><SelectValue placeholder="Select type" /></SelectTrigger>
-                                    <SelectContent>{gutterTypes.map(o => <SelectItem key={o} value={o}>{o}</SelectItem>)}</SelectContent>
+                                    <SelectContent>{gutterTypes.map((o, i) => <SelectItem key={`${o}-${i}`} value={o}>{o}</SelectItem>)}</SelectContent>
                                 </Select>
                             </div>
                             <div className="space-y-2">
                                 <Label className="text-xs">Material</Label>
                                 <Select value={document.roofing.guttersAndDownspouts.material ?? ''} onValueChange={(v) => handleNestedCategoryChange('roofing', 'guttersAndDownspouts', 'material', v)}>
                                     <SelectTrigger><SelectValue placeholder="Select material" /></SelectTrigger>
-                                    <SelectContent>{gutterMaterials.map(o => <SelectItem key={o} value={o}>{o}</SelectItem>)}</SelectContent>
+                                    <SelectContent>{gutterMaterials.map((o, i) => <SelectItem key={`${o}-${i}`} value={o}>{o}</SelectItem>)}</SelectContent>
                                 </Select>
                             </div>
                             <div className="space-y-2">
@@ -1033,7 +1033,7 @@ export function DocumentForm({ document, setDocument, accentColor, setAccentColo
                         <Select value={document.hvac.serviceType} onValueChange={(value) => handleCategorySelectChange('hvac', 'serviceType', value)}>
                             <SelectTrigger><SelectValue placeholder="Select service type" /></SelectTrigger>
                             <SelectContent>
-                                {hvacServiceTypes.map(o => <SelectItem key={o} value={o}>{o}</SelectItem>)}
+                                {hvacServiceTypes.map((o, i) => <SelectItem key={`${o}-${i}`} value={o}>{o}</SelectItem>)}
                             </SelectContent>
                         </Select>
                     </div>
@@ -1042,7 +1042,7 @@ export function DocumentForm({ document, setDocument, accentColor, setAccentColo
                          <Select value={document.hvac.systemType} onValueChange={(value) => handleCategorySelectChange('hvac', 'systemType', value)}>
                             <SelectTrigger><SelectValue placeholder="Select system type" /></SelectTrigger>
                             <SelectContent>
-                                {hvacSystemTypes.map(o => <SelectItem key={o} value={o}>{o}</SelectItem>)}
+                                {hvacSystemTypes.map((o, i) => <SelectItem key={`${o}-${i}`} value={o}>{o}</SelectItem>)}
                             </SelectContent>
                         </Select>
                     </div>
@@ -1092,7 +1092,7 @@ export function DocumentForm({ document, setDocument, accentColor, setAccentColo
                         <Select value={document.plumbing.serviceType} onValueChange={(value) => handleCategorySelectChange('plumbing', 'serviceType', value)}>
                             <SelectTrigger><SelectValue placeholder="Select service type" /></SelectTrigger>
                             <SelectContent>
-                                {plumbingServiceTypes.map(o => <SelectItem key={o} value={o}>{o}</SelectItem>)}
+                                {plumbingServiceTypes.map((o, i) => <SelectItem key={`${o}-${i}`} value={o}>{o}</SelectItem>)}
                             </SelectContent>
                         </Select>
                     </div>
@@ -1101,7 +1101,7 @@ export function DocumentForm({ document, setDocument, accentColor, setAccentColo
                          <Select value={document.plumbing.fixtureType} onValueChange={(value) => handleCategorySelectChange('plumbing', 'fixtureType', value)}>
                             <SelectTrigger><SelectValue placeholder="Select fixture type" /></SelectTrigger>
                             <SelectContent>
-                                {plumbingFixtureTypes.map(o => <SelectItem key={o} value={o}>{o}</SelectItem>)}
+                                {plumbingFixtureTypes.map((o, i) => <SelectItem key={`${o}-${i}`} value={o}>{o}</SelectItem>)}
                             </SelectContent>
                         </Select>
                     </div>
@@ -1110,7 +1110,7 @@ export function DocumentForm({ document, setDocument, accentColor, setAccentColo
                          <Select value={document.plumbing.pipeMaterial} onValueChange={(value) => handleCategorySelectChange('plumbing', 'pipeMaterial', value)}>
                             <SelectTrigger><SelectValue placeholder="Select pipe material" /></SelectTrigger>
                             <SelectContent>
-                                {plumbingPipeMaterials.map(o => <SelectItem key={o} value={o}>{o}</SelectItem>)}
+                                {plumbingPipeMaterials.map((o, i) => <SelectItem key={`${o}-${i}`} value={o}>{o}</SelectItem>)}
                             </SelectContent>
                         </Select>
                     </div>
@@ -1184,8 +1184,8 @@ export function DocumentForm({ document, setDocument, accentColor, setAccentColo
                     </div>
                     <div className="flex items-center space-x-2 pt-2"><Checkbox id="hasPets" name="hasPets" checked={document.cleaning.hasPets} onCheckedChange={(c) => handleCategorySelectChange('cleaning', 'hasPets', !!c)} /><Label htmlFor="hasPets">Any Pets?</Label></div>
                     <div className="space-y-3"><Label>Add-ons</Label><div className="grid grid-cols-2 md:grid-cols-3 gap-x-4 gap-y-2">
-                        {['Carpet', 'Windows', 'Fridge', 'Oven', 'Laundry', 'Walls'].map(addOn => (
-                            <div key={addOn} className="flex items-center space-x-2"><Checkbox id={`addOn-${addOn}`} checked={cleaningAddOns.includes(addOn)} onCheckedChange={(c) => handleCleaningAddOnChange(addOn, !!c)} /><Label htmlFor={`addOn-${addOn}`}>{addOn}</Label></div>
+                        {['Carpet', 'Windows', 'Fridge', 'Oven', 'Laundry', 'Walls'].map((addOn, i) => (
+                            <div key={`${addOn}-${i}`} className="flex items-center space-x-2"><Checkbox id={`addOn-${addOn}`} checked={cleaningAddOns.includes(addOn)} onCheckedChange={(c) => handleCleaningAddOnChange(addOn, !!c)} /><Label htmlFor={`addOn-${addOn}`}>{addOn}</Label></div>
                         ))}
                     </div></div>
                 </CardContent>
