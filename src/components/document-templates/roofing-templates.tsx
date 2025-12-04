@@ -38,16 +38,18 @@ const RoofingDetails: React.FC<{ document: Estimate }> = ({ document }) => {
     const { roofing } = document;
     return (
        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-4 gap-y-1 text-xs">
-            <p><span className="text-gray-500">Roof Material:</span> <span className="font-semibold">{roofing.roofMaterial}</span></p>
+            <p><span className="text-gray-500">Roof Type:</span> <span className="font-semibold">{roofing.roofType}</span></p>
+            <p><span className="text-gray-500">Shingle Brand:</span> <span className="font-semibold">{roofing.shingleBrand}</span></p>
             {roofing.roofSize && <p><span className="text-gray-500">Roof Size:</span> <span className="font-semibold">{roofing.roofSize} sq. ft.</span></p>}
+            {roofing.roofSquares && <p><span className="text-gray-500">Squares:</span> <span className="font-semibold">{roofing.roofSquares}</span></p>}
             <p><span className="text-gray-500">Roof Pitch:</span> <span className="font-semibold">{roofing.roofPitch}</span></p>
-            {roofing.layersToRemove && <p><span className="text-gray-500">Layers to Remove:</span> <span className="font-semibold">{roofing.layersToRemove}</span></p>}
+            <p><span className="text-gray-500">Layers to Remove:</span> <span className="font-semibold">{roofing.layersToRemove}</span></p>
             <p><span className="text-gray-500">Underlayment:</span> <span className="font-semibold">{roofing.underlaymentType}</span></p>
-            <p><span className="text-gray-500">Ventilation:</span> <span className="font-semibold">{roofing.ventilationSystem}</span></p>
-            <p><span className="text-gray-500">Flashing:</span> <span className="font-semibold">{roofing.flashingReplacement ? 'Replacement Included' : 'No Replacement'}</span></p>
-            <p><span className="text-gray-500">Gutter Repair:</span> <span className="font-semibold">{roofing.gutterRepairNeeded ? 'Needed' : 'Not Needed'}</span></p>
-            {roofing.roofAge && <p><span className="text-gray-500">Roof Age:</span> <span className="font-semibold">{roofing.roofAge} years</span></p>}
-            <p><span className="text-gray-500">Inspection:</span> <span className="font-semibold">{roofing.inspectionRequired ? 'Required' : 'Not Required'}</span></p>
+            <p className="col-span-full"><span className="text-gray-500">Flashing:</span> <span className="font-semibold">{roofing.flashingDetails}</span></p>
+            <p className="col-span-full"><span className="text-gray-500">Ventilation:</span> <span className="font-semibold">{roofing.ventilationDetails}</span></p>
+            <p className="col-span-full"><span className="text-gray-500">Gutters:</span> <span className="font-semibold">{roofing.gutterDetails}</span></p>
+            <p><span className="text-gray-500">Timeline:</span> <span className="font-semibold">{roofing.estimatedTimeline}</span></p>
+            <p><span className="text-gray-500">Warranty:</span> <span className="font-semibold">{roofing.warranty}</span></p>
         </div>
     );
 };
@@ -444,5 +446,3 @@ export const RoofingTemplate5: React.FC<TemplateProps> = ({ document, pageItems,
         </div>
     );
 };
-
-    
