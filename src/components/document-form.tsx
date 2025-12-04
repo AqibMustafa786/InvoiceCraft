@@ -778,7 +778,7 @@ export function DocumentForm({ document, setDocument, accentColor, setAccentColo
                         <Label htmlFor="ventilationSystem">Ventilation System</Label>
                         <div className="relative flex items-center">
                             <Wind className="absolute left-3 h-5 w-5 text-muted-foreground" />
-                            <Input id="ventilationSystem" name="ventilationSystem" value={document.roofing.ventilationSystem} onChange={(e) => handleCategoryDataChange('roofing', e)} placeholder="e.g. Ridge Vents, Soffit Vents" />
+                            <Input id="ventilationSystem" name="ventilationSystem" value={document.roofing.ventilationSystem} onChange={(e) => handleCategoryDataChange('roofing', e)} placeholder="e.g. Ridge Vents, Soffit Vents" className="pl-10"/>
                         </div>
                     </div>
                     <div className="flex items-center space-x-2 pt-6">
