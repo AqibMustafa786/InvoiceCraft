@@ -150,7 +150,7 @@ const CustomSelect = ({ value, onValueChange, options, placeholder, name }: { va
                     <SelectValue placeholder={placeholder} />
                 </SelectTrigger>
                 <SelectContent>
-                    {options.map(option => <SelectItem key={option} value={option}>{option}</SelectItem>)}
+                    {options.map((option, index) => <SelectItem key={`${option}-${index}`} value={option}>{option}</SelectItem>)}
                     <SelectItem value="Other">Other (Please specify)</SelectItem>
                 </SelectContent>
             </Select>
@@ -771,9 +771,7 @@ export function DocumentForm({ document, setDocument, accentColor, setAccentColo
                             <SelectValue placeholder="Select currency" />
                         </SelectTrigger>
                         <SelectContent>
-                            {currencies.map(c => (
-                                <SelectItem key={c.value} value={c.value}>{c.label}</SelectItem>
-                            ))}
+                            {currencies.map(c => <SelectItem key={c.value} value={c.value}>{c.label}</SelectItem>)}
                         </SelectContent>
                     </Select>
                 </div>
