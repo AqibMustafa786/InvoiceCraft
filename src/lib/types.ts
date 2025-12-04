@@ -170,7 +170,7 @@ export interface RoofingInfo {
   underlaymentType: string;
   flashingDetails: string;
   ventilationSystem: string;
-  gutterRepairNeeded: string;
+  gutterRepairNeeded: boolean;
   warranty: string;
   estimatedTimeline: string;
   inspectionRequired: 'Yes' | 'No';

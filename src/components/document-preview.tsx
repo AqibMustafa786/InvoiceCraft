@@ -103,9 +103,9 @@ const CategoryPreview = ({ document }: { document: Estimate }) => {
                         <div><span className="font-bold">Layers to Remove:</span> {roofing.layersToRemove}</div>
                         <div><span className="font-bold">Roof Pitch:</span> {roofing.roofPitch}</div>
                         <div><span className="font-bold">Underlayment:</span> {roofing.underlaymentType}</div>
-                        <div><span className="font-bold">Flashing Replacement:</span> {roofing.flashingDetails}</div>
+                        <div><span className="font-bold">Flashing Details:</span> {roofing.flashingDetails}</div>
                         <div><span className="font-bold">Ventilation:</span> {roofing.ventilationSystem}</div>
-                        <div><span className="font-bold">Gutter Repair:</span> {roofing.gutterRepairNeeded}</div>
+                        <div><span className="font-bold">Gutter Repair:</span> {roofing.gutterRepairNeeded ? 'Yes' : 'No'}</div>
                         <div><span className="font-bold">Warranty:</span> {roofing.warranty}</div>
                         <div className="col-span-2"><span className="font-bold">Timeline:</span> {roofing.estimatedTimeline}</div>
                         <div><span className="font-bold">Inspection Required:</span> {roofing.inspectionRequired}</div>
