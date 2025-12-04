@@ -55,12 +55,12 @@ export const LandscapingTemplate1: React.FC<TemplateProps> = ({ document, pageIt
                      {business.logoUrl ? (
                         <Image src={business.logoUrl} alt="Logo" width={100} height={50} className="object-contain"/>
                     ) : (
-                        <h2 className="text-2xl font-bold" style={{ color: style.color }}>{business.name}</h2>
+                        <h2 className="text-3xl font-bold" style={{ color: style.color }}>{business.name}</h2>
                     )}
                      <p className="text-xs">{business.address}</p>
                 </div>
                 <div className="text-right">
-                    <h1 className="text-4xl font-bold">{docTitle}</h1>
+                    <h1 className="text-2xl font-bold">{docTitle}</h1>
                     {category !== 'Generic' && <p className="text-sm">{category}</p>}
                 </div>
             </header>
@@ -137,11 +137,11 @@ export const LandscapingTemplate2: React.FC<TemplateProps> = ({ document, pageIt
         <div className={`p-10 bg-white font-sans text-gray-700 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: 'Verdana, sans-serif', fontSize: '9.5pt', minHeight: '1056px' }}>
             <header className="flex justify-between items-start mb-10 pb-4 border-b-2 border-gray-100">
                 <div>
-                    <h1 className="text-2xl font-bold" style={{ color: style.color }}>{business.name}</h1>
+                    <h1 className="text-3xl font-bold" style={{ color: style.color }}>{business.name}</h1>
                     <p className="text-xs text-gray-500">{business.address}</p>
                 </div>
                 <div className="text-right">
-                    <h2 className="text-3xl font-light text-gray-400">{docTitle}</h2>
+                    <h2 className="text-2xl font-light text-gray-400">{docTitle}</h2>
                     {category !== 'Generic' && <p className="text-sm text-gray-400">{category}</p>}
                 </div>
             </header>
@@ -211,7 +211,7 @@ export const LandscapingTemplate3: React.FC<TemplateProps> = ({ document, pageIt
     return (
         <div className={`bg-white font-sans text-gray-800 flex ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ minHeight: '1056px' }}>
             <div className="w-1/3 p-8 text-white" style={{ backgroundColor: style.color }}>
-                <h1 className="text-3xl font-bold mb-2">{docTitle}</h1>
+                <h1 className="text-4xl font-bold mb-2">{docTitle}</h1>
                 {category !== 'Generic' && <p className="text-sm mb-8">{category}</p>}
 
                 <div className="text-sm space-y-6 flex-grow">
@@ -233,7 +233,7 @@ export const LandscapingTemplate3: React.FC<TemplateProps> = ({ document, pageIt
             </div>
             <div className="w-2/3 p-10 flex flex-col">
                 <header className="mb-8 text-right">
-                    <h2 className="text-2xl font-bold">{business.name}</h2>
+                    <h2 className="text-3xl font-bold">{business.name}</h2>
                     <p className="text-xs text-gray-500">{business.address}</p>
                 </header>
                  <LandscapingDetails document={document} />
@@ -286,8 +286,8 @@ export const LandscapingTemplate4: React.FC<TemplateProps> = ({ document, pageIt
     return (
         <div className={`p-12 bg-white font-['Garamond',_serif] text-gray-700 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ minHeight: '1056px' }}>
             <header className="mb-16 text-center">
-                <h1 className="text-4xl font-light tracking-widest">{business.name}</h1>
-                <h2 className="text-2xl font-light tracking-widest mt-2">{docTitle.toUpperCase()}</h2>
+                <h1 className="text-5xl font-light tracking-widest">{business.name}</h1>
+                <h2 className="text-3xl font-light tracking-widest mt-2">{docTitle.toUpperCase()}</h2>
                 {category !== 'Generic' && <p className="text-sm text-gray-500">{category}</p>}
             </header>
 
@@ -343,12 +343,12 @@ export const LandscapingTemplate5: React.FC<TemplateProps> = ({ document, pageIt
         <div className={`p-10 bg-gray-50 font-['Roboto'] text-gray-900 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ minHeight: '1056px' }}>
             <header className="grid grid-cols-2 gap-4 mb-8">
                 <div>
-                  <h1 className="text-3xl font-extrabold" style={{ color: style.color }}>{business.name}</h1>
+                  <h1 className="text-4xl font-extrabold" style={{ color: style.color }}>{business.name}</h1>
                    <p className="text-xs">{business.address}</p>
                 </div>
                  <div className="text-right">
-                    <p className="text-3xl font-extrabold">{docTitle.toUpperCase()}</p>
-                    {category !== 'Generic' && <p className="text-xs">{category}</p>}
+                     <p className="text-3xl font-bold">{docTitle}</p>
+                    {category !== 'Generic' && <p className="text-xs text-gray-500">{category}</p>}
                 </div>
             </header>
 
@@ -395,3 +395,5 @@ export const LandscapingTemplate5: React.FC<TemplateProps> = ({ document, pageIt
         </div>
     );
 };
+
+    

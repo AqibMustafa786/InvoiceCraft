@@ -56,10 +56,10 @@ export const PlumbingTemplate1: React.FC<TemplateProps> = ({ document, pageItems
             <header className="flex justify-between items-start mb-4">
                 <div>
                     {business.logoUrl && <Image src={business.logoUrl} alt="Logo" width={100} height={50} className="object-contain" />}
-                    <h1 className="text-2xl font-bold">{business.name}</h1>
+                    <h1 className="text-3xl font-bold">{business.name}</h1>
                 </div>
                 <div className="text-right">
-                    <h2 className="text-3xl font-bold">{docTitle}</h2>
+                    <h2 className="text-2xl font-bold">{docTitle}</h2>
                     {category !== 'Generic' && <p className="text-sm">{category}</p>}
                 </div>
             </header>
@@ -152,7 +152,7 @@ export const PlumbingTemplate2: React.FC<TemplateProps> = ({ document, pageItems
         <div className={`p-10 bg-white font-sans text-gray-800 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ minHeight: '1056px' }}>
             <header className="flex justify-between items-start mb-8 pb-4 border-b-2" style={{ borderColor: accentColor }}>
                 <div>
-                    <h1 className="text-3xl font-bold" style={{ color: accentColor }}>{business.name}</h1>
+                    <h1 className="text-4xl font-bold" style={{ color: accentColor }}>{business.name}</h1>
                     <p className="text-xs whitespace-pre-line text-gray-500">{business.address}</p>
                 </div>
                 <div className="text-right">
@@ -217,7 +217,7 @@ export const PlumbingTemplate3: React.FC<TemplateProps> = ({ document, pageItems
         <div className={`p-12 bg-white font-['Helvetica'] text-gray-700 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ minHeight: '1056px' }}>
             <header className="flex justify-between items-start mb-12 text-center">
                 <div className="text-left">
-                    <h1 className="text-3xl font-bold">{business.name}</h1>
+                    <h1 className="text-4xl font-bold">{business.name}</h1>
                     <p className="text-xs">{business.address}</p>
                 </div>
                 <div className="text-right">
@@ -289,7 +289,7 @@ export const PlumbingTemplate4: React.FC<TemplateProps> = ({ document, pageItems
     return (
         <div className={`bg-white font-sans text-gray-800 flex ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ minHeight: '1056px' }}>
             <div className="w-1/3 p-8 text-white bg-gray-800 flex flex-col">
-                 <h1 className="text-2xl font-bold mb-2">{business.name}</h1>
+                 <h1 className="text-3xl font-bold mb-2">{business.name}</h1>
                 <div className="text-xs space-y-4 flex-grow">
                     <div>
                         <p className="font-bold opacity-70 mb-1">ESTIMATE FOR</p>
@@ -316,7 +316,7 @@ export const PlumbingTemplate4: React.FC<TemplateProps> = ({ document, pageItems
             <div className="w-2/3 p-10 flex flex-col">
                 <div className='flex justify-end mb-4'>
                     <div className="text-right">
-                        <h2 className='text-3xl font-bold'>{docTitle}</h2>
+                        <h2 className='text-2xl font-bold'>{docTitle}</h2>
                         {category !== 'Generic' && <p className="text-sm">{category}</p>}
                     </div>
                 </div>
@@ -369,7 +369,7 @@ export const PlumbingTemplate5: React.FC<TemplateProps> = ({ document, pageItems
         <div className={`p-10 bg-gray-50 font-['Roboto'] text-gray-900 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ minHeight: '1056px' }}>
             <header className="grid grid-cols-2 gap-4 mb-10">
                 <div>
-                    <h1 className="text-3xl font-extrabold">{business.name}</h1>
+                    <h1 className="text-4xl font-extrabold">{business.name}</h1>
                     <p className="text-xs">{business.address}</p>
                 </div>
                  <div className="text-right">
@@ -423,3 +423,5 @@ export const PlumbingTemplate5: React.FC<TemplateProps> = ({ document, pageItems
         </div>
     );
 };
+
+    

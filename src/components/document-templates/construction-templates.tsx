@@ -65,7 +65,7 @@ export const ConstructionTemplate1: React.FC<TemplateProps> = ({ document, pageI
         <div className={`p-10 font-sans text-gray-800 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: style.fontFamily, fontSize: `${style.fontSize}pt`, minHeight: '1056px', backgroundColor: document.backgroundColor, color: textColor }}>
             <header className="flex justify-between items-start pb-4 border-b-2" style={{ borderColor: style.color }}>
                 <div>
-                    <h1 className="text-3xl font-bold">{business.name}</h1>
+                    <h1 className="text-4xl font-bold">{business.name}</h1>
                     <p className="text-xs whitespace-pre-line">{business.address}</p>
                 </div>
                 <div className="text-right">
@@ -155,12 +155,12 @@ export const ConstructionTemplate2: React.FC<TemplateProps> = ({ document, pageI
                      {business.logoUrl ? (
                         <Image src={business.logoUrl} alt="Logo" width={120} height={50} />
                     ) : (
-                        <h1 className="text-3xl font-bold">{business.name}</h1>
+                        <h1 className="text-4xl font-bold">{business.name}</h1>
                     )}
                     <p className="text-xs whitespace-pre-line mt-2 text-gray-300">{business.address}</p>
                 </div>
                 <div className="text-right">
-                    <h2 className="text-4xl font-bold">{docTitle}</h2>
+                    <h2 className="text-3xl font-bold">{docTitle}</h2>
                     {category !== 'Generic' && <p className="text-sm">{category}</p>}
                 </div>
             </header>
@@ -246,7 +246,7 @@ export const ConstructionTemplate3: React.FC<TemplateProps> = ({ document, pageI
         <div className={`p-10 font-sans text-gray-700 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: style.fontFamily, fontSize: `${style.fontSize}pt`, minHeight: '1056px', backgroundColor: document.backgroundColor, color: textColor }}>
             <header className="flex justify-between items-start mb-12">
                  <div>
-                    <h1 className="text-3xl font-light tracking-wider mb-1">{business.name}</h1>
+                    <h1 className="text-4xl font-light tracking-wider mb-1">{business.name}</h1>
                     <p className="text-xs whitespace-pre-line">{business.address}</p>
                 </div>
                 <div className="text-right">
@@ -318,7 +318,7 @@ export const ConstructionTemplate4: React.FC<TemplateProps> = ({ document, pageI
     return (
         <div className={`font-sans text-gray-800 flex ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: style.fontFamily, fontSize: `${style.fontSize}pt`, minHeight: '1056px', backgroundColor: document.backgroundColor }}>
             <div className="w-1/4 p-8 text-white" style={{ backgroundColor: style.color }}>
-                <h1 className="text-3xl font-bold mb-2">{business.name}</h1>
+                <h1 className="text-4xl font-bold mb-2">{business.name}</h1>
                 <div className="text-sm space-y-4">
                     <div>
                         <p className="font-bold opacity-80 mb-1">FROM</p>
@@ -402,11 +402,11 @@ export const ConstructionTemplate5: React.FC<TemplateProps> = ({ document, pageI
                      {business.logoUrl ? (
                         <Image src={business.logoUrl} alt="Logo" width={100} height={40} className="object-contain" />
                     ) : (
-                        <h1 className="text-3xl font-bold">{business.name}</h1>
+                        <h1 className="text-4xl font-bold">{business.name}</h1>
                     )}
                 </div>
                  <div className="text-right">
-                    <h2 className="text-4xl font-extrabold text-gray-400">{docTitle}</h2>
+                    <h2 className="text-3xl font-extrabold text-gray-400">{docTitle}</h2>
                     {category !== 'Generic' && <p className="text-sm text-gray-400">{category}</p>}
                 </div>
             </header>
@@ -478,3 +478,5 @@ export const ConstructionTemplate5: React.FC<TemplateProps> = ({ document, pageI
         </div>
     );
 };
+
+    

@@ -71,10 +71,10 @@ export const RemodelingTemplate1: React.FC<TemplateProps> = ({ document, pageIte
                             <Image src={business.logoUrl} alt="logo" width={40} height={40}/> :
                             <div className="w-10 h-10 bg-white flex items-center justify-center rounded-md"><span style={{color: '#0A2D4D'}}>🏠</span></div>
                         }
-                        <h1 className="text-2xl font-bold">{business.name}</h1>
+                        <h1 className="text-3xl font-bold">{business.name}</h1>
                     </div>
                     <div className="text-right">
-                        <h2 className="text-3xl font-bold">{docTitle}</h2>
+                        <h2 className="text-2xl font-bold">{docTitle}</h2>
                         {category !== 'Generic' && <p className="text-sm">{category.replace(' / ', ' / ')}</p>}
                     </div>
                 </div>
@@ -172,11 +172,11 @@ export const RemodelingTemplate2: React.FC<TemplateProps> = ({ document, pageIte
             <header className="flex justify-between items-start mb-10">
                 <div>
                      {business.logoUrl && <Image src={business.logoUrl} alt="Logo" width={100} height={50} className="mb-2 object-contain"/>}
-                    <h1 className="text-2xl font-bold">{business.name}</h1>
+                    <h1 className="text-3xl font-bold">{business.name}</h1>
                     <p className="text-xs text-gray-500 whitespace-pre-line" style={{color: textColor}}>{business.address}</p>
                 </div>
                 <div className="text-right">
-                    <h2 className="text-4xl font-light" style={{color: style.color}}>{docTitle}</h2>
+                    <h2 className="text-2xl font-light" style={{color: style.color}}>{docTitle}</h2>
                     {category !== 'Generic' && <p className="text-sm" style={{color: style.color}}>{category.replace(' / ', ' / ')}</p>}
                     <p className="mt-2"><span className="font-bold text-gray-500">#</span> {document.estimateNumber}</p>
                     <p className="text-xs"><span className="font-bold text-gray-500">Date:</span> {safeFormat(document.estimateDate, 'MM/dd/yyyy')}</p>
@@ -320,11 +320,11 @@ export const RemodelingTemplate4: React.FC<TemplateProps> = ({ document, pageIte
         <div className={`p-10 font-sans text-gray-800 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: 'Arial', fontSize: `${style.fontSize}pt`, minHeight: '1056px', backgroundColor: document.backgroundColor, color: textColor }}>
             <header className="flex justify-between items-center mb-8 pb-4 border-b-4" style={{borderColor: style.color}}>
                 <div>
-                    <p className="font-bold text-lg">{business.name}</p>
+                    <p className="font-bold text-3xl">{business.name}</p>
                     <p className="text-xs text-gray-500" style={{color: textColor}}>{business.address}</p>
                 </div>
                 <div className="text-right">
-                    <h1 className="text-4xl font-extrabold" style={{color: style.color}}>{docTitle}</h1>
+                    <h1 className="text-2xl font-extrabold" style={{color: style.color}}>{docTitle}</h1>
                      {category !== 'Generic' && <p className="text-sm" style={{color: style.color}}>{category.replace(' / ', ' / ')}</p>}
                 </div>
             </header>
@@ -386,7 +386,7 @@ export const RemodelingTemplate5: React.FC<TemplateProps> = ({ document, pageIte
         <div className={`p-12 font-sans text-gray-800 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: style.fontFamily, fontSize: `${style.fontSize}pt`, minHeight: '1056px', backgroundColor: document.backgroundColor, color: textColor }}>
             <header className="flex justify-between items-start mb-12">
                 <div>
-                    <h1 className="text-3xl font-bold">{business.name}</h1>
+                    <h1 className="text-4xl font-bold">{business.name}</h1>
                 </div>
                 <div className="text-right">
                     <h2 className="text-3xl font-bold">{docTitle}</h2>
@@ -447,3 +447,5 @@ export const RemodelingTemplate5: React.FC<TemplateProps> = ({ document, pageIte
         </div>
     );
 };
+
+    

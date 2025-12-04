@@ -67,11 +67,11 @@ export const CleaningTemplate1: React.FC<TemplateProps> = ({ document, pageItems
             <div className="p-10 relative z-10 flex-grow flex flex-col" style={{color: textColor}}>
                 <header className="flex justify-between items-start mb-8 text-white">
                     <div>
-                        <h1 className="text-2xl font-bold">{business.name}</h1>
+                        <h1 className="text-3xl font-bold">{business.name}</h1>
                         <p className="text-xs whitespace-pre-line">{business.address}</p>
                     </div>
                     <div className="text-right">
-                        <h2 className="text-3xl font-bold">{docTitle}</h2>
+                        <h2 className="text-2xl font-bold">{docTitle}</h2>
                         {category !== 'Generic' && <p className="text-sm">Cleaning Service</p>}
                     </div>
                 </header>
@@ -160,11 +160,11 @@ export const CleaningTemplate2: React.FC<TemplateProps> = ({ document, pageItems
         <div className={`p-10 bg-white font-sans text-gray-700 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: 'Inter, sans-serif', fontSize: '9pt', minHeight: '1056px', color: textColor }}>
             <header className="flex justify-between items-start mb-10">
                 <div>
-                    <h1 className="text-2xl font-bold" style={{ color: accentColor }}>{business.name}</h1>
+                    <h1 className="text-3xl font-bold" style={{ color: accentColor }}>{business.name}</h1>
                     <p className="text-xs text-gray-500">{business.address}</p>
                 </div>
                 <div className='text-right'>
-                    <h2 className="text-3xl font-extrabold" >{docTitle}</h2>
+                    <h2 className="text-2xl font-extrabold" >{docTitle}</h2>
                     {category !== 'Generic' && <p className="text-sm text-gray-400">{category}</p>}
                 </div>
             </header>
@@ -233,7 +233,7 @@ export const CleaningTemplate3: React.FC<TemplateProps> = ({ document, pageItems
         <div className={`p-12 bg-white font-['Garamond',_serif] text-gray-700 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ minHeight: '1056px', color: textColor }}>
             <header className="flex justify-between items-start mb-12">
                 <div>
-                    <h1 className="text-3xl font-light tracking-wider">{business.name}</h1>
+                    <h1 className="text-4xl font-light tracking-wider">{business.name}</h1>
                     <p className="text-xs">{business.address}</p>
                 </div>
                 <div className="text-right">
@@ -329,7 +329,7 @@ export const CleaningTemplate4: React.FC<TemplateProps> = ({ document, pageItems
             </div>
             <div className="w-2/3 p-10 flex flex-col" style={{color: textColor}}>
                 <header className="mb-8 text-right">
-                     <h2 className="text-3xl font-bold">{docTitle}</h2>
+                     <h2 className="text-2xl font-bold">{docTitle}</h2>
                     {category !== 'Generic' && <p className="text-sm">{category}</p>}
                 </header>
                  <CleaningDetails document={document} textColor={textColor || '#374151'} />
@@ -367,12 +367,12 @@ export const CleaningTemplate5: React.FC<TemplateProps> = ({ document, pageItems
         <div className={`p-10 bg-gray-50 font-['Roboto'] text-gray-900 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ minHeight: '1056px', color: textColor }}>
             <header className="grid grid-cols-2 gap-4 mb-10">
                 <div>
-                    <h1 className="text-2xl font-extrabold">{business.name}</h1>
-                     <p className="text-xs text-gray-500">{business.address}</p>
+                    <h1 className="text-3xl font-extrabold" style={{ color: style.color }}>{business.name}</h1>
+                     <p className="text-xs">{business.address}</p>
                 </div>
                  <div className="text-right">
-                    <p className="text-3xl font-extrabold" style={{color: style.color}}>{docTitle.toUpperCase()}</p>
-                    {category !== 'Generic' && <p className="text-xs" style={{color: style.color}}>Service Estimate</p>}
+                     <p className="text-2xl font-bold">{docTitle}</p>
+                    {category !== 'Generic' && <p className="text-xs text-gray-500">{category}</p>}
                 </div>
             </header>
 
@@ -419,3 +419,5 @@ export const CleaningTemplate5: React.FC<TemplateProps> = ({ document, pageItems
         </div>
     );
 };
+
+    

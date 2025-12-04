@@ -77,13 +77,13 @@ export const ITTemplate1: React.FC<TemplateProps> = ({ document, pageItems, page
                         <div className="w-12 h-12 bg-gray-200 rounded-md"></div>
                     }
                     <div>
-                        <h1 className="text-2xl font-bold">{business.name}</h1>
+                        <h1 className="text-3xl font-bold">{business.name}</h1>
                         <p className="text-xs text-gray-500">{business.address} • {business.phone}</p>
                         <p className="text-xs text-blue-600">{business.email}</p>
                     </div>
                 </div>
                  <div className="text-right">
-                    <p className="text-4xl font-extrabold">{currencySymbol}{summary.grandTotal.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</p>
+                    <p className="text-2xl font-extrabold">{currencySymbol}{summary.grandTotal.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</p>
                     <p className="text-sm font-bold text-gray-500 tracking-wider">TOTAL COST</p>
                 </div>
             </header>
@@ -161,7 +161,7 @@ export const ITTemplate2: React.FC<TemplateProps> = ({ document, pageItems, page
         <div className={`p-10 bg-gray-900 text-gray-200 font-['Roboto_Mono',_monospace] flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ minHeight: '1056px' }}>
             <header className="flex justify-between items-start mb-10">
                 <div>
-                    <h1 className="text-3xl font-bold" style={{ color: style.color || '#4C1D95' }}>{business.name}</h1>
+                    <h1 className="text-4xl font-bold" style={{ color: style.color || '#4C1D95' }}>{business.name}</h1>
                     <p className="text-xs text-gray-400">Software & IT Solutions</p>
                 </div>
                 <div className="text-right">
@@ -225,11 +225,11 @@ export const ITTemplate3: React.FC<TemplateProps> = ({ document, pageItems, page
         <div className={`p-12 bg-white font-['Inter',_sans-serif] text-gray-800 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ minHeight: '1056px' }}>
             <header className="flex justify-between items-start mb-12">
                 <div>
-                    <h1 className="text-2xl font-bold tracking-tighter">{business.name}</h1>
+                    <h1 className="text-3xl font-bold tracking-tighter">{business.name}</h1>
                     <p className="text-xs">{business.address}</p>
                 </div>
                  <div className="text-right">
-                    <h2 className="text-4xl font-extrabold tracking-tighter">{docTitle}</h2>
+                    <h2 className="text-2xl font-extrabold tracking-tighter">{docTitle}</h2>
                     {category !== 'Generic' && <p className="text-sm">{category}</p>}
                 </div>
             </header>
@@ -293,7 +293,7 @@ export const ITTemplate4: React.FC<TemplateProps> = ({ document, pageItems, page
     return (
         <div className={`bg-white font-sans text-gray-800 flex ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ minHeight: '1056px' }}>
             <div className="w-1/3 p-8 text-white flex flex-col" style={{ backgroundColor: style.color || '#1D4ED8' }}>
-                <h1 className="text-3xl font-bold mb-10">{docTitle}</h1>
+                <h1 className="text-4xl font-bold mb-10">{docTitle}</h1>
                 <div className="text-sm space-y-6 flex-grow">
                     <div>
                         <p className="font-bold opacity-80 mb-1">CLIENT</p>
@@ -319,7 +319,7 @@ export const ITTemplate4: React.FC<TemplateProps> = ({ document, pageItems, page
             </div>
             <div className="w-2/3 p-10 flex flex-col">
                 <header className="mb-8 text-right">
-                    <h2 className="text-2xl font-bold">{business.name}</h2>
+                    <h2 className="text-3xl font-bold">{business.name}</h2>
                     <p className="text-xs text-gray-500">{business.address}</p>
                 </header>
                  <ITFreelanceDetails document={document} />
@@ -360,11 +360,11 @@ export const ITTemplate5: React.FC<TemplateProps> = ({ document, pageItems, page
         <div className={`p-10 bg-gray-50 font-['Inter',_sans-serif] text-gray-800 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ minHeight: '1056px' }}>
             <header className="flex justify-between items-start mb-10">
                 <div>
-                    <h1 className="text-2xl font-extrabold tracking-tighter">{business.name}</h1>
+                    <h1 className="text-3xl font-extrabold tracking-tighter">{business.name}</h1>
                     <p className="text-xs">{business.address}</p>
                 </div>
                  <div className="text-right">
-                    <p className="text-3xl font-extrabold tracking-tighter text-gray-400">{docTitle}</p>
+                    <p className="text-2xl font-extrabold tracking-tighter text-gray-400">{docTitle}</p>
                     {category !== 'Generic' && <p className="text-xs text-gray-400">{category}</p>}
                 </div>
             </header>
@@ -421,3 +421,5 @@ export const ITTemplate5: React.FC<TemplateProps> = ({ document, pageItems, page
         </div>
     );
 };
+
+    

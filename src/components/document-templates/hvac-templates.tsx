@@ -68,13 +68,13 @@ export const HVACTemplate1: React.FC<TemplateProps> = ({ document, pageItems, pa
                 <div className="flex items-center gap-4">
                      {business.logoUrl && <Image src={business.logoUrl} alt="Logo" width={50} height={50} className="object-contain" />}
                     <div>
-                        <h1 className="text-2xl font-bold">{business.name}</h1>
+                        <h1 className="text-3xl font-bold">{business.name}</h1>
                         <p className="text-xs whitespace-pre-line">{business.address}</p>
                         <p className="text-xs">{business.email} | {business.phone}</p>
                     </div>
                 </div>
                 <div className="text-right">
-                  <h2 className="text-3xl font-bold text-gray-700">{docTitle}</h2>
+                  <h2 className="text-2xl font-bold text-gray-700">{docTitle}</h2>
                   {category !== 'Generic' && <p className="text-sm">{category.replace(' (Air Conditioning / Heating)', '')}</p>}
                 </div>
             </header>
@@ -156,11 +156,11 @@ export const HVACTemplate2: React.FC<TemplateProps> = ({ document, pageItems, pa
         <div className={`p-8 bg-white font-sans text-gray-800 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: 'Inter, sans-serif', fontSize: `9pt`, minHeight: '1056px', color: textColor }}>
             <header className="flex justify-between items-start mb-8">
                 <div>
-                    <h1 className="text-3xl font-extrabold" style={{ color: accentColor }}>{business.name}</h1>
+                    <h1 className="text-4xl font-extrabold" style={{ color: accentColor }}>{business.name}</h1>
                     <p className="text-xs">{business.address}</p>
                 </div>
                 <div className="text-right">
-                    <h2 className="text-2xl font-bold">{docTitle}</h2>
+                    <h2 className="text-3xl font-bold">{docTitle}</h2>
                      {category !== 'Generic' && <p className="text-xs">{category.replace(' (Air Conditioning / Heating)', '')}</p>}
                 </div>
             </header>
@@ -233,11 +233,11 @@ export const HVACTemplate3: React.FC<TemplateProps> = ({ document, pageItems, pa
         <div className={`p-10 bg-white font-sans text-gray-700 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: 'Roboto, sans-serif', fontSize: `9pt`, minHeight: '1056px', color: textColor }}>
             <header className="flex justify-between items-start mb-10">
                 <div>
-                     <h1 className="text-3xl font-light tracking-wide">{business.name}</h1>
+                     <h1 className="text-4xl font-light tracking-wide">{business.name}</h1>
                      <p className="text-xs">{business.address}</p>
                 </div>
                 <div className="text-right">
-                    <h2 className="text-2xl font-bold">{docTitle}</h2>
+                    <h2 className="text-3xl font-bold">{docTitle}</h2>
                     {category !== 'Generic' && <p className="text-sm" style={{ color: style.color }}>{category.replace(' (Air Conditioning / Heating)', '')}</p>}
                 </div>
             </header>
@@ -301,7 +301,7 @@ export const HVACTemplate4: React.FC<TemplateProps> = ({ document, pageItems, pa
             <div className="p-10">
                 <header className="flex justify-between items-start mb-5 pb-5 border-b-8" style={{ borderColor: style.color }}>
                     <div>
-                        <h1 className="text-3xl font-extrabold">{business.name}</h1>
+                        <h1 className="text-4xl font-extrabold">{business.name}</h1>
                         <p className="text-xs">{business.address}</p>
                     </div>
                     <div className="text-right">
@@ -370,7 +370,7 @@ export const HVACTemplate5: React.FC<TemplateProps> = ({ document, pageItems, pa
     return (
         <div className={`p-10 bg-white font-sans text-gray-800 flex ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: 'Helvetica, sans-serif', fontSize: `9pt`, minHeight: '1056px' }}>
             <div className="w-1/4 pr-8 border-r border-gray-200" style={{color: textColor}}>
-                <h1 className="text-2xl font-bold" style={{ color: style.color }}>{docTitle}</h1>
+                <h1 className="text-3xl font-bold" style={{ color: style.color }}>{docTitle}</h1>
                 {category !== 'Generic' && <p className="text-xs" style={{ color: style.color }}>{category.replace(' (Air Conditioning / Heating)', '')}</p>}
                 {business.logoUrl && <Image src={business.logoUrl} alt="Logo" width={80} height={40} className="mt-4 object-contain" />}
                 <div className="text-xs mt-8 space-y-4">
@@ -419,3 +419,5 @@ export const HVACTemplate5: React.FC<TemplateProps> = ({ document, pageItems, pa
         </div>
     );
 };
+
+    

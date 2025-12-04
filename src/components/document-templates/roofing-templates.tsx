@@ -64,11 +64,11 @@ export const RoofingTemplate1: React.FC<TemplateProps> = ({ document, pageItems,
             <header className="p-10 flex justify-between items-start">
                  <div>
                      {business.logoUrl && <Image src={business.logoUrl} alt="Logo" width={80} height={40} className="object-contain" />}
-                     <h1 className="text-2xl font-bold mt-2">{business.name}</h1>
+                     <h1 className="text-3xl font-bold mt-2">{business.name}</h1>
                      <p className="text-xs opacity-80">{document.documentType === 'quote' ? 'Quotation Services' : 'Estimation Services'}</p>
                 </div>
                 <div className="text-right">
-                    <h2 className="text-4xl font-extrabold tracking-wider">{docTitle}</h2>
+                    <h2 className="text-2xl font-extrabold tracking-wider">{docTitle}</h2>
                     {category !== 'Generic' && <p className="text-sm opacity-90">{category}</p>}
                 </div>
             </header>
@@ -167,11 +167,11 @@ export const RoofingTemplate2: React.FC<TemplateProps> = ({ document, pageItems,
         <div className={`p-10 bg-white font-sans text-gray-700 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: 'Verdana, sans-serif', fontSize: '9.5pt', minHeight: '1056px' }}>
             <header className="flex justify-between items-start mb-10 pb-4 border-b-2" style={{ borderColor: style.color }}>
                 <div>
-                    <h1 className="text-2xl font-bold" style={{ color: style.color }}>{business.name}</h1>
+                    <h1 className="text-3xl font-bold" style={{ color: style.color }}>{business.name}</h1>
                     <p className="text-xs text-gray-500">{business.address}</p>
                 </div>
                 <div className="text-right">
-                    <h2 className="text-3xl font-light text-gray-400">{docTitle}</h2>
+                    <h2 className="text-2xl font-light text-gray-400">{docTitle}</h2>
                     {category !== 'Generic' && <p className="text-sm text-gray-400">{category}</p>}
                 </div>
             </header>
@@ -244,11 +244,11 @@ export const RoofingTemplate3: React.FC<TemplateProps> = ({ document, pageItems,
         <div className={`p-10 bg-gray-50 font-['Roboto'] text-gray-800 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ minHeight: '1056px' }}>
             <header className="flex justify-between items-start mb-8">
                 <div>
-                    <h1 className="text-3xl font-extrabold" style={{color: accentColor}}>{business.name}</h1>
+                    <h1 className="text-4xl font-extrabold" style={{color: accentColor}}>{business.name}</h1>
                     <p className="text-xs">{business.address}</p>
                 </div>
                 <div className="text-right">
-                    <h2 className="text-2xl font-bold">{docTitle}</h2>
+                    <h2 className="text-3xl font-bold">{docTitle}</h2>
                     {category !== 'Generic' && <p className="text-sm">{category}</p>}
                 </div>
             </header>
@@ -313,12 +313,12 @@ export const RoofingTemplate4: React.FC<TemplateProps> = ({ document, pageItems,
         <div className={`p-10 bg-white font-sans text-gray-800 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: 'Helvetica, sans-serif', fontSize: '9pt', minHeight: '1056px' }}>
             <header className="flex justify-between items-start mb-8">
                 <div>
-                    <h1 className="text-3xl font-bold">{business.name}</h1>
+                    <h1 className="text-4xl font-bold">{business.name}</h1>
                     <p className="text-xs text-gray-500 whitespace-pre-line">{business.address}</p>
                 </div>
                 <div className="text-right">
                     {business.logoUrl && <Image src={business.logoUrl} alt="Logo" width={90} height={45} className="object-contain ml-auto mb-2"/>}
-                    <h2 className="text-2xl font-semibold text-gray-400">{docTitle}</h2>
+                    <h2 className="text-3xl font-semibold text-gray-400">{docTitle}</h2>
                     {category !== 'Generic' && <p className="text-xs text-gray-400">{category}</p>}
                 </div>
             </header>
@@ -386,7 +386,7 @@ export const RoofingTemplate5: React.FC<TemplateProps> = ({ document, pageItems,
         <div className={`p-12 bg-white font-['Garamond',_serif] text-gray-700 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ minHeight: '1056px' }}>
             <header className="flex justify-between items-start mb-16">
                 <div>
-                    <h1 className="text-2xl font-bold tracking-widest">{business.name}</h1>
+                    <h1 className="text-3xl font-bold tracking-widest">{business.name}</h1>
                     <p className="text-xs">{business.address}</p>
                 </div>
                 <div className="text-right">
@@ -444,3 +444,5 @@ export const RoofingTemplate5: React.FC<TemplateProps> = ({ document, pageItems,
         </div>
     );
 };
+
+    
