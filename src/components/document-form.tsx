@@ -838,68 +838,15 @@ export function DocumentForm({ document, setDocument, accentColor, setAccentColo
         {document.category === "Roofing Estimate" && document.roofing && (
             <Card className="bg-card/50 backdrop-blur-sm group-disabled:opacity-70">
                 <CardHeader><CardTitle>Roofing Project Details</CardTitle></CardHeader>
-                <CardContent className="space-y-6">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div className="space-y-2">
-                           <Label>Roof Material</Label>
-                           <CustomSelect value={document.roofing.roofMaterial} onValueChange={(name, value) => handleCategorySelectChange('roofing', name, value)} options={roofMaterials} placeholder="Select roof material" name="roofMaterial" />
-                        </div>
-                        <div className="space-y-2">
-                           <Label>Shingle/Material Brand</Label>
-                           <CustomSelect value={document.roofing.shingleBrand} onValueChange={(name, value) => handleCategorySelectChange('roofing', name, value)} options={shingleBrands} placeholder="Select brand" name="shingleBrand"/>
-                        </div>
-                        <div className="space-y-2">
-                            <Label htmlFor="roofSize">Roof Size (sq ft)</Label>
-                            <Input id="roofSize" name="roofSize" type="number" value={document.roofing.roofSize ?? ''} onChange={(e) => handleCategorySelectChange('roofing', 'roofSize', e.target.value ? parseFloat(e.target.value) : null)} />
-                        </div>
-                        <div className="space-y-2">
-                            <Label>Number of layers to remove</Label>
-                            <Select value={document.roofing.layersToRemove} onValueChange={(v) => handleCategorySelectChange('roofing', 'layersToRemove', v)}>
-                                <SelectTrigger><SelectValue placeholder="Select layers" /></SelectTrigger>
-                                <SelectContent>
-                                    <SelectItem value="0 layers">0 layers</SelectItem>
-                                    <SelectItem value="1 layer">1 layer</SelectItem>
-                                    <SelectItem value="2 layers">2 layers</SelectItem>
-                                    <SelectItem value="3 layers">3 layers</SelectItem>
-                                </SelectContent>
-                            </Select>
-                        </div>
-                        <div className="space-y-2">
-                            <Label>Roof Pitch</Label>
-                            <Select value={document.roofing.roofPitch} onValueChange={(v) => handleCategorySelectChange('roofing', 'roofPitch', v)}>
-                                <SelectTrigger><SelectValue placeholder="Select pitch" /></SelectTrigger>
-                                <SelectContent>
-                                    <SelectItem value="Low (2/12 – 4/12)">Low (2/12 – 4/12)</SelectItem>
-                                    <SelectItem value="Medium (5/12 – 7/12)">Medium (5/12 – 7/12)</SelectItem>
-                                    <SelectItem value="Steep (8/12 – 12/12)">Steep (8/12 – 12/12)</SelectItem>
-                                </SelectContent>
-                            </Select>
-                        </div>
-                         <div className="space-y-2">
-                            <Label>Underlayment Type</Label>
-                            <CustomSelect value={document.roofing.underlaymentType} onValueChange={(name, value) => handleCategorySelectChange('roofing', name, value)} options={underlaymentTypes} placeholder="Select underlayment" name="underlaymentType"/>
-                        </div>
-                        <div className="space-y-2 md:col-span-2">
-                            <Label htmlFor="flashingDetails">Flashing Details</Label>
-                            <Input id="flashingDetails" name="flashingDetails" value={document.roofing.flashingDetails} onChange={(e) => handleCategorySelectChange('roofing', 'flashingDetails', e.target.value)} placeholder="e.g., Step, Counter, Apron" />
-                        </div>
-                         <div className="space-y-2">
-                            <Label htmlFor="ventilationDetails">Ventilation Details</Label>
-                            <Input id="ventilationDetails" name="ventilationDetails" value={document.roofing.ventilationDetails} onChange={(e) => handleCategorySelectChange('roofing', 'ventilationDetails', e.target.value)} placeholder="e.g., Ridge vent, Soffit vents" />
-                        </div>
-                         <div className="space-y-2">
-                            <Label htmlFor="gutterDetails">Gutter Details</Label>
-                            <Input id="gutterDetails" name="gutterDetails" value={document.roofing.gutterDetails} onChange={(e) => handleCategorySelectChange('roofing', 'gutterDetails', e.target.value)} placeholder="e.g., 5-inch K-style, new downspouts" />
-                        </div>
-                        <div className="space-y-2">
-                            <Label htmlFor="warranty">Warranty</Label>
-                            <Input id="warranty" name="warranty" value={document.roofing.warranty} onChange={(e) => handleCategorySelectChange('roofing', 'warranty', e.target.value)} placeholder="e.g., 5-year workmanship" />
-                        </div>
-                         <div className="space-y-2">
-                            <Label htmlFor="estimatedTimeline">Estimated Timeline</Label>
-                            <Input id="estimatedTimeline" name="estimatedTimeline" value={document.roofing.estimatedTimeline} onChange={(e) => handleCategorySelectChange('roofing', 'estimatedTimeline', e.target.value)} placeholder="e.g., 2-3 days, weather permitting" />
-                        </div>
-                    </div>
+                <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-2"><Label>Roof Material</Label><Input name="roofMaterial" value={document.roofing.roofMaterial} onChange={(e) => handleCategoryDataChange('roofing', e)} /></div>
+                    <div className="space-y-2"><Label>Roof Pitch</Label><Input name="roofPitch" value={document.roofing.roofPitch} onChange={(e) => handleCategoryDataChange('roofing', e)} /></div>
+                    <div className="space-y-2"><Label>Layers to Remove</Label><Input name="layersToRemove" value={document.roofing.layersToRemove} onChange={(e) => handleCategoryDataChange('roofing', e)} /></div>
+                    <div className="space-y-2"><Label>Underlayment</Label><Input name="underlayment" value={document.roofing.underlayment} onChange={(e) => handleCategoryDataChange('roofing', e)} /></div>
+                    <div className="space-y-2 md:col-span-2"><Label>Ventilation</Label><Input name="ventilation" value={document.roofing.ventilation} onChange={(e) => handleCategoryDataChange('roofing', e)} /></div>
+                    <div className="space-y-2"><Label>Gutter Repair</Label><RadioGroup value={document.roofing.gutterRepair} onValueChange={(v) => handleCategorySelectChange('roofing', 'gutterRepair', v)} className="flex gap-4 pt-2"><div className="flex items-center space-x-2"><RadioGroupItem value="Yes" id="gutter-yes" /><Label htmlFor="gutter-yes">Yes</Label></div><div className="flex items-center space-x-2"><RadioGroupItem value="No" id="gutter-no" /><Label htmlFor="gutter-no">No</Label></div></RadioGroup></div>
+                    <div className="space-y-2"><Label>Flashing Replacement</Label><RadioGroup value={document.roofing.flashingReplacement} onValueChange={(v) => handleCategorySelectChange('roofing', 'flashingReplacement', v)} className="flex gap-4 pt-2"><div className="flex items-center space-x-2"><RadioGroupItem value="Yes" id="flashing-yes" /><Label htmlFor="flashing-yes">Yes</Label></div><div className="flex items-center space-x-2"><RadioGroupItem value="No" id="flashing-no" /><Label htmlFor="flashing-no">No</Label></div></RadioGroup></div>
+                    <div className="space-y-2 md:col-span-2"><Label>Inspection Required</Label><RadioGroup value={document.roofing.inspectionRequired} onValueChange={(v) => handleCategorySelectChange('roofing', 'inspectionRequired', v)} className="flex gap-4 pt-2"><div className="flex items-center space-x-2"><RadioGroupItem value="Yes" id="inspection-yes" /><Label htmlFor="inspection-yes">Yes</Label></div><div className="flex items-center space-x-2"><RadioGroupItem value="No" id="inspection-no" /><Label htmlFor="inspection-no">No</Label></div></RadioGroup></div>
                 </CardContent>
             </Card>
         )}

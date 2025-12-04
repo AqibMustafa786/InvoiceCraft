@@ -163,16 +163,13 @@ export interface HomeRemodelingInfo {
 
 export interface RoofingInfo {
   roofMaterial: string;
-  shingleBrand: string;
-  roofSize: number | null; // in sq ft
   layersToRemove: string;
+  ventilation: string;
+  gutterRepair: 'Yes' | 'No';
   roofPitch: string;
-  underlaymentType: string;
-  flashingDetails: string;
-  ventilationDetails: string;
-  gutterDetails: string;
-  warranty: string;
-  estimatedTimeline: string;
+  underlayment: string;
+  flashingReplacement: 'Yes' | 'No';
+  inspectionRequired: 'Yes' | 'No';
 }
 
 export interface HVACInfo {
