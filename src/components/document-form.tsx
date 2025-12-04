@@ -539,7 +539,8 @@ export function DocumentForm({ document, setDocument, accentColor, setAccentColo
                             placeholder="#374151"
                         />
                         <input 
-                            type="color" _value={textColor}
+                            type="color" 
+                            value={textColor}
                             onChange={(e) => {
                                 setTextColor(e.target.value);
                                 setTextColorInput(e.target.value);
@@ -838,7 +839,7 @@ export function DocumentForm({ document, setDocument, accentColor, setAccentColo
             <Card className="bg-card/50 backdrop-blur-sm group-disabled:opacity-70">
                 <CardHeader><CardTitle>Roofing Project Details</CardTitle></CardHeader>
                 <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="space-y-2"><Label>Roof Material</Label><Input name="roofMaterial" value={document.roofing.roofMaterial} onChange={(e) => handleCategoryDataChange('roofing', e)} /></div>
+                    <div className="space-y-2"><Label>Roof Material</Label><CustomSelect name="roofMaterial" value={document.roofing.roofMaterial} onValueChange={(name, value) => handleCategorySelectChange('roofing', name, value)} options={roofMaterials} placeholder="Select material" /></div>
                     <div className="space-y-2"><Label>Shingle/Material Brand</Label><CustomSelect name="shingleBrand" value={document.roofing.shingleBrand} onValueChange={(name, value) => handleCategorySelectChange('roofing', name, value)} options={shingleBrands} placeholder="Select a brand" /></div>
                     <div className="space-y-2"><Label>Roof Size (sq ft)</Label><Input name="roofSize" type="number" value={document.roofing.roofSize ?? ''} onChange={(e) => handleCategorySelectChange('roofing', 'roofSize', e.target.value ? parseFloat(e.target.value) : null)} /></div>
                     <div className="space-y-2"><Label>Number of layers to remove</Label><CustomSelect name="layersToRemove" value={document.roofing.layersToRemove} onValueChange={(name, value) => handleCategorySelectChange('roofing', name, value)} options={['1 layer', '2 layers', '3+ layers']} placeholder="Select layers" /></div>

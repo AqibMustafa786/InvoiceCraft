@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import { useState, useLayoutEffect, useRef, useEffect, FC } from 'react';
@@ -22,8 +23,8 @@ import { ITTemplate1, ITTemplate2, ITTemplate3, ITTemplate4, ITTemplate5 } from 
 interface DocumentPreviewProps {
   document: Estimate;
   accentColor: string;
-  backgroundColor: string;
-  textColor: string;
+  backgroundColor?: string;
+  textColor?: string;
   id?: string;
   isPrint?: boolean;
 }
@@ -31,8 +32,8 @@ interface DocumentPreviewProps {
 interface CommonTemplateProps {
   document: Estimate;
   accentColor: string;
-  backgroundColor: string;
-  textColor: string;
+  backgroundColor?: string;
+  textColor?: string;
 }
 
 interface PageProps extends CommonTemplateProps {
@@ -93,19 +94,21 @@ const CategoryPreview = ({ document }: { document: Estimate }) => {
                     </div>
                 );
             case "Roofing Estimate":
-                if (!roofing) return null;
+                 if (!roofing) return null;
                  return (
                     <div className="grid grid-cols-2 gap-x-8 gap-y-2 mt-4 text-xs" data-element="category-details">
                         <div><span className="font-bold">Roof Material:</span> {roofing.roofMaterial}</div>
+                        <div><span className="font-bold">Shingle Brand:</span> {roofing.shingleBrand}</div>
                         {roofing.roofSize && <div><span className="font-bold">Roof Size:</span> {roofing.roofSize} sq ft</div>}
+                        <div><span className="font-bold">Layers to Remove:</span> {roofing.layersToRemove}</div>
                         <div><span className="font-bold">Roof Pitch:</span> {roofing.roofPitch}</div>
-                        {roofing.layersToRemove && <div><span className="font-bold">Layers to Remove:</span> {roofing.layersToRemove}</div>}
                         <div><span className="font-bold">Underlayment:</span> {roofing.underlaymentType}</div>
+                        <div><span className="font-bold">Flashing Replacement:</span> {roofing.flashingDetails}</div>
                         <div><span className="font-bold">Ventilation:</span> {roofing.ventilationSystem}</div>
-                        {roofing.roofAge && <div><span className="font-bold">Roof Age:</span> {roofing.roofAge} years</div>}
-                        <div><span className="font-bold">Flashing Replacement:</span> {roofing.flashingReplacement ? 'Yes' : 'No'}</div>
-                        <div><span className="font-bold">Gutter Repair:</span> {roofing.gutterRepairNeeded ? 'Yes' : 'No'}</div>
-                        <div><span className="font-bold">Inspection Required:</span> {roofing.inspectionRequired ? 'Yes' : 'No'}</div>
+                        <div><span className="font-bold">Gutter Repair:</span> {roofing.gutterRepairNeeded}</div>
+                        <div><span className="font-bold">Warranty:</span> {roofing.warranty}</div>
+                        <div className="col-span-2"><span className="font-bold">Timeline:</span> {roofing.estimatedTimeline}</div>
+                        <div><span className="font-bold">Inspection Required:</span> {roofing.inspectionRequired}</div>
                     </div>
                 );
             case "HVAC (Air Conditioning / Heating)":
@@ -585,8 +588,8 @@ const DocumentPreviewInternal: FC<DocumentPreviewProps> = ({ document, accentCol
   const commonProps: CommonTemplateProps = {
     document,
     accentColor,
-    backgroundColor,
-    textColor,
+    backgroundColor: backgroundColor || '#FFFFFF',
+    textColor: textColor || '#374151',
   };
 
   if (isPrint) {
@@ -650,5 +653,3 @@ export const ClientDocumentPreview: FC<DocumentPreviewProps> = (props) => {
 };
 
 export { DocumentPreviewInternal as DocumentPreview };
-
-    
