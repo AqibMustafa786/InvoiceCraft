@@ -1,3 +1,4 @@
+
 'use client';
 
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
@@ -42,8 +43,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       router.push('/login');
     }
 
-    // Redirect logged-in users from login/signup pages, but NOT from other pages
-    // that might be linked from pricing (like /signup)
+    // Redirect logged-in users from login/signup pages, but allow them to stay on /pricing
     if (user && isPublicAuthRoute) {
       router.push('/');
     }
