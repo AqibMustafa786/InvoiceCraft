@@ -8,7 +8,7 @@ import type { Invoice, LineItem } from '@/lib/types';
 import { InvoiceForm } from '@/components/invoice-form';
 import { ClientInvoicePreview } from '@/components/invoice-preview';
 import { Button } from '@/components/ui/button';
-import { Printer, Edit, FilePlus, LayoutDashboard, MoreVertical } from 'lucide-react';
+import { Printer, Edit, FilePlus, LayoutDashboard, MoreVertical, Brush } from 'lucide-react';
 import { addDays, isValid } from 'date-fns';
 import { useToast } from '@/hooks/use-toast';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -24,6 +24,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 
 const INVOICES_COLLECTION = 'invoices';
 
@@ -204,7 +205,6 @@ export default function CreateInvoicePage() {
             <h1 className="text-3xl font-bold font-headline">Create Invoice</h1>
             <p className="text-muted-foreground">Select a template, then fill out the form to generate your invoice.</p>
           </div>
-          {/* Actions Buttons */}
           <div className="flex w-full md:w-auto items-center gap-2">
             <Button onClick={handleSaveDraft} className="w-full md:w-auto">
                 <Edit className="mr-2 h-4 w-4" /> Save Draft
@@ -234,28 +234,44 @@ export default function CreateInvoicePage() {
 
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 xl:gap-12">
           <div className="lg:col-span-3">
-             <div className="mb-12">
-                <h2 className="text-2xl font-bold font-headline mb-6 text-center">Select a Template</h2>
-                <TemplateSelector 
-                  selectedTemplate={invoice.template}
-                  onSelectTemplate={(template) => setInvoice(prev => prev ? ({...prev, template}) : null)}
+             <div className="space-y-6">
+                <h2 className="text-2xl font-bold font-headline mb-4 text-center lg:text-left">Fill in Details</h2>
+                <InvoiceForm 
+                  invoice={invoice} 
+                  setInvoice={setInvoice} 
+                  logoUrl={logoUrl}
+                  setLogoUrl={setLogoUrl}
+                  accentColor={accentColor}
+                  setAccentColor={setAccentColor}
+                  toast={toast}
                 />
               </div>
-            <h2 className="text-2xl font-bold font-headline mb-4 text-center lg:text-left">Fill in Details</h2>
-            <InvoiceForm 
-              invoice={invoice} 
-              setInvoice={setInvoice} 
-              logoUrl={logoUrl}
-              setLogoUrl={setLogoUrl}
-              accentColor={accentColor}
-              setAccentColor={setAccentColor}
-              toast={toast}
-            />
           </div>
           <div className="lg:col-span-2">
-             <div className="sticky top-24">
-                <h2 className="text-2xl font-bold font-headline mb-6">Live Preview</h2>
-                <ClientInvoicePreview invoice={invoice} logoUrl={logoUrl} accentColor={accentColor} />
+             <div className="sticky top-24 space-y-4">
+                <Sheet>
+                    <SheetTrigger asChild>
+                        <Button variant="outline" className="w-full">
+                            <Brush className="mr-2 h-4 w-4" />
+                            Change Template
+                        </Button>
+                    </SheetTrigger>
+                    <SheetContent className="w-full sm:max-w-xl overflow-y-auto">
+                        <SheetHeader>
+                            <SheetTitle>Select a Template</SheetTitle>
+                        </SheetHeader>
+                        <div className="py-4">
+                            <TemplateSelector 
+                                selectedTemplate={invoice.template}
+                                onSelectTemplate={(template) => setInvoice(prev => prev ? ({...prev, template}) : null)}
+                            />
+                        </div>
+                    </SheetContent>
+                </Sheet>
+                <div>
+                  <h2 className="text-2xl font-bold font-headline mb-4">Live Preview</h2>
+                  <ClientInvoicePreview invoice={invoice} logoUrl={logoUrl} accentColor={accentColor} />
+                </div>
             </div>
           </div>
         </div>

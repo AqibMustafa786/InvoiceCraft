@@ -8,7 +8,7 @@ import type { Estimate, LineItem, Quote } from '@/lib/types';
 import { DocumentForm } from '@/components/document-form';
 import { ClientDocumentPreview } from '@/components/document-preview';
 import { Button } from '@/components/ui/button';
-import { Printer, FilePlus, LayoutDashboard, Edit, Share2, Mail, Loader2, MoreVertical } from 'lucide-react';
+import { Printer, FilePlus, LayoutDashboard, Edit, Share2, Mail, Loader2, MoreVertical, Brush } from 'lucide-react';
 import { addDays, isValid } from 'date-fns';
 import { useToast } from '@/hooks/use-toast';
 import Link from 'next/link';
@@ -25,6 +25,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 
 const ESTIMATES_COLLECTION = 'estimates';
 
@@ -467,7 +468,6 @@ export default function CreateEstimatePage() {
             <h1 className="text-3xl font-bold font-headline">Create Estimate</h1>
             <p className="text-muted-foreground">Fill out the form to generate your professional estimate.</p>
           </div>
-           {/* Actions Buttons */}
           <div className="flex w-full md:w-auto items-center gap-2">
             <Button onClick={handleSaveDraft} className="w-full md:w-auto">
                 <Edit className="mr-2 h-4 w-4" /> Save Draft
@@ -504,16 +504,7 @@ export default function CreateEstimatePage() {
 
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
           <div className="lg:col-span-3">
-            <div className="space-y-12">
-               <div className="mb-12">
-                <h2 className="text-2xl font-bold font-headline mb-6 text-center">Select a Template</h2>
-                 <DocumentTemplateSelector 
-                  selectedTemplate={document.template}
-                  onSelectTemplate={(template) => setDocument(prev => prev ? ({...prev, template}) : null)}
-                  documentType="estimate"
-                  category={document.category}
-                />
-              </div>
+            <div className="space-y-6">
               <div>
                 <h2 className="text-2xl font-bold font-headline mb-4 text-center lg:text-left">Fill in Details</h2>
                 <DocumentForm 
@@ -532,9 +523,32 @@ export default function CreateEstimatePage() {
             </div>
           </div>
           <div className="lg:col-span-2">
-            <div className="sticky top-24">
-                <h2 className="text-2xl font-bold font-headline mb-6">Live Preview</h2>
-                <ClientDocumentPreview document={document} accentColor={accentColor} backgroundColor={backgroundColor} textColor={textColor} />
+            <div className="sticky top-24 space-y-4">
+                 <Sheet>
+                    <SheetTrigger asChild>
+                        <Button variant="outline" className="w-full">
+                            <Brush className="mr-2 h-4 w-4" />
+                            Change Template
+                        </Button>
+                    </SheetTrigger>
+                    <SheetContent className="w-full sm:max-w-xl overflow-y-auto">
+                        <SheetHeader>
+                            <SheetTitle>Select a Template</SheetTitle>
+                        </SheetHeader>
+                        <div className="py-4">
+                            <DocumentTemplateSelector 
+                                selectedTemplate={document.template}
+                                onSelectTemplate={(template) => setDocument(prev => prev ? ({...prev, template}) : null)}
+                                documentType="estimate"
+                                category={document.category}
+                            />
+                        </div>
+                    </SheetContent>
+                </Sheet>
+                <div>
+                  <h2 className="text-2xl font-bold font-headline mb-4">Live Preview</h2>
+                  <ClientDocumentPreview document={document} accentColor={accentColor} backgroundColor={backgroundColor} textColor={textColor} />
+                </div>
             </div>
           </div>
         </div>
