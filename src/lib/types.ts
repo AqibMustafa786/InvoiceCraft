@@ -1,4 +1,5 @@
 
+import { z } from 'zod';
 
 export interface LineItem {
   id: string;
@@ -315,3 +316,18 @@ export interface Estimate {
 }
 
 export type Quote = Estimate & { documentType: 'quote' };
+
+// Stripe Checkout Types
+export const StripeCheckoutInputSchema = z.object({
+  priceId: z.string().describe('The ID of the Stripe Price object.'),
+  userId: z.string().describe('The ID of the user initiating the checkout.'),
+  userEmail: z.string().email().describe('The email of the user.'),
+});
+export type StripeCheckoutInput = z.infer<typeof StripeCheckoutInputSchema>;
+
+export const StripeCheckoutOutputSchema = z.object({
+  sessionId: z.string().optional(),
+  url: z.string().optional(),
+  error: z.string().optional(),
+});
+export type StripeCheckoutOutput = z.infer<typeof StripeCheckoutOutputSchema>;

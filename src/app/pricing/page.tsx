@@ -15,6 +15,7 @@ import { useRouter } from "next/navigation";
 import { createStripeCheckoutSession } from "@/ai/flows/stripe-checkout-flow";
 import { useToast } from "@/hooks/use-toast";
 import { loadStripe } from '@stripe/stripe-js';
+import type { StripeCheckoutInput, StripeCheckoutOutput } from "@/lib/types";
 
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || '');
 

@@ -5,27 +5,12 @@
  */
 
 import { ai } from '@/ai/genkit';
-import { z } from 'zod';
 import Stripe from 'stripe';
+import { StripeCheckoutInputSchema, StripeCheckoutOutputSchema, type StripeCheckoutInput, type StripeCheckoutOutput } from '@/lib/types';
 
 const stripe = new Stripe(process.env.STRIPE_API_KEY || '', {
   apiVersion: '2024-06-20',
 });
-
-export const StripeCheckoutInputSchema = z.object({
-  priceId: z.string().describe('The ID of the Stripe Price object.'),
-  userId: z.string().describe('The ID of the user initiating the checkout.'),
-  userEmail: z.string().email().describe('The email of the user.'),
-});
-export type StripeCheckoutInput = z.infer<typeof StripeCheckoutInputSchema>;
-
-export const StripeCheckoutOutputSchema = z.object({
-  sessionId: z.string().optional(),
-  url: z.string().optional(),
-  error: z.string().optional(),
-});
-export type StripeCheckoutOutput = z.infer<typeof StripeCheckoutOutputSchema>;
-
 
 export async function createStripeCheckoutSession(input: StripeCheckoutInput): Promise<StripeCheckoutOutput> {
   return createStripeCheckoutSessionFlow(input);
