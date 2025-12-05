@@ -41,7 +41,7 @@ export default function HomePage() {
               >
                 <span>Create Professional </span>
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent">
-                  Invoices
+                  Documents
                 </span>
                 <span> in Seconds </span>
                 <span className="inline-block origin-bottom-right animate-wave">⚡️</span>
@@ -50,7 +50,7 @@ export default function HomePage() {
                 className="mt-6 text-lg text-muted-foreground md:text-xl max-w-2xl mx-auto"
                 variants={itemVariants}
               >
-                Generate, download as PDF, and track beautiful invoices online. The perfect free invoice generator for freelancers and small businesses.
+                Generate invoices, estimates, quotes, and insurance documents. Download as PDF and track them online. The ultimate tool for freelancers and small businesses.
               </motion.p>
               <motion.div 
                 className="flex flex-col items-center justify-center gap-4 mt-8 sm:flex-row"
