@@ -1,3 +1,4 @@
+
 'use client';
 
 import { Check, X } from "lucide-react";
@@ -35,8 +36,8 @@ const plans = [
   {
     title: "Business",
     price: {
-      monthly: "$9.99",
-      yearly: "$99"
+      monthly: "$19.99",
+      yearly: "$199.99"
     },
     description: "For contractors, agencies, and freelancers with heavy usage.",
     features: [
