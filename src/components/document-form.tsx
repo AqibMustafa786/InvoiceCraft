@@ -1,5 +1,3 @@
-
-
 'use client';
 
 import { ChangeEvent, Dispatch, SetStateAction, useState, useEffect } from 'react';
@@ -1156,7 +1154,7 @@ export function DocumentForm({ document, setDocument, accentColor, setAccentColo
               </div>
             </div>
 
-            <div className="hidden md:grid md:grid-cols-[5fr_2fr_2fr_1fr_2fr_1fr] gap-4 text-sm font-medium text-muted-foreground pt-4">
+            <div className="hidden md:grid md:grid-cols-[1fr_auto_auto_auto_auto_auto] gap-4 text-sm font-medium text-muted-foreground pt-4">
                 <Label>Item Name / Description</Label>
                 <Label>Quantity</Label>
                 <Label>Unit Price</Label>
@@ -1165,33 +1163,36 @@ export function DocumentForm({ document, setDocument, accentColor, setAccentColo
                 <span></span>
             </div>
             {document.lineItems.map((item, index) => (
-                <div key={item.id} className="grid grid-cols-1 md:grid-cols-[5fr_2fr_2fr_1fr_2fr_1fr] gap-4 items-start">
-                    <div className="md:col-span-1 space-y-2">
+                <div key={item.id} className="grid grid-cols-1 md:grid-cols-[1fr_auto_auto_auto_auto_auto] gap-4 items-start border-b pb-4">
+                    <div className="space-y-2 md:col-span-1">
                         <Label htmlFor={`itemName-${index}`} className="md:hidden">Item Name / Description</Label>
                         <Textarea id={`itemName-${index}`} value={item.name} onChange={(e) => handleItemChange(index, 'name', e.target.value)} rows={1} className="min-h-0"/>
                     </div>
-                    <div className="col-span-6 sm:col-span-3 md:col-span-1 space-y-2">
-                        <Label htmlFor={`itemQuantity-${index}`} className="md:hidden">Quantity</Label>
-                        <Input id={`itemQuantity-${index}`} type="number" value={item.quantity} onChange={(e) => handleItemChange(index, 'quantity', parseFloat(e.target.value) || 0)} />
+                     <div className="grid grid-cols-3 md:contents gap-4">
+                        <div className="space-y-2">
+                            <Label htmlFor={`itemQuantity-${index}`} className="md:hidden">Quantity</Label>
+                            <Input id={`itemQuantity-${index}`} type="number" value={item.quantity} onChange={(e) => handleItemChange(index, 'quantity', parseFloat(e.target.value) || 0)} />
+                        </div>
+                        <div className="space-y-2">
+                            <Label htmlFor={`itemRate-${index}`} className="md:hidden">Unit Price</Label>
+                            <Input id={`itemRate-${index}`} type="number" value={item.unitPrice} onChange={(e) => handleItemChange(index, 'unitPrice', parseFloat(e.target.value) || 0)} />
+                        </div>
+                        <div className="flex items-center justify-center h-10">
+                            <Checkbox id={`itemTaxable-${index}`} checked={item.taxable} onCheckedChange={(checked) => handleItemChange(index, 'taxable', !!checked)} />
+                        </div>
                     </div>
-                    <div className="col-span-6 sm:col-span-3 md:col-span-1 space-y-2">
-                        <Label htmlFor={`itemRate-${index}`} className="md:hidden">Unit Price</Label>
-                        <Input id={`itemRate-${index}`} type="number" value={item.unitPrice} onChange={(e) => handleItemChange(index, 'unitPrice', parseFloat(e.target.value) || 0)} />
-                    </div>
-                    <div className="col-span-2 sm:col-span-1 flex items-center justify-center h-10">
-                        <Checkbox id={`itemTaxable-${index}`} checked={item.taxable} onCheckedChange={(checked) => handleItemChange(index, 'taxable', !!checked)} />
-                    </div>
-                    <div className="col-span-4 sm:col-span-2 flex items-center h-10">
+
+                    <div className="flex items-center h-10">
                         <p className="font-medium tabular-nums text-sm">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</p>
                     </div>
-                    <div className="col-span-2 sm:col-span-1 flex items-center h-10 justify-end">
+                    <div className="flex items-center h-10 justify-end">
                         <Button variant="ghost" size="icon" onClick={() => removeItem(index)}>
                         <Trash2 className="h-4 w-4 text-destructive" />
                         </Button>
                     </div>
                 </div>
             ))}
-            <div className="flex flex-wrap items-end gap-4 pt-2 border-t border-border">
+            <div className="flex flex-wrap items-end gap-4 pt-4 border-t">
                 <Button variant="outline" onClick={addItem}><Plus className="mr-2 h-4 w-4" /> Add Line Item</Button>
                 
                 <div className="flex items-end gap-2">
