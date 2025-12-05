@@ -51,6 +51,11 @@ export function setDocumentNonBlocking(docRef: DocumentReference, data: any, opt
   
   const preparedData = prepareDataForFirestore(data);
 
+  // Ensure userId is preserved, as it's crucial for security rules.
+  if (data.userId && !preparedData.userId) {
+      preparedData.userId = data.userId;
+  }
+
   setDoc(docRef, preparedData, options).catch(error => {
     console.error("Firestore setDoc error:", error);
     errorEmitter.emit(
