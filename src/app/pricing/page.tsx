@@ -9,87 +9,67 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 const plans = [
   {
     title: "Free",
-    price: "$0",
-    description: "For individuals and hobbyists starting out.",
+    price: "₹0",
+    description: "For freelancers and very small service providers starting out.",
     features: [
-      { text: "Up to 3 invoices/month", included: true },
-      { text: "Save as PDF instantly", included: true },
-      { text: "Live Invoice Preview", included: true },
-      { text: "Dashboard access", included: false },
-      { text: "Save draft invoices", included: false },
-      { text: "Filter/Search invoices", included: false },
-      { text: "Payment status tracking", included: false },
-      { text: "Add Logo/Branding", included: false },
-      { text: "Multi-user access", included: false },
-      { text: "Invoice Analytics & Reports", included: false },
-      { text: "Priority support", included: false },
+      { text: "Up to 5 invoices/month", included: true },
+      { text: "Up to 3 estimates/month", included: true },
+      { text: "PDF Export", included: true },
+      { text: "Basic Templates", included: true },
+      { text: "Limited Cloud Save (5 docs)", included: true },
+      { text: "No Quotes or Insurance Docs", included: false },
+      { text: "No Custom Branding", included: false },
+      { text: "No Emailing", included: false },
     ],
-    cta: "Get Started",
-    ctaLink: "/create-invoice",
-    variant: "default" as "default" | "primary",
-  },
-  {
-    title: "Pro",
-    price: "$10",
-    description: "For freelancers and small businesses who need more power.",
-    features: [
-      { text: "Unlimited invoices", included: true },
-      { text: "Full Dashboard access", included: true },
-      { text: "Save, edit, and update invoices", included: true },
-      { text: "Filter & search invoices", included: true },
-      { text: "Mark invoices as Paid, Sent, or Draft", included: true },
-      { text: "Add your logo", included: true },
-      { text: "Priority email support", included: true },
-      { text: "Multi-user access", included: false },
-      { text: "Invoice Analytics & Reports", included: false },
-    ],
-    cta: "Choose Pro",
+    cta: "Get Started for Free",
     ctaLink: "/signup",
-    variant: "primary" as "default" | "primary",
+    variant: "default" as "default" | "primary",
   },
   {
     title: "Business",
-    price: "$25",
-    description: "For growing businesses and agencies with teams.",
+    price: "$9.99",
+    description: "For contractors, agencies, and freelancers with heavy usage.",
     features: [
-      { text: "Everything in Pro Plan", included: true },
-      { text: "Multi-user support", included: true },
-      { text: "Advanced invoice analytics", included: true },
-      { text: "Custom branding & colors", included: true },
-      { text: "Priority email + chat support", included: true },
+      { text: "Unlimited Invoices & Estimates", included: true },
+      { text: "Unlimited Quotes & Insurance Docs", included: true },
+      { text: "All Professional Templates (20+)", included: true },
+      { text: "Custom Branding (Logo & Colors)", included: true },
+      { text: "Email PDF to Clients", included: true },
+      { text: "Reusable Line Item Presets", included: true },
+      { text: "Unlimited Cloud Storage", included: true },
+      { text: "Remove 'Made with InvoiceCraft' Watermark", included: true },
     ],
     cta: "Choose Business",
-    ctaLink: "/signup",
-    variant: "default" as "default" | "primary",
+    ctaLink: "/signup", // This would later go to /checkout
+    variant: "primary" as "default" | "primary",
   },
 ];
 
 const comparisonFeatures = [
-    { feature: "Monthly Invoice Limit", free: "3", pro: "Unlimited", business: "Unlimited" },
-    { feature: "Save as PDF", free: true, pro: true, business: true },
-    { feature: "Live Invoice Preview", free: true, pro: true, business: true },
-    { feature: "Dashboard Access", free: false, pro: true, business: true },
-    { feature: "Save Draft Invoices", free: false, pro: true, business: true },
-    { feature: "Filter/Search Invoices", free: false, pro: true, business: true },
-    { feature: "Payment Status Tracking", free: false, pro: true, business: true },
-    { feature: "Add Logo/Branding", free: false, pro: true, business: true },
-    { feature: "Multi-User Access", free: false, pro: false, business: true },
-    { feature: "Invoice Analytics & Reports", free: false, pro: false, business: true },
-    { feature: "Priority Support", free: false, pro: true, business: true },
+    { feature: "Invoices", free: "5 per month", pro: "Unlimited" },
+    { feature: "Estimates", free: "3 per month", pro: "Unlimited" },
+    { feature: "Quotes", free: false, pro: true },
+    { feature: "Insurance Docs", free: false, pro: true },
+    { feature: "Line Item Presets", free: false, pro: true },
+    { feature: "Templates", free: "Basic (3)", pro: "All (20+)" },
+    { feature: "Custom Branding", free: false, pro: true },
+    { feature: "Email PDF to Client", free: false, pro: true },
+    { feature: "Remove Watermark", free: false, pro: true },
+    { feature: "Cloud Document Storage", free: "5 documents", pro: "Unlimited" },
+    { feature: "Analytics", free: false, pro: true },
 ];
-
 
 export default function PricingPage() {
   return (
     <div className="container mx-auto p-4 md:p-8">
       <PageHeader>
-        <PageHeaderHeading>InvoiceCraft Pricing – Simple, Transparent, and Built for Growth</PageHeaderHeading>
+        <PageHeaderHeading>Our Pricing Plans</PageHeaderHeading>
         <PageHeaderDescription>
-          Great invoicing tools should be affordable for everyone. We offer flexible plans that grow with your business, with no hidden fees.
+          Choose the plan that's right for your business. Simple, transparent, and built for growth.
         </PageHeaderDescription>
       </PageHeader>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
         {plans.map((plan) => (
           <Card 
             key={plan.title} 
@@ -100,7 +80,7 @@ export default function PricingPage() {
               <CardDescription>{plan.description}</CardDescription>
               <div className="flex items-baseline pt-4">
                 <span className="text-4xl font-bold">{plan.price}</span>
-                {plan.price !== "$0" && <span className="text-muted-foreground">/month</span>}
+                {plan.price !== "₹0" && <span className="text-muted-foreground">/month</span>}
               </div>
             </CardHeader>
             <CardContent className="flex-1 space-y-4">
@@ -131,7 +111,6 @@ export default function PricingPage() {
                     <TableRow>
                     <TableHead className="w-1/3">Feature</TableHead>
                     <TableHead className="text-center">Free</TableHead>
-                    <TableHead className="text-center">Pro</TableHead>
                     <TableHead className="text-center">Business</TableHead>
                     </TableRow>
                 </TableHeader>
@@ -142,11 +121,8 @@ export default function PricingPage() {
                         <TableCell className="text-center">
                             {typeof item.free === 'boolean' ? (item.free ? <Check className="h-5 w-5 text-primary mx-auto" /> : <X className="h-5 w-5 text-muted-foreground/50 mx-auto" />) : item.free}
                         </TableCell>
-                        <TableCell className="text-center">
-                            {typeof item.pro === 'boolean' ? (item.pro ? <Check className="h-5 w-5 text-primary mx-auto" /> : <X className="h-5 w-5 text-muted-foreground/50 mx-auto" />) : item.pro}
-                        </TableCell>
                          <TableCell className="text-center">
-                            {typeof item.business === 'boolean' ? (item.business ? <Check className="h-5 w-5 text-primary mx-auto" /> : <X className="h-5 w-5 text-muted-foreground/50 mx-auto" />) : item.business}
+                            {typeof item.pro === 'boolean' ? (item.pro ? <Check className="h-5 w-5 text-primary mx-auto" /> : <X className="h-5 w-5 text-muted-foreground/50 mx-auto" />) : item.pro}
                         </TableCell>
                     </TableRow>
                     ))}
@@ -155,15 +131,6 @@ export default function PricingPage() {
           </CardContent>
          </Card>
        </div>
-
-       <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-3xl md:text-4xl font-bold font-headline mb-4">Why Upgrade?</h2>
-          <p className="text-muted-foreground md:text-lg">
-            Many users start with our Free plan, but quickly realize the benefits of upgrading. Save time by managing all invoices in one dashboard, stay organized by tracking drafts and payments, and look more professional by adding your own branding. Upgrade to grow your business with confidence.
-          </p>
-       </div>
-
-       <p className="text-xs text-center text-muted-foreground pt-12">(This is a non-functional placeholder page)</p>
     </div>
   );
 }

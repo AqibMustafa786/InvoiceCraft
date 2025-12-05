@@ -23,13 +23,24 @@
             "type": "string",
             "description": "The user's role within their company.",
             "enum": ["admin", "staff", "viewer"]
+        },
+        "plan": {
+            "type": "string",
+            "description": "The user's subscription plan.",
+            "enum": ["free", "business"]
+        },
+        "planExpires": {
+            "type": "string",
+            "description": "The expiration date of the user's plan.",
+            "format": "date-time"
         }
       },
       "required": [
         "id",
         "email",
         "companyId",
-        "role"
+        "role",
+        "plan"
       ]
     },
     "Company": {

@@ -1,3 +1,4 @@
+
 'use client';
 
 import Link from 'next/link';
@@ -10,7 +11,7 @@ import * as z from 'zod';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { useAuth, useFirestore } from '@/firebase';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
-import { doc, setDoc } from 'firebase/firestore';
+import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
 import { useRouter } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
 import { useState } from 'react';
@@ -48,16 +49,33 @@ export default function SignupPage() {
             const userCredential = await createUserWithEmailAndPassword(auth, data.email, data.password);
             const user = userCredential.user;
 
+            // Auto-generate a company ID for the new user
+            const companyId = `COMP_${user.uid.substring(0, 8).toUpperCase()}`;
+
+            // Create user profile in the global users collection
             await setDoc(doc(firestore, "users", user.uid), {
                 uid: user.uid,
                 email: user.email,
                 name: data.name,
-                createdAt: new Date(),
+                companyId: companyId, // Assign companyId
+                role: 'admin',         // New users are admins of their own company
+                plan: 'free',          // Default to free plan
+                planExpires: null,     // No expiration for free plan
+                createdAt: serverTimestamp(),
             });
+
+            // Optional: Create a company document as well
+            await setDoc(doc(firestore, "companies", companyId), {
+                id: companyId,
+                name: `${data.name}'s Company`,
+                ownerId: user.uid,
+                createdAt: serverTimestamp(),
+            });
+
 
             toast({
                 title: "Account Created",
-                description: "You have been successfully signed up.",
+                description: "You’re on the Free Plan. Welcome to InvoiceCraft!",
             });
             router.push('/');
         } catch (error: any) {
