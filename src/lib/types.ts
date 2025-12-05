@@ -40,6 +40,8 @@ export interface Invoice {
   documentType: 'invoice';
   fontFamily?: string;
   fontSize?: number;
+  backgroundColor?: string;
+  textColor?: string;
   createdAt?: any;
   updatedAt?: any;
 }

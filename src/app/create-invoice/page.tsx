@@ -1,5 +1,3 @@
-
-
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -55,9 +53,13 @@ const getInitialInvoice = (): Omit<Invoice, 'userId'> => ({
   language: 'en',
   template: 'default',
   documentType: 'invoice',
+  fontFamily: 'Inter',
+  fontSize: 10,
+  backgroundColor: '#FFFFFF',
+  textColor: '#374151',
 });
 
-function PrintableInvoice({ doc, logoUrl, accentColor }: { doc: Invoice, logoUrl: string | null, accentColor: string }) {
+function PrintableInvoice({ doc, logoUrl, accentColor, backgroundColor, textColor }: { doc: Invoice, logoUrl: string | null, accentColor: string, backgroundColor: string, textColor: string }) {
     const [isMounted, setIsMounted] = useState(false);
 
     useEffect(() => {
@@ -74,7 +76,7 @@ function PrintableInvoice({ doc, logoUrl, accentColor }: { doc: Invoice, logoUrl
     }
 
     return createPortal(
-        <ClientInvoicePreview invoice={doc} logoUrl={logoUrl} accentColor={accentColor} id="invoice-preview-print" isPrint={true} />,
+        <ClientInvoicePreview invoice={doc} logoUrl={logoUrl} accentColor={accentColor} backgroundColor={backgroundColor} textColor={textColor} id="invoice-preview-print" isPrint={true} />,
         printRoot
     );
 }
@@ -84,6 +86,8 @@ export default function CreateInvoicePage() {
   const [invoice, setInvoice] = useState<Invoice | null>(null);
   const [logoUrl, setLogoUrl] = useState<string | null>(null);
   const [accentColor, setAccentColor] = useState<string>('hsl(var(--primary))');
+  const [backgroundColor, setBackgroundColor] = useState<string>('#FFFFFF');
+  const [textColor, setTextColor] = useState<string>('#374151');
   const { toast } = useToast();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -113,11 +117,15 @@ export default function CreateInvoicePage() {
        const loadedDraft = JSON.parse(JSON.stringify(remoteDraft), fromJSON);
        initialInvoice = { ...getInitialInvoice(), ...loadedDraft, userId: user.uid };
     } else {
-        initialInvoice = { ...getInitialInvoice(), userId: user.uid };
+        const newInvoice = getInitialInvoice();
+        newInvoice.invoiceNumber = `INV-${new Date().getFullYear()}-${String(Math.floor(Math.random() * 1000)).padStart(3, '0')}`;
+        initialInvoice = { ...newInvoice, userId: user.uid };
     }
     
     setInvoice(initialInvoice);
-    setLogoUrl(null);
+    setBackgroundColor(initialInvoice.backgroundColor || '#FFFFFF');
+    setTextColor(initialInvoice.textColor || '#374151');
+    setLogoUrl(null); // Will be loaded from invoice data if available
     
     if (typeof window !== 'undefined' && window.document) {
         const computedColor = getComputedStyle(window.document.documentElement).getPropertyValue('--primary').trim();
@@ -243,6 +251,10 @@ export default function CreateInvoicePage() {
                   setLogoUrl={setLogoUrl}
                   accentColor={accentColor}
                   setAccentColor={setAccentColor}
+                  backgroundColor={backgroundColor}
+                  setBackgroundColor={setBackgroundColor}
+                  textColor={textColor}
+                  setTextColor={setTextColor}
                   toast={toast}
                 />
               </div>
@@ -270,13 +282,13 @@ export default function CreateInvoicePage() {
                 </Sheet>
                 <div>
                   <h2 className="text-2xl font-bold font-headline mb-4">Live Preview</h2>
-                  <ClientInvoicePreview invoice={invoice} logoUrl={logoUrl} accentColor={accentColor} />
+                  <ClientInvoicePreview invoice={invoice} logoUrl={logoUrl} accentColor={accentColor} backgroundColor={backgroundColor} textColor={textColor} />
                 </div>
             </div>
           </div>
         </div>
       </div>
-      {invoice && <PrintableInvoice doc={invoice} logoUrl={logoUrl} accentColor={accentColor} />}
+      {invoice && <PrintableInvoice doc={invoice} logoUrl={logoUrl} accentColor={accentColor} backgroundColor={backgroundColor} textColor={textColor} />}
     </>
   );
 }

@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useLayoutEffect, useRef, useEffect, FC } from 'react';
@@ -14,6 +13,8 @@ interface InvoicePreviewProps {
   invoice: Invoice;
   logoUrl: string | null;
   accentColor: string;
+  backgroundColor: string;
+  textColor: string;
   id?: string;
   isPrint?: boolean;
 }
@@ -22,6 +23,8 @@ interface CommonTemplateProps {
   invoice: Invoice;
   logoUrl: string | null;
   accentColor: string;
+  backgroundColor: string;
+  textColor: string;
   t: any;
   currencySymbol: string;
 }
@@ -138,7 +141,7 @@ const InvoiceFooter: FC<{
 
 
 const DefaultTemplatePage: FC<PageProps> = ({ pageItems, pageIndex, totalPages, ...commonProps }) => (
-    <div className={`p-8 md:p-10 bg-white font-sans text-gray-800 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{minHeight: '1056px'}}>
+    <div className={`p-8 md:p-10 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{minHeight: '1056px', fontFamily: commonProps.invoice.fontFamily, fontSize: `${commonProps.invoice.fontSize}px`, backgroundColor: commonProps.backgroundColor, color: commonProps.textColor }}>
         <div data-element="page-content" className="flex-grow">
             <header className="flex justify-between items-start mb-10" data-element="header">
                 <div>
@@ -147,21 +150,21 @@ const DefaultTemplatePage: FC<PageProps> = ({ pageItems, pageIndex, totalPages, 
                     ) : (
                         <h1 className="text-3xl font-bold font-headline" style={{ color: commonProps.accentColor }}>{commonProps.invoice.companyName}</h1>
                     )}
-                    <div className="text-muted-foreground text-sm mt-2 space-y-1">
+                    <div className="text-sm mt-2 space-y-1">
                       <p className="whitespace-pre-line">{commonProps.invoice.companyAddress}</p>
                       {commonProps.invoice.companyPhone && <p>{commonProps.invoice.companyPhone}</p>}
                     </div>
                 </div>
                 <div className="text-right">
                     <h2 className="text-3xl font-bold text-gray-400 uppercase tracking-wider">{commonProps.t.invoice}</h2>
-                    <p className="text-muted-foreground mt-1">{commonProps.invoice.invoiceNumber}</p>
+                    <p className="mt-1">{commonProps.invoice.invoiceNumber}</p>
                 </div>
             </header>
              <section className="flex justify-between mb-10" data-element="client-details">
                 <div className="space-y-1">
                     <p className="text-sm font-semibold text-gray-500">{commonProps.t.billTo}</p>
                     <p className="font-bold">{commonProps.invoice.clientName}</p>
-                    <p className="text-muted-foreground text-sm whitespace-pre-line">{commonProps.invoice.clientAddress}</p>
+                    <p className="text-sm whitespace-pre-line">{commonProps.invoice.clientAddress}</p>
                 </div>
                 <div className="text-right space-y-1">
                     <p className="text-sm font-semibold text-gray-500">{commonProps.t.invoiceDate}</p>
@@ -178,7 +181,7 @@ const DefaultTemplatePage: FC<PageProps> = ({ pageItems, pageIndex, totalPages, 
 
 // --- TEMPLATE: Modern ---
 const ModernTemplatePage = ({ pageItems, pageIndex, totalPages, ...commonProps }: PageProps) => (
-     <div className={`p-8 md:p-10 bg-white font-sans text-gray-800 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{minHeight: '1056px'}}>
+     <div className={`p-8 md:p-10 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{minHeight: '1056px', fontFamily: commonProps.invoice.fontFamily, fontSize: `${commonProps.invoice.fontSize}px`, backgroundColor: commonProps.backgroundColor, color: commonProps.textColor }}>
         <div data-element="page-content" className="flex-grow">
             <div className="flex justify-between items-center pb-4 border-b-4" style={{borderColor: commonProps.accentColor}} data-element="header">
                  <div>
@@ -193,12 +196,12 @@ const ModernTemplatePage = ({ pageItems, pageIndex, totalPages, ...commonProps }
              <section className="flex justify-between my-8 text-sm" data-element="client-details">
                 <div className="space-y-1">
                     <p className="font-bold">{commonProps.invoice.companyName}</p>
-                    <p className="text-gray-600 whitespace-pre-line">{commonProps.invoice.companyAddress}</p>
-                    <p className="text-gray-600">{commonProps.invoice.companyPhone}</p>
+                    <p className="whitespace-pre-line">{commonProps.invoice.companyAddress}</p>
+                    <p>{commonProps.invoice.companyPhone}</p>
                 </div>
                 <div className="space-y-1 text-right">
                     <p className="font-bold">{commonProps.invoice.clientName}</p>
-                    <p className="text-gray-600 whitespace-pre-line">{commonProps.invoice.clientAddress}</p>
+                    <p className="whitespace-pre-line">{commonProps.invoice.clientAddress}</p>
                 </div>
             </section>
              <section className="flex justify-between my-8 text-sm" data-element="invoice-meta">
@@ -223,7 +226,7 @@ const ModernTemplatePage = ({ pageItems, pageIndex, totalPages, ...commonProps }
 
 // --- TEMPLATE: Minimalist ---
 const MinimalistTemplatePage: FC<PageProps> = ({ pageItems, pageIndex, totalPages, ...commonProps }) => (
-    <div className={`p-12 bg-white font-sans text-gray-900 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{minHeight: '1056px'}}>
+    <div className={`p-12 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{minHeight: '1056px', fontFamily: commonProps.invoice.fontFamily, fontSize: `${commonProps.invoice.fontSize}px`, backgroundColor: commonProps.backgroundColor, color: commonProps.textColor }}>
         <div data-element="page-content" className="flex-grow">
             <header data-element="header" className="mb-12">
                 <div className="flex justify-between items-start">
@@ -255,7 +258,7 @@ const MinimalistTemplatePage: FC<PageProps> = ({ pageItems, pageIndex, totalPage
 
 // --- TEMPLATE: Creative ---
 const CreativeTemplatePage: FC<PageProps> = ({ pageItems, pageIndex, totalPages, ...commonProps }) => (
-    <div className={`p-8 bg-white font-['Lato'] text-gray-800 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{minHeight: '1056px'}}>
+    <div className={`p-8 relative flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{minHeight: '1056px', fontFamily: commonProps.invoice.fontFamily, fontSize: `${commonProps.invoice.fontSize}px`, backgroundColor: commonProps.backgroundColor, color: commonProps.textColor }}>
         <div className="absolute top-0 left-0 w-full h-48" style={{backgroundColor: commonProps.accentColor, opacity: 0.1}}></div>
         <div data-element="page-content" className="flex-grow z-10">
             <header data-element="header" className="flex justify-between items-center mb-12">
@@ -281,7 +284,7 @@ const CreativeTemplatePage: FC<PageProps> = ({ pageItems, pageIndex, totalPages,
 
 // --- TEMPLATE: Elegant ---
 const ElegantTemplatePage: FC<PageProps> = ({ pageItems, pageIndex, totalPages, ...commonProps }) => (
-    <div className={`p-10 bg-white font-['Merriweather'] text-gray-700 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{minHeight: '1056px'}}>
+    <div className={`p-10 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{minHeight: '1056px', fontFamily: commonProps.invoice.fontFamily, fontSize: `${commonProps.invoice.fontSize}px`, backgroundColor: commonProps.backgroundColor, color: commonProps.textColor }}>
         <div data-element="page-content" className="flex-grow">
             <header data-element="header" className="text-center mb-16">
                 {commonProps.logoUrl && <Image src={commonProps.logoUrl} alt="logo" width={100} height={50} className="mx-auto mb-4 object-contain" />}
@@ -310,7 +313,7 @@ const UsaTemplatePage: FC<PageProps> = ({ pageItems, pageIndex, totalPages, ...c
     const { invoice, logoUrl, accentColor, total, subtotal, currencySymbol } = commonProps;
 
     return (
-        <div className={`invoice-page font-sans text-gray-800 ${pageIndex < totalPages - 1 ? "page-break" : ""}`}>
+        <div className={`invoice-page ${pageIndex < totalPages - 1 ? "page-break" : ""}`} style={{fontFamily: commonProps.invoice.fontFamily, fontSize: `${commonProps.invoice.fontSize}px`, backgroundColor: commonProps.backgroundColor, color: commonProps.textColor }}>
             <div className="p-8 m-4 border-2" style={{ borderColor: accentColor }}>
                 <header className="grid grid-cols-2 gap-10 mb-8" data-element="header">
                      <div>
@@ -319,7 +322,7 @@ const UsaTemplatePage: FC<PageProps> = ({ pageItems, pageIndex, totalPages, ...c
                         ) : (
                             <h1 className="text-3xl font-bold mb-1" style={{color: accentColor}}>{invoice.companyName}</h1>
                         )}
-                        <p className="text-xs text-gray-600 whitespace-pre-line">{invoice.companyAddress}</p>
+                        <p className="text-xs whitespace-pre-line">{invoice.companyAddress}</p>
                     </div>
                      <div className="text-right">
                         <h2 className="text-4xl font-bold">INVOICE</h2>
@@ -409,7 +412,7 @@ const PAGE_PADDING = 80; // 40px top + 40px bottom
 const AVAILABLE_HEIGHT = PAGE_HEIGHT - PAGE_PADDING;
 
 
-const InvoicePreviewInternal: FC<InvoicePreviewProps> = ({ invoice, logoUrl, accentColor, id = 'invoice-preview', isPrint = false }) => {
+const InvoicePreviewInternal: FC<InvoicePreviewProps> = ({ invoice, logoUrl, accentColor, backgroundColor, textColor, id = 'invoice-preview', isPrint = false }) => {
   const [paginatedItems, setPaginatedItems] = useState<LineItem[][]>([]);
   const [needsRemeasure, setNeedsRemeasure] = useState(true);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -431,7 +434,11 @@ const InvoicePreviewInternal: FC<InvoicePreviewProps> = ({ invoice, logoUrl, acc
 
   const previewStyle = {
       '--primary-hsl': accentColor,
-      '--primary': accentColor
+      '--primary': accentColor,
+      fontFamily: invoice.fontFamily || 'Inter, sans-serif',
+      fontSize: `${invoice.fontSize || 10}pt`,
+      backgroundColor: backgroundColor || '#FFFFFF',
+      color: textColor || '#374151',
   } as React.CSSProperties;
 
   const TemplateComponent = templates[invoice.template as keyof typeof templates] || templates['default'];
@@ -524,6 +531,8 @@ const InvoicePreviewInternal: FC<InvoicePreviewProps> = ({ invoice, logoUrl, acc
     invoice,
     logoUrl,
     accentColor,
+    backgroundColor,
+    textColor,
     t,
     currencySymbol,
     subtotal,
@@ -537,7 +546,7 @@ const InvoicePreviewInternal: FC<InvoicePreviewProps> = ({ invoice, logoUrl, acc
     const itemsToRender = needsRemeasure ? [invoice.items] : paginatedItems;
     
     return (
-      <div id={id} className="bg-white text-gray-800" style={previewStyle} ref={containerRef}>
+      <div id={id} ref={containerRef}>
         {itemsToRender.map((pageItems, pageIndex) => (
           <TemplateComponent
             key={pageIndex}
@@ -553,8 +562,8 @@ const InvoicePreviewInternal: FC<InvoicePreviewProps> = ({ invoice, logoUrl, acc
 
   // Default live preview (single page)
   return (
-    <Card id={id} className="w-full shadow-lg rounded-xl overflow-hidden print-hide" style={previewStyle}>
-      <CardContent className="p-0 bg-white text-gray-800 dark:bg-white dark:text-gray-800">
+    <Card id={id} className="w-full shadow-lg rounded-xl overflow-hidden print-hide" style={{backgroundColor: backgroundColor}}>
+      <CardContent className="p-0" style={{color: textColor}}>
           <TemplateComponent
             {...commonProps}
             pageItems={invoice.items}

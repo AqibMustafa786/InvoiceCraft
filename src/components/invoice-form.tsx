@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { DatePicker } from '@/components/ui/datepicker';
-import { ImageUp, Plus, Trash2, Palette, X, Mail, Truck, Hash, Wallet, Phone } from 'lucide-react';
+import { ImageUp, Plus, Trash2, Palette, X, Mail, Truck, Hash, Wallet, Phone, PaintBucket, Paintbrush, Type } from 'lucide-react';
 import Image from 'next/image';
 import {
   Select,
@@ -25,6 +25,10 @@ interface InvoiceFormProps {
   setLogoUrl: Dispatch<SetStateAction<string | null>>;
   accentColor: string;
   setAccentColor: Dispatch<SetStateAction<string>>;
+  backgroundColor: string;
+  setBackgroundColor: Dispatch<SetStateAction<string>>;
+  textColor: string;
+  setTextColor: Dispatch<SetStateAction<string>>;
   toast: (options: { title: string; description: string; variant?: "default" | "destructive" }) => void;
 }
 
@@ -36,13 +40,39 @@ const currencies = [
     { value: 'PKR', label: 'PKR (₨)' },
 ]
 
-export function InvoiceForm({ invoice, setInvoice, logoUrl, setLogoUrl, accentColor, setAccentColor, toast }: InvoiceFormProps) {
+const fonts = [
+    { value: 'Inter', label: 'Inter' },
+    { value: 'Roboto', label: 'Roboto' },
+    { value: 'Lato', label: 'Lato' },
+    { value: 'Merriweather', label: 'Merriweather' },
+    { value: 'system-ui', label: 'System Default' },
+]
+
+export function InvoiceForm({ invoice, setInvoice, logoUrl, setLogoUrl, accentColor, setAccentColor, backgroundColor, setBackgroundColor, textColor, setTextColor, toast }: InvoiceFormProps) {
   const [bulkAddCount, setBulkAddCount] = useState(10);
-  const [colorInputValue, setColorInputValue] = useState(accentColor);
+  const [accentColorInput, setAccentColorInput] = useState(accentColor);
+  const [bgColorInput, setBgColorInput] = useState(backgroundColor);
+  const [textColorInput, setTextColorInput] = useState(textColor);
+  
+  useEffect(() => {
+    setAccentColorInput(accentColor);
+  }, [accentColor]);
 
   useEffect(() => {
-    setColorInputValue(accentColor);
-  }, [accentColor]);
+    setBgColorInput(backgroundColor);
+  }, [backgroundColor]);
+  
+  useEffect(() => {
+    setTextColorInput(textColor);
+  }, [textColor]);
+
+  useEffect(() => {
+     setInvoice(prev => ({ ...prev, backgroundColor: backgroundColor }));
+  }, [backgroundColor, setInvoice]);
+
+  useEffect(() => {
+    setInvoice(prev => ({ ...prev, textColor: textColor }));
+ }, [textColor, setInvoice]);
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -175,8 +205,8 @@ export function InvoiceForm({ invoice, setInvoice, logoUrl, setLogoUrl, accentCo
                     <Input 
                         id="accentColor"
                         type="text" 
-                        value={colorInputValue} 
-                        onChange={(e) => setColorInputValue(e.target.value)}
+                        value={accentColorInput} 
+                        onChange={(e) => setAccentColorInput(e.target.value)}
                         onBlur={(e) => setAccentColor(e.target.value)}
                         className="pl-10"
                         placeholder="hsl(260 85% 66%)"
@@ -186,10 +216,76 @@ export function InvoiceForm({ invoice, setInvoice, logoUrl, setLogoUrl, accentCo
                         value={accentColor.startsWith('hsl') ? '#000000' : accentColor}
                         onChange={(e) => {
                             setAccentColor(e.target.value);
-                            setColorInputValue(e.target.value);
+                            setAccentColorInput(e.target.value);
                         }}
                         className="absolute right-1 top-1/2 -translate-y-1/2 h-8 w-8 p-1 rounded-md cursor-pointer bg-transparent border-none appearance-none"
                     />
+                </div>
+            </div>
+             <div className="space-y-2">
+                <Label htmlFor="backgroundColor">Background Color</Label>
+                <div className="relative flex items-center">
+                    <PaintBucket className="absolute left-3 h-5 w-5 text-muted-foreground" />
+                    <Input 
+                        id="backgroundColor"
+                        type="text" 
+                        value={bgColorInput} 
+                        onChange={(e) => setBgColorInput(e.target.value)}
+                        onBlur={(e) => setBackgroundColor(e.target.value)}
+                        className="pl-10"
+                        placeholder="#FFFFFF"
+                    />
+                    <input 
+                        type="color" 
+                        value={backgroundColor}
+                        onChange={(e) => {
+                            setBackgroundColor(e.target.value);
+                            setBgColorInput(e.target.value);
+                        }}
+                        className="absolute right-1 top-1/2 -translate-y-1/2 h-8 w-8 p-1 rounded-md cursor-pointer bg-transparent border-none appearance-none"
+                    />
+                </div>
+            </div>
+             <div className="space-y-2">
+                <Label htmlFor="textColor">Text Color</Label>
+                <div className="relative flex items-center">
+                    <Paintbrush className="absolute left-3 h-5 w-5 text-muted-foreground" />
+                    <Input 
+                        id="textColor"
+                        type="text" 
+                        value={textColorInput} 
+                        onChange={(e) => setTextColorInput(e.target.value)}
+                        onBlur={(e) => setTextColor(e.target.value)}
+                        className="pl-10"
+                        placeholder="#374151"
+                    />
+                    <input 
+                        type="color" 
+                        value={textColor}
+                        onChange={(e) => {
+                            setTextColor(e.target.value);
+                            setTextColorInput(e.target.value);
+                        }}
+                        className="absolute right-1 top-1/2 -translate-y-1/2 h-8 w-8 p-1 rounded-md cursor-pointer bg-transparent border-none appearance-none"
+                    />
+                </div>
+            </div>
+             <div className="space-y-2">
+                <Label htmlFor="fontFamily">Font Family</Label>
+                <Select value={invoice.fontFamily} onValueChange={(value) => setInvoice(p => ({...p, fontFamily: value}))}>
+                    <SelectTrigger id="fontFamily">
+                        <SelectValue placeholder="Select font" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        {fonts.map(font => <SelectItem key={font.value} value={font.value}>{font.label}</SelectItem>)}
+                    </SelectContent>
+                </Select>
+            </div>
+             <div className="space-y-2">
+                <Label htmlFor="fontSize">Font Size</Label>
+                <div className="relative flex items-center">
+                    <Type className="absolute left-3 h-5 w-5 text-muted-foreground" />
+                    <Input id="fontSize" name="fontSize" type="number" value={invoice.fontSize} onChange={(e) => setInvoice(p => ({...p, fontSize: Number(e.target.value) || 14}))} className="pl-10" />
                 </div>
             </div>
         </CardContent>
@@ -324,16 +420,17 @@ export function InvoiceForm({ invoice, setInvoice, logoUrl, setLogoUrl, accentCo
                 <Label htmlFor={`itemName-${index}`} className="md:hidden">Item Name</Label>
                 <Textarea id={`itemName-${index}`} value={item.name} onChange={(e) => handleItemChange(index, 'name', e.target.value)} rows={1} className="min-h-0"/>
               </div>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-2 md:contents gap-4">
                 <div className="space-y-2">
                   <Label htmlFor={`itemQuantity-${index}`} className="md:hidden">Quantity</Label>
                   <Input id={`itemQuantity-${index}`} type="number" value={item.quantity} onChange={(e) => handleItemChange(index, 'quantity', parseFloat(e.target.value) || 0)} />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor={`itemRate-${index}`} className="md:hidden">Rate</Label>
-                  <Input id={`itemRate-${index}`} type="number" value={item.rate} onChange={(e) => handleItemChange(index, 'rate', parseFloat(e.target.value) || 0)} />
+                  <Input id={`itemRate-${index}`} type="number" value={item.rate || 0} onChange={(e) => handleItemChange(index, 'rate', parseFloat(e.target.value) || 0)} />
                 </div>
               </div>
+
               <div className="flex items-center h-10">
                 <p className="font-medium tabular-nums text-sm">{currencySymbol}{(item.quantity * (item.rate || 0)).toFixed(2)}</p>
               </div>
@@ -369,7 +466,7 @@ export function InvoiceForm({ invoice, setInvoice, logoUrl, setLogoUrl, accentCo
 
       <Card className="bg-card/50 backdrop-blur-sm">
         <CardHeader>
-          <CardTitle>Totals & Notes</CardTitle>
+          <CardTitle>Totals &amp; Notes</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
