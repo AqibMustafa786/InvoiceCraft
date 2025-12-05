@@ -70,17 +70,17 @@ export default function DashboardPage() {
 
     const invoicesQuery = useMemoFirebase(() => {
         if (!firestore || !user?.uid) return null;
-        return query(collection(firestore, INVOICES_COLLECTION), where("userId", "==", user.uid));
+        return query(collection(firestore, 'companies', user.companyId, INVOICES_COLLECTION), where("userId", "==", user.uid));
     }, [firestore, user?.uid]);
 
     const estimatesQuery = useMemoFirebase(() => {
         if (!firestore || !user?.uid) return null;
-        return query(collection(firestore, ESTIMATES_COLLECTION), where("userId", "==", user.uid));
+        return query(collection(firestore, 'companies', user.companyId, ESTIMATES_COLLECTION), where("userId", "==", user.uid));
     }, [firestore, user?.uid]);
 
     const quotesQuery = useMemoFirebase(() => {
         if (!firestore || !user?.uid) return null;
-        return query(collection(firestore, QUOTES_COLLECTION), where("userId", "==", user.uid));
+        return query(collection(firestore, 'companies', user.companyId, QUOTES_COLLECTION), where("userId", "==", user.uid));
     }, [firestore, user?.uid]);
 
     const { data: invoices, isLoading: isLoadingInvoices, error: invoicesError } = useCollection<Invoice>(invoicesQuery);
@@ -101,9 +101,9 @@ export default function DashboardPage() {
     }, []);
 
     const handleDelete = () => {
-        if (!deleteCandidate || !firestore) return;
-        const { id, collection } = deleteCandidate;
-        const docRef = doc(firestore, collection, id);
+        if (!deleteCandidate || !firestore || !user?.companyId) return;
+        const { id, collection: collectionName } = deleteCandidate;
+        const docRef = doc(firestore, 'companies', user.companyId, collectionName, id);
         deleteDocumentNonBlocking(docRef);
         setDeleteCandidate(null);
         toast({
@@ -113,8 +113,8 @@ export default function DashboardPage() {
     };
 
     const handleStatusChange = (id: string, collectionName: string, newStatus: DocumentStatus) => {
-        if (!firestore) return;
-        const docRef = doc(firestore, collectionName, id);
+        if (!firestore || !user?.companyId) return;
+        const docRef = doc(firestore, 'companies', user.companyId, collectionName, id);
         updateDocumentNonBlocking(docRef, { status: newStatus });
         toast({
             title: "Status Updated",
@@ -123,7 +123,7 @@ export default function DashboardPage() {
     };
     
     const handleConvertToInvoice = async (estimate: Estimate | Quote) => {
-        if (!firestore || !user) return;
+        if (!firestore || !user || !user.companyId) return;
         
         const { business, client, lineItems, summary, projectTitle, currency, language, estimateNumber, referenceNumber } = estimate;
 
@@ -155,7 +155,7 @@ export default function DashboardPage() {
         };
         
         try {
-            const newDocRef = await addDoc(collection(firestore, INVOICES_COLLECTION), {
+            const newDocRef = await addDoc(collection(firestore, 'companies', user.companyId, INVOICES_COLLECTION), {
                 ...newInvoiceData,
                 createdAt: Timestamp.now(),
                 updatedAt: Timestamp.now(),
@@ -280,7 +280,7 @@ export default function DashboardPage() {
     
     const isLoading = isUserLoading || isLoadingInvoices || isLoadingEstimates || isLoadingQuotes;
 
-    if (isLoading && !invoices && !estimates && !quotes) {
+    if (isLoading || !user) {
         return (
             <div className="container mx-auto p-4 md:p-8">
                  <div className="flex justify-between items-center mb-8 gap-4 flex-wrap">
@@ -312,11 +312,6 @@ export default function DashboardPage() {
                 </Card>
             </div>
         )
-    }
-
-    if (!user && !isUserLoading) {
-        router.push('/login');
-        return null;
     }
 
     return (
