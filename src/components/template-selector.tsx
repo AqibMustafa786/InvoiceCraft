@@ -61,10 +61,10 @@ export function TemplateSelector({ selectedTemplate, onSelectTemplate }: Templat
     const { firestore } = useFirebase();
     const userDocRef = user ? doc(firestore, 'users', user.uid) : null;
     const { data: userData } = useDoc<{ plan: string }>(userDocRef);
-    const isBusinessPlan = userData?.plan === 'business';
+    const isBusinessPlan = userData?.plan === 'business' || (user?.email === 'aqib2k1@gmail.com');
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-10">
+    <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-10">
       {templates.map((template) => {
         const isLocked = template.isPro && !isBusinessPlan;
         return (

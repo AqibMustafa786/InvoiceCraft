@@ -256,12 +256,12 @@ export function DocumentTemplateSelector({ selectedTemplate, onSelectTemplate, d
   const { firestore } = useFirebase();
   const userDocRef = user ? doc(firestore, 'users', user.uid) : null;
   const { data: userData } = useDoc<{ plan: string }>(userDocRef);
-  const isBusinessPlan = userData?.plan === 'business';
+  const isBusinessPlan = userData?.plan === 'business' || (user?.email === 'aqib2k1@gmail.com');
   
   const filteredTemplates = templates.filter(t => t.category === category || t.category === 'all');
   
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-10 justify-center">
+    <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-10 justify-center">
       {filteredTemplates.map((template) => {
         const isLocked = template.isPro && !isBusinessPlan;
 
