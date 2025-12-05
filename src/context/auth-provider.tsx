@@ -36,14 +36,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (isLoading) return;
 
     const isProtectedRoute = protectedRoutes.some(route => pathname.startsWith(route));
-    const isPublicRoute = publicRoutes.includes(pathname);
+    const isPublicAuthRoute = publicRoutes.includes(pathname);
 
     if (!user && isProtectedRoute) {
       router.push('/login');
     }
 
-    if (user && isPublicRoute) {
-      router.push('/dashboard');
+    if (user && isPublicAuthRoute) {
+      router.push('/');
     }
   }, [user, isLoading, pathname, router]);
 
