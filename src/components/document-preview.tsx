@@ -477,6 +477,8 @@ const DocumentPreviewInternal: FC<DocumentPreviewProps> = ({ document, accentCol
 
   const dynamicColorStyle = {
       color: accentColor,
+      fontFamily: document?.fontFamily || 'Inter, sans-serif',
+      fontSize: `${document?.fontSize || 10}pt`,
   }
 
   const TemplateComponent = templates[document.template] || templates.default;
