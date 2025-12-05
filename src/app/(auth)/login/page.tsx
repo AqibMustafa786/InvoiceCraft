@@ -24,7 +24,7 @@ type LoginFormValues = z.infer<typeof loginSchema>;
 
 export default function LoginPage() {
     const [isLoading, setIsLoading] = useState(false);
-    const auth = useAuth();
+    const { auth } = useFirebase();
     const router = useRouter();
     const { toast } = useToast();
 

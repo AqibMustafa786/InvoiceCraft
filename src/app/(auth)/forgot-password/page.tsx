@@ -10,7 +10,8 @@ import * as z from 'zod';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { useToast } from '@/hooks/use-toast';
 import { useState } from 'react';
-import { sendPasswordResetEmailFlow } from '@/ai/flows/send-password-reset-flow';
+import { useFirebase } from '@/firebase';
+import { sendPasswordResetEmail } from 'firebase/auth';
 
 const forgotPasswordSchema = z.object({
     email: z.string().email({ message: "Invalid email address." }),
@@ -20,6 +21,7 @@ type ForgotPasswordFormValues = z.infer<typeof forgotPasswordSchema>;
 
 export default function ForgotPasswordPage() {
     const [isLoading, setIsLoading] = useState(false);
+    const { auth } = useFirebase();
     const { toast } = useToast();
 
     const form = useForm<ForgotPasswordFormValues>({
@@ -32,16 +34,14 @@ export default function ForgotPasswordPage() {
     const onSubmit = async (data: ForgotPasswordFormValues) => {
         setIsLoading(true);
         try {
-            const result = await sendPasswordResetEmailFlow({ email: data.email });
-
-            if (result.success) {
-                toast({
-                    title: "Password Reset Email Sent",
-                    description: "If an account exists for that email, a reset link has been sent. Please check your inbox.",
-                });
-            } else {
-                 throw new Error(result.message);
+            if (!auth) {
+                throw new Error("Authentication service not available.");
             }
+            await sendPasswordResetEmail(auth, data.email);
+            toast({
+                title: "Password Reset Email Sent",
+                description: "If an account exists for that email, a reset link has been sent. Please check your inbox.",
+            });
         } catch (error: any) {
             toast({
                 variant: "destructive",
