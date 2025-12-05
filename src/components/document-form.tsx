@@ -1156,39 +1156,39 @@ export function DocumentForm({ document, setDocument, accentColor, setAccentColo
               </div>
             </div>
 
-            <div className="hidden md:grid md:grid-cols-12 gap-4 text-sm font-medium text-muted-foreground pt-4">
-                <div className="col-span-5"><Label>Item Name / Description</Label></div>
-                <div className="col-span-2"><Label>Quantity</Label></div>
-                <div className="col-span-2"><Label>Unit Price</Label></div>
-                <div className="col-span-1 text-center"><Label>Taxable</Label></div>
-                <div className="col-span-2"><Label>Total</Label></div>
+            <div className="hidden md:grid md:grid-cols-[5fr_2fr_2fr_1fr_2fr_1fr] gap-4 text-sm font-medium text-muted-foreground pt-4">
+                <Label>Item Name / Description</Label>
+                <Label>Quantity</Label>
+                <Label>Unit Price</Label>
+                <Label className="text-center">Taxable</Label>
+                <Label>Total</Label>
+                <span></span>
             </div>
             {document.lineItems.map((item, index) => (
-                <div key={item.id} className="grid grid-cols-12 gap-2 items-start">
-                <div className="col-span-12 md:col-span-5 space-y-2">
-                    <Label htmlFor={`itemName-${index}`} className="md:hidden">Item Name / Description</Label>
-                    <Textarea id={`itemName-${index}`} value={item.name} onChange={(e) => handleItemChange(index, 'name', e.target.value)} rows={1} className="min-h-0"/>
-                </div>
-                <div className="col-span-4 md:col-span-2 space-y-2">
-                    <Label htmlFor={`itemQuantity-${index}`} className="md:hidden">Quantity</Label>
-                    <Input id={`itemQuantity-${index}`} type="number" value={item.quantity} onChange={(e) => handleItemChange(index, 'quantity', parseFloat(e.target.value) || 0)} />
-                </div>
-                <div className="col-span-4 md:col-span-2 space-y-2">
-                    <Label htmlFor={`itemRate-${index}`} className="md:hidden">Unit Price</Label>
-                    <Input id={`itemRate-${index}`} type="number" value={item.unitPrice} onChange={(e) => handleItemChange(index, 'unitPrice', parseFloat(e.target.value) || 0)} />
-                </div>
-                <div className="col-span-2 md:col-span-1 flex items-center justify-center h-10">
-                    <Label htmlFor={`itemTaxable-${index}`} className="md:hidden sr-only">Taxable</Label>
-                    <Checkbox id={`itemTaxable-${index}`} checked={item.taxable} onCheckedChange={(checked) => handleItemChange(index, 'taxable', !!checked)} />
-                </div>
-                <div className="col-span-1 flex items-center h-10">
-                    <p className="font-medium tabular-nums text-sm">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</p>
-                </div>
-                <div className="col-span-1 flex items-center h-10 justify-end">
-                    <Button variant="ghost" size="icon" onClick={() => removeItem(index)}>
-                    <Trash2 className="h-4 w-4 text-destructive" />
-                    </Button>
-                </div>
+                <div key={item.id} className="grid grid-cols-1 md:grid-cols-[5fr_2fr_2fr_1fr_2fr_1fr] gap-4 items-start">
+                    <div className="md:col-span-1 space-y-2">
+                        <Label htmlFor={`itemName-${index}`} className="md:hidden">Item Name / Description</Label>
+                        <Textarea id={`itemName-${index}`} value={item.name} onChange={(e) => handleItemChange(index, 'name', e.target.value)} rows={1} className="min-h-0"/>
+                    </div>
+                    <div className="col-span-6 sm:col-span-3 md:col-span-1 space-y-2">
+                        <Label htmlFor={`itemQuantity-${index}`} className="md:hidden">Quantity</Label>
+                        <Input id={`itemQuantity-${index}`} type="number" value={item.quantity} onChange={(e) => handleItemChange(index, 'quantity', parseFloat(e.target.value) || 0)} />
+                    </div>
+                    <div className="col-span-6 sm:col-span-3 md:col-span-1 space-y-2">
+                        <Label htmlFor={`itemRate-${index}`} className="md:hidden">Unit Price</Label>
+                        <Input id={`itemRate-${index}`} type="number" value={item.unitPrice} onChange={(e) => handleItemChange(index, 'unitPrice', parseFloat(e.target.value) || 0)} />
+                    </div>
+                    <div className="col-span-2 sm:col-span-1 flex items-center justify-center h-10">
+                        <Checkbox id={`itemTaxable-${index}`} checked={item.taxable} onCheckedChange={(checked) => handleItemChange(index, 'taxable', !!checked)} />
+                    </div>
+                    <div className="col-span-4 sm:col-span-2 flex items-center h-10">
+                        <p className="font-medium tabular-nums text-sm">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</p>
+                    </div>
+                    <div className="col-span-2 sm:col-span-1 flex items-center h-10 justify-end">
+                        <Button variant="ghost" size="icon" onClick={() => removeItem(index)}>
+                        <Trash2 className="h-4 w-4 text-destructive" />
+                        </Button>
+                    </div>
                 </div>
             ))}
             <div className="flex flex-wrap items-end gap-4 pt-2 border-t border-border">
@@ -1220,7 +1220,7 @@ export function DocumentForm({ document, setDocument, accentColor, setAccentColo
             <CardTitle>Pricing Summary &amp; Terms</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-2">
                 <Label htmlFor="taxPercentage">Tax (%)</Label>
                 <Input id="taxPercentage" name="summary.taxPercentage" type="number" value={document.summary.taxPercentage} onChange={handleNumberChange} />
@@ -1229,7 +1229,7 @@ export function DocumentForm({ document, setDocument, accentColor, setAccentColo
                 <Label htmlFor="discount">Discount (Fixed Amount)</Label>
                 <Input id="discount" name="summary.discount" type="number" value={document.summary.discount} onChange={handleNumberChange} />
                 </div>
-                <div className="space-y-2 col-span-2">
+                <div className="space-y-2 col-span-1 sm:col-span-2">
                 <Label htmlFor="shippingCost">Shipping / Extra Costs</Label>
                 <div className="relative flex items-center">
                     <Truck className="absolute left-3 h-5 w-5 text-muted-foreground" />
