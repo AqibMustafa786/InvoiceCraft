@@ -7,7 +7,7 @@ import type { Invoice, LineItem } from '@/lib/types';
 import { InvoiceForm } from '@/components/invoice-form';
 import { ClientInvoicePreview } from '@/components/invoice-preview';
 import { Button } from '@/components/ui/button';
-import { Printer, Edit, FilePlus, LayoutDashboard } from 'lucide-react';
+import { Printer, Edit, FilePlus, LayoutDashboard, MoreVertical } from 'lucide-react';
 import { addDays, isValid } from 'date-fns';
 import { useToast } from '@/hooks/use-toast';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -17,6 +17,12 @@ import { doc, serverTimestamp, Timestamp } from 'firebase/firestore';
 import { setDocumentNonBlocking } from '@/firebase/non-blocking-updates';
 import { useDoc } from '@/firebase/firestore/use-doc';
 import { TemplateSelector } from '@/components/template-selector';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 
 const INVOICES_COLLECTION = 'invoices';
 
@@ -197,7 +203,8 @@ export default function CreateInvoicePage() {
             <h1 className="text-3xl font-bold font-headline">Create Invoice</h1>
             <p className="text-muted-foreground">Select a template, then fill out the form to generate your invoice.</p>
           </div>
-          <div className="flex flex-wrap gap-2">
+          {/* Desktop Buttons */}
+          <div className="hidden md:flex flex-wrap gap-2">
               <Button onClick={handleNew} variant="outline">
                   <FilePlus className="mr-2 h-5 w-5" />
                   New
@@ -217,6 +224,35 @@ export default function CreateInvoicePage() {
                 Save as PDF
               </Button>
           </div>
+          {/* Mobile Buttons */}
+           <div className="md:hidden flex w-full items-center gap-2">
+                <Button onClick={handleSaveDraft} className="flex-1">
+                    <Edit className="mr-2 h-5 w-5" /> Save Draft
+                </Button>
+                 <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                        <Button variant="outline" size="icon">
+                            <MoreVertical className="h-5 w-5" />
+                        </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                         <DropdownMenuItem onClick={handleNew}>
+                            <FilePlus className="mr-2 h-5 w-5" />
+                            New
+                        </DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                             <Link href="/dashboard">
+                                <LayoutDashboard className="mr-2 h-5 w-5" />
+                                Dashboard
+                            </Link>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={handlePrint}>
+                            <Printer className="mr-2 h-5 w-5" />
+                            Save as PDF
+                        </DropdownMenuItem>
+                    </DropdownMenuContent>
+                </DropdownMenu>
+            </div>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 xl:gap-12">

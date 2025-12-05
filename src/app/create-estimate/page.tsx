@@ -8,7 +8,7 @@ import type { Estimate, LineItem, Quote } from '@/lib/types';
 import { DocumentForm } from '@/components/document-form';
 import { ClientDocumentPreview } from '@/components/document-preview';
 import { Button } from '@/components/ui/button';
-import { Printer, FilePlus, LayoutDashboard, Edit, Share2, Mail, Loader2 } from 'lucide-react';
+import { Printer, FilePlus, LayoutDashboard, Edit, Share2, Mail, Loader2, MoreVertical } from 'lucide-react';
 import { addDays, isValid } from 'date-fns';
 import { useToast } from '@/hooks/use-toast';
 import Link from 'next/link';
@@ -19,6 +19,12 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { useDoc } from '@/firebase/firestore/use-doc';
 import { sendDocumentByEmail } from '@/ai/flows/send-document-flow';
 import { DocumentTemplateSelector } from '@/components/document-template-selector';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 
 const ESTIMATES_COLLECTION = 'estimates';
 
@@ -461,7 +467,8 @@ export default function CreateEstimatePage() {
             <h1 className="text-3xl font-bold font-headline">Create Estimate</h1>
             <p className="text-muted-foreground">Fill out the form to generate your professional estimate.</p>
           </div>
-          <div className="flex flex-wrap gap-2">
+           {/* Desktop Buttons */}
+          <div className="hidden md:flex flex-wrap gap-2">
               <Button onClick={handleNew} variant="outline">
                   <FilePlus className="mr-2 h-5 w-5" />
                   New
@@ -493,6 +500,47 @@ export default function CreateEstimatePage() {
                 Save as PDF
               </Button>
           </div>
+            {/* Mobile Buttons */}
+            <div className="md:hidden flex w-full items-center gap-2">
+                <Button onClick={handleSaveDraft} className="flex-1">
+                    <Edit className="mr-2 h-5 w-5" /> Save Draft
+                </Button>
+                 <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                        <Button variant="outline" size="icon">
+                            <MoreVertical className="h-5 w-5" />
+                        </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                         <DropdownMenuItem onClick={handleNew}>
+                            <FilePlus className="mr-2 h-5 w-5" />
+                            New
+                        </DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                             <Link href="/dashboard">
+                                <LayoutDashboard className="mr-2 h-5 w-5" />
+                                Dashboard
+                            </Link>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={handleEmail} disabled={isSendingEmail}>
+                             {isSendingEmail ? (
+                              <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                            ) : (
+                              <Mail className="mr-2 h-5 w-5" />
+                            )}
+                            Email
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={handleShare}>
+                            <Share2 className="mr-2 h-5 w-5" />
+                            Share
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={handlePrint}>
+                            <Printer className="mr-2 h-5 w-5" />
+                            Save as PDF
+                        </DropdownMenuItem>
+                    </DropdownMenuContent>
+                </DropdownMenu>
+            </div>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">

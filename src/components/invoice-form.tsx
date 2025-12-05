@@ -311,37 +311,37 @@ export function InvoiceForm({ invoice, setInvoice, logoUrl, setLogoUrl, accentCo
           <CardTitle>Items</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="hidden md:grid md:grid-cols-12 gap-4 text-sm font-medium text-muted-foreground">
-            <div className="col-span-5"><Label>Item Name</Label></div>
-            <div className="col-span-2"><Label>Quantity</Label></div>
-            <div className="col-span-2"><Label>Rate</Label></div>
-            <div className="col-span-3"><Label>Subtotal</Label></div>
+          <div className="hidden md:grid md:grid-cols-[5fr_2fr_2fr_3fr] gap-4 text-sm font-medium text-muted-foreground">
+            <Label>Item Name</Label>
+            <Label>Quantity</Label>
+            <Label>Rate</Label>
+            <Label>Subtotal</Label>
           </div>
           {invoice.items.map((item, index) => (
-            <div key={item.id} className="grid grid-cols-1 md:grid-cols-12 gap-4 items-center">
-              <div className="md:col-span-5 space-y-2">
+            <div key={item.id} className="grid grid-cols-1 md:grid-cols-[5fr_2fr_2fr_3fr_1fr] gap-4 md:gap-2 items-start">
+              <div className="space-y-2">
                 <Label htmlFor={`itemName-${index}`} className="md:hidden">Item Name</Label>
                 <Textarea id={`itemName-${index}`} value={item.name} onChange={(e) => handleItemChange(index, 'name', e.target.value)} rows={1} className="min-h-0"/>
               </div>
-              <div className="col-span-6 md:col-span-2 space-y-2">
+              <div className="space-y-2">
                  <Label htmlFor={`itemQuantity-${index}`} className="md:hidden">Quantity</Label>
                 <Input id={`itemQuantity-${index}`} type="number" value={item.quantity} onChange={(e) => handleItemChange(index, 'quantity', parseFloat(e.target.value) || 0)} />
               </div>
-              <div className="col-span-6 md:col-span-2 space-y-2">
+              <div className="space-y-2">
                 <Label htmlFor={`itemRate-${index}`} className="md:hidden">Rate</Label>
                 <Input id={`itemRate-${index}`} type="number" value={item.rate} onChange={(e) => handleItemChange(index, 'rate', parseFloat(e.target.value) || 0)} />
               </div>
-              <div className="col-span-8 md:col-span-2 flex items-center h-10">
-                <p className="font-medium tabular-nums">{currencySymbol}{(item.quantity * (item.rate || 0)).toFixed(2)}</p>
+              <div className="flex items-center h-10">
+                <p className="font-medium tabular-nums text-sm">{currencySymbol}{(item.quantity * (item.rate || 0)).toFixed(2)}</p>
               </div>
-              <div className="col-span-4 md:col-span-1 flex items-center h-10 justify-end">
+              <div className="flex items-center h-10 justify-end">
                 <Button variant="ghost" size="icon" onClick={() => removeItem(index)}>
                   <Trash2 className="h-4 w-4 text-destructive" />
                 </Button>
               </div>
             </div>
           ))}
-          <div className="flex flex-wrap items-end gap-4">
+          <div className="flex flex-wrap items-end gap-4 pt-4 border-t">
             <Button variant="outline" onClick={addItem}><Plus className="mr-2 h-4 w-4" /> Add Item</Button>
             
             <div className="flex items-end gap-2">
