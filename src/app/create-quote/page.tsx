@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
@@ -296,80 +297,39 @@ export default function CreateQuotePage() {
             <h1 className="text-3xl font-bold font-headline">Create Quote</h1>
             <p className="text-muted-foreground">Fill out the form to generate your professional quote.</p>
           </div>
-          {/* Desktop Buttons */}
-          <div className="hidden md:flex flex-wrap gap-2">
-              <Button onClick={handleNew} variant="outline">
-                  <FilePlus className="mr-2 h-5 w-5" />
-                  New
-              </Button>
-              <Button asChild variant="outline">
-                <Link href="/dashboard">
-                  <LayoutDashboard className="mr-2 h-5 w-5" />
-                  Dashboard
-                </Link>
-              </Button>
-               <Button onClick={handleSaveDraft}>
-                <Edit className="mr-2 h-5 w-5" />
-                Save Draft
-              </Button>
-              <Button onClick={handleEmail} disabled={isSendingEmail}>
-                {isSendingEmail ? (
-                  <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                ) : (
-                  <Mail className="mr-2 h-5 w-5" />
-                )}
-                Email
-              </Button>
-              <Button onClick={handleShare}>
-                <Share2 className="mr-2 h-5 w-5" />
-                Share
-              </Button>
-              <Button onClick={handlePrint}>
-                <Printer className="mr-2 h-5 w-5" />
-                Save as PDF
-              </Button>
+          {/* Actions Buttons */}
+          <div className="flex w-full md:w-auto items-center gap-2">
+            <Button onClick={handleSaveDraft} className="w-full md:w-auto">
+                <Edit className="mr-2 h-4 w-4" /> Save Draft
+            </Button>
+            <Button onClick={handlePrint} variant="outline" className="w-full md:w-auto">
+                <Printer className="mr-2 h-4 w-4" /> Save as PDF
+            </Button>
+            <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                    <Button variant="outline" size="icon" className="shrink-0">
+                        <MoreVertical className="h-4 w-4" />
+                    </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                    <DropdownMenuItem onClick={handleNew}>
+                        <FilePlus className="mr-2 h-4 w-4" /> New
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                        <Link href="/dashboard">
+                            <LayoutDashboard className="mr-2 h-4 w-4" /> Dashboard
+                        </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={handleEmail} disabled={isSendingEmail}>
+                        {isSendingEmail ? ( <Loader2 className="mr-2 h-4 w-4 animate-spin" />) : ( <Mail className="mr-2 h-4 w-4" /> )}
+                         Email
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={handleShare}>
+                        <Share2 className="mr-2 h-4 w-4" /> Share
+                    </DropdownMenuItem>
+                </DropdownMenuContent>
+            </DropdownMenu>
           </div>
-          {/* Mobile Buttons */}
-           <div className="md:hidden flex w-full items-center gap-2">
-                <Button onClick={handleSaveDraft} className="flex-1">
-                    <Edit className="mr-2 h-5 w-5" /> Save Draft
-                </Button>
-                 <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                        <Button variant="outline" size="icon">
-                            <MoreVertical className="h-5 w-5" />
-                        </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                         <DropdownMenuItem onClick={handleNew}>
-                            <FilePlus className="mr-2 h-5 w-5" />
-                            New
-                        </DropdownMenuItem>
-                        <DropdownMenuItem asChild>
-                             <Link href="/dashboard">
-                                <LayoutDashboard className="mr-2 h-5 w-5" />
-                                Dashboard
-                            </Link>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem onClick={handleEmail} disabled={isSendingEmail}>
-                             {isSendingEmail ? (
-                              <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                            ) : (
-                              <Mail className="mr-2 h-5 w-5" />
-                            )}
-                            Email
-                        </DropdownMenuItem>
-                        <DropdownMenuItem onClick={handleShare}>
-                            <Share2 className="mr-2 h-5 w-5" />
-                            Share
-                        </DropdownMenuItem>
-                        <DropdownMenuItem onClick={handlePrint}>
-                            <Printer className="mr-2 h-5 w-5" />
-                            Save as PDF
-                        </DropdownMenuItem>
-                    </DropdownMenuContent>
-                </DropdownMenu>
-            </div>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
