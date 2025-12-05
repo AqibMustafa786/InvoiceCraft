@@ -36,7 +36,7 @@ service cloud.firestore {
     }
 
     // ======================================================
-    // Top-level collections for single-user mode
+    // Top-level collections for single-user mode (being phased out)
     // ======================================================
      match /invoices/{invoiceId} {
         allow read, write: if isSignedIn() && request.auth.uid == resource.data.userId;
@@ -57,6 +57,12 @@ service cloud.firestore {
     // COMPANY ROOT (strict multi-tenant isolation)
     // ======================================================
     match /companies/{companyId} {
+
+      // ------------------------------
+      // Company Document
+      // ------------------------------
+      allow read: if belongsToCompany(companyId);
+      allow update: if belongsToCompany(companyId) && hasRole(["admin"]);
 
       // ------------------------------
       // Company Settings

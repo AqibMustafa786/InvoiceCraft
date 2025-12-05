@@ -1,3 +1,4 @@
+'use client';
 
 import { Check, X } from "lucide-react";
 import Link from "next/link";
@@ -5,18 +6,24 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { PageHeader, PageHeaderDescription, PageHeaderHeading } from "@/components/page-header";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { useState } from "react";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
 
 const plans = [
   {
     title: "Free",
-    price: "₹0",
+    price: {
+      monthly: "₹0",
+      yearly: "₹0"
+    },
     description: "For freelancers and very small service providers starting out.",
     features: [
       { text: "Up to 5 invoices/month", included: true },
       { text: "Up to 3 estimates/month", included: true },
       { text: "PDF Export", included: true },
       { text: "Basic Templates", included: true },
-      { text: "Limited Cloud Save (5 docs)", included: true },
+      { text: "Cloud Save (last 5 docs)", included: true },
       { text: "No Quotes or Insurance Docs", included: false },
       { text: "No Custom Branding", included: false },
       { text: "No Emailing", included: false },
@@ -27,7 +34,10 @@ const plans = [
   },
   {
     title: "Business",
-    price: "$9.99",
+    price: {
+      monthly: "$9.99",
+      yearly: "$99"
+    },
     description: "For contractors, agencies, and freelancers with heavy usage.",
     features: [
       { text: "Unlimited Invoices & Estimates", included: true },
@@ -60,6 +70,8 @@ const comparisonFeatures = [
 ];
 
 export default function PricingPage() {
+  const [billingCycle, setBillingCycle] = useState<'monthly' | 'yearly'>('monthly');
+
   return (
     <div className="container mx-auto p-4 md:p-8">
       <PageHeader>
@@ -68,6 +80,18 @@ export default function PricingPage() {
           Choose the plan that's right for your business. Simple, transparent, and built for growth.
         </PageHeaderDescription>
       </PageHeader>
+      
+      <div className="flex items-center justify-center space-x-2 mb-10">
+        <Label htmlFor="billing-cycle">Monthly</Label>
+        <Switch
+          id="billing-cycle"
+          checked={billingCycle === 'yearly'}
+          onCheckedChange={(checked) => setBillingCycle(checked ? 'yearly' : 'monthly')}
+        />
+        <Label htmlFor="billing-cycle" className="flex items-center">
+          Yearly <span className="ml-2 inline-flex items-center rounded-md bg-primary/10 px-2 py-1 text-xs font-medium text-primary">2 Months Free!</span>
+        </Label>
+      </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
         {plans.map((plan) => (
@@ -79,8 +103,8 @@ export default function PricingPage() {
               <CardTitle>{plan.title}</CardTitle>
               <CardDescription>{plan.description}</CardDescription>
               <div className="flex items-baseline pt-4">
-                <span className="text-4xl font-bold">{plan.price}</span>
-                {plan.price !== "₹0" && <span className="text-muted-foreground">/month</span>}
+                <span className="text-4xl font-bold">{plan.title === 'Free' ? plan.price.monthly : plan.price[billingCycle]}</span>
+                {plan.title !== "Free" && <span className="text-muted-foreground">/{billingCycle === 'monthly' ? 'month' : 'year'}</span>}
               </div>
             </CardHeader>
             <CardContent className="flex-1 space-y-4">
@@ -94,7 +118,7 @@ export default function PricingPage() {
               </ul>
             </CardContent>
             <CardFooter>
-              <Button asChild className={`w-full ${plan.variant === 'primary' ? 'text-white bg-gradient-to-r from-primary to-accent shadow-lg hover:scale-105 transition-transform' : 'variant="outline"'}`}>
+              <Button asChild className={`w-full ${plan.variant === 'primary' ? 'text-white bg-gradient-to-r from-primary to-accent shadow-lg hover:scale-105 transition-transform' : ''}`} variant={plan.variant === 'primary' ? 'default' : 'outline'}>
                 <Link href={plan.ctaLink}>{plan.cta}</Link>
               </Button>
             </CardFooter>

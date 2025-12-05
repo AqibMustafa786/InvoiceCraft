@@ -64,7 +64,7 @@ export default function SignupPage() {
                 createdAt: serverTimestamp(),
             });
 
-            // Optional: Create a company document as well
+            // Create a company document as well
             await setDoc(doc(firestore, "companies", companyId), {
                 id: companyId,
                 name: `${data.name}'s Company`,
@@ -72,12 +72,20 @@ export default function SignupPage() {
                 createdAt: serverTimestamp(),
             });
 
+            // Create the user's profile within their company's subcollection
+            await setDoc(doc(firestore, `companies/${companyId}/users`, user.uid), {
+                 uid: user.uid,
+                 email: user.email,
+                 name: data.name,
+                 role: 'admin',
+                 createdAt: serverTimestamp(),
+            });
 
             toast({
-                title: "Account Created",
+                title: "Account Created!",
                 description: "You’re on the Free Plan. Welcome to InvoiceCraft!",
             });
-            router.push('/');
+            router.push('/dashboard');
         } catch (error: any) {
              toast({
                 variant: "destructive",
