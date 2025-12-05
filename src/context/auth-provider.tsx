@@ -13,8 +13,8 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-const protectedRoutes = ['/dashboard', '/create', '/create-estimate', '/create-quote', '/create-insurance'];
-const publicRoutes = ['/login', '/signup'];
+const protectedRoutes = ['/dashboard', '/create-invoice', '/create-estimate', '/create-quote', '/create-insurance'];
+const publicAuthRoutes = ['/login', '/signup'];
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const { auth } = useFirebase();
@@ -36,12 +36,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (isLoading) return;
 
     const isProtectedRoute = protectedRoutes.some(route => pathname.startsWith(route));
-    const isPublicAuthRoute = publicRoutes.includes(pathname);
+    const isPublicAuthRoute = publicAuthRoutes.includes(pathname);
 
     if (!user && isProtectedRoute) {
       router.push('/login');
     }
 
+    // Redirect logged-in users from login/signup pages, but NOT from other pages
+    // that might be linked from pricing (like /signup)
     if (user && isPublicAuthRoute) {
       router.push('/');
     }
