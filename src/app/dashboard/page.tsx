@@ -31,6 +31,7 @@ import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
 import { useFirebase, useMemoFirebase } from '@/firebase/provider';
 import { useCollection } from '@/firebase/firestore/use-collection';
+import { useDoc } from '@/firebase/firestore/use-doc';
 import { collection, doc, addDoc, query, where, Timestamp } from 'firebase/firestore';
 import { deleteDocumentNonBlocking, updateDocumentNonBlocking } from '@/firebase';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -68,24 +69,71 @@ export default function DashboardPage() {
     const { firestore, user, isUserLoading } = useFirebase();
     const router = useRouter();
 
+    const userDocRef = useMemoFirebase(() => user ? doc(firestore, 'users', user.uid) : null, [user, firestore]);
+    const { data: userProfile, isLoading: isUserProfileLoading } = useDoc(userDocRef);
+
+    const companyId = userProfile?.companyId;
+    const userPlan = userProfile?.plan || 'free';
+    const isBusinessPlan = userPlan === 'business';
+
     const invoicesQuery = useMemoFirebase(() => {
-        if (!firestore || !user?.uid) return null;
-        return query(collection(firestore, 'companies', user.companyId, INVOICES_COLLECTION), where("userId", "==", user.uid));
-    }, [firestore, user?.uid]);
+        if (!firestore || !user?.uid || !companyId) return null;
+        return query(collection(firestore, 'companies', companyId, INVOICES_COLLECTION));
+    }, [firestore, user?.uid, companyId]);
 
     const estimatesQuery = useMemoFirebase(() => {
-        if (!firestore || !user?.uid) return null;
-        return query(collection(firestore, 'companies', user.companyId, ESTIMATES_COLLECTION), where("userId", "==", user.uid));
-    }, [firestore, user?.uid]);
+        if (!firestore || !user?.uid || !companyId) return null;
+        return query(collection(firestore, 'companies', companyId, ESTIMATES_COLLECTION));
+    }, [firestore, user?.uid, companyId]);
 
     const quotesQuery = useMemoFirebase(() => {
-        if (!firestore || !user?.uid) return null;
-        return query(collection(firestore, 'companies', user.companyId, QUOTES_COLLECTION), where("userId", "==", user.uid));
-    }, [firestore, user?.uid]);
+        if (!firestore || !user?.uid || !companyId) return null;
+        return query(collection(firestore, 'companies', companyId, QUOTES_COLLECTION));
+    }, [firestore, user?.uid, companyId]);
 
     const { data: invoices, isLoading: isLoadingInvoices, error: invoicesError } = useCollection<Invoice>(invoicesQuery);
     const { data: estimates, isLoading: isLoadingEstimates, error: estimatesError } = useCollection<Estimate>(estimatesQuery);
     const { data: quotes, isLoading: isLoadingQuotes, error: quotesError } = useCollection<Quote>(quotesQuery);
+    
+    const canCreateInvoice = isBusinessPlan || (invoices?.length || 0) < 5;
+    const canCreateEstimate = isBusinessPlan || (estimates?.length || 0) < 3;
+
+
+    const handleCreateInvoice = () => {
+        if (canCreateInvoice) {
+            router.push('/create-invoice');
+        } else {
+            toast({
+                title: "Free Plan Limit Reached",
+                description: "Upgrade to the Business Plan to create unlimited invoices.",
+                variant: "destructive"
+            });
+        }
+    };
+    
+    const handleCreateEstimate = () => {
+        if (canCreateEstimate) {
+            router.push('/create-estimate');
+        } else {
+            toast({
+                title: "Free Plan Limit Reached",
+                description: "Upgrade to the Business Plan to create unlimited estimates.",
+                variant: "destructive"
+            });
+        }
+    };
+
+    const handleCreateQuote = () => {
+        if (isBusinessPlan) {
+            router.push('/create-quote');
+        } else {
+            toast({
+                title: "Upgrade Required",
+                description: "Creating quotes is a Business Plan feature. Please upgrade your plan.",
+                variant: "destructive"
+            });
+        }
+    };
 
     const calculateTotal = useCallback((doc: DocumentType): number => {
         if (doc.documentType === 'invoice') {
@@ -101,9 +149,9 @@ export default function DashboardPage() {
     }, []);
 
     const handleDelete = () => {
-        if (!deleteCandidate || !firestore || !user?.companyId) return;
+        if (!deleteCandidate || !firestore || !companyId) return;
         const { id, collection: collectionName } = deleteCandidate;
-        const docRef = doc(firestore, 'companies', user.companyId, collectionName, id);
+        const docRef = doc(firestore, 'companies', companyId, collectionName, id);
         deleteDocumentNonBlocking(docRef);
         setDeleteCandidate(null);
         toast({
@@ -113,8 +161,8 @@ export default function DashboardPage() {
     };
 
     const handleStatusChange = (id: string, collectionName: string, newStatus: DocumentStatus) => {
-        if (!firestore || !user?.companyId) return;
-        const docRef = doc(firestore, 'companies', user.companyId, collectionName, id);
+        if (!firestore || !companyId) return;
+        const docRef = doc(firestore, 'companies', companyId, collectionName, id);
         updateDocumentNonBlocking(docRef, { status: newStatus });
         toast({
             title: "Status Updated",
@@ -123,7 +171,15 @@ export default function DashboardPage() {
     };
     
     const handleConvertToInvoice = async (estimate: Estimate | Quote) => {
-        if (!firestore || !user || !user.companyId) return;
+        if (!firestore || !user || !companyId) return;
+        if (!canCreateInvoice) {
+            toast({
+                title: "Free Plan Limit Reached",
+                description: "You have reached your invoice limit. Please upgrade to convert this document.",
+                variant: 'destructive'
+            });
+            return;
+        }
         
         const { business, client, lineItems, summary, projectTitle, currency, language, estimateNumber, referenceNumber } = estimate;
 
@@ -155,7 +211,7 @@ export default function DashboardPage() {
         };
         
         try {
-            const newDocRef = await addDoc(collection(firestore, 'companies', user.companyId, INVOICES_COLLECTION), {
+            const newDocRef = await addDoc(collection(firestore, 'companies', companyId, INVOICES_COLLECTION), {
                 ...newInvoiceData,
                 createdAt: Timestamp.now(),
                 updatedAt: Timestamp.now(),
@@ -176,6 +232,14 @@ export default function DashboardPage() {
     };
 
     const handleShare = (docId: string, docType: 'estimate' | 'quote') => {
+        if (!isBusinessPlan) {
+            toast({
+                title: "Upgrade to Share",
+                description: "Sharing documents via a link is a Business Plan feature.",
+                variant: 'destructive'
+            });
+            return;
+        }
         const url = `${window.location.origin}/${docType}/${docId}`;
         navigator.clipboard.writeText(url);
         toast({
@@ -198,8 +262,8 @@ export default function DashboardPage() {
     };
 
     const combinedDocuments = useMemo(() => {
-        if (!user || !invoices || !estimates || !quotes) return [];
-        const allDocs: DocumentType[] = [...invoices, ...estimates, ...quotes];
+        if (!user) return [];
+        const allDocs: DocumentType[] = [...(invoices || []), ...(estimates || []), ...(quotes || [])];
         
         const safeParsedDocs = allDocs.map(doc => {
             const newDoc = { ...doc };
@@ -278,7 +342,7 @@ export default function DashboardPage() {
         }
     };
     
-    const isLoading = isUserLoading || isLoadingInvoices || isLoadingEstimates || isLoadingQuotes;
+    const isLoading = isUserLoading || isUserProfileLoading || isLoadingInvoices || isLoadingEstimates || isLoadingQuotes;
 
     if (isLoading || !user) {
         return (
@@ -345,23 +409,17 @@ export default function DashboardPage() {
                     <p className="text-muted-foreground">Manage your invoices, estimates, and quotes here.</p>
                 </div>
                 <div className="flex gap-2">
-                    <Button asChild>
-                        <Link href="/create-invoice">
-                            <FilePlus2 className="mr-2 h-4 w-4" />
-                            New Invoice
-                        </Link>
+                    <Button onClick={handleCreateInvoice}>
+                        <FilePlus2 className="mr-2 h-4 w-4" />
+                        New Invoice
                     </Button>
-                     <Button asChild variant="outline">
-                        <Link href="/create-estimate">
-                            <FilePlus2 className="mr-2 h-4 w-4" />
-                            New Estimate
-                        </Link>
+                     <Button onClick={handleCreateEstimate} variant="outline">
+                        <FilePlus2 className="mr-2 h-4 w-4" />
+                        New Estimate
                     </Button>
-                     <Button asChild variant="outline">
-                        <Link href="/create-quote">
-                            <FilePlus2 className="mr-2 h-4 w-4" />
-                            New Quote
-                        </Link>
+                     <Button onClick={handleCreateQuote} variant="outline">
+                        <FilePlus2 className="mr-2 h-4 w-4" />
+                        New Quote
                     </Button>
                 </div>
             </div>
@@ -528,4 +586,3 @@ export default function DashboardPage() {
     );
 }
 
-    
