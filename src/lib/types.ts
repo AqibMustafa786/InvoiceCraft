@@ -319,15 +319,16 @@ export type Quote = Estimate & { documentType: 'quote' };
 
 // Stripe Checkout Types
 export const StripeCheckoutInputSchema = z.object({
-  priceId: z.string().describe('The ID of the Stripe Price object.'),
-  userId: z.string().describe('The ID of the user initiating the checkout.'),
-  userEmail: z.string().email().describe('The email of the user.'),
+  userId: z.string(),
+  userEmail: z.string().email(),
+  companyId: z.string(),
+  plan: z.enum(['monthly', 'yearly']),
 });
 export type StripeCheckoutInput = z.infer<typeof StripeCheckoutInputSchema>;
 
 export const StripeCheckoutOutputSchema = z.object({
   sessionId: z.string().optional(),
-  url: z.string().optional(),
+  url: z.string().url().optional(),
   error: z.string().optional(),
 });
 export type StripeCheckoutOutput = z.infer<typeof StripeCheckoutOutputSchema>;

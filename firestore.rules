@@ -3,161 +3,77 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // CHECK AUTH
+    // Helper Functions
     function isSignedIn() {
       return request.auth != null;
     }
 
-    // CHECK ROLE
-    function hasRole(requiredRoles) {
-      return isSignedIn() &&
-             (request.auth.token.role in requiredRoles);
-    }
-
-    // COMPANY MATCH
-    function belongsToCompany(companyId) {
-      return isSignedIn() &&
-             request.auth.token.companyId == companyId;
-    }
-
-    // OWNERSHIP CHECK
     function isOwner(userId) {
-      return isSignedIn() &&
-             request.auth.uid == userId;
+      return request.auth.uid == userId;
     }
 
+    function getUser(userId) {
+      return get(/databases/$(database)/documents/users/$(userId)).data;
+    }
+    
+    function getCompany(companyId) {
+      return get(/databases/$(database)/documents/companies/$(companyId)).data;
+    }
+    
+    function belongsToCompany(companyId) {
+       return isSignedIn() && getUser(request.auth.uid).companyId == companyId;
+    }
+    
+    function hasCompanyRole(companyId, requiredRoles) {
+        return belongsToCompany(companyId) && getUser(request.auth.uid).role in requiredRoles;
+    }
 
-    // ======================================================
-    // GLOBAL USERS COLLECTION
-    // ======================================================
+    // USER-SPECIFIC DATA
     match /users/{userId} {
-      allow read: if isOwner(userId);
-      allow write: if isOwner(userId);
+      allow read, update, delete: if isSignedIn() && isOwner(userId);
+      allow create: if isSignedIn();
     }
 
-    // ======================================================
-    // Top-level collections for single-user mode (being phased out)
-    // ======================================================
-     match /invoices/{invoiceId} {
-        allow read, write: if isSignedIn() && request.auth.uid == resource.data.userId;
-     }
-
-    match /estimates/{estimateId} {
-      allow get: if true; // Public read is allowed
-      allow list, create, update, delete: if isSignedIn() && request.auth.uid == resource.data.userId;
-    }
-
-    match /quotes/{quoteId} {
-      allow get: if true; // Public read is allowed
-      allow list, create, update, delete: if isSignedIn() && request.auth.uid == resource.data.userId;
-    }
-
-
-    // ======================================================
-    // COMPANY ROOT (strict multi-tenant isolation)
-    // ======================================================
+    // COMPANY DATA
     match /companies/{companyId} {
+      allow get: if belongsToCompany(companyId);
+      allow list: if false; // Don't allow listing all companies
+      allow create: if isSignedIn(); // User can create their own company
+      allow update: if hasCompanyRole(companyId, ['admin']);
 
-      // ------------------------------
-      // Company Document
-      // ------------------------------
-      allow read: if belongsToCompany(companyId);
-      allow update: if belongsToCompany(companyId) && hasRole(["admin"]);
-
-      // ------------------------------
-      // Company Settings
-      // ------------------------------
-      match /settings/{settingsId} {
+      // Nested collections within a company
+      match /{collection}/{docId} {
+        // Anyone in the company can read documents
         allow read: if belongsToCompany(companyId);
+        
+        // Admins and Staff can create/update most documents
+        allow create, update: if hasCompanyRole(companyId, ['admin', 'staff']);
 
-        allow write: if belongsToCompany(companyId) &&
-                      hasRole(["admin"]);
+        // Only admins can delete
+        allow delete: if hasCompanyRole(companyId, ['admin']);
       }
-
-      // ------------------------------
-      // Company Users (employees)
-      // ------------------------------
+      
+      // Special rule for estimates/quotes to be publicly readable
+      match /estimates/{estimateId} {
+          allow get: if true;
+          allow list, create, update, delete: if belongsToCompany(companyId);
+      }
+      
+      match /quotes/{quoteId} {
+          allow get: if true;
+          allow list, create, update, delete: if belongsToCompany(companyId);
+      }
+      
+      // Tighter rules for user management within a company
       match /users/{userId} {
         allow read: if belongsToCompany(companyId);
-
-        allow create: if belongsToCompany(companyId) &&
-                       hasRole(["admin"]);
-
-        allow update: if belongsToCompany(companyId) &&
-                       (isOwner(userId) || hasRole(["admin"]));
-
-        allow delete: if belongsToCompany(companyId) &&
-                       hasRole(["admin"]);
-      }
-
-      // ------------------------------
-      // ROLES
-      // ------------------------------
-      match /roles/{roleId} {
-        allow read: if belongsToCompany(companyId);
-        allow write: if belongsToCompany(companyId) &&
-                      hasRole(["admin"]);
-      }
-
-      // ------------------------------
-      // INVOICES (COMPANY)
-      // ------------------------------
-      match /invoices/{invoiceId} {
-        allow read: if belongsToCompany(companyId);
-
-        allow create: if belongsToCompany(companyId) &&
-                       hasRole(["admin", "staff"]);
-
-        allow update: if belongsToCompany(companyId) &&
-                       hasRole(["admin", "staff"]);
-
-        allow delete: if belongsToCompany(companyId) &&
-                       hasRole(["admin"]);
-      }
-
-      // ------------------------------
-      // ESTIMATES (COMPANY)
-      // ------------------------------
-      match /estimates/{estimateId} {
-        // Public read
-        allow get: if true;
-
-        allow list, create: if belongsToCompany(companyId) &&
-                            hasRole(["admin", "staff"]);
-
-        allow update, delete:
-          if belongsToCompany(companyId) &&
-             hasRole(["admin", "staff"]);
-      }
-
-      // ------------------------------
-      // QUOTES (COMPANY)
-      // ------------------------------
-      match /quotes/{quoteId} {
-        allow get: if true;
-
-        allow list, create: if belongsToCompany(companyId) &&
-                            hasRole(["admin", "staff"]);
-
-        allow update, delete:
-          if belongsToCompany(companyId) &&
-             hasRole(["admin", "staff"]);
-      }
-
-      // ------------------------------
-      // PRESETS (Reusable Line Item Groups)
-      // ------------------------------
-      match /presets/{presetId} {
-        allow read: if belongsToCompany(companyId);
-
-        allow write: if belongsToCompany(companyId) &&
-                      hasRole(["admin", "staff"]);
+        allow create: if hasCompanyRole(companyId, ['admin']);
+        allow update: if hasCompanyRole(companyId, ['admin']) || (isOwner(userId) && belongsToCompany(companyId));
+        allow delete: if hasCompanyRole(companyId, ['admin']);
       }
     }
-
-    // ======================================================
-    // MAIL trigger for sending PDF attachments
-    // ======================================================
+    
+    // MAIL trigger for sending emails
     match /mail/{docId} {
       allow create: if isSignedIn();
     }

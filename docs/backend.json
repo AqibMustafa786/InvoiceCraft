@@ -33,6 +33,19 @@
             "description": "The user's subscription plan.",
             "enum": ["free", "business"]
         },
+        "stripeCustomerId": {
+            "type": "string",
+            "description": "The user's Stripe Customer ID."
+        },
+        "subscriptionId": {
+            "type": "string",
+            "description": "The user's active Stripe Subscription ID."
+        },
+        "subscriptionStatus": {
+            "type": "string",
+            "description": "The status of the user's subscription.",
+            "enum": ["active", "trialing", "past_due", "canceled", "unpaid"]
+        },
         "planExpires": {
             "type": "string",
             "description": "The expiration date of the user's plan.",
@@ -74,6 +87,18 @@
           "type": "string",
           "description": "URL of the company logo.",
           "format": "uri"
+        },
+         "stripeCustomerId": {
+            "type": "string",
+            "description": "The company's Stripe Customer ID."
+        },
+        "subscriptionId": {
+            "type": "string",
+            "description": "The company's active Stripe Subscription ID."
+        },
+        "subscriptionStatus": {
+            "type": "string",
+            "description": "The status of the company's subscription."
         },
         "createdAt": {
             "type": "string",

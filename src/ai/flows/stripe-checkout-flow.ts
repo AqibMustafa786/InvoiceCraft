@@ -1,58 +1,109 @@
 
 'use server';
 /**
- * @fileOverview A Genkit flow for creating a Stripe Checkout session.
+ * @fileOverview A Genkit flow for creating and managing Stripe subscriptions.
  */
 
 import { ai } from '@/ai/genkit';
 import Stripe from 'stripe';
 import { StripeCheckoutInputSchema, StripeCheckoutOutputSchema, type StripeCheckoutInput, type StripeCheckoutOutput } from '@/lib/types';
+import { initializeAdminApp } from '@/firebase/server';
+import { getFirestore } from 'firebase-admin/firestore';
 
-const stripe = new Stripe(process.env.STRIPE_API_KEY || '', {
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
   apiVersion: '2024-06-20',
 });
 
+// Initialize Firebase Admin SDK
+const { db } = initializeAdminApp();
+
+
+/**
+ * Creates a Stripe Checkout session for a user to purchase a subscription.
+ * @param {StripeCheckoutInput} input - The user ID, email, and desired plan.
+ * @returns {Promise<StripeCheckoutOutput>} The session ID, URL, or an error.
+ */
 export async function createStripeCheckoutSession(input: StripeCheckoutInput): Promise<StripeCheckoutOutput> {
-  return createStripeCheckoutSessionFlow(input);
+  const { userId, userEmail, companyId, plan } = input;
+
+  if (!userId || !userEmail || !companyId || !plan) {
+    return { error: 'Missing required parameters: userId, userEmail, companyId, and plan.' };
+  }
+  
+  const priceId = plan === 'monthly'
+    ? process.env.STRIPE_PRICE_MONTHLY
+    : process.env.STRIPE_PRICE_YEARLY;
+
+  if (!priceId) {
+    return { error: 'Stripe price ID for the selected plan is not configured.' };
+  }
+  
+  try {
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:9002';
+    const companyRef = db.collection('companies').doc(companyId);
+    const companyDoc = await companyRef.get();
+    const companyData = companyDoc.data();
+    
+    let stripeCustomerId = companyData?.stripeCustomerId;
+
+    // Create a new Stripe customer if one doesn't exist for the company
+    if (!stripeCustomerId) {
+      const customer = await stripe.customers.create({
+        email: userEmail,
+        name: companyData?.name,
+        metadata: {
+          firebaseCompanyId: companyId,
+        },
+      });
+      stripeCustomerId = customer.id;
+      await companyRef.update({ stripeCustomerId });
+    }
+
+    const session = await stripe.checkout.sessions.create({
+      payment_method_types: ['card'],
+      mode: 'subscription',
+      customer: stripeCustomerId,
+      line_items: [{ price: priceId, quantity: 1 }],
+      success_url: `${baseUrl}/billing/success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${baseUrl}/pricing?payment_canceled=true`,
+      subscription_data: {
+        metadata: {
+          firebaseCompanyId: companyId,
+          firebaseUserId: userId,
+        }
+      }
+    });
+    
+    return { sessionId: session.id, url: session.url };
+  } catch (e: any) {
+    console.error('Stripe Checkout Error:', e);
+    return { error: e.message };
+  }
 }
 
-const createStripeCheckoutSessionFlow = ai.defineFlow(
-  {
-    name: 'createStripeCheckoutSessionFlow',
-    inputSchema: StripeCheckoutInputSchema,
-    outputSchema: StripeCheckoutOutputSchema,
-  },
-  async ({ priceId, userId, userEmail }) => {
+/**
+ * Creates a Stripe Customer Portal session for a user to manage their subscription.
+ * @param {string} companyId - The Firebase company ID.
+ * @returns {Promise<{ url: string } | { error: string }>} The portal URL or an error.
+ */
+export async function createCustomerPortalSession({ companyId }: { companyId: string }): Promise<{ url: string } | { error: string }> {
     try {
-      const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:9002';
-      
-      const session = await stripe.checkout.sessions.create({
-        payment_method_types: ['card'],
-        line_items: [
-          {
-            price: priceId,
-            quantity: 1,
-          },
-        ],
-        mode: 'subscription',
-        success_url: `${baseUrl}/dashboard?payment_success=true`,
-        cancel_url: `${baseUrl}/pricing?payment_canceled=true`,
-        customer_email: userEmail,
-        client_reference_id: userId,
-        subscription_data: {
-          metadata: {
-            userId: userId,
-          }
+        const companyDoc = await db.collection('companies').doc(companyId).get();
+        const stripeCustomerId = companyDoc.data()?.stripeCustomerId;
+
+        if (!stripeCustomerId) {
+            return { error: 'Stripe customer ID not found for this company.' };
         }
-      });
-      
-      return {
-        sessionId: session.id,
-        url: session.url,
-      };
+
+        const portalSession = await stripe.billingPortal.sessions.create({
+            customer: stripeCustomerId,
+            return_url: `${process.env.NEXT_PUBLIC_BASE_URL}/dashboard`,
+        });
+
+        return { url: portalSession.url };
+
     } catch (e: any) {
-      console.error('Stripe Checkout Error:', e);
-      return { error: e.message };
+        console.error('Stripe Portal Error:', e);
+        return { error: e.message };
     }
-  }
-);
+}
