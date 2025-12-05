@@ -15,8 +15,8 @@ const plans = [
   {
     title: "Free",
     price: {
-      monthly: "₹0",
-      yearly: "₹0"
+      monthly: "$0",
+      yearly: "$0"
     },
     description: "For freelancers and very small service providers starting out.",
     features: [
