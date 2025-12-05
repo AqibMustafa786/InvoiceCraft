@@ -34,6 +34,23 @@ service cloud.firestore {
       allow write: if isOwner(userId);
     }
 
+    // ======================================================
+    // Top-level collections for single-user mode
+    // ======================================================
+     match /invoices/{invoiceId} {
+        allow read, write: if isOwner(resource.data.userId);
+     }
+
+    match /estimates/{estimateId} {
+      allow get: if true; // Public read is allowed
+      allow list, create, update, delete: if isSignedIn() && request.auth.uid == resource.data.userId;
+    }
+
+    match /quotes/{quoteId} {
+      allow get: if true; // Public read is allowed
+      allow list, create, update, delete: if isSignedIn() && request.auth.uid == resource.data.userId;
+    }
+
 
     // ======================================================
     // COMPANY ROOT (strict multi-tenant isolation)
@@ -76,7 +93,7 @@ service cloud.firestore {
       }
 
       // ------------------------------
-      // INVOICES
+      // INVOICES (COMPANY)
       // ------------------------------
       match /invoices/{invoiceId} {
         allow read: if belongsToCompany(companyId);
@@ -92,7 +109,7 @@ service cloud.firestore {
       }
 
       // ------------------------------
-      // ESTIMATES
+      // ESTIMATES (COMPANY)
       // ------------------------------
       match /estimates/{estimateId} {
         // Public read
@@ -107,7 +124,7 @@ service cloud.firestore {
       }
 
       // ------------------------------
-      // QUOTES
+      // QUOTES (COMPANY)
       // ------------------------------
       match /quotes/{quoteId} {
         allow get: if true;
