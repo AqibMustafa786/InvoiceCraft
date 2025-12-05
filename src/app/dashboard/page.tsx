@@ -72,24 +72,23 @@ export default function DashboardPage() {
     const userDocRef = useMemoFirebase(() => user ? doc(firestore, 'users', user.uid) : null, [user, firestore]);
     const { data: userProfile, isLoading: isUserProfileLoading } = useDoc(userDocRef);
 
-    const companyId = userProfile?.companyId;
     const userPlan = userProfile?.plan || 'free';
     const isBusinessPlan = userPlan === 'business';
 
     const invoicesQuery = useMemoFirebase(() => {
-        if (!firestore || !user?.uid || !companyId) return null;
-        return query(collection(firestore, 'companies', companyId, INVOICES_COLLECTION));
-    }, [firestore, user?.uid, companyId]);
+        if (!firestore || !user?.uid) return null;
+        return query(collection(firestore, INVOICES_COLLECTION), where("userId", "==", user.uid));
+    }, [firestore, user?.uid]);
 
     const estimatesQuery = useMemoFirebase(() => {
-        if (!firestore || !user?.uid || !companyId) return null;
-        return query(collection(firestore, 'companies', companyId, ESTIMATES_COLLECTION));
-    }, [firestore, user?.uid, companyId]);
+        if (!firestore || !user?.uid) return null;
+        return query(collection(firestore, ESTIMATES_COLLECTION), where("userId", "==", user.uid));
+    }, [firestore, user?.uid]);
 
     const quotesQuery = useMemoFirebase(() => {
-        if (!firestore || !user?.uid || !companyId) return null;
-        return query(collection(firestore, 'companies', companyId, QUOTES_COLLECTION));
-    }, [firestore, user?.uid, companyId]);
+        if (!firestore || !user?.uid) return null;
+        return query(collection(firestore, QUOTES_COLLECTION), where("userId", "==", user.uid));
+    }, [firestore, user?.uid]);
 
     const { data: invoices, isLoading: isLoadingInvoices, error: invoicesError } = useCollection<Invoice>(invoicesQuery);
     const { data: estimates, isLoading: isLoadingEstimates, error: estimatesError } = useCollection<Estimate>(estimatesQuery);
@@ -149,9 +148,9 @@ export default function DashboardPage() {
     }, []);
 
     const handleDelete = () => {
-        if (!deleteCandidate || !firestore || !companyId) return;
+        if (!deleteCandidate || !firestore) return;
         const { id, collection: collectionName } = deleteCandidate;
-        const docRef = doc(firestore, 'companies', companyId, collectionName, id);
+        const docRef = doc(firestore, collectionName, id);
         deleteDocumentNonBlocking(docRef);
         setDeleteCandidate(null);
         toast({
@@ -161,8 +160,8 @@ export default function DashboardPage() {
     };
 
     const handleStatusChange = (id: string, collectionName: string, newStatus: DocumentStatus) => {
-        if (!firestore || !companyId) return;
-        const docRef = doc(firestore, 'companies', companyId, collectionName, id);
+        if (!firestore) return;
+        const docRef = doc(firestore, collectionName, id);
         updateDocumentNonBlocking(docRef, { status: newStatus });
         toast({
             title: "Status Updated",
@@ -171,7 +170,7 @@ export default function DashboardPage() {
     };
     
     const handleConvertToInvoice = async (estimate: Estimate | Quote) => {
-        if (!firestore || !user || !companyId) return;
+        if (!firestore || !user) return;
         if (!canCreateInvoice) {
             toast({
                 title: "Free Plan Limit Reached",
@@ -211,7 +210,7 @@ export default function DashboardPage() {
         };
         
         try {
-            const newDocRef = await addDoc(collection(firestore, 'companies', companyId, INVOICES_COLLECTION), {
+            const newDocRef = await addDoc(collection(firestore, INVOICES_COLLECTION), {
                 ...newInvoiceData,
                 createdAt: Timestamp.now(),
                 updatedAt: Timestamp.now(),
