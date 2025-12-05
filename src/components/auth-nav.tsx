@@ -17,7 +17,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
-import { User as UserIcon, LogOut, LayoutDashboard } from 'lucide-react';
+import { User as UserIcon, LogOut, LayoutDashboard, UserCog } from 'lucide-react';
 
 interface AuthNavProps {
     isMobile?: boolean;
@@ -28,6 +28,8 @@ export function AuthNav({ isMobile = false }: AuthNavProps) {
     const { user } = useAuth();
     const { auth } = useFirebase();
     const router = useRouter();
+    const isAdmin = user?.email === 'aqib2k1@gmail.com';
+
 
     useEffect(() => {
         setIsClient(true);
@@ -45,16 +47,22 @@ export function AuthNav({ isMobile = false }: AuthNavProps) {
 
     if (user) {
         // --- MOBILE-SPECIFIC VIEW ---
-        // This renders a simple button layout inside the mobile sheet.
         if (isMobile) {
             return (
-                 <div className="flex flex-col gap-4">
-                    <Button asChild variant="outline">
+                 <div className="flex w-full flex-col gap-2">
+                    {isAdmin && (
+                         <Button asChild variant="secondary" className="justify-start">
+                            <Link href="/admin" className="flex items-center gap-2">
+                               <UserCog className="h-4 w-4" /> Admin Panel
+                            </Link>
+                        </Button>
+                    )}
+                    <Button asChild variant="outline" className="justify-start">
                         <Link href="/dashboard" className="flex items-center gap-2">
                            <LayoutDashboard className="h-4 w-4" /> Dashboard
                         </Link>
                     </Button>
-                    <Button onClick={handleLogout} variant="destructive">
+                    <Button onClick={handleLogout} variant="destructive" className="justify-start">
                         <LogOut className="h-4 w-4 mr-2" /> Logout
                     </Button>
                 </div>
@@ -62,8 +70,6 @@ export function AuthNav({ isMobile = false }: AuthNavProps) {
         }
 
         // --- DESKTOP-SPECIFIC VIEW ---
-        // This renders the DropdownMenu and is hidden on mobile screens.
-        // It will not be mounted inside the Sheet, preventing the conflict.
         return (
             <div className="hidden md:block">
                 <DropdownMenu>
@@ -93,6 +99,14 @@ export function AuthNav({ isMobile = false }: AuthNavProps) {
                                 <span>Dashboard</span>
                             </Link>
                         </DropdownMenuItem>
+                         {isAdmin && (
+                            <DropdownMenuItem asChild>
+                                <Link href="/admin">
+                                    <UserCog className="mr-2 h-4 w-4" />
+                                    <span>Admin Panel</span>
+                                </Link>
+                            </DropdownMenuItem>
+                        )}
                         <DropdownMenuSeparator />
                         <DropdownMenuItem onClick={handleLogout} className="text-destructive cursor-pointer">
                             <LogOut className="mr-2 h-4 w-4" />
@@ -105,13 +119,12 @@ export function AuthNav({ isMobile = false }: AuthNavProps) {
     }
     
     // --- Logged-out user view ---
-    // Renders login/signup buttons, adapted for mobile or desktop.
     return (
-        <div className={`flex items-center gap-2 ${isMobile ? 'flex-col' : 'hidden md:flex'}`}>
-             <Button asChild variant={isMobile ? 'outline' : 'ghost'}>
+        <div className={`flex items-center gap-2 ${isMobile ? 'w-full flex-col' : 'hidden md:flex'}`}>
+             <Button asChild variant={isMobile ? 'outline' : 'ghost'} className={isMobile ? 'w-full' : ''}>
                 <Link href="/login">Login</Link>
             </Button>
-            <Button asChild className="text-white transition-transform shadow-lg bg-gradient-to-r from-primary to-accent hover:scale-105">
+            <Button asChild className={`text-white transition-transform shadow-lg bg-gradient-to-r from-primary to-accent hover:scale-105 ${isMobile ? 'w-full' : ''}`}>
                 <Link href="/signup">Get Started</Link>
             </Button>
         </div>

@@ -10,6 +10,7 @@ import { ModeToggle } from '@/components/mode-toggle';
 import { cn } from '@/lib/utils';
 import { motion } from 'framer-motion';
 import { AuthNav } from './auth-nav'; 
+import { useAuth } from '@/context/auth-provider';
 
 const navLinks = [
     { href: "/features", label: "Features" },
@@ -44,6 +45,8 @@ function NavLink({ href, label, isActive }: { href: string, label: string, isAct
 
 export function Header() {
     const pathname = usePathname();
+    const { user } = useAuth();
+    const isAdmin = user?.email === 'aqib2k1@gmail.com';
 
     return (
         <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur-sm supports-[backdrop-filter]:bg-background/60">
@@ -53,9 +56,10 @@ export function Header() {
                 </Link>
 
                 <nav className="hidden md:flex items-center space-x-1 text-sm font-medium">
-                    {navLinks.map(link => (
+                    {navLinks.slice(0, 5).map(link => (
                         <NavLink key={link.href} href={link.href} label={link.label} isActive={pathname === link.href} />
                     ))}
+                     {isAdmin && <NavLink href="/admin" label="Admin" isActive={pathname === '/admin'} />}
                 </nav>
 
                 <div className="flex flex-1 items-center justify-end gap-2">
@@ -71,7 +75,7 @@ export function Header() {
                         <span className="sr-only">Toggle navigation menu</span>
                         </Button>
                     </SheetTrigger>
-                    <SheetContent side="left">
+                    <SheetContent side="left" className="flex flex-col">
                         <SheetHeader>
                             <SheetTitle>
                                 <Link href="/" className="flex items-center gap-2">
@@ -79,7 +83,7 @@ export function Header() {
                                 </Link>
                             </SheetTitle>
                         </SheetHeader>
-                        <nav className="grid gap-4 text-lg font-medium mt-8">
+                        <nav className="flex-grow grid gap-4 text-lg font-medium mt-8">
                             {navLinks.map(link => (
                                 <Link
                                     key={link.href}
@@ -92,11 +96,10 @@ export function Header() {
                                     {link.label}
                                 </Link>
                             ))}
-                            <div className='flex flex-col gap-4 mt-4 border-t pt-6'>
-                                 {/* Renders the mobile version of AuthNav */}
-                                 <AuthNav isMobile={true} />
-                            </div>
                         </nav>
+                         <div className='mt-auto border-t pt-6'>
+                            <AuthNav isMobile={true} />
+                        </div>
                     </SheetContent>
                 </Sheet>
             </div>
