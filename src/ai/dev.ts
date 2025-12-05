@@ -3,3 +3,4 @@
 import './flows/send-document-flow';
 import './flows/generate-pdf-flow';
 import './flows/send-password-reset-flow';
+import './flows/stripe-checkout-flow';

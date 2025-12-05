@@ -1,7 +1,7 @@
 
 'use client';
 
-import { Check, X } from "lucide-react";
+import { Check, X, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -10,6 +10,13 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { useState } from "react";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
+import { useAuth } from "@/context/auth-provider";
+import { useRouter } from "next/navigation";
+import { createStripeCheckoutSession } from "@/ai/flows/stripe-checkout-flow";
+import { useToast } from "@/hooks/use-toast";
+import { loadStripe } from '@stripe/stripe-js';
+
+const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || '');
 
 const plans = [
   {
@@ -38,6 +45,10 @@ const plans = [
     price: {
       monthly: "$19.99",
       yearly: "$199.99"
+    },
+    priceIds: {
+      monthly: 'price_1PcSgRRxH9kJ0nAy0j2bAewd', // Replace with your actual Stripe Price ID
+      yearly: 'price_1PcSgRRxH9kJ0nAyZ0aGz4q0', // Replace with your actual Stripe Price ID
     },
     description: "For contractors, agencies, and freelancers with heavy usage.",
     features: [
@@ -72,6 +83,56 @@ const comparisonFeatures = [
 
 export default function PricingPage() {
   const [billingCycle, setBillingCycle] = useState<'monthly' | 'yearly'>('monthly');
+  const [isLoading, setIsLoading] = useState(false);
+  const { user } = useAuth();
+  const router = useRouter();
+  const { toast } = useToast();
+
+  const handleCheckout = async (plan: typeof plans[1]) => {
+    setIsLoading(true);
+    if (!user) {
+      router.push('/login');
+      return;
+    }
+    
+    const priceId = plan.priceIds?.[billingCycle];
+    if (!priceId) {
+      toast({ title: "Error", description: "Price ID not found for the selected plan.", variant: "destructive" });
+      setIsLoading(false);
+      return;
+    }
+
+    try {
+      const { sessionId, url, error } = await createStripeCheckoutSession({
+        priceId,
+        userId: user.uid,
+        userEmail: user.email || '',
+      });
+      
+      if (error) {
+        throw new Error(error);
+      }
+
+      if (sessionId && url) {
+        const stripe = await stripePromise;
+        if (stripe) {
+          const { error: stripeError } = await stripe.redirectToCheckout({ sessionId });
+          if (stripeError) {
+             throw new Error(stripeError.message);
+          }
+        }
+      } else {
+         throw new Error("Could not create a checkout session.");
+      }
+    } catch (e: any) {
+        toast({
+            title: "Checkout Failed",
+            description: e.message || "An unexpected error occurred during checkout.",
+            variant: "destructive"
+        });
+        setIsLoading(false);
+    }
+  };
 
   return (
     <div className="container mx-auto p-4 md:p-8">
@@ -119,9 +180,19 @@ export default function PricingPage() {
               </ul>
             </CardContent>
             <CardFooter>
-              <Button asChild className={`w-full ${plan.variant === 'primary' ? 'text-white bg-gradient-to-r from-primary to-accent shadow-lg hover:scale-105 transition-transform' : ''}`} variant={plan.variant === 'primary' ? 'default' : 'outline'}>
-                <Link href={plan.ctaLink}>{plan.cta}</Link>
-              </Button>
+               {plan.title === 'Business' ? (
+                <Button 
+                  className={`w-full text-white bg-gradient-to-r from-primary to-accent shadow-lg hover:scale-105 transition-transform`} 
+                  onClick={() => handleCheckout(plan as typeof plans[1])}
+                  disabled={isLoading}
+                >
+                   {isLoading ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Please wait</> : 'Choose Business'}
+                </Button>
+              ) : (
+                <Button asChild className="w-full" variant="outline">
+                    <Link href={plan.ctaLink}>{plan.cta}</Link>
+                </Button>
+              )}
             </CardFooter>
           </Card>
         ))}
