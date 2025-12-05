@@ -7,7 +7,7 @@ import Link from "next/link";
 export default function BillingCancelPage() {
     return (
         <div className="flex min-h-[calc(100vh-4rem)] items-center justify-center p-4">
-            <Card className="w-full max-w-md text-center">
+            <Card className="w-full max-w-md text-center bg-card/50 backdrop-blur-sm">
                 <CardHeader>
                     <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-red-100 dark:bg-red-900/50">
                         <XCircle className="h-10 w-10 text-red-600 dark:text-red-400" />

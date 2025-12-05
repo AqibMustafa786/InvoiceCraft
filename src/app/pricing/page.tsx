@@ -14,10 +14,10 @@ import { useAuth } from "@/context/auth-provider";
 import { useRouter } from "next/navigation";
 import { createStripeCheckoutSession } from "@/ai/flows/stripe-checkout-flow";
 import { useToast } from "@/hooks/use-toast";
-import { loadStripe } from '@stripe/stripe-js';
-import type { StripeCheckoutInput, StripeCheckoutOutput } from "@/lib/types";
+import { useDoc } from "@/firebase/firestore/use-doc";
+import { doc } from "firebase/firestore";
+import { useFirebase, useMemoFirebase } from "@/firebase/provider";
 
-const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || '');
 
 const plans = [
   {
@@ -48,8 +48,8 @@ const plans = [
       yearly: "$199.99"
     },
     priceIds: {
-      monthly: 'price_1PcSgRRxH9kJ0nAy0j2bAewd', // Replace with your actual Stripe Price ID
-      yearly: 'price_1PcSgRRxH9kJ0nAyZ0aGz4q0', // Replace with your actual Stripe Price ID
+      monthly: process.env.STRIPE_PRICE_MONTHLY, 
+      yearly: process.env.STRIPE_PRICE_YEARLY,
     },
     description: "For contractors, agencies, and freelancers with heavy usage.",
     features: [
@@ -57,7 +57,7 @@ const plans = [
       { text: "Unlimited Quotes & Insurance Docs", included: true },
       { text: "All Professional Templates (20+)", included: true },
       { text: "Custom Branding (Logo & Colors)", included: true },
-      { text: "Email PDF to Clients", included: true },
+      { text: "Email PDF to Client", included: true },
       { text: "Reusable Line Item Presets", included: true },
       { text: "Unlimited Cloud Storage", included: true },
       { text: "Remove 'Made with InvoiceCraft' Watermark", included: true },
@@ -88,42 +88,42 @@ export default function PricingPage() {
   const { user } = useAuth();
   const router = useRouter();
   const { toast } = useToast();
+  const { firestore } = useFirebase();
+  
+  const userDocRef = useMemoFirebase(() => (user ? doc(firestore, 'users', user.uid) : null), [user, firestore]);
+  const { data: userData } = useDoc(userDocRef);
+  const companyId = userData?.companyId;
 
-  const handleCheckout = async (plan: typeof plans[1]) => {
+  const handleCheckout = async () => {
+    if (isLoading) return;
     setIsLoading(true);
+
     if (!user) {
       router.push('/login');
+      setIsLoading(false);
       return;
     }
     
-    const priceId = plan.priceIds?.[billingCycle];
-    if (!priceId) {
-      toast({ title: "Error", description: "Price ID not found for the selected plan.", variant: "destructive" });
+    if (!companyId) {
+      toast({ title: "Error", description: "Company ID not found. Please re-login.", variant: "destructive" });
       setIsLoading(false);
       return;
     }
 
     try {
-      const { sessionId, url, error } = await createStripeCheckoutSession({
-        priceId,
+      const response = await createStripeCheckoutSession({
         userId: user.uid,
         userEmail: user.email || '',
+        companyId: companyId,
+        plan: billingCycle,
       });
-      
-      if (error) {
-        throw new Error(error);
-      }
 
-      if (sessionId && url) {
-        const stripe = await stripePromise;
-        if (stripe) {
-          const { error: stripeError } = await stripe.redirectToCheckout({ sessionId });
-          if (stripeError) {
-             throw new Error(stripeError.message);
-          }
-        }
+      if ('url' in response && response.url) {
+        window.location.href = response.url;
+      } else if ('error' in response) {
+        throw new Error(response.error);
       } else {
-         throw new Error("Could not create a checkout session.");
+        throw new Error("Could not create a checkout session.");
       }
     } catch (e: any) {
         toast({
@@ -184,7 +184,7 @@ export default function PricingPage() {
                {plan.title === 'Business' ? (
                 <Button 
                   className={`w-full text-white bg-gradient-to-r from-primary to-accent shadow-lg hover:scale-105 transition-transform`} 
-                  onClick={() => handleCheckout(plan as typeof plans[1])}
+                  onClick={handleCheckout}
                   disabled={isLoading}
                 >
                    {isLoading ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Please wait</> : 'Choose Business'}

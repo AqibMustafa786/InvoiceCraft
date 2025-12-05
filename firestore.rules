@@ -28,6 +28,10 @@ service cloud.firestore {
         return belongsToCompany(companyId) && getUser(request.auth.uid).role in requiredRoles;
     }
 
+    function getUserData() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
+    }
+
     // USER-SPECIFIC DATA
     match /users/{userId} {
       allow read, update, delete: if isSignedIn() && isOwner(userId);
@@ -42,26 +46,22 @@ service cloud.firestore {
       allow update: if hasCompanyRole(companyId, ['admin']);
 
       // Nested collections within a company
-      match /{collection}/{docId} {
-        // Anyone in the company can read documents
-        allow read: if belongsToCompany(companyId);
-        
-        // Admins and Staff can create/update most documents
-        allow create, update: if hasCompanyRole(companyId, ['admin', 'staff']);
-
-        // Only admins can delete
-        allow delete: if hasCompanyRole(companyId, ['admin']);
+      match /invoices/{invoiceId} {
+          allow read, update, delete: if belongsToCompany(companyId);
+          allow create: if belongsToCompany(companyId) && 
+                        (getUserData().plan == 'business' || list(/databases/$(database)/documents/companies/$(companyId)/invoices,).size() < 5);
       }
-      
-      // Special rule for estimates/quotes to be publicly readable
-      match /estimates/{estimateId} {
-          allow get: if true;
-          allow list, create, update, delete: if belongsToCompany(companyId);
+       match /estimates/{estimateId} {
+          allow get: if true; // Publicly readable for sharing
+          allow list, update, delete: if belongsToCompany(companyId);
+          allow create: if belongsToCompany(companyId) && 
+                        (getUserData().plan == 'business' || list(/databases/$(database)/documents/companies/$(companyId)/estimates,).size() < 3);
       }
       
       match /quotes/{quoteId} {
-          allow get: if true;
-          allow list, create, update, delete: if belongsToCompany(companyId);
+          allow get: if true; // Publicly readable for sharing
+          allow list, update, delete: if belongsToCompany(companyId);
+           allow create: if belongsToCompany(companyId) && getUserData().plan == 'business';
       }
       
       // Tighter rules for user management within a company
@@ -69,6 +69,13 @@ service cloud.firestore {
         allow read: if belongsToCompany(companyId);
         allow create: if hasCompanyRole(companyId, ['admin']);
         allow update: if hasCompanyRole(companyId, ['admin']) || (isOwner(userId) && belongsToCompany(companyId));
+        allow delete: if hasCompanyRole(companyId, ['admin']);
+      }
+
+      // General fallback for other collections
+       match /{collection}/{docId} {
+        allow read: if belongsToCompany(companyId);
+        allow create, update: if hasCompanyRole(companyId, ['admin', 'staff']);
         allow delete: if hasCompanyRole(companyId, ['admin']);
       }
     }

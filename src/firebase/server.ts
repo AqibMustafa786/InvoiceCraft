@@ -14,7 +14,10 @@ function initializeAdminApp() {
 
     const serviceAccountKey = process.env.FIREBASE_SERVICE_ACCOUNT_KEY;
     if (!serviceAccountKey) {
-        throw new Error('FIREBASE_SERVICE_ACCOUNT_KEY environment variable is not set.');
+        // This is a soft error for local development where the key might not be set.
+        // The flows that use it will fail gracefully.
+        console.warn('FIREBASE_SERVICE_ACCOUNT_KEY is not set. Firebase Admin SDK features will be disabled.');
+        return { db: null, adminApp: null };
     }
 
     try {

@@ -321,8 +321,7 @@ export type Quote = Estimate & { documentType: 'quote' };
 export const StripeCheckoutInputSchema = z.object({
   userId: z.string(),
   userEmail: z.string().email(),
-  companyId: z.string(),
-  plan: z.enum(['monthly', 'yearly']),
+  priceId: z.string(),
 });
 export type StripeCheckoutInput = z.infer<typeof StripeCheckoutInputSchema>;
 
