@@ -17,7 +17,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
-import { User as UserIcon, LogOut, LayoutDashboard, UserCog } from 'lucide-react';
+import { User as UserIcon, LogOut, LayoutDashboard } from 'lucide-react';
 
 interface AuthNavProps {
     isMobile?: boolean;
@@ -28,15 +28,15 @@ export function AuthNav({ isMobile = false }: AuthNavProps) {
     const { user } = useAuth();
     const { auth } = useFirebase();
     const router = useRouter();
-    const isAdmin = user?.email === 'aqib2k1@gmail.com';
-
 
     useEffect(() => {
         setIsClient(true);
     }, []);
 
     const handleLogout = async () => {
-        await signOut(auth);
+        if (auth) {
+            await signOut(auth);
+        }
         router.push('/login');
     };
 
@@ -50,13 +50,6 @@ export function AuthNav({ isMobile = false }: AuthNavProps) {
         if (isMobile) {
             return (
                  <div className="flex w-full flex-col gap-2">
-                    {isAdmin && (
-                         <Button asChild variant="secondary" className="justify-start">
-                            <Link href="/admin" className="flex items-center gap-2">
-                               <UserCog className="h-4 w-4" /> Admin Panel
-                            </Link>
-                        </Button>
-                    )}
                     <Button asChild variant="outline" className="justify-start">
                         <Link href="/dashboard" className="flex items-center gap-2">
                            <LayoutDashboard className="h-4 w-4" /> Dashboard
@@ -99,14 +92,6 @@ export function AuthNav({ isMobile = false }: AuthNavProps) {
                                 <span>Dashboard</span>
                             </Link>
                         </DropdownMenuItem>
-                         {isAdmin && (
-                            <DropdownMenuItem asChild>
-                                <Link href="/admin">
-                                    <UserCog className="mr-2 h-4 w-4" />
-                                    <span>Admin Panel</span>
-                                </Link>
-                            </DropdownMenuItem>
-                        )}
                         <DropdownMenuSeparator />
                         <DropdownMenuItem onClick={handleLogout} className="text-destructive cursor-pointer">
                             <LogOut className="mr-2 h-4 w-4" />

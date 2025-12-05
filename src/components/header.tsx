@@ -46,7 +46,6 @@ function NavLink({ href, label, isActive }: { href: string, label: string, isAct
 export function Header() {
     const pathname = usePathname();
     const { user } = useAuth();
-    const isAdmin = user?.email === 'aqib2k1@gmail.com';
 
     return (
         <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur-sm supports-[backdrop-filter]:bg-background/60">
@@ -59,7 +58,6 @@ export function Header() {
                     {navLinks.slice(0, 5).map(link => (
                         <NavLink key={link.href} href={link.href} label={link.label} isActive={pathname === link.href} />
                     ))}
-                     {isAdmin && <NavLink href="/admin" label="Admin" isActive={pathname === '/admin'} />}
                 </nav>
 
                 <div className="flex flex-1 items-center justify-end gap-2">
@@ -75,7 +73,7 @@ export function Header() {
                         <span className="sr-only">Toggle navigation menu</span>
                         </Button>
                     </SheetTrigger>
-                    <SheetContent side="left" className="flex flex-col">
+                    <SheetContent side="left" className="flex w-full flex-col sm:max-w-sm">
                         <SheetHeader>
                             <SheetTitle>
                                 <Link href="/" className="flex items-center gap-2">
