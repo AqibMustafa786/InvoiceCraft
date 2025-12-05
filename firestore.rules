@@ -1,34 +1,69 @@
-
 rules_version = '2';
+
 service cloud.firestore {
   match /databases/{database}/documents {
 
+    // Helper Functions
     function isSignedIn() {
       return request.auth != null;
     }
 
-    match /users/{userId} {
-      allow read, write: if isSignedIn() && request.auth.uid == userId;
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
     }
 
+    // Rules for the 'companies' collection and its subcollections
+    match /companies/{companyId} {
+      // Company documents can be read by any signed-in user, but only modified by authorized members (future-proofing)
+      allow read: if isSignedIn();
+      // Write access should be more restrictive, e.g., only by company admins. 
+      // For now, we'll keep it simple and secure.
+      allow write: if false; // TBD based on company admin logic
+
+      // Rules for the 'users' subcollection within a company
+      match /users/{userId} {
+        // A user can read/write their own profile within a company.
+        allow read, write: if isOwner(userId);
+      }
+
+      // Rules for the 'invoices' subcollection within a company
+      match /invoices/{invoiceId} {
+        // Allow read/write if the user is signed in and their ID matches the userId on the invoice document.
+        // This is a common pattern for user-owned documents.
+        allow read, write: if isSignedIn() && request.auth.uid == resource.data.userId;
+      }
+    }
+
+    // Standalone collections
+    match /users/{userId} {
+      // A user can read and write to their own user document.
+      allow read, write: if isOwner(userId);
+    }
+    
     match /invoices/{invoiceId} {
-      allow read, write: if isSignedIn() && request.auth.uid == resource.data.userId;
+        // A user can only read/write their own invoices.
+        allow read, write: if isOwner(resource.data.userId);
     }
 
     match /estimates/{estimateId} {
-      // Public can read, owner can write
+      // Anyone can read a specific estimate (for public sharing).
       allow get: if true;
-      allow list, create, update, delete: if isSignedIn() && request.auth.uid == resource.data.userId;
+      // Only the owner can list, create, update, or delete their estimates.
+      allow list, create, update, delete: if isOwner(resource.data.userId);
     }
 
     match /quotes/{quoteId} {
-      // Public can read, owner can write
+      // Anyone can read a specific quote.
       allow get: if true;
-      allow list, create, update, delete: if isSignedIn() && request.auth.uid == resource.data.userId;
+      // Only the owner can manage their own quotes.
+      allow list, create, update, delete: if isOwner(resource.data.userId);
     }
 
     match /mail/{docId} {
+      // Any signed-in user can create a document in the 'mail' collection to trigger an email.
       allow create: if isSignedIn();
+      // No one should be able to read, update, or delete mail documents from the client-side.
+      allow read, update, delete: if false;
     }
   }
 }
