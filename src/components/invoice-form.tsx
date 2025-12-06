@@ -2,14 +2,14 @@
 'use client';
 
 import { ChangeEvent, Dispatch, SetStateAction, useState, useEffect } from 'react';
-import type { Invoice, LineItem, InvoiceCategory } from '@/lib/types';
+import type { Invoice, LineItem, InvoiceCategory, ConstructionInfo, PlumbingInfo, ElectricalInfo, HVACInfo, RoofingInfo, LandscapingInfo, CleaningInfo, AutoRepairInfo, ITFreelanceInfo } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { DatePicker } from '@/components/ui/datepicker';
-import { ImageUp, Plus, Trash2, Palette, X, Mail, Truck, Hash, Wallet, Phone, PaintBucket, Paintbrush, Type, Briefcase, Building, FileText, User } from 'lucide-react';
+import { ImageUp, Plus, Trash2, Palette, X, Mail, Truck, Hash, Wallet, Phone, PaintBucket, Paintbrush, Type, Package, Hammer, Ruler, ListTree, CheckSquare, Sparkles, Calendar, TextQuote, Wind, Thermometer, Wrench, Zap, Trees, Droplets, Car, Code, DraftingCompass, Pencil } from 'lucide-react';
 import Image from 'next/image';
 import {
   Select,
@@ -19,6 +19,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Checkbox } from './ui/checkbox';
+import { RadioGroup, RadioGroupItem } from './ui/radio-group';
+
 
 interface InvoiceFormProps {
   invoice: Invoice;
@@ -66,12 +68,69 @@ const categories: InvoiceCategory[] = [
     "Rental / Property",
 ];
 
+const CustomSelect = ({ value, onValueChange, options, placeholder, name }: { value: string; onValueChange: (name: string, value: string) => void; options: string[]; placeholder?: string; name: string; }) => {
+    const [isOther, setIsOther] = useState(false);
+    const [otherValue, setOtherValue] = useState('');
+
+    useEffect(() => {
+        const isValueInOptions = options.includes(value);
+        if (value && !isValueInOptions) {
+            setIsOther(true);
+            setOtherValue(value);
+        } else {
+            setIsOther(false);
+            setOtherValue('');
+        }
+    }, [value, options]);
+
+    const handleSelectChange = (newValue: string) => {
+        if (newValue === 'Other') {
+            setIsOther(true);
+            onValueChange(name, otherValue);
+        } else {
+            setIsOther(false);
+            onValueChange(name, newValue);
+        }
+    };
+    
+    const handleOtherInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setOtherValue(e.target.value);
+        onValueChange(name, e.target.value);
+    }
+
+    return (
+        <div className="space-y-2">
+            <Select value={isOther ? 'Other' : value} onValueChange={handleSelectChange}>
+                <SelectTrigger>
+                    <SelectValue placeholder={placeholder} />
+                </SelectTrigger>
+                <SelectContent>
+                    {options.map((option, index) => <SelectItem key={`${name}-${option}-${index}`} value={option}>{option}</SelectItem>)}
+                    <SelectItem value="Other">Other (Please specify)</SelectItem>
+                </SelectContent>
+            </Select>
+            {isOther && (
+                <Input
+                    type="text"
+                    name={name}
+                    value={otherValue}
+                    onChange={handleOtherInputChange}
+                    placeholder="Specify other value"
+                    className="mt-2"
+                />
+            )}
+        </div>
+    );
+};
+
+
 export function InvoiceForm({ invoice, setInvoice, accentColor, setAccentColor, backgroundColor, setBackgroundColor, textColor, setTextColor, toast }: InvoiceFormProps) {
   const [bulkAddCount, setBulkAddCount] = useState(10);
   const [accentColorInput, setAccentColorInput] = useState(accentColor);
   const [bgColorInput, setBgColorInput] = useState(backgroundColor);
   const [textColorInput, setTextColorInput] = useState(textColor);
   const [logoUrl, setLogoUrl] = useState<string | null>(invoice.business.logoUrl || null);
+  const [cleaningAddOns, setCleaningAddOns] = useState<string[]>(invoice.cleaning?.addOns || []);
   
   useEffect(() => {
     setAccentColorInput(accentColor);
@@ -115,6 +174,54 @@ export function InvoiceForm({ invoice, setInvoice, accentColor, setAccentColor, 
       }
     }));
   };
+
+  const handleCategoryDataChange = (category: 'construction' | 'plumbing' | 'electrical' | 'hvac' | 'roofing' | 'landscaping' | 'cleaning' | 'autoRepair' | 'freelance', e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value, type } = e.target;
+    const isCheckbox = type === 'checkbox';
+    
+    setInvoice(prev => ({
+        ...prev,
+        [category]: {
+            ...prev[category]!,
+            [name]: isCheckbox ? (e.target as HTMLInputElement).checked : value
+        }
+    }));
+  };
+
+   const handleCategorySelectChange = (category: 'construction' | 'plumbing' | 'electrical' | 'hvac' | 'roofing' | 'landscaping' | 'cleaning' | 'autoRepair' | 'freelance', name: string, value: string | boolean | number | null) => {
+     setInvoice(prev => ({
+        ...prev,
+        [category]: {
+            ...prev[category]!,
+            [name]: value
+        }
+    }));
+  };
+  
+    const handleRemodelingDateChange = (name: keyof ConstructionInfo, date: Date | undefined) => {
+     setInvoice(prev => ({
+        ...prev,
+        construction: {
+            ...prev.construction!,
+            [name]: date
+        }
+    }));
+  };
+
+  const handleCleaningAddOnChange = (addOn: string, checked: boolean) => {
+    const currentAddOns = invoice.cleaning?.addOns || [];
+    const newAddOns = checked
+      ? [...currentAddOns, addOn]
+      : currentAddOns.filter(item => item !== addOn);
+    setCleaningAddOns(newAddOns);
+    setInvoice(prev => ({
+      ...prev,
+      cleaning: {
+        ...prev.cleaning!,
+        addOns: newAddOns
+      }
+    }));
+  }
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -388,6 +495,23 @@ export function InvoiceForm({ invoice, setInvoice, accentColor, setAccentColor, 
           <CardTitle>Invoice Details</CardTitle>
         </CardHeader>
         <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="space-y-2 md:col-span-2">
+            <Label htmlFor="category">Invoice Category</Label>
+            <div className="relative flex items-center">
+                <Package className="absolute left-3 h-5 w-5 text-muted-foreground z-10" />
+                <Select
+                    value={invoice.category}
+                    onValueChange={(value: InvoiceCategory) => setInvoice(p => ({ ...p, category: value }))}
+                >
+                    <SelectTrigger id="category" className="pl-10">
+                        <SelectValue placeholder="Select a business category" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        {categories.map((cat, index) => <SelectItem key={`${cat}-${index}`} value={cat}>{cat}</SelectItem>)}
+                    </SelectContent>
+                </Select>
+            </div>
+          </div>
           <div className="space-y-2">
             <Label htmlFor="invoiceNumber">Invoice Number</Label>
             <Input id="invoiceNumber" name="invoiceNumber" value={invoice.invoiceNumber} onChange={handleInputChange} />
@@ -434,6 +558,38 @@ export function InvoiceForm({ invoice, setInvoice, accentColor, setAccentColor, 
             </div>
         </CardContent>
       </Card>
+      
+        {invoice.category === "Construction" && invoice.construction && (
+            <Card className="bg-card/50 backdrop-blur-sm">
+                <CardHeader>
+                    <CardTitle>Construction Details</CardTitle>
+                </CardHeader>
+                <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-2">
+                        <Label htmlFor="projectType">Project Type</Label>
+                         <Input id="projectType" name="projectType" value={invoice.construction.projectType} onChange={(e) => handleCategoryDataChange('construction', e)} placeholder="e.g. New Build, Renovation" />
+                    </div>
+                     <div className="space-y-2">
+                        <Label htmlFor="squareFootage">Square Footage</Label>
+                        <Input id="squareFootage" name="squareFootage" type="number" value={invoice.construction.squareFootage ?? ''} onChange={(e) => handleCategoryDataChange('construction', e)} />
+                    </div>
+                </CardContent>
+            </Card>
+        )}
+
+        {invoice.category === "Plumbing" && invoice.plumbing && (
+             <Card className="bg-card/50 backdrop-blur-sm">
+                <CardHeader>
+                    <CardTitle>Plumbing Job Details</CardTitle>
+                </CardHeader>
+                <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-2">
+                        <Label>Service Type</Label>
+                        <Input name="serviceType" value={invoice.plumbing.serviceType} onChange={(e) => handleCategoryDataChange('plumbing', e)} placeholder="e.g., Leak Repair, Installation" />
+                    </div>
+                </CardContent>
+            </Card>
+        )}
 
       <Card className="bg-card/50 backdrop-blur-sm">
         <CardHeader>
@@ -522,7 +678,7 @@ export function InvoiceForm({ invoice, setInvoice, accentColor, setAccentColor, 
               <Label htmlFor="amountPaid">Amount Paid</Label>
                 <div className="relative flex items-center">
                   <Wallet className="absolute left-3 h-5 w-5 text-muted-foreground" />
-                  <Input id="amountPaid" name="amountPaid" type="number" value={invoice.amountPaid || 0} onChange={handleNumberChange} className="pl-10"/>
+                  <Input id="amountPaid" name="amountPaid" type="number" value={invoice.amountPaid || 0} onChange={(e) => setInvoice(p => ({...p, amountPaid: parseFloat(e.target.value) || 0}))} className="pl-10"/>
               </div>
             </div>
           </div>
