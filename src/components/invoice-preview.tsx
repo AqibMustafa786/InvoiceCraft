@@ -512,19 +512,20 @@ const InvoicePreviewInternal: FC<InvoicePreviewProps> = ({ invoice, accentColor,
   } as React.CSSProperties;
 
   const getTemplateComponent = () => {
-    if (invoice.category === 'Construction') {
+    const category = invoice.category;
+    if (category === 'Construction') {
       return templates[invoice.template] || ConstructionTemplate1;
     }
-    if (invoice.category === 'Plumbing') {
+    if (category === 'Plumbing') {
       return templates[invoice.template] || PlumbingTemplate1;
     }
-    if (invoice.category === 'Electrical Services') {
+    if (category === 'Electrical Services') {
         return templates[invoice.template] || ElectricalTemplate1;
     }
-    if (invoice.category === 'HVAC Services') {
+    if (category === 'HVAC Services') {
         return templates[invoice.template] || HVACTemplate1;
     }
-    if (invoice.category === 'Roofing') {
+    if (category === 'Roofing') {
         return templates[invoice.template] || RoofingTemplate1;
     }
     return templates[invoice.template] || DefaultTemplatePage;
