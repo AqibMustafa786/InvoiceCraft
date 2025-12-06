@@ -78,6 +78,7 @@ const getInitialInvoice = (): Omit<Invoice, 'userId'> => ({
   fontSize: 10,
   backgroundColor: '#FFFFFF',
   textColor: '#374151',
+  amountPaid: 0,
 
   construction: {
     jobSiteAddress: '',
@@ -143,9 +144,13 @@ const getInitialInvoice = (): Omit<Invoice, 'userId'> => ({
     caseNumber: '',
     caseType: '',
     retainerBalance: null,
+    billingAttorney: '',
   },
   medical: {
     patientName: '',
+    patientId: '',
+    insuranceProvider: '',
+    insurancePolicyNumber: '',
     diagnosisCode: '',
     procedureCode: '',
     coPay: null,
@@ -156,6 +161,7 @@ const getInitialInvoice = (): Omit<Invoice, 'userId'> => ({
     vehicleYear: null,
     vin: '',
     diagnosticFee: null,
+    mileage: null,
   },
   ecommerce: {
     orderNumber: '',
@@ -283,25 +289,25 @@ export default function CreateInvoicePage() {
          business: { ...baseInvoice.business, ...loadedDraft.business },
          client: { ...baseInvoice.client, ...loadedDraft.client },
          summary: { ...baseInvoice.summary, ...loadedDraft.summary },
-         construction: { ...baseInvoice.construction, ...loadedDraft.construction },
-         plumbing: { ...baseInvoice.plumbing, ...loadedDraft.plumbing },
-         electrical: { ...baseInvoice.electrical, ...loadedDraft.electrical },
-         hvac: { ...baseInvoice.hvac, ...loadedDraft.hvac },
-         roofing: { ...baseInvoice.roofing, ...loadedDraft.roofing },
-         landscaping: { ...baseInvoice.landscaping, ...loadedDraft.landscaping },
-         cleaning: { ...baseInvoice.cleaning, ...loadedDraft.cleaning },
-         freelance: { ...baseInvoice.freelance, ...loadedDraft.freelance },
-         consulting: { ...baseInvoice.consulting, ...loadedDraft.consulting },
-         legal: { ...baseInvoice.legal, ...loadedDraft.legal },
-         medical: { ...baseInvoice.medical, ...loadedDraft.medical },
-         autoRepair: { ...baseInvoice.autoRepair, ...loadedDraft.autoRepair },
-         ecommerce: { ...baseInvoice.ecommerce, ...loadedDraft.ecommerce },
-         rental: { ...baseInvoice.rental, ...loadedDraft.rental },
-         retail: { ...baseInvoice.retail, ...loadedDraft.retail },
-         photography: { ...baseInvoice.photography, ...loadedDraft.photography },
-         realEstate: { ...baseInvoice.realEstate, ...loadedDraft.realEstate },
-         transportation: { ...baseInvoice.transportation, ...loadedDraft.transportation },
-         itServices: { ...baseInvoice.itServices, ...loadedDraft.itServices },
+         construction: { ...baseInvoice.construction, ...(loadedDraft.construction || {}) },
+         plumbing: { ...baseInvoice.plumbing, ...(loadedDraft.plumbing || {}) },
+         electrical: { ...baseInvoice.electrical, ...(loadedDraft.electrical || {}) },
+         hvac: { ...baseInvoice.hvac, ...(loadedDraft.hvac || {}) },
+         roofing: { ...baseInvoice.roofing, ...(loadedDraft.roofing || {}) },
+         landscaping: { ...baseInvoice.landscaping, ...(loadedDraft.landscaping || {}) },
+         cleaning: { ...baseInvoice.cleaning, ...(loadedDraft.cleaning || {}) },
+         freelance: { ...baseInvoice.freelance, ...(loadedDraft.freelance || {}) },
+         consulting: { ...baseInvoice.consulting, ...(loadedDraft.consulting || {}) },
+         legal: { ...baseInvoice.legal, ...(loadedDraft.legal || {}) },
+         medical: { ...baseInvoice.medical, ...(loadedDraft.medical || {}) },
+         autoRepair: { ...baseInvoice.autoRepair, ...(loadedDraft.autoRepair || {}) },
+         ecommerce: { ...baseInvoice.ecommerce, ...(loadedDraft.ecommerce || {}) },
+         rental: { ...baseInvoice.rental, ...(loadedDraft.rental || {}) },
+         retail: { ...baseInvoice.retail, ...(loadedDraft.retail || {}) },
+         photography: { ...baseInvoice.photography, ...(loadedDraft.photography || {}) },
+         realEstate: { ...baseInvoice.realEstate, ...(loadedDraft.realEstate || {}) },
+         transportation: { ...baseInvoice.transportation, ...(loadedDraft.transportation || {}) },
+         itServices: { ...baseInvoice.itServices, ...(loadedDraft.itServices || {}) },
        };
 
     } else {
@@ -498,4 +504,5 @@ export default function CreateInvoicePage() {
   );
 }
     
+
 
