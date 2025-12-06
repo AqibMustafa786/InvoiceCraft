@@ -15,6 +15,10 @@ import {
   PlumbingTemplate1, PlumbingTemplate2, PlumbingTemplate3, PlumbingTemplate4, PlumbingTemplate5,
   PlumbingTemplate6, PlumbingTemplate7, PlumbingTemplate8, PlumbingTemplate9, PlumbingTemplate10
 } from './invoice-templates/plumbing-templates';
+import {
+  ElectricalTemplate1, ElectricalTemplate2, ElectricalTemplate3, ElectricalTemplate4, ElectricalTemplate5,
+  ElectricalTemplate6, ElectricalTemplate7, ElectricalTemplate8, ElectricalTemplate9, ElectricalTemplate10
+} from './invoice-templates/electrical-templates';
 
 // --- PROPS ---
 interface InvoicePreviewProps {
@@ -431,6 +435,16 @@ const templates: Record<string, FC<PageProps>> = {
   'plumbing-8': PlumbingTemplate8,
   'plumbing-9': PlumbingTemplate9,
   'plumbing-10': PlumbingTemplate10,
+  'electrical-1': ElectricalTemplate1,
+  'electrical-2': ElectricalTemplate2,
+  'electrical-3': ElectricalTemplate3,
+  'electrical-4': ElectricalTemplate4,
+  'electrical-5': ElectricalTemplate5,
+  'electrical-6': ElectricalTemplate6,
+  'electrical-7': ElectricalTemplate7,
+  'electrical-8': ElectricalTemplate8,
+  'electrical-9': ElectricalTemplate9,
+  'electrical-10': ElectricalTemplate10,
 };
 
 
@@ -474,6 +488,9 @@ const InvoicePreviewInternal: FC<InvoicePreviewProps> = ({ invoice, accentColor,
     }
     if (invoice.category === 'Plumbing') {
       return templates[invoice.template] || PlumbingTemplate1;
+    }
+    if (invoice.category === 'Electrical Services') {
+        return templates[invoice.template] || ElectricalTemplate1;
     }
     return templates[invoice.template] || DefaultTemplatePage;
   };

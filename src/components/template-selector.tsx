@@ -55,6 +55,18 @@ const templates: Template[] = [
   { id: 'plumbing-9', name: 'Pressure', thumbnailUrl: '/templates/plumbing-4.png', category: 'Plumbing', isPro: true },
   { id: 'plumbing-10', name: 'Classic', thumbnailUrl: '/templates/plumbing-5.png', category: 'Plumbing', isPro: true },
 
+  // Electrical
+  { id: 'electrical-1', name: 'Direct', thumbnailUrl: '/templates/electrical-1.png', category: 'Electrical Services' },
+  { id: 'electrical-2', name: 'Centered', thumbnailUrl: '/templates/electrical-2.png', category: 'Electrical Services' },
+  { id: 'electrical-3', name: 'Minimal', thumbnailUrl: '/templates/electrical-3.png', category: 'Electrical Services' },
+  { id: 'electrical-4', name: 'Side Accent', thumbnailUrl: '/templates/electrical-4.png', category: 'Electrical Services', isPro: true },
+  { id: 'electrical-5', name: 'Grid', thumbnailUrl: '/templates/electrical-5.png', category: 'Electrical Services', isPro: true },
+  { id: 'electrical-6', name: 'Volt', thumbnailUrl: '/templates/electrical-1.png', category: 'Electrical Services', isPro: true },
+  { id: 'electrical-7', name: 'Spark', thumbnailUrl: '/templates/electrical-2.png', category: 'Electrical Services', isPro: true },
+  { id: 'electrical-8', name: 'Circuit', thumbnailUrl: '/templates/electrical-3.png', category: 'Electrical Services', isPro: true },
+  { id: 'electrical-9', name: 'Wired', thumbnailUrl: '/templates/electrical-4.png', category: 'Electrical Services', isPro: true },
+  { id: 'electrical-10', name: 'PowerGrid', thumbnailUrl: '/templates/electrical-5.png', category: 'Electrical Services', isPro: true },
+
 ];
 
 export function TemplateSelector({ selectedTemplate, onSelectTemplate, category }: TemplateSelectorProps) {
