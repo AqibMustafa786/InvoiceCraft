@@ -3,7 +3,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { createPortal } from 'react-dom';
-import type { Invoice, LineItem } from '@/lib/types';
+import type { Invoice, LineItem, ConstructionInfo, PlumbingInfo, ElectricalInfo, HVACInfo, RoofingInfo, LandscapingInfo, CleaningInfo, ITFreelanceInfo, ConsultingInfo, LegalInfo, MedicalInfo, AutoRepairInfo, EcommerceInfo, RentalInfo, RetailInfo, PhotographyInfo, RealEstateInfo, TransportationInfo, ITServiceInfo } from '@/lib/types';
 import { InvoiceForm } from '@/components/invoice-form';
 import { ClientInvoicePreview } from '@/components/invoice-preview';
 import { Button } from '@/components/ui/button';
@@ -77,6 +77,125 @@ const getInitialInvoice = (): Omit<Invoice, 'userId'> => ({
   fontSize: 10,
   backgroundColor: '#FFFFFF',
   textColor: '#374151',
+
+  construction: {
+    jobSiteAddress: '',
+    permitNumber: '',
+    laborRate: null,
+    equipmentRentalFees: null,
+    wasteDisposalFee: null,
+    projectStartDate: null,
+    projectEndDate: null,
+  },
+  plumbing: {
+    serviceType: 'Repair',
+    pipeMaterial: 'PVC',
+    fixtureName: '',
+    emergencyFee: null,
+  },
+  electrical: {
+    serviceType: 'Wiring',
+    voltage: '120V',
+    fixtureDevice: '',
+    permitCost: null,
+  },
+  hvac: {
+    unitType: 'AC',
+    modelNumber: '',
+    refrigerantType: '',
+    maintenanceFee: null,
+  },
+  roofing: {
+    roofType: 'Shingle',
+    squareFootage: null,
+    pitch: '',
+    tearOffRequired: false,
+    underlaymentType: '',
+    dumpsterFee: null,
+  },
+  landscaping: {
+    lawnSquareFootage: null,
+    serviceType: 'Mowing',
+    equipmentFee: null,
+    disposalFee: null,
+  },
+  cleaning: {
+    cleaningType: 'Home',
+    numberOfRooms: null,
+    squareFootage: null,
+    suppliesFee: null,
+    recurringSchedule: 'One-time',
+  },
+  freelance: {
+    projectName: '',
+    hourlyRate: null,
+    fixedRate: null,
+    hoursLogged: null,
+    milestoneDescription: '',
+  },
+  consulting: {
+    consultationType: '',
+    sessionHours: null,
+    retainerFee: null,
+  },
+  legal: {
+    caseNumber: '',
+    caseType: '',
+    retainerBalance: null,
+  },
+  medical: {
+    patientName: '',
+    diagnosisCode: '',
+    procedureCode: '',
+    coPay: null,
+  },
+  autoRepair: {
+    vehicleMake: '',
+    vehicleModel: '',
+    vehicleYear: null,
+    vin: '',
+    diagnosticFee: null,
+  },
+  ecommerce: {
+    orderNumber: '',
+    shippingMethod: '',
+    trackingNumber: '',
+  },
+  rental: {
+    propertyAddress: '',
+    tenantName: '',
+    rentPeriod: '',
+    lateFee: null,
+  },
+  retail: {
+    sku: '',
+    productCategory: '',
+    shippingFee: null,
+  },
+  photography: {
+    eventType: '',
+    hoursOfCoverage: null,
+    editingFee: null,
+    travelFee: null,
+  },
+  realEstate: {
+    propertyAddress: '',
+    leaseTerm: '',
+    maintenanceCosts: null,
+    managementFee: null,
+  },
+  transportation: {
+    pickupLocation: '',
+    deliveryLocation: '',
+    distanceMiles: null,
+    weightLoad: '',
+    fuelSurcharge: null,
+  },
+  itServices: {
+    serviceType: '',
+    hardwareReplacementCost: null,
+    monthlyMaintenanceFee: null,
+  },
 });
 
 
@@ -149,7 +268,7 @@ export default function CreateInvoicePage() {
     if (draftId && remoteDraft) {
        const baseInvoice = getInitialInvoice();
        const fromJSON = (key: string, value: any) => {
-           if (['invoiceDate', 'dueDate', 'createdAt', 'updatedAt'].includes(key) && value) {
+           if (['invoiceDate', 'dueDate', 'createdAt', 'updatedAt', 'projectStartDate', 'projectEndDate'].includes(key) && value) {
                return value.toDate ? value.toDate() : (isValid(new Date(value)) ? new Date(value) : null);
            }
            return value;
@@ -163,6 +282,25 @@ export default function CreateInvoicePage() {
          business: { ...baseInvoice.business, ...loadedDraft.business },
          client: { ...baseInvoice.client, ...loadedDraft.client },
          summary: { ...baseInvoice.summary, ...loadedDraft.summary },
+         construction: { ...baseInvoice.construction, ...loadedDraft.construction },
+         plumbing: { ...baseInvoice.plumbing, ...loadedDraft.plumbing },
+         electrical: { ...baseInvoice.electrical, ...loadedDraft.electrical },
+         hvac: { ...baseInvoice.hvac, ...loadedDraft.hvac },
+         roofing: { ...baseInvoice.roofing, ...loadedDraft.roofing },
+         landscaping: { ...baseInvoice.landscaping, ...loadedDraft.landscaping },
+         cleaning: { ...baseInvoice.cleaning, ...loadedDraft.cleaning },
+         freelance: { ...baseInvoice.freelance, ...loadedDraft.freelance },
+         consulting: { ...baseInvoice.consulting, ...loadedDraft.consulting },
+         legal: { ...baseInvoice.legal, ...loadedDraft.legal },
+         medical: { ...baseInvoice.medical, ...loadedDraft.medical },
+         autoRepair: { ...baseInvoice.autoRepair, ...loadedDraft.autoRepair },
+         ecommerce: { ...baseInvoice.ecommerce, ...loadedDraft.ecommerce },
+         rental: { ...baseInvoice.rental, ...loadedDraft.rental },
+         retail: { ...baseInvoice.retail, ...loadedDraft.retail },
+         photography: { ...baseInvoice.photography, ...loadedDraft.photography },
+         realEstate: { ...baseInvoice.realEstate, ...loadedDraft.realEstate },
+         transportation: { ...baseInvoice.transportation, ...loadedDraft.transportation },
+         itServices: { ...baseInvoice.itServices, ...loadedDraft.itServices },
        };
 
     } else {
@@ -213,12 +351,22 @@ export default function CreateInvoicePage() {
       userId: user.uid,
       updatedAt: serverTimestamp(),
     };
-
-    const invoiceDate = normalizeDate(invoice.invoiceDate);
-    if (invoiceDate) draftToSave.invoiceDate = invoiceDate;
     
-    const dueDate = normalizeDate(invoice.dueDate);
-    if (dueDate) draftToSave.dueDate = dueDate;
+    const dateFields = ['invoiceDate', 'dueDate'];
+    dateFields.forEach(field => {
+        const dateVal = (invoice as any)[field];
+        if (dateVal) {
+            draftToSave[field] = normalizeDate(dateVal);
+        }
+    });
+
+    if (invoice.construction) {
+        draftToSave.construction = { ...invoice.construction };
+        const start = normalizeDate(invoice.construction.projectStartDate);
+        if(start) draftToSave.construction.projectStartDate = start;
+        const end = normalizeDate(invoice.construction.projectEndDate);
+        if(end) draftToSave.construction.projectEndDate = end;
+    }
 
     if (!invoice.createdAt) {
       draftToSave.createdAt = serverTimestamp();
@@ -348,3 +496,5 @@ export default function CreateInvoicePage() {
     </>
   );
 }
+
+    
