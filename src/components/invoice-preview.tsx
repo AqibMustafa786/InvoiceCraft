@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useLayoutEffect, useRef, useEffect, FC } from 'react';
@@ -12,6 +11,10 @@ import {
   ConstructionTemplate1, ConstructionTemplate2, ConstructionTemplate3, ConstructionTemplate4, ConstructionTemplate5,
   ConstructionTemplate6, ConstructionTemplate7, ConstructionTemplate8, ConstructionTemplate9, ConstructionTemplate10
 } from './invoice-templates/construction-templates';
+import {
+  PlumbingTemplate1, PlumbingTemplate2, PlumbingTemplate3, PlumbingTemplate4, PlumbingTemplate5,
+  PlumbingTemplate6, PlumbingTemplate7, PlumbingTemplate8, PlumbingTemplate9, PlumbingTemplate10
+} from './invoice-templates/plumbing-templates';
 
 // --- PROPS ---
 interface InvoicePreviewProps {
@@ -418,6 +421,16 @@ const templates: Record<string, FC<PageProps>> = {
   'construction-8': ConstructionTemplate8,
   'construction-9': ConstructionTemplate9,
   'construction-10': ConstructionTemplate10,
+  'plumbing-1': PlumbingTemplate1,
+  'plumbing-2': PlumbingTemplate2,
+  'plumbing-3': PlumbingTemplate3,
+  'plumbing-4': PlumbingTemplate4,
+  'plumbing-5': PlumbingTemplate5,
+  'plumbing-6': PlumbingTemplate6,
+  'plumbing-7': PlumbingTemplate7,
+  'plumbing-8': PlumbingTemplate8,
+  'plumbing-9': PlumbingTemplate9,
+  'plumbing-10': PlumbingTemplate10,
 };
 
 
@@ -458,6 +471,9 @@ const InvoicePreviewInternal: FC<InvoicePreviewProps> = ({ invoice, accentColor,
   const getTemplateComponent = () => {
     if (invoice.category === 'Construction') {
       return templates[invoice.template] || ConstructionTemplate1;
+    }
+    if (invoice.category === 'Plumbing') {
+      return templates[invoice.template] || PlumbingTemplate1;
     }
     return templates[invoice.template] || DefaultTemplatePage;
   };

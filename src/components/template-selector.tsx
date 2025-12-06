@@ -1,4 +1,3 @@
-
 'use client';
 
 import { cn } from '@/lib/utils';
@@ -43,6 +42,18 @@ const templates: Template[] = [
   { id: 'construction-8', name: 'Grid', thumbnailUrl: '/templates/construction-3.png', category: 'Construction', isPro: true },
   { id: 'construction-9', name: 'Simple', thumbnailUrl: '/templates/construction-4.png', category: 'Construction', isPro: true },
   { id: 'construction-10', name: 'Bold', thumbnailUrl: '/templates/construction-5.png', category: 'Construction', isPro: true },
+
+  // Plumbing
+  { id: 'plumbing-1', name: 'Direct', thumbnailUrl: '/templates/plumbing-1.png', category: 'Plumbing' },
+  { id: 'plumbing-2', name: 'Modern Blue', thumbnailUrl: '/templates/plumbing-2.png', category: 'Plumbing' },
+  { id: 'plumbing-3', name: 'Clean', thumbnailUrl: '/templates/plumbing-3.png', category: 'Plumbing' },
+  { id: 'plumbing-4', name: 'Side Panel', thumbnailUrl: '/templates/plumbing-4.png', category: 'Plumbing', isPro: true },
+  { id: 'plumbing-5', name: 'Grid', thumbnailUrl: '/templates/plumbing-5.png', category: 'Plumbing', isPro: true },
+  { id: 'plumbing-6', name: 'Aqua', thumbnailUrl: '/templates/plumbing-1.png', category: 'Plumbing', isPro: true },
+  { id: 'plumbing-7', name: 'Flow', thumbnailUrl: '/templates/plumbing-2.png', category: 'Plumbing', isPro: true },
+  { id: 'plumbing-8', name: 'LeakFree', thumbnailUrl: '/templates/plumbing-3.png', category: 'Plumbing', isPro: true },
+  { id: 'plumbing-9', name: 'Pressure', thumbnailUrl: '/templates/plumbing-4.png', category: 'Plumbing', isPro: true },
+  { id: 'plumbing-10', name: 'Classic', thumbnailUrl: '/templates/plumbing-5.png', category: 'Plumbing', isPro: true },
 
 ];
 
