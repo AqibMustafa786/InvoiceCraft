@@ -100,7 +100,9 @@ export function TemplateSelector({ selectedTemplate, onSelectTemplate, category 
     const { data: userData } = useDoc<{ plan: string }>(userDocRef);
     const isBusinessPlan = userData?.plan === 'business' || (user?.email === 'aqib2k1@gmail.com');
 
-    const filteredTemplates = templates.filter(t => t.category === category || t.category === 'all');
+    const categorySpecificTemplates = templates.filter(t => t.category === category);
+    const generalTemplates = templates.filter(t => t.category === 'all');
+    const filteredTemplates = categorySpecificTemplates.length > 0 ? categorySpecificTemplates : generalTemplates;
 
   return (
     <div className="grid grid-cols-2 lg:grid-cols-3 gap-6">
