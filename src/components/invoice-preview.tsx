@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useLayoutEffect, useRef, useEffect, FC } from 'react';
@@ -11,7 +12,6 @@ import locales from '@/lib/locales';
 // --- PROPS ---
 interface InvoicePreviewProps {
   invoice: Invoice;
-  logoUrl: string | null;
   accentColor: string;
   backgroundColor: string;
   textColor: string;
@@ -21,7 +21,6 @@ interface InvoicePreviewProps {
 
 interface CommonTemplateProps {
   invoice: Invoice;
-  logoUrl: string | null;
   accentColor: string;
   backgroundColor: string;
   textColor: string;
@@ -75,8 +74,8 @@ const ItemsTable: FC<{ items: LineItem[], t: any, currencySymbol: string, accent
                 <tr key={item.id} className="border-b" data-element="table-row">
                 <td className="p-3 whitespace-pre-line">{item.name || <span className="text-gray-400">{t.itemDescription}</span>}</td>
                 <td className="p-3 text-center tabular-nums">{item.quantity}</td>
-                <td className="p-3 text-right tabular-nums">{currencySymbol}{((item as any).rate || 0).toFixed(2)}</td>
-                <td className="p-3 text-right tabular-nums font-medium">{currencySymbol}{(item.quantity * ((item as any).rate || 0)).toFixed(2)}</td>
+                <td className="p-3 text-right tabular-nums">{currencySymbol}{(item.unitPrice || 0).toFixed(2)}</td>
+                <td className="p-3 text-right tabular-nums font-medium">{currencySymbol}{(item.quantity * (item.unitPrice || 0)).toFixed(2)}</td>
                 </tr>
             ))}
             </tbody>
@@ -94,21 +93,21 @@ const InvoiceFooter: FC<{
                 <span className="text-muted-foreground">{t.subtotal}</span>
                 <span className="font-medium tabular-nums">{currencySymbol}{subtotal.toFixed(2)}</span>
                 </div>
-                {invoice.discount > 0 && (
+                {invoice.summary.discount > 0 && (
                     <div className="flex justify-between text-sm">
-                        <span className="text-muted-foreground">{t.discount} ({invoice.discount}%)</span>
+                        <span className="text-muted-foreground">{t.discount} ({invoice.summary.discount}%)</span>
                         <span className="font-medium text-destructive tabular-nums">-{currencySymbol}{discountAmount.toFixed(2)}</span>
                     </div>
                 )}
-                {invoice.shippingCost > 0 && (
+                {invoice.summary.shippingCost > 0 && (
                      <div className="flex justify-between text-sm">
                         <span className="text-muted-foreground">Shipping Cost</span>
-                        <span className="font-medium tabular-nums">{currencySymbol}{invoice.shippingCost.toFixed(2)}</span>
+                        <span className="font-medium tabular-nums">{currencySymbol}{invoice.summary.shippingCost.toFixed(2)}</span>
                     </div>
                 )}
-                {invoice.tax > 0 && (
+                {invoice.summary.taxPercentage > 0 && (
                 <div className="flex justify-between text-sm">
-                <span className="text-muted-foreground">{t.tax} ({invoice.tax}%)</span>
+                <span className="text-muted-foreground">{t.tax} ({invoice.summary.taxPercentage}%)</span>
                 <span className="font-medium tabular-nums">{currencySymbol}{taxAmount.toFixed(2)}</span>
                 </div>
                 )}
@@ -117,10 +116,10 @@ const InvoiceFooter: FC<{
                 <span>{t.total}</span>
                 <span className="tabular-nums">{currencySymbol}{total.toFixed(2)}</span>
                 </div>
-                 {invoice.amountPaid > 0 && (
+                 {(invoice.amountPaid || 0) > 0 && (
                     <div className="flex justify-between text-sm">
                         <span className="text-muted-foreground">Amount Paid</span>
-                        <span className="font-medium tabular-nums">-{currencySymbol}{invoice.amountPaid.toFixed(2)}</span>
+                        <span className="font-medium tabular-nums">-{currencySymbol}{(invoice.amountPaid || 0).toFixed(2)}</span>
                     </div>
                 )}
                 <div className="flex justify-between items-center font-bold text-lg p-3 mt-2 rounded-md" style={{backgroundColor: accentColor, color: 'white'}}>
@@ -145,14 +144,14 @@ const DefaultTemplatePage: FC<PageProps> = ({ pageItems, pageIndex, totalPages, 
         <div data-element="page-content" className="flex-grow">
             <header className="flex justify-between items-start mb-10" data-element="header">
                 <div>
-                    {commonProps.logoUrl ? (
-                        <Image src={commonProps.logoUrl} alt={`${commonProps.invoice.companyName} Logo`} width={120} height={40} className="object-contain" data-ai-hint="logo" />
+                    {commonProps.invoice.business.logoUrl ? (
+                        <Image src={commonProps.invoice.business.logoUrl} alt={`${commonProps.invoice.business.name} Logo`} width={120} height={40} className="object-contain" data-ai-hint="logo" />
                     ) : (
-                        <h1 className="text-3xl font-bold font-headline" style={{ color: commonProps.accentColor }}>{commonProps.invoice.companyName}</h1>
+                        <h1 className="text-3xl font-bold font-headline" style={{ color: commonProps.accentColor }}>{commonProps.invoice.business.name}</h1>
                     )}
                     <div className="text-sm mt-2 space-y-1">
-                      <p className="whitespace-pre-line">{commonProps.invoice.companyAddress}</p>
-                      {commonProps.invoice.companyPhone && <p>{commonProps.invoice.companyPhone}</p>}
+                      <p className="whitespace-pre-line">{commonProps.invoice.business.address}</p>
+                      {commonProps.invoice.business.phone && <p>{commonProps.invoice.business.phone}</p>}
                     </div>
                 </div>
                 <div className="text-right">
@@ -163,8 +162,8 @@ const DefaultTemplatePage: FC<PageProps> = ({ pageItems, pageIndex, totalPages, 
              <section className="flex justify-between mb-10" data-element="client-details">
                 <div className="space-y-1">
                     <p className="text-sm font-semibold text-gray-500">{commonProps.t.billTo}</p>
-                    <p className="font-bold">{commonProps.invoice.clientName}</p>
-                    <p className="text-sm whitespace-pre-line">{commonProps.invoice.clientAddress}</p>
+                    <p className="font-bold">{commonProps.invoice.client.name}</p>
+                    <p className="text-sm whitespace-pre-line">{commonProps.invoice.client.address}</p>
                 </div>
                 <div className="text-right space-y-1">
                     <p className="text-sm font-semibold text-gray-500">{commonProps.t.invoiceDate}</p>
@@ -185,23 +184,23 @@ const ModernTemplatePage = ({ pageItems, pageIndex, totalPages, ...commonProps }
         <div data-element="page-content" className="flex-grow">
             <div className="flex justify-between items-center pb-4 border-b-4" style={{borderColor: commonProps.accentColor}} data-element="header">
                  <div>
-                    {commonProps.logoUrl ? (
-                        <Image src={commonProps.logoUrl} alt={`${commonProps.invoice.companyName} Logo`} width={100} height={40} className="object-contain" />
+                    {commonProps.invoice.business.logoUrl ? (
+                        <Image src={commonProps.invoice.business.logoUrl} alt={`${commonProps.invoice.business.name} Logo`} width={100} height={40} className="object-contain" />
                     ) : (
-                        <h1 className="text-2xl font-bold font-headline">{commonProps.invoice.companyName}</h1>
+                        <h1 className="text-2xl font-bold font-headline">{commonProps.invoice.business.name}</h1>
                     )}
                  </div>
                  <h2 className="text-3xl font-bold uppercase" style={{color: commonProps.accentColor}}>{commonProps.t.invoice}</h2>
             </div>
              <section className="flex justify-between my-8 text-sm" data-element="client-details">
                 <div className="space-y-1">
-                    <p className="font-bold">{commonProps.invoice.companyName}</p>
-                    <p className="whitespace-pre-line">{commonProps.invoice.companyAddress}</p>
-                    <p>{commonProps.invoice.companyPhone}</p>
+                    <p className="font-bold">{commonProps.invoice.business.name}</p>
+                    <p className="whitespace-pre-line">{commonProps.invoice.business.address}</p>
+                    <p>{commonProps.invoice.business.phone}</p>
                 </div>
                 <div className="space-y-1 text-right">
-                    <p className="font-bold">{commonProps.invoice.clientName}</p>
-                    <p className="whitespace-pre-line">{commonProps.invoice.clientAddress}</p>
+                    <p className="font-bold">{commonProps.invoice.client.name}</p>
+                    <p className="whitespace-pre-line">{commonProps.invoice.client.address}</p>
                 </div>
             </section>
              <section className="flex justify-between my-8 text-sm" data-element="invoice-meta">
@@ -230,16 +229,16 @@ const MinimalistTemplatePage: FC<PageProps> = ({ pageItems, pageIndex, totalPage
         <div data-element="page-content" className="flex-grow">
             <header data-element="header" className="mb-12">
                 <div className="flex justify-between items-start">
-                    <h1 className="text-2xl font-bold">{commonProps.invoice.companyName}</h1>
+                    <h1 className="text-2xl font-bold">{commonProps.invoice.business.name}</h1>
                     <h2 className="text-2xl font-light uppercase text-gray-500">{commonProps.t.invoice}</h2>
                 </div>
-                <p className="text-xs text-gray-500 mt-1">{commonProps.invoice.companyAddress}</p>
+                <p className="text-xs text-gray-500 mt-1">{commonProps.invoice.business.address}</p>
             </header>
             <section data-element="client-details" className="grid grid-cols-3 gap-4 mb-12 text-xs">
                 <div className="space-y-1">
                     <p className="text-gray-500 uppercase tracking-widest">Billed To</p>
-                    <p className="font-medium">{commonProps.invoice.clientName}</p>
-                    <p>{commonProps.invoice.clientAddress}</p>
+                    <p className="font-medium">{commonProps.invoice.client.name}</p>
+                    <p>{commonProps.invoice.client.address}</p>
                 </div>
                 <div className="space-y-1">
                     <p className="text-gray-500 uppercase tracking-widest">Invoice #</p>
@@ -263,8 +262,8 @@ const CreativeTemplatePage: FC<PageProps> = ({ pageItems, pageIndex, totalPages,
         <div data-element="page-content" className="flex-grow z-10">
             <header data-element="header" className="flex justify-between items-center mb-12">
                 <div>
-                    {commonProps.logoUrl && <Image src={commonProps.logoUrl} alt="logo" width={80} height={80} className="rounded-full" />}
-                    <h1 className="text-3xl font-bold mt-2">{commonProps.invoice.companyName}</h1>
+                    {commonProps.invoice.business.logoUrl && <Image src={commonProps.invoice.business.logoUrl} alt="logo" width={80} height={80} className="rounded-full" />}
+                    <h1 className="text-3xl font-bold mt-2">{commonProps.invoice.business.name}</h1>
                 </div>
                 <div className="text-right">
                     <h2 className="text-4xl font-extrabold uppercase" style={{color: commonProps.accentColor}}>{commonProps.t.invoice}</h2>
@@ -273,8 +272,8 @@ const CreativeTemplatePage: FC<PageProps> = ({ pageItems, pageIndex, totalPages,
             </header>
             <section data-element="client-details" className="mb-10 text-sm">
                 <p className="text-gray-500">Billed to:</p>
-                <p className="font-bold text-lg">{commonProps.invoice.clientName}</p>
-                <p>{commonProps.invoice.clientAddress}</p>
+                <p className="font-bold text-lg">{commonProps.invoice.client.name}</p>
+                <p>{commonProps.invoice.client.address}</p>
             </section>
             <ItemsTable items={pageItems} {...commonProps} accentColor={commonProps.accentColor} />
         </div>
@@ -287,15 +286,15 @@ const ElegantTemplatePage: FC<PageProps> = ({ pageItems, pageIndex, totalPages, 
     <div className={`p-10 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{minHeight: '1056px', fontFamily: commonProps.invoice.fontFamily, fontSize: `${commonProps.invoice.fontSize}px`, backgroundColor: commonProps.backgroundColor, color: commonProps.textColor }}>
         <div data-element="page-content" className="flex-grow">
             <header data-element="header" className="text-center mb-16">
-                {commonProps.logoUrl && <Image src={commonProps.logoUrl} alt="logo" width={100} height={50} className="mx-auto mb-4 object-contain" />}
-                <h1 className="text-4xl font-bold tracking-tight">{commonProps.invoice.companyName}</h1>
-                <p className="text-xs text-gray-500 mt-2 tracking-widest">{commonProps.invoice.companyAddress}</p>
+                {commonProps.invoice.business.logoUrl && <Image src={commonProps.invoice.business.logoUrl} alt="logo" width={100} height={50} className="mx-auto mb-4 object-contain" />}
+                <h1 className="text-4xl font-bold tracking-tight">{commonProps.invoice.business.name}</h1>
+                <p className="text-xs text-gray-500 mt-2 tracking-widest">{commonProps.invoice.business.address}</p>
             </header>
             <div className="w-full h-px bg-gray-300 mb-10"></div>
             <section data-element="meta" className="flex justify-between items-center mb-10 text-sm">
                 <div>
-                    <p className="font-bold">Billed to: {commonProps.invoice.clientName}</p>
-                    <p>{commonProps.invoice.clientAddress}</p>
+                    <p className="font-bold">Billed to: {commonProps.invoice.client.name}</p>
+                    <p>{commonProps.invoice.client.address}</p>
                 </div>
                 <div className="text-right">
                     <p><span className="font-bold">Invoice Number:</span> {commonProps.invoice.invoiceNumber}</p>
@@ -310,19 +309,19 @@ const ElegantTemplatePage: FC<PageProps> = ({ pageItems, pageIndex, totalPages, 
 
 // --- TEMPLATE: USA ---
 const UsaTemplatePage: FC<PageProps> = ({ pageItems, pageIndex, totalPages, ...commonProps }) => {
-    const { invoice, logoUrl, accentColor, total, subtotal, currencySymbol } = commonProps;
+    const { invoice, accentColor, total, subtotal, currencySymbol } = commonProps;
 
     return (
         <div className={`invoice-page ${pageIndex < totalPages - 1 ? "page-break" : ""}`} style={{fontFamily: commonProps.invoice.fontFamily, fontSize: `${commonProps.invoice.fontSize}px`, backgroundColor: commonProps.backgroundColor, color: commonProps.textColor }}>
             <div className="p-8 m-4 border-2" style={{ borderColor: accentColor }}>
                 <header className="grid grid-cols-2 gap-10 mb-8" data-element="header">
                      <div>
-                        {logoUrl ? (
-                            <Image src={logoUrl} alt={`${invoice.companyName} Logo`} width={160} height={80} className="object-contain mb-2" data-ai-hint="logo" />
+                        {invoice.business.logoUrl ? (
+                            <Image src={invoice.business.logoUrl} alt={`${invoice.business.name} Logo`} width={160} height={80} className="object-contain mb-2" data-ai-hint="logo" />
                         ) : (
-                            <h1 className="text-3xl font-bold mb-1" style={{color: accentColor}}>{invoice.companyName}</h1>
+                            <h1 className="text-3xl font-bold mb-1" style={{color: accentColor}}>{invoice.business.name}</h1>
                         )}
-                        <p className="text-xs whitespace-pre-line">{invoice.companyAddress}</p>
+                        <p className="text-xs whitespace-pre-line">{invoice.business.address}</p>
                     </div>
                      <div className="text-right">
                         <h2 className="text-4xl font-bold">INVOICE</h2>
@@ -334,8 +333,8 @@ const UsaTemplatePage: FC<PageProps> = ({ pageItems, pageIndex, totalPages, ...c
                 </header>
                  <section className="mb-6 text-xs" data-element="client-details">
                     <div className="grid grid-cols-[max-content_1fr] gap-x-4 gap-y-1 p-3 bg-gray-50 rounded-md">
-                        <span className="font-bold text-gray-600">Billed To:</span><span className="font-medium">{invoice.clientName}</span>
-                        <span className="font-bold text-gray-600">Address:</span><span className="whitespace-pre-line font-medium">{invoice.clientAddress}</span>
+                        <span className="font-bold text-gray-600">Billed To:</span><span className="font-medium">{invoice.client.name}</span>
+                        <span className="font-bold text-gray-600">Address:</span><span className="whitespace-pre-line font-medium">{invoice.client.address}</span>
                         {invoice.poNumber && <><span className="font-bold text-gray-600">PO Number:</span><span className="font-medium">{invoice.poNumber}</span></>}
                     </div>
                 </section>
@@ -351,7 +350,7 @@ const UsaTemplatePage: FC<PageProps> = ({ pageItems, pageIndex, totalPages, ...c
                             {pageItems?.filter(Boolean).map((item) => (
                                 <tr key={item.id} data-element="table-row">
                                     <td className="border p-2 align-top h-8 whitespace-pre-line pl-6">{item.name}</td>
-                                    <td className="border p-2 text-right align-top">{currencySymbol}{(item.quantity * ((item as any).rate || 0)).toFixed(2)}</td>
+                                    <td className="border p-2 text-right align-top">{currencySymbol}{(item.quantity * ((item as any).unitPrice || 0)).toFixed(2)}</td>
                                 </tr>
                             ))}
                              {[...Array(Math.max(0, 10 - (pageItems?.length || 0)))].map((_, i) => (
@@ -366,17 +365,17 @@ const UsaTemplatePage: FC<PageProps> = ({ pageItems, pageIndex, totalPages, ...c
                                 <td className="border p-2 text-right font-bold">Subtotal</td>
                                 <td className="border p-2 text-right">{currencySymbol}{subtotal.toFixed(2)}</td>
                             </tr>
-                            {invoice.tax > 0 && <tr>
-                                <td className="border p-2 text-right font-bold">Tax ({invoice.tax}%)</td>
+                            {invoice.summary.taxPercentage > 0 && <tr>
+                                <td className="border p-2 text-right font-bold">Tax ({invoice.summary.taxPercentage}%)</td>
                                 <td className="border p-2 text-right">{currencySymbol}{commonProps.taxAmount.toFixed(2)}</td>
                             </tr>}
-                            {invoice.discount > 0 && <tr>
-                                <td className="border p-2 text-right font-bold">Discount ({invoice.discount}%)</td>
+                            {invoice.summary.discount > 0 && <tr>
+                                <td className="border p-2 text-right font-bold">Discount ({invoice.summary.discount}%)</td>
                                 <td className="border p-2 text-right text-red-600">-{currencySymbol}{commonProps.discountAmount.toFixed(2)}</td>
                             </tr>}
-                             {invoice.amountPaid > 0 && <tr>
+                             {(invoice.amountPaid || 0) > 0 && <tr>
                                 <td className="border p-2 text-right font-bold">Amount Paid</td>
-                                <td className="border p-2 text-right text-green-600">-{currencySymbol}{invoice.amountPaid.toFixed(2)}</td>
+                                <td className="border p-2 text-right text-green-600">-{currencySymbol}{(invoice.amountPaid || 0).toFixed(2)}</td>
                             </tr>}
                             <tr className="bg-gray-100 font-bold text-base">
                                 <td className="border p-2 text-right">Total Due</td>
@@ -412,24 +411,24 @@ const PAGE_PADDING = 80; // 40px top + 40px bottom
 const AVAILABLE_HEIGHT = PAGE_HEIGHT - PAGE_PADDING;
 
 
-const InvoicePreviewInternal: FC<InvoicePreviewProps> = ({ invoice, logoUrl, accentColor, backgroundColor, textColor, id = 'invoice-preview', isPrint = false }) => {
+const InvoicePreviewInternal: FC<InvoicePreviewProps> = ({ invoice, accentColor, backgroundColor, textColor, id = 'invoice-preview', isPrint = false }) => {
   const [paginatedItems, setPaginatedItems] = useState<LineItem[][]>([]);
   const [needsRemeasure, setNeedsRemeasure] = useState(true);
   const containerRef = useRef<HTMLDivElement>(null);
 
   const t = locales[invoice.language as keyof typeof locales] || locales.en;
   
-  const subtotal = invoice.items.reduce((acc, item) => acc + item.quantity * ((item as any).rate || 0), 0);
-  const taxAmount = (subtotal * invoice.tax) / 100;
-  const discountAmount = (subtotal * invoice.discount) / 100;
-  const total = subtotal + taxAmount - discountAmount + (invoice.shippingCost || 0);
+  const subtotal = invoice.lineItems.reduce((acc, item) => acc + item.quantity * ((item as any).unitPrice || 0), 0);
+  const taxAmount = (subtotal * invoice.summary.taxPercentage) / 100;
+  const discountAmount = invoice.summary.discount;
+  const total = subtotal + taxAmount - discountAmount + (invoice.summary.shippingCost || 0);
   const balanceDue = total - (invoice.amountPaid || 0);
   const currencySymbol = currencySymbols[invoice.currency] || '$';
 
   useEffect(() => {
     setNeedsRemeasure(true);
-    setPaginatedItems([invoice.items]);
-  }, [invoice, logoUrl, accentColor, t]);
+    setPaginatedItems([invoice.lineItems]);
+  }, [invoice, accentColor, t]);
 
 
   const previewStyle = {
@@ -495,13 +494,13 @@ const InvoicePreviewInternal: FC<InvoicePreviewProps> = ({ invoice, logoUrl, acc
                 currentPageHeight += tableHeaderHeight;
             }
 
-            newPages[currentPage].push(invoice.items[index]);
+            newPages[currentPage].push(invoice.lineItems[index]);
             currentPageHeight += itemHeight;
         });
         
         const lastPageItemHeight = (newPages[currentPage] || []).reduce((total, item) => {
             if (!item) return total;
-            const itemIndex = invoice.items.findIndex(i => i.id === item.id);
+            const itemIndex = invoice.lineItems.findIndex(i => i.id === item.id);
             return total + (allRows[itemIndex]?.offsetHeight || 0);
         }, 0);
 
@@ -524,12 +523,11 @@ const InvoicePreviewInternal: FC<InvoicePreviewProps> = ({ invoice, logoUrl, acc
     const timer = setTimeout(measureAndPaginate, 50);
     return () => clearTimeout(timer);
 
-  }, [invoice.items, isPrint, needsRemeasure, TemplateComponent, invoice]);
+  }, [invoice.lineItems, isPrint, needsRemeasure, TemplateComponent, invoice]);
 
 
   const commonProps: Omit<PageProps, 'pageItems' | 'pageIndex' | 'totalPages'> = {
     invoice,
-    logoUrl,
     accentColor,
     backgroundColor,
     textColor,
@@ -543,7 +541,7 @@ const InvoicePreviewInternal: FC<InvoicePreviewProps> = ({ invoice, logoUrl, acc
   };
   
   if (isPrint) {
-    const itemsToRender = needsRemeasure ? [invoice.items] : paginatedItems;
+    const itemsToRender = needsRemeasure ? [invoice.lineItems] : paginatedItems;
     
     return (
       <div id={id} ref={containerRef}>
@@ -566,7 +564,7 @@ const InvoicePreviewInternal: FC<InvoicePreviewProps> = ({ invoice, logoUrl, acc
       <CardContent className="p-0" style={{color: textColor}}>
           <TemplateComponent
             {...commonProps}
-            pageItems={invoice.items}
+            pageItems={invoice.lineItems}
             pageIndex={0}
             totalPages={1}
           />

@@ -13,38 +13,64 @@ export interface LineItem {
 
 export type DocumentStatus = 'draft' | 'sent' | 'paid' | 'overdue' | 'accepted' | 'rejected' | 'expired';
 
+export type InvoiceCategory = 
+  | "General Services"
+  | "Construction"
+  | "Plumbing"
+  | "Electrical Services"
+  | "HVAC Services"
+  | "Roofing"
+  | "Landscaping & Lawn Care"
+  | "Cleaning Services"
+  | "Freelance / Digital Services"
+  | "Consulting"
+  | "Legal Services"
+  | "Medical / Healthcare"
+  | "Auto Repair"
+  | "E-commerce / Online Store"
+  | "Rental / Property";
+
 export interface Invoice {
   id: string; 
   userId: string;
-  companyName: string;
-  companyPhone: string;
-  companyAddress: string;
-  clientName: string;
-  clientAddress: string;
-  clientEmail: string;
-  shippingAddress: string;
+  business: BusinessInfo;
+  client: ClientInfo;
   invoiceNumber: string;
-  poNumber: string;
   invoiceDate: Date;
   dueDate: Date;
-  trackingNumber: string;
-  items: LineItem[];
-  tax: number;
-  discount: number;
-  shippingCost: number;
-  amountPaid: number;
+  lineItems: LineItem[];
+  summary: EstimateSummary;
   paymentInstructions: string;
   status: DocumentStatus;
   currency: string;
   language: string;
   template: string;
   documentType: 'invoice';
+  category: InvoiceCategory;
   fontFamily?: string;
   fontSize?: number;
   backgroundColor?: string;
   textColor?: string;
   createdAt?: any;
   updatedAt?: any;
+  poNumber?: string;
+  amountPaid?: number;
+
+  // Category specific data
+  construction?: ConstructionInfo;
+  plumbing?: PlumbingInfo;
+  electrical?: ElectricalInfo;
+  hvac?: HVACInfo;
+  roofing?: RoofingInfo;
+  landscaping?: LandscapingInfo;
+  cleaning?: CleaningInfo;
+  freelance?: ITFreelanceInfo;
+  consulting?: any; // Define if needed
+  legal?: any; // Define if needed
+  medical?: any; // Define if needed
+  autoRepair?: AutoRepairInfo;
+  ecommerce?: any; // Define if needed
+  rental?: any; // Define if needed
 }
 
 export interface InsuranceDocument {
@@ -94,7 +120,7 @@ export interface BusinessInfo {
   name: string;
   address: string;
   phone: string;
-  email: string;
+  email:string;
   website: string;
   licenseNumber: string;
   logoUrl?: string;

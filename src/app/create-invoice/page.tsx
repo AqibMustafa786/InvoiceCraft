@@ -1,6 +1,7 @@
+
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { createPortal } from 'react-dom';
 import type { Invoice, LineItem } from '@/lib/types';
 import { InvoiceForm } from '@/components/invoice-form';
@@ -26,40 +27,60 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/co
 
 const INVOICES_COLLECTION = 'invoices';
 
-const getInitialLineItem = (): LineItem => ({ id: crypto.randomUUID(), name: '', quantity: 1, rate: 0, unitPrice: 0 });
+const getInitialLineItem = (): LineItem => ({ id: crypto.randomUUID(), name: '', quantity: 1, unitPrice: 0, taxable: true });
 
 const getInitialInvoice = (): Omit<Invoice, 'userId'> => ({
-  id: crypto.randomUUID(),
-  companyName: 'Your Company',
-  companyPhone: '+1 (123) 456-7890',
-  companyAddress: '123 Main St, Anytown, USA',
-  clientName: 'Client Company',
-  clientAddress: '456 Oak Ave, Someplace, USA',
-  clientEmail: '',
-  shippingAddress: '',
-  invoiceNumber: 'INV-001',
-  poNumber: '',
+  id: '',
+  invoiceNumber: '',
   invoiceDate: new Date(),
-  dueDate: addDays(new Date(), 7),
-  trackingNumber: '',
-  items: [{ ...getInitialLineItem(), name: 'Sample Item', rate: 100 }],
-  tax: 5,
-  discount: 0,
-  shippingCost: 0,
-  amountPaid: 0,
-  paymentInstructions: 'Thank you for your business.',
+  dueDate: addDays(new Date(), 30),
   status: 'draft',
-  currency: 'USD',
-  language: 'en',
+  
+  business: {
+    name: 'Your Company',
+    address: '123 Main St, Anytown, USA 12345',
+    phone: '+1 (123) 456-7890',
+    email: 'contact@yourcompany.com',
+    website: 'www.yourcompany.com',
+    licenseNumber: 'LICENSE-12345',
+    logoUrl: '',
+    taxId: '',
+  },
+
+  client: {
+    name: 'Client Name',
+    companyName: 'Client Company',
+    address: '456 Oak Ave, Someplace, USA 54321',
+    phone: '+1 (987) 654-3210',
+    email: 'client@example.com',
+  },
+  
+  lineItems: [{ ...getInitialLineItem(), name: 'Sample Service (e.g., Website Development)', unitPrice: 1500 }],
+
+  summary: {
+    subtotal: 1500,
+    taxPercentage: 8.25,
+    taxAmount: 123.75,
+    discount: 0,
+    grandTotal: 1623.75,
+    shippingCost: 0,
+  },
+
+  paymentInstructions: 'Thank you for your business. Please make payment to the account specified below.',
+  
   template: 'default',
   documentType: 'invoice',
+  category: 'General Services',
+  language: 'en',
+  currency: 'USD',
   fontFamily: 'Inter',
   fontSize: 10,
   backgroundColor: '#FFFFFF',
   textColor: '#374151',
 });
 
-function PrintableInvoice({ doc, logoUrl, accentColor, backgroundColor, textColor }: { doc: Invoice, logoUrl: string | null, accentColor: string, backgroundColor: string, textColor: string }) {
+
+function PrintableInvoice({ doc, accentColor, backgroundColor, textColor }: { doc: Invoice, accentColor: string, backgroundColor: string, textColor: string }) {
     const [isMounted, setIsMounted] = useState(false);
 
     useEffect(() => {
@@ -76,7 +97,7 @@ function PrintableInvoice({ doc, logoUrl, accentColor, backgroundColor, textColo
     }
 
     return createPortal(
-        <ClientInvoicePreview invoice={doc} logoUrl={logoUrl} accentColor={accentColor} backgroundColor={backgroundColor} textColor={textColor} id="invoice-preview-print" isPrint={true} />,
+        <ClientInvoicePreview invoice={doc} accentColor={accentColor} backgroundColor={backgroundColor} textColor={textColor} id="invoice-preview-print" isPrint={true} />,
         printRoot
     );
 }
@@ -84,7 +105,6 @@ function PrintableInvoice({ doc, logoUrl, accentColor, backgroundColor, textColo
 
 export default function CreateInvoicePage() {
   const [invoice, setInvoice] = useState<Invoice | null>(null);
-  const [logoUrl, setLogoUrl] = useState<string | null>(null);
   const [accentColor, setAccentColor] = useState<string>('hsl(var(--primary))');
   const [backgroundColor, setBackgroundColor] = useState<string>('#FFFFFF');
   const [textColor, setTextColor] = useState<string>('#374151');
@@ -97,10 +117,29 @@ export default function CreateInvoicePage() {
   const docRef = useMemoFirebase(() => draftId && firestore ? doc(firestore, INVOICES_COLLECTION, draftId) : null, [draftId, firestore]);
   const { data: remoteDraft, isLoading: isDraftLoading } = useDoc<Invoice>(docRef);
 
+  const computeSummary = useCallback((inv: Invoice): Invoice => {
+    const subtotal = inv.lineItems.reduce((acc, item) => acc + (Number(item.quantity) || 0) * (Number(item.unitPrice) || 0), 0);
+    const taxableTotal = inv.lineItems.filter(i => i.taxable !== false).reduce((s, i) => s + ((Number(i.quantity) || 0) * (Number(i.unitPrice) || 0)), 0);
+    const taxPercentage = Number(inv.summary.taxPercentage) || 0;
+    const taxAmount = taxableTotal * (taxPercentage / 100);
+    const discountAmount = Number(inv.summary.discount) || 0;
+    const shippingCost = Number(inv.summary.shippingCost) || 0;
+    const grandTotal = subtotal + taxAmount - discountAmount + shippingCost;
+
+    return {
+        ...inv,
+        summary: {
+            ...inv.summary,
+            subtotal,
+            taxAmount,
+            grandTotal,
+        }
+    };
+  }, []);
+
   useEffect(() => {
     if (isUserLoading || (draftId && isDraftLoading)) return;
     if (!user) {
-        // This check will be handled by AuthProvider, but as a fallback:
         router.push('/login');
         return;
     }
@@ -108,24 +147,34 @@ export default function CreateInvoicePage() {
     let initialInvoice: Invoice;
 
     if (draftId && remoteDraft) {
-        const fromJSON = (key: string, value: any) => {
+       const baseInvoice = getInitialInvoice();
+       const fromJSON = (key: string, value: any) => {
            if (['invoiceDate', 'dueDate', 'createdAt', 'updatedAt'].includes(key) && value) {
                return value.toDate ? value.toDate() : (isValid(new Date(value)) ? new Date(value) : null);
            }
            return value;
        };
        const loadedDraft = JSON.parse(JSON.stringify(remoteDraft), fromJSON);
-       initialInvoice = { ...getInitialInvoice(), ...loadedDraft, userId: user.uid };
+       
+       initialInvoice = {
+         ...baseInvoice,
+         ...loadedDraft,
+         userId: user.uid,
+         business: { ...baseInvoice.business, ...loadedDraft.business },
+         client: { ...baseInvoice.client, ...loadedDraft.client },
+         summary: { ...baseInvoice.summary, ...loadedDraft.summary },
+       };
+
     } else {
         const newInvoice = getInitialInvoice();
+        newInvoice.id = crypto.randomUUID();
         newInvoice.invoiceNumber = `INV-${new Date().getFullYear()}-${String(Math.floor(Math.random() * 1000)).padStart(3, '0')}`;
-        initialInvoice = { ...newInvoice, userId: user.uid };
+        initialInvoice = {...newInvoice, userId: user.uid};
     }
     
     setInvoice(initialInvoice);
     setBackgroundColor(initialInvoice.backgroundColor || '#FFFFFF');
     setTextColor(initialInvoice.textColor || '#374151');
-    setLogoUrl(null); // Will be loaded from invoice data if available
     
     if (typeof window !== 'undefined' && window.document) {
         const computedColor = getComputedStyle(window.document.documentElement).getPropertyValue('--primary').trim();
@@ -134,6 +183,15 @@ export default function CreateInvoicePage() {
         }
     }
   }, [draftId, remoteDraft, isDraftLoading, user, isUserLoading, router]);
+
+  useEffect(() => {
+    if (invoice) {
+        const newInvoice = computeSummary(invoice);
+         if (JSON.stringify(newInvoice.summary) !== JSON.stringify(invoice.summary)) {
+            setInvoice(newInvoice);
+        }
+    }
+  }, [invoice, computeSummary]);
 
 
   const handlePrint = () => {
@@ -181,9 +239,9 @@ export default function CreateInvoicePage() {
   const handleNew = () => {
     if(!user) return;
     const newInvoice = {...getInitialInvoice(), userId: user.uid};
+    newInvoice.id = crypto.randomUUID();
     newInvoice.invoiceNumber = `INV-${String(Math.floor(Math.random() * 1000)).padStart(3, '0')}`;
     setInvoice(newInvoice);
-    setLogoUrl(null);
     if (typeof window !== 'undefined' && window.document) {
         const computedColor = getComputedStyle(window.document.documentElement).getPropertyValue('--primary').trim();
         if (computedColor) {
@@ -247,8 +305,6 @@ export default function CreateInvoicePage() {
                 <InvoiceForm 
                   invoice={invoice} 
                   setInvoice={setInvoice} 
-                  logoUrl={logoUrl}
-                  setLogoUrl={setLogoUrl}
                   accentColor={accentColor}
                   setAccentColor={setAccentColor}
                   backgroundColor={backgroundColor}
@@ -282,13 +338,13 @@ export default function CreateInvoicePage() {
                 </Sheet>
                 <div>
                   <h2 className="text-2xl font-bold font-headline mb-4">Live Preview</h2>
-                  <ClientInvoicePreview invoice={invoice} logoUrl={logoUrl} accentColor={accentColor} backgroundColor={backgroundColor} textColor={textColor} />
+                  <ClientInvoicePreview invoice={invoice} accentColor={accentColor} backgroundColor={backgroundColor} textColor={textColor} />
                 </div>
             </div>
           </div>
         </div>
       </div>
-      {invoice && <PrintableInvoice doc={invoice} logoUrl={logoUrl} accentColor={accentColor} backgroundColor={backgroundColor} textColor={textColor} />}
+      {invoice && <PrintableInvoice doc={invoice} accentColor={accentColor} backgroundColor={backgroundColor} textColor={textColor} />}
     </>
   );
 }

@@ -1,14 +1,15 @@
+
 'use client';
 
 import { ChangeEvent, Dispatch, SetStateAction, useState, useEffect } from 'react';
-import type { Invoice, LineItem } from '@/lib/types';
+import type { Invoice, LineItem, InvoiceCategory } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { DatePicker } from '@/components/ui/datepicker';
-import { ImageUp, Plus, Trash2, Palette, X, Mail, Truck, Hash, Wallet, Phone, PaintBucket, Paintbrush, Type } from 'lucide-react';
+import { ImageUp, Plus, Trash2, Palette, X, Mail, Truck, Hash, Wallet, Phone, PaintBucket, Paintbrush, Type, Briefcase, Building, FileText, User } from 'lucide-react';
 import Image from 'next/image';
 import {
   Select,
@@ -17,12 +18,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Checkbox } from './ui/checkbox';
 
 interface InvoiceFormProps {
   invoice: Invoice;
   setInvoice: Dispatch<SetStateAction<Invoice>>;
-  logoUrl: string | null;
-  setLogoUrl: Dispatch<SetStateAction<string | null>>;
   accentColor: string;
   setAccentColor: Dispatch<SetStateAction<string>>;
   backgroundColor: string;
@@ -48,11 +48,30 @@ const fonts = [
     { value: 'system-ui', label: 'System Default' },
 ]
 
-export function InvoiceForm({ invoice, setInvoice, logoUrl, setLogoUrl, accentColor, setAccentColor, backgroundColor, setBackgroundColor, textColor, setTextColor, toast }: InvoiceFormProps) {
+const categories: InvoiceCategory[] = [
+    "General Services",
+    "Construction",
+    "Plumbing",
+    "Electrical Services",
+    "HVAC Services",
+    "Roofing",
+    "Landscaping & Lawn Care",
+    "Cleaning Services",
+    "Freelance / Digital Services",
+    "Consulting",
+    "Legal Services",
+    "Medical / Healthcare",
+    "Auto Repair",
+    "E-commerce / Online Store",
+    "Rental / Property",
+];
+
+export function InvoiceForm({ invoice, setInvoice, accentColor, setAccentColor, backgroundColor, setBackgroundColor, textColor, setTextColor, toast }: InvoiceFormProps) {
   const [bulkAddCount, setBulkAddCount] = useState(10);
   const [accentColorInput, setAccentColorInput] = useState(accentColor);
   const [bgColorInput, setBgColorInput] = useState(backgroundColor);
   const [textColorInput, setTextColorInput] = useState(textColor);
+  const [logoUrl, setLogoUrl] = useState<string | null>(invoice.business.logoUrl || null);
   
   useEffect(() => {
     setAccentColorInput(accentColor);
@@ -67,12 +86,35 @@ export function InvoiceForm({ invoice, setInvoice, logoUrl, setLogoUrl, accentCo
   }, [textColor]);
 
   useEffect(() => {
+    if (logoUrl !== invoice.business.logoUrl) {
+      setInvoice(prev => ({
+          ...prev,
+          business: {
+              ...prev.business,
+              logoUrl: logoUrl || '',
+          }
+      }))
+    }
+  }, [logoUrl, setInvoice, invoice.business.logoUrl]);
+
+  useEffect(() => {
      setInvoice(prev => ({ ...prev, backgroundColor: backgroundColor }));
   }, [backgroundColor, setInvoice]);
 
   useEffect(() => {
     setInvoice(prev => ({ ...prev, textColor: textColor }));
  }, [textColor, setInvoice]);
+
+  const handleNestedChange = (section: 'business' | 'client' | 'summary', e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setInvoice(prev => ({
+      ...prev,
+      [section]: {
+        ...prev[section],
+        [name]: value
+      }
+    }));
+  };
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -89,17 +131,28 @@ export function InvoiceForm({ invoice, setInvoice, logoUrl, setLogoUrl, accentCo
 
   const handleNumberChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setInvoice(prev => ({ ...prev, [name]: parseFloat(value) || 0 }));
+    const [section, field] = name.split('.');
+    if (section === 'summary') {
+        setInvoice(prev => ({
+        ...prev,
+        [section as 'summary']: {
+            ...prev[section as 'summary'],
+            [field]: parseFloat(value) || 0,
+        }
+        }));
+    } else {
+        setInvoice(prev => ({ ...prev, [name]: parseFloat(value) || 0 }));
+    }
   }
 
-  const handleItemChange = (index: number, field: keyof LineItem, value: string | number) => {
-    const newItems = [...invoice.items];
+  const handleItemChange = (index: number, field: keyof Omit<LineItem, 'id'>, value: string | number | boolean) => {
+    const newItems = [...invoice.lineItems];
     (newItems[index] as any)[field] = value;
-    setInvoice(prev => ({ ...prev, items: newItems }));
+    setInvoice(prev => ({ ...prev, lineItems: newItems }));
   };
 
   const addItem = () => {
-     if (invoice.items.length >= 50) {
+     if (invoice.lineItems.length >= 50) {
        toast({
         title: "Item Limit Reached",
         description: "You cannot add more than 50 items to a single invoice.",
@@ -109,7 +162,7 @@ export function InvoiceForm({ invoice, setInvoice, logoUrl, setLogoUrl, accentCo
     }
     setInvoice(prev => ({
       ...prev,
-      items: [...prev.items, { id: crypto.randomUUID(), name: '', quantity: 1, rate: 0, unitPrice: 0 }],
+      lineItems: [...prev.lineItems, { id: crypto.randomUUID(), name: '', quantity: 1, unitPrice: 0, taxable: true }],
     }));
   };
   
@@ -117,10 +170,10 @@ export function InvoiceForm({ invoice, setInvoice, logoUrl, setLogoUrl, accentCo
     const count = Number(bulkAddCount);
     if (count <= 0) return;
 
-    if (invoice.items.length + count > 50) {
+    if (invoice.lineItems.length + count > 50) {
       toast({
         title: "Item Limit Exceeded",
-        description: `You can only add ${50 - invoice.items.length} more items. The maximum is 50.`,
+        description: `You can only add ${50 - invoice.lineItems.length} more items. The maximum is 50.`,
         variant: "destructive",
       });
       return;
@@ -130,19 +183,19 @@ export function InvoiceForm({ invoice, setInvoice, logoUrl, setLogoUrl, accentCo
       id: crypto.randomUUID(),
       name: '',
       quantity: 1,
-      rate: 0,
       unitPrice: 0,
+      taxable: true,
     }));
 
     setInvoice(prev => ({
       ...prev,
-      items: [...prev.items, ...newItems],
+      lineItems: [...prev.lineItems, ...newItems],
     }));
   };
 
   const removeItem = (index: number) => {
-    const newItems = invoice.items.filter((_, i) => i !== index);
-    setInvoice(prev => ({ ...prev, items: newItems }));
+    const newItems = invoice.lineItems.filter((_, i) => i !== index);
+    setInvoice(prev => ({ ...prev, lineItems: newItems }));
   };
 
   const handleLogoUpload = (e: ChangeEvent<HTMLInputElement>) => {
@@ -296,22 +349,13 @@ export function InvoiceForm({ invoice, setInvoice, logoUrl, setLogoUrl, accentCo
           <CardTitle>Bill From</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="companyName">Company Name</Label>
-              <Input id="companyName" name="companyName" value={invoice.companyName} onChange={handleInputChange} />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="companyPhone">Phone #</Label>
-              <div className="relative flex items-center">
-                  <Phone className="absolute left-3 h-5 w-5 text-muted-foreground" />
-                  <Input id="companyPhone" name="companyPhone" value={invoice.companyPhone} onChange={handleInputChange} className="pl-10" />
-              </div>
-            </div>
+          <div className="space-y-2">
+            <Label htmlFor="businessName">Business Name</Label>
+            <Input id="businessName" name="name" value={invoice.business.name} onChange={(e) => handleNestedChange('business', e)} />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="companyAddress">Company Address</Label>
-            <Textarea id="companyAddress" name="companyAddress" value={invoice.companyAddress} onChange={handleInputChange} />
+            <Label htmlFor="businessAddress">Business Address</Label>
+            <Textarea id="businessAddress" name="address" value={invoice.business.address} onChange={(e) => handleNestedChange('business', e)} />
           </div>
         </CardContent>
       </Card>
@@ -323,22 +367,18 @@ export function InvoiceForm({ invoice, setInvoice, logoUrl, setLogoUrl, accentCo
         <CardContent className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="clientName">Client Name</Label>
-            <Input id="clientName" name="clientName" value={invoice.clientName} onChange={handleInputChange} />
+            <Input id="clientName" name="name" value={invoice.client.name} onChange={(e) => handleNestedChange('client', e)} />
           </div>
            <div className="space-y-2">
             <Label htmlFor="clientEmail">Client Email</Label>
             <div className="relative flex items-center">
                 <Mail className="absolute left-3 h-5 w-5 text-muted-foreground" />
-                <Input id="clientEmail" name="clientEmail" value={invoice.clientEmail || ''} onChange={handleInputChange} className="pl-10" placeholder="client@example.com" />
+                <Input id="clientEmail" name="email" value={invoice.client.email || ''} onChange={(e) => handleNestedChange('client', e)} className="pl-10" placeholder="client@example.com" />
             </div>
           </div>
           <div className="space-y-2">
             <Label htmlFor="clientAddress">Billing Address</Label>
-            <Textarea id="clientAddress" name="clientAddress" value={invoice.clientAddress} onChange={handleInputChange} />
-          </div>
-          <div className="space-y-2">
-              <Label htmlFor="shippingAddress">Shipping Address (optional)</Label>
-              <Textarea id="shippingAddress" name="shippingAddress" value={invoice.shippingAddress} onChange={handleInputChange} placeholder="Leave blank to use billing address"/>
+            <Textarea id="clientAddress" name="address" value={invoice.client.address} onChange={(e) => handleNestedChange('client', e)} />
           </div>
         </CardContent>
       </Card>
@@ -389,16 +429,9 @@ export function InvoiceForm({ invoice, setInvoice, logoUrl, setLogoUrl, accentCo
               <Label htmlFor="poNumber">PO Number</Label>
                 <div className="relative flex items-center">
                   <Hash className="absolute left-3 h-5 w-5 text-muted-foreground" />
-                  <Input id="poNumber" name="poNumber" value={invoice.poNumber} onChange={handleInputChange} className="pl-10" />
+                  <Input id="poNumber" name="poNumber" value={invoice.poNumber || ''} onChange={handleInputChange} className="pl-10" />
               </div>
-          </div>
-            <div className="space-y-2">
-              <Label htmlFor="trackingNumber">Tracking Number</Label>
-                <div className="relative flex items-center">
-                  <Truck className="absolute left-3 h-5 w-5 text-muted-foreground" />
-                  <Input id="trackingNumber" name="trackingNumber" value={invoice.trackingNumber} onChange={handleInputChange} className="pl-10" />
-              </div>
-          </div>
+            </div>
         </CardContent>
       </Card>
 
@@ -410,11 +443,11 @@ export function InvoiceForm({ invoice, setInvoice, logoUrl, setLogoUrl, accentCo
           <div className="hidden md:grid md:grid-cols-[1fr_auto_auto_auto_auto] gap-4 text-sm font-medium text-muted-foreground">
             <Label>Item Name</Label>
             <Label>Quantity</Label>
-            <Label>Rate</Label>
+            <Label>Unit Price</Label>
             <Label>Subtotal</Label>
             <span></span>
           </div>
-          {invoice.items.map((item, index) => (
+          {invoice.lineItems.map((item, index) => (
             <div key={item.id} className="grid grid-cols-1 md:grid-cols-[1fr_auto_auto_auto_auto] gap-4 md:gap-2 items-start border-b pb-4">
               <div className="space-y-2 md:col-span-1">
                 <Label htmlFor={`itemName-${index}`} className="md:hidden">Item Name</Label>
@@ -426,13 +459,13 @@ export function InvoiceForm({ invoice, setInvoice, logoUrl, setLogoUrl, accentCo
                   <Input id={`itemQuantity-${index}`} type="number" value={item.quantity} onChange={(e) => handleItemChange(index, 'quantity', parseFloat(e.target.value) || 0)} />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor={`itemRate-${index}`} className="md:hidden">Rate</Label>
-                  <Input id={`itemRate-${index}`} type="number" value={item.rate || 0} onChange={(e) => handleItemChange(index, 'rate', parseFloat(e.target.value) || 0)} />
+                  <Label htmlFor={`itemRate-${index}`} className="md:hidden">Unit Price</Label>
+                  <Input id={`itemRate-${index}`} type="number" value={item.unitPrice || 0} onChange={(e) => handleItemChange(index, 'unitPrice', parseFloat(e.target.value) || 0)} />
                 </div>
               </div>
 
               <div className="flex items-center h-10">
-                <p className="font-medium tabular-nums text-sm">{currencySymbol}{(item.quantity * (item.rate || 0)).toFixed(2)}</p>
+                <p className="font-medium tabular-nums text-sm">{currencySymbol}{(item.quantity * (item.unitPrice || 0)).toFixed(2)}</p>
               </div>
               <div className="flex items-center h-10 justify-end">
                 <Button variant="ghost" size="icon" onClick={() => removeItem(index)}>
@@ -472,24 +505,24 @@ export function InvoiceForm({ invoice, setInvoice, logoUrl, setLogoUrl, accentCo
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="tax">Tax (%)</Label>
-              <Input id="tax" name="tax" type="number" value={invoice.tax} onChange={handleNumberChange} />
+              <Input id="tax" name="summary.taxPercentage" type="number" value={invoice.summary.taxPercentage} onChange={handleNumberChange} />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="discount">Discount (%)</Label>
-              <Input id="discount" name="discount" type="number" value={invoice.discount} onChange={handleNumberChange} />
+              <Label htmlFor="discount">Discount (Fixed Amount)</Label>
+              <Input id="discount" name="summary.discount" type="number" value={invoice.summary.discount} onChange={handleNumberChange} />
             </div>
             <div className="space-y-2">
               <Label htmlFor="shippingCost">Shipping Cost</Label>
               <div className="relative flex items-center">
                   <Truck className="absolute left-3 h-5 w-5 text-muted-foreground" />
-                  <Input id="shippingCost" name="shippingCost" type="number" value={invoice.shippingCost} onChange={handleNumberChange} className="pl-10"/>
+                  <Input id="shippingCost" name="summary.shippingCost" type="number" value={invoice.summary.shippingCost} onChange={handleNumberChange} className="pl-10"/>
               </div>
             </div>
             <div className="space-y-2">
               <Label htmlFor="amountPaid">Amount Paid</Label>
                 <div className="relative flex items-center">
                   <Wallet className="absolute left-3 h-5 w-5 text-muted-foreground" />
-                  <Input id="amountPaid" name="amountPaid" type="number" value={invoice.amountPaid} onChange={handleNumberChange} className="pl-10"/>
+                  <Input id="amountPaid" name="amountPaid" type="number" value={invoice.amountPaid || 0} onChange={handleNumberChange} className="pl-10"/>
               </div>
             </div>
           </div>
