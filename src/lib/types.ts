@@ -22,12 +22,17 @@ export type InvoiceCategory =
   | "Roofing"
   | "Landscaping & Lawn Care"
   | "Cleaning Services"
-  | "Freelance / Digital Services"
+  | "Freelance / Agency"
   | "Consulting"
   | "Legal Services"
   | "Medical / Healthcare"
   | "Auto Repair"
   | "E-commerce / Online Store"
+  | "Retail / Wholesale"
+  | "Photography"
+  | "Real Estate / Property Management"
+  | "Transportation / Trucking"
+  | "IT Services / Tech Support"
   | "Rental / Property";
 
 export interface Invoice {
@@ -65,12 +70,17 @@ export interface Invoice {
   landscaping?: LandscapingInfo;
   cleaning?: CleaningInfo;
   freelance?: ITFreelanceInfo;
-  consulting?: any; // Define if needed
-  legal?: any; // Define if needed
-  medical?: any; // Define if needed
+  consulting?: ConsultingInfo;
+  legal?: LegalInfo;
+  medical?: MedicalInfo;
   autoRepair?: AutoRepairInfo;
-  ecommerce?: any; // Define if needed
-  rental?: any; // Define if needed
+  ecommerce?: EcommerceInfo;
+  rental?: RentalInfo;
+  retail?: RetailInfo;
+  photography?: PhotographyInfo;
+  realEstate?: RealEstateInfo;
+  transportation?: TransportationInfo;
+  itServices?: ITServiceInfo;
 }
 
 export interface InsuranceDocument {
@@ -191,72 +201,67 @@ export interface HomeRemodelingInfo {
 }
 
 export interface RoofingInfo {
-  roofMaterial: string;
-  shingleBrand: string;
-  roofSize: number | null;
-  layersToRemove: string;
-  roofPitch: string;
+  roofType: string;
+  squareFootage: number | null;
+  pitch: string;
+  tearOffRequired: boolean;
   underlaymentType: string;
-  flashingDetails: string;
-  ventilationSystem: string;
-  gutterRepairNeeded: boolean;
-  warranty: string;
-  estimatedTimeline: string;
-  inspectionRequired: 'Yes' | 'No';
-}
-
-export interface HVACInfo {
-    serviceType: string;
-    systemType: string;
-    unitSize: number | null; // Tonnage or BTU
-    seerRating: string;
-    furnaceType: string;
-    ductworkRequired: boolean;
-    thermostatType: string;
-    existingSystemCondition: string;
-    refrigerantType: string;
+  dumpsterFee: number | null;
 }
 
 export interface PlumbingInfo {
     serviceType: string;
-    fixtureType: string; // e.g., Sink, Toilet, Shower, Water Heater
     pipeMaterial: string;
-    floorLevel: string;
-    emergencyService: boolean;
-    waterPressureIssue: boolean;
-    leakLocation: string;
-    estimatedRepairTime: string;
+    fixtureName: string;
+    emergencyFee: number | null;
 }
 
 export interface ElectricalInfo {
     serviceType: string;
-    wiringType: string;
-    panelUpgradeNeeded: boolean;
-    panelSize: string;
-    outletsFixturesCount: number | null;
-    roomsInvolved: string;
-    evChargerNeeded: boolean;
-    inspectionRequired: boolean;
+    voltage: string;
+    fixtureDevice: string;
+    permitCost: number | null;
+}
+
+export interface HVACInfo {
+    unitType: string;
+    modelNumber: string;
+    refrigerantType: string;
+    maintenanceFee: number | null;
 }
 
 export interface LandscapingInfo {
+    lawnSquareFootage: number | null;
     serviceType: string;
-    propertySize: string;
-    grassHeight: string;
-    treeCount: number | null;
-    fenceLengthNeeded: string;
-    yardCondition: 'Good' | 'Moderate' | 'Poor';
+    equipmentFee: number | null;
+    disposalFee: number | null;
 }
 
 export interface CleaningInfo {
     cleaningType: string;
-    homeSize: number | null;
-    bedrooms: number | null;
-    bathrooms: number | null;
-    kitchenSize: string;
-    hasPets: boolean;
-    addOns: string[];
-    frequency: string;
+    numberOfRooms: number | null;
+    squareFootage: number | null;
+    suppliesFee: number | null;
+    recurringSchedule: string;
+}
+
+export interface ConsultingInfo {
+  consultationType: string;
+  sessionHours: number | null;
+  retainerFee: number | null;
+}
+
+export interface LegalInfo {
+  caseNumber: string;
+  caseType: string;
+  retainerBalance: number | null;
+}
+
+export interface MedicalInfo {
+  patientName: string;
+  diagnosisCode: string;
+  procedureCode: string;
+  coPay: number | null;
 }
 
 export interface AutoRepairInfo {
@@ -264,33 +269,73 @@ export interface AutoRepairInfo {
     vehicleModel: string;
     vehicleYear: number | null;
     vin: string;
-    mileage: number | null;
-    issueDescription: string;
-    partsRequired: string;
-    diagnosticType: 'Basic' | 'Advanced';
+    diagnosticFee: number | null;
 }
 
+export interface EcommerceInfo {
+  orderNumber: string;
+  shippingMethod: string;
+  trackingNumber: string;
+}
+
+export interface RentalInfo {
+  propertyAddress: string;
+  tenantName: string;
+  rentPeriod: string;
+  lateFee: number | null;
+}
+
+export interface RetailInfo {
+  sku: string;
+  productCategory: string;
+  shippingFee: number | null;
+}
+
+export interface PhotographyInfo {
+  eventType: string;
+  hoursOfCoverage: number | null;
+  editingFee: number | null;
+  travelFee: number | null;
+}
+
+export interface RealEstateInfo {
+  propertyAddress: string;
+  leaseTerm: string;
+  maintenanceCosts: number | null;
+  managementFee: number | null;
+}
+
+export interface TransportationInfo {
+  pickupLocation: string;
+  deliveryLocation: string;
+  distanceMiles: number | null;
+  weightLoad: string;
+  fuelSurcharge: number | null;
+}
+
+export interface ITServiceInfo {
+  serviceType: string;
+  hardwareReplacementCost: number | null;
+  monthlyMaintenanceFee: number | null;
+}
+
+
 export interface ConstructionInfo {
-  projectType: string;
-  squareFootage: number | null;
-  lotSize: string;
-  buildingType: string;
-  permitRequired: boolean;
-  architectDrawingsProvided: boolean;
-  soilCondition: string;
-  materialPreference: string;
-  inspectionRequired: boolean;
+  jobSiteAddress: string;
+  permitNumber: string;
+  laborRate: number | null;
+  equipmentRentalFees: number | null;
+  wasteDisposalFee: number | null;
+  projectStartDate: Date | null;
+  projectEndDate: Date | null;
 }
 
 export interface ITFreelanceInfo {
-  projectType: string;
-  scopeOfWork: string;
-  pagesScreensCount: number | null;
-  designStyle: string;
-  featuresNeeded: string;
-  integrations: string;
-  revisionsIncluded: number | null;
-  deliveryTimeline: string;
+  projectName: string;
+  hourlyRate: number | null;
+  fixedRate: number | null;
+  hoursLogged: number | null;
+  milestoneDescription: string;
 }
 
 export interface Estimate {
@@ -347,7 +392,8 @@ export type Quote = Estimate & { documentType: 'quote' };
 export const StripeCheckoutInputSchema = z.object({
   userId: z.string(),
   userEmail: z.string().email(),
-  priceId: z.string(),
+  companyId: z.string(),
+  plan: z.enum(['monthly', 'yearly']),
 });
 export type StripeCheckoutInput = z.infer<typeof StripeCheckoutInputSchema>;
 

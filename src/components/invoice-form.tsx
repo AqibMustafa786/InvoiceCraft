@@ -2,7 +2,7 @@
 'use client';
 
 import { ChangeEvent, Dispatch, SetStateAction, useState, useEffect } from 'react';
-import type { Invoice, LineItem, InvoiceCategory, ConstructionInfo, PlumbingInfo, ElectricalInfo, HVACInfo, RoofingInfo, LandscapingInfo, CleaningInfo, AutoRepairInfo, ITFreelanceInfo } from '@/lib/types';
+import type { Invoice, LineItem, InvoiceCategory, ConstructionInfo, PlumbingInfo, ElectricalInfo, HVACInfo, RoofingInfo, LandscapingInfo, CleaningInfo, AutoRepairInfo, ITFreelanceInfo, ConsultingInfo, LegalInfo, MedicalInfo, EcommerceInfo, RentalInfo, RetailInfo, PhotographyInfo, RealEstateInfo, TransportationInfo, ITServiceInfo } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -59,18 +59,23 @@ const categories: InvoiceCategory[] = [
     "Roofing",
     "Landscaping & Lawn Care",
     "Cleaning Services",
-    "Freelance / Digital Services",
+    "Freelance / Agency",
     "Consulting",
     "Legal Services",
     "Medical / Healthcare",
     "Auto Repair",
     "E-commerce / Online Store",
+    "Retail / Wholesale",
+    "Photography",
+    "Real Estate / Property Management",
+    "Transportation / Trucking",
+    "IT Services / Tech Support",
     "Rental / Property",
 ];
 
 const plumbingServiceTypes = ["Leak Repair", "Installation", "Sewer Line", "Water Heater", "Drain Cleaning"];
 const hvacServiceTypes = ["Install", "Repair", "Replace", "Maintenance"];
-const roofMaterials = ["Asphalt Shingle", "Metal", "Tile", "Flat Roof"];
+const roofMaterials = ["Shingle", "Metal", "Tile", "Flat Roof"];
 
 const CustomSelect = ({ value, onValueChange, options, placeholder, name }: { value: string; onValueChange: (name: string, value: string) => void; options: string[]; placeholder?: string; name: string; }) => {
     const [isOther, setIsOther] = useState(false);
@@ -134,7 +139,6 @@ export function InvoiceForm({ invoice, setInvoice, accentColor, setAccentColor, 
   const [bgColorInput, setBgColorInput] = useState(backgroundColor);
   const [textColorInput, setTextColorInput] = useState(textColor);
   const [logoUrl, setLogoUrl] = useState<string | null>(invoice.business.logoUrl || null);
-  const [cleaningAddOns, setCleaningAddOns] = useState<string[]>(invoice.cleaning?.addOns || []);
   
   useEffect(() => {
     setAccentColorInput(accentColor);
@@ -179,53 +183,39 @@ export function InvoiceForm({ invoice, setInvoice, accentColor, setAccentColor, 
     }));
   };
 
-  const handleCategoryDataChange = (category: 'construction' | 'plumbing' | 'electrical' | 'hvac' | 'roofing' | 'landscaping' | 'cleaning' | 'autoRepair' | 'freelance', e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleCategoryDataChange = (category: keyof Invoice, e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value, type } = e.target;
     const isCheckbox = type === 'checkbox';
     
     setInvoice(prev => ({
         ...prev,
         [category]: {
-            ...prev[category]!,
-            [name]: isCheckbox ? (e.target as HTMLInputElement).checked : value
+            ...(prev as any)[category],
+            [name]: isCheckbox ? (e.target as HTMLInputElement).checked : (type === 'number' ? parseFloat(value) || null : value)
         }
     }));
   };
 
-   const handleCategorySelectChange = (category: 'construction' | 'plumbing' | 'electrical' | 'hvac' | 'roofing' | 'landscaping' | 'cleaning' | 'autoRepair' | 'freelance', name: string, value: string | boolean | number | null) => {
+   const handleCategorySelectChange = (category: keyof Invoice, name: string, value: string | boolean | number | null) => {
      setInvoice(prev => ({
         ...prev,
         [category]: {
-            ...prev[category]!,
+            ...(prev as any)[category],
             [name]: value
         }
     }));
   };
   
-    const handleRemodelingDateChange = (name: keyof ConstructionInfo, date: Date | undefined) => {
-     setInvoice(prev => ({
-        ...prev,
-        construction: {
-            ...prev.construction!,
-            [name]: date
-        }
-    }));
+  const handleDateChange = (category: keyof Invoice, name: string, date: Date | undefined) => {
+      setInvoice(prev => ({
+          ...prev,
+          [category]: {
+              ...(prev as any)[category],
+              [name]: date
+          }
+      }));
   };
 
-  const handleCleaningAddOnChange = (addOn: string, checked: boolean) => {
-    const currentAddOns = invoice.cleaning?.addOns || [];
-    const newAddOns = checked
-      ? [...currentAddOns, addOn]
-      : currentAddOns.filter(item => item !== addOn);
-    setCleaningAddOns(newAddOns);
-    setInvoice(prev => ({
-      ...prev,
-      cleaning: {
-        ...prev.cleaning!,
-        addOns: newAddOns
-      }
-    }));
-  }
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -563,122 +553,134 @@ export function InvoiceForm({ invoice, setInvoice, accentColor, setAccentColor, 
         </CardContent>
       </Card>
       
-        {invoice.category === "Construction" && invoice.construction && (
-            <Card className="bg-card/50 backdrop-blur-sm">
-                <CardHeader>
-                    <CardTitle>Construction Details</CardTitle>
-                </CardHeader>
-                <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="space-y-2">
-                        <Label htmlFor="projectType">Project Type</Label>
-                         <Input id="projectType" name="projectType" value={invoice.construction.projectType} onChange={(e) => handleCategoryDataChange('construction', e)} placeholder="e.g. New Build, Renovation" />
-                    </div>
-                     <div className="space-y-2">
-                        <Label htmlFor="squareFootage">Square Footage</Label>
-                        <Input id="squareFootage" name="squareFootage" type="number" value={invoice.construction.squareFootage ?? ''} onChange={(e) => handleCategoryDataChange('construction', e)} />
-                    </div>
-                    <div className="space-y-2"><Label>Permit #</Label><Input name="permitNumber" value={invoice.construction.permitNumber || ''} onChange={(e) => handleCategoryDataChange('construction', e)} /></div>
-                </CardContent>
-            </Card>
-        )}
+      {invoice.category === "Construction" && invoice.construction && (
+        <Card className="bg-card/50 backdrop-blur-sm">
+            <CardHeader><CardTitle>Construction Details</CardTitle></CardHeader>
+            <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2"><Label>Job Site Address</Label><Input name="jobSiteAddress" value={invoice.construction.jobSiteAddress || ''} onChange={(e) => handleCategoryDataChange('construction', e)}/></div>
+                <div className="space-y-2"><Label>Permit #</Label><Input name="permitNumber" value={invoice.construction.permitNumber || ''} onChange={(e) => handleCategoryDataChange('construction', e)}/></div>
+                <div className="space-y-2"><Label>Labor Rate (/hr)</Label><Input type="number" name="laborRate" value={invoice.construction.laborRate || ''} onChange={(e) => handleCategoryDataChange('construction', e)}/></div>
+                <div className="space-y-2"><Label>Equipment Rental Fees</Label><Input type="number" name="equipmentRentalFees" value={invoice.construction.equipmentRentalFees || ''} onChange={(e) => handleCategoryDataChange('construction', e)}/></div>
+                <div className="space-y-2"><Label>Waste Disposal Fee</Label><Input type="number" name="wasteDisposalFee" value={invoice.construction.wasteDisposalFee || ''} onChange={(e) => handleCategoryDataChange('construction', e)}/></div>
+                <div className="space-y-2"><Label>Project Start Date</Label><DatePicker date={invoice.construction.projectStartDate} setDate={(date) => handleDateChange('construction', 'projectStartDate', date)} /></div>
+                <div className="space-y-2"><Label>Project End Date</Label><DatePicker date={invoice.construction.projectEndDate} setDate={(date) => handleDateChange('construction', 'projectEndDate', date)} /></div>
+            </CardContent>
+        </Card>
+      )}
 
-        {invoice.category === "Plumbing" && invoice.plumbing && (
-             <Card className="bg-card/50 backdrop-blur-sm">
-                <CardHeader>
-                    <CardTitle>Plumbing Job Details</CardTitle>
-                </CardHeader>
-                <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="space-y-2">
-                        <Label>Service Type</Label>
-                        <CustomSelect name="serviceType" value={invoice.plumbing.serviceType || ''} onValueChange={(name, value) => handleCategorySelectChange('plumbing', name, value)} options={plumbingServiceTypes} placeholder="Select service type"/>
-                    </div>
-                    <div className="flex items-center space-x-2 pt-6"><Checkbox id="emergencyService" name="emergencyService" checked={invoice.plumbing.emergencyService} onCheckedChange={(c) => handleCategorySelectChange('plumbing', 'emergencyService', !!c)} /><Label htmlFor="emergencyService">Emergency Service</Label></div>
-                </CardContent>
-            </Card>
-        )}
-        
-        {invoice.category === "Electrical Services" && invoice.electrical && (
-            <Card className="bg-card/50 backdrop-blur-sm">
-                <CardHeader><CardTitle>Electrical Job Details</CardTitle></CardHeader>
-                <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="space-y-2"><Label>Job Type</Label><Input name="jobType" value={invoice.electrical.jobType || ''} onChange={(e) => handleCategoryDataChange('electrical', e)} placeholder="e.g. Wiring, Panel Upgrade"/></div>
-                    <div className="space-y-2"><Label>Permit #</Label><Input name="permitNumber" value={invoice.electrical.permitNumber || ''} onChange={(e) => handleCategoryDataChange('electrical', e)}/></div>
-                </CardContent>
-            </Card>
-        )}
-        
-        {invoice.category === "HVAC Services" && invoice.hvac && (
-            <Card className="bg-card/50 backdrop-blur-sm">
-                <CardHeader><CardTitle>HVAC Service Details</CardTitle></CardHeader>
-                <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="space-y-2"><Label>System Type</Label><CustomSelect name="systemType" value={invoice.hvac.systemType || ''} onValueChange={(name, value) => handleCategorySelectChange('hvac', name, value)} options={hvacServiceTypes} placeholder="Select system type"/></div>
-                    <div className="space-y-2"><Label>Unit Model #</Label><Input name="unitModelNumber" value={invoice.hvac.unitModelNumber || ''} onChange={(e) => handleCategoryDataChange('hvac', e)}/></div>
-                </CardContent>
-            </Card>
-        )}
+      {invoice.category === "Roofing" && invoice.roofing && (
+        <Card className="bg-card/50 backdrop-blur-sm">
+            <CardHeader><CardTitle>Roofing Job Details</CardTitle></CardHeader>
+            <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2"><Label>Roof Type</Label><CustomSelect name="roofType" value={invoice.roofing.roofType || ''} onValueChange={(name, value) => handleCategorySelectChange('roofing', name, value)} options={roofMaterials} placeholder="Select roof type"/></div>
+                <div className="space-y-2"><Label>Square Footage</Label><Input name="squareFootage" type="number" value={invoice.roofing.squareFootage || ''} onChange={(e) => handleCategoryDataChange('roofing', e)}/></div>
+                <div className="space-y-2"><Label>Pitch / Slope</Label><Input name="pitch" value={invoice.roofing.pitch || ''} onChange={(e) => handleCategoryDataChange('roofing', e)}/></div>
+                <div className="space-y-2"><Label>Underlayment Type</Label><Input name="underlaymentType" value={invoice.roofing.underlaymentType || ''} onChange={(e) => handleCategoryDataChange('roofing', e)}/></div>
+                <div className="space-y-2"><Label>Dumpster / Cleanup Fee</Label><Input name="dumpsterFee" type="number" value={invoice.roofing.dumpsterFee || ''} onChange={(e) => handleCategoryDataChange('roofing', e)}/></div>
+                <div className="flex items-center space-x-2 pt-6"><Checkbox id="tearOffRequired" name="tearOffRequired" checked={invoice.roofing.tearOffRequired} onCheckedChange={(c) => handleCategorySelectChange('roofing', 'tearOffRequired', !!c)} /><Label htmlFor="tearOffRequired">Tear-off Required?</Label></div>
+            </CardContent>
+        </Card>
+      )}
 
-        {invoice.category === "Roofing" && invoice.roofing && (
-            <Card className="bg-card/50 backdrop-blur-sm">
-                <CardHeader><CardTitle>Roofing Job Details</CardTitle></CardHeader>
-                <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="space-y-2"><Label>Roof Type</Label><CustomSelect name="roofType" value={invoice.roofing.roofType || ''} onValueChange={(name, value) => handleCategorySelectChange('roofing', name, value)} options={roofMaterials} placeholder="Select roof type"/></div>
-                    <div className="space-y-2"><Label>Square Footage</Label><Input name="squareFootage" type="number" value={invoice.roofing.squareFootage || ''} onChange={(e) => handleCategoryDataChange('roofing', e)}/></div>
-                </CardContent>
-            </Card>
-        )}
-        
-        {invoice.category === "Landscaping & Lawn Care" && invoice.landscaping && (
-             <Card className="bg-card/50 backdrop-blur-sm">
-                <CardHeader><CardTitle>Landscaping Service Details</CardTitle></CardHeader>
-                <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="space-y-2"><Label>Service Type</Label><Input name="serviceType" value={invoice.landscaping.serviceType || ''} onChange={(e) => handleCategoryDataChange('landscaping', e)} placeholder="e.g. Mowing, Fertilizing"/></div>
-                    <div className="space-y-2"><Label>Property Size</Label><Input name="propertySize" value={invoice.landscaping.propertySize || ''} onChange={(e) => handleCategoryDataChange('landscaping', e)} placeholder="e.g. 0.5 acres"/></div>
-                </CardContent>
-            </Card>
-        )}
+      {invoice.category === "Plumbing" && invoice.plumbing && (
+          <Card className="bg-card/50 backdrop-blur-sm">
+              <CardHeader><CardTitle>Plumbing Job Details</CardTitle></CardHeader>
+              <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-2"><Label>Service Type</Label><CustomSelect name="serviceType" value={invoice.plumbing.serviceType || ''} onValueChange={(name, value) => handleCategorySelectChange('plumbing', name, value)} options={plumbingServiceTypes} placeholder="Select service type"/></div>
+                  <div className="space-y-2"><Label>Pipe Material</Label><Input name="pipeMaterial" value={invoice.plumbing.pipeMaterial || ''} onChange={(e) => handleCategoryDataChange('plumbing', e)} placeholder="e.g., PVC, Copper"/></div>
+                  <div className="space-y-2"><Label>Fixture Name</Label><Input name="fixtureName" value={invoice.plumbing.fixtureName || ''} onChange={(e) => handleCategoryDataChange('plumbing', e)} placeholder="e.g., Kitchen Sink"/></div>
+                  <div className="space-y-2"><Label>Emergency Fee</Label><Input name="emergencyFee" type="number" value={invoice.plumbing.emergencyFee || ''} onChange={(e) => handleCategoryDataChange('plumbing', e)}/></div>
+              </CardContent>
+          </Card>
+      )}
 
-        {invoice.category === "Cleaning Services" && invoice.cleaning && (
-             <Card className="bg-card/50 backdrop-blur-sm">
-                <CardHeader><CardTitle>Cleaning Service Details</CardTitle></CardHeader>
-                <CardContent className="space-y-6">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div className="space-y-2"><Label>Cleaning Type</Label><Input name="cleaningType" value={invoice.cleaning.cleaningType || ''} onChange={(e) => handleCategoryDataChange('cleaning', e)} placeholder="e.g. Deep Clean, Regular"/></div>
-                        <div className="space-y-2"><Label>Property Size (sq ft)</Label><Input name="propertySize" type="number" value={invoice.cleaning.propertySize || ''} onChange={(e) => handleCategoryDataChange('cleaning', e)}/></div>
-                    </div>
-                </CardContent>
-            </Card>
-        )}
+      {invoice.category === "Electrical Services" && invoice.electrical && (
+        <Card className="bg-card/50 backdrop-blur-sm">
+            <CardHeader><CardTitle>Electrical Job Details</CardTitle></CardHeader>
+            <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2"><Label>Service Type</Label><Input name="serviceType" value={invoice.electrical.serviceType || ''} onChange={(e) => handleCategoryDataChange('electrical', e)} placeholder="e.g., Wiring, Panel Upgrade"/></div>
+                <div className="space-y-2"><Label>Voltage/Amperage</Label><Input name="voltage" value={invoice.electrical.voltage || ''} onChange={(e) => handleCategoryDataChange('electrical', e)} placeholder="e.g., 120V/20A"/></div>
+                <div className="space-y-2"><Label>Fixture/Device Installed</Label><Input name="fixtureDevice" value={invoice.electrical.fixtureDevice || ''} onChange={(e) => handleCategoryDataChange('electrical', e)}/></div>
+                <div className="space-y-2"><Label>Permit Cost</Label><Input name="permitCost" type="number" value={invoice.electrical.permitCost || ''} onChange={(e) => handleCategoryDataChange('electrical', e)}/></div>
+            </CardContent>
+        </Card>
+      )}
 
-        {invoice.category === "Auto Repair" && invoice.autoRepair && (
-            <Card className="bg-card/50 backdrop-blur-sm">
-                <CardHeader><CardTitle>Auto Repair Details</CardTitle></CardHeader>
-                <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="space-y-2"><Label>Vehicle</Label><Input name="vehicleInfo" value={invoice.autoRepair.vehicleInfo || ''} onChange={(e) => handleCategoryDataChange('autoRepair', e)} placeholder="e.g. 2023 Toyota Camry"/></div>
-                    <div className="space-y-2"><Label>Mileage</Label><Input name="mileage" type="number" value={invoice.autoRepair.mileage || ''} onChange={(e) => handleCategoryDataChange('autoRepair', e)}/></div>
-                </CardContent>
-            </Card>
-        )}
-        
-        {invoice.category === "E-commerce / Online Store" && invoice.ecommerce && (
-            <Card className="bg-card/50 backdrop-blur-sm">
-                <CardHeader><CardTitle>E-commerce Details</CardTitle></CardHeader>
-                <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                     <div className="space-y-2"><Label>Order #</Label><Input name="orderNumber" value={invoice.ecommerce.orderNumber || ''} onChange={handleInputChange}/></div>
-                     <div className="space-y-2"><Label>Tracking #</Label><Input name="trackingNumber" value={invoice.ecommerce.trackingNumber || ''} onChange={handleInputChange}/></div>
-                </CardContent>
-            </Card>
-        )}
+      {invoice.category === "HVAC Services" && invoice.hvac && (
+        <Card className="bg-card/50 backdrop-blur-sm">
+            <CardHeader><CardTitle>HVAC Service Details</CardTitle></CardHeader>
+            <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2"><Label>Unit Type</Label><CustomSelect name="unitType" value={invoice.hvac.unitType || ''} onValueChange={(name, value) => handleCategorySelectChange('hvac', name, value)} options={hvacServiceTypes} placeholder="Select unit type"/></div>
+                <div className="space-y-2"><Label>Model Number</Label><Input name="modelNumber" value={invoice.hvac.modelNumber || ''} onChange={(e) => handleCategoryDataChange('hvac', e)}/></div>
+                <div className="space-y-2"><Label>Refrigerant Type</Label><Input name="refrigerantType" value={invoice.hvac.refrigerantType || ''} onChange={(e) => handleCategoryDataChange('hvac', e)}/></div>
+                <div className="space-y-2"><Label>Seasonal Maintenance Fee</Label><Input name="maintenanceFee" type="number" value={invoice.hvac.maintenanceFee || ''} onChange={(e) => handleCategoryDataChange('hvac', e)}/></div>
+            </CardContent>
+        </Card>
+      )}
 
-        {invoice.category === "Rental / Property" && invoice.rental && (
-            <Card className="bg-card/50 backdrop-blur-sm">
-                <CardHeader><CardTitle>Rental Details</CardTitle></CardHeader>
-                <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="space-y-2"><Label>Property Address</Label><Input name="propertyAddress" value={invoice.rental.propertyAddress || ''} onChange={handleInputChange}/></div>
-                    <div className="space-y-2"><Label>Tenant</Label><Input name="tenantName" value={invoice.rental.tenantName || ''} onChange={handleInputChange}/></div>
-                     <div className="space-y-2"><Label>Rent Period</Label><Input name="rentPeriod" value={invoice.rental.rentPeriod || ''} onChange={handleInputChange} placeholder="e.g. August 2024"/></div>
-                </CardContent>
-            </Card>
-        )}
+      {invoice.category === "Landscaping & Lawn Care" && invoice.landscaping && (
+        <Card className="bg-card/50 backdrop-blur-sm">
+            <CardHeader><CardTitle>Landscaping Service Details</CardTitle></CardHeader>
+            <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2"><Label>Lawn Square Footage</Label><Input name="lawnSquareFootage" type="number" value={invoice.landscaping.lawnSquareFootage || ''} onChange={(e) => handleCategoryDataChange('landscaping', e)}/></div>
+                <div className="space-y-2"><Label>Service Type</Label><Input name="serviceType" value={invoice.landscaping.serviceType || ''} onChange={(e) => handleCategoryDataChange('landscaping', e)} placeholder="e.g., Mowing, Fertilizing"/></div>
+                <div className="space-y-2"><Label>Equipment Fee</Label><Input name="equipmentFee" type="number" value={invoice.landscaping.equipmentFee || ''} onChange={(e) => handleCategoryDataChange('landscaping', e)}/></div>
+                <div className="space-y-2"><Label>Disposal/Hauling Fee</Label><Input name="disposalFee" type="number" value={invoice.landscaping.disposalFee || ''} onChange={(e) => handleCategoryDataChange('landscaping', e)}/></div>
+            </CardContent>
+        </Card>
+      )}
+
+      {invoice.category === "Cleaning Services" && invoice.cleaning && (
+        <Card className="bg-card/50 backdrop-blur-sm">
+            <CardHeader><CardTitle>Cleaning Service Details</CardTitle></CardHeader>
+            <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2"><Label>Cleaning Type</Label><Input name="cleaningType" value={invoice.cleaning.cleaningType || ''} onChange={(e) => handleCategoryDataChange('cleaning', e)} placeholder="e.g., Home, Office"/></div>
+                <div className="space-y-2"><Label>Number of Rooms</Label><Input name="numberOfRooms" type="number" value={invoice.cleaning.numberOfRooms || ''} onChange={(e) => handleCategoryDataChange('cleaning', e)}/></div>
+                <div className="space-y-2"><Label>Square Footage</Label><Input name="squareFootage" type="number" value={invoice.cleaning.squareFootage || ''} onChange={(e) => handleCategoryDataChange('cleaning', e)}/></div>
+                <div className="space-y-2"><Label>Supplies Fee</Label><Input name="suppliesFee" type="number" value={invoice.cleaning.suppliesFee || ''} onChange={(e) => handleCategoryDataChange('cleaning', e)}/></div>
+                <div className="space-y-2"><Label>Recurring Schedule</Label><Input name="recurringSchedule" value={invoice.cleaning.recurringSchedule || ''} onChange={(e) => handleCategoryDataChange('cleaning', e)} placeholder="e.g., Weekly, Monthly"/></div>
+            </CardContent>
+        </Card>
+      )}
+
+      {invoice.category === "Freelance / Agency" && invoice.freelance && (
+        <Card className="bg-card/50 backdrop-blur-sm">
+            <CardHeader><CardTitle>Freelance Project Details</CardTitle></CardHeader>
+            <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2"><Label>Project Name</Label><Input name="projectName" value={invoice.freelance.projectName || ''} onChange={(e) => handleCategoryDataChange('freelance', e)}/></div>
+                <div className="space-y-2"><Label>Hourly Rate</Label><Input name="hourlyRate" type="number" value={invoice.freelance.hourlyRate || ''} onChange={(e) => handleCategoryDataChange('freelance', e)}/></div>
+                <div className="space-y-2"><Label>Fixed Rate</Label><Input name="fixedRate" type="number" value={invoice.freelance.fixedRate || ''} onChange={(e) => handleCategoryDataChange('freelance', e)}/></div>
+                <div className="space-y-2"><Label>Hours Logged</Label><Input name="hoursLogged" type="number" value={invoice.freelance.hoursLogged || ''} onChange={(e) => handleCategoryDataChange('freelance', e)}/></div>
+                <div className="md:col-span-2 space-y-2"><Label>Milestone/Task Description</Label><Textarea name="milestoneDescription" value={invoice.freelance.milestoneDescription || ''} onChange={(e) => handleCategoryDataChange('freelance', e)}/></div>
+            </CardContent>
+        </Card>
+      )}
+
+      {invoice.category === "Consulting" && invoice.consulting && (
+        <Card className="bg-card/50 backdrop-blur-sm">
+            <CardHeader><CardTitle>Consulting Details</CardTitle></CardHeader>
+            <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2"><Label>Consultation Type</Label><Input name="consultationType" value={invoice.consulting.consultationType || ''} onChange={(e) => handleCategoryDataChange('consulting', e)}/></div>
+                <div className="space-y-2"><Label>Session Hours</Label><Input name="sessionHours" type="number" value={invoice.consulting.sessionHours || ''} onChange={(e) => handleCategoryDataChange('consulting', e)}/></div>
+                <div className="space-y-2"><Label>Retainer Fee</Label><Input name="retainerFee" type="number" value={invoice.consulting.retainerFee || ''} onChange={(e) => handleCategoryDataChange('consulting', e)}/></div>
+            </CardContent>
+        </Card>
+      )}
+
+      {invoice.category === "Auto Repair" && invoice.autoRepair && (
+        <Card className="bg-card/50 backdrop-blur-sm">
+            <CardHeader><CardTitle>Auto Repair Details</CardTitle></CardHeader>
+            <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2"><Label>Vehicle Make</Label><Input name="vehicleMake" value={invoice.autoRepair.vehicleMake || ''} onChange={(e) => handleCategoryDataChange('autoRepair', e)}/></div>
+                <div className="space-y-2"><Label>Vehicle Model</Label><Input name="vehicleModel" value={invoice.autoRepair.vehicleModel || ''} onChange={(e) => handleCategoryDataChange('autoRepair', e)}/></div>
+                <div className="space-y-2"><Label>Vehicle Year</Label><Input name="vehicleYear" type="number" value={invoice.autoRepair.vehicleYear || ''} onChange={(e) => handleCategoryDataChange('autoRepair', e)}/></div>
+                <div className="space-y-2"><Label>VIN</Label><Input name="vin" value={invoice.autoRepair.vin || ''} onChange={(e) => handleCategoryDataChange('autoRepair', e)}/></div>
+                <div className="space-y-2 md:col-span-2"><Label>Diagnostic Fee</Label><Input name="diagnosticFee" type="number" value={invoice.autoRepair.diagnosticFee || ''} onChange={(e) => handleCategoryDataChange('autoRepair', e)}/></div>
+            </CardContent>
+        </Card>
+      )}
+      
+      {/* Other Categories would go here */}
 
       <Card className="bg-card/50 backdrop-blur-sm">
         <CardHeader>
