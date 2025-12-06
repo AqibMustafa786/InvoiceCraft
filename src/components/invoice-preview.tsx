@@ -8,6 +8,10 @@ import { Separator } from '@/components/ui/separator';
 import Image from 'next/image';
 import { format, isValid } from 'date-fns';
 import locales from '@/lib/locales';
+import {
+  ConstructionTemplate1, ConstructionTemplate2, ConstructionTemplate3, ConstructionTemplate4, ConstructionTemplate5,
+  ConstructionTemplate6, ConstructionTemplate7, ConstructionTemplate8, ConstructionTemplate9, ConstructionTemplate10
+} from './invoice-templates/construction-templates';
 
 // --- PROPS ---
 interface InvoicePreviewProps {
@@ -47,8 +51,9 @@ const currencySymbols: { [key: string]: string } = {
     PKR: '₨',
 };
 
-const safeFormat = (date: Date | string | number, formatString: string) => {
-    const d = new Date(date || new Date());
+const safeFormat = (date: Date | string | number | null | undefined, formatString: string) => {
+    if (!date) return "N/A";
+    const d = new Date(date);
     if (!isValid(d)) return "Invalid Date";
     return format(d, formatString);
 }
@@ -396,13 +401,23 @@ const UsaTemplatePage: FC<PageProps> = ({ pageItems, pageIndex, totalPages, ...c
 };
 
 
-const templates = {
+const templates: Record<string, FC<PageProps>> = {
   'default': DefaultTemplatePage,
   'modern': ModernTemplatePage,
   'minimalist': MinimalistTemplatePage,
   'creative': CreativeTemplatePage,
   'elegant': ElegantTemplatePage,
   'usa': UsaTemplatePage,
+  'construction-1': ConstructionTemplate1,
+  'construction-2': ConstructionTemplate2,
+  'construction-3': ConstructionTemplate3,
+  'construction-4': ConstructionTemplate4,
+  'construction-5': ConstructionTemplate5,
+  'construction-6': ConstructionTemplate6,
+  'construction-7': ConstructionTemplate7,
+  'construction-8': ConstructionTemplate8,
+  'construction-9': ConstructionTemplate9,
+  'construction-10': ConstructionTemplate10,
 };
 
 
@@ -440,7 +455,14 @@ const InvoicePreviewInternal: FC<InvoicePreviewProps> = ({ invoice, accentColor,
       color: textColor || '#374151',
   } as React.CSSProperties;
 
-  const TemplateComponent = templates[invoice.template as keyof typeof templates] || templates['default'];
+  const getTemplateComponent = () => {
+    if (invoice.category === 'Construction') {
+      return templates[invoice.template] || ConstructionTemplate1;
+    }
+    return templates[invoice.template] || DefaultTemplatePage;
+  };
+
+  const TemplateComponent = getTemplateComponent();
   
   useLayoutEffect(() => {
     if (!isPrint || !containerRef.current || !needsRemeasure) return;

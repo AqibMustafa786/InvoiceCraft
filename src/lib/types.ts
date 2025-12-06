@@ -35,102 +35,6 @@ export type InvoiceCategory =
   | "IT Services / Tech Support"
   | "Rental / Property";
 
-export interface Invoice {
-  id: string; 
-  userId: string;
-  // Kept for backwards compatibility with older invoice structures
-  companyName?: string;
-  companyAddress?: string;
-  // New structure
-  business: BusinessInfo;
-  client: ClientInfo;
-  invoiceNumber: string;
-  invoiceDate: Date;
-  dueDate: Date;
-  lineItems: LineItem[];
-  summary: EstimateSummary;
-  paymentInstructions: string;
-  status: DocumentStatus;
-  currency: string;
-  language: string;
-  template: string;
-  documentType: 'invoice';
-  category: InvoiceCategory;
-  fontFamily?: string;
-  fontSize?: number;
-  backgroundColor?: string;
-  textColor?: string;
-  createdAt?: any;
-  updatedAt?: any;
-  poNumber?: string;
-  amountPaid?: number;
-  trackingNumber?: string;
-
-  // Category specific data
-  construction: ConstructionInfo;
-  plumbing: PlumbingInfo;
-  electrical: ElectricalInfo;
-  hvac: HVACInfo;
-  roofing: RoofingInfo;
-  landscaping: LandscapingInfo;
-  cleaning: CleaningInfo;
-  freelance: ITFreelanceInfo;
-  consulting: ConsultingInfo;
-  legal: LegalInfo;
-  medical: MedicalInfo;
-  autoRepair: AutoRepairInfo;
-  ecommerce: EcommerceInfo;
-  rental: RentalInfo;
-  retail: RetailInfo;
-  photography: PhotographyInfo;
-  realEstate: RealEstateInfo;
-  transportation: TransportationInfo;
-  itServices: ITServiceInfo;
-}
-
-export interface InsuranceDocument {
-  id: string;
-  companyName: string;
-  companyPhone: string;
-  companyAddress: string;
-
-  // Insured/Policyholder Details
-  insuredName: string;
-  policyId: string;
-  insuredAddress: string;
-  insuredPhone: string;
-  insuredEmail: string;
-
-  // Claim/Incident Details
-  claimNumber: string;
-  dateOfLoss: string;
-  typeOfClaim: string;
-  incidentDescription: string;
-  insuranceCompany: string;
-  adjusterInfo: string;
-
-  // Invoice-like details
-  documentNumber: string;
-  documentDate: Date;
-  
-  items: LineItem[];
-  tax: number;
-  discount: number;
-  shippingCost: number;
-
-  notes: string;
-  
-  currency: string;
-  language: string;
-  template: string;
-  fontFamily?: string;
-  fontSize?: number;
-  textColor?: string;
-  createdAt?: any;
-  updatedAt?: any;
-}
-
-// New refined Estimate Structure
 export interface BusinessInfo {
   name: string;
   address: string;
@@ -166,44 +70,14 @@ export interface EstimateSummary {
     shippingCost: number;
 }
 
-export interface SignatureInfo {
-    image: string;
-    signedAt: any; // Firestore Timestamp
-    signerName: string;
-    signerIP?: string; // Optional, can be captured server-side
-}
-
-export interface AuditLogEntry {
-    action: 'created' | 'viewed' | 'signed' | 'declined' | 'sent';
-    timestamp: any; // Firestore Timestamp
-    actor?: 'user' | 'client';
-    details?: string;
-}
-
-export type EstimateCategory = 
-  | "Generic"
-  | "Home Remodeling / Renovation"
-  | "Roofing Estimate"
-  | "HVAC (Air Conditioning / Heating)"
-  | "Plumbing Estimate"
-  | "Electrical Estimate"
-  | "Landscaping Estimate"
-  | "Cleaning Estimate"
-  | "Auto Repair Estimate"
-  | "Construction Estimate"
-  | "IT / Freelance Estimate";
-
-export interface HomeRemodelingInfo {
-    projectType: string;
-    propertyType: string;
-    squareFootage: number | null;
-    roomsIncluded: string;
-    materialGrade: 'Basic' | 'Standard' | 'Premium';
-    demolitionRequired: boolean;
-    permitRequired: boolean;
-    specialInstructions: string;
-    expectedStartDate: Date | null;
-    expectedCompletionDate: Date | null;
+export interface ConstructionInfo {
+  jobSiteAddress: string;
+  permitNumber: string;
+  laborRate: number | null;
+  equipmentRentalFees: number | null;
+  wasteDisposalFee: number | null;
+  projectStartDate: Date | null;
+  projectEndDate: Date | null;
 }
 
 export interface RoofingInfo {
@@ -266,7 +140,7 @@ export interface LegalInfo {
   retainerAmount: number | null;
   courtFilingFees: number | null;
   travelTime: number | null;
-  additionalDisbursements: number | null;
+  additionalDisbursements: string | null;
 }
 
 export interface MedicalInfo {
@@ -382,16 +256,6 @@ export interface RentalInfo {
 }
 
 
-export interface ConstructionInfo {
-  jobSiteAddress: string;
-  permitNumber: string;
-  laborRate: number | null;
-  equipmentRentalFees: number | null;
-  wasteDisposalFee: number | null;
-  projectStartDate: Date | null;
-  projectEndDate: Date | null;
-}
-
 export interface ITFreelanceInfo {
   projectName: string;
   hourlyRate: number | null;
@@ -399,6 +263,82 @@ export interface ITFreelanceInfo {
   hoursLogged: number | null;
   milestoneDescription: string;
 }
+
+export interface Invoice {
+  id: string; 
+  userId: string;
+  business: BusinessInfo;
+  client: ClientInfo;
+  invoiceNumber: string;
+  invoiceDate: Date;
+  dueDate: Date;
+  lineItems: LineItem[];
+  summary: EstimateSummary;
+  paymentInstructions: string;
+  status: DocumentStatus;
+  currency: string;
+  language: string;
+  template: string;
+  documentType: 'invoice';
+  category: InvoiceCategory;
+  fontFamily?: string;
+  fontSize?: number;
+  backgroundColor?: string;
+  textColor?: string;
+  createdAt?: any;
+  updatedAt?: any;
+  poNumber?: string;
+  amountPaid?: number;
+  trackingNumber?: string;
+
+  // Category specific data
+  construction?: ConstructionInfo;
+  plumbing?: PlumbingInfo;
+  electrical?: ElectricalInfo;
+  hvac?: HVACInfo;
+  roofing?: RoofingInfo;
+  landscaping?: LandscapingInfo;
+  cleaning?: CleaningInfo;
+  freelance?: ITFreelanceInfo;
+  consulting?: ConsultingInfo;
+  legal?: LegalInfo;
+  medical?: MedicalInfo;
+  autoRepair?: AutoRepairInfo;
+  ecommerce?: EcommerceInfo;
+  rental?: RentalInfo;
+  retail?: RetailInfo;
+  photography?: PhotographyInfo;
+  realEstate?: RealEstateInfo;
+  transportation?: TransportationInfo;
+  itServices?: ITServiceInfo;
+}
+
+export interface SignatureInfo {
+    image: string;
+    signedAt: any; // Firestore Timestamp
+    signerName: string;
+    signerIP?: string; // Optional, can be captured server-side
+}
+
+export interface AuditLogEntry {
+    action: 'created' | 'viewed' | 'signed' | 'declined' | 'sent';
+    timestamp: any; // Firestore Timestamp
+    actor?: 'user' | 'client';
+    details?: string;
+}
+
+export type EstimateCategory = 
+  | "Generic"
+  | "Home Remodeling / Renovation"
+  | "Roofing Estimate"
+  | "HVAC (Air Conditioning / Heating)"
+  | "Plumbing Estimate"
+  | "Electrical Estimate"
+  | "Landscaping Estimate"
+  | "Cleaning Estimate"
+  | "Auto Repair Estimate"
+  | "Construction Estimate"
+  | "IT / Freelance Estimate";
 
 export interface Estimate {
   id: string;
@@ -437,7 +377,7 @@ export interface Estimate {
 
   // Category specific data
   homeRemodeling?: HomeRemodelingInfo;
-  roofing: RoofingInfo;
+  roofing?: RoofingInfo;
   hvac?: HVACInfo;
   plumbing?: PlumbingInfo;
   electrical?: ElectricalInfo;

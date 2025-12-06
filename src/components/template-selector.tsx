@@ -7,65 +7,57 @@ import Image from 'next/image';
 import { useAuth, useFirebase } from '@/firebase';
 import { doc } from 'firebase/firestore';
 import { useDoc } from '@/firebase/firestore/use-doc';
+import { type InvoiceCategory } from '@/lib/types';
 
 interface Template {
   id: string;
   name: string;
   thumbnailUrl: string;
   isPro?: boolean;
+  category?: InvoiceCategory | 'all';
 }
 
 interface TemplateSelectorProps {
   selectedTemplate: string;
   onSelectTemplate: (templateId: string) => void;
+  category: InvoiceCategory;
 }
 
 const templates: Template[] = [
-  {
-    id: 'default',
-    name: 'Default',
-    thumbnailUrl: '/templates/Default.png',
-  },
-  {
-    id: 'modern',
-    name: 'Modern',
-    thumbnailUrl: '/templates/Modern.png',
-  },
-  {
-    id: 'minimalist',
-    name: 'Minimalist',
-    thumbnailUrl: '/templates/Minimalist.png',
-  },
-  {
-    id: 'creative',
-    name: 'Creative',
-    thumbnailUrl: '/templates/Creative.png',
-    isPro: true,
-  },
-  {
-    id: 'elegant',
-    name: 'Elegant',
-    thumbnailUrl: '/templates/Elegant.png',
-    isPro: true,
-  },
-  {
-    id: 'usa',
-    name: 'USA',
-    thumbnailUrl: '/templates/Usa.png',
-    isPro: true,
-  },
+  // General
+  { id: 'default', name: 'Default', thumbnailUrl: '/templates/Default.png', category: 'all' },
+  { id: 'modern', name: 'Modern', thumbnailUrl: '/templates/Modern.png', category: 'all' },
+  { id: 'minimalist', name: 'Minimalist', thumbnailUrl: '/templates/Minimalist.png', category: 'all' },
+  { id: 'creative', name: 'Creative', thumbnailUrl: '/templates/Creative.png', category: 'all', isPro: true },
+  { id: 'elegant', name: 'Elegant', thumbnailUrl: '/templates/Elegant.png', category: 'all', isPro: true },
+  { id: 'usa', name: 'USA', thumbnailUrl: '/templates/Usa.png', category: 'all', isPro: true },
+
+  // Construction
+  { id: 'construction-1', name: 'Foundation', thumbnailUrl: '/templates/construction-1.png', category: 'Construction' },
+  { id: 'construction-2', name: 'Blueprint', thumbnailUrl: '/templates/construction-2.png', category: 'Construction' },
+  { id: 'construction-3', name: 'Contractor', thumbnailUrl: '/templates/construction-3.png', category: 'Construction' },
+  { id: 'construction-4', name: 'High-Rise', thumbnailUrl: '/templates/construction-4.png', category: 'Construction', isPro: true },
+  { id: 'construction-5', name: 'Steel-Frame', thumbnailUrl: '/templates/construction-5.png', category: 'Construction', isPro: true },
+  { id: 'construction-6', name: 'Classic', thumbnailUrl: '/templates/construction-1.png', category: 'Construction', isPro: true },
+  { id: 'construction-7', name: 'Modern Build', thumbnailUrl: '/templates/construction-2.png', category: 'Construction', isPro: true },
+  { id: 'construction-8', name: 'Grid', thumbnailUrl: '/templates/construction-3.png', category: 'Construction', isPro: true },
+  { id: 'construction-9', name: 'Simple', thumbnailUrl: '/templates/construction-4.png', category: 'Construction', isPro: true },
+  { id: 'construction-10', name: 'Bold', thumbnailUrl: '/templates/construction-5.png', category: 'Construction', isPro: true },
+
 ];
 
-export function TemplateSelector({ selectedTemplate, onSelectTemplate }: TemplateSelectorProps) {
+export function TemplateSelector({ selectedTemplate, onSelectTemplate, category }: TemplateSelectorProps) {
     const { user } = useAuth();
     const { firestore } = useFirebase();
     const userDocRef = user ? doc(firestore, 'users', user.uid) : null;
     const { data: userData } = useDoc<{ plan: string }>(userDocRef);
     const isBusinessPlan = userData?.plan === 'business' || (user?.email === 'aqib2k1@gmail.com');
 
+    const filteredTemplates = templates.filter(t => t.category === category || t.category === 'all');
+
   return (
     <div className="grid grid-cols-2 lg:grid-cols-3 gap-6">
-      {templates.map((template) => {
+      {filteredTemplates.map((template) => {
         const isLocked = template.isPro && !isBusinessPlan;
         return (
             <div
