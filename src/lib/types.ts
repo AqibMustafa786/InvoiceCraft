@@ -41,14 +41,6 @@ export interface Invoice {
   // Kept for backwards compatibility with older invoice structures
   companyName?: string;
   companyAddress?: string;
-  companyPhone?: string;
-  clientName?: string;
-  clientAddress?: string;
-  clientEmail?: string;
-  items?: LineItem[];
-  tax?: number;
-  discount?: number;
-  shippingAddress?: string;
   // New structure
   business: BusinessInfo;
   client: ClientInfo;
@@ -266,76 +258,127 @@ export interface ConsultingInfo {
 }
 
 export interface LegalInfo {
+  caseName: string;
   caseNumber: string;
-  caseType: string;
-  retainerBalance: number | null;
-  billingAttorney: string;
+  serviceType: string;
+  hourlyRate: number | null;
+  hoursWorked: number | null;
+  retainerAmount: number | null;
+  courtFilingFees: number | null;
+  travelTime: number | null;
+  additionalDisbursements: number | null;
 }
 
 export interface MedicalInfo {
   patientName: string;
   patientId: string;
-  insuranceProvider: string;
-  insurancePolicyNumber: string;
-  diagnosisCode: string;
-  procedureCode: string;
-  coPay: number | null;
+  serviceType: string;
+  cptCode: string;
+  icdCode: string;
+  visitDate: Date | null;
+  physicianName: string;
+  copayAmount: number | null;
+  labFee: number | null;
+  medicationCharges: number | null;
 }
 
 export interface AutoRepairInfo {
     vehicleMake: string;
     vehicleModel: string;
-    vehicleYear: number | null;
+    year: number | null;
+    licensePlate: string;
     vin: string;
+    odometer: number | null;
+    laborHours: number | null;
+    laborRate: number | null;
     diagnosticFee: number | null;
-    mileage: number | null;
+    shopSupplyFee: number | null;
+    towingFee: number | null;
+    parts: { name: string; partNumber: string; cost: number; }[];
 }
 
 export interface EcommerceInfo {
   orderNumber: string;
-  shippingMethod: string;
-  trackingNumber: string;
-}
-
-export interface RentalInfo {
-  propertyAddress: string;
-  tenantName: string;
-  rentPeriod: string;
-  lateFee: number | null;
+  sku: string;
+  productCategory: string;
+  weight: number | null;
+  quantity: number | null;
+  shippingCost: number | null;
+  shippingCarrier: string;
+  trackingId: string;
+  salesTax: number | null;
+  packagingFee: number | null;
 }
 
 export interface RetailInfo {
   sku: string;
+  productName: string;
   productCategory: string;
-  shippingFee: number | null;
+  unitOfMeasure: string;
+  batchNumber: string;
+  stockQuantity: number | null;
+  wholesalePrice: number | null;
+  shippingPalletCost: number | null;
 }
 
 export interface PhotographyInfo {
   eventType: string;
+  shootDate: Date | null;
   hoursOfCoverage: number | null;
-  editingFee: number | null;
+  packageSelected: string;
+  editedPhotosCount: number | null;
+  rawFilesCost: number | null;
   travelFee: number | null;
+  equipmentRentalFee: number | null;
 }
 
 export interface RealEstateInfo {
   propertyAddress: string;
+  unitNumber: string;
   leaseTerm: string;
-  maintenanceCosts: number | null;
-  managementFee: number | null;
+  tenantName: string;
+  monthlyRent: number | null;
+  cleaningFee: number | null;
+  maintenanceFee: number | null;
+  lateFee: number | null;
+  hoaCharges: number | null;
+  utilityCharges: number | null;
 }
 
 export interface TransportationInfo {
   pickupLocation: string;
-  deliveryLocation: string;
-  distanceMiles: number | null;
-  weightLoad: string;
+  dropoffLocation: string;
+  milesDriven: number | null;
+  ratePerMile: number | null;
+  weight: number | null;
+  loadType: string;
   fuelSurcharge: number | null;
+  tollCharges: number | null;
+  detentionFee: number | null;
 }
 
 export interface ITServiceInfo {
   serviceType: string;
+  hourlyRate: number | null;
   hardwareReplacementCost: number | null;
   monthlyMaintenanceFee: number | null;
+  deviceType: string;
+  serialNumber: string;
+  hoursWorked: number | null;
+}
+
+export interface RentalInfo {
+  rentalItemName: string;
+  rentalStartDate: Date | null;
+  rentalEndDate: Date | null;
+  dailyRate: number | null;
+  hourlyRate: number | null;
+  numberOfDays: number | null;
+  numberOfHours: number | null;
+  securityDeposit: number | null;
+  damageCharges: number | null;
+  deliveryFee: number | null;
+  pickupFee: number | null;
 }
 
 

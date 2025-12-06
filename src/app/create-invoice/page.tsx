@@ -141,67 +141,118 @@ const getInitialInvoice = (): Omit<Invoice, 'userId'> => ({
     retainerFee: null,
   },
   legal: {
+    caseName: '',
     caseNumber: '',
-    caseType: '',
-    retainerBalance: null,
-    billingAttorney: ''
+    serviceType: 'Consultation',
+    hourlyRate: null,
+    hoursWorked: null,
+    retainerAmount: null,
+    courtFilingFees: null,
+    travelTime: null,
+    additionalDisbursements: null,
   },
   medical: {
     patientName: '',
     patientId: '',
-    insuranceProvider: '',
-    insurancePolicyNumber: '',
-    diagnosisCode: '',
-    procedureCode: '',
-    coPay: null,
+    serviceType: 'Consultation',
+    cptCode: '',
+    icdCode: '',
+    visitDate: null,
+    physicianName: '',
+    copayAmount: null,
+    labFee: null,
+    medicationCharges: null,
   },
   autoRepair: {
     vehicleMake: '',
     vehicleModel: '',
-    vehicleYear: null,
+    year: null,
+    licensePlate: '',
     vin: '',
+    odometer: null,
+    laborHours: null,
+    laborRate: null,
     diagnosticFee: null,
-    mileage: null
+    shopSupplyFee: null,
+    towingFee: null,
+    parts: [],
   },
   ecommerce: {
     orderNumber: '',
-    shippingMethod: '',
-    trackingNumber: '',
+    sku: '',
+    productCategory: '',
+    weight: null,
+    quantity: null,
+    shippingCost: null,
+    shippingCarrier: '',
+    trackingId: '',
+    salesTax: null,
+    packagingFee: null,
   },
   rental: {
-    propertyAddress: '',
-    tenantName: '',
-    rentPeriod: '',
-    lateFee: null,
+    rentalItemName: '',
+    rentalStartDate: null,
+    rentalEndDate: null,
+    dailyRate: null,
+    hourlyRate: null,
+    numberOfDays: null,
+    numberOfHours: null,
+    securityDeposit: null,
+    damageCharges: null,
+    deliveryFee: null,
+    pickupFee: null,
   },
   retail: {
     sku: '',
+    productName: '',
     productCategory: '',
-    shippingFee: null,
+    unitOfMeasure: '',
+    batchNumber: '',
+    stockQuantity: null,
+    wholesalePrice: null,
+    shippingPalletCost: null,
   },
   photography: {
-    eventType: '',
+    eventType: 'Portrait',
+    shootDate: null,
     hoursOfCoverage: null,
-    editingFee: null,
+    packageSelected: '',
+    editedPhotosCount: null,
+    rawFilesCost: null,
     travelFee: null,
+    equipmentRentalFee: null,
   },
   realEstate: {
     propertyAddress: '',
+    unitNumber: '',
     leaseTerm: '',
-    maintenanceCosts: null,
-    managementFee: null,
+    tenantName: '',
+    monthlyRent: null,
+    cleaningFee: null,
+    maintenanceFee: null,
+    lateFee: null,
+    hoaCharges: null,
+    utilityCharges: null,
   },
   transportation: {
     pickupLocation: '',
-    deliveryLocation: '',
-    distanceMiles: null,
-    weightLoad: '',
+    dropoffLocation: '',
+    milesDriven: null,
+    ratePerMile: null,
+    weight: null,
+    loadType: '',
     fuelSurcharge: null,
+    tollCharges: null,
+    detentionFee: null,
   },
   itServices: {
-    serviceType: '',
+    serviceType: 'Support',
+    hourlyRate: null,
     hardwareReplacementCost: null,
     monthlyMaintenanceFee: null,
+    deviceType: '',
+    serialNumber: '',
+    hoursWorked: null,
   },
 });
 
@@ -275,7 +326,7 @@ export default function CreateInvoicePage() {
     if (draftId && remoteDraft) {
        const baseInvoice = getInitialInvoice();
        const fromJSON = (key: string, value: any) => {
-           if (['invoiceDate', 'dueDate', 'createdAt', 'updatedAt', 'projectStartDate', 'projectEndDate'].includes(key) && value) {
+           if (['invoiceDate', 'dueDate', 'createdAt', 'updatedAt', 'projectStartDate', 'projectEndDate', 'visitDate', 'shootDate', 'rentalStartDate', 'rentalEndDate'].includes(key) && value) {
                return value.toDate ? value.toDate() : (isValid(new Date(value)) ? new Date(value) : null);
            }
            return value;
@@ -374,6 +425,24 @@ export default function CreateInvoicePage() {
         const end = normalizeDate(invoice.construction.projectEndDate);
         if(end) draftToSave.construction.projectEndDate = end;
     }
+    if (invoice.medical) {
+        draftToSave.medical = { ...invoice.medical };
+        const visitDate = normalizeDate(invoice.medical.visitDate);
+        if(visitDate) draftToSave.medical.visitDate = visitDate;
+    }
+     if (invoice.photography) {
+        draftToSave.photography = { ...invoice.photography };
+        const shootDate = normalizeDate(invoice.photography.shootDate);
+        if(shootDate) draftToSave.photography.shootDate = shootDate;
+    }
+     if (invoice.rental) {
+        draftToSave.rental = { ...invoice.rental };
+        const start = normalizeDate(invoice.rental.rentalStartDate);
+        if(start) draftToSave.rental.rentalStartDate = start;
+        const end = normalizeDate(invoice.rental.rentalEndDate);
+        if(end) draftToSave.rental.rentalEndDate = end;
+    }
+
 
     if (!invoice.createdAt) {
       draftToSave.createdAt = serverTimestamp();
