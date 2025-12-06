@@ -79,6 +79,18 @@ const templates: Template[] = [
   { id: 'hvac-8', name: 'EcoLink', thumbnailUrl: '/templates/hvac-3.png', category: 'HVAC Services', isPro: true },
   { id: 'hvac-9', name: 'ClimateControl', thumbnailUrl: '/templates/hvac-4.png', category: 'HVAC Services', isPro: true },
   { id: 'hvac-10', name: 'Airflow', thumbnailUrl: '/templates/hvac-5.png', category: 'HVAC Services', isPro: true },
+
+    // Roofing
+  { id: 'roofing-1', name: 'USA Contractor', thumbnailUrl: '/templates/roofing-1.png', category: 'Roofing' },
+  { id: 'roofing-2', name: 'Modern Roofing', thumbnailUrl: '/templates/roofing-2.png', category: 'Roofing' },
+  { id: 'roofing-3', name: 'Classic Roofing', thumbnailUrl: '/templates/roofing-3.png', category: 'Roofing' },
+  { id: 'roofing-4', name: 'Clean Grid', thumbnailUrl: '/templates/roofing-4.png', category: 'Roofing', isPro: true },
+  { id: 'roofing-5', name: 'Side Panel', thumbnailUrl: '/templates/roofing-5.png', category: 'Roofing', isPro: true },
+  { id: 'roofing-6', name: 'PeakPro', thumbnailUrl: '/templates/roofing-1.png', category: 'Roofing', isPro: true },
+  { id: 'roofing-7', name: 'Shingle', thumbnailUrl: '/templates/roofing-2.png', category: 'Roofing', isPro: true },
+  { id: 'roofing-8', name: 'Skyline', thumbnailUrl: '/templates/roofing-3.png', category: 'Roofing', isPro: true },
+  { id: 'roofing-9', name: 'Fortress', thumbnailUrl: '/templates/roofing-4.png', category: 'Roofing', isPro: true },
+  { id: 'roofing-10', name: 'Ridge', thumbnailUrl: '/templates/roofing-5.png', category: 'Roofing', isPro: true },
 ];
 
 export function TemplateSelector({ selectedTemplate, onSelectTemplate, category }: TemplateSelectorProps) {

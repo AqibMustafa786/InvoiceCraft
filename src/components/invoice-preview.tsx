@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useLayoutEffect, useRef, useEffect, FC } from 'react';
@@ -24,6 +23,10 @@ import {
   HVACTemplate1, HVACTemplate2, HVACTemplate3, HVACTemplate4, HVACTemplate5,
   HVACTemplate6, HVACTemplate7, HVACTemplate8, HVACTemplate9, HVACTemplate10
 } from './invoice-templates/hvac-templates';
+import {
+  RoofingTemplate1, RoofingTemplate2, RoofingTemplate3, RoofingTemplate4, RoofingTemplate5,
+  RoofingTemplate6, RoofingTemplate7, RoofingTemplate8, RoofingTemplate9, RoofingTemplate10
+} from './invoice-templates/roofing-templates';
 
 
 // --- PROPS ---
@@ -461,6 +464,16 @@ const templates: Record<string, FC<PageProps>> = {
   'hvac-8': HVACTemplate8,
   'hvac-9': HVACTemplate9,
   'hvac-10': HVACTemplate10,
+  'roofing-1': RoofingTemplate1,
+  'roofing-2': RoofingTemplate2,
+  'roofing-3': RoofingTemplate3,
+  'roofing-4': RoofingTemplate4,
+  'roofing-5': RoofingTemplate5,
+  'roofing-6': RoofingTemplate6,
+  'roofing-7': RoofingTemplate7,
+  'roofing-8': RoofingTemplate8,
+  'roofing-9': RoofingTemplate9,
+  'roofing-10': RoofingTemplate10,
 };
 
 
@@ -510,6 +523,9 @@ const InvoicePreviewInternal: FC<InvoicePreviewProps> = ({ invoice, accentColor,
     }
     if (invoice.category === 'HVAC Services') {
         return templates[invoice.template] || HVACTemplate1;
+    }
+    if (invoice.category === 'Roofing') {
+        return templates[invoice.template] || RoofingTemplate1;
     }
     return templates[invoice.template] || DefaultTemplatePage;
   };
