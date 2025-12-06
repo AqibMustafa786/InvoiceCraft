@@ -8,6 +8,7 @@ import { useAuth, useFirebase } from '@/firebase';
 import { doc } from 'firebase/firestore';
 import { useDoc } from '@/firebase/firestore/use-doc';
 import { type InvoiceCategory } from '@/lib/types';
+import { useMemo } from 'react';
 
 interface Template {
   id: string;
@@ -25,12 +26,12 @@ interface TemplateSelectorProps {
 
 const templates: Template[] = [
   // General
-  { id: 'default', name: 'Default', thumbnailUrl: '/templates/Default.png', category: 'all' },
-  { id: 'modern', name: 'Modern', thumbnailUrl: '/templates/Modern.png', category: 'all' },
-  { id: 'minimalist', name: 'Minimalist', thumbnailUrl: '/templates/Minimalist.png', category: 'all' },
-  { id: 'creative', name: 'Creative', thumbnailUrl: '/templates/Creative.png', category: 'all', isPro: true },
-  { id: 'elegant', name: 'Elegant', thumbnailUrl: '/templates/Elegant.png', category: 'all', isPro: true },
-  { id: 'usa', name: 'USA', thumbnailUrl: '/templates/Usa.png', category: 'all', isPro: true },
+  { id: 'default', name: 'Default', thumbnailUrl: '/templates/Default.png', category: 'General Services' },
+  { id: 'modern', name: 'Modern', thumbnailUrl: '/templates/Modern.png', category: 'General Services' },
+  { id: 'minimalist', name: 'Minimalist', thumbnailUrl: '/templates/Minimalist.png', category: 'General Services' },
+  { id: 'creative', name: 'Creative', thumbnailUrl: '/templates/Creative.png', category: 'General Services', isPro: true },
+  { id: 'elegant', name: 'Elegant', thumbnailUrl: '/templates/Elegant.png', category: 'General Services', isPro: true },
+  { id: 'usa', name: 'USA', thumbnailUrl: '/templates/Usa.png', category: 'General Services', isPro: true },
 
   // Construction
   { id: 'construction-1', name: 'Foundation', thumbnailUrl: '/templates/construction-1.png', category: 'Construction' },
@@ -100,7 +101,14 @@ export function TemplateSelector({ selectedTemplate, onSelectTemplate, category 
     const { data: userData } = useDoc<{ plan: string }>(userDocRef);
     const isBusinessPlan = userData?.plan === 'business' || (user?.email === 'aqib2k1@gmail.com');
 
-    const filteredTemplates = templates.filter(t => t.category === category || t.category === 'all');
+    const filteredTemplates = useMemo(() => {
+        const categoryTemplates = templates.filter(t => t.category === category);
+        if (categoryTemplates.length > 0) {
+            return categoryTemplates;
+        }
+        return templates.filter(t => t.category === 'General Services');
+    }, [category]);
+
 
   return (
     <div className="grid grid-cols-2 lg:grid-cols-3 gap-6">

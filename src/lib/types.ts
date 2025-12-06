@@ -267,6 +267,22 @@ export interface ITFreelanceInfo {
 export interface Invoice {
   id: string; 
   userId: string;
+  // Deprecated fields - will be removed in a future step
+  companyName: string;
+  companyAddress: string;
+  companyPhone: string;
+  clientName: string;
+  clientAddress: string;
+  clientEmail: string;
+  items: LineItem[];
+  tax: number;
+  discount: number;
+  shippingCost: number;
+  shippingAddress: string;
+  poNumber: string;
+  trackingNumber: string;
+  // End deprecated fields
+
   business: BusinessInfo;
   client: ClientInfo;
   invoiceNumber: string;
@@ -287,9 +303,7 @@ export interface Invoice {
   textColor?: string;
   createdAt?: any;
   updatedAt?: any;
-  poNumber?: string;
   amountPaid?: number;
-  trackingNumber?: string;
 
   // Category specific data
   construction?: ConstructionInfo;
@@ -389,6 +403,45 @@ export interface Estimate {
 }
 
 export type Quote = Estimate & { documentType: 'quote' };
+
+
+export interface InsuranceDocument {
+  id: string;
+  companyName: string;
+  companyPhone: string;
+  companyAddress: string;
+
+  insuredName: string;
+  policyId: string;
+  insuredAddress: string;
+  insuredPhone: string;
+  insuredEmail: string;
+
+  claimNumber: string;
+  dateOfLoss: string;
+  typeOfClaim: string;
+  incidentDescription: string;
+  insuranceCompany: string;
+  adjusterInfo: string;
+
+  documentNumber: string;
+  documentDate: Date;
+  
+  items: LineItem[];
+  tax: number;
+  discount: number;
+  shippingCost: number;
+
+  notes: string;
+
+  currency: string;
+  language: string;
+  template: string;
+  createdAt: any;
+  updatedAt: any;
+  textColor: string;
+}
+
 
 // Stripe Checkout Types
 export const StripeCheckoutInputSchema = z.object({
