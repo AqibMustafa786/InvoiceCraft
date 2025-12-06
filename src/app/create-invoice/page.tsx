@@ -43,17 +43,17 @@ const getInitialInvoice = (): Omit<Invoice, 'userId'> => ({
     phone: '+1 (123) 456-7890',
     email: 'contact@yourcompany.com',
     website: 'www.yourcompany.com',
-    licenseNumber: 'LICENSE-12345',
+    licenseNumber: '',
     logoUrl: '',
     taxId: '',
   },
 
   client: {
     name: 'Client Name',
-    companyName: 'Client Company',
     address: '456 Oak Ave, Someplace, USA 54321',
-    phone: '+1 (987) 654-3210',
+    phone: '',
     email: 'client@example.com',
+    shippingAddress: ''
   },
   
   lineItems: [{ ...getInitialLineItem(), name: 'Sample Service (e.g., Website Development)', unitPrice: 1500 }],
@@ -144,7 +144,7 @@ const getInitialInvoice = (): Omit<Invoice, 'userId'> => ({
     caseNumber: '',
     caseType: '',
     retainerBalance: null,
-    billingAttorney: '',
+    billingAttorney: ''
   },
   medical: {
     patientName: '',
@@ -161,7 +161,7 @@ const getInitialInvoice = (): Omit<Invoice, 'userId'> => ({
     vehicleYear: null,
     vin: '',
     diagnosticFee: null,
-    mileage: null,
+    mileage: null
   },
   ecommerce: {
     orderNumber: '',
@@ -504,5 +504,3 @@ export default function CreateInvoicePage() {
   );
 }
     
-
-

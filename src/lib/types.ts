@@ -38,6 +38,18 @@ export type InvoiceCategory =
 export interface Invoice {
   id: string; 
   userId: string;
+  // Kept for backwards compatibility with older invoice structures
+  companyName?: string;
+  companyAddress?: string;
+  companyPhone?: string;
+  clientName?: string;
+  clientAddress?: string;
+  clientEmail?: string;
+  items?: LineItem[];
+  tax?: number;
+  discount?: number;
+  shippingAddress?: string;
+  // New structure
   business: BusinessInfo;
   client: ClientInfo;
   invoiceNumber: string;
@@ -60,27 +72,28 @@ export interface Invoice {
   updatedAt?: any;
   poNumber?: string;
   amountPaid?: number;
+  trackingNumber?: string;
 
   // Category specific data
-  construction?: ConstructionInfo;
-  plumbing?: PlumbingInfo;
-  electrical?: ElectricalInfo;
-  hvac?: HVACInfo;
-  roofing?: RoofingInfo;
-  landscaping?: LandscapingInfo;
-  cleaning?: CleaningInfo;
-  freelance?: ITFreelanceInfo;
-  consulting?: ConsultingInfo;
-  legal?: LegalInfo;
-  medical?: MedicalInfo;
-  autoRepair?: AutoRepairInfo;
-  ecommerce?: EcommerceInfo;
-  rental?: RentalInfo;
-  retail?: RetailInfo;
-  photography?: PhotographyInfo;
-  realEstate?: RealEstateInfo;
-  transportation?: TransportationInfo;
-  itServices?: ITServiceInfo;
+  construction: ConstructionInfo;
+  plumbing: PlumbingInfo;
+  electrical: ElectricalInfo;
+  hvac: HVACInfo;
+  roofing: RoofingInfo;
+  landscaping: LandscapingInfo;
+  cleaning: CleaningInfo;
+  freelance: ITFreelanceInfo;
+  consulting: ConsultingInfo;
+  legal: LegalInfo;
+  medical: MedicalInfo;
+  autoRepair: AutoRepairInfo;
+  ecommerce: EcommerceInfo;
+  rental: RentalInfo;
+  retail: RetailInfo;
+  photography: PhotographyInfo;
+  realEstate: RealEstateInfo;
+  transportation: TransportationInfo;
+  itServices: ITServiceInfo;
 }
 
 export interface InsuranceDocument {
@@ -144,11 +157,12 @@ export interface BusinessInfo {
 
 export interface ClientInfo {
   name: string;
-  companyName: string;
+  companyName?: string;
   address: string;
   phone: string;
   email: string;
-  projectLocation?: string; // New field for project location
+  projectLocation?: string;
+  shippingAddress?: string;
 }
 
 export interface EstimateSummary {
@@ -255,10 +269,14 @@ export interface LegalInfo {
   caseNumber: string;
   caseType: string;
   retainerBalance: number | null;
+  billingAttorney: string;
 }
 
 export interface MedicalInfo {
   patientName: string;
+  patientId: string;
+  insuranceProvider: string;
+  insurancePolicyNumber: string;
   diagnosisCode: string;
   procedureCode: string;
   coPay: number | null;
@@ -270,6 +288,7 @@ export interface AutoRepairInfo {
     vehicleYear: number | null;
     vin: string;
     diagnosticFee: number | null;
+    mileage: number | null;
 }
 
 export interface EcommerceInfo {
