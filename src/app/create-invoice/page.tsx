@@ -51,7 +51,7 @@ const getInitialInvoice = (): Omit<Invoice, 'userId'> => ({
   client: {
     name: 'Client Name',
     address: '456 Oak Ave, Someplace, USA 54321',
-    phone: '',
+    phone: '+1 (987) 654-3210',
     email: 'client@example.com',
     shippingAddress: ''
   },
@@ -168,7 +168,7 @@ const getInitialInvoice = (): Omit<Invoice, 'userId'> => ({
     vehicleModel: '',
     year: null,
     licensePlate: '',
-    vin: '',
+vin: '',
     odometer: null,
     laborHours: null,
     laborRate: null,
@@ -333,7 +333,7 @@ export default function CreateInvoicePage() {
        };
        const loadedDraft = JSON.parse(JSON.stringify(remoteDraft), fromJSON);
        
-       initialInvoice = {
+        initialInvoice = {
          ...baseInvoice,
          ...loadedDraft,
          userId: user.uid,
