@@ -1,3 +1,4 @@
+
 'use client';
 
 import { cn } from '@/lib/utils';
@@ -67,6 +68,17 @@ const templates: Template[] = [
   { id: 'electrical-9', name: 'Wired', thumbnailUrl: '/templates/electrical-4.png', category: 'Electrical Services', isPro: true },
   { id: 'electrical-10', name: 'PowerGrid', thumbnailUrl: '/templates/electrical-5.png', category: 'Electrical Services', isPro: true },
 
+  // HVAC Services
+  { id: 'hvac-1', name: 'Direct', thumbnailUrl: '/templates/Usa-insurance.png', category: 'HVAC Services' },
+  { id: 'hvac-2', name: 'Modern', thumbnailUrl: '/templates/Modern.png', category: 'HVAC Services' },
+  { id: 'hvac-3', name: 'Minimalist', thumbnailUrl: '/templates/Minimalist.png', category: 'HVAC Services' },
+  { id: 'hvac-4', name: 'Corporate', thumbnailUrl: '/templates/Creative.png', category: 'HVAC Services', isPro: true },
+  { id: 'hvac-5', name: 'Side Details', thumbnailUrl: '/templates/Elegant.png', category: 'HVAC Services', isPro: true },
+  { id: 'hvac-6', name: 'Coolant', thumbnailUrl: '/templates/hvac-1.png', category: 'HVAC Services', isPro: true },
+  { id: 'hvac-7', name: 'Ventura', thumbnailUrl: '/templates/hvac-2.png', category: 'HVAC Services', isPro: true },
+  { id: 'hvac-8', name: 'EcoLink', thumbnailUrl: '/templates/hvac-3.png', category: 'HVAC Services', isPro: true },
+  { id: 'hvac-9', name: 'ClimateControl', thumbnailUrl: '/templates/hvac-4.png', category: 'HVAC Services', isPro: true },
+  { id: 'hvac-10', name: 'Airflow', thumbnailUrl: '/templates/hvac-5.png', category: 'HVAC Services', isPro: true },
 ];
 
 export function TemplateSelector({ selectedTemplate, onSelectTemplate, category }: TemplateSelectorProps) {

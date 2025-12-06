@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useLayoutEffect, useRef, useEffect, FC } from 'react';
@@ -19,6 +20,11 @@ import {
   ElectricalTemplate1, ElectricalTemplate2, ElectricalTemplate3, ElectricalTemplate4, ElectricalTemplate5,
   ElectricalTemplate6, ElectricalTemplate7, ElectricalTemplate8, ElectricalTemplate9, ElectricalTemplate10
 } from './invoice-templates/electrical-templates';
+import {
+  HVACTemplate1, HVACTemplate2, HVACTemplate3, HVACTemplate4, HVACTemplate5,
+  HVACTemplate6, HVACTemplate7, HVACTemplate8, HVACTemplate9, HVACTemplate10
+} from './invoice-templates/hvac-templates';
+
 
 // --- PROPS ---
 interface InvoicePreviewProps {
@@ -445,6 +451,16 @@ const templates: Record<string, FC<PageProps>> = {
   'electrical-8': ElectricalTemplate8,
   'electrical-9': ElectricalTemplate9,
   'electrical-10': ElectricalTemplate10,
+  'hvac-1': HVACTemplate1,
+  'hvac-2': HVACTemplate2,
+  'hvac-3': HVACTemplate3,
+  'hvac-4': HVACTemplate4,
+  'hvac-5': HVACTemplate5,
+  'hvac-6': HVACTemplate6,
+  'hvac-7': HVACTemplate7,
+  'hvac-8': HVACTemplate8,
+  'hvac-9': HVACTemplate9,
+  'hvac-10': HVACTemplate10,
 };
 
 
@@ -491,6 +507,9 @@ const InvoicePreviewInternal: FC<InvoicePreviewProps> = ({ invoice, accentColor,
     }
     if (invoice.category === 'Electrical Services') {
         return templates[invoice.template] || ElectricalTemplate1;
+    }
+    if (invoice.category === 'HVAC Services') {
+        return templates[invoice.template] || HVACTemplate1;
     }
     return templates[invoice.template] || DefaultTemplatePage;
   };
