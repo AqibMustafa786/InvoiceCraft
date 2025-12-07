@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState, useMemo } from 'react';
-import { doc, updateDoc, arrayUnion, serverTimestamp, getDocs, collection, query, where, limit } from 'firebase/firestore';
+import { doc, updateDoc, arrayUnion, serverTimestamp, getDocs, collection, query, where, limit, getDoc } from 'firebase/firestore';
 import { useFirebase, useDoc, useMemoFirebase } from '@/firebase';
 import type { Estimate } from '@/lib/types';
 import { EstimatePreview } from '@/components/estimate-preview';
@@ -21,6 +21,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
+import { Skeleton } from '@/components/ui/skeleton';
 
 export default function PublicEstimatePage({ params }: { params: { estimateId: string } }) {
     const { firestore, user } = useFirebase();
@@ -30,51 +31,47 @@ export default function PublicEstimatePage({ params }: { params: { estimateId: s
     const { toast } = useToast();
     const [estimate, setEstimate] = useState<Estimate | null>(null);
     const [isLoading, setIsLoading] = useState(true);
-    const [error, setError] = useState<Error | null>(null);
+    const [error, setError] = useState<string | null>(null);
+    const [docRef, setDocRef] = useState<any>(null);
 
-    const estimateRef = useMemo(() => {
-        if (!firestore || !params.estimateId) return null;
-        // This ref is optimistic; we don't know the companyId yet.
-        // We will find it via query.
-        return doc(collection(firestore, 'companies'), 'dummy', 'estimates', params.estimateId);
-    }, [firestore, params.estimateId]);
-    
     useEffect(() => {
         const fetchDoc = async () => {
             if (!firestore || !params.estimateId) {
+                setError("An error occurred.");
                 setIsLoading(false);
-                setError(new Error("Firestore not available"));
                 return;
-            };
-            
+            }
+
             try {
-                // Query across all 'estimates' sub-collections for the document
+                // Query across all companies' estimates subcollections
                 const estimatesQuery = query(
                     collection(firestore, 'companies'),
-                    // This is a collection group query placeholder. In a real scenario, you'd enable this in Firestore.
-                    // For now, let's simulate it by iterating. A better production approach is a root lookup collection.
                 );
                 
-                const companiesSnapshot = await getDocs(collection(firestore, "companies"));
+                const companiesSnapshot = await getDocs(estimatesQuery);
                 let foundDoc = null;
+                let companyId = null;
 
                 for (const companyDoc of companiesSnapshot.docs) {
                     const estimateDocRef = doc(firestore, 'companies', companyDoc.id, 'estimates', params.estimateId);
-                    const docSnap = await getDocs(query(collection(firestore, 'companies', companyDoc.id, 'estimates'), where('id', '==', params.estimateId), limit(1)));
+                    const docSnap = await getDoc(estimateDocRef);
                     
-                    if (!docSnap.empty) {
-                        foundDoc = docSnap.docs[0];
+                    if (docSnap.exists()) {
+                        foundDoc = docSnap.data();
+                        companyId = companyDoc.id;
+                        setDocRef(estimateDocRef);
                         break;
                     }
                 }
 
                 if (foundDoc) {
-                    setEstimate(foundDoc.data() as Estimate);
+                    setEstimate(foundDoc as Estimate);
                 } else {
-                     setError(new Error("Estimate not found."));
+                    setError("Estimate not found or you don't have permission to view it.");
                 }
-            } catch (e) {
-                setError(e as Error);
+            } catch (e: any) {
+                console.error("Error fetching estimate:", e);
+                setError(e.message || "Failed to load estimate.");
             } finally {
                 setIsLoading(false);
             }
@@ -93,7 +90,7 @@ export default function PublicEstimatePage({ params }: { params: { estimateId: s
     }, []);
 
     const fromJSON = (key: string, value: any) => {
-        if (key === 'estimateDate' || key === 'validUntilDate' || key === 'signedAt' || key === 'timestamp') {
+        if (['estimateDate', 'validUntilDate', 'signedAt', 'timestamp'].includes(key) && value) {
             return value?.toDate ? value.toDate() : (value ? new Date(value) : value);
         }
         return value;
@@ -105,10 +102,9 @@ export default function PublicEstimatePage({ params }: { params: { estimateId: s
     const isOwner = user && loadedEstimate && user.uid === loadedEstimate.userId;
 
     const handleDecline = async () => {
-        if (!estimateRef || !firestore || !loadedEstimate?.companyId) return;
-        const ref = doc(firestore, 'companies', loadedEstimate.companyId, 'estimates', params.estimateId);
+        if (!docRef) return;
         
-        await updateDoc(ref, {
+        await updateDoc(docRef, {
             status: 'rejected',
             auditLog: arrayUnion({
                 action: 'declined',
@@ -125,12 +121,18 @@ export default function PublicEstimatePage({ params }: { params: { estimateId: s
     };
 
     if (isLoading) {
-        return <div className="container mx-auto p-8 text-center">Loading estimate...</div>;
+        return (
+            <div className="container mx-auto p-8">
+                <div className="max-w-4xl mx-auto">
+                    <Skeleton className="h-10 w-48 mb-8" />
+                    <Skeleton className="w-full h-[800px]" />
+                </div>
+            </div>
+        );
     }
 
     if (error) {
-        console.error(error);
-        return <div className="container mx-auto p-8 text-center text-destructive">Error: Could not load estimate. This link may be invalid, expired, or you may not have permission to view it.</div>;
+        return <div className="container mx-auto p-8 text-center text-destructive">Error: {error}</div>;
     }
 
     if (!loadedEstimate) {
@@ -183,11 +185,11 @@ export default function PublicEstimatePage({ params }: { params: { estimateId: s
                     accentColor={accentColor} 
                 />
 
-                 {estimateRef && loadedEstimate && (
+                 {docRef && (
                     <DocumentAcceptanceModal 
                         isOpen={isAcceptanceModalOpen}
                         onClose={() => setIsAcceptanceModalOpen(false)}
-                        docRef={doc(firestore, 'companies', loadedEstimate.companyId, 'estimates', params.estimateId)}
+                        docRef={docRef}
                         docType="Estimate"
                     />
                 )}

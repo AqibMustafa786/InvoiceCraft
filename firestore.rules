@@ -59,7 +59,8 @@ service cloud.firestore {
                         (getUserData().plan == 'business' || list(/databases/$(database)/documents/companies/$(companyId)/invoices,).size() < 5);
       }
        match /estimates/{estimateId} {
-          allow get: if belongsToCompany(companyId); // Publicly readable for sharing
+          // Allow owner to read their own estimate regardless of company structure for sharing.
+          allow get: if belongsToCompany(companyId) || (isSignedIn() && resource.data.userId == request.auth.uid);
           allow list, update, delete: if belongsToCompany(companyId);
           allow create: if belongsToCompany(companyId) && 
                         (getUserData().plan == 'business' || list(/databases/$(database)/documents/companies/$(companyId)/estimates,).size() < 3);
