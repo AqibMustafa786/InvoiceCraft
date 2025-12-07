@@ -56,10 +56,10 @@ export default function HomePage() {
                 className="flex flex-col items-center justify-center gap-4 mt-8 sm:flex-row"
                 variants={itemVariants}
               >
-                <Button asChild size="lg" className="w-full text-lg text-white transition-transform shadow-lg bg-gradient-to-r from-primary to-accent hover:scale-105 sm:w-auto">
+                <Button asChild size="lg" className="w-full text-lg sm:w-auto">
                   <Link href="/create-invoice">Create Free Invoice</Link>
                 </Button>
-                <Button asChild variant="outline" size="lg" className="w-full text-lg bg-card/50 backdrop-blur-sm sm:w-auto">
+                <Button asChild variant="outline" size="lg" className="w-full text-lg sm:w-auto">
                   <Link href="/features">
                     Learn More
                   </Link>

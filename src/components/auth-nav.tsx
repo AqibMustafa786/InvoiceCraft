@@ -109,7 +109,7 @@ export function AuthNav({ isMobile = false }: AuthNavProps) {
              <Button asChild variant={isMobile ? 'outline' : 'ghost'} className={isMobile ? 'w-full' : ''}>
                 <Link href="/login">Login</Link>
             </Button>
-            <Button asChild className={`text-white transition-transform shadow-lg bg-gradient-to-r from-primary to-accent hover:scale-105 ${isMobile ? 'w-full' : ''}`}>
+            <Button asChild className={`transition-transform hover:scale-105 ${isMobile ? 'w-full' : ''}`}>
                 <Link href="/signup">Get Started</Link>
             </Button>
         </div>
