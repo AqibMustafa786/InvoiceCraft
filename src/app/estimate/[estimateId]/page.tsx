@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState, useMemo } from 'react';
-import { doc, updateDoc, arrayUnion, serverTimestamp, getDocs, collection, query, where, limit, getDoc } from 'firebase/firestore';
+import { doc, updateDoc, arrayUnion, serverTimestamp, getDocs, collection, query, where, limit, getDoc, collectionGroup } from 'firebase/firestore';
 import { useFirebase, useDoc, useMemoFirebase } from '@/firebase';
 import type { Estimate } from '@/lib/types';
 import { EstimatePreview } from '@/components/estimate-preview';
@@ -43,35 +43,27 @@ export default function PublicEstimatePage({ params }: { params: { estimateId: s
             }
 
             try {
-                // Query across all companies' estimates subcollections
-                const estimatesQuery = query(
-                    collection(firestore, 'companies'),
-                );
+                // This query looks across all 'estimates' subcollections in the entire database.
+                // It requires a composite index on the fields being queried.
+                const estimatesCollectionGroup = collectionGroup(firestore, 'estimates');
+                const q = query(estimatesCollectionGroup, where('id', '==', params.estimateId), limit(1));
                 
-                const companiesSnapshot = await getDocs(estimatesQuery);
-                let foundDoc = null;
-                let companyId = null;
+                const querySnapshot = await getDocs(q);
 
-                for (const companyDoc of companiesSnapshot.docs) {
-                    const estimateDocRef = doc(firestore, 'companies', companyDoc.id, 'estimates', params.estimateId);
-                    const docSnap = await getDoc(estimateDocRef);
-                    
-                    if (docSnap.exists()) {
-                        foundDoc = docSnap.data();
-                        companyId = companyDoc.id;
-                        setDocRef(estimateDocRef);
-                        break;
-                    }
-                }
-
-                if (foundDoc) {
-                    setEstimate(foundDoc as Estimate);
+                if (!querySnapshot.empty) {
+                    const docSnap = querySnapshot.docs[0];
+                    setEstimate(docSnap.data() as Estimate);
+                    setDocRef(docSnap.ref);
                 } else {
                     setError("Estimate not found or you don't have permission to view it.");
                 }
             } catch (e: any) {
                 console.error("Error fetching estimate:", e);
-                setError(e.message || "Failed to load estimate.");
+                 if (e.code === 'failed-precondition') {
+                    setError("Query requires an index. Please check your Firebase console to create the necessary composite index on the 'estimates' collection group.");
+                } else {
+                    setError(e.message || "Failed to load estimate.");
+                }
             } finally {
                 setIsLoading(false);
             }
