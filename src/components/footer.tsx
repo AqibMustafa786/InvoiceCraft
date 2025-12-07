@@ -16,16 +16,16 @@ export function Footer() {
             Smart, simple, and professional invoicing for modern freelancers and businesses.
           </p>
            <div className="flex gap-3 mt-4">
-            <Link href="#" aria-label="Twitter" rel="noopener noreferrer" target="_blank" className="transition-colors text-muted-foreground hover:text-foreground">
+            <Link href="#" aria-label="Twitter" rel="noopener noreferrer" target="_blank" className="transition-colors text-muted-foreground hover:text-primary">
               <Twitter className="w-5 h-5" />
             </Link>
-            <Link href="#" aria-label="GitHub" rel="noopener noreferrer" target="_blank" className="transition-colors text-muted-foreground hover:text-foreground">
+            <Link href="#" aria-label="GitHub" rel="noopener noreferrer" target="_blank" className="transition-colors text-muted-foreground hover:text-primary">
               <Github className="w-5 h-5" />
             </Link>
-            <Link href="#" aria-label="LinkedIn" rel="noopener noreferrer" target="_blank" className="transition-colors text-muted-foreground hover:text-foreground">
+            <Link href="#" aria-label="LinkedIn" rel="noopener noreferrer" target="_blank" className="transition-colors text-muted-foreground hover:text-primary">
                 <Linkedin className="w-5 h-5" />
             </Link>
-             <Link href="#" aria-label="Instagram" rel="noopener noreferrer" target="_blank" className="transition-colors text-muted-foreground hover:text-foreground">
+             <Link href="#" aria-label="Instagram" rel="noopener noreferrer" target="_blank" className="transition-colors text-muted-foreground hover:text-primary">
                 <Instagram className="w-5 h-5" />
             </Link>
           </div>
@@ -36,28 +36,28 @@ export function Footer() {
           <div className="space-y-4">
             <h3 className="font-semibold tracking-wider uppercase text-foreground">Product</h3>
             <nav className="flex flex-col space-y-3">
-              <Link href="/features" className="transition-colors text-muted-foreground hover:text-foreground">Features</Link>
-              <Link href="/pricing" className="transition-colors text-muted-foreground hover:text-foreground">Pricing</Link>
-              <Link href="/create-invoice" className="transition-colors text-muted-foreground hover:text-foreground">Create Invoice</Link>
-              <Link href="/create-estimate" className="transition-colors text-muted-foreground hover:text-foreground">Create Estimate</Link>
+              <Link href="/features" className="transition-colors text-muted-foreground hover:text-primary">Features</Link>
+              <Link href="/pricing" className="transition-colors text-muted-foreground hover:text-primary">Pricing</Link>
+              <Link href="/create-invoice" className="transition-colors text-muted-foreground hover:text-primary">Create Invoice</Link>
+              <Link href="/create-estimate" className="transition-colors text-muted-foreground hover:text-primary">Create Estimate</Link>
             </nav>
           </div>
           <div className="space-y-4">
             <h3 className="font-semibold tracking-wider uppercase text-foreground">Company</h3>
             <nav className="flex flex-col space-y-3">
-              <Link href="/about" className="transition-colors text-muted-foreground hover:text-foreground">About Us</Link>
-              <Link href="/blog" className="transition-colors text-muted-foreground hover:text-foreground">Blog</Link>
-              <Link href="/careers" className="transition-colors text-muted-foreground hover:text-foreground">Careers</Link>
-              <Link href="/press" className="transition-colors text-muted-foreground hover:text-foreground">Press</Link>
+              <Link href="/about" className="transition-colors text-muted-foreground hover:text-primary">About Us</Link>
+              <Link href="/blog" className="transition-colors text-muted-foreground hover:text-primary">Blog</Link>
+              <Link href="/careers" className="transition-colors text-muted-foreground hover:text-primary">Careers</Link>
+              <Link href="/press" className="transition-colors text-muted-foreground hover:text-primary">Press</Link>
             </nav>
           </div>
           <div className="space-y-4">
             <h3 className="font-semibold tracking-wider uppercase text-foreground">Legal</h3>
             <nav className="flex flex-col space-y-3">
-              <Link href="/terms" className="transition-colors text-muted-foreground hover:text-foreground">Terms of Service</Link>
-              <Link href="/privacy" className="transition-colors text-muted-foreground hover:text-foreground">Privacy Policy</Link>
-              <Link href="/security" className="transition-colors text-muted-foreground hover:text-foreground">Security</Link>
-              <Link href="/cookies" className="transition-colors text-muted-foreground hover:text-foreground">Cookie Policy</Link>
+              <Link href="/terms" className="transition-colors text-muted-foreground hover:text-primary">Terms of Service</Link>
+              <Link href="/privacy" className="transition-colors text-muted-foreground hover:text-primary">Privacy Policy</Link>
+              <Link href="/security" className="transition-colors text-muted-foreground hover:text-primary">Security</Link>
+              <Link href="/cookies" className="transition-colors text-muted-foreground hover:text-primary">Cookie Policy</Link>
             </nav>
           </div>
         </div>
@@ -69,8 +69,8 @@ export function Footer() {
             © {new Date().getFullYear()} InvoiceCraft. All rights reserved.
         </p>
          <div className="flex items-center gap-4 text-sm">
-            <Link href="/help" className="transition-colors text-muted-foreground hover:text-foreground">Help Center</Link>
-            <Link href="/contact" className="transition-colors text-muted-foreground hover:text-foreground">Contact</Link>
+            <Link href="/help" className="transition-colors text-muted-foreground hover:text-primary">Help Center</Link>
+            <Link href="/contact" className="transition-colors text-muted-foreground hover:text-primary">Contact</Link>
          </div>
       </div>
     </footer>
