@@ -29,7 +29,7 @@ function NavLink({ href, label, isActive }: { href: string, label: string, isAct
             href={href}
             className={cn(
                 "relative block px-3 py-2 transition",
-                isActive ? "text-primary" : "hover:text-primary/80"
+                isActive ? "text-primary" : "hover:text-accent"
             )}
         >
             {label}
