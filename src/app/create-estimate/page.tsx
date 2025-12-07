@@ -11,7 +11,8 @@ import { Printer, FilePlus, LayoutDashboard, Edit, Share2, Mail, Loader2, MoreVe
 import { addDays, isValid } from 'date-fns';
 import { useToast } from '@/hooks/use-toast';
 import Link from 'next/link';
-import { useFirebase, useMemoFirebase, useUser, useFirestore } from '@/firebase';
+import { useFirebase, useMemoFirebase } from '@/firebase';
+import { useAuth } from '@/context/auth-provider';
 import { doc, serverTimestamp, Timestamp, collection } from 'firebase/firestore';
 import { setDocumentNonBlocking } from '@/firebase/non-blocking-updates';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -26,7 +27,6 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { Skeleton } from '@/components/ui/skeleton';
-
 
 const ESTIMATES_COLLECTION = 'estimates';
 
@@ -225,19 +225,18 @@ export default function CreateEstimatePage() {
   const [textColor, setTextColor] = useState<string>('#374151');
   const [isSendingEmail, setIsSendingEmail] = useState(false);
   const { toast } = useToast();
-  const { user, isUserLoading } = useUser();
-  const firestore = useFirestore();
+  const { user, userProfile, isLoading: isAuthLoading } = useAuth();
+  const { firestore } = useFirebase();
   const router = useRouter();
   const searchParams = useSearchParams();
   const draftId = searchParams.get('draftId');
 
-  const userDocRef = useMemoFirebase(() => (user ? doc(firestore, 'users', user.uid) : null), [user, firestore]);
-  const { data: userData, isLoading: isUserDocLoading } = useDoc(userDocRef);
+  const companyId = userProfile?.companyId;
 
   const docRef = useMemoFirebase(() => {
-    if (!draftId || !firestore || !userData?.companyId) return null;
-    return doc(firestore, 'companies', userData.companyId, 'estimates', draftId);
-  }, [draftId, firestore, userData?.companyId]);
+    if (!draftId || !firestore || !companyId) return null;
+    return doc(firestore, 'companies', companyId, 'estimates', draftId);
+  }, [draftId, firestore, companyId]);
   
   const { data: remoteDraft, isLoading: isDraftLoading } = useDoc<Estimate>(docRef);
   
@@ -270,17 +269,14 @@ export default function CreateEstimatePage() {
 
   // Effect to initialize a new estimate or load a remote one
   useEffect(() => {
-    if (isUserLoading || isUserDocLoading) {
+    if (isAuthLoading) {
         return; // Wait until user and company info are loaded
     }
 
-    if (!user || !userData?.companyId) {
-        // This case should be handled by AuthProvider, but as a safeguard:
-        if (!isUserLoading) router.push('/login');
+    if (!user || !companyId) {
+        if (!isAuthLoading) router.push('/login');
         return;
     }
-
-    const companyId = userData.companyId;
 
     if (draftId) {
         // Logic to load existing draft
@@ -316,13 +312,14 @@ export default function CreateEstimatePage() {
             companyId: companyId,
             createdAt: serverTimestamp(),
             status: 'draft',
+            estimateNumber: newEstimate.estimateNumber,
         }, { merge: true });
 
         // Set local state and update URL
         setDocument(docWithUser);
         router.replace(`/create-estimate?draftId=${newEstimate.id}`, { scroll: false });
     }
-}, [user, userData, isUserLoading, isUserDocLoading, draftId, remoteDraft, document, fromJSON, firestore, router]);
+}, [user, companyId, isAuthLoading, draftId, remoteDraft, document, fromJSON, firestore, router]);
 
 
   useEffect(() => {
@@ -340,7 +337,7 @@ export default function CreateEstimatePage() {
   };
   
   const handleSaveDraft = () => {
-    if (!document || !firestore || !user || !userData?.companyId) return;
+    if (!document || !firestore || !user || !companyId) return;
 
     const normalizeDate = (val: any): Timestamp | null => {
         if (!val) return null;
@@ -352,7 +349,7 @@ export default function CreateEstimatePage() {
     const draftToSave: any = {
       ...document,
       userId: user.uid, 
-      companyId: userData.companyId,
+      companyId: companyId,
       updatedAt: serverTimestamp(),
     };
 
@@ -389,7 +386,7 @@ export default function CreateEstimatePage() {
       draftToSave.createdAt = serverTimestamp();
     }
     
-    const finalDocRef = doc(firestore, 'companies', userData.companyId, ESTIMATES_COLLECTION, document.id);
+    const finalDocRef = doc(firestore, 'companies', companyId, ESTIMATES_COLLECTION, document.id);
     setDocumentNonBlocking(finalDocRef, draftToSave, { merge: true });
 
     toast({
@@ -457,7 +454,7 @@ export default function CreateEstimatePage() {
   }, [document, computeSummary]);
 
 
-  if (!document || isUserLoading || isUserDocLoading || (draftId && isDraftLoading)) {
+  if (!document || isAuthLoading || (draftId && isDraftLoading)) {
     return (
         <div className="container mx-auto p-4 md:p-8">
             <div className="flex flex-col space-y-3">

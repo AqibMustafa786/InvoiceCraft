@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useMemo, useCallback, useEffect } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import type { Invoice, Estimate, DocumentStatus, Quote } from '@/lib/types';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -31,8 +31,8 @@ import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
 import { useFirebase, useMemoFirebase } from '@/firebase/provider';
 import { useCollection } from '@/firebase/firestore/use-collection';
-import { useDoc } from '@/firebase/firestore/use-doc';
-import { collection, doc, addDoc, query, where, Timestamp } from 'firebase/firestore';
+import { useAuth } from '@/context/auth-provider';
+import { collection, doc, addDoc, query, Timestamp } from 'firebase/firestore';
 import { deleteDocumentNonBlocking, updateDocumentNonBlocking } from '@/firebase';
 import { Skeleton } from '@/components/ui/skeleton';
 
@@ -66,11 +66,9 @@ export default function DashboardPage() {
     const [filters, setFilters] = useState<DashboardFilters>(initialFilters);
     const [isFilterSheetOpen, setIsFilterSheetOpen] = useState(false);
     const { toast } = useToast();
-    const { firestore, user, isUserLoading } = useFirebase();
+    const { firestore } = useFirebase();
+    const { user, userProfile, isLoading: isAuthLoading } = useAuth();
     const router = useRouter();
-
-    const userDocRef = useMemoFirebase(() => user ? doc(firestore, 'users', user.uid) : null, [user, firestore]);
-    const { data: userProfile, isLoading: isUserProfileLoading } = useDoc(userDocRef);
 
     const userPlan = userProfile?.plan || 'free';
     const companyId = userProfile?.companyId;
@@ -336,7 +334,7 @@ export default function DashboardPage() {
         }
     };
     
-    const isLoading = isUserLoading || isUserProfileLoading || isLoadingInvoices || isLoadingEstimates || isLoadingQuotes;
+    const isLoading = isAuthLoading || isLoadingInvoices || isLoadingEstimates || isLoadingQuotes;
 
     if (isLoading || !user) {
         return (
