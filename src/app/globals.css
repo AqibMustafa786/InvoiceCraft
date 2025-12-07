@@ -13,7 +13,7 @@
     --popover: 0 0% 100%;
     --popover-foreground: 0 0% 3.9%;
 
-    --primary: 260 85% 66%; /* vibrant purple */
+    --primary: 240 5% 34%; /* Muted dark blue/purple from example */
     --primary-foreground: 0 0% 98%;
 
     --secondary: 0 0% 96.1%;
@@ -33,7 +33,7 @@
 
     --border: 0 0% 89.8%;
     --input: 0 0% 89.8%;
-    --ring: 260 85% 66%;
+    --ring: 240 5% 34%;
 
     --radius: 0.75rem;
   }
@@ -48,7 +48,7 @@
     --popover: 240 10% 3.9%;
     --popover-foreground: 0 0% 98%;
 
-    --primary: 260 85% 66%; /* vibrant purple */
+    --primary: 240 5% 34%; /* Muted dark blue/purple from example */
     --primary-foreground: 0 0% 98%;
 
     --secondary: 240 3.7% 15.9%;
@@ -68,7 +68,7 @@
 
     --border: 240 3.7% 25.9%;
     --input: 240 3.7% 15.9%;
-    --ring: 260 85% 70%;
+    --ring: 240 5% 40%;
   }
 }
 
