@@ -2,7 +2,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { doc, updateDoc, arrayUnion, serverTimestamp } from 'firebase/firestore';
+import { doc, updateDoc, arrayUnion, serverTimestamp, getDocs, collectionGroup, query, where, getDoc } from 'firebase/firestore';
 import { useFirebase, useDoc, useMemoFirebase } from '@/firebase';
 import type { Estimate } from '@/lib/types';
 import { EstimatePreview } from '@/components/estimate-preview';
@@ -24,19 +24,39 @@ import {
 } from "@/components/ui/alert-dialog"
 import { Skeleton } from '@/components/ui/skeleton';
 
+async function findEstimate(firestore: any, estimateId: string): Promise<Estimate | null> {
+    const q = query(collectionGroup(firestore, 'estimates'), where('id', '==', estimateId));
+    const querySnapshot = await getDocs(q);
+    if (!querySnapshot.empty) {
+        const docSnap = querySnapshot.docs[0];
+        return { id: docSnap.id, ...docSnap.data() } as Estimate;
+    }
+    // Fallback for root collection if needed
+    const rootDocRef = doc(firestore, 'estimates', estimateId);
+    const rootDocSnap = await getDoc(rootDocRef);
+    if(rootDocSnap.exists()) {
+        return { id: rootDocSnap.id, ...rootDocSnap.data() } as Estimate;
+    }
+    return null;
+}
+
 export default function PublicEstimatePage({ params }: { params: { estimateId: string } }) {
     const { firestore, user } = useFirebase();
     const [accentColor, setAccentColor] = useState('hsl(var(--primary))');
     const [isAcceptanceModalOpen, setIsAcceptanceModalOpen] = useState(false);
     const [isDeclineAlertOpen, setIsDeclineAlertOpen] = useState(false);
     const { toast } = useToast();
-    
+    const [estimate, setEstimate] = useState<Estimate | null>(null);
+    const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState<Error | null>(null);
+
     const docRef = useMemoFirebase(() => {
-      if (!firestore || !params.estimateId) return null;
-      return doc(firestore, 'estimates', params.estimateId);
-    }, [firestore, params.estimateId]);
-    
-    const { data: estimate, isLoading, error } = useDoc<Estimate>(docRef);
+        if (!firestore || !estimate) return null;
+        if (estimate.companyId) {
+            return doc(firestore, 'companies', estimate.companyId, 'estimates', estimate.id);
+        }
+        return doc(firestore, 'estimates', estimate.id);
+    }, [firestore, estimate]);
 
     useEffect(() => {
         if (typeof window !== 'undefined' && document) {
@@ -45,7 +65,29 @@ export default function PublicEstimatePage({ params }: { params: { estimateId: s
                 setAccentColor(`hsl(${computedColor})`);
             }
         }
-    }, []);
+
+        const fetchEstimate = async () => {
+            if (!firestore || !params.estimateId) {
+                setIsLoading(false);
+                return;
+            };
+            try {
+                const foundEstimate = await findEstimate(firestore, params.estimateId);
+                if (foundEstimate) {
+                    setEstimate(foundEstimate);
+                } else {
+                    setError(new Error('Estimate not found.'));
+                }
+            } catch (err: any) {
+                setError(err);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+        fetchEstimate();
+
+    }, [firestore, params.estimateId]);
+
 
     const fromJSON = (key: string, value: any) => {
         if (['estimateDate', 'validUntilDate', 'signedAt', 'timestamp'].includes(key) && value) {
