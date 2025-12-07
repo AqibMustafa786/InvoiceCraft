@@ -31,7 +31,11 @@ export default function PublicEstimatePage({ params }: { params: { estimateId: s
     const [isDeclineAlertOpen, setIsDeclineAlertOpen] = useState(false);
     const { toast } = useToast();
     
-    const docRef = useMemoFirebase(() => firestore ? doc(firestore, 'estimates', params.estimateId) : null, [firestore, params.estimateId]);
+    const docRef = useMemoFirebase(() => {
+      if (!firestore || !params.estimateId) return null;
+      return doc(firestore, 'estimates', params.estimateId);
+    }, [firestore, params.estimateId]);
+    
     const { data: estimate, isLoading, error } = useDoc<Estimate>(docRef);
 
     useEffect(() => {

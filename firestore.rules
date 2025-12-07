@@ -39,9 +39,9 @@ service cloud.firestore {
     }
     
     match /estimates/{estimateId} {
-        // Allow read if the estimate is public, or if the user is the owner
-        allow get: if resource.data.isPublic == true || (isSignedIn() && resource.data.userId == request.auth.uid);
-        // Allow list for owner to see their own documents
+        // Allow read if the user is the owner of the document.
+        allow get: if isSignedIn() && resource.data.userId == request.auth.uid;
+        // Allow list only for queries made by the application logic (e.g., dashboard)
         allow list: if isSignedIn();
         // Allow create, update, delete if the user is the owner
         allow create, update, delete: if isSignedIn() && request.resource.data.userId == request.auth.uid;

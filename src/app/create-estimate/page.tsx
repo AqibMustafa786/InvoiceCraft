@@ -1,5 +1,4 @@
 
-
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
@@ -266,62 +265,67 @@ export default function CreateEstimatePage() {
     return value;
   }, []);
 
-  // Effect to initialize a new estimate if no draftId is present
+  // Effect to initialize a new estimate or load a remote one
   useEffect(() => {
-    if (isUserLoading || isUserDocLoading || draftId || document) return;
-
-    if (user && companyId) {
-        const newEstimate = getInitialEstimate();
-        const newId = doc(collection(firestore, ESTIMATES_COLLECTION)).id;
-        newEstimate.id = newId;
-        newEstimate.estimateNumber = `EST-${new Date().getFullYear()}-${String(Math.floor(Math.random() * 1000)).padStart(3, '0')}`;
-        
-        setDocument({ ...newEstimate, userId: user.uid, companyId });
-        // Replace URL without reloading the page
-        router.replace(`/create-estimate?draftId=${newId}`, { scroll: false });
+    if (isUserLoading || isUserDocLoading) {
+      return; // Wait until user and company info are loaded
     }
-  }, [user, companyId, draftId, document, firestore, isUserLoading, isUserDocLoading, router]);
 
-  // Effect to load a draft from Firestore if draftId is present
+    if (!user || !companyId) {
+      return; // Or if there's no user/company, do nothing
+    }
+
+    if (draftId) {
+      // Logic to load existing draft
+      if (remoteDraft && (!document || document.id !== draftId)) {
+         const baseEstimate = getInitialEstimate();
+         const loadedDraft = JSON.parse(JSON.stringify(remoteDraft), fromJSON);
+         const initialEstimate = {
+            ...baseEstimate,
+            ...loadedDraft,
+            userId: loadedDraft.userId || user.uid, // Ensure userId is set
+            companyId: loadedDraft.companyId || companyId, // Ensure companyId is set
+            business: { ...baseEstimate.business, ...loadedDraft.business },
+            client: { ...baseEstimate.client, ...loadedDraft.client },
+            summary: { ...baseEstimate.summary, ...loadedDraft.summary },
+         };
+         setDocument(initialEstimate);
+         setBackgroundColor(initialEstimate.backgroundColor || '#FFFFFF');
+         setTextColor(initialEstimate.textColor || '#374151');
+      }
+    } else if (!document) {
+      // Logic to create a new draft if no draftId and no document in state
+      const newEstimate = getInitialEstimate();
+      const newId = doc(collection(firestore, ESTIMATES_COLLECTION)).id;
+      newEstimate.id = newId;
+      newEstimate.estimateNumber = `EST-${new Date().getFullYear()}-${String(Math.floor(Math.random() * 1000)).padStart(3, '0')}`;
+      
+      const docWithUser = { ...newEstimate, userId: user.uid, companyId };
+      setDocument(docWithUser);
+      
+      // Save initial draft to Firestore immediately with user and company IDs
+      const draftDocRef = doc(firestore, ESTIMATES_COLLECTION, newId);
+      setDocumentNonBlocking(draftDocRef, { 
+          id: newId, 
+          userId: user.uid, 
+          companyId: companyId,
+          createdAt: serverTimestamp(),
+          status: 'draft',
+      }, { merge: true });
+
+      router.replace(`/create-estimate?draftId=${newId}`, { scroll: false });
+    }
+  }, [user, companyId, isUserLoading, isUserDocLoading, draftId, remoteDraft, document, fromJSON, firestore, router]);
+
+
   useEffect(() => {
-    if (isUserLoading || isUserDocLoading || !draftId || !remoteDraft || document) return;
-
-    if (remoteDraft && user && companyId) {
-        const baseEstimate = getInitialEstimate();
-        const loadedDraft = JSON.parse(JSON.stringify(remoteDraft), fromJSON);
-        
-        const initialEstimate = {
-         ...baseEstimate,
-         ...loadedDraft,
-         userId: user.uid,
-         companyId: companyId,
-         business: { ...baseEstimate.business, ...loadedDraft.business },
-         client: { ...baseEstimate.client, ...loadedDraft.client },
-         summary: { ...baseEstimate.summary, ...loadedDraft.summary },
-         homeRemodeling: { ...baseEstimate.homeRemodeling, ...loadedDraft.homeRemodeling },
-         roofing: { ...baseEstimate.roofing, ...loadedDraft.roofing },
-         hvac: { ...baseEstimate.hvac, ...loadedDraft.hvac },
-         plumbing: { ...baseEstimate.plumbing, ...loadedDraft.plumbing },
-         electrical: { ...baseEstimate.electrical, ...loadedDraft.electrical },
-         landscaping: { ...baseEstimate.landscaping, ...loadedDraft.landscaping },
-         cleaning: { ...baseEstimate.cleaning, ...loadedDraft.cleaning },
-         autoRepair: { ...baseEstimate.autoRepair, ...loadedDraft.autoRepair },
-         construction: { ...baseEstimate.construction, ...loadedDraft.construction },
-         itFreelance: { ...baseEstimate.itFreelance, ...loadedDraft.itFreelance },
-       };
-
-        setDocument(initialEstimate);
-        setBackgroundColor(initialEstimate.backgroundColor || '#FFFFFF');
-        setTextColor(initialEstimate.textColor || '#374151');
-        
-        if (typeof window !== 'undefined' && window.document) {
-            const computedColor = getComputedStyle(window.document.documentElement).getPropertyValue('--primary').trim();
-            if (computedColor) {
-               setAccentColor(`hsl(${computedColor})`);
-            }
+     if (typeof window !== 'undefined' && window.document) {
+        const computedColor = getComputedStyle(window.document.documentElement).getPropertyValue('--primary').trim();
+        if (computedColor) {
+           setAccentColor(`hsl(${computedColor})`);
         }
     }
-  }, [draftId, remoteDraft, user, companyId, document, isUserLoading, isUserDocLoading, fromJSON]);
+  }, []);
 
 
   const handlePrint = () => {
@@ -446,7 +450,7 @@ export default function CreateEstimatePage() {
   }, [document, computeSummary]);
 
 
-  if (!document || isUserLoading || isUserDocLoading) {
+  if (!document || isUserLoading || isUserDocLoading || (draftId && isDraftLoading)) {
     return (
         <div className="container mx-auto p-4 md:p-8">
             <div className="flex flex-col space-y-3">
@@ -557,4 +561,3 @@ export default function CreateEstimatePage() {
     </>
   );
 }
-
