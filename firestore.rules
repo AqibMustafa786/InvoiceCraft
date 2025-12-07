@@ -66,6 +66,12 @@ service cloud.firestore {
           allow list, update, delete: if belongsToCompany(companyId);
            allow create: if belongsToCompany(companyId) && getUserData().plan == 'business';
       }
+
+      match /estimates/{estimateId} {
+          allow read, update, delete: if belongsToCompany(companyId);
+          allow create: if belongsToCompany(companyId) && 
+                        (getUserData().plan == 'business' || list(/databases/$(database)/documents/companies/$(companyId)/estimates,).size() < 3);
+      }
       
       // Tighter rules for user management within a company
       match /users/{userId} {
