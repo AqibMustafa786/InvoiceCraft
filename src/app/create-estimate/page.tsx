@@ -12,7 +12,7 @@ import { Printer, FilePlus, LayoutDashboard, Edit, Share2, Mail, Loader2, MoreVe
 import { addDays, isValid } from 'date-fns';
 import { useToast } from '@/hooks/use-toast';
 import Link from 'next/link';
-import { useFirebase, useMemoFirebase, useAuth } from '@/firebase/provider';
+import { useFirebase, useMemoFirebase, useAuth, useUser, useFirestore } from '@/firebase';
 import { doc, serverTimestamp, Timestamp, collection } from 'firebase/firestore';
 import { setDocumentNonBlocking } from '@/firebase/non-blocking-updates';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -26,14 +26,16 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
+import { Skeleton } from '@/components/ui/skeleton';
+
 
 const ESTIMATES_COLLECTION = 'estimates';
 
 const getInitialLineItem = (): LineItem => ({ id: crypto.randomUUID(), name: '', quantity: 1, unitPrice: 0, taxable: true });
 
 const getInitialEstimate = (): Omit<Estimate, 'userId' | 'companyId'> => ({
-  id: '', // Will be set in useEffect
-  estimateNumber: '', // Will be set in useEffect
+  id: '', 
+  estimateNumber: '',
   estimateDate: new Date(),
   validUntilDate: addDays(new Date(), 30),
   status: 'draft',
@@ -224,18 +226,17 @@ export default function CreateEstimatePage() {
   const [textColor, setTextColor] = useState<string>('#374151');
   const [isSendingEmail, setIsSendingEmail] = useState(false);
   const { toast } = useToast();
-  const { user } = useAuth();
-  const { firestore, isUserLoading } = useFirebase();
+  const { user, isUserLoading } = useUser();
+  const firestore = useFirestore();
   const router = useRouter();
   const searchParams = useSearchParams();
-  const documentType = 'estimate';
+  const draftId = searchParams.get('draftId');
 
   const userDocRef = useMemoFirebase(() => (user ? doc(firestore, 'users', user.uid) : null), [user, firestore]);
-  const { data: userData } = useDoc(userDocRef);
+  const { data: userData, isLoading: isUserDocLoading } = useDoc(userDocRef);
   const companyId = userData?.companyId;
 
-  const draftId = searchParams.get('draftId');
-  const docRef = useMemoFirebase(() => (draftId && firestore && companyId) ? doc(firestore, 'companies', companyId, ESTIMATES_COLLECTION, draftId) : null, [draftId, firestore, companyId]);
+  const docRef = useMemoFirebase(() => (draftId && companyId) ? doc(firestore, 'companies', companyId, ESTIMATES_COLLECTION, draftId) : null, [draftId, companyId, firestore]);
   const { data: remoteDraft, isLoading: isDraftLoading } = useDoc<Estimate>(docRef);
 
   const computeSummary = useCallback((est: Estimate | Quote): Estimate | Quote => {
@@ -258,27 +259,39 @@ export default function CreateEstimatePage() {
     };
   }, []);
 
+  const fromJSON = useCallback((key: string, value: any) => {
+    if (['estimateDate', 'validUntilDate', 'createdAt', 'updatedAt', 'expectedStartDate', 'expectedCompletionDate', 'estimatedStartDate', 'estimatedCompletionDate'].includes(key) && value) {
+        return value.toDate ? value.toDate() : (isValid(new Date(value)) ? new Date(value) : null);
+    }
+    return value;
+  }, []);
+
+  const initializeNewEstimate = useCallback(() => {
+    if (!user || !companyId) return;
+    const newEstimate = getInitialEstimate();
+    const newId = doc(collection(firestore, 'companies', companyId, ESTIMATES_COLLECTION)).id;
+    newEstimate.id = newId;
+    newEstimate.estimateNumber = `EST-${new Date().getFullYear()}-${String(Math.floor(Math.random() * 1000)).padStart(3, '0')}`;
+    setDocument({ ...newEstimate, userId: user.uid, companyId: companyId });
+    router.replace(`/create-estimate?draftId=${newId}`, { scroll: false });
+  }, [user, companyId, firestore, router]);
+
+
   useEffect(() => {
-    if (isUserLoading || (draftId && isDraftLoading) || !userData) return;
-    if (!user) {
-        router.push('/login');
+    if (isUserLoading || isUserDocLoading) return;
+
+    if (!draftId) {
+        if (companyId) {
+            initializeNewEstimate();
+        }
         return;
     }
 
-    let initialEstimate: Estimate | Quote;
-    const companyId = userData.companyId;
-
-    if (draftId && remoteDraft) {
-       const baseEstimate = getInitialEstimate();
-       const fromJSON = (key: string, value: any) => {
-           if (['estimateDate', 'validUntilDate', 'createdAt', 'updatedAt', 'expectedStartDate', 'expectedCompletionDate', 'estimatedStartDate', 'estimatedCompletionDate'].includes(key) && value) {
-               return value.toDate ? value.toDate() : (isValid(new Date(value)) ? new Date(value) : null);
-           }
-           return value;
-       };
-       const loadedDraft = JSON.parse(JSON.stringify(remoteDraft), fromJSON);
-       
-       initialEstimate = {
+    if (remoteDraft && user && companyId) {
+        const baseEstimate = getInitialEstimate();
+        const loadedDraft = JSON.parse(JSON.stringify(remoteDraft), fromJSON);
+        
+        const initialEstimate = {
          ...baseEstimate,
          ...loadedDraft,
          userId: user.uid,
@@ -298,24 +311,19 @@ export default function CreateEstimatePage() {
          itFreelance: { ...baseEstimate.itFreelance, ...loadedDraft.itFreelance },
        };
 
-    } else {
-        const newEstimate = getInitialEstimate();
-        newEstimate.id = doc(collection(firestore, 'companies', companyId, ESTIMATES_COLLECTION)).id;
-        newEstimate.estimateNumber = `EST-${new Date().getFullYear()}-${String(Math.floor(Math.random() * 1000)).padStart(3, '0')}`;
-        initialEstimate = {...newEstimate, userId: user.uid, companyId: companyId};
-    }
-    
-    setDocument(initialEstimate);
-    setBackgroundColor(initialEstimate.backgroundColor || '#FFFFFF');
-    setTextColor(initialEstimate.textColor || '#374151');
-    
-    if (typeof window !== 'undefined' && window.document) {
-        const computedColor = getComputedStyle(window.document.documentElement).getPropertyValue('--primary').trim();
-        if (computedColor) {
-           setAccentColor(`hsl(${computedColor})`);
+        setDocument(initialEstimate);
+        setBackgroundColor(initialEstimate.backgroundColor || '#FFFFFF');
+        setTextColor(initialEstimate.textColor || '#374151');
+        
+        if (typeof window !== 'undefined' && window.document) {
+            const computedColor = getComputedStyle(window.document.documentElement).getPropertyValue('--primary').trim();
+            if (computedColor) {
+               setAccentColor(`hsl(${computedColor})`);
+            }
         }
     }
-  }, [draftId, remoteDraft, isDraftLoading, user, isUserLoading, router, userData, firestore]);
+  }, [draftId, remoteDraft, user, companyId, isUserLoading, isUserDocLoading, initializeNewEstimate, fromJSON]);
+
 
   const handlePrint = () => {
     window.print();
@@ -378,31 +386,10 @@ export default function CreateEstimatePage() {
       title: "Estimate Draft Saved",
       description: "Your estimate draft has been saved online.",
     });
-    
-    if (!searchParams.get('draftId')) {
-      router.push(`/create-estimate?draftId=${document.id}`, { scroll: false });
-    }
   };
 
   const handleNew = () => {
-    if (!user || !companyId) return;
-    const newEstimate = getInitialEstimate();
-    newEstimate.id = doc(collection(firestore, 'companies', companyId, ESTIMATES_COLLECTION)).id;
-    newEstimate.estimateNumber = `EST-${new Date().getFullYear()}-${String(Math.floor(Math.random() * 1000)).padStart(3, '0')}`;
-    setDocument({...newEstimate, userId: user.uid, companyId: companyId});
-    setBackgroundColor('#FFFFFF');
-    setTextColor('#374151');
-    if (typeof window !== 'undefined' && window.document) {
-        const computedColor = getComputedStyle(window.document.documentElement).getPropertyValue('--primary').trim();
-        if (computedColor) {
-            setAccentColor(`hsl(${computedColor})`);
-        }
-    }
-     router.push('/create-estimate');
-    toast({
-        title: "New Estimate",
-        description: "A new blank estimate has been created.",
-      });
+    router.push('/create-estimate');
   };
 
   const handleShare = () => {
@@ -425,7 +412,6 @@ export default function CreateEstimatePage() {
     
     setIsSendingEmail(true);
     try {
-      // First, save the latest version to ensure the emailed PDF is up-to-date.
       handleSaveDraft();
 
       const result = await sendDocumentByEmail({ docId: document.id, docType: 'estimate' });
@@ -460,10 +446,16 @@ export default function CreateEstimatePage() {
   }, [document, computeSummary]);
 
 
-  if (!document || (draftId && isDraftLoading) || isUserLoading) {
+  if (!document || isDraftLoading || isUserLoading || isUserDocLoading) {
     return (
         <div className="container mx-auto p-4 md:p-8">
-            <h1 className="text-3xl font-bold font-headline">Loading...</h1>
+            <div className="flex flex-col space-y-3">
+              <Skeleton className="h-9 w-64 mb-2" />
+              <div className="space-y-2">
+                  <Skeleton className="h-4 w-[250px]" />
+                  <Skeleton className="h-4 w-[200px]" />
+              </div>
+          </div>
         </div>
     );
   }
@@ -565,3 +557,4 @@ export default function CreateEstimatePage() {
     </>
   );
 }
+

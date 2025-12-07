@@ -1,7 +1,7 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { doc, updateDoc, arrayUnion, serverTimestamp, getDoc } from 'firebase/firestore';
+import { useEffect, useState, useMemo } from 'react';
+import { doc, updateDoc, arrayUnion, serverTimestamp, getDocs, collection, query, where, limit } from 'firebase/firestore';
 import { useFirebase, useDoc, useMemoFirebase } from '@/firebase';
 import type { Estimate } from '@/lib/types';
 import { EstimatePreview } from '@/components/estimate-preview';
@@ -32,22 +32,44 @@ export default function PublicEstimatePage({ params }: { params: { estimateId: s
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<Error | null>(null);
 
-    const estimateRef = useMemoFirebase(async () => {
-        if (!firestore) return null;
-        // Since companyId is not in the URL, we might need to query for the document.
-        // For now, let's assume it's in a root collection for public access,
-        // and security rules will handle permissions.
-        // This part might need adjustment based on final data structure.
-        return doc(firestore, 'estimates', params.estimateId);
+    const estimateRef = useMemo(() => {
+        if (!firestore || !params.estimateId) return null;
+        // This ref is optimistic; we don't know the companyId yet.
+        // We will find it via query.
+        return doc(collection(firestore, 'companies'), 'dummy', 'estimates', params.estimateId);
     }, [firestore, params.estimateId]);
     
     useEffect(() => {
         const fetchDoc = async () => {
-            if (!estimateRef) return;
+            if (!firestore || !params.estimateId) {
+                setIsLoading(false);
+                setError(new Error("Firestore not available"));
+                return;
+            };
+            
             try {
-                const docSnap = await getDoc(await estimateRef);
-                if (docSnap.exists()) {
-                    setEstimate(docSnap.data() as Estimate);
+                // Query across all 'estimates' sub-collections for the document
+                const estimatesQuery = query(
+                    collection(firestore, 'companies'),
+                    // This is a collection group query placeholder. In a real scenario, you'd enable this in Firestore.
+                    // For now, let's simulate it by iterating. A better production approach is a root lookup collection.
+                );
+                
+                const companiesSnapshot = await getDocs(collection(firestore, "companies"));
+                let foundDoc = null;
+
+                for (const companyDoc of companiesSnapshot.docs) {
+                    const estimateDocRef = doc(firestore, 'companies', companyDoc.id, 'estimates', params.estimateId);
+                    const docSnap = await getDocs(query(collection(firestore, 'companies', companyDoc.id, 'estimates'), where('id', '==', params.estimateId), limit(1)));
+                    
+                    if (!docSnap.empty) {
+                        foundDoc = docSnap.docs[0];
+                        break;
+                    }
+                }
+
+                if (foundDoc) {
+                    setEstimate(foundDoc.data() as Estimate);
                 } else {
                      setError(new Error("Estimate not found."));
                 }
@@ -59,7 +81,7 @@ export default function PublicEstimatePage({ params }: { params: { estimateId: s
         };
 
         fetchDoc();
-    }, [estimateRef]);
+    }, [firestore, params.estimateId]);
 
     useEffect(() => {
         if (typeof window !== 'undefined' && document) {
@@ -83,9 +105,8 @@ export default function PublicEstimatePage({ params }: { params: { estimateId: s
     const isOwner = user && loadedEstimate && user.uid === loadedEstimate.userId;
 
     const handleDecline = async () => {
-        if (!estimateRef || !firestore) return;
-        const ref = await estimateRef;
-        if (!ref) return;
+        if (!estimateRef || !firestore || !loadedEstimate?.companyId) return;
+        const ref = doc(firestore, 'companies', loadedEstimate.companyId, 'estimates', params.estimateId);
         
         await updateDoc(ref, {
             status: 'rejected',
@@ -162,12 +183,14 @@ export default function PublicEstimatePage({ params }: { params: { estimateId: s
                     accentColor={accentColor} 
                 />
 
-                <DocumentAcceptanceModal 
-                    isOpen={isAcceptanceModalOpen}
-                    onClose={() => setIsAcceptanceModalOpen(false)}
-                    docRef={estimateRef as any}
-                    docType="Estimate"
-                />
+                 {estimateRef && loadedEstimate && (
+                    <DocumentAcceptanceModal 
+                        isOpen={isAcceptanceModalOpen}
+                        onClose={() => setIsAcceptanceModalOpen(false)}
+                        docRef={doc(firestore, 'companies', loadedEstimate.companyId, 'estimates', params.estimateId)}
+                        docType="Estimate"
+                    />
+                )}
 
                 <AlertDialog open={isDeclineAlertOpen} onOpenChange={setIsDeclineAlertOpen}>
                     <AlertDialogContent>
