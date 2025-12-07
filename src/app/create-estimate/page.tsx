@@ -266,26 +266,25 @@ export default function CreateEstimatePage() {
     return value;
   }, []);
 
-  const initializeNewEstimate = useCallback(() => {
-    if (!user || !companyId) return;
-    const newEstimate = getInitialEstimate();
-    const newId = doc(collection(firestore, 'companies', companyId, ESTIMATES_COLLECTION)).id;
-    newEstimate.id = newId;
-    newEstimate.estimateNumber = `EST-${new Date().getFullYear()}-${String(Math.floor(Math.random() * 1000)).padStart(3, '0')}`;
-    setDocument({ ...newEstimate, userId: user.uid, companyId: companyId });
-    router.replace(`/create-estimate?draftId=${newId}`, { scroll: false });
-  }, [user, companyId, firestore, router]);
-
-
+  // Effect to initialize a new estimate if no draftId is present
   useEffect(() => {
-    if (isUserLoading || isUserDocLoading) return;
+    if (isUserLoading || isUserDocLoading || draftId || document) return;
 
-    if (!draftId) {
-        if (companyId) {
-            initializeNewEstimate();
-        }
-        return;
+    if (user && companyId) {
+        const newEstimate = getInitialEstimate();
+        const newId = doc(collection(firestore, 'companies', companyId, ESTIMATES_COLLECTION)).id;
+        newEstimate.id = newId;
+        newEstimate.estimateNumber = `EST-${new Date().getFullYear()}-${String(Math.floor(Math.random() * 1000)).padStart(3, '0')}`;
+        
+        setDocument({ ...newEstimate, userId: user.uid, companyId });
+        // Replace URL without reloading the page
+        router.replace(`/create-estimate?draftId=${newId}`, { scroll: false });
     }
+  }, [user, companyId, draftId, document, firestore, isUserLoading, isUserDocLoading, router]);
+
+  // Effect to load a draft from Firestore if draftId is present
+  useEffect(() => {
+    if (isUserLoading || isUserDocLoading || !draftId || !remoteDraft || document) return;
 
     if (remoteDraft && user && companyId) {
         const baseEstimate = getInitialEstimate();
@@ -322,7 +321,7 @@ export default function CreateEstimatePage() {
             }
         }
     }
-  }, [draftId, remoteDraft, user, companyId, isUserLoading, isUserDocLoading, initializeNewEstimate, fromJSON]);
+  }, [draftId, remoteDraft, user, companyId, document, isUserLoading, isUserDocLoading, fromJSON]);
 
 
   const handlePrint = () => {
@@ -389,6 +388,7 @@ export default function CreateEstimatePage() {
   };
 
   const handleNew = () => {
+    setDocument(null);
     router.push('/create-estimate');
   };
 
@@ -446,7 +446,7 @@ export default function CreateEstimatePage() {
   }, [document, computeSummary]);
 
 
-  if (!document || isDraftLoading || isUserLoading || isUserDocLoading) {
+  if (!document || isUserLoading || isUserDocLoading) {
     return (
         <div className="container mx-auto p-4 md:p-8">
             <div className="flex flex-col space-y-3">
