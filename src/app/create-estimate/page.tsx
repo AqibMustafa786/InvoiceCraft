@@ -12,8 +12,8 @@ import { Printer, FilePlus, LayoutDashboard, Edit, Share2, Mail, Loader2, MoreVe
 import { addDays, isValid } from 'date-fns';
 import { useToast } from '@/hooks/use-toast';
 import Link from 'next/link';
-import { useFirebase, useMemoFirebase } from '@/firebase/provider';
-import { doc, serverTimestamp, Timestamp } from 'firebase/firestore';
+import { useFirebase, useMemoFirebase, useAuth } from '@/firebase/provider';
+import { doc, serverTimestamp, Timestamp, collection } from 'firebase/firestore';
 import { setDocumentNonBlocking } from '@/firebase/non-blocking-updates';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useDoc } from '@/firebase/firestore/use-doc';
@@ -31,7 +31,7 @@ const ESTIMATES_COLLECTION = 'estimates';
 
 const getInitialLineItem = (): LineItem => ({ id: crypto.randomUUID(), name: '', quantity: 1, unitPrice: 0, taxable: true });
 
-const getInitialEstimate = (): Omit<Estimate, 'userId'> => ({
+const getInitialEstimate = (): Omit<Estimate, 'userId' | 'companyId'> => ({
   id: '', // Will be set in useEffect
   estimateNumber: '', // Will be set in useEffect
   estimateDate: new Date(),
@@ -224,13 +224,18 @@ export default function CreateEstimatePage() {
   const [textColor, setTextColor] = useState<string>('#374151');
   const [isSendingEmail, setIsSendingEmail] = useState(false);
   const { toast } = useToast();
-  const { firestore, user, isUserLoading } = useFirebase();
+  const { user } = useAuth();
+  const { firestore, isUserLoading } = useFirebase();
   const router = useRouter();
   const searchParams = useSearchParams();
   const documentType = 'estimate';
 
+  const userDocRef = useMemoFirebase(() => (user ? doc(firestore, 'users', user.uid) : null), [user, firestore]);
+  const { data: userData } = useDoc(userDocRef);
+  const companyId = userData?.companyId;
+
   const draftId = searchParams.get('draftId');
-  const docRef = useMemoFirebase(() => draftId && firestore ? doc(firestore, ESTIMATES_COLLECTION, draftId) : null, [draftId, firestore]);
+  const docRef = useMemoFirebase(() => (draftId && firestore && companyId) ? doc(firestore, 'companies', companyId, ESTIMATES_COLLECTION, draftId) : null, [draftId, firestore, companyId]);
   const { data: remoteDraft, isLoading: isDraftLoading } = useDoc<Estimate>(docRef);
 
   const computeSummary = useCallback((est: Estimate | Quote): Estimate | Quote => {
@@ -254,13 +259,14 @@ export default function CreateEstimatePage() {
   }, []);
 
   useEffect(() => {
-    if (isUserLoading || (draftId && isDraftLoading)) return;
+    if (isUserLoading || (draftId && isDraftLoading) || !userData) return;
     if (!user) {
         router.push('/login');
         return;
     }
 
     let initialEstimate: Estimate | Quote;
+    const companyId = userData.companyId;
 
     if (draftId && remoteDraft) {
        const baseEstimate = getInitialEstimate();
@@ -276,6 +282,7 @@ export default function CreateEstimatePage() {
          ...baseEstimate,
          ...loadedDraft,
          userId: user.uid,
+         companyId: companyId,
          business: { ...baseEstimate.business, ...loadedDraft.business },
          client: { ...baseEstimate.client, ...loadedDraft.client },
          summary: { ...baseEstimate.summary, ...loadedDraft.summary },
@@ -293,9 +300,9 @@ export default function CreateEstimatePage() {
 
     } else {
         const newEstimate = getInitialEstimate();
-        newEstimate.id = crypto.randomUUID();
+        newEstimate.id = doc(collection(firestore, 'companies', companyId, ESTIMATES_COLLECTION)).id;
         newEstimate.estimateNumber = `EST-${new Date().getFullYear()}-${String(Math.floor(Math.random() * 1000)).padStart(3, '0')}`;
-        initialEstimate = {...newEstimate, userId: user.uid};
+        initialEstimate = {...newEstimate, userId: user.uid, companyId: companyId};
     }
     
     setDocument(initialEstimate);
@@ -308,14 +315,14 @@ export default function CreateEstimatePage() {
            setAccentColor(`hsl(${computedColor})`);
         }
     }
-  }, [draftId, remoteDraft, isDraftLoading, user, isUserLoading, router]);
+  }, [draftId, remoteDraft, isDraftLoading, user, isUserLoading, router, userData, firestore]);
 
   const handlePrint = () => {
     window.print();
   };
   
   const handleSaveDraft = () => {
-    if (!document || !firestore || !user) return;
+    if (!document || !firestore || !user || !companyId) return;
 
     const normalizeDate = (val: any): Timestamp | null => {
         if (!val) return null;
@@ -327,6 +334,7 @@ export default function CreateEstimatePage() {
     const draftToSave: any = {
       ...document,
       userId: user.uid, 
+      companyId: companyId,
       updatedAt: serverTimestamp(),
     };
 
@@ -363,7 +371,7 @@ export default function CreateEstimatePage() {
       draftToSave.createdAt = serverTimestamp();
     }
     
-    const docRef = doc(firestore, ESTIMATES_COLLECTION, document.id);
+    const docRef = doc(firestore, 'companies', companyId, ESTIMATES_COLLECTION, document.id);
     setDocumentNonBlocking(docRef, draftToSave, { merge: true });
 
     toast({
@@ -377,11 +385,11 @@ export default function CreateEstimatePage() {
   };
 
   const handleNew = () => {
-    if (!user) return;
-    const newEstimate = {...getInitialEstimate(), userId: user.uid};
-    newEstimate.id = crypto.randomUUID();
+    if (!user || !companyId) return;
+    const newEstimate = getInitialEstimate();
+    newEstimate.id = doc(collection(firestore, 'companies', companyId, ESTIMATES_COLLECTION)).id;
     newEstimate.estimateNumber = `EST-${new Date().getFullYear()}-${String(Math.floor(Math.random() * 1000)).padStart(3, '0')}`;
-    setDocument(newEstimate);
+    setDocument({...newEstimate, userId: user.uid, companyId: companyId});
     setBackgroundColor('#FFFFFF');
     setTextColor('#374151');
     if (typeof window !== 'undefined' && window.document) {

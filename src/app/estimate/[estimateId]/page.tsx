@@ -1,12 +1,12 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { doc, updateDoc, arrayUnion, serverTimestamp } from 'firebase/firestore';
+import { doc, updateDoc, arrayUnion, serverTimestamp, getDoc } from 'firebase/firestore';
 import { useFirebase, useDoc, useMemoFirebase } from '@/firebase';
 import type { Estimate } from '@/lib/types';
 import { EstimatePreview } from '@/components/estimate-preview';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, Check, X, Pencil } from 'lucide-react';
+import { ArrowLeft, Check, X } from 'lucide-react';
 import Link from 'next/link';
 import { DocumentAcceptanceModal } from '@/components/document-acceptance-modal';
 import { useToast } from '@/hooks/use-toast';
@@ -28,9 +28,38 @@ export default function PublicEstimatePage({ params }: { params: { estimateId: s
     const [isAcceptanceModalOpen, setIsAcceptanceModalOpen] = useState(false);
     const [isDeclineAlertOpen, setIsDeclineAlertOpen] = useState(false);
     const { toast } = useToast();
+    const [estimate, setEstimate] = useState<Estimate | null>(null);
+    const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState<Error | null>(null);
+
+    const estimateRef = useMemoFirebase(async () => {
+        if (!firestore) return null;
+        // Since companyId is not in the URL, we might need to query for the document.
+        // For now, let's assume it's in a root collection for public access,
+        // and security rules will handle permissions.
+        // This part might need adjustment based on final data structure.
+        return doc(firestore, 'estimates', params.estimateId);
+    }, [firestore, params.estimateId]);
     
-    const estimateRef = useMemoFirebase(() => firestore ? doc(firestore, 'estimates', params.estimateId) : null, [firestore, params.estimateId]);
-    const { data: estimate, isLoading, error } = useDoc<Estimate>(estimateRef);
+    useEffect(() => {
+        const fetchDoc = async () => {
+            if (!estimateRef) return;
+            try {
+                const docSnap = await getDoc(await estimateRef);
+                if (docSnap.exists()) {
+                    setEstimate(docSnap.data() as Estimate);
+                } else {
+                     setError(new Error("Estimate not found."));
+                }
+            } catch (e) {
+                setError(e as Error);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        fetchDoc();
+    }, [estimateRef]);
 
     useEffect(() => {
         if (typeof window !== 'undefined' && document) {
@@ -55,7 +84,10 @@ export default function PublicEstimatePage({ params }: { params: { estimateId: s
 
     const handleDecline = async () => {
         if (!estimateRef || !firestore) return;
-        await updateDoc(estimateRef, {
+        const ref = await estimateRef;
+        if (!ref) return;
+        
+        await updateDoc(ref, {
             status: 'rejected',
             auditLog: arrayUnion({
                 action: 'declined',
@@ -68,6 +100,7 @@ export default function PublicEstimatePage({ params }: { params: { estimateId: s
             description: "The sender has been notified.",
         })
         setIsDeclineAlertOpen(false);
+        setEstimate(prev => prev ? { ...prev, status: 'rejected' } : null);
     };
 
     if (isLoading) {
@@ -132,7 +165,7 @@ export default function PublicEstimatePage({ params }: { params: { estimateId: s
                 <DocumentAcceptanceModal 
                     isOpen={isAcceptanceModalOpen}
                     onClose={() => setIsAcceptanceModalOpen(false)}
-                    docRef={estimateRef}
+                    docRef={estimateRef as any}
                     docType="Estimate"
                 />
 

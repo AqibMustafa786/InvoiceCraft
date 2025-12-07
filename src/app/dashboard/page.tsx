@@ -73,22 +73,23 @@ export default function DashboardPage() {
     const { data: userProfile, isLoading: isUserProfileLoading } = useDoc(userDocRef);
 
     const userPlan = userProfile?.plan || 'free';
+    const companyId = userProfile?.companyId;
     const isBusinessPlan = userPlan === 'business';
 
     const invoicesQuery = useMemoFirebase(() => {
-        if (!firestore || !user?.uid) return null;
-        return query(collection(firestore, INVOICES_COLLECTION), where("userId", "==", user.uid));
-    }, [firestore, user?.uid]);
+        if (!firestore || !companyId) return null;
+        return collection(firestore, 'companies', companyId, INVOICES_COLLECTION);
+    }, [firestore, companyId]);
 
     const estimatesQuery = useMemoFirebase(() => {
-        if (!firestore || !user?.uid) return null;
-        return query(collection(firestore, ESTIMATES_COLLECTION), where("userId", "==", user.uid));
-    }, [firestore, user?.uid]);
+        if (!firestore || !companyId) return null;
+        return collection(firestore, 'companies', companyId, ESTIMATES_COLLECTION);
+    }, [firestore, companyId]);
 
     const quotesQuery = useMemoFirebase(() => {
-        if (!firestore || !user?.uid) return null;
-        return query(collection(firestore, QUOTES_COLLECTION), where("userId", "==", user.uid));
-    }, [firestore, user?.uid]);
+        if (!firestore || !companyId) return null;
+        return collection(firestore, 'companies', companyId, QUOTES_COLLECTION);
+    }, [firestore, companyId]);
 
     const { data: invoices, isLoading: isLoadingInvoices, error: invoicesError } = useCollection<Invoice>(invoicesQuery);
     const { data: estimates, isLoading: isLoadingEstimates, error: estimatesError } = useCollection<Estimate>(estimatesQuery);
@@ -137,10 +138,7 @@ export default function DashboardPage() {
     const calculateTotal = useCallback((doc: DocumentType): number => {
         if (doc.documentType === 'invoice') {
             const invoice = doc as Invoice;
-            const subtotal = invoice.items.reduce((acc, item) => acc + item.quantity * ((item as any).rate || (item.unitPrice || 0)), 0);
-            const taxAmount = (subtotal * invoice.tax) / 100;
-            const discountAmount = (subtotal * invoice.discount) / 100;
-            return subtotal + taxAmount - discountAmount + (invoice.shippingCost || 0);
+            return invoice.summary.grandTotal;
         } else {
             const estimate = doc as Estimate | Quote;
             return estimate.summary.grandTotal;
@@ -148,9 +146,9 @@ export default function DashboardPage() {
     }, []);
 
     const handleDelete = () => {
-        if (!deleteCandidate || !firestore) return;
+        if (!deleteCandidate || !firestore || !companyId) return;
         const { id, collection: collectionName } = deleteCandidate;
-        const docRef = doc(firestore, collectionName, id);
+        const docRef = doc(firestore, 'companies', companyId, collectionName, id);
         deleteDocumentNonBlocking(docRef);
         setDeleteCandidate(null);
         toast({
@@ -160,8 +158,8 @@ export default function DashboardPage() {
     };
 
     const handleStatusChange = (id: string, collectionName: string, newStatus: DocumentStatus) => {
-        if (!firestore) return;
-        const docRef = doc(firestore, collectionName, id);
+        if (!firestore || !companyId) return;
+        const docRef = doc(firestore, 'companies', companyId, collectionName, id);
         updateDocumentNonBlocking(docRef, { status: newStatus });
         toast({
             title: "Status Updated",
@@ -170,7 +168,7 @@ export default function DashboardPage() {
     };
     
     const handleConvertToInvoice = async (estimate: Estimate | Quote) => {
-        if (!firestore || !user) return;
+        if (!firestore || !user || !companyId) return;
         if (!canCreateInvoice) {
             toast({
                 title: "Free Plan Limit Reached",
@@ -184,34 +182,30 @@ export default function DashboardPage() {
 
         const newInvoiceData: Omit<Invoice, 'id'| 'createdAt' | 'updatedAt'> = {
             userId: user.uid,
-            companyName: business.name,
-            companyPhone: business.phone,
-            companyAddress: business.address,
-            clientName: client.name,
-            clientAddress: client.address,
-            clientEmail: client.email,
+            companyId: companyId,
+            business: business,
+            client: { ...client, shippingAddress: client.address },
             invoiceNumber: `INV-${estimateNumber.replace('EST-', '').replace('QTE-', '')}`,
             invoiceDate: new Date(),
             dueDate: new Date(new Date().setDate(new Date().getDate() + 30)),
-            items: lineItems.map(item => ({...item, rate: item.unitPrice})),
-            tax: summary.taxPercentage,
-            discount: summary.discount,
-            shippingCost: summary.shippingCost,
+            lineItems: lineItems,
+            summary: summary,
             status: 'draft',
             documentType: 'invoice',
+            category: 'General Services', // Default category for converted invoice
             currency: currency,
             language: language,
             template: 'default',
-            shippingAddress: client.address,
-            poNumber: referenceNumber,
-            trackingNumber: '',
             amountPaid: 0,
             paymentInstructions: 'Thank you for your business. Please make payment to the details provided below.',
         };
         
         try {
-            const newDocRef = await addDoc(collection(firestore, INVOICES_COLLECTION), {
+            const newDocRef = doc(collection(firestore, 'companies', companyId, INVOICES_COLLECTION));
+            
+            await addDoc(collection(firestore, 'companies', companyId, INVOICES_COLLECTION), {
                 ...newInvoiceData,
+                id: newDocRef.id,
                 createdAt: Timestamp.now(),
                 updatedAt: Timestamp.now(),
             });
@@ -286,7 +280,7 @@ export default function DashboardPage() {
                 let clientName = '';
                 if (doc.documentType === 'invoice') {
                   date = (doc as Invoice).invoiceDate;
-                  clientName = (doc as Invoice).clientName;
+                  clientName = (doc as Invoice).client.name;
                 } else if (doc.documentType === 'estimate' || doc.documentType === 'quote') {
                   date = (doc as Estimate | Quote).estimateDate;
                   clientName = (doc as Estimate | Quote).client.name;
@@ -488,7 +482,7 @@ export default function DashboardPage() {
                                     const isQuote = doc.documentType === 'quote';
 
                                     const docNumber = isInvoice ? (doc as Invoice).invoiceNumber : (doc as Estimate | Quote).estimateNumber;
-                                    const clientName = isInvoice ? (doc as Invoice).clientName : (doc as Estimate | Quote).client.name;
+                                    const clientName = isInvoice ? (doc as Invoice).client.name : (doc as Estimate | Quote).client.name;
                                     
                                     let docCollection: string;
                                     let editUrl: string;

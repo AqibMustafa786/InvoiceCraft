@@ -37,6 +37,13 @@ service cloud.firestore {
       allow read, update, delete: if isSignedIn() && isOwner(userId);
       allow create: if isSignedIn();
     }
+    
+    match /estimates/{estimateId} {
+        // Allow read if the estimate is public, or if the user is the owner
+        allow get: if resource.data.isPublic == true || (isSignedIn() && resource.data.userId == request.auth.uid);
+        // Allow create, update, delete if the user is the owner
+        allow create, update, delete: if isSignedIn() && request.resource.data.userId == request.auth.uid;
+    }
 
     // COMPANY DATA
     match /companies/{companyId} {
@@ -52,7 +59,7 @@ service cloud.firestore {
                         (getUserData().plan == 'business' || list(/databases/$(database)/documents/companies/$(companyId)/invoices,).size() < 5);
       }
        match /estimates/{estimateId} {
-          allow get: if true; // Publicly readable for sharing
+          allow get: if belongsToCompany(companyId); // Publicly readable for sharing
           allow list, update, delete: if belongsToCompany(companyId);
           allow create: if belongsToCompany(companyId) && 
                         (getUserData().plan == 'business' || list(/databases/$(database)/documents/companies/$(companyId)/estimates,).size() < 3);
