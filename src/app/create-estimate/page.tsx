@@ -13,7 +13,7 @@ import { useToast } from '@/hooks/use-toast';
 import Link from 'next/link';
 import { useFirebase, useMemoFirebase } from '@/firebase';
 import { useAuth } from '@/context/auth-provider';
-import { doc, serverTimestamp, Timestamp, collection } from 'firebase/firestore';
+import { doc, serverTimestamp, Timestamp, collection, addDoc } from 'firebase/firestore';
 import { setDocumentNonBlocking } from '@/firebase/non-blocking-updates';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useDoc } from '@/firebase/firestore/use-doc';
@@ -196,10 +196,10 @@ const getInitialEstimate = (): Omit<Estimate, 'userId' | 'companyId'> => ({
 
 
 function PrintableDocument({ doc, accentColor, backgroundColor, textColor }: { doc: Estimate | Quote, accentColor: string, backgroundColor: string, textColor: string }) {
-    const [isMounted, setIsMounted] = useState(false);
+    const [isMounted, useState] = React.useState(false);
 
     useEffect(() => {
-        setIsMounted(true);
+        useState(true);
     }, []);
 
     if (!isMounted) {
@@ -234,9 +234,10 @@ export default function CreateEstimatePage() {
   const companyId = userProfile?.companyId;
 
   const docRef = useMemoFirebase(() => {
-    if (!draftId || !firestore || !companyId) return null;
-    return doc(firestore, 'companies', companyId, 'estimates', draftId);
-  }, [draftId, firestore, companyId]);
+    if (!draftId || !firestore) return null;
+    // All estimates are in the root collection now
+    return doc(firestore, 'estimates', draftId);
+  }, [draftId, firestore]);
   
   const { data: remoteDraft, isLoading: isDraftLoading } = useDoc<Estimate>(docRef);
   
@@ -270,10 +271,11 @@ export default function CreateEstimatePage() {
   // Effect to initialize a new estimate or load a remote one
   useEffect(() => {
     if (isAuthLoading) {
-        return; // Wait until user and company info are loaded
+        return; // Wait until auth state is confirmed
     }
 
     if (!user || !companyId) {
+        // If not logged in and not loading, redirect.
         if (!isAuthLoading) router.push('/login');
         return;
     }
@@ -299,7 +301,7 @@ export default function CreateEstimatePage() {
     } else if (!document) {
         // Logic to create a new draft if no draftId and no document in state
         const newEstimate = getInitialEstimate();
-        const newDocRef = doc(collection(firestore, `companies/${companyId}/estimates`));
+        const newDocRef = doc(collection(firestore, `estimates`));
         newEstimate.id = newDocRef.id;
         newEstimate.estimateNumber = `EST-${new Date().getFullYear()}-${String(Math.floor(Math.random() * 1000)).padStart(3, '0')}`;
         
@@ -319,7 +321,7 @@ export default function CreateEstimatePage() {
         setDocument(docWithUser);
         router.replace(`/create-estimate?draftId=${newEstimate.id}`, { scroll: false });
     }
-}, [user, companyId, isAuthLoading, draftId, remoteDraft, document, fromJSON, firestore, router]);
+  }, [user, companyId, isAuthLoading, draftId, remoteDraft, document, fromJSON, firestore, router]);
 
 
   useEffect(() => {
@@ -386,7 +388,7 @@ export default function CreateEstimatePage() {
       draftToSave.createdAt = serverTimestamp();
     }
     
-    const finalDocRef = doc(firestore, 'companies', companyId, ESTIMATES_COLLECTION, document.id);
+    const finalDocRef = doc(firestore, ESTIMATES_COLLECTION, document.id);
     setDocumentNonBlocking(finalDocRef, draftToSave, { merge: true });
 
     toast({
@@ -454,7 +456,7 @@ export default function CreateEstimatePage() {
   }, [document, computeSummary]);
 
 
-  if (!document || isAuthLoading || (draftId && isDraftLoading)) {
+  if (isAuthLoading || !document || (draftId && isDraftLoading)) {
     return (
         <div className="container mx-auto p-4 md:p-8">
             <div className="flex flex-col space-y-3">
