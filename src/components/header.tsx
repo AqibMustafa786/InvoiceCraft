@@ -88,7 +88,7 @@ export function Header() {
                                     href={link.href}
                                     className={cn(
                                         "block py-2 transition",
-                                        pathname === link.href ? "text-primary font-semibold" : "text-muted-foreground hover:text-foreground"
+                                        pathname === link.href ? "text-primary font-semibold" : "text-muted-foreground hover:text-accent"
                                     )}
                                 >
                                     {link.label}
