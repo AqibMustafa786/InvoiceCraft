@@ -236,7 +236,7 @@ export default function CreateEstimatePage() {
   const { data: userData, isLoading: isUserDocLoading } = useDoc(userDocRef);
   const companyId = userData?.companyId;
 
-  const docRef = useMemoFirebase(() => (draftId && companyId) ? doc(firestore, 'companies', companyId, ESTIMATES_COLLECTION, draftId) : null, [draftId, companyId, firestore]);
+  const docRef = useMemoFirebase(() => draftId ? doc(firestore, ESTIMATES_COLLECTION, draftId) : null, [draftId, firestore]);
   const { data: remoteDraft, isLoading: isDraftLoading } = useDoc<Estimate>(docRef);
 
   const computeSummary = useCallback((est: Estimate | Quote): Estimate | Quote => {
@@ -272,7 +272,7 @@ export default function CreateEstimatePage() {
 
     if (user && companyId) {
         const newEstimate = getInitialEstimate();
-        const newId = doc(collection(firestore, 'companies', companyId, ESTIMATES_COLLECTION)).id;
+        const newId = doc(collection(firestore, ESTIMATES_COLLECTION)).id;
         newEstimate.id = newId;
         newEstimate.estimateNumber = `EST-${new Date().getFullYear()}-${String(Math.floor(Math.random() * 1000)).padStart(3, '0')}`;
         
@@ -378,7 +378,7 @@ export default function CreateEstimatePage() {
       draftToSave.createdAt = serverTimestamp();
     }
     
-    const docRef = doc(firestore, 'companies', companyId, ESTIMATES_COLLECTION, document.id);
+    const docRef = doc(firestore, ESTIMATES_COLLECTION, document.id);
     setDocumentNonBlocking(docRef, draftToSave, { merge: true });
 
     toast({

@@ -1,7 +1,8 @@
+
 'use client';
 
-import { useEffect, useState, useMemo } from 'react';
-import { doc, updateDoc, arrayUnion, serverTimestamp, getDocs, collection, query, where, limit, getDoc, collectionGroup } from 'firebase/firestore';
+import { useEffect, useState } from 'react';
+import { doc, updateDoc, arrayUnion, serverTimestamp } from 'firebase/firestore';
 import { useFirebase, useDoc, useMemoFirebase } from '@/firebase';
 import type { Estimate } from '@/lib/types';
 import { EstimatePreview } from '@/components/estimate-preview';
@@ -29,48 +30,9 @@ export default function PublicEstimatePage({ params }: { params: { estimateId: s
     const [isAcceptanceModalOpen, setIsAcceptanceModalOpen] = useState(false);
     const [isDeclineAlertOpen, setIsDeclineAlertOpen] = useState(false);
     const { toast } = useToast();
-    const [estimate, setEstimate] = useState<Estimate | null>(null);
-    const [isLoading, setIsLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
-    const [docRef, setDocRef] = useState<any>(null);
-
-    useEffect(() => {
-        const fetchDoc = async () => {
-            if (!firestore || !params.estimateId) {
-                setError("An error occurred.");
-                setIsLoading(false);
-                return;
-            }
-
-            try {
-                // This query looks across all 'estimates' subcollections in the entire database.
-                // It requires a composite index on the fields being queried.
-                const estimatesCollectionGroup = collectionGroup(firestore, 'estimates');
-                const q = query(estimatesCollectionGroup, where('id', '==', params.estimateId), limit(1));
-                
-                const querySnapshot = await getDocs(q);
-
-                if (!querySnapshot.empty) {
-                    const docSnap = querySnapshot.docs[0];
-                    setEstimate(docSnap.data() as Estimate);
-                    setDocRef(docSnap.ref);
-                } else {
-                    setError("Estimate not found or you don't have permission to view it.");
-                }
-            } catch (e: any) {
-                console.error("Error fetching estimate:", e);
-                 if (e.code === 'failed-precondition') {
-                    setError("Query requires an index. Please check your Firebase console to create the necessary composite index on the 'estimates' collection group.");
-                } else {
-                    setError(e.message || "Failed to load estimate.");
-                }
-            } finally {
-                setIsLoading(false);
-            }
-        };
-
-        fetchDoc();
-    }, [firestore, params.estimateId]);
+    
+    const docRef = useMemoFirebase(() => firestore ? doc(firestore, 'estimates', params.estimateId) : null, [firestore, params.estimateId]);
+    const { data: estimate, isLoading, error } = useDoc<Estimate>(docRef);
 
     useEffect(() => {
         if (typeof window !== 'undefined' && document) {
@@ -109,7 +71,6 @@ export default function PublicEstimatePage({ params }: { params: { estimateId: s
             description: "The sender has been notified.",
         })
         setIsDeclineAlertOpen(false);
-        setEstimate(prev => prev ? { ...prev, status: 'rejected' } : null);
     };
 
     if (isLoading) {
@@ -124,7 +85,7 @@ export default function PublicEstimatePage({ params }: { params: { estimateId: s
     }
 
     if (error) {
-        return <div className="container mx-auto p-8 text-center text-destructive">Error: {error}</div>;
+        return <div className="container mx-auto p-8 text-center text-destructive">Error: {error.message}</div>;
     }
 
     if (!loadedEstimate) {

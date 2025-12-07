@@ -258,9 +258,9 @@
         "description": "Stores invoices for a specific company."
       },
       {
-        "path": "/companies/{companyId}/estimates/{estimateId}",
+        "path": "/estimates/{estimateId}",
         "schema": { "$ref": "#/entities/Estimate" },
-        "description": "Stores estimates for a specific company."
+        "description": "Root collection for all estimates."
       },
       {
         "path": "/companies/{companyId}/quotes/{quoteId}",

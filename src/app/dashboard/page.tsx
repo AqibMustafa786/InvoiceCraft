@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import { useState, useMemo, useCallback, useEffect } from 'react';
@@ -78,17 +79,17 @@ export default function DashboardPage() {
 
     const invoicesQuery = useMemoFirebase(() => {
         if (!firestore || !companyId) return null;
-        return collection(firestore, 'companies', companyId, INVOICES_COLLECTION);
+        return query(collection(firestore, INVOICES_COLLECTION), where('companyId', '==', companyId));
     }, [firestore, companyId]);
 
     const estimatesQuery = useMemoFirebase(() => {
         if (!firestore || !companyId) return null;
-        return collection(firestore, 'companies', companyId, ESTIMATES_COLLECTION);
+        return query(collection(firestore, ESTIMATES_COLLECTION), where('companyId', '==', companyId));
     }, [firestore, companyId]);
 
     const quotesQuery = useMemoFirebase(() => {
         if (!firestore || !companyId) return null;
-        return collection(firestore, 'companies', companyId, QUOTES_COLLECTION);
+        return query(collection(firestore, QUOTES_COLLECTION), where('companyId', '==', companyId));
     }, [firestore, companyId]);
 
     const { data: invoices, isLoading: isLoadingInvoices, error: invoicesError } = useCollection<Invoice>(invoicesQuery);
@@ -146,9 +147,9 @@ export default function DashboardPage() {
     }, []);
 
     const handleDelete = () => {
-        if (!deleteCandidate || !firestore || !companyId) return;
+        if (!deleteCandidate || !firestore) return;
         const { id, collection: collectionName } = deleteCandidate;
-        const docRef = doc(firestore, 'companies', companyId, collectionName, id);
+        const docRef = doc(firestore, collectionName, id);
         deleteDocumentNonBlocking(docRef);
         setDeleteCandidate(null);
         toast({
@@ -158,8 +159,8 @@ export default function DashboardPage() {
     };
 
     const handleStatusChange = (id: string, collectionName: string, newStatus: DocumentStatus) => {
-        if (!firestore || !companyId) return;
-        const docRef = doc(firestore, 'companies', companyId, collectionName, id);
+        if (!firestore) return;
+        const docRef = doc(firestore, collectionName, id);
         updateDocumentNonBlocking(docRef, { status: newStatus });
         toast({
             title: "Status Updated",
@@ -201,9 +202,9 @@ export default function DashboardPage() {
         };
         
         try {
-            const newDocRef = doc(collection(firestore, 'companies', companyId, INVOICES_COLLECTION));
+            const newDocRef = doc(collection(firestore, INVOICES_COLLECTION));
             
-            await addDoc(collection(firestore, 'companies', companyId, INVOICES_COLLECTION), {
+            await addDoc(collection(firestore, INVOICES_COLLECTION), {
                 ...newInvoiceData,
                 id: newDocRef.id,
                 createdAt: Timestamp.now(),
