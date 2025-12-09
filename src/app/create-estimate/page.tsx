@@ -219,7 +219,7 @@ function PrintableDocument({ doc, accentColor, backgroundColor, textColor }: { d
 
 
 export default function CreateEstimatePage() {
-  const { user, userProfile, isLoading: isAuthLoading } = useAuth();
+  const { user, userProfile } = useAuth();
   const [document, setDocument] = useState<Estimate | Quote | null>(null);
   const [accentColor, setAccentColor] = useState<string>('hsl(var(--primary))');
   const [backgroundColor, setBackgroundColor] = useState<string>('#FFFFFF');
@@ -229,15 +229,6 @@ export default function CreateEstimatePage() {
   
   const { firestore } = useFirebase();
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const draftId = searchParams.get('draftId');
-
-  const docRef = useMemoFirebase(() => {
-    if (!draftId || !firestore || !userProfile?.companyId) return null;
-    return doc(firestore, 'companies', userProfile.companyId, ESTIMATES_COLLECTION, draftId);
-  }, [draftId, firestore, userProfile?.companyId]);
-  
-  const { data: remoteDraft, isLoading: isDraftLoading } = useDoc<Estimate>(docRef);
   
   const computeSummary = useCallback((est: Estimate | Quote): Estimate | Quote => {
     const subtotal = est.lineItems.reduce((acc, item) => acc + (Number(item.quantity) || 0) * (Number(item.unitPrice) || 0), 0);
@@ -259,47 +250,17 @@ export default function CreateEstimatePage() {
     };
   }, []);
 
-  const fromJSON = useCallback((key: string, value: any) => {
-    if (['estimateDate', 'validUntilDate', 'createdAt', 'updatedAt', 'expectedStartDate', 'expectedCompletionDate', 'estimatedStartDate', 'estimatedCompletionDate'].includes(key) && value) {
-        return value.toDate ? value.toDate() : (isValid(new Date(value)) ? new Date(value) : null);
-    }
-    return value;
-  }, []);
-
   useEffect(() => {
-    if (isAuthLoading) return; // Wait until authentication is resolved
-
-    if (remoteDraft && (!document || document.id !== draftId)) { // Loading an existing draft
-        const baseEstimate = getInitialEstimate();
-        const loadedDraft = JSON.parse(JSON.stringify(remoteDraft), fromJSON);
-        const initialEstimate = {
-            ...baseEstimate,
-            ...loadedDraft,
-            userId: loadedDraft.userId || user?.uid || '',
-            companyId: loadedDraft.companyId || userProfile?.companyId || '',
-            business: { ...baseEstimate.business, ...loadedDraft.business },
-            client: { ...baseEstimate.client, ...loadedDraft.client },
-            summary: { ...baseEstimate.summary, ...loadedDraft.summary },
-        };
-        setDocument(initialEstimate);
-    } else if (!draftId && user && userProfile) { // Creating a new draft
-        const newDocId = doc(collection(firestore, ESTIMATES_COLLECTION)).id;
-        const newDoc: Estimate = { 
-            ...getInitialEstimate(), 
-            id: newDocId, 
-            userId: user.uid, 
-            companyId: userProfile.companyId,
-            createdAt: serverTimestamp(),
-            updatedAt: serverTimestamp(),
-        };
-        const docToSaveRef = doc(firestore, 'companies', userProfile.companyId, ESTIMATES_COLLECTION, newDocId);
-        setDocumentNonBlocking(docToSaveRef, newDoc, { merge: true });
-        router.replace(`/create-estimate?draftId=${newDocId}`, { scroll: false });
-    } else if (!user && !isAuthLoading) {
-      router.push('/login');
-    }
-
-  }, [isAuthLoading, user, userProfile, draftId, remoteDraft, firestore, document, fromJSON, router]);
+    // Initialize with a default document client-side to ensure the form is always visible
+    const newDocId = firestore ? doc(collection(firestore, 'companies', 'temp', ESTIMATES_COLLECTION)).id : crypto.randomUUID();
+    const initialDoc: Estimate = {
+        ...getInitialEstimate(),
+        id: newDocId,
+        userId: user?.uid || '',
+        companyId: userProfile?.companyId || '',
+    };
+    setDocument(initialDoc);
+  }, [user, userProfile, firestore]);
 
   useEffect(() => {
      if (typeof window !== 'undefined' && window.document) {
@@ -316,7 +277,14 @@ export default function CreateEstimatePage() {
   };
   
   const handleSaveDraft = () => {
-    if (!document || !firestore || !user || !userProfile?.companyId) return;
+    if (!document || !firestore || !user || !userProfile?.companyId) {
+         toast({
+          title: "Cannot Save Draft",
+          description: "You must be logged in to save a draft.",
+          variant: "destructive",
+        });
+        return;
+    }
 
     const companyId = userProfile.companyId;
 
@@ -374,15 +342,18 @@ export default function CreateEstimatePage() {
       title: "Estimate Draft Saved",
       description: "Your estimate draft has been saved online.",
     });
-
-    if (!searchParams.has('draftId')) {
-        router.push(`/create-estimate?draftId=${document.id}`, { scroll: false });
-    }
   };
 
   const handleNew = () => {
-    setDocument(null);
-    router.push('/create-estimate');
+    const newDocId = firestore ? doc(collection(firestore, 'companies', 'temp', ESTIMATES_COLLECTION)).id : crypto.randomUUID();
+    const newDoc: Estimate = { 
+        ...getInitialEstimate(), 
+        id: newDocId, 
+        userId: user?.uid || '', 
+        companyId: userProfile?.companyId || '',
+    };
+    setDocument(newDoc);
+    router.push('/create-estimate', { scroll: false });
   };
 
   const handleShare = () => {
@@ -430,7 +401,7 @@ export default function CreateEstimatePage() {
   };
 
   useEffect(() => {
-    if (document?.id) { // Only compute summary if document is initialized
+    if (document) { 
         const newDocument = computeSummary(document);
          if (JSON.stringify(newDocument.summary) !== JSON.stringify(document.summary)) {
             setDocument(newDocument);
@@ -480,7 +451,7 @@ export default function CreateEstimatePage() {
           </div>
         </div>
 
-        {!document || isAuthLoading || isDraftLoading ? (
+        {!document ? (
             <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
               <div className="lg:col-span-3 space-y-4">
                 <Skeleton className="h-48 w-full" />
