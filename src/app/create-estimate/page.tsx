@@ -30,7 +30,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 
 const ESTIMATES_COLLECTION = 'estimates';
 
-const getInitialLineItem = (): LineItem => ({ id: crypto.randomUUID(), name: '', quantity: 1, unitPrice: 0, taxable: true });
+const getInitialLineItem = (): LineItem => ({ id: crypto.randomUUID(), name: '', quantity: 1, unitPrice: 0, taxable: false });
 
 const getInitialEstimate = (): Omit<Estimate, 'userId' | 'companyId'> => ({
   id: '', 
@@ -519,4 +519,3 @@ export default function CreateEstimatePage() {
     </>
   );
 }
-

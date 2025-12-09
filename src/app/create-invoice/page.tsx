@@ -28,7 +28,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/co
 
 const INVOICES_COLLECTION = 'invoices';
 
-const getInitialLineItem = (): LineItem => ({ id: crypto.randomUUID(), name: '', quantity: 1, unitPrice: 0, taxable: true });
+const getInitialLineItem = (): LineItem => ({ id: crypto.randomUUID(), name: '', quantity: 1, unitPrice: 0, taxable: false });
 
 const getInitialInvoice = (): Omit<Invoice, 'userId'> => ({
   id: '',

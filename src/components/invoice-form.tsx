@@ -264,7 +264,7 @@ export function InvoiceForm({ invoice, setInvoice, accentColor, setAccentColor, 
     }
     setInvoice(prev => ({
       ...prev,
-      lineItems: [...prev.lineItems, { id: crypto.randomUUID(), name: '', quantity: 1, unitPrice: 0, taxable: true }],
+      lineItems: [...prev.lineItems, { id: crypto.randomUUID(), name: '', quantity: 1, unitPrice: 0, taxable: false }],
     }));
   };
   
@@ -286,7 +286,7 @@ export function InvoiceForm({ invoice, setInvoice, accentColor, setAccentColor, 
       name: '',
       quantity: 1,
       unitPrice: 0,
-      taxable: true,
+      taxable: false,
     }));
 
     setInvoice(prev => ({
@@ -881,7 +881,7 @@ export function InvoiceForm({ invoice, setInvoice, accentColor, setAccentColor, 
           <CardTitle>Items</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="hidden md:grid md:grid-cols-[1fr_90px_110px_110px_auto] gap-x-4 text-sm font-medium text-muted-foreground">
+          <div className="hidden md:grid md:grid-cols-[2fr_100px_120px_120px_auto] gap-x-4 text-sm font-medium text-muted-foreground">
             <Label>Item Name</Label>
             <Label>Quantity</Label>
             <Label>Unit Price</Label>
@@ -889,7 +889,7 @@ export function InvoiceForm({ invoice, setInvoice, accentColor, setAccentColor, 
             <span></span>
           </div>
           {invoice.lineItems.map((item, index) => (
-            <div key={item.id} className="grid grid-cols-1 md:grid-cols-[1fr_90px_110px_110px_auto] gap-x-4 gap-y-2 items-start border-b pb-4">
+            <div key={item.id} className="grid grid-cols-1 md:grid-cols-[2fr_100px_120px_120px_auto] gap-x-4 gap-y-2 items-start border-b pb-4">
               <div className="space-y-2 md:col-span-1">
                 <Label htmlFor={`itemName-${index}`} className="md:hidden">Item Name</Label>
                 <Textarea id={`itemName-${index}`} value={item.name} onChange={(e) => handleItemChange(index, 'name', e.target.value)} rows={1} className="min-h-0"/>

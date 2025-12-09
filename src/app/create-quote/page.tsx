@@ -27,7 +27,7 @@ import {
 
 const QUOTES_COLLECTION = 'quotes';
 
-const getInitialLineItem = (): LineItem => ({ id: crypto.randomUUID(), name: '', quantity: 1, unitPrice: 0, taxable: true });
+const getInitialLineItem = (): LineItem => ({ id: crypto.randomUUID(), name: '', quantity: 1, unitPrice: 0, taxable: false });
 
 const getInitialQuote = (): Omit<Quote, 'userId'> => ({
   id: crypto.randomUUID(),
