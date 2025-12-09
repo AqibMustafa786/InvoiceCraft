@@ -17,6 +17,7 @@ import { RoofingTemplate1, RoofingTemplate2, RoofingTemplate3, RoofingTemplate4,
 import { AutoRepairTemplate1, AutoRepairTemplate2, AutoRepairTemplate3, AutoRepairTemplate4, AutoRepairTemplate5 } from './document-templates/auto-repair-templates';
 import { CleaningTemplate1, CleaningTemplate2, CleaningTemplate3, CleaningTemplate4, CleaningTemplate5 } from './document-templates/cleaning-templates';
 import { ITTemplate1, ITTemplate2, ITTemplate3, ITTemplate4, ITTemplate5 } from './document-templates/it-freelance-templates';
+import locales from '@/lib/locales';
 
 
 // --- PROPS ---
@@ -34,6 +35,7 @@ interface CommonTemplateProps {
   accentColor: string;
   backgroundColor?: string;
   textColor?: string;
+  t: any;
 }
 
 interface PageProps extends CommonTemplateProps {
@@ -228,9 +230,9 @@ const CategoryPreview = ({ document }: { document: Estimate }) => {
     return <div data-element="category-preview-wrapper">{renderContent()}</div>;
 };
 
-const PageHeader = ({ document, style, pageIndex }: { document: Estimate, style: React.CSSProperties, pageIndex: number }) => {
+const PageHeader = ({ document, style, pageIndex, t }: { document: Estimate, style: React.CSSProperties, pageIndex: number, t: any }) => {
     const { business } = document;
-    const documentTitle = document.documentType === 'quote' ? 'Quote' : 'Estimate';
+    const documentTitle = document.documentType === 'quote' ? t.quote || 'Quote' : t.estimate || 'Estimate';
     
     return (
         <div data-element="page-header-content" className="flex flex-col">
@@ -252,8 +254,8 @@ const PageHeader = ({ document, style, pageIndex }: { document: Estimate, style:
                 <div className="w-1/2 space-y-0.5">
                     {pageIndex === 0 && (
                         <>
-                            {business.licenseNumber && <p>Lic #: {business.licenseNumber}</p>}
-                            {business.taxId && <p>Tax ID: {business.taxId}</p>}
+                            {business.licenseNumber && <p>{t.license || 'Lic #'}: {business.licenseNumber}</p>}
+                            {business.taxId && <p>{t.taxId || 'Tax ID'}: {business.taxId}</p>}
                             <p>{business.phone}</p>
                             <p>{business.email}</p>
                             <p className="whitespace-pre-line">{business.address}</p>
@@ -262,11 +264,11 @@ const PageHeader = ({ document, style, pageIndex }: { document: Estimate, style:
                 </div>
                  <div className="w-1/2 text-right">
                     <div className="flex justify-end">
-                        <span className="font-bold w-24">Estimate #</span>
+                        <span className="font-bold w-24">{t.estimateNumber || 'Estimate #'}</span>
                         <span className="w-24 text-left">{document.estimateNumber}</span>
                     </div>
                     <div className="flex justify-end mt-1">
-                        <span className="font-bold w-24">Date</span>
+                        <span className="font-bold w-24">{t.date || 'Date'}</span>
                         <span className="w-24 text-left">{safeFormat(document.estimateDate, 'MM/dd/yyyy')}</span>
                     </div>
                 </div>
@@ -275,10 +277,10 @@ const PageHeader = ({ document, style, pageIndex }: { document: Estimate, style:
     );
 };
 
-const PageClientDetails = ({ document }: { document: Estimate }) => (
+const PageClientDetails = ({ document, t }: { document: Estimate, t: any }) => (
      <section data-element="client-details" className="flex justify-between items-start my-8 text-xs">
         <div className="w-1/3 space-y-0.5">
-            <p className="font-bold mb-1">BILL TO</p>
+            <p className="font-bold mb-1">{t.billTo || 'BILL TO'}</p>
             <p className="font-semibold">{document.client.name}</p>
             {document.client.companyName && <p>{document.client.companyName}</p>}
             {document.client.email && <p>{document.client.email}</p>}
@@ -288,7 +290,7 @@ const PageClientDetails = ({ document }: { document: Estimate }) => (
         <div className="w-1/3 space-y-0.5">
             {document.client.projectLocation && (
                 <>
-                    <p className="font-bold mb-1">PROJECT LOCATION</p>
+                    <p className="font-bold mb-1">{t.projectLocation || 'PROJECT LOCATION'}</p>
                     <p className="whitespace-pre-line">{document.client.projectLocation}</p>
                 </>
             )}
@@ -297,7 +299,7 @@ const PageClientDetails = ({ document }: { document: Estimate }) => (
 );
 
 
-const PageFooter = ({ document, style }: { document: Estimate, style: React.CSSProperties }) => {
+const PageFooter = ({ document, style, t }: { document: Estimate, style: React.CSSProperties, t: any }) => {
     const { summary } = document;
     const currencySymbol = currencySymbols[document.currency] || '$';
     const subtotalLessDiscount = summary.subtotal - (summary.discount || 0);
@@ -307,46 +309,46 @@ const PageFooter = ({ document, style }: { document: Estimate, style: React.CSSP
         <div data-element="footer" className="avoid-page-break">
             <section className="flex justify-between items-start mt-6">
                 <div className="w-1/2 text-xs">
-                    <p className="font-bold mb-1">Notes</p>
+                    <p className="font-bold mb-1">{t.notes || 'Notes'}</p>
                     <p className="whitespace-pre-line">{document.termsAndConditions}</p>
                     <div className="flex gap-8">
-                        <SignatureDisplay signature={document.business.ownerSignature} label="Authorized Signature" />
-                        <SignatureDisplay signature={document.clientSignature} label="Client Signature" />
+                        <SignatureDisplay signature={document.business.ownerSignature} label={t.authorizedSignature || "Authorized Signature"} />
+                        <SignatureDisplay signature={document.clientSignature} label={t.clientSignature || "Client Signature"} />
                     </div>
                 </div>
                 <div className="w-2/5 space-y-1 text-xs">
                     <div className="flex justify-between">
-                        <span>Estimated Subtotal</span>
+                        <span>{t.subtotal || 'Subtotal'}</span>
                         <span className="font-medium tabular-nums">{currencySymbol}{summary.subtotal.toFixed(2)}</span>
                     </div>
                      {summary.discount > 0 && (
                         <div className="flex justify-between">
-                            <span>Discount</span>
+                            <span>{t.discount || 'Discount'}</span>
                             <span className="font-medium tabular-nums">-{currencySymbol}{summary.discount.toFixed(2)}</span>
                         </div>
                     )}
                     <div className="flex justify-between font-bold border-b pb-1 mb-1">
-                        <span>Subtotal less discount</span>
+                        <span>{t.subtotalLessDiscount || 'Subtotal less discount'}</span>
                         <span className="tabular-nums">{currencySymbol}{subtotalLessDiscount.toFixed(2)}</span>
                     </div>
                     {taxRate > 0 && (
                          <div className="flex justify-between">
-                            <span>Tax Rate</span>
+                            <span>{t.taxRate || 'Tax Rate'}</span>
                             <span className="tabular-nums">{taxRate.toFixed(2)}%</span>
                         </div>
                     )}
                     <div className="flex justify-between">
-                        <span>Total tax</span>
+                        <span>{t.totalTax || 'Total tax'}</span>
                         <span className="font-medium tabular-nums">{currencySymbol}{summary.taxAmount.toFixed(2)}</span>
                     </div>
                      {summary.shippingCost > 0 && (
                         <div className="flex justify-between">
-                            <span>Shipping/Handling</span>
+                            <span>{t.shipping || 'Shipping/Handling'}</span>
                             <span className="font-medium tabular-nums">{currencySymbol}{summary.shippingCost.toFixed(2)}</span>
                         </div>
                     )}
                     <div className="flex justify-between items-center font-bold text-lg pt-2 mt-2" style={{ color: style.color }}>
-                        <span className="uppercase">Estimate Total</span>
+                        <span className="uppercase">{t.estimateTotal || 'Estimate Total'}</span>
                         <span className="tabular-nums">{currencySymbol}{summary.grandTotal.toFixed(2)}</span>
                     </div>
                 </div>
@@ -356,16 +358,16 @@ const PageFooter = ({ document, style }: { document: Estimate, style: React.CSSP
 };
 
 
-const ModernTemplatePage: FC<PageProps> = ({ document, pageItems, pageIndex, totalPages, style }) => {
+const ModernTemplatePage: FC<PageProps> = ({ document, pageItems, pageIndex, totalPages, style, t }) => {
     const currencySymbol = currencySymbols[document.currency] || '$';
 
     return (
         <div className={`p-8 md:p-10 font-sans flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ color: document.textColor, fontFamily: style.fontFamily, fontSize: `${style.fontSize}pt`, backgroundColor: document.backgroundColor, minHeight: '1056px' }}>
             <div data-element="page-header">
-                <PageHeader document={document} style={style} pageIndex={pageIndex}/>
+                <PageHeader document={document} style={style} pageIndex={pageIndex} t={t}/>
                 {(pageIndex === 0) && (
                     <>
-                        <PageClientDetails document={document} />
+                        <PageClientDetails document={document} t={t}/>
                         <CategoryPreview document={document} />
                     </>
                 )}
@@ -375,10 +377,10 @@ const ModernTemplatePage: FC<PageProps> = ({ document, pageItems, pageIndex, tot
                 <table className="w-full text-left text-xs" data-element="items-table">
                     <thead style={{ backgroundColor: style.color, color: 'white' }} data-element="table-header">
                         <tr>
-                            <th className="p-2 font-bold w-1/2">Item/Service Description</th>
-                            <th className="p-2 font-bold text-right">Quantity</th>
-                            <th className="p-2 font-bold text-right">Item Price</th>
-                            <th className="p-2 font-bold text-right">Amount</th>
+                            <th className="p-2 font-bold w-1/2">{t.item || 'Item/Service Description'}</th>
+                            <th className="p-2 font-bold text-right">{t.quantity || 'Quantity'}</th>
+                            <th className="p-2 font-bold text-right">{t.rate || 'Item Price'}</th>
+                            <th className="p-2 font-bold text-right">{t.amount || 'Amount'}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -394,7 +396,7 @@ const ModernTemplatePage: FC<PageProps> = ({ document, pageItems, pageIndex, tot
                 </table>
             </section>
 
-            {pageIndex === totalPages - 1 && <PageFooter document={document} style={style} />}
+            {pageIndex === totalPages - 1 && <PageFooter document={document} style={style} t={t}/>}
         </div>
     );
 };
@@ -464,6 +466,8 @@ const DocumentPreviewInternal: FC<DocumentPreviewProps> = ({ document, accentCol
   const [needsRemeasure, setNeedsRemeasure] = useState(true);
   const containerRef = useRef<HTMLDivElement>(null);
   
+  const t = locales[document.language as keyof typeof locales] || locales.en;
+
   useEffect(() => {
     setNeedsRemeasure(true);
   }, [document]);
@@ -592,6 +596,7 @@ const DocumentPreviewInternal: FC<DocumentPreviewProps> = ({ document, accentCol
     accentColor,
     backgroundColor: backgroundColor || '#FFFFFF',
     textColor: textColor || '#374151',
+    t,
   };
 
   if (isPrint) {
@@ -600,10 +605,10 @@ const DocumentPreviewInternal: FC<DocumentPreviewProps> = ({ document, accentCol
     return (
       <div id={id} style={{backgroundColor: backgroundColor}} ref={containerRef}>
         <div style={{ position: 'absolute', left: '-9999px' }}>
-             <PageHeader document={document} style={dynamicColorStyle} pageIndex={0}/>
-             <PageClientDetails document={document} />
+             <PageHeader document={document} style={dynamicColorStyle} pageIndex={0} t={t}/>
+             <PageClientDetails document={document} t={t}/>
              <CategoryPreview document={document} />
-             <PageFooter document={document} style={dynamicColorStyle} />
+             <PageFooter document={document} style={dynamicColorStyle} t={t} />
         </div>
         {itemsToRender.map((pageItems, pageIndex) => (
            <TemplateComponent
