@@ -20,8 +20,6 @@ const navLinks = [
     { href: "/create-insurance", label: "Create Insurance" },
     { href: "/pricing", label: "Pricing" },
     { href: "/blog", label: "Blog" },
-    { href: "/about", label: "About" },
-    { href: "/contact", label: "Contact" },
 ]
 
 function NavLink({ href, label, isActive }: { href: string, label: string, isActive: boolean }) {
@@ -56,7 +54,7 @@ export function Header() {
                 </Link>
 
                 <nav className="hidden md:flex items-center space-x-1 text-sm font-medium">
-                    {navLinks.slice(0, 5).map(link => (
+                    {navLinks.map(link => (
                         <NavLink key={link.href} href={link.href} label={link.label} isActive={pathname === link.href} />
                     ))}
                 </nav>

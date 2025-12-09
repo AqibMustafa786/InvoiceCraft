@@ -436,13 +436,6 @@ export function InvoiceForm({ invoice, setInvoice, accentColor, setAccentColor, 
                     </SelectContent>
                 </Select>
             </div>
-             <div className="space-y-2">
-                <Label htmlFor="fontSize">Font Size</Label>
-                <div className="relative flex items-center">
-                    <Type className="absolute left-3 h-5 w-5 text-muted-foreground" />
-                    <Input id="fontSize" name="fontSize" type="number" value={invoice.fontSize} onChange={(e) => setInvoice(p => ({...p, fontSize: Number(e.target.value) || 14}))} className="pl-10" />
-                </div>
-            </div>
         </CardContent>
       </Card>
       

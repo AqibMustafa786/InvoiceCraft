@@ -17,7 +17,7 @@ interface UserProfile {
 interface AuthContextType {
   user: User | null;
   userProfile: UserProfile | null;
-  isLoading: boolean;
+  isLoading: boolean; // This will now represent the combined loading state
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -29,40 +29,41 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const { auth, firestore } = useFirebase();
   const [user, setUser] = useState<User | null>(null);
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true); // Single loading state
   const router = useRouter();
   const pathname = usePathname();
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (user) => {
-      setUser(user);
-      if (user && firestore) {
-        // User is logged in, fetch their profile
-        const userDocRef = doc(firestore, 'users', user.uid);
+    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+      setUser(firebaseUser);
+      if (firebaseUser && firestore) {
+        const userDocRef = doc(firestore, 'users', firebaseUser.uid);
         try {
           const docSnap = await getDoc(userDocRef);
           if (docSnap.exists()) {
             setUserProfile(docSnap.data() as UserProfile);
           } else {
-            // Handle case where user exists in Auth but not Firestore
+            console.warn("User profile not found in Firestore for UID:", firebaseUser.uid);
             setUserProfile(null);
-            console.warn("User profile not found in Firestore for UID:", user.uid);
           }
         } catch (error) {
           console.error("Error fetching user profile:", error);
           setUserProfile(null);
+        } finally {
+          setIsLoading(false);
         }
       } else {
-        // User is logged out
+        // User is not logged in, no profile to fetch.
         setUserProfile(null);
+        setIsLoading(false);
       }
-      setIsLoading(false);
     });
 
     return () => unsubscribe();
   }, [auth, firestore]);
 
   useEffect(() => {
+    // This effect handles redirection logic based on the final loading state
     if (isLoading) return;
 
     const isProtectedRoute = protectedRoutes.some(route => pathname.startsWith(route));
@@ -73,12 +74,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
 
     if (user && isPublicAuthRoute) {
-      router.push('/dashboard');
+      router.push('/');
     }
   }, [user, isLoading, pathname, router]);
 
-  // The initial loading state should cover auth and profile fetch
-  if (isLoading) {
+  // If loading, show a skeleton screen on the relevant pages.
+  // Otherwise, allow children to render. The redirection effect above will handle unauthorized access.
+  if (isLoading && protectedRoutes.some(route => pathname.startsWith(route))) {
     return (
         <div className="container mx-auto p-4 md:p-8">
              <div className="flex flex-col space-y-3">

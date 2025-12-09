@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { createPortal } from 'react-dom';
 import type { Estimate, LineItem, Quote } from '@/lib/types';
 import { DocumentForm } from '@/components/document-form';
@@ -219,16 +219,8 @@ function PrintableDocument({ doc, accentColor, backgroundColor, textColor }: { d
 
 
 export default function CreateEstimatePage() {
-  const { user, userProfile } = useAuth();
-  const [document, setDocument] = useState<Estimate | Quote>(() => {
-    const initial = getInitialEstimate();
-    return {
-      ...initial,
-      id: '', // Will be set properly in effect
-      userId: '',
-      companyId: '',
-    }
-  });
+  const { user, userProfile, isLoading: isAuthLoading } = useAuth();
+  const [document, setDocument] = useState<Estimate | Quote | null>(null);
 
   const [accentColor, setAccentColor] = useState<string>('hsl(var(--primary))');
   const [backgroundColor, setBackgroundColor] = useState<string>('#FFFFFF');
@@ -242,9 +234,9 @@ export default function CreateEstimatePage() {
   const draftId = searchParams.get('draftId');
 
   const docRef = useMemoFirebase(() => {
-    if (!draftId || !firestore) return null;
-    return doc(firestore, 'estimates', draftId);
-  }, [draftId, firestore]);
+    if (!draftId || !firestore || !userProfile?.companyId) return null;
+    return doc(firestore, 'companies', userProfile.companyId, ESTIMATES_COLLECTION, draftId);
+  }, [draftId, firestore, userProfile?.companyId]);
   
   const { data: remoteDraft, isLoading: isDraftLoading } = useDoc<Estimate>(docRef);
   
@@ -275,8 +267,11 @@ export default function CreateEstimatePage() {
     return value;
   }, []);
 
-    useEffect(() => {
-        if (remoteDraft && (!document || document.id !== draftId)) {
+  useEffect(() => {
+    if (isAuthLoading) return; // Wait until authentication is resolved
+
+    if (remoteDraft) { // Loading an existing draft
+        if (!document || document.id !== draftId) {
             const baseEstimate = getInitialEstimate();
             const loadedDraft = JSON.parse(JSON.stringify(remoteDraft), fromJSON);
             const initialEstimate = {
@@ -289,20 +284,23 @@ export default function CreateEstimatePage() {
                 summary: { ...baseEstimate.summary, ...loadedDraft.summary },
             };
             setDocument(initialEstimate);
-        } else if (!draftId && user && userProfile && document.id === '') {
-             const newEstimateBase = getInitialEstimate();
-            const newDocId = doc(collection(firestore, 'estimates')).id;
-            const newDoc: Estimate = { 
-                ...newEstimateBase, 
-                id: newDocId, 
-                userId: user.uid, 
-                companyId: userProfile.companyId,
-                createdAt: serverTimestamp(),
-                updatedAt: serverTimestamp(),
-            };
-            setDocument(newDoc);
         }
-    }, [user, userProfile, firestore, draftId, remoteDraft, document.id, fromJSON]);
+    } else if (!draftId && user && userProfile && !document) { // Creating a new draft
+        const newDocId = doc(collection(firestore, ESTIMATES_COLLECTION)).id;
+        const newDoc: Estimate = { 
+            ...getInitialEstimate(), 
+            id: newDocId, 
+            userId: user.uid, 
+            companyId: userProfile.companyId,
+            createdAt: serverTimestamp(),
+            updatedAt: serverTimestamp(),
+        };
+        const docToSaveRef = doc(firestore, 'companies', userProfile.companyId, ESTIMATES_COLLECTION, newDocId);
+        setDocumentNonBlocking(docToSaveRef, newDoc, { merge: true });
+        router.replace(`/create-estimate?draftId=${newDocId}`, { scroll: false });
+    }
+
+}, [isAuthLoading, user, userProfile, draftId, remoteDraft, firestore, document, fromJSON, router]);
 
 
   useEffect(() => {
@@ -371,7 +369,7 @@ export default function CreateEstimatePage() {
       draftToSave.createdAt = serverTimestamp();
     }
     
-    const finalDocRef = doc(firestore, ESTIMATES_COLLECTION, document.id);
+    const finalDocRef = doc(firestore, 'companies', companyId, ESTIMATES_COLLECTION, document.id);
     setDocumentNonBlocking(finalDocRef, draftToSave, { merge: true });
 
     toast({
@@ -385,17 +383,8 @@ export default function CreateEstimatePage() {
   };
 
   const handleNew = () => {
+    setDocument(null);
     router.push('/create-estimate');
-    // We don't set document to null, instead we rely on the useEffect to re-initialize it
-    // when the URL changes. This is more robust.
-    const newEstimateBase = getInitialEstimate();
-    const newDoc: Estimate = { 
-        ...newEstimateBase, 
-        id: '', // let effect handle ID
-        userId: user?.uid || '', 
-        companyId: userProfile?.companyId || '',
-    };
-    setDocument(newDoc);
   };
 
   const handleShare = () => {
@@ -443,13 +432,33 @@ export default function CreateEstimatePage() {
   };
 
   useEffect(() => {
-    if (document.id) { // Only compute summary if document is initialized
+    if (document?.id) { // Only compute summary if document is initialized
         const newDocument = computeSummary(document);
          if (JSON.stringify(newDocument.summary) !== JSON.stringify(document.summary)) {
             setDocument(newDocument);
         }
     }
   }, [document, computeSummary]);
+
+  if (isAuthLoading || !document) {
+    return (
+        <div className="container mx-auto p-4 md:p-8">
+             <div className="flex flex-col space-y-3">
+                <Skeleton className="h-16 w-full" />
+                <div className="flex-grow p-4 grid grid-cols-1 lg:grid-cols-5 gap-8">
+                  <div className="lg:col-span-3 space-y-4">
+                    <Skeleton className="h-48 w-full" />
+                    <Skeleton className="h-64 w-full" />
+                    <Skeleton className="h-96 w-full" />
+                  </div>
+                  <div className="lg:col-span-2">
+                     <Skeleton className="h-[800px] w-full" />
+                  </div>
+                </div>
+            </div>
+        </div>
+    );
+  }
 
   return (
     <>
@@ -548,5 +557,3 @@ export default function CreateEstimatePage() {
     </>
   );
 }
-
-    
