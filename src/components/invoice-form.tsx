@@ -78,6 +78,19 @@ const plumbingServiceTypes = ["Leak Repair", "Installation", "Sewer Line", "Wate
 const hvacServiceTypes = ["Install", "Repair", "Replace", "Maintenance"];
 const roofMaterials = ["Shingle", "Metal", "Tile", "Flat Roof"];
 
+const languages = [
+    { value: 'en', label: 'English' },
+    { value: 'ur', label: 'Urdu' },
+    { value: 'es', label: 'Spanish' },
+    { value: 'fr', label: 'French' },
+    { value: 'de', label: 'German' },
+    { value: 'it', label: 'Italian' },
+    { value: 'pt', label: 'Portuguese' },
+    { value: 'nl', label: 'Dutch' },
+    { value: 'ru', label: 'Russian' },
+    { value: 'zh', label: 'Chinese' },
+];
+
 const CustomSelect = ({ value, onValueChange, options, placeholder, name }: { value: string; onValueChange: (name: string, value: string) => void; options: string[]; placeholder?: string; name: string; }) => {
     const [isOther, setIsOther] = useState(false);
     const [otherValue, setOtherValue] = useState('');
@@ -586,8 +599,9 @@ export function InvoiceForm({ invoice, setInvoice, accentColor, setAccentColor, 
                         <SelectValue placeholder="Select language" />
                     </SelectTrigger>
                     <SelectContent>
-                        <SelectItem value="en">English</SelectItem>
-                        <SelectItem value="ur">Urdu</SelectItem>
+                        {languages.map(lang => (
+                            <SelectItem key={lang.value} value={lang.value}>{lang.label}</SelectItem>
+                        ))}
                     </SelectContent>
                 </Select>
             </div>
