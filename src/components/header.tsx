@@ -2,10 +2,10 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
-import { Menu, Search, ChevronDown } from 'lucide-react';
+import { Menu, Search, ChevronDown, FileText, BarChart, Tag, Book, LayoutDashboard, FilePlus, Shield, Gem } from 'lucide-react';
 import { ModeToggle } from '@/components/mode-toggle';
 import { cn } from '@/lib/utils';
 import { motion } from 'framer-motion';
@@ -21,16 +21,16 @@ import {
 } from "@/components/ui/dropdown-menu"
 
 const mainNavLinks = [
-    { href: "/features", label: "Features" },
-    { href: "/pricing", label: "Pricing" },
-    { href: "/blog", label: "Blog" },
+    { href: "/features", label: "Features", icon: <Gem /> },
+    { href: "/pricing", label: "Pricing", icon: <Tag /> },
+    { href: "/blog", label: "Blog", icon: <Book /> },
 ]
 
 const generalToolsLinks = [
-    { href: "/create-invoice", label: "Create Invoice" },
-    { href: "/create-estimate", label: "Create Estimate" },
-    { href: "/create-quote", label: "Create Quote" },
-    { href: "/create-insurance", label: "Create Insurance" },
+    { href: "/create-invoice", label: "Create Invoice", icon: <FilePlus /> },
+    { href: "/create-estimate", label: "Create Estimate", icon: <FilePlus /> },
+    { href: "/create-quote", label: "Create Quote", icon: <FilePlus /> },
+    { href: "/create-insurance", label: "Create Insurance", icon: <Shield /> },
 ]
 
 function NavLink({ href, label, isActive }: { href: string, label: string, isActive: boolean }) {
@@ -55,6 +55,7 @@ function NavLink({ href, label, isActive }: { href: string, label: string, isAct
 
 export function Header() {
     const pathname = usePathname();
+    const router = useRouter();
     const [open, setOpen] = useState(false);
 
     useEffect(() => {
@@ -67,6 +68,11 @@ export function Header() {
         document.addEventListener("keydown", down)
         return () => document.removeEventListener("keydown", down)
     }, [])
+
+    const runCommand = (command: () => unknown) => {
+        setOpen(false)
+        command()
+    }
 
     return (
         <header className="sticky top-0 z-50 w-full">
@@ -114,15 +120,20 @@ export function Header() {
                         <CommandInput placeholder="Type a command or search..." />
                         <CommandList>
                         <CommandEmpty>No results found.</CommandEmpty>
-                        <CommandGroup heading="Suggestions">
-                            <CommandItem>
-                            <span>Create Invoice</span>
-                            </CommandItem>
-                            <CommandItem>
-                            <span>Dashboard</span>
-                            </CommandItem>
-                            <CommandItem>
-                            <span>Pricing</span>
+                         <CommandGroup heading="Links">
+                            {[...mainNavLinks, ...generalToolsLinks].map((link) => (
+                                <CommandItem
+                                key={link.href}
+                                value={link.label}
+                                onSelect={() => runCommand(() => router.push(link.href))}
+                                >
+                                {link.icon}
+                                <span>{link.label}</span>
+                                </CommandItem>
+                            ))}
+                             <CommandItem onSelect={() => runCommand(() => router.push('/dashboard'))}>
+                                <LayoutDashboard />
+                                <span>Dashboard</span>
                             </CommandItem>
                         </CommandGroup>
                         </CommandList>
