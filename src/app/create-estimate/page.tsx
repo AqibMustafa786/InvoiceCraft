@@ -221,7 +221,6 @@ function PrintableDocument({ doc, accentColor, backgroundColor, textColor }: { d
 export default function CreateEstimatePage() {
   const { user, userProfile, isLoading: isAuthLoading } = useAuth();
   const [document, setDocument] = useState<Estimate | Quote | null>(null);
-
   const [accentColor, setAccentColor] = useState<string>('hsl(var(--primary))');
   const [backgroundColor, setBackgroundColor] = useState<string>('#FFFFFF');
   const [textColor, setTextColor] = useState<string>('#374151');
@@ -270,22 +269,20 @@ export default function CreateEstimatePage() {
   useEffect(() => {
     if (isAuthLoading) return; // Wait until authentication is resolved
 
-    if (remoteDraft) { // Loading an existing draft
-        if (!document || document.id !== draftId) {
-            const baseEstimate = getInitialEstimate();
-            const loadedDraft = JSON.parse(JSON.stringify(remoteDraft), fromJSON);
-            const initialEstimate = {
-                ...baseEstimate,
-                ...loadedDraft,
-                userId: loadedDraft.userId || user?.uid || '',
-                companyId: loadedDraft.companyId || userProfile?.companyId || '',
-                business: { ...baseEstimate.business, ...loadedDraft.business },
-                client: { ...baseEstimate.client, ...loadedDraft.client },
-                summary: { ...baseEstimate.summary, ...loadedDraft.summary },
-            };
-            setDocument(initialEstimate);
-        }
-    } else if (!draftId && user && userProfile && !document) { // Creating a new draft
+    if (remoteDraft && (!document || document.id !== draftId)) { // Loading an existing draft
+        const baseEstimate = getInitialEstimate();
+        const loadedDraft = JSON.parse(JSON.stringify(remoteDraft), fromJSON);
+        const initialEstimate = {
+            ...baseEstimate,
+            ...loadedDraft,
+            userId: loadedDraft.userId || user?.uid || '',
+            companyId: loadedDraft.companyId || userProfile?.companyId || '',
+            business: { ...baseEstimate.business, ...loadedDraft.business },
+            client: { ...baseEstimate.client, ...loadedDraft.client },
+            summary: { ...baseEstimate.summary, ...loadedDraft.summary },
+        };
+        setDocument(initialEstimate);
+    } else if (!draftId && user && userProfile) { // Creating a new draft
         const newDocId = doc(collection(firestore, ESTIMATES_COLLECTION)).id;
         const newDoc: Estimate = { 
             ...getInitialEstimate(), 
@@ -298,10 +295,11 @@ export default function CreateEstimatePage() {
         const docToSaveRef = doc(firestore, 'companies', userProfile.companyId, ESTIMATES_COLLECTION, newDocId);
         setDocumentNonBlocking(docToSaveRef, newDoc, { merge: true });
         router.replace(`/create-estimate?draftId=${newDocId}`, { scroll: false });
+    } else if (!user && !isAuthLoading) {
+      router.push('/login');
     }
 
-}, [isAuthLoading, user, userProfile, draftId, remoteDraft, firestore, document, fromJSON, router]);
-
+  }, [isAuthLoading, user, userProfile, draftId, remoteDraft, firestore, document, fromJSON, router]);
 
   useEffect(() => {
      if (typeof window !== 'undefined' && window.document) {
@@ -440,26 +438,6 @@ export default function CreateEstimatePage() {
     }
   }, [document, computeSummary]);
 
-  if (isAuthLoading || !document) {
-    return (
-        <div className="container mx-auto p-4 md:p-8">
-             <div className="flex flex-col space-y-3">
-                <Skeleton className="h-16 w-full" />
-                <div className="flex-grow p-4 grid grid-cols-1 lg:grid-cols-5 gap-8">
-                  <div className="lg:col-span-3 space-y-4">
-                    <Skeleton className="h-48 w-full" />
-                    <Skeleton className="h-64 w-full" />
-                    <Skeleton className="h-96 w-full" />
-                  </div>
-                  <div className="lg:col-span-2">
-                     <Skeleton className="h-[800px] w-full" />
-                  </div>
-                </div>
-            </div>
-        </div>
-    );
-  }
-
   return (
     <>
       <div className="container mx-auto p-4 md:px-6 md:py-8">
@@ -469,10 +447,10 @@ export default function CreateEstimatePage() {
             <p className="text-muted-foreground">Fill out the form to generate your professional estimate.</p>
           </div>
           <div className="flex w-full md:w-auto items-center gap-2">
-            <Button onClick={handleSaveDraft} className="w-full md:w-auto">
+            <Button onClick={handleSaveDraft} className="w-full md:w-auto" disabled={!document}>
                 <Edit className="mr-2 h-4 w-4" /> Save Draft
             </Button>
-            <Button onClick={handlePrint} variant="outline" className="w-full md:w-auto">
+            <Button onClick={handlePrint} variant="outline" className="w-full md:w-auto" disabled={!document}>
                 <Printer className="mr-2 h-4 w-4" /> Save as PDF
             </Button>
             <DropdownMenu>
@@ -490,11 +468,11 @@ export default function CreateEstimatePage() {
                             <LayoutDashboard className="mr-2 h-4 w-4" /> Dashboard
                         </Link>
                     </DropdownMenuItem>
-                    <DropdownMenuItem onClick={handleEmail} disabled={isSendingEmail}>
+                    <DropdownMenuItem onClick={handleEmail} disabled={isSendingEmail || !document}>
                         {isSendingEmail ? ( <Loader2 className="mr-2 h-4 w-4 animate-spin" />) : ( <Mail className="mr-2 h-4 w-4" /> )}
                          Email
                     </DropdownMenuItem>
-                    <DropdownMenuItem onClick={handleShare}>
+                    <DropdownMenuItem onClick={handleShare} disabled={!document}>
                         <Share2 className="mr-2 h-4 w-4" /> Share
                     </DropdownMenuItem>
                 </DropdownMenuContent>
@@ -502,58 +480,72 @@ export default function CreateEstimatePage() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
-          <div className="lg:col-span-3">
-            <div className="space-y-6">
-              <div>
-                <h2 className="text-2xl font-bold font-headline mb-4 text-center lg:text-left">Fill in Details</h2>
-                <DocumentForm 
-                  document={document} 
-                  setDocument={setDocument} 
-                  accentColor={accentColor}
-                  setAccentColor={setAccentColor}
-                  backgroundColor={backgroundColor}
-                  setBackgroundColor={setBackgroundColor}
-                  textColor={textColor}
-                  setTextColor={setTextColor}
-                  toast={toast}
-                  documentType="estimate"
-                />
+        {!document || isAuthLoading || isDraftLoading ? (
+            <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
+              <div className="lg:col-span-3 space-y-4">
+                <Skeleton className="h-48 w-full" />
+                <Skeleton className="h-64 w-full" />
+                <Skeleton className="h-96 w-full" />
+              </div>
+              <div className="lg:col-span-2">
+                  <Skeleton className="h-[800px] w-full" />
+              </div>
+            </div>
+        ) : (
+          <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
+            <div className="lg:col-span-3">
+              <div className="space-y-6">
+                <div>
+                  <h2 className="text-2xl font-bold font-headline mb-4 text-center lg:text-left">Fill in Details</h2>
+                  <DocumentForm 
+                    document={document} 
+                    setDocument={setDocument} 
+                    accentColor={accentColor}
+                    setAccentColor={setAccentColor}
+                    backgroundColor={backgroundColor}
+                    setBackgroundColor={setBackgroundColor}
+                    textColor={textColor}
+                    setTextColor={setTextColor}
+                    toast={toast}
+                    documentType="estimate"
+                  />
+                </div>
+              </div>
+            </div>
+            <div className="lg:col-span-2">
+              <div className="sticky top-24 space-y-4">
+                  <Sheet>
+                      <SheetTrigger asChild>
+                          <Button variant="outline" className="w-full">
+                              <Brush className="mr-2 h-4 w-4" />
+                              Change Template
+                          </Button>
+                      </SheetTrigger>
+                      <SheetContent className="w-full sm:max-w-xl overflow-y-auto">
+                          <SheetHeader>
+                              <SheetTitle>Select a Template</SheetTitle>
+                          </SheetHeader>
+                          <div className="py-4">
+                              <DocumentTemplateSelector 
+                                  selectedTemplate={document.template}
+                                  onSelectTemplate={(template) => setDocument(prev => prev ? ({...prev, template}) : null)}
+                                  documentType="estimate"
+                                  category={document.category}
+                              />
+                          </div>
+                      </SheetContent>
+                  </Sheet>
+                  <div>
+                    <h2 className="text-2xl font-bold font-headline mb-4">Live Preview</h2>
+                    <ClientDocumentPreview document={document} accentColor={accentColor} backgroundColor={backgroundColor} textColor={textColor} />
+                  </div>
               </div>
             </div>
           </div>
-          <div className="lg:col-span-2">
-            <div className="sticky top-24 space-y-4">
-                 <Sheet>
-                    <SheetTrigger asChild>
-                        <Button variant="outline" className="w-full">
-                            <Brush className="mr-2 h-4 w-4" />
-                            Change Template
-                        </Button>
-                    </SheetTrigger>
-                    <SheetContent className="w-full sm:max-w-xl overflow-y-auto">
-                        <SheetHeader>
-                            <SheetTitle>Select a Template</SheetTitle>
-                        </SheetHeader>
-                        <div className="py-4">
-                            <DocumentTemplateSelector 
-                                selectedTemplate={document.template}
-                                onSelectTemplate={(template) => setDocument(prev => prev ? ({...prev, template}) : null)}
-                                documentType="estimate"
-                                category={document.category}
-                            />
-                        </div>
-                    </SheetContent>
-                </Sheet>
-                <div>
-                  <h2 className="text-2xl font-bold font-headline mb-4">Live Preview</h2>
-                  <ClientDocumentPreview document={document} accentColor={accentColor} backgroundColor={backgroundColor} textColor={textColor} />
-                </div>
-            </div>
-          </div>
-        </div>
+        )}
       </div>
       {document && <PrintableDocument doc={document} accentColor={accentColor} backgroundColor={backgroundColor} textColor={textColor} />}
     </>
   );
 }
+
