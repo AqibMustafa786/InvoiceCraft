@@ -55,9 +55,8 @@ export const LandscapingTemplate1: React.FC<TemplateProps> = ({ document, pageIt
                 <div>
                      {business.logoUrl && (
                         <Image src={business.logoUrl} alt="Logo" width={100} height={50} className="object-contain"/>
-                    ) : (
-                        <h2 className="text-3xl font-bold" style={{ color: style.color }}>{business.name}</h2>
                     )}
+                     <h2 className="text-3xl font-bold" style={{ color: style.color }}>{business.name}</h2>
                      <p className="text-xs">{business.address}</p>
                 </div>
                 <div className="text-right">
