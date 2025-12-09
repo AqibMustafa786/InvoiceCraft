@@ -2,7 +2,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { doc, updateDoc, arrayUnion, serverTimestamp, getDocs, collectionGroup, query, where, getDoc } from 'firebase/firestore';
+import { doc, updateDoc, arrayUnion, serverTimestamp, getDocs, collectionGroup, query, where, getDoc, Firestore } from 'firebase/firestore';
 import { useFirebase, useDoc, useMemoFirebase } from '@/firebase';
 import type { Estimate } from '@/lib/types';
 import { EstimatePreview } from '@/components/estimate-preview';
@@ -24,19 +24,26 @@ import {
 } from "@/components/ui/alert-dialog"
 import { Skeleton } from '@/components/ui/skeleton';
 
-async function findEstimate(firestore: any, estimateId: string): Promise<Estimate | null> {
+async function findEstimate(firestore: Firestore, estimateId: string): Promise<Estimate | null> {
+    // A more robust way to fetch a document when its full path is not known
+    // is often to have a known top-level collection.
+    const docRef = doc(firestore, 'estimates', estimateId);
+    const docSnap = await getDoc(docRef);
+
+    if (docSnap.exists()) {
+        return { id: docSnap.id, ...docSnap.data() } as Estimate;
+    }
+    
+    // Fallback query for cases where it might be in a subcollection, though less ideal.
+    console.warn("Falling back to collectionGroup query for estimate. This might be slow.");
     const q = query(collectionGroup(firestore, 'estimates'), where('id', '==', estimateId));
     const querySnapshot = await getDocs(q);
+
     if (!querySnapshot.empty) {
         const docSnap = querySnapshot.docs[0];
         return { id: docSnap.id, ...docSnap.data() } as Estimate;
     }
-    // Fallback for root collection if needed
-    const rootDocRef = doc(firestore, 'estimates', estimateId);
-    const rootDocSnap = await getDoc(rootDocRef);
-    if(rootDocSnap.exists()) {
-        return { id: rootDocSnap.id, ...rootDocSnap.data() } as Estimate;
-    }
+    
     return null;
 }
 
@@ -52,9 +59,7 @@ export default function PublicEstimatePage({ params }: { params: { estimateId: s
 
     const docRef = useMemoFirebase(() => {
         if (!firestore || !estimate) return null;
-        if (estimate.companyId) {
-            return doc(firestore, 'companies', estimate.companyId, 'estimates', estimate.id);
-        }
+        // Since we now store estimates at the root, the path is simple.
         return doc(firestore, 'estimates', estimate.id);
     }, [firestore, estimate]);
 

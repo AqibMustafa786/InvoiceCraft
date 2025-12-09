@@ -267,6 +267,7 @@ export interface ITFreelanceInfo {
 export interface Invoice {
   id: string; 
   userId: string;
+  companyId: string;
   // Deprecated fields - will be removed in a future step
   companyName: string;
   companyAddress: string;
@@ -354,9 +355,23 @@ export type EstimateCategory =
   | "Construction Estimate"
   | "IT / Freelance Estimate";
 
+export interface HomeRemodelingInfo {
+  projectType: string;
+  propertyType: string;
+  squareFootage: number | null;
+  roomsIncluded: string;
+  materialGrade: 'Basic' | 'Standard' | 'Premium';
+  demolitionRequired: boolean;
+  permitRequired: boolean;
+  specialInstructions: string;
+  expectedStartDate: Date | null;
+  expectedCompletionDate: Date | null;
+}
+
 export interface Estimate {
   id: string;
   userId: string;
+  companyId: string;
   estimateNumber: string;
   estimateDate: Date;
   validUntilDate: Date;
