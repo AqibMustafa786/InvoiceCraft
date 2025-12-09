@@ -266,25 +266,17 @@ export default function CreateEstimatePage() {
   }, []);
 
     useEffect(() => {
-        // Wait until authentication is resolved
         if (isAuthLoading) {
             return;
         }
 
-        // If no user, redirect to login
-        if (!user) {
-            router.push('/login');
-            return;
-        }
-
-        // Wait for firestore and user profile (with companyId)
-        if (!firestore || !userProfile?.companyId) {
+        if (!user || !userProfile?.companyId || !firestore) {
+            if (!isAuthLoading) router.push('/login');
             return;
         }
 
         const companyId = userProfile.companyId;
 
-        // Logic for loading an existing draft
         if (draftId) {
             if (remoteDraft && (!document || document.id !== draftId)) {
                 const baseEstimate = getInitialEstimate();
@@ -302,7 +294,6 @@ export default function CreateEstimatePage() {
                 setBackgroundColor(initialEstimate.backgroundColor || '#FFFFFF');
                 setTextColor(initialEstimate.textColor || '#374151');
             }
-        // Logic for creating a new draft if one isn't being loaded and isn't already in state
         } else if (!document) {
             const newEstimateBase = getInitialEstimate();
             const newDocRef = doc(collection(firestore, `estimates`));
@@ -315,17 +306,13 @@ export default function CreateEstimatePage() {
                 updatedAt: serverTimestamp(),
             };
             
-            // Set in local state immediately to render the form
             setDocument(newDoc);
             
-            // Save to Firestore non-blockingly
-            setDoc(newDocRef, newDoc, { merge: true }).catch(error => {
+            setDoc(newDocRef, newDoc, { merge: true }).then(() => {
+                router.replace(`/create-estimate?draftId=${newDocRef.id}`, { scroll: false });
+            }).catch(error => {
                 console.error("Failed to create new estimate draft:", error);
-                // Optionally show a toast to the user
             });
-            
-            // Update URL without a full page reload to reflect the new draft ID
-            router.replace(`/create-estimate?draftId=${newDocRef.id}`, { scroll: false });
         }
     }, [user, userProfile, isAuthLoading, firestore, draftId, remoteDraft, document, fromJSON, router]);
 
