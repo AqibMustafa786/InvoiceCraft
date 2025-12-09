@@ -65,7 +65,7 @@ const templates: Template[] = [
     category: 'Construction',
     isPro: true,
   },
-  { id: 'construction-6', name: 'Classic', thumbnailUrl: '/templates/construction-1.png', category: 'Construction', isPro: true },
+   { id: 'construction-6', name: 'Classic', thumbnailUrl: '/templates/construction-1.png', category: 'Construction', isPro: true },
   { id: 'construction-7', name: 'Modern Build', thumbnailUrl: '/templates/construction-2.png', category: 'Construction', isPro: true },
   { id: 'construction-8', name: 'Grid', thumbnailUrl: '/templates/construction-3.png', category: 'Construction', isPro: true },
   { id: 'construction-9', name: 'Simple', thumbnailUrl: '/templates/construction-4.png', category: 'Construction', isPro: true },
@@ -279,18 +279,26 @@ const templates: Template[] = [
 ];
 
 export function DocumentTemplateSelector({ selectedTemplate, onSelectTemplate, documentType, category }: DocumentTemplateSelectorProps) {
-  const { userProfile } = useAuth();
   
   const filteredTemplates = useMemo(() => {
     const generalCategory = documentType === 'invoice' ? 'General Services' : 'all';
+    
+    // Always include general templates
     const generalTemplates = templates.filter(t => t.category === generalCategory || t.category === 'Generic');
     
+    // If the selected category is general, just return those
     if (category === generalCategory || (documentType !== 'invoice' && category === 'Generic')) {
       return generalTemplates;
     }
 
+    // Otherwise, get category-specific templates and combine with general ones, removing duplicates.
     const categoryTemplates = templates.filter(t => t.category === category);
-    return [...categoryTemplates, ...generalTemplates];
+    
+    const combined = [...categoryTemplates, ...generalTemplates];
+    const uniqueTemplates = Array.from(new Map(combined.map(item => [item.id, item])).values());
+    
+    return uniqueTemplates;
+
   }, [category, documentType]);
 
   const docTypeLabel = documentType === 'invoice' ? 'Invoice' : (documentType === 'quote' ? 'Quote' : 'Estimate');
@@ -298,7 +306,7 @@ export function DocumentTemplateSelector({ selectedTemplate, onSelectTemplate, d
   return (
     <div className="grid grid-cols-2 lg:grid-cols-3 gap-6">
       {filteredTemplates.map((template) => {
-        const isLocked = false; // All templates are now unlocked
+        const isLocked = false; 
 
         return (
             <div
