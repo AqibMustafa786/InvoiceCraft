@@ -30,17 +30,17 @@ const safeFormat = (date: Date | string | number | null | undefined, formatStrin
     return format(d, formatString);
 }
 
-const PlumbingDetails: React.FC<{ invoice: Invoice }> = ({ invoice }) => {
+const PlumbingDetails: React.FC<{ invoice: Invoice, t: any }> = ({ invoice, t }) => {
     if (!invoice.plumbing) return null;
     const { plumbing } = invoice;
     return (
         <section className="my-4 text-xs">
-            <p className="font-bold text-gray-500 mb-2 border-b">Plumbing Details</p>
+            <p className="font-bold text-gray-500 mb-2 border-b">{t.plumbingDetails || 'Plumbing Details'}</p>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-x-4 gap-y-1">
-                <p><span className="font-semibold text-gray-600">Service Type:</span> {plumbing.serviceType}</p>
-                <p><span className="font-semibold text-gray-600">Pipe Material:</span> {plumbing.pipeMaterial}</p>
-                <p><span className="font-semibold text-gray-600">Fixture:</span> {plumbing.fixtureName}</p>
-                {plumbing.emergencyFee && <p><span className="font-semibold text-gray-600">Emergency Fee:</span> ${plumbing.emergencyFee.toFixed(2)}</p>}
+                <p><span className="font-semibold text-gray-600">{t.serviceType || 'Service Type'}:</span> {plumbing.serviceType}</p>
+                <p><span className="font-semibold text-gray-600">{t.pipeMaterial || 'Pipe Material'}:</span> {plumbing.pipeMaterial}</p>
+                <p><span className="font-semibold text-gray-600">{t.fixture || 'Fixture'}:</span> {plumbing.fixtureName}</p>
+                {plumbing.emergencyFee && <p><span className="font-semibold text-gray-600">{t.emergencyFee || 'Emergency Fee'}:</span> ${plumbing.emergencyFee.toFixed(2)}</p>}
             </div>
         </section>
     );
@@ -59,21 +59,21 @@ export const PlumbingTemplate1: React.FC<PageProps> = (props) => {
                     <h1 className="text-3xl font-bold mt-2" style={{color: accentColor}}>{business.name}</h1>
                 </div>
                 <div className="text-right">
-                    <h2 className="text-4xl font-bold">INVOICE</h2>
+                    <h2 className="text-4xl font-bold">{t.invoice.toUpperCase() || 'INVOICE'}</h2>
                     <p className="text-xs text-gray-500">#{invoice.invoiceNumber}</p>
                 </div>
             </header>
 
             <section className="grid grid-cols-2 gap-8 text-xs mb-8">
                 <div>
-                    <p className="font-bold mb-1">From:</p>
+                    <p className="font-bold mb-1">{t.from || 'From'}:</p>
                     <p>{business.name}</p>
                     <p className="whitespace-pre-line">{business.address}</p>
                     <p>{business.phone}</p>
                     <p>{business.email}</p>
                 </div>
                 <div className="text-right">
-                    <p className="font-bold mb-1">Bill to:</p>
+                    <p className="font-bold mb-1">{t.billTo || 'Bill to'}:</p>
                     <p>{client.name}</p>
                     <p className="whitespace-pre-line">{client.address}</p>
                     <p>{client.phone}</p>
@@ -83,29 +83,29 @@ export const PlumbingTemplate1: React.FC<PageProps> = (props) => {
             
             <section className="grid grid-cols-3 gap-4 text-xs mb-8 text-center">
                 <div className="p-2 bg-gray-100 rounded">
-                    <p className="font-bold text-gray-500">Invoice Date</p>
+                    <p className="font-bold text-gray-500">{t.invoiceDate || 'Invoice Date'}</p>
                     <p>{safeFormat(invoice.invoiceDate, 'MM/dd/yyyy')}</p>
                 </div>
                  <div className="p-2 bg-gray-100 rounded">
-                    <p className="font-bold text-gray-500">Terms</p>
-                    <p>{invoice.paymentInstructions.split('\n')[0] || 'Due on receipt'}</p>
+                    <p className="font-bold text-gray-500">{t.terms || 'Terms'}</p>
+                    <p>{invoice.paymentInstructions.split('\n')[0] || t.dueOnReceipt || 'Due on receipt'}</p>
                 </div>
                  <div className="p-2 bg-gray-100 rounded">
-                    <p className="font-bold text-gray-500">Due Date</p>
+                    <p className="font-bold text-gray-500">{t.dueDate || 'Due Date'}</p>
                     <p>{safeFormat(invoice.dueDate, 'MM/dd/yyyy')}</p>
                 </div>
             </section>
             
-            <PlumbingDetails invoice={invoice} />
+            <PlumbingDetails invoice={invoice} t={t} />
             
             <main className="flex-grow">
                  <table className="w-full text-left text-xs">
                     <thead>
                         <tr style={{ backgroundColor: accentColor }} className="text-white">
-                            <th className="p-2 font-bold w-1/2">DESCRIPTION</th>
-                            <th className="p-2 font-bold text-center">QTY</th>
-                            <th className="p-2 font-bold text-right">RATE</th>
-                            <th className="p-2 font-bold text-right">AMOUNT</th>
+                            <th className="p-2 font-bold w-1/2">{t.description.toUpperCase() || 'DESCRIPTION'}</th>
+                            <th className="p-2 font-bold text-center">{t.quantity.toUpperCase() || 'QTY'}</th>
+                            <th className="p-2 font-bold text-right">{t.rate.toUpperCase() || 'RATE'}</th>
+                            <th className="p-2 font-bold text-right">{t.amount.toUpperCase() || 'AMOUNT'}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -125,15 +125,15 @@ export const PlumbingTemplate1: React.FC<PageProps> = (props) => {
                 <footer className="mt-auto pt-8">
                      <div className="flex justify-end">
                         <div className="w-2/5 text-xs space-y-1">
-                            <div className="flex justify-between p-1"><span>Subtotal</span><span>{currencySymbol}{subtotal.toFixed(2)}</span></div>
-                            <div className="flex justify-between p-1"><span>Tax ({invoice.summary.taxPercentage}%)</span><span>{currencySymbol}{taxAmount.toFixed(2)}</span></div>
+                            <div className="flex justify-between p-1"><span>{t.subtotal || 'Subtotal'}</span><span>{currencySymbol}{subtotal.toFixed(2)}</span></div>
+                            <div className="flex justify-between p-1"><span>{t.tax || 'Tax'} ({invoice.summary.taxPercentage}%)</span><span>{currencySymbol}{taxAmount.toFixed(2)}</span></div>
                             <div className="flex justify-between font-bold text-base mt-2 pt-2 border-t" style={{borderColor: accentColor}}>
-                                <span>Balance Due</span><span style={{color: accentColor}}>{currencySymbol}{balanceDue.toFixed(2)}</span>
+                                <span>{t.balanceDue || 'Balance Due'}</span><span style={{color: accentColor}}>{currencySymbol}{balanceDue.toFixed(2)}</span>
                             </div>
                         </div>
                     </div>
                      <div className="text-xs mt-8">
-                        <p className="font-bold">Notes / Payment Instructions:</p>
+                        <p className="font-bold">{t.notesPaymentInstructions || 'Notes / Payment Instructions'}:</p>
                         <p className="text-gray-600 whitespace-pre-line">{invoice.paymentInstructions}</p>
                     </div>
                 </footer>

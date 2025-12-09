@@ -30,19 +30,19 @@ const safeFormat = (date: Date | string | number | null | undefined, formatStrin
     return format(d, formatString);
 }
 
-const RoofingDetails: React.FC<{ invoice: Invoice }> = ({ invoice }) => {
+const RoofingDetails: React.FC<{ invoice: Invoice, t: any }> = ({ invoice, t }) => {
     if (!invoice.roofing) return null;
     const { roofing } = invoice;
     return (
         <section className="my-4 text-xs">
-            <p className="font-bold text-gray-500 mb-2 border-b">Roofing Details</p>
+            <p className="font-bold text-gray-500 mb-2 border-b">{t.roofingDetails || 'Roofing Details'}</p>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-x-4 gap-y-1">
-                <p><span className="font-semibold text-gray-600">Roof Type:</span> {roofing.roofType}</p>
-                {roofing.squareFootage && <p><span className="font-semibold text-gray-600">Sq Ft:</span> {roofing.squareFootage}</p>}
-                <p><span className="font-semibold text-gray-600">Pitch:</span> {roofing.pitch}</p>
-                <p><span className="font-semibold text-gray-600">Tear-off:</span> {roofing.tearOffRequired ? 'Yes' : 'No'}</p>
-                <p><span className="font-semibold text-gray-600">Underlayment:</span> {roofing.underlaymentType}</p>
-                {roofing.dumpsterFee && <p><span className="font-semibold text-gray-600">Disposal Fee:</span> ${roofing.dumpsterFee.toFixed(2)}</p>}
+                <p><span className="font-semibold text-gray-600">{t.roofType || 'Roof Type'}:</span> {roofing.roofType}</p>
+                {roofing.squareFootage && <p><span className="font-semibold text-gray-600">{t.sqFt || 'Sq Ft'}:</span> {roofing.squareFootage}</p>}
+                <p><span className="font-semibold text-gray-600">{t.pitch || 'Pitch'}:</span> {roofing.pitch}</p>
+                <p><span className="font-semibold text-gray-600">{t.tearOff || 'Tear-off'}:</span> {roofing.tearOffRequired ? 'Yes' : 'No'}</p>
+                <p><span className="font-semibold text-gray-600">{t.underlayment || 'Underlayment'}:</span> {roofing.underlaymentType}</p>
+                {roofing.dumpsterFee && <p><span className="font-semibold text-gray-600">{t.disposalFee || 'Disposal Fee'}:</span> ${roofing.dumpsterFee.toFixed(2)}</p>}
             </div>
         </section>
     );
@@ -50,7 +50,7 @@ const RoofingDetails: React.FC<{ invoice: Invoice }> = ({ invoice }) => {
 
 // Template 1: Direct Interpretation from Image
 export const RoofingTemplate1: React.FC<PageProps> = (props) => {
-    const { invoice, pageItems, pageIndex, totalPages, subtotal, taxAmount, balanceDue, currencySymbol, accentColor } = props;
+    const { invoice, pageItems, pageIndex, totalPages, subtotal, taxAmount, balanceDue, currencySymbol, t } = props;
     const { business, client } = invoice;
 
     return (
@@ -67,33 +67,33 @@ export const RoofingTemplate1: React.FC<PageProps> = (props) => {
                  }}></div>
                 <div className="relative">
                     <h1 className="text-4xl font-extrabold">{business.name}</h1>
-                    <p className="text-sm">Residential & Commercial Roofing</p>
+                    <p className="text-sm">{t.roofingServices || 'Residential & Commercial Roofing'}</p>
                 </div>
             </header>
 
             <section className="grid grid-cols-2 gap-4 text-xs mb-4">
                 <div className="p-2 border">
-                    <p className="font-bold">CUSTOMER</p>
+                    <p className="font-bold">{t.customer || 'CUSTOMER'}</p>
                     <p>{client.name}</p>
                     <p>{client.address}</p>
                 </div>
                  <div className="p-2 border text-right">
-                    <p className="font-bold">INVOICE</p>
+                    <p className="font-bold">{t.invoice.toUpperCase() || 'INVOICE'}</p>
                     <p>#{invoice.invoiceNumber}</p>
-                    <p>Date: {safeFormat(invoice.invoiceDate, 'MM/dd/yyyy')}</p>
+                    <p>{t.date || 'Date'}: {safeFormat(invoice.invoiceDate, 'MM/dd/yyyy')}</p>
                 </div>
             </section>
             
-            <RoofingDetails invoice={invoice} />
+            <RoofingDetails invoice={invoice} t={t} />
             
             <main className="flex-grow mt-4">
                  <table className="w-full text-left text-xs border">
                     <thead>
                         <tr className="bg-gray-800 text-white">
-                            <th className="p-1 font-bold w-1/2 border-r">MATERIAL & JOB DESCRIPTION</th>
-                            <th className="p-1 font-bold text-center border-r">QTY</th>
-                            <th className="p-1 font-bold text-right border-r">COST</th>
-                            <th className="p-1 font-bold text-right">TOTAL</th>
+                            <th className="p-1 font-bold w-1/2 border-r">{t.materialJobDescription || 'MATERIAL & JOB DESCRIPTION'}</th>
+                            <th className="p-1 font-bold text-center border-r">{t.quantity.toUpperCase() || 'QTY'}</th>
+                            <th className="p-1 font-bold text-right border-r">{t.cost.toUpperCase() || 'COST'}</th>
+                            <th className="p-1 font-bold text-right">{t.total.toUpperCase() || 'TOTAL'}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -113,16 +113,16 @@ export const RoofingTemplate1: React.FC<PageProps> = (props) => {
                 <footer className="mt-auto pt-4 text-xs">
                     <div className="flex justify-end">
                         <div className="w-1/3">
-                            <p className="flex justify-between p-1 border-b"><span>SUBTOTAL</span> <span>{currencySymbol}{subtotal.toFixed(2)}</span></p>
-                            <p className="flex justify-between p-1 border-b"><span>TAX</span> <span>{currencySymbol}{taxAmount.toFixed(2)}</span></p>
-                            <p className="flex justify-between p-1 font-bold text-sm"><span>TOTAL DUE</span> <span>{currencySymbol}{balanceDue.toFixed(2)}</span></p>
+                            <p className="flex justify-between p-1 border-b"><span>{t.subtotal.toUpperCase() || 'SUBTOTAL'}</span> <span>{currencySymbol}{subtotal.toFixed(2)}</span></p>
+                            <p className="flex justify-between p-1 border-b"><span>{t.tax.toUpperCase() || 'TAX'}</span> <span>{currencySymbol}{taxAmount.toFixed(2)}</span></p>
+                            <p className="flex justify-between p-1 font-bold text-sm"><span>{t.totalDue.toUpperCase() || 'TOTAL DUE'}</span> <span>{currencySymbol}{balanceDue.toFixed(2)}</span></p>
                         </div>
                     </div>
                     <div className="mt-4 border-t pt-2">
                         <p className="italic text-gray-600">{invoice.termsAndConditions}</p>
                         <div className="flex justify-between mt-8">
-                            <div><p className="border-t pt-1">Customer Signature</p></div>
-                            <div><p className="border-t pt-1">Date</p></div>
+                            <div><p className="border-t pt-1">{t.customerSignature || 'Customer Signature'}</p></div>
+                            <div><p className="border-t pt-1">{t.date || 'Date'}</p></div>
                         </div>
                     </div>
                 </footer>

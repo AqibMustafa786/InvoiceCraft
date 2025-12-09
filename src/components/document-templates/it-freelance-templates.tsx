@@ -12,6 +12,7 @@ interface TemplateProps {
   pageIndex: number;
   totalPages: number;
   style: React.CSSProperties;
+  t: any;
 }
 
 const currencySymbols: { [key: string]: string } = { USD: '$', EUR: '€', GBP: '£', JPY: '¥', PKR: '₨' };
@@ -33,28 +34,28 @@ const SignatureDisplay = ({ signature, label }: { signature: any, label: string 
     )
 }
 
-const ITFreelanceDetails: React.FC<{ document: Estimate }> = ({ document }) => {
+const ITFreelanceDetails: React.FC<{ document: Estimate, t: any }> = ({ document, t }) => {
     if (!document.itFreelance) return null;
     const { itFreelance } = document;
     return (
         <section className="my-4 text-xs">
-            <p className="font-bold text-gray-500 mb-2 border-b">Project Specifications</p>
+            <p className="font-bold text-gray-500 mb-2 border-b">{t.projectSpecifications || 'Project Specifications'}</p>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-1">
-                <p><span className="font-semibold text-gray-600">Project Type:</span> {itFreelance.projectType}</p>
-                <p><span className="font-semibold text-gray-600">Design Style:</span> {itFreelance.designStyle}</p>
-                {itFreelance.pagesScreensCount && <p><span className="font-semibold text-gray-600">Pages/Screens:</span> {itFreelance.pagesScreensCount}</p>}
-                {itFreelance.revisionsIncluded && <p><span className="font-semibold text-gray-600">Revisions:</span> {itFreelance.revisionsIncluded}</p>}
-                <p className="col-span-full"><span className="font-semibold text-gray-600">Timeline:</span> {itFreelance.deliveryTimeline}</p>
+                <p><span className="font-semibold text-gray-600">{t.projectType || 'Project Type'}:</span> {itFreelance.projectType}</p>
+                <p><span className="font-semibold text-gray-600">{t.designStyle || 'Design Style'}:</span> {itFreelance.designStyle}</p>
+                {itFreelance.pagesScreensCount && <p><span className="font-semibold text-gray-600">{t.pagesScreens || 'Pages/Screens'}:</span> {itFreelance.pagesScreensCount}</p>}
+                {itFreelance.revisionsIncluded && <p><span className="font-semibold text-gray-600">{t.revisions || 'Revisions'}:</span> {itFreelance.revisionsIncluded}</p>}
+                <p className="col-span-full"><span className="font-semibold text-gray-600">{t.timeline || 'Timeline'}:</span> {itFreelance.deliveryTimeline}</p>
                 <div className="col-span-full mt-2">
-                    <p className="font-semibold text-gray-600">Scope:</p>
+                    <p className="font-semibold text-gray-600">{t.scope || 'Scope'}:</p>
                     <p className="whitespace-pre-line pl-2">{itFreelance.scopeOfWork}</p>
                 </div>
                  <div className="col-span-full mt-2">
-                    <p className="font-semibold text-gray-600">Features:</p>
+                    <p className="font-semibold text-gray-600">{t.features || 'Features'}:</p>
                     <p className="whitespace-pre-line pl-2">{itFreelance.featuresNeeded}</p>
                 </div>
                  <div className="col-span-full mt-2">
-                    <p className="font-semibold text-gray-600">Integrations:</p>
+                    <p className="font-semibold text-gray-600">{t.integrations || 'Integrations'}:</p>
                     <p className="whitespace-pre-line pl-2">{itFreelance.integrations}</p>
                 </div>
             </div>
@@ -64,7 +65,7 @@ const ITFreelanceDetails: React.FC<{ document: Estimate }> = ({ document }) => {
 
 
 // Template 1: Tech Corporate (Based on user image)
-export const ITTemplate1: React.FC<TemplateProps> = ({ document, pageItems, pageIndex, totalPages, style }) => {
+export const ITTemplate1: React.FC<TemplateProps> = ({ document, pageItems, pageIndex, totalPages, style, t }) => {
     const { business, client, summary, currency } = document;
     const currencySymbol = currencySymbols[currency] || '$';
 
@@ -84,32 +85,32 @@ export const ITTemplate1: React.FC<TemplateProps> = ({ document, pageItems, page
                 </div>
                  <div className="text-right">
                     <p className="text-2xl font-extrabold">{currencySymbol}{summary.grandTotal.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</p>
-                    <p className="text-sm font-bold text-gray-500 tracking-wider">TOTAL COST</p>
+                    <p className="text-sm font-bold text-gray-500 tracking-wider">{t.totalCost.toUpperCase() || 'TOTAL COST'}</p>
                 </div>
             </header>
 
             <section className="mb-8 p-4 bg-gray-50 rounded-md text-xs">
-                <p className="font-bold text-gray-400 tracking-widest mb-2">PROJECT INFORMATION</p>
+                <p className="font-bold text-gray-400 tracking-widest mb-2">{t.projectInformation.toUpperCase() || 'PROJECT INFORMATION'}</p>
                 <div className="grid grid-cols-[120px_1fr] gap-x-4 gap-y-1">
-                    <span className="text-gray-600">PROJECT NAME:</span><span className="font-semibold">{document.projectTitle}</span>
-                    <span className="text-gray-600">LOCATION:</span><span className="font-semibold">{client.projectLocation}</span>
-                    <span className="text-gray-600">CONTACT PERSON:</span><span className="font-semibold">{client.name}</span>
-                    <span className="text-gray-600">ESTIMATOR:</span><span className="font-semibold">{business.name}</span>
-                    <span className="text-gray-600">ESTIMATION DATE:</span><span className="font-semibold">{safeFormat(document.estimateDate, 'yyyy-MM-dd')}</span>
+                    <span className="text-gray-600">{t.projectName || 'PROJECT NAME'}:</span><span className="font-semibold">{document.projectTitle}</span>
+                    <span className="text-gray-600">{t.location || 'LOCATION'}:</span><span className="font-semibold">{client.projectLocation}</span>
+                    <span className="text-gray-600">{t.contactPerson || 'CONTACT PERSON'}:</span><span className="font-semibold">{client.name}</span>
+                    <span className="text-gray-600">{t.estimator || 'ESTIMATOR'}:</span><span className="font-semibold">{business.name}</span>
+                    <span className="text-gray-600">{t.estimationDate || 'ESTIMATION DATE'}:</span><span className="font-semibold">{safeFormat(document.estimateDate, 'yyyy-MM-dd')}</span>
                 </div>
             </section>
             
-            <ITFreelanceDetails document={document} />
+            <ITFreelanceDetails document={document} t={t} />
 
             <main className="flex-grow">
-                 <p className="font-bold text-gray-400 tracking-widest mb-2 text-xs">COST ESTIMATE</p>
+                 <p className="font-bold text-gray-400 tracking-widest mb-2 text-xs">{t.costEstimate.toUpperCase() || 'COST ESTIMATE'}</p>
                  <table className="w-full text-left text-xs">
                     <thead>
                         <tr className="border-b-2 border-gray-200">
-                            <th className="py-2 font-bold w-1/2">DESCRIPTION</th>
-                            <th className="py-2 font-bold text-center">QUANTITY</th>
-                            <th className="py-2 font-bold text-right">UNIT PRICE</th>
-                            <th className="py-2 font-bold text-right">TOTAL</th>
+                            <th className="py-2 font-bold w-1/2">{t.description.toUpperCase() || 'DESCRIPTION'}</th>
+                            <th className="py-2 font-bold text-center">{t.quantity.toUpperCase() || 'QUANTITY'}</th>
+                            <th className="py-2 font-bold text-right">{t.unitPrice.toUpperCase() || 'UNIT PRICE'}</th>
+                            <th className="py-2 font-bold text-right">{t.total.toUpperCase() || 'TOTAL'}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -129,21 +130,21 @@ export const ITTemplate1: React.FC<TemplateProps> = ({ document, pageItems, page
                 <footer className="mt-auto pt-8 flex justify-between items-end text-xs">
                     <div className="space-y-4">
                         <div>
-                             <p className="font-bold text-gray-400 tracking-widest mb-2">NOTES</p>
+                             <p className="font-bold text-gray-400 tracking-widest mb-2">{t.notes.toUpperCase() || 'NOTES'}</p>
                              <p className="text-gray-600 whitespace-pre-line w-96">{document.termsAndConditions}</p>
                         </div>
                          <div>
-                             <p className="font-bold text-gray-400 tracking-widest mb-2">CLIENT INFORMATION</p>
-                            <p><span className="text-gray-600 w-20 inline-block">CLIENT:</span> <span className="font-semibold">{client.name}</span></p>
-                            <p><span className="text-gray-600 w-20 inline-block">ADDRESS:</span> <span className="font-semibold">{client.address}</span></p>
-                            <p><span className="text-gray-600 w-20 inline-block">CONTACT:</span> <span className="font-semibold">{client.phone}</span></p>
-                            <p><span className="text-gray-600 w-20 inline-block">EMAIL:</span> <span className="font-semibold">{client.email}</span></p>
+                             <p className="font-bold text-gray-400 tracking-widest mb-2">{t.clientInformation.toUpperCase() || 'CLIENT INFORMATION'}</p>
+                            <p><span className="text-gray-600 w-20 inline-block">{t.client || 'CLIENT'}:</span> <span className="font-semibold">{client.name}</span></p>
+                            <p><span className="text-gray-600 w-20 inline-block">{t.address || 'ADDRESS'}:</span> <span className="font-semibold">{client.address}</span></p>
+                            <p><span className="text-gray-600 w-20 inline-block">{t.contact || 'CONTACT'}:</span> <span className="font-semibold">{client.phone}</span></p>
+                            <p><span className="text-gray-600 w-20 inline-block">{t.email || 'EMAIL'}:</span> <span className="font-semibold">{client.email}</span></p>
                         </div>
                     </div>
                      <div className="text-right">
                         <SignatureDisplay signature={document.business.ownerSignature} label={business.name} />
-                         <p className="text-lg font-bold mt-4" style={{fontFamily: 'cursive'}}>Thank you!</p>
-                         <p className="text-[8px] text-gray-500 mt-2 max-w-[250px]">Thank you for considering IT Solutions Inc. for your project needs. We look forward to the opportunity to work together and deliver exceptional results.</p>
+                         <p className="text-lg font-bold mt-4" style={{fontFamily: 'cursive'}}>{t.thankYou || 'Thank you!'}</p>
+                         <p className="text-[8px] text-gray-500 mt-2 max-w-[250px]">{t.thankYouMessage || 'Thank you for considering IT Solutions Inc. for your project needs. We look forward to the opportunity to work together and deliver exceptional results.'}</p>
                      </div>
                 </footer>
             )}
@@ -152,17 +153,17 @@ export const ITTemplate1: React.FC<TemplateProps> = ({ document, pageItems, page
 };
 
 // Template 2: Modern Dark Mode
-export const ITTemplate2: React.FC<TemplateProps> = ({ document, pageItems, pageIndex, totalPages, style }) => {
+export const ITTemplate2: React.FC<TemplateProps> = ({ document, pageItems, pageIndex, totalPages, style, t }) => {
     const { business, client, summary, currency, category } = document;
     const currencySymbol = currencySymbols[currency] || '$';
-    const docTitle = document.documentType === 'quote' ? 'QUOTE' : 'ESTIMATE';
+    const docTitle = document.documentType === 'quote' ? t.quote.toUpperCase() || 'QUOTE' : t.estimate.toUpperCase() || 'ESTIMATE';
 
     return (
         <div className={`p-10 bg-gray-900 text-gray-200 font-['Roboto_Mono',_monospace] flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ minHeight: '1056px' }}>
             <header className="flex justify-between items-start mb-10">
                 <div>
                     <h1 className="text-4xl font-bold" style={{ color: style.color || '#4C1D95' }}>{business.name}</h1>
-                    <p className="text-xs text-gray-400">Software & IT Solutions</p>
+                    <p className="text-xs text-gray-400">{t.softwareAndITSolutions || 'Software & IT Solutions'}</p>
                 </div>
                 <div className="text-right">
                     <h2 className="text-3xl font-light text-gray-400">{docTitle}</h2>
@@ -171,20 +172,20 @@ export const ITTemplate2: React.FC<TemplateProps> = ({ document, pageItems, page
             </header>
 
             <section className="grid grid-cols-2 gap-8 mb-8 text-xs">
-                <div><p className="font-bold text-gray-500 mb-1">PROJECT FOR:</p><p className="font-medium">{client.name}</p><p className="text-gray-400">{client.address}</p></div>
-                <div className="text-right"><p className="font-bold text-gray-500 mb-1">DATE:</p><p>{safeFormat(document.estimateDate, 'MM-dd-yyyy')}</p></div>
+                <div><p className="font-bold text-gray-500 mb-1">{t.projectFor.toUpperCase() || 'PROJECT FOR'}:</p><p className="font-medium">{client.name}</p><p className="text-gray-400">{client.address}</p></div>
+                <div className="text-right"><p className="font-bold text-gray-500 mb-1">{t.date.toUpperCase() || 'DATE'}:</p><p>{safeFormat(document.estimateDate, 'MM-dd-yyyy')}</p></div>
             </section>
             
-            <ITFreelanceDetails document={document} />
+            <ITFreelanceDetails document={document} t={t} />
 
             <main className="flex-grow">
                 <table className="w-full text-left text-sm">
                     <thead>
                         <tr className="border-b border-gray-700">
-                            <th className="py-2 font-semibold w-1/2 text-gray-400">SERVICE</th>
-                            <th className="py-2 font-semibold text-center text-gray-400">QTY</th>
-                            <th className="py-2 font-semibold text-right text-gray-400">RATE</th>
-                            <th className="py-2 font-semibold text-right text-gray-400">TOTAL</th>
+                            <th className="py-2 font-semibold w-1/2 text-gray-400">{t.service.toUpperCase() || 'SERVICE'}</th>
+                            <th className="py-2 font-semibold text-center text-gray-400">{t.quantity.toUpperCase() || 'QTY'}</th>
+                            <th className="py-2 font-semibold text-right text-gray-400">{t.rate.toUpperCase() || 'RATE'}</th>
+                            <th className="py-2 font-semibold text-right text-gray-400">{t.total.toUpperCase() || 'TOTAL'}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -204,9 +205,9 @@ export const ITTemplate2: React.FC<TemplateProps> = ({ document, pageItems, page
                 <footer className="mt-auto pt-8">
                      <div className="flex justify-end">
                         <div className="w-2/5 text-sm space-y-1">
-                            <div className="flex justify-between"><span className="text-gray-400">Subtotal:</span><span>{currencySymbol}{summary.subtotal.toFixed(2)}</span></div>
-                            <div className="flex justify-between"><span className="text-gray-400">Tax ({summary.taxPercentage}%):</span><span>{currencySymbol}{summary.taxAmount.toFixed(2)}</span></div>
-                            <div className="flex justify-between font-bold text-lg mt-2 pt-2 border-t border-gray-600"><span>Total Estimate:</span><span style={{ color: style.color || '#4C1D95' }}>{currencySymbol}{summary.grandTotal.toFixed(2)}</span></div>
+                            <div className="flex justify-between"><span className="text-gray-400">{t.subtotal || 'Subtotal'}:</span><span>{currencySymbol}{summary.subtotal.toFixed(2)}</span></div>
+                            <div className="flex justify-between"><span className="text-gray-400">{t.tax || 'Tax'} ({summary.taxPercentage}%):</span><span>{currencySymbol}{summary.taxAmount.toFixed(2)}</span></div>
+                            <div className="flex justify-between font-bold text-lg mt-2 pt-2 border-t border-gray-600"><span>{t.estimateTotal || 'Total Estimate'}:</span><span style={{ color: style.color || '#4C1D95' }}>{currencySymbol}{summary.grandTotal.toFixed(2)}</span></div>
                         </div>
                     </div>
                 </footer>
@@ -216,10 +217,10 @@ export const ITTemplate2: React.FC<TemplateProps> = ({ document, pageItems, page
 };
 
 // Template 3: Minimalist Grid
-export const ITTemplate3: React.FC<TemplateProps> = ({ document, pageItems, pageIndex, totalPages, style }) => {
+export const ITTemplate3: React.FC<TemplateProps> = ({ document, pageItems, pageIndex, totalPages, style, t }) => {
     const { business, client, summary, currency, category } = document;
     const currencySymbol = currencySymbols[currency] || '$';
-    const docTitle = document.documentType === 'quote' ? 'QUOTE' : 'ESTIMATE';
+    const docTitle = document.documentType === 'quote' ? t.quote.toUpperCase() || 'QUOTE' : t.estimate.toUpperCase() || 'ESTIMATE';
 
     return (
         <div className={`p-12 bg-white font-['Inter',_sans-serif] text-gray-800 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ minHeight: '1056px' }}>
@@ -235,22 +236,22 @@ export const ITTemplate3: React.FC<TemplateProps> = ({ document, pageItems, page
             </header>
 
             <section className="grid grid-cols-4 gap-4 mb-10 text-xs">
-                <div><p className="font-bold text-gray-500 mb-1">To</p><p>{client.name}</p></div>
-                <div><p className="font-bold text-gray-500 mb-1">Estimate #</p><p>{document.estimateNumber}</p></div>
-                <div><p className="font-bold text-gray-500 mb-1">Date</p><p>{safeFormat(document.estimateDate, 'yyyy-MM-dd')}</p></div>
-                <div><p className="font-bold text-gray-500 mb-1">Project</p><p>{document.projectTitle}</p></div>
+                <div><p className="font-bold text-gray-500 mb-1">{t.to || 'To'}</p><p>{client.name}</p></div>
+                <div><p className="font-bold text-gray-500 mb-1">{t.estimateNo || 'Estimate #'}</p><p>{document.estimateNumber}</p></div>
+                <div><p className="font-bold text-gray-500 mb-1">{t.date || 'Date'}</p><p>{safeFormat(document.estimateDate, 'yyyy-MM-dd')}</p></div>
+                <div><p className="font-bold text-gray-500 mb-1">{t.project || 'Project'}</p><p>{document.projectTitle}</p></div>
             </section>
             
-            <ITFreelanceDetails document={document} />
+            <ITFreelanceDetails document={document} t={t}/>
 
             <main className="flex-grow">
                  <table className="w-full text-left text-xs">
                     <thead>
                         <tr>
-                            <th className="p-2 font-bold w-3/5 border-b-2 border-gray-300">ITEM</th>
-                            <th className="p-2 font-bold text-center border-b-2 border-gray-300">QTY</th>
-                            <th className="p-2 font-bold text-right border-b-2 border-gray-300">PRICE</th>
-                            <th className="p-2 font-bold text-right border-b-2 border-gray-300">AMOUNT</th>
+                            <th className="p-2 font-bold w-3/5 border-b-2 border-gray-300">{t.item.toUpperCase() || 'ITEM'}</th>
+                            <th className="p-2 font-bold text-center border-b-2 border-gray-300">{t.quantity.toUpperCase() || 'QTY'}</th>
+                            <th className="p-2 font-bold text-right border-b-2 border-gray-300">{t.price.toUpperCase() || 'PRICE'}</th>
+                            <th className="p-2 font-bold text-right border-b-2 border-gray-300">{t.amount.toUpperCase() || 'AMOUNT'}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -271,9 +272,9 @@ export const ITTemplate3: React.FC<TemplateProps> = ({ document, pageItems, page
                     <div className="flex justify-end">
                         <table className="w-1/3 text-xs">
                             <tbody>
-                                <tr><td className="py-1 text-gray-500">Subtotal</td><td className="py-1 text-right">{currencySymbol}{summary.subtotal.toFixed(2)}</td></tr>
-                                <tr className="border-b"><td className="py-1 text-gray-500">Tax</td><td className="py-1 text-right">{currencySymbol}{summary.taxAmount.toFixed(2)}</td></tr>
-                                <tr className="font-bold text-base"><td className="pt-2">TOTAL</td><td className="pt-2 text-right">{currencySymbol}{summary.grandTotal.toFixed(2)}</td></tr>
+                                <tr><td className="py-1 text-gray-500">{t.subtotal || 'Subtotal'}</td><td className="py-1 text-right">{currencySymbol}{summary.subtotal.toFixed(2)}</td></tr>
+                                <tr className="border-b"><td className="py-1 text-gray-500">{t.tax || 'Tax'}</td><td className="py-1 text-right">{currencySymbol}{summary.taxAmount.toFixed(2)}</td></tr>
+                                <tr className="font-bold text-base"><td className="pt-2">{t.total.toUpperCase() || 'TOTAL'}</td><td className="pt-2 text-right">{currencySymbol}{summary.grandTotal.toFixed(2)}</td></tr>
                             </tbody>
                         </table>
                     </div>
@@ -285,10 +286,10 @@ export const ITTemplate3: React.FC<TemplateProps> = ({ document, pageItems, page
 
 
 // Template 4: Creative Blue
-export const ITTemplate4: React.FC<TemplateProps> = ({ document, pageItems, pageIndex, totalPages, style }) => {
+export const ITTemplate4: React.FC<TemplateProps> = ({ document, pageItems, pageIndex, totalPages, style, t }) => {
     const { business, client, summary, currency, category } = document;
     const currencySymbol = currencySymbols[currency] || '$';
-    const docTitle = document.documentType === 'quote' ? 'QUOTE' : 'ESTIMATE';
+    const docTitle = document.documentType === 'quote' ? t.quote.toUpperCase() || 'QUOTE' : t.estimate.toUpperCase() || 'ESTIMATE';
 
     return (
         <div className={`bg-white font-sans text-gray-800 flex ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ minHeight: '1056px' }}>
@@ -296,23 +297,23 @@ export const ITTemplate4: React.FC<TemplateProps> = ({ document, pageItems, page
                 <h1 className="text-4xl font-bold mb-10">{docTitle}</h1>
                 <div className="text-sm space-y-6 flex-grow">
                     <div>
-                        <p className="font-bold opacity-80 mb-1">CLIENT</p>
+                        <p className="font-bold opacity-80 mb-1">{t.client.toUpperCase() || 'CLIENT'}</p>
                         <p className="font-bold text-lg">{client.name}</p>
                         <p>{client.address}</p>
                     </div>
                     <div>
-                        <p className="font-bold opacity-80 mb-1">PROJECT</p>
+                        <p className="font-bold opacity-80 mb-1">{t.project.toUpperCase() || 'PROJECT'}</p>
                         <p>{document.projectTitle}</p>
                     </div>
                     <div>
-                        <p className="font-bold opacity-80 mb-1">REFERENCE</p>
+                        <p className="font-bold opacity-80 mb-1">{t.reference.toUpperCase() || 'REFERENCE'}</p>
                         <p>#{document.estimateNumber}</p>
-                        <p>Date: {safeFormat(document.estimateDate, 'yyyy-MM-dd')}</p>
+                        <p>{t.date || 'Date'}: {safeFormat(document.estimateDate, 'yyyy-MM-dd')}</p>
                     </div>
                 </div>
                  {pageIndex === totalPages - 1 && (
                     <div className="mt-auto text-sm">
-                         <p className="font-bold opacity-80 mb-2">TOTAL ESTIMATE</p>
+                         <p className="font-bold opacity-80 mb-2">{t.totalEstimate.toUpperCase() || 'TOTAL ESTIMATE'}</p>
                          <p className="text-4xl font-extrabold">{currencySymbol}{summary.grandTotal.toFixed(2)}</p>
                     </div>
                 )}
@@ -322,15 +323,15 @@ export const ITTemplate4: React.FC<TemplateProps> = ({ document, pageItems, page
                     <h2 className="text-3xl font-bold">{business.name}</h2>
                     <p className="text-xs text-gray-500">{business.address}</p>
                 </header>
-                 <ITFreelanceDetails document={document} />
+                 <ITFreelanceDetails document={document} t={t} />
                 <main className="flex-grow">
                     <table className="w-full text-left text-sm">
                         <thead className="border-b-2 border-gray-300">
                             <tr>
-                                <th className="py-2 font-bold w-1/2">SERVICE/ITEM</th>
-                                <th className="py-2 font-bold text-center">QTY</th>
-                                <th className="py-2 font-bold text-right">RATE</th>
-                                <th className="py-2 font-bold text-right">TOTAL</th>
+                                <th className="py-2 font-bold w-1/2">{t.serviceItem.toUpperCase() || 'SERVICE/ITEM'}</th>
+                                <th className="py-2 font-bold text-center">{t.quantity.toUpperCase() || 'QTY'}</th>
+                                <th className="py-2 font-bold text-right">{t.rate.toUpperCase() || 'RATE'}</th>
+                                <th className="py-2 font-bold text-right">{t.total.toUpperCase() || 'TOTAL'}</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -351,10 +352,10 @@ export const ITTemplate4: React.FC<TemplateProps> = ({ document, pageItems, page
 };
 
 // Template 5: Startup Vibe
-export const ITTemplate5: React.FC<TemplateProps> = ({ document, pageItems, pageIndex, totalPages, style }) => {
+export const ITTemplate5: React.FC<TemplateProps> = ({ document, pageItems, pageIndex, totalPages, style, t }) => {
     const { business, client, summary, currency, category } = document;
     const currencySymbol = currencySymbols[currency] || '$';
-    const docTitle = document.documentType === 'quote' ? 'QUOTE' : 'ESTIMATE';
+    const docTitle = document.documentType === 'quote' ? t.quote.toUpperCase() || 'QUOTE' : t.estimate.toUpperCase() || 'ESTIMATE';
 
     return (
         <div className={`p-10 bg-gray-50 font-['Inter',_sans-serif] text-gray-800 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ minHeight: '1056px' }}>
@@ -371,26 +372,26 @@ export const ITTemplate5: React.FC<TemplateProps> = ({ document, pageItems, page
 
             <section className="grid grid-cols-2 gap-4 text-xs mb-8">
                 <div>
-                    <p className="text-gray-500">To:</p>
+                    <p className="text-gray-500">{t.to || 'To'}:</p>
                     <p className="font-bold">{client.name}</p>
                     <p className="text-gray-600">{client.address}</p>
                 </div>
                 <div className="text-right">
-                    <p className="text-gray-500">Estimate <span className="font-mono text-black">#{document.estimateNumber}</span></p>
-                    <p className="text-gray-500">Date: <span className="font-mono text-black">{safeFormat(document.estimateDate, 'dd.MM.yyyy')}</span></p>
+                    <p className="text-gray-500">{t.estimate || 'Estimate'} <span className="font-mono text-black">#{document.estimateNumber}</span></p>
+                    <p className="text-gray-500">{t.date || 'Date'}: <span className="font-mono text-black">{safeFormat(document.estimateDate, 'dd.MM.yyyy')}</span></p>
                 </div>
             </section>
             
-             <ITFreelanceDetails document={document} />
+             <ITFreelanceDetails document={document} t={t}/>
 
             <main className="flex-grow bg-white p-4 rounded-lg shadow-sm">
                 <table className="w-full text-left text-xs">
                     <thead>
                         <tr className="border-b-2 border-gray-200">
-                            <th className="py-2 font-bold w-3/5 text-gray-500">DESCRIPTION</th>
-                            <th className="py-2 font-bold text-center text-gray-500">QTY</th>
-                            <th className="py-2 font-bold text-right text-gray-500">PRICE</th>
-                            <th className="py-2 font-bold text-right text-gray-500">TOTAL</th>
+                            <th className="py-2 font-bold w-3/5 text-gray-500">{t.description.toUpperCase() || 'DESCRIPTION'}</th>
+                            <th className="py-2 font-bold text-center text-gray-500">{t.quantity.toUpperCase() || 'QTY'}</th>
+                            <th className="py-2 font-bold text-right text-gray-500">{t.price.toUpperCase() || 'PRICE'}</th>
+                            <th className="py-2 font-bold text-right text-gray-500">{t.total.toUpperCase() || 'TOTAL'}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -409,10 +410,10 @@ export const ITTemplate5: React.FC<TemplateProps> = ({ document, pageItems, page
             {pageIndex === totalPages - 1 && (
                 <footer className="mt-auto pt-8 flex justify-end">
                     <div className="w-1/3 text-sm space-y-1">
-                        <p className="flex justify-between"><span>Subtotal</span><span className="font-mono">{currencySymbol}{summary.subtotal.toFixed(2)}</span></p>
-                        <p className="flex justify-between"><span>Tax</span><span className="font-mono">{currencySymbol}{summary.taxAmount.toFixed(2)}</span></p>
+                        <p className="flex justify-between"><span>{t.subtotal || 'Subtotal'}</span><span className="font-mono">{currencySymbol}{summary.subtotal.toFixed(2)}</span></p>
+                        <p className="flex justify-between"><span>{t.tax || 'Tax'}</span><span className="font-mono">{currencySymbol}{summary.taxAmount.toFixed(2)}</span></p>
                         <p className="flex justify-between font-bold text-lg mt-2 pt-2 border-t-2 border-black">
-                            <span>Total Due</span>
+                            <span>{t.totalDue || 'Total Due'}</span>
                             <span className="font-mono">{currencySymbol}{summary.grandTotal.toFixed(2)}</span>
                         </p>
                     </div>
@@ -421,5 +422,3 @@ export const ITTemplate5: React.FC<TemplateProps> = ({ document, pageItems, page
         </div>
     );
 };
-
-    
