@@ -280,11 +280,10 @@ const templates: Template[] = [
 
 export function DocumentTemplateSelector({ selectedTemplate, onSelectTemplate, documentType, category }: DocumentTemplateSelectorProps) {
   const { userProfile } = useAuth();
-  const isBusinessPlan = userProfile?.plan === 'business';
   
   const filteredTemplates = useMemo(() => {
     const generalCategory = documentType === 'invoice' ? 'General Services' : 'all';
-    const generalTemplates = templates.filter(t => t.category === generalCategory);
+    const generalTemplates = templates.filter(t => t.category === generalCategory || t.category === 'Generic');
     
     if (category === generalCategory || (documentType !== 'invoice' && category === 'Generic')) {
       return generalTemplates;
@@ -299,7 +298,7 @@ export function DocumentTemplateSelector({ selectedTemplate, onSelectTemplate, d
   return (
     <div className="grid grid-cols-2 lg:grid-cols-3 gap-6">
       {filteredTemplates.map((template) => {
-        const isLocked = template.isPro && !isBusinessPlan;
+        const isLocked = false; // All templates are now unlocked
 
         return (
             <div
