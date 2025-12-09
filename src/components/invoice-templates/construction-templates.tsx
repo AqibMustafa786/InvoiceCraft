@@ -50,7 +50,7 @@ const ConstructionDetails: React.FC<{ invoice: Invoice, t: any }> = ({ invoice, 
 };
 
 export const ConstructionTemplate1: React.FC<PageProps> = (props) => {
-    const { invoice, pageItems, pageIndex, totalPages, subtotal, taxAmount, discountAmount, balanceDue, t, currencySymbol, accentColor } = props;
+    const { invoice, pageItems, pageIndex, totalPages, subtotal, taxAmount, balanceDue, t, currencySymbol } = props;
     const { business, client } = invoice;
     const totalLabor = pageItems.filter(i => i.name.toLowerCase().includes('labor')).reduce((acc, i) => acc + (i.quantity * i.unitPrice), 0);
     const totalMaterials = pageItems.filter(i => !i.name.toLowerCase().includes('labor')).reduce((acc, i) => acc + (i.quantity * i.unitPrice), 0);
@@ -64,7 +64,7 @@ export const ConstructionTemplate1: React.FC<PageProps> = (props) => {
                     <p className="text-xs">{business.phone}</p>
                     <p className="text-xs">{business.email}</p>
                 </div>
-                <h2 className="text-3xl font-bold text-gray-400">{t.invoice.toUpperCase() || 'CONSTRUCTION INVOICE'}</h2>
+                <h2 className="text-3xl font-bold text-gray-400">{(t.invoice || 'CONSTRUCTION INVOICE').toUpperCase()}</h2>
             </header>
             
             <section className="grid grid-cols-2 gap-8 text-xs mb-8">
@@ -88,33 +88,33 @@ export const ConstructionTemplate1: React.FC<PageProps> = (props) => {
                  {/* Materials Table */}
                 <div className="space-y-4">
                     <table className="w-full text-left text-xs">
-                        <thead><tr className="bg-gray-200"><th className="p-1 font-bold w-1/4">{t.quantity.toUpperCase() || 'QTY'}</th><th className="p-1 font-bold w-1/2">{t.material.toUpperCase() || 'MATERIAL'}</th><th className="p-1 font-bold text-right w-1/4">{t.total.toUpperCase() || 'TOTAL'}</th></tr></thead>
+                        <thead><tr className="bg-gray-200"><th className="p-1 font-bold w-1/4">{(t.quantity || 'QTY').toUpperCase()}</th><th className="p-1 font-bold w-1/2">{(t.material || 'MATERIAL').toUpperCase()}</th><th className="p-1 font-bold text-right w-1/4">{(t.total || 'TOTAL').toUpperCase()}</th></tr></thead>
                         <tbody>
                             {pageItems.filter(i => !i.name.toLowerCase().includes('labor')).map(item => (
                                 <tr key={item.id} className="border-b"><td className="p-1">{item.quantity}</td><td className="p-1">{item.name}</td><td className="p-1 text-right">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</td></tr>
                             ))}
                         </tbody>
-                        <tfoot><tr><td colSpan={2} className="p-1 text-right font-bold">{t.totalMaterials.toUpperCase() || 'TOTAL MATERIALS'}</td><td className="p-1 text-right font-bold">{currencySymbol}{totalMaterials.toFixed(2)}</td></tr></tfoot>
+                        <tfoot><tr><td colSpan={2} className="p-1 text-right font-bold">{(t.totalMaterials || 'TOTAL MATERIALS').toUpperCase()}</td><td className="p-1 text-right font-bold">{currencySymbol}{totalMaterials.toFixed(2)}</td></tr></tfoot>
                     </table>
                 </div>
 
                 {/* Labor & Totals Table */}
                 <div className="space-y-4">
                      <table className="w-full text-left text-xs">
-                        <thead><tr className="bg-gray-200"><th className="p-1 font-bold w-1/2">{t.labor.toUpperCase() || 'LABOR'}</th><th className="p-1 font-bold text-right w-1/4">{t.hours.toUpperCase() || 'HRS'}</th><th className="p-1 font-bold text-right w-1/4">{t.amount.toUpperCase() || 'AMOUNT'}</th></tr></thead>
+                        <thead><tr className="bg-gray-200"><th className="p-1 font-bold w-1/2">{(t.labor || 'LABOR').toUpperCase()}</th><th className="p-1 font-bold text-right w-1/4">{(t.hours || 'HRS').toUpperCase()}</th><th className="p-1 font-bold text-right w-1/4">{(t.amount || 'AMOUNT').toUpperCase()}</th></tr></thead>
                         <tbody>
                             {pageItems.filter(i => i.name.toLowerCase().includes('labor')).map(item => (
                                 <tr key={item.id} className="border-b"><td className="p-1">{item.name}</td><td className="p-1 text-right">{item.quantity}</td><td className="p-1 text-right">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</td></tr>
                             ))}
                         </tbody>
-                        <tfoot><tr><td colSpan={2} className="p-1 text-right font-bold">{t.totalLabor.toUpperCase() || 'TOTAL LABOR'}</td><td className="p-1 text-right font-bold">{currencySymbol}{totalLabor.toFixed(2)}</td></tr></tfoot>
+                        <tfoot><tr><td colSpan={2} className="p-1 text-right font-bold">{(t.totalLabor || 'TOTAL LABOR').toUpperCase()}</td><td className="p-1 text-right font-bold">{currencySymbol}{totalLabor.toFixed(2)}</td></tr></tfoot>
                     </table>
                      {pageIndex === totalPages - 1 && (
                          <div className="flex justify-end">
                             <div className="w-full text-xs space-y-1">
-                                <p className="grid grid-cols-2"><span className="font-bold">{t.subtotal.toUpperCase() || 'SUBTOTAL'}:</span> <span className="text-right">{currencySymbol}{subtotal.toFixed(2)}</span></p>
-                                <p className="grid grid-cols-2"><span className="font-bold">{t.tax.toUpperCase() || 'TAX'} ({invoice.summary.taxPercentage}%):</span> <span className="text-right">{currencySymbol}{taxAmount.toFixed(2)}</span></p>
-                                <p className="grid grid-cols-2 bg-gray-200 p-1 font-bold text-sm"><span className="">{t.grandTotal.toUpperCase() || 'GRAND TOTAL'}:</span> <span className="text-right">{currencySymbol}{balanceDue.toFixed(2)}</span></p>
+                                <p className="grid grid-cols-2"><span className="font-bold">{(t.subtotal || 'SUBTOTAL').toUpperCase()}:</span> <span className="text-right">{currencySymbol}{subtotal.toFixed(2)}</span></p>
+                                <p className="grid grid-cols-2"><span className="font-bold">{(t.tax || 'TAX').toUpperCase()} ({invoice.summary.taxPercentage}%):</span> <span className="text-right">{currencySymbol}{taxAmount.toFixed(2)}</span></p>
+                                <p className="grid grid-cols-2 bg-gray-200 p-1 font-bold text-sm"><span className="">{(t.grandTotal || 'GRAND TOTAL').toUpperCase()}:</span> <span className="text-right">{currencySymbol}{balanceDue.toFixed(2)}</span></p>
                             </div>
                         </div>
                      )}
