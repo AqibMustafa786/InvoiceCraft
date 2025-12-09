@@ -35,7 +35,6 @@ import { useAuth } from '@/context/auth-provider';
 import { collection, doc, setDoc, query, Timestamp, where } from 'firebase/firestore';
 import { deleteDocumentNonBlocking, updateDocumentNonBlocking } from '@/firebase';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Header } from '@/components/header';
 
 const INVOICES_COLLECTION = 'invoices';
 const ESTIMATES_COLLECTION = 'estimates';
@@ -341,7 +340,6 @@ export default function DashboardPage() {
     if (isLoading) {
         return (
             <div className="container mx-auto p-4 md:p-8">
-                 <Header />
                  <div className="flex justify-between items-center mb-8 gap-4 flex-wrap">
                     <div>
                         <Skeleton className="h-9 w-64 mb-2" />
@@ -375,7 +373,6 @@ export default function DashboardPage() {
 
     return (
         <>
-            <Header filters={filters} onFiltersChange={setFilters} />
             <div className="container mx-auto p-4 md:p-8">
                 <FilterSheet
                     open={isFilterSheetOpen}

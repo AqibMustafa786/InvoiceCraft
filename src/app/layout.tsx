@@ -40,6 +40,7 @@ export default function RootLayout({
                 disableTransitionOnChange
               >
               <div className="app-main-container relative flex min-h-screen flex-col">
+                <Header />
                 <main className="flex-1">{children}</main>
                 <Footer />
               </div>

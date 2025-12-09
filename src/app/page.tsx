@@ -5,7 +5,6 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import Marquee from '@/components/marquee';
 import { motion } from 'framer-motion';
-import { Header } from '@/components/header';
 
 export default function HomePage() {
   const containerVariants = {
@@ -27,7 +26,6 @@ export default function HomePage() {
 
   return (
     <div className="flex flex-col min-h-[calc(100vh-4rem)]">
-      <Header />
       <main className="flex-1">
         <section className="relative w-full py-20 overflow-hidden text-center md:py-32 lg:py-40">
           <div className="container px-4 mx-auto md:px-6">
