@@ -266,18 +266,14 @@ export default function CreateEstimatePage() {
   }, []);
 
     useEffect(() => {
-        if (isAuthLoading) {
+        if (isAuthLoading) return;
+
+        if (!user || !userProfile?.companyId) {
+            router.push('/login');
             return;
         }
-
-        if (!user || !userProfile?.companyId || !firestore) {
-            if (!isAuthLoading) router.push('/login');
-            return;
-        }
-
-        const companyId = userProfile.companyId;
-
-        if (draftId) {
+        
+        if (draftId) { // Loading an existing draft
             if (remoteDraft && (!document || document.id !== draftId)) {
                 const baseEstimate = getInitialEstimate();
                 const loadedDraft = JSON.parse(JSON.stringify(remoteDraft), fromJSON);
@@ -285,34 +281,25 @@ export default function CreateEstimatePage() {
                     ...baseEstimate,
                     ...loadedDraft,
                     userId: loadedDraft.userId || user.uid,
-                    companyId: loadedDraft.companyId || companyId,
+                    companyId: loadedDraft.companyId || userProfile.companyId,
                     business: { ...baseEstimate.business, ...loadedDraft.business },
                     client: { ...baseEstimate.client, ...loadedDraft.client },
                     summary: { ...baseEstimate.summary, ...loadedDraft.summary },
                 };
                 setDocument(initialEstimate);
-                setBackgroundColor(initialEstimate.backgroundColor || '#FFFFFF');
-                setTextColor(initialEstimate.textColor || '#374151');
             }
-        } else if (!document) {
+        } else if (!document) { // Creating a new draft
             const newEstimateBase = getInitialEstimate();
-            const newDocRef = doc(collection(firestore, `estimates`));
+            const newDocId = doc(collection(firestore, 'estimates')).id;
             const newDoc: Estimate = { 
                 ...newEstimateBase, 
-                id: newDocRef.id, 
+                id: newDocId, 
                 userId: user.uid, 
-                companyId: companyId,
+                companyId: userProfile.companyId,
                 createdAt: serverTimestamp(),
                 updatedAt: serverTimestamp(),
             };
-            
             setDocument(newDoc);
-            
-            setDoc(newDocRef, newDoc, { merge: true }).then(() => {
-                router.replace(`/create-estimate?draftId=${newDocRef.id}`, { scroll: false });
-            }).catch(error => {
-                console.error("Failed to create new estimate draft:", error);
-            });
         }
     }, [user, userProfile, isAuthLoading, firestore, draftId, remoteDraft, document, fromJSON, router]);
 
@@ -390,6 +377,10 @@ export default function CreateEstimatePage() {
       title: "Estimate Draft Saved",
       description: "Your estimate draft has been saved online.",
     });
+
+    if (!searchParams.has('draftId')) {
+        router.push(`/create-estimate?draftId=${document.id}`, { scroll: false });
+    }
   };
 
   const handleNew = () => {
