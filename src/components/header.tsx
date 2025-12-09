@@ -10,8 +10,8 @@ import { ModeToggle } from '@/components/mode-toggle';
 import { cn } from '@/lib/utils';
 import { motion } from 'framer-motion';
 import { AuthNav } from './auth-nav'; 
-import { useAuth } from '@/context/auth-provider';
-import { Input } from './ui/input';
+import { CommandDialog, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from './ui/command';
+import { useEffect, useState } from 'react';
 
 const navLinks = [
     { href: "/features", label: "Features" },
@@ -43,10 +43,20 @@ function NavLink({ href, label, isActive }: { href: string, label: string, isAct
     );
 }
 
-export function Header({ filters, onFiltersChange }: { filters?: any, onFiltersChange?: (filters: any) => void }) {
+export function Header() {
     const pathname = usePathname();
-    const { user } = useAuth();
-    const isDashboard = pathname === '/dashboard';
+    const [open, setOpen] = useState(false);
+
+    useEffect(() => {
+        const down = (e: KeyboardEvent) => {
+            if (e.key === "k" && (e.metaKey || e.ctrlKey)) {
+                e.preventDefault()
+                setOpen((open) => !open)
+            }
+        }
+        document.addEventListener("keydown", down)
+        return () => document.removeEventListener("keydown", down)
+    }, [])
 
     return (
         <header className="sticky top-0 z-50 w-full">
@@ -63,20 +73,34 @@ export function Header({ filters, onFiltersChange }: { filters?: any, onFiltersC
                     ))}
                 </nav>
 
-                <div className="flex items-center justify-end gap-2">
-                    {isDashboard && onFiltersChange && (
-                        <div className="relative hidden sm:block">
-                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                            <Input 
-                                placeholder="Search clients..." 
-                                className="pl-10 w-48"
-                                value={filters.clientName}
-                                onChange={(e) => onFiltersChange({ ...filters, clientName: e.target.value })}
-                            />
-                        </div>
-                    )}
+                <div className="flex flex-1 items-center justify-end gap-2">
+                     <Button variant="outline" className="relative h-9 w-full justify-start rounded-[0.5rem] text-sm text-muted-foreground sm:pr-12 md:w-40 lg:w-64" onClick={() => setOpen(true)}>
+                        <Search className="h-4 w-4 mr-2" />
+                        <span className="hidden lg:inline-flex">Search...</span>
+                        <span className="inline-flex lg:hidden">Search...</span>
+                        <kbd className="pointer-events-none absolute right-[0.3rem] top-[0.3rem] hidden h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium opacity-100 sm:flex">
+                            <span className="text-xs">⌘</span>K
+                        </kbd>
+                    </Button>
                     <ModeToggle />
-                    <AuthNav /> 
+                    <AuthNav />
+                     <CommandDialog open={open} onOpenChange={setOpen}>
+                        <CommandInput placeholder="Type a command or search..." />
+                        <CommandList>
+                        <CommandEmpty>No results found.</CommandEmpty>
+                        <CommandGroup heading="Suggestions">
+                            <CommandItem>
+                            <span>Create Invoice</span>
+                            </CommandItem>
+                            <CommandItem>
+                            <span>Dashboard</span>
+                            </CommandItem>
+                            <CommandItem>
+                            <span>Pricing</span>
+                            </CommandItem>
+                        </CommandGroup>
+                        </CommandList>
+                    </CommandDialog>
                 </div>
                 
                 <Sheet>
@@ -94,17 +118,6 @@ export function Header({ filters, onFiltersChange }: { filters?: any, onFiltersC
                                 </Link>
                             </SheetTitle>
                         </SheetHeader>
-                        {isDashboard && onFiltersChange && (
-                            <div className="relative mt-4">
-                                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                                <Input
-                                    placeholder="Search clients..."
-                                    className="pl-10"
-                                    value={filters.clientName}
-                                    onChange={(e) => onFiltersChange({ ...filters, clientName: e.target.value })}
-                                />
-                            </div>
-                        )}
                         <nav className="flex-grow grid gap-4 text-lg font-medium mt-8">
                             {navLinks.map(link => (
                                 <Link
