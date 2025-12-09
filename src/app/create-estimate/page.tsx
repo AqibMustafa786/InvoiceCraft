@@ -306,7 +306,6 @@ export default function CreateEstimatePage() {
         }, { merge: true });
 
         setDocument(docWithUser);
-        router.replace(`/create-estimate?draftId=${newDocRef.id}`, { scroll: false });
     }
   }, [user, companyId, isAuthLoading, firestore, draftId, remoteDraft, document, fromJSON, router]);
 
