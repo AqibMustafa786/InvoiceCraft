@@ -1,6 +1,7 @@
 
 'use client';
 
+import React from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
@@ -38,7 +39,7 @@ function NavLink({ href, label, isActive }: { href: string, label: string, isAct
         <Link
             href={href}
             className={cn(
-                "relative block px-3 py-2 transition rounded-md",
+                "relative block px-3 py-2 transition",
                 isActive ? "text-primary" : "text-foreground hover:text-primary"
             )}
         >
@@ -57,6 +58,8 @@ export function Header() {
     const pathname = usePathname();
     const router = useRouter();
     const [open, setOpen] = useState(false);
+    const [isToolsMenuOpen, setIsToolsMenuOpen] = useState(false);
+
 
     useEffect(() => {
         const down = (e: KeyboardEvent) => {
@@ -87,17 +90,29 @@ export function Header() {
                     {mainNavLinks.map(link => (
                         <NavLink key={link.href} href={link.href} label={link.label} isActive={pathname === link.href} />
                     ))}
-                    <DropdownMenu>
+                    <DropdownMenu open={isToolsMenuOpen} onOpenChange={setIsToolsMenuOpen}>
                       <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" className="px-3 py-2 flex items-center gap-1 hover:text-primary focus-visible:ring-0">
+                        <Button 
+                          variant="ghost" 
+                          className="px-3 py-2 flex items-center gap-1 focus-visible:ring-0"
+                          onMouseEnter={() => setIsToolsMenuOpen(true)}
+                          onMouseLeave={() => setIsToolsMenuOpen(false)}
+                        >
                           Tools
                           <ChevronDown className="h-4 w-4" />
                         </Button>
                       </DropdownMenuTrigger>
-                      <DropdownMenuContent>
+                      <DropdownMenuContent 
+                        onMouseEnter={() => setIsToolsMenuOpen(true)}
+                        onMouseLeave={() => setIsToolsMenuOpen(false)}
+                        className="w-48"
+                      >
                         {generalToolsLinks.map(link => (
                           <DropdownMenuItem key={link.href} asChild>
-                            <Link href={link.href}>{link.label}</Link>
+                            <Link href={link.href} className='flex items-center gap-2'>
+                              {React.cloneElement(link.icon, {className: 'h-4 w-4 text-muted-foreground'})}
+                              {link.label}
+                            </Link>
                           </DropdownMenuItem>
                         ))}
                       </DropdownMenuContent>
@@ -127,12 +142,12 @@ export function Header() {
                                 value={link.label}
                                 onSelect={() => runCommand(() => router.push(link.href))}
                                 >
-                                {link.icon}
+                                {React.cloneElement(link.icon, {className: 'mr-2 h-4 w-4'})}
                                 <span>{link.label}</span>
                                 </CommandItem>
                             ))}
                              <CommandItem onSelect={() => runCommand(() => router.push('/dashboard'))}>
-                                <LayoutDashboard />
+                                <LayoutDashboard className="mr-2 h-4 w-4" />
                                 <span>Dashboard</span>
                             </CommandItem>
                         </CommandGroup>
