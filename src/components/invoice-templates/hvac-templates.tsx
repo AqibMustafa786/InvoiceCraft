@@ -35,12 +35,12 @@ const HvacDetails: React.FC<{ invoice: Invoice, t: any }> = ({ invoice, t }) => 
     const { hvac } = invoice;
     return (
         <section className="my-4 text-xs">
-            <p className="font-bold text-gray-500 mb-2 border-b">{t.hvacSpecifications || 'HVAC Specifications'}</p>
+            <p className="font-bold text-gray-500 mb-2 border-b">{(t.hvacSpecifications || 'HVAC Specifications')}</p>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-x-4 gap-y-1">
-                <p><span className="font-semibold text-gray-600">{t.unitType || 'Unit Type'}:</span> {hvac.unitType}</p>
-                <p><span className="font-semibold text-gray-600">{t.modelNo || 'Model #'}:</span> {hvac.modelNumber}</p>
-                <p><span className="font-semibold text-gray-600">{t.refrigerant || 'Refrigerant'}:</span> {hvac.refrigerantType}</p>
-                {hvac.maintenanceFee && <p><span className="font-semibold text-gray-600">{t.maintenanceFee || 'Maintenance Fee'}:</span> ${hvac.maintenanceFee.toFixed(2)}</p>}
+                <p><span className="font-semibold text-gray-600">{(t.unitType || 'Unit Type')}:</span> {hvac.unitType}</p>
+                <p><span className="font-semibold text-gray-600">{(t.modelNo || 'Model #')}:</span> {hvac.modelNumber}</p>
+                <p><span className="font-semibold text-gray-600">{(t.refrigerant || 'Refrigerant')}:</span> {hvac.refrigerantType}</p>
+                {hvac.maintenanceFee && <p><span className="font-semibold text-gray-600">{(t.maintenanceFee || 'Maintenance Fee')}:</span> ${hvac.maintenanceFee.toFixed(2)}</p>}
             </div>
         </section>
     );
@@ -63,21 +63,21 @@ export const HVACTemplate1: React.FC<PageProps> = (props) => {
                     </div>
                 </div>
                 <div className="text-right">
-                  <h2 className="text-2xl font-bold text-gray-700">{t.invoice.toUpperCase() || 'INVOICE'}</h2>
-                  <p className="text-sm">{t.hvacService || 'HVAC Service'}</p>
+                  <h2 className="text-2xl font-bold text-gray-700">{(t.invoice || 'INVOICE').toUpperCase()}</h2>
+                  <p className="text-sm">{(t.hvacService || 'HVAC Service')}</p>
                 </div>
             </header>
 
             <section className="grid grid-cols-2 gap-4 my-6 text-xs border-b pb-6">
                 <div>
-                    <p className="font-bold text-gray-500 mb-1">{t.serviceContractor || 'SERVICE CONTRACTOR'}</p>
+                    <p className="font-bold text-gray-500 mb-1">{(t.serviceContractor || 'SERVICE CONTRACTOR')}</p>
                     <p>{business.name}</p>
                     <p className="whitespace-pre-line">{business.address}</p>
                     <p>{business.email}</p>
                     <p>{business.phone}</p>
                 </div>
                 <div className="p-4 bg-gray-50 rounded-md">
-                    <p className="font-bold text-gray-500 mb-1">{t.clientInformation || 'CLIENT INFORMATION'}</p>
+                    <p className="font-bold text-gray-500 mb-1">{(t.clientInformation || 'CLIENT INFORMATION')}</p>
                     <p>{client.name}</p>
                     <p className="whitespace-pre-line">{client.address}</p>
                     <p>{client.email}</p>
@@ -91,11 +91,11 @@ export const HVACTemplate1: React.FC<PageProps> = (props) => {
                  <table className="w-full text-left text-xs">
                     <thead>
                         <tr style={{ backgroundColor: `${accentColor}20`}}>
-                            <th className="p-2 font-bold w-1/6">{t.serviceNo || 'SERVICE NO.'}</th>
-                            <th className="p-2 font-bold w-2/5">{t.description || 'DESCRIPTION'}</th>
-                            <th className="p-2 font-bold text-center">{t.quantity || 'QUANTITY'}</th>
-                            <th className="p-2 font-bold text-right">{t.unitCost || 'UNIT COST'}</th>
-                            <th className="p-2 font-bold text-right">{t.subtotal || 'SUB-TOTAL'}</th>
+                            <th className="p-2 font-bold w-1/6">{(t.serviceNo || 'SERVICE NO.')}</th>
+                            <th className="p-2 font-bold w-2/5">{(t.description || 'DESCRIPTION')}</th>
+                            <th className="p-2 font-bold text-center">{(t.quantity || 'QUANTITY')}</th>
+                            <th className="p-2 font-bold text-right">{(t.unitCost || 'UNIT COST')}</th>
+                            <th className="p-2 font-bold text-right">{(t.subtotal || 'SUB-TOTAL')}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -115,14 +115,14 @@ export const HVACTemplate1: React.FC<PageProps> = (props) => {
             {pageIndex === totalPages - 1 && (
                 <footer className="mt-auto pt-6 flex justify-between items-end">
                     <div className="w-1/2 text-xs">
-                        <p className="font-bold mb-1" style={{ color: accentColor }}>{t.termsAndConditions || 'TERMS & CONDITION'}:</p>
+                        <p className="font-bold mb-1" style={{ color: accentColor }}>{(t.termsAndConditions || 'TERMS & CONDITION')}:</p>
                         <p className="whitespace-pre-line">{invoice.termsAndConditions}</p>
                     </div>
                      <div className="w-2/5">
                         <div className="space-y-1 text-xs">
-                            <div className="flex justify-between p-1"><span>{t.subtotal || 'Sub-total'}:</span><span className="font-medium">{currencySymbol}{subtotal.toFixed(2)}</span></div>
-                            <div className="flex justify-between p-1"><span>{t.tax || 'Tax'} ({invoice.summary.taxPercentage}%):</span><span className="font-medium">{currencySymbol}{taxAmount.toFixed(2)}</span></div>
-                            <div className="flex justify-between p-2 mt-1 border-t-2 border-gray-400 font-bold" style={{ color: accentColor }}><span className="text-base">{t.totalCost || 'TOTAL COST'}:</span><span className="text-base">{currencySymbol}{balanceDue.toFixed(2)}</span></div>
+                            <div className="flex justify-between p-1"><span>{(t.subtotal || 'Sub-total')}:</span><span className="font-medium">{currencySymbol}{subtotal.toFixed(2)}</span></div>
+                            <div className="flex justify-between p-1"><span>{(t.tax || 'Tax')} ({invoice.summary.taxPercentage}%):</span><span className="font-medium">{currencySymbol}{taxAmount.toFixed(2)}</span></div>
+                            <div className="flex justify-between p-2 mt-1 border-t-2 border-gray-400 font-bold" style={{ color: accentColor }}><span className="text-base">{(t.totalCost || 'TOTAL COST')}:</span><span className="text-base">{currencySymbol}{balanceDue.toFixed(2)}</span></div>
                         </div>
                     </div>
                 </footer>

@@ -35,15 +35,15 @@ const ConstructionDetails: React.FC<{ invoice: Invoice, t: any }> = ({ invoice, 
     const { construction } = invoice;
     return (
         <section className="my-4 text-xs">
-            <p className="font-bold text-gray-500 mb-2 border-b">{t.constructionDetails || 'Construction Details'}</p>
+            <p className="font-bold text-gray-500 mb-2 border-b">{(t.constructionDetails || 'Construction Details')}</p>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-x-4 gap-y-1">
-                <p><span className="font-semibold text-gray-600">{t.jobSite || 'Job Site'}:</span> {construction.jobSiteAddress}</p>
-                <p><span className="font-semibold text-gray-600">{t.permitNumber || 'Permit #'}:</span> {construction.permitNumber}</p>
-                {construction.laborRate && <p><span className="font-semibold text-gray-600">{t.laborRate || 'Labor Rate'}:</span> ${construction.laborRate}/hr</p>}
-                {construction.equipmentRentalFees && <p><span className="font-semibold text-gray-600">{t.equipmentFees || 'Equipment Fees'}:</span> ${construction.equipmentRentalFees}</p>}
-                {construction.wasteDisposalFee && <p><span className="font-semibold text-gray-600">{t.disposalFee || 'Disposal Fee'}:</span> ${construction.wasteDisposalFee}</p>}
-                {construction.projectStartDate && <p><span className="font-semibold text-gray-600">{t.startDate || 'Start Date'}:</span> {safeFormat(construction.projectStartDate, 'MM/dd/yyyy')}</p>}
-                {construction.projectEndDate && <p><span className="font-semibold text-gray-600">{t.endDate || 'End Date'}:</span> {safeFormat(construction.projectEndDate, 'MM/dd/yyyy')}</p>}
+                <p><span className="font-semibold text-gray-600">{(t.jobSite || 'Job Site')}:</span> {construction.jobSiteAddress}</p>
+                <p><span className="font-semibold text-gray-600">{(t.permitNumber || 'Permit #')}:</span> {construction.permitNumber}</p>
+                {construction.laborRate && <p><span className="font-semibold text-gray-600">{(t.laborRate || 'Labor Rate')}:</span> ${construction.laborRate}/hr</p>}
+                {construction.equipmentRentalFees && <p><span className="font-semibold text-gray-600">{(t.equipmentFees || 'Equipment Fees')}:</span> ${construction.equipmentRentalFees}</p>}
+                {construction.wasteDisposalFee && <p><span className="font-semibold text-gray-600">{(t.disposalFee || 'Disposal Fee')}:</span> ${construction.wasteDisposalFee}</p>}
+                {construction.projectStartDate && <p><span className="font-semibold text-gray-600">{(t.startDate || 'Start Date')}:</span> {safeFormat(construction.projectStartDate, 'MM/dd/yyyy')}</p>}
+                {construction.projectEndDate && <p><span className="font-semibold text-gray-600">{(t.endDate || 'End Date')}:</span> {safeFormat(construction.projectEndDate, 'MM/dd/yyyy')}</p>}
             </div>
         </section>
     );
@@ -74,11 +74,11 @@ export const ConstructionTemplate1: React.FC<PageProps> = (props) => {
                     <p className="whitespace-pre-line">{client.address}</p>
                 </div>
                 <div className="bg-gray-100 p-2 rounded">
-                    <p className="grid grid-cols-2"><span className="font-bold">{t.invoiceDate || 'Date of Invoice'}:</span> <span>{safeFormat(invoice.invoiceDate, 'MM-dd-yyyy')}</span></p>
-                    <p className="grid grid-cols-2"><span className="font-bold">{t.invoiceNo || 'Invoice No'}:</span> <span>{invoice.invoiceNumber}</span></p>
-                    {invoice.construction?.projectStartDate && <p className="grid grid-cols-2"><span className="font-bold">{t.workStartDate || 'Work Start Date'}:</span> <span>{safeFormat(invoice.construction.projectStartDate, 'MM-dd-yyyy')}</span></p>}
-                    {invoice.construction?.projectEndDate && <p className="grid grid-cols-2"><span className="font-bold">{t.workEndDate || 'Work End Date'}:</span> <span>{safeFormat(invoice.construction.projectEndDate, 'MM-dd-yyyy')}</span></p>}
-                    <p className="grid grid-cols-2"><span className="font-bold">{t.dueDate || 'Due Date'}:</span> <span>{safeFormat(invoice.dueDate, 'MM-dd-yyyy')}</span></p>
+                    <p className="grid grid-cols-2"><span className="font-bold">{(t.invoiceDate || 'Date of Invoice')}:</span> <span>{safeFormat(invoice.invoiceDate, 'MM-dd-yyyy')}</span></p>
+                    <p className="grid grid-cols-2"><span className="font-bold">{(t.invoiceNo || 'Invoice No')}:</span> <span>{invoice.invoiceNumber}</span></p>
+                    {invoice.construction?.projectStartDate && <p className="grid grid-cols-2"><span className="font-bold">{(t.workStartDate || 'Work Start Date')}:</span> <span>{safeFormat(invoice.construction.projectStartDate, 'MM-dd-yyyy')}</span></p>}
+                    {invoice.construction?.projectEndDate && <p className="grid grid-cols-2"><span className="font-bold">{(t.workEndDate || 'Work End Date')}:</span> <span>{safeFormat(invoice.construction.projectEndDate, 'MM-dd-yyyy')}</span></p>}
+                    <p className="grid grid-cols-2"><span className="font-bold">{(t.dueDate || 'Due Date')}:</span> <span>{safeFormat(invoice.dueDate, 'MM-dd-yyyy')}</span></p>
                 </div>
             </section>
             
@@ -122,7 +122,7 @@ export const ConstructionTemplate1: React.FC<PageProps> = (props) => {
             </main>
             {pageIndex === totalPages - 1 && (
                 <footer className="mt-8 text-xs pt-4 border-t">
-                    <p><span className="font-bold">{t.paymentTerms || 'Payment Terms'}:</span> {invoice.paymentInstructions}</p>
+                    <p><span className="font-bold">{(t.paymentTerms || 'Payment Terms')}:</span> {invoice.paymentInstructions}</p>
                 </footer>
             )}
         </div>

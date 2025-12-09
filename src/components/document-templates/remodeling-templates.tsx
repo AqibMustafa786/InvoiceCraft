@@ -447,5 +447,3 @@ export const RemodelingTemplate5: React.FC<TemplateProps> = ({ document, pageIte
         </div>
     );
 };
-
-    
