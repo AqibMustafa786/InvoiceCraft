@@ -29,6 +29,19 @@ import {
   RoofingTemplate1, RoofingTemplate2, RoofingTemplate3, RoofingTemplate4, RoofingTemplate5,
   RoofingTemplate6, RoofingTemplate7, RoofingTemplate8, RoofingTemplate9, RoofingTemplate10
 } from './invoice-templates/roofing-templates';
+import {
+  LandscapingTemplate1, LandscapingTemplate2, LandscapingTemplate3, LandscapingTemplate4, LandscapingTemplate5
+} from './invoice-templates/landscaping-templates';
+import {
+  CleaningTemplate1, CleaningTemplate2, CleaningTemplate3, CleaningTemplate4, CleaningTemplate5
+} from './invoice-templates/cleaning-templates';
+import {
+  AutoRepairTemplate1, AutoRepairTemplate2, AutoRepairTemplate3, AutoRepairTemplate4, AutoRepairTemplate5
+} from './invoice-templates/auto-repair-templates';
+import {
+    ITTemplate1, ITTemplate2, ITTemplate3, ITTemplate4, ITTemplate5
+} from './invoice-templates/it-freelance-templates';
+
 
 
 // --- PROPS ---
@@ -476,6 +489,26 @@ const templates: Record<string, FC<PageProps>> = {
   'roofing-8': RoofingTemplate8,
   'roofing-9': RoofingTemplate9,
   'roofing-10': RoofingTemplate10,
+  'landscaping-1': LandscapingTemplate1,
+  'landscaping-2': LandscapingTemplate2,
+  'landscaping-3': LandscapingTemplate3,
+  'landscaping-4': LandscapingTemplate4,
+  'landscaping-5': LandscapingTemplate5,
+  'cleaning-1': CleaningTemplate1,
+  'cleaning-2': CleaningTemplate2,
+  'cleaning-3': CleaningTemplate3,
+  'cleaning-4': CleaningTemplate4,
+  'cleaning-5': CleaningTemplate5,
+  'auto-repair-1': AutoRepairTemplate1,
+  'auto-repair-2': AutoRepairTemplate2,
+  'auto-repair-3': AutoRepairTemplate3,
+  'auto-repair-4': AutoRepairTemplate4,
+  'auto-repair-5': AutoRepairTemplate5,
+  'it-1': ITTemplate1,
+  'it-2': ITTemplate2,
+  'it-3': ITTemplate3,
+  'it-4': ITTemplate4,
+  'it-5': ITTemplate5,
 };
 
 
@@ -515,22 +548,27 @@ const InvoicePreviewInternal: FC<InvoicePreviewProps> = ({ invoice, accentColor,
 
   const getTemplateComponent = () => {
     const category = invoice.category;
-    if (category === 'Construction') {
-      return templates[invoice.template] || ConstructionTemplate1;
+    const templateId = invoice.template;
+
+    if (templates[templateId]) {
+      return templates[templateId];
     }
-    if (category === 'Plumbing') {
-      return templates[invoice.template] || PlumbingTemplate1;
+    
+    // Fallback logic for categories if a specific template ID doesn't exist
+    switch(category) {
+        case 'Construction': return ConstructionTemplate1;
+        case 'Plumbing': return PlumbingTemplate1;
+        case 'Electrical Services': return ElectricalTemplate1;
+        case 'HVAC Services': return HVACTemplate1;
+        case 'Roofing': return RoofingTemplate1;
+        case 'Landscaping & Lawn Care': return LandscapingTemplate1;
+        case 'Cleaning Services': return CleaningTemplate1;
+        case 'Auto Repair': return AutoRepairTemplate1;
+        case 'IT Services / Tech Support':
+        case 'Freelance / Agency':
+             return ITTemplate1;
+        default: return DefaultTemplatePage;
     }
-    if (category === 'Electrical Services') {
-        return templates[invoice.template] || ElectricalTemplate1;
-    }
-    if (category === 'HVAC Services') {
-        return templates[invoice.template] || HVACTemplate1;
-    }
-    if (category === 'Roofing') {
-        return templates[invoice.template] || RoofingTemplate1;
-    }
-    return templates[invoice.template] || DefaultTemplatePage;
   };
 
   const TemplateComponent = getTemplateComponent();
