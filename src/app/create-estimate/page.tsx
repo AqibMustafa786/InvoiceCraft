@@ -13,7 +13,7 @@ import { useToast } from '@/hooks/use-toast';
 import Link from 'next/link';
 import { useFirebase, useMemoFirebase } from '@/firebase';
 import { useAuth } from '@/context/auth-provider';
-import { doc, serverTimestamp, Timestamp, collection, addDoc, getDoc } from 'firebase/firestore';
+import { doc, serverTimestamp, Timestamp, collection, addDoc, getDoc, setDoc } from 'firebase/firestore';
 import { setDocumentNonBlocking } from '@/firebase/non-blocking-updates';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useDoc } from '@/firebase/firestore/use-doc';
@@ -231,8 +231,6 @@ export default function CreateEstimatePage() {
   const searchParams = useSearchParams();
   const draftId = searchParams.get('draftId');
 
-  const companyId = userProfile?.companyId;
-
   const docRef = useMemoFirebase(() => {
     if (!draftId || !firestore) return null;
     return doc(firestore, 'estimates', draftId);
@@ -267,47 +265,69 @@ export default function CreateEstimatePage() {
     return value;
   }, []);
 
-  useEffect(() => {
-    if (isAuthLoading || !firestore) {
-      return; 
-    }
-  
-    if (!user || !companyId) {
-      if (!isAuthLoading) router.push('/login');
-      return;
-    }
-  
-    if (draftId) {
-      if (remoteDraft && (!document || document.id !== draftId)) {
-        const baseEstimate = getInitialEstimate();
-        const loadedDraft = JSON.parse(JSON.stringify(remoteDraft), fromJSON);
-        const initialEstimate = {
-          ...baseEstimate,
-          ...loadedDraft,
-          userId: loadedDraft.userId || user.uid,
-          companyId: loadedDraft.companyId || companyId,
-          business: { ...baseEstimate.business, ...loadedDraft.business },
-          client: { ...baseEstimate.client, ...loadedDraft.client },
-          summary: { ...baseEstimate.summary, ...loadedDraft.summary },
-        };
-        setDocument(initialEstimate);
-        setBackgroundColor(initialEstimate.backgroundColor || '#FFFFFF');
-        setTextColor(initialEstimate.textColor || '#374151');
-      }
-    } else if (!document) {
-        const newEstimate = getInitialEstimate();
-        const newDocRef = doc(collection(firestore, `estimates`));
-        const docWithUser: Estimate = { ...newEstimate, id: newDocRef.id, userId: user.uid, companyId };
-        
-        setDocumentNonBlocking(newDocRef, {
-            ...docWithUser,
-            createdAt: serverTimestamp(),
-            updatedAt: serverTimestamp(),
-        }, { merge: true });
+    useEffect(() => {
+        // Wait until authentication is resolved
+        if (isAuthLoading) {
+            return;
+        }
 
-        setDocument(docWithUser);
-    }
-  }, [user, companyId, isAuthLoading, firestore, draftId, remoteDraft, document, fromJSON, router]);
+        // If no user, redirect to login
+        if (!user) {
+            router.push('/login');
+            return;
+        }
+
+        // Wait for firestore and user profile (with companyId)
+        if (!firestore || !userProfile?.companyId) {
+            return;
+        }
+
+        const companyId = userProfile.companyId;
+
+        // Logic for loading an existing draft
+        if (draftId) {
+            if (remoteDraft && (!document || document.id !== draftId)) {
+                const baseEstimate = getInitialEstimate();
+                const loadedDraft = JSON.parse(JSON.stringify(remoteDraft), fromJSON);
+                const initialEstimate = {
+                    ...baseEstimate,
+                    ...loadedDraft,
+                    userId: loadedDraft.userId || user.uid,
+                    companyId: loadedDraft.companyId || companyId,
+                    business: { ...baseEstimate.business, ...loadedDraft.business },
+                    client: { ...baseEstimate.client, ...loadedDraft.client },
+                    summary: { ...baseEstimate.summary, ...loadedDraft.summary },
+                };
+                setDocument(initialEstimate);
+                setBackgroundColor(initialEstimate.backgroundColor || '#FFFFFF');
+                setTextColor(initialEstimate.textColor || '#374151');
+            }
+        // Logic for creating a new draft if one isn't being loaded and isn't already in state
+        } else if (!document) {
+            const newEstimateBase = getInitialEstimate();
+            const newDocRef = doc(collection(firestore, `estimates`));
+            const newDoc: Estimate = { 
+                ...newEstimateBase, 
+                id: newDocRef.id, 
+                userId: user.uid, 
+                companyId: companyId,
+                createdAt: serverTimestamp(),
+                updatedAt: serverTimestamp(),
+            };
+            
+            // Set in local state immediately to render the form
+            setDocument(newDoc);
+            
+            // Save to Firestore non-blockingly
+            setDoc(newDocRef, newDoc, { merge: true }).catch(error => {
+                console.error("Failed to create new estimate draft:", error);
+                // Optionally show a toast to the user
+            });
+            
+            // Update URL without a full page reload to reflect the new draft ID
+            router.replace(`/create-estimate?draftId=${newDocRef.id}`, { scroll: false });
+        }
+    }, [user, userProfile, isAuthLoading, firestore, draftId, remoteDraft, document, fromJSON, router]);
 
 
   useEffect(() => {
@@ -325,7 +345,9 @@ export default function CreateEstimatePage() {
   };
   
   const handleSaveDraft = () => {
-    if (!document || !firestore || !user || !companyId) return;
+    if (!document || !firestore || !user || !userProfile?.companyId) return;
+
+    const companyId = userProfile.companyId;
 
     const normalizeDate = (val: any): Timestamp | null => {
         if (!val) return null;

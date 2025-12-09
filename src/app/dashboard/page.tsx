@@ -32,7 +32,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useFirebase, useMemoFirebase } from '@/firebase/provider';
 import { useCollection } from '@/firebase/firestore/use-collection';
 import { useAuth } from '@/context/auth-provider';
-import { collection, doc, addDoc, query, Timestamp } from 'firebase/firestore';
+import { collection, doc, addDoc, query, Timestamp, where } from 'firebase/firestore';
 import { deleteDocumentNonBlocking, updateDocumentNonBlocking } from '@/firebase';
 import { Skeleton } from '@/components/ui/skeleton';
 
@@ -76,17 +76,17 @@ export default function DashboardPage() {
 
     const invoicesQuery = useMemoFirebase(() => {
         if (!firestore || !companyId) return null;
-        return query(collection(firestore, 'companies', companyId, 'invoices'));
+        return query(collection(firestore, 'invoices'), where('companyId', '==', companyId));
     }, [firestore, companyId]);
 
     const estimatesQuery = useMemoFirebase(() => {
         if (!firestore || !companyId) return null;
-        return query(collection(firestore, 'companies', companyId, 'estimates'));
+        return query(collection(firestore, 'estimates'), where('companyId', '==', companyId));
     }, [firestore, companyId]);
 
     const quotesQuery = useMemoFirebase(() => {
         if (!firestore || !companyId) return null;
-        return query(collection(firestore, 'companies', companyId, 'quotes'));
+        return query(collection(firestore, 'quotes'), where('companyId', '==', companyId));
     }, [firestore, companyId]);
 
 
@@ -145,9 +145,9 @@ export default function DashboardPage() {
     }, []);
 
     const handleDelete = () => {
-        if (!deleteCandidate || !firestore || !companyId) return;
+        if (!deleteCandidate || !firestore) return;
         const { id, collection: collectionName } = deleteCandidate;
-        const docRef = doc(firestore, 'companies', companyId, collectionName, id);
+        const docRef = doc(firestore, collectionName, id);
         deleteDocumentNonBlocking(docRef);
         setDeleteCandidate(null);
         toast({
@@ -157,8 +157,8 @@ export default function DashboardPage() {
     };
 
     const handleStatusChange = (id: string, collectionName: string, newStatus: DocumentStatus) => {
-        if (!firestore || !companyId) return;
-        const docRef = doc(firestore, 'companies', companyId, collectionName, id);
+        if (!firestore) return;
+        const docRef = doc(firestore, collectionName, id);
         updateDocumentNonBlocking(docRef, { status: newStatus });
         toast({
             title: "Status Updated",
@@ -200,14 +200,15 @@ export default function DashboardPage() {
         };
         
         try {
-            const newDocRef = doc(collection(firestore, 'companies', companyId, 'invoices'));
+            const newDocRef = doc(collection(firestore, 'invoices'));
             
-            await addDoc(collection(firestore, 'companies', companyId, 'invoices'), {
+            await setDoc(doc(firestore, "invoices", newDocRef.id), {
                 ...newInvoiceData,
                 id: newDocRef.id,
                 createdAt: Timestamp.now(),
                 updatedAt: Timestamp.now(),
             });
+
             toast({
                 title: 'Invoice Created',
                 description: `Document ${estimateNumber} has been successfully converted to an invoice.`
