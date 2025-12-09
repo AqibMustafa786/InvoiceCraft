@@ -256,7 +256,7 @@ export function DocumentTemplateSelector({ selectedTemplate, onSelectTemplate, d
   const { firestore } = useFirebase();
   const userDocRef = user ? doc(firestore, 'users', user.uid) : null;
   const { data: userData } = useDoc<{ plan: string }>(userDocRef);
-  const isBusinessPlan = userData?.plan === 'business' || (user?.email === 'aqib2k1@gmail.com');
+  const isBusinessPlan = true;
   
   const filteredTemplates = templates.filter(t => t.category === category || t.category === 'all');
   

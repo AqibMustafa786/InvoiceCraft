@@ -99,7 +99,7 @@ export function TemplateSelector({ selectedTemplate, onSelectTemplate, category 
     const { firestore } = useFirebase();
     const userDocRef = user ? doc(firestore, 'users', user.uid) : null;
     const { data: userData } = useDoc<{ plan: string }>(userDocRef);
-    const isBusinessPlan = userData?.plan === 'business' || (user?.email === 'aqib2k1@gmail.com');
+    const isBusinessPlan = true;
 
     const filteredTemplates = useMemo(() => {
         const categoryTemplates = templates.filter(t => t.category === category);
