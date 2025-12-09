@@ -548,7 +548,18 @@ export function DocumentForm({ document, setDocument, accentColor, setAccentColo
                         />
                     </div>
                 </div>
-                <div className="space-y-2">
+                 <div className="space-y-2">
+                    <Label htmlFor="fontFamily">Font Family</Label>
+                    <Select value={document.fontFamily} onValueChange={(value) => setDocument(p => ({...p, fontFamily: value}))}>
+                        <SelectTrigger id="fontFamily">
+                            <SelectValue placeholder="Select font" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            {fonts.map((font, index) => <SelectItem key={`${font.value}-${index}`} value={font.value}>{font.label}</SelectItem>)}
+                        </SelectContent>
+                    </Select>
+                </div>
+                 <div className="space-y-2">
                     <Label>Document Type</Label>
                     <RadioGroup
                         value={document.documentType}
@@ -564,17 +575,6 @@ export function DocumentForm({ document, setDocument, accentColor, setAccentColo
                             <Label htmlFor="type-quote">Quote</Label>
                         </div>
                     </RadioGroup>
-                </div>
-                 <div className="space-y-2">
-                    <Label htmlFor="fontFamily">Font Family</Label>
-                    <Select value={document.fontFamily} onValueChange={(value) => setDocument(p => ({...p, fontFamily: value}))}>
-                        <SelectTrigger id="fontFamily">
-                            <SelectValue placeholder="Select font" />
-                        </SelectTrigger>
-                        <SelectContent>
-                            {fonts.map((font, index) => <SelectItem key={`${font.value}-${index}`} value={font.value}>{font.label}</SelectItem>)}
-                        </SelectContent>
-                    </Select>
                 </div>
             </CardContent>
         </Card>
