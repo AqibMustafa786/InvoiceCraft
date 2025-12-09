@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
-import { Menu, Search } from 'lucide-react';
+import { Menu, Search, ChevronDown } from 'lucide-react';
 import { ModeToggle } from '@/components/mode-toggle';
 import { cn } from '@/lib/utils';
 import { motion } from 'framer-motion';
@@ -13,15 +13,24 @@ import { AuthNav } from './auth-nav';
 import { CommandDialog, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from './ui/command';
 import { DialogTitle } from './ui/dialog';
 import { useEffect, useState } from 'react';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 
-const navLinks = [
+const mainNavLinks = [
     { href: "/features", label: "Features" },
+    { href: "/pricing", label: "Pricing" },
+    { href: "/blog", label: "Blog" },
+]
+
+const generalToolsLinks = [
     { href: "/create-invoice", label: "Create Invoice" },
     { href: "/create-estimate", label: "Create Estimate" },
     { href: "/create-quote", label: "Create Quote" },
     { href: "/create-insurance", label: "Create Insurance" },
-    { href: "/pricing", label: "Pricing" },
-    { href: "/blog", label: "Blog" },
 ]
 
 function NavLink({ href, label, isActive }: { href: string, label: string, isActive: boolean }) {
@@ -69,9 +78,24 @@ export function Header() {
                 </div>
 
                 <nav className="hidden md:flex flex-1 items-center justify-center space-x-1 text-sm font-medium">
-                    {navLinks.map(link => (
+                    {mainNavLinks.map(link => (
                         <NavLink key={link.href} href={link.href} label={link.label} isActive={pathname === link.href} />
                     ))}
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" className="px-3 py-2 flex items-center gap-1 hover:text-accent focus-visible:ring-0">
+                          General
+                          <ChevronDown className="h-4 w-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent>
+                        {generalToolsLinks.map(link => (
+                          <DropdownMenuItem key={link.href} asChild>
+                            <Link href={link.href}>{link.label}</Link>
+                          </DropdownMenuItem>
+                        ))}
+                      </DropdownMenuContent>
+                    </DropdownMenu>
                 </nav>
 
                 <div className="flex flex-1 items-center justify-end gap-2">
@@ -121,7 +145,19 @@ export function Header() {
                             </SheetTitle>
                         </SheetHeader>
                         <nav className="flex-grow grid gap-4 text-lg font-medium mt-8">
-                            {navLinks.map(link => (
+                             {mainNavLinks.map(link => (
+                                <Link
+                                    key={link.href}
+                                    href={link.href}
+                                    className={cn(
+                                        "block py-2 transition",
+                                        pathname === link.href ? "text-primary font-semibold" : "text-muted-foreground hover:text-accent"
+                                    )}
+                                >
+                                    {link.label}
+                                </Link>
+                            ))}
+                             {generalToolsLinks.map(link => (
                                 <Link
                                     key={link.href}
                                     href={link.href}
