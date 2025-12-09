@@ -359,7 +359,7 @@ export const LandscapingTemplate5: React.FC<TemplateProps> = ({ document, pageIt
                  <p>{client.address}</p>
             </section>
             
-             <LandscapingDetails document={document} t={t}/>
+             <LandscapingDetails document={document} t={t} />
 
             <main className="flex-grow bg-white p-4 rounded-md shadow-sm">
                 <table className="w-full text-left text-xs">
