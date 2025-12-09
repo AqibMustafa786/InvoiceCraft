@@ -102,11 +102,12 @@ export function TemplateSelector({ selectedTemplate, onSelectTemplate, category 
     const isBusinessPlan = true;
 
     const filteredTemplates = useMemo(() => {
-        const categoryTemplates = templates.filter(t => t.category === category);
-        if (categoryTemplates.length > 0) {
-            return categoryTemplates;
+        const generalTemplates = templates.filter(t => t.category === 'General Services');
+        if (category === 'General Services') {
+            return generalTemplates;
         }
-        return templates.filter(t => t.category === 'General Services');
+        const categoryTemplates = templates.filter(t => t.category === category);
+        return [...categoryTemplates, ...generalTemplates];
     }, [category]);
 
 
