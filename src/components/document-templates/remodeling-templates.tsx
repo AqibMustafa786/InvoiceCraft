@@ -185,12 +185,12 @@ export const RemodelingTemplate2: React.FC<TemplateProps> = ({ document, pageIte
             
             <section className="p-4 rounded-md mb-8 grid grid-cols-2 gap-4" style={{backgroundColor: `${style.color}1A`}}>
                 <div className="text-xs">
-                     <p className="font-bold text-gray-500 mb-1" style={{color: textColor}}>{t.client.toUpperCase() || 'CLIENT'}</p>
+                     <p className="font-bold text-gray-500 mb-1" style={{color: textColor}}>{(t.client || 'Client').toUpperCase()}</p>
                      <p className="font-semibold">{client.name}</p>
                      <p>{client.address}</p>
                 </div>
                  <div className="text-xs text-right">
-                     <p className="font-bold text-gray-500 mb-1" style={{color: textColor}}>{t.project.toUpperCase() || 'PROJECT'}</p>
+                     <p className="font-bold text-gray-500 mb-1" style={{color: textColor}}>{(t.project || 'Project').toUpperCase()}</p>
                      <p className="font-semibold">{document.projectTitle}</p>
                      <p>{client.projectLocation}</p>
                 </div>
