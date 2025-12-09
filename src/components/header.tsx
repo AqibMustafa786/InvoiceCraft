@@ -5,12 +5,13 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
-import { Menu } from 'lucide-react';
+import { Menu, Search } from 'lucide-react';
 import { ModeToggle } from '@/components/mode-toggle';
 import { cn } from '@/lib/utils';
 import { motion } from 'framer-motion';
 import { AuthNav } from './auth-nav'; 
 import { useAuth } from '@/context/auth-provider';
+import { Input } from './ui/input';
 
 const navLinks = [
     { href: "/features", label: "Features" },
@@ -42,13 +43,14 @@ function NavLink({ href, label, isActive }: { href: string, label: string, isAct
     );
 }
 
-export function Header() {
+export function Header({ filters, onFiltersChange }: { filters?: any, onFiltersChange?: (filters: any) => void }) {
     const pathname = usePathname();
     const { user } = useAuth();
+    const isDashboard = pathname === '/dashboard';
 
     return (
-        <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur-sm supports-[backdrop-filter]:bg-background/60">
-            <div className="container flex h-16 items-center">
+        <header className="sticky top-0 z-50 w-full">
+            <div className="container my-4 flex h-16 items-center rounded-2xl border border-border/40 bg-background/80 shadow-lg backdrop-blur-sm supports-[backdrop-filter]:bg-background/60">
                 <Link href="/" className="mr-6 flex items-center gap-2">
                      <span className="text-lg font-bold text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent">InvoiceCraft</span>
                 </Link>
@@ -60,6 +62,17 @@ export function Header() {
                 </nav>
 
                 <div className="flex flex-1 items-center justify-end gap-2">
+                    {isDashboard && onFiltersChange && (
+                        <div className="relative hidden sm:block">
+                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                            <Input 
+                                placeholder="Search clients..." 
+                                className="pl-10 w-48"
+                                value={filters.clientName}
+                                onChange={(e) => onFiltersChange({ ...filters, clientName: e.target.value })}
+                            />
+                        </div>
+                    )}
                     <ModeToggle />
                     {/* Renders the desktop version of AuthNav */}
                     <AuthNav /> 
@@ -80,6 +93,17 @@ export function Header() {
                                 </Link>
                             </SheetTitle>
                         </SheetHeader>
+                        {isDashboard && onFiltersChange && (
+                            <div className="relative mt-4">
+                                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                                <Input
+                                    placeholder="Search clients..."
+                                    className="pl-10"
+                                    value={filters.clientName}
+                                    onChange={(e) => onFiltersChange({ ...filters, clientName: e.target.value })}
+                                />
+                            </div>
+                        )}
                         <nav className="flex-grow grid gap-4 text-lg font-medium mt-8">
                             {navLinks.map(link => (
                                 <Link

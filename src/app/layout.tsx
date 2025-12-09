@@ -1,3 +1,4 @@
+
 import type { Metadata } from 'next';
 import './globals.css';
 import { cn } from '@/lib/utils';
@@ -39,7 +40,6 @@ export default function RootLayout({
                 disableTransitionOnChange
               >
               <div className="app-main-container relative flex min-h-screen flex-col">
-                <Header />
                 <main className="flex-1">{children}</main>
                 <Footer />
               </div>
