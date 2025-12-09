@@ -219,13 +219,23 @@ function PrintableDocument({ doc, accentColor, backgroundColor, textColor }: { d
 
 
 export default function CreateEstimatePage() {
-  const [document, setDocument] = useState<Estimate | Quote | null>(null);
+  const { user, userProfile } = useAuth();
+  const [document, setDocument] = useState<Estimate | Quote>(() => {
+    const initial = getInitialEstimate();
+    return {
+      ...initial,
+      id: '', // Will be set properly in effect
+      userId: '',
+      companyId: '',
+    }
+  });
+
   const [accentColor, setAccentColor] = useState<string>('hsl(var(--primary))');
   const [backgroundColor, setBackgroundColor] = useState<string>('#FFFFFF');
   const [textColor, setTextColor] = useState<string>('#374151');
   const [isSendingEmail, setIsSendingEmail] = useState(false);
   const { toast } = useToast();
-  const { user, userProfile, isLoading: isAuthLoading } = useAuth();
+  
   const { firestore } = useFirebase();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -266,30 +276,21 @@ export default function CreateEstimatePage() {
   }, []);
 
     useEffect(() => {
-        if (isAuthLoading) return;
-
-        if (!user || !userProfile?.companyId) {
-            router.push('/login');
-            return;
-        }
-        
-        if (draftId) { // Loading an existing draft
-            if (remoteDraft && (!document || document.id !== draftId)) {
-                const baseEstimate = getInitialEstimate();
-                const loadedDraft = JSON.parse(JSON.stringify(remoteDraft), fromJSON);
-                const initialEstimate = {
-                    ...baseEstimate,
-                    ...loadedDraft,
-                    userId: loadedDraft.userId || user.uid,
-                    companyId: loadedDraft.companyId || userProfile.companyId,
-                    business: { ...baseEstimate.business, ...loadedDraft.business },
-                    client: { ...baseEstimate.client, ...loadedDraft.client },
-                    summary: { ...baseEstimate.summary, ...loadedDraft.summary },
-                };
-                setDocument(initialEstimate);
-            }
-        } else if (!document) { // Creating a new draft
-            const newEstimateBase = getInitialEstimate();
+        if (remoteDraft && (!document || document.id !== draftId)) {
+            const baseEstimate = getInitialEstimate();
+            const loadedDraft = JSON.parse(JSON.stringify(remoteDraft), fromJSON);
+            const initialEstimate = {
+                ...baseEstimate,
+                ...loadedDraft,
+                userId: loadedDraft.userId || user?.uid || '',
+                companyId: loadedDraft.companyId || userProfile?.companyId || '',
+                business: { ...baseEstimate.business, ...loadedDraft.business },
+                client: { ...baseEstimate.client, ...loadedDraft.client },
+                summary: { ...baseEstimate.summary, ...loadedDraft.summary },
+            };
+            setDocument(initialEstimate);
+        } else if (!draftId && user && userProfile && document.id === '') {
+             const newEstimateBase = getInitialEstimate();
             const newDocId = doc(collection(firestore, 'estimates')).id;
             const newDoc: Estimate = { 
                 ...newEstimateBase, 
@@ -301,7 +302,7 @@ export default function CreateEstimatePage() {
             };
             setDocument(newDoc);
         }
-    }, [user, userProfile, isAuthLoading, firestore, draftId, remoteDraft, document, fromJSON, router]);
+    }, [user, userProfile, firestore, draftId, remoteDraft, document.id, fromJSON]);
 
 
   useEffect(() => {
@@ -384,8 +385,17 @@ export default function CreateEstimatePage() {
   };
 
   const handleNew = () => {
-    setDocument(null);
     router.push('/create-estimate');
+    // We don't set document to null, instead we rely on the useEffect to re-initialize it
+    // when the URL changes. This is more robust.
+    const newEstimateBase = getInitialEstimate();
+    const newDoc: Estimate = { 
+        ...newEstimateBase, 
+        id: '', // let effect handle ID
+        userId: user?.uid || '', 
+        companyId: userProfile?.companyId || '',
+    };
+    setDocument(newDoc);
   };
 
   const handleShare = () => {
@@ -433,28 +443,13 @@ export default function CreateEstimatePage() {
   };
 
   useEffect(() => {
-    if (document) {
+    if (document.id) { // Only compute summary if document is initialized
         const newDocument = computeSummary(document);
          if (JSON.stringify(newDocument.summary) !== JSON.stringify(document.summary)) {
             setDocument(newDocument);
         }
     }
   }, [document, computeSummary]);
-
-
-  if (isAuthLoading || !document || (draftId && isDraftLoading)) {
-    return (
-        <div className="container mx-auto p-4 md:p-8">
-            <div className="flex flex-col space-y-3">
-              <Skeleton className="h-9 w-64 mb-2" />
-              <div className="space-y-2">
-                  <Skeleton className="h-4 w-[250px]" />
-                  <Skeleton className="h-4 w-[200px]" />
-              </div>
-          </div>
-        </div>
-    );
-  }
 
   return (
     <>
@@ -504,8 +499,8 @@ export default function CreateEstimatePage() {
               <div>
                 <h2 className="text-2xl font-bold font-headline mb-4 text-center lg:text-left">Fill in Details</h2>
                 <DocumentForm 
-                  document={document as Estimate} 
-                  setDocument={setDocument as React.Dispatch<React.SetStateAction<Estimate>>} 
+                  document={document} 
+                  setDocument={setDocument} 
                   accentColor={accentColor}
                   setAccentColor={setAccentColor}
                   backgroundColor={backgroundColor}
@@ -553,3 +548,5 @@ export default function CreateEstimatePage() {
     </>
   );
 }
+
+    
