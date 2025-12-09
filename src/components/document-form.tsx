@@ -73,6 +73,19 @@ const fonts = [
     { value: 'system-ui', label: 'System Default' },
 ]
 
+const languages = [
+    { value: 'en', label: 'English' },
+    { value: 'ur', label: 'Urdu' },
+    { value: 'es', label: 'Spanish' },
+    { value: 'fr', label: 'French' },
+    { value: 'de', label: 'German' },
+    { value: 'it', label: 'Italian' },
+    { value: 'pt', label: 'Portuguese' },
+    { value: 'nl', label: 'Dutch' },
+    { value: 'ru', label: 'Russian' },
+    { value: 'zh', label: 'Chinese' },
+];
+
 const categories: EstimateCategory[] = [
     "Generic",
     "Home Remodeling / Renovation",
@@ -302,6 +315,10 @@ export function DocumentForm({ document, setDocument, accentColor, setAccentColo
   const handleCurrencyChange = (value: string) => {
     setDocument(prev => ({ ...prev, currency: value }));
   }
+
+    const handleLanguageChange = (value: string) => {
+    setDocument(prev => ({ ...prev, language: value }));
+  };
 
   const handleItemChange = (index: number, field: keyof Omit<LineItem, 'id'>, value: string | number | boolean) => {
     const newItems = [...document.lineItems];
@@ -573,6 +590,19 @@ export function DocumentForm({ document, setDocument, accentColor, setAccentColo
                         </SelectTrigger>
                         <SelectContent>
                             {fonts.map((font, index) => <SelectItem key={`${font.value}-${index}`} value={font.value}>{font.label}</SelectItem>)}
+                        </SelectContent>
+                    </Select>
+                </div>
+                <div className="space-y-2">
+                    <Label htmlFor="language">Language</Label>
+                    <Select value={document.language} onValueChange={handleLanguageChange}>
+                        <SelectTrigger id="language">
+                            <SelectValue placeholder="Select language" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            {languages.map(lang => (
+                                <SelectItem key={lang.value} value={lang.value}>{lang.label}</SelectItem>
+                            ))}
                         </SelectContent>
                     </Select>
                 </div>

@@ -37,6 +37,19 @@ const currencies = [
     { value: 'PKR', label: 'PKR (₨)' },
 ];
 
+const languages = [
+    { value: 'en', label: 'English' },
+    { value: 'ur', label: 'Urdu' },
+    { value: 'es', label: 'Spanish' },
+    { value: 'fr', label: 'French' },
+    { value: 'de', label: 'German' },
+    { value: 'it', label: 'Italian' },
+    { value: 'pt', label: 'Portuguese' },
+    { value: 'nl', label: 'Dutch' },
+    { value: 'ru', label: 'Russian' },
+    { value: 'zh', label: 'Chinese' },
+];
+
 export function InsuranceForm({ document: doc, setDocument: setDoc, logoUrl, setLogoUrl, accentColor, setAccentColor, toast }: InsuranceFormProps) {
   const [colorInputValue, setColorInputValue] = useState(accentColor);
 
@@ -153,6 +166,19 @@ export function InsuranceForm({ document: doc, setDocument: setDoc, logoUrl, set
                  <div className="space-y-2">
                     <Label>Document Date</Label>
                     <DatePicker date={doc.documentDate} setDate={(date) => setDoc(p => ({ ...p, documentDate: date! }))} />
+                </div>
+                <div className="space-y-2">
+                    <Label htmlFor="language">Language</Label>
+                    <Select value={doc.language} onValueChange={handleLanguageChange}>
+                        <SelectTrigger id="language">
+                            <SelectValue placeholder="Select language" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            {languages.map(lang => (
+                                <SelectItem key={lang.value} value={lang.value}>{lang.label}</SelectItem>
+                            ))}
+                        </SelectContent>
+                    </Select>
                 </div>
             </div>
         </CardContent>
