@@ -11,6 +11,7 @@ import { cn } from '@/lib/utils';
 import { motion } from 'framer-motion';
 import { AuthNav } from './auth-nav'; 
 import { CommandDialog, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from './ui/command';
+import { DialogTitle } from './ui/dialog';
 import { useEffect, useState } from 'react';
 
 const navLinks = [
@@ -85,6 +86,7 @@ export function Header() {
                     <ModeToggle />
                     <AuthNav />
                      <CommandDialog open={open} onOpenChange={setOpen}>
+                        <DialogTitle className="sr-only">Search</DialogTitle>
                         <CommandInput placeholder="Type a command or search..." />
                         <CommandList>
                         <CommandEmpty>No results found.</CommandEmpty>
