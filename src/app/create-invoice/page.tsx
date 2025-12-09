@@ -17,7 +17,7 @@ import { useFirebase, useMemoFirebase } from '@/firebase';
 import { doc, serverTimestamp, Timestamp } from 'firebase/firestore';
 import { setDocumentNonBlocking } from '@/firebase/non-blocking-updates';
 import { useDoc } from '@/firebase/firestore/use-doc';
-import { TemplateSelector } from '@/components/template-selector';
+import { DocumentTemplateSelector } from '@/components/document-template-selector';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -553,9 +553,11 @@ export default function CreateInvoicePage() {
                             <SheetTitle>Select a Template</SheetTitle>
                         </SheetHeader>
                         <div className="py-4">
-                            <TemplateSelector 
+                            <DocumentTemplateSelector 
                                 selectedTemplate={invoice.template}
                                 onSelectTemplate={(template) => setInvoice(prev => prev ? ({...prev, template}) : null)}
+                                documentType="invoice"
+                                category={invoice.category}
                             />
                         </div>
                     </SheetContent>
