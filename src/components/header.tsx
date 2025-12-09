@@ -38,8 +38,8 @@ function NavLink({ href, label, isActive }: { href: string, label: string, isAct
         <Link
             href={href}
             className={cn(
-                "relative block px-3 py-2 transition",
-                isActive ? "text-primary" : "hover:text-accent"
+                "relative block px-3 py-2 transition rounded-md",
+                isActive ? "text-primary-foreground bg-accent" : "hover:bg-accent hover:text-accent-foreground"
             )}
         >
             {label}
@@ -83,7 +83,7 @@ export function Header() {
                     ))}
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" className="px-3 py-2 flex items-center gap-1 hover:text-accent focus-visible:ring-0">
+                        <Button variant="ghost" className="px-3 py-2 flex items-center gap-1 hover:bg-accent hover:text-accent-foreground rounded-md focus-visible:ring-0">
                           Tools
                           <ChevronDown className="h-4 w-4" />
                         </Button>
