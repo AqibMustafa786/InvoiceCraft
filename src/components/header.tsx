@@ -51,17 +51,19 @@ export function Header({ filters, onFiltersChange }: { filters?: any, onFiltersC
     return (
         <header className="sticky top-0 z-50 w-full">
             <div className="container my-4 flex h-16 items-center rounded-2xl border border-border/40 bg-background/80 shadow-lg backdrop-blur-sm supports-[backdrop-filter]:bg-background/60">
-                <Link href="/" className="mr-6 flex items-center gap-2">
-                     <span className="text-lg font-bold text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent">InvoiceCraft</span>
-                </Link>
+                <div className="flex items-center justify-start">
+                    <Link href="/" className="flex items-center gap-2">
+                        <span className="text-lg font-bold text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent">InvoiceCraft</span>
+                    </Link>
+                </div>
 
-                <nav className="hidden md:flex items-center space-x-1 text-sm font-medium">
+                <nav className="hidden md:flex flex-1 items-center justify-center space-x-1 text-sm font-medium">
                     {navLinks.map(link => (
                         <NavLink key={link.href} href={link.href} label={link.label} isActive={pathname === link.href} />
                     ))}
                 </nav>
 
-                <div className="flex flex-1 items-center justify-end gap-2">
+                <div className="flex items-center justify-end gap-2">
                     {isDashboard && onFiltersChange && (
                         <div className="relative hidden sm:block">
                             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -74,7 +76,6 @@ export function Header({ filters, onFiltersChange }: { filters?: any, onFiltersC
                         </div>
                     )}
                     <ModeToggle />
-                    {/* Renders the desktop version of AuthNav */}
                     <AuthNav /> 
                 </div>
                 
