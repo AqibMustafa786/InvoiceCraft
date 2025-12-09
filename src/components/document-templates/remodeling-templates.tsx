@@ -20,8 +20,7 @@ const currencySymbols: { [key: string]: string } = { USD: '$', EUR: '€', GBP: 
 const safeFormat = (date: Date | string | number | undefined | null, formatString: string) => {
     if (!date) return 'N/A';
     const d = new Date(date);
-    if (!isValid(d)) return "Invalid Date";
-    return format(d, formatString);
+    return isValid(d) ? format(d, formatString) : "Invalid Date";
 }
 
 const SignatureDisplay = ({ signature, label, style }: { signature: any, label: string, style?: React.CSSProperties }) => {
@@ -61,7 +60,7 @@ const RemodelingDetails: React.FC<{ document: Estimate; textColor: string, t: an
 export const RemodelingTemplate1: React.FC<TemplateProps> = ({ document, pageItems, pageIndex, totalPages, style, t }) => {
     const { business, client, summary, currency, category, textColor } = document;
     const currencySymbol = currencySymbols[currency] || '$';
-    const docTitle = document.documentType === 'quote' ? t.quote || 'Quote' : t.estimate || 'Estimate';
+    const docTitle = document.documentType === 'quote' ? (t.quote || 'Quote') : (t.estimate || 'Estimate');
     
     return (
         <div className={`font-sans text-gray-800 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: style.fontFamily, fontSize: `${style.fontSize}pt`, minHeight: '1056px', backgroundColor: document.backgroundColor }}>
@@ -166,7 +165,7 @@ export const RemodelingTemplate1: React.FC<TemplateProps> = ({ document, pageIte
 export const RemodelingTemplate2: React.FC<TemplateProps> = ({ document, pageItems, pageIndex, totalPages, style, t }) => {
     const { business, client, summary, currency, category, textColor } = document;
     const currencySymbol = currencySymbols[currency] || '$';
-    const docTitle = document.documentType === 'quote' ? t.quote.toUpperCase() || 'QUOTE' : t.estimate.toUpperCase() || 'ESTIMATE';
+    const docTitle = document.documentType === 'quote' ? (t.quote || 'QUOTE').toUpperCase() : (t.estimate || 'ESTIMATE').toUpperCase();
 
     return (
         <div className={`p-10 font-sans text-gray-700 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: style.fontFamily, fontSize: `${style.fontSize}pt`, minHeight: '1056px', backgroundColor: document.backgroundColor, color: textColor }}>
@@ -245,7 +244,7 @@ export const RemodelingTemplate2: React.FC<TemplateProps> = ({ document, pageIte
 export const RemodelingTemplate3: React.FC<TemplateProps> = ({ document, pageItems, pageIndex, totalPages, style, t }) => {
     const { business, client, summary, currency, category, textColor } = document;
     const currencySymbol = currencySymbols[currency] || '$';
-    const docTitle = document.documentType === 'quote' ? t.quote.toUpperCase() || 'QUOTE' : t.estimate.toUpperCase() || 'ESTIMATE';
+    const docTitle = document.documentType === 'quote' ? (t.quote || 'QUOTE').toUpperCase() : (t.estimate || 'ESTIMATE').toUpperCase();
 
     return (
         <div className={`p-10 font-['Times_New_Roman',_serif] text-gray-900 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontSize: `${style.fontSize}pt`, minHeight: '1056px', backgroundColor: document.backgroundColor, color: textColor }}>
@@ -315,7 +314,7 @@ export const RemodelingTemplate3: React.FC<TemplateProps> = ({ document, pageIte
 export const RemodelingTemplate4: React.FC<TemplateProps> = ({ document, pageItems, pageIndex, totalPages, style, t }) => {
     const { business, client, summary, currency, category, textColor } = document;
     const currencySymbol = currencySymbols[currency] || '$';
-    const docTitle = document.documentType === 'quote' ? t.estimate.toUpperCase() || 'ESTIMATE' : t.estimate.toUpperCase() || 'ESTIMATE';
+    const docTitle = document.documentType === 'quote' ? (t.estimate || 'ESTIMATE').toUpperCase() : (t.estimate || 'ESTIMATE').toUpperCase();
 
     return (
         <div className={`p-10 font-sans text-gray-800 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: 'Arial', fontSize: `${style.fontSize}pt`, minHeight: '1056px', backgroundColor: document.backgroundColor, color: textColor }}>
@@ -381,7 +380,7 @@ export const RemodelingTemplate4: React.FC<TemplateProps> = ({ document, pageIte
 export const RemodelingTemplate5: React.FC<TemplateProps> = ({ document, pageItems, pageIndex, totalPages, style, t }) => {
     const { business, client, summary, currency, category, textColor } = document;
     const currencySymbol = currencySymbols[currency] || '$';
-    const docTitle = document.documentType === 'quote' ? t.quote.toUpperCase() || 'QUOTE' : t.estimate.toUpperCase() || 'ESTIMATE';
+    const docTitle = document.documentType === 'quote' ? (t.quote || 'QUOTE').toUpperCase() : (t.estimate || 'ESTIMATE').toUpperCase();
 
     return (
         <div className={`p-12 font-sans text-gray-800 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: style.fontFamily, fontSize: `${style.fontSize}pt`, minHeight: '1056px', backgroundColor: document.backgroundColor, color: textColor }}>
