@@ -1,4 +1,5 @@
 
+
 'use client';
 export const dynamic = 'force-dynamic';
 
@@ -368,7 +369,7 @@ export default function CreateEstimatePage() {
       });
   };
   
-  const handleEmail = async () => {
+    const handleEmail = async () => {
     if (!document) return;
     if (!document.client.email) {
       toast({ title: "Client Email Missing", description: "Please enter the client's email address first.", variant: 'destructive' });
@@ -520,3 +521,5 @@ export default function CreateEstimatePage() {
     </>
   );
 }
+
+    

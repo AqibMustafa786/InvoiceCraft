@@ -1,4 +1,5 @@
 
+
 'use client';
 export const dynamic = 'force-dynamic';
 
@@ -84,10 +85,13 @@ export default function PublicInvoicePage({ params }: { params: { invoiceId: str
 
                 <ClientInvoicePreview 
                     invoice={invoice}
-                    logoUrl={logoUrl} 
                     accentColor={accentColor} 
+                    backgroundColor={invoice.backgroundColor || '#FFFFFF'} 
+                    textColor={invoice.textColor || '#374151'}
                 />
             </div>
         </div>
     );
 }
+
+    
