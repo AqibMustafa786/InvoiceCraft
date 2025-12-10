@@ -47,5 +47,18 @@
     "milestone": "Milestone",
     "hourlyRate": "Hourly Rate",
     "fixedRate": "Fixed Rate",
-    "hoursLogged": "Hours Logged"
+    "hoursLogged": "Hours Logged",
+    "attorneysAtLaw": "Attorneys at Law",
+    "statementOfAccountFor": "Statement of Account For",
+    "professionalServicesRendered": "Professional Services Rendered",
+    "totalForServices": "Total for Services",
+    "otherCharges": "Other Charges & Tax",
+    "caseDetails": "Case Details",
+    "caseName": "Case Name",
+    "caseNumber": "Case #",
+    "serviceType": "Service Type",
+    "retainer": "Retainer",
+    "filingFees": "Filing Fees",
+    "travelTime": "Travel (hrs)",
+    "disbursements": "Disbursements"
 }
