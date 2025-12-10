@@ -67,7 +67,28 @@
     "salesTax": "Sales Tax",
     "other": "Other",
     "termsAndConditions": "Terms and Conditions",
-    "thankYouForBusiness": "Thank you for your business. Please send payment within __ days of receiving this invoice. There will be a __% per __ on late invoices."
+    "thankYouForBusiness": "Thank you for your business. Please send payment within __ days of receiving this invoice. There will be a __% per __ on late invoices.",
+    "patientInformation": "Patient Information",
+    "patientName": "Patient",
+    "patientId": "Patient ID",
+    "visitDate": "Visit Date",
+    "physician": "Physician",
+    "cptCode": "CPT",
+    "icdCode": "ICD-10",
+    "copay": "Copay",
+    "labFee": "Lab Fee",
+    "medication": "Medication",
+    "billedTo": "Billed To",
+    "totalCharges": "Total Charges",
+    "amountPaid": "Amount Paid",
+    "patientResponsibility": "Patient Responsibility",
+    "medicalBillingStatement": "Medical Billing Statement",
+    "procedure": "Procedure",
+    "charge": "Charge",
+    "adjustments": "Adjustments",
+    "statement": "STATEMENT",
+    "statementDate": "Statement Date",
+    "accountNo": "Account #",
+    "pleaseRemit": "Please Remit",
+    "statementOfAccount": "STATEMENT OF ACCOUNT"
 }
-
-    
