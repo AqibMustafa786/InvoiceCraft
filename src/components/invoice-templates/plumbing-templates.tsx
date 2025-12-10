@@ -89,7 +89,7 @@ export const PlumbingTemplate1: React.FC<PageProps> = (props) => {
                 </div>
                  <div className="p-2 bg-gray-100 rounded">
                     <p className="font-bold text-gray-500">{(t.terms || 'Terms')}</p>
-                    <p>{invoice.paymentInstructions.split('\n')[0] || (t.dueOnReceipt || 'Due on receipt')}</p>
+                    <p>{(invoice.paymentInstructions || '').split('\n')[0] || (t.dueOnReceipt || 'Due on receipt')}</p>
                 </div>
                  <div className="p-2 bg-gray-100 rounded">
                     <p className="font-bold text-gray-500">{(t.dueDate || 'Due Date')}</p>

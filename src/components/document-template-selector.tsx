@@ -1,5 +1,4 @@
 
-
 'use client';
 
 import { cn } from '@/lib/utils';
@@ -12,7 +11,7 @@ interface Template {
   id: string;
   name: string;
   thumbnailUrl: string;
-  category: EstimateCategory | InvoiceCategory | 'all';
+  category: EstimateCategory | InvoiceCategory;
 }
 
 interface DocumentTemplateSelectorProps {
@@ -132,11 +131,12 @@ export function DocumentTemplateSelector({ selectedTemplate, onSelectTemplate, d
   const filteredTemplates = useMemo(() => {
     const generalCategory = documentType === 'invoice' ? 'General Services' : 'Generic';
     
+    // Strict filtering: If a specific category is chosen, show only its templates.
+    // If the general category is chosen, show only the general templates.
     if (category === generalCategory || !category) {
       return templates.filter(t => t.category === "General Services");
     }
     
-    // For any other specific category, only show templates for that category.
     return templates.filter(t => t.category === category);
 
   }, [category, documentType]);

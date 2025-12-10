@@ -36,15 +36,15 @@ const ConstructionDetails: React.FC<{ invoice: Invoice, t: any }> = ({ invoice, 
     const { construction } = invoice;
     return (
         <section className="my-4 text-xs">
-            <p className="font-bold text-gray-500 mb-2 border-b">{(t.constructionDetails || 'Construction Details')}</p>
+            <p className="font-bold text-gray-500 mb-2 border-b">{t.constructionDetails || 'Construction Details'}</p>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-x-4 gap-y-1">
-                <p><span className="font-semibold text-gray-600">{(t.jobSite || 'Job Site')}:</span> {construction.jobSiteAddress}</p>
-                <p><span className="font-semibold text-gray-600">{(t.permitNumber || 'Permit #')}:</span> {construction.permitNumber}</p>
-                {construction.laborRate && <p><span className="font-semibold text-gray-600">{(t.laborRate || 'Labor Rate')}:</span> ${construction.laborRate}/hr</p>}
-                {construction.equipmentRentalFees && <p><span className="font-semibold text-gray-600">{(t.equipmentFees || 'Equipment Fees')}:</span> ${construction.equipmentRentalFees}</p>}
-                {construction.wasteDisposalFee && <p><span className="font-semibold text-gray-600">{(t.disposalFee || 'Disposal Fee')}:</span> ${construction.wasteDisposalFee}</p>}
-                {construction.projectStartDate && <p><span className="font-semibold text-gray-600">{(t.startDate || 'Start Date')}:</span> {safeFormat(construction.projectStartDate, 'MM/dd/yyyy')}</p>}
-                {construction.projectEndDate && <p><span className="font-semibold text-gray-600">{(t.endDate || 'End Date')}:</span> {safeFormat(construction.projectEndDate, 'MM/dd/yyyy')}</p>}
+                <p><span className="font-semibold text-gray-600">{t.jobSite || 'Job Site'}:</span> {construction.jobSiteAddress}</p>
+                <p><span className="font-semibold text-gray-600">{t.permitNumber || 'Permit #'}:</span> {construction.permitNumber}</p>
+                {construction.laborRate && <p><span className="font-semibold text-gray-600">{t.laborRate || 'Labor Rate'}:</span> ${construction.laborRate}/hr</p>}
+                {construction.equipmentRentalFees && <p><span className="font-semibold text-gray-600">{t.equipmentFees || 'Equipment Fees'}:</span> ${construction.equipmentRentalFees}</p>}
+                {construction.wasteDisposalFee && <p><span className="font-semibold text-gray-600">{t.disposalFee || 'Disposal Fee'}:</span> ${construction.wasteDisposalFee}</p>}
+                {construction.projectStartDate && <p><span className="font-semibold text-gray-600">{t.startDate || 'Start Date'}:</span> {safeFormat(construction.projectStartDate, 'MM/dd/yyyy')}</p>}
+                {construction.projectEndDate && <p><span className="font-semibold text-gray-600">{t.endDate || 'End Date'}:</span> {safeFormat(construction.projectEndDate, 'MM/dd/yyyy')}</p>}
             </div>
         </section>
     );
@@ -53,8 +53,8 @@ const ConstructionDetails: React.FC<{ invoice: Invoice, t: any }> = ({ invoice, 
 export const ConstructionTemplate1: React.FC<PageProps> = (props) => {
     const { invoice, pageItems, pageIndex, totalPages, subtotal, taxAmount, balanceDue, t, currencySymbol } = props;
     const { business, client } = invoice;
-    const totalLabor = pageItems.filter(i => i.name.toLowerCase().includes('labor')).reduce((acc, i) => acc + (i.quantity * i.unitPrice), 0);
-    const totalMaterials = pageItems.filter(i => !i.name.toLowerCase().includes('labor')).reduce((acc, i) => acc + (i.quantity * i.unitPrice), 0);
+    const totalLabor = pageItems.filter(i => (i.name || '').toLowerCase().includes('labor')).reduce((acc, i) => acc + (i.quantity * i.unitPrice), 0);
+    const totalMaterials = pageItems.filter(i => !(i.name || '').toLowerCase().includes('labor')).reduce((acc, i) => acc + (i.quantity * i.unitPrice), 0);
 
     return (
         <div className={`p-8 font-sans ${pageIndex < totalPages - 1 ? 'page-break-after' : ''}`} style={{ minHeight: '1056px', backgroundColor: props.backgroundColor, color: props.textColor }}>
@@ -91,7 +91,7 @@ export const ConstructionTemplate1: React.FC<PageProps> = (props) => {
                     <table className="w-full text-left text-xs">
                         <thead><tr className="bg-gray-200"><th className="p-1 font-bold w-1/4">{(t.quantity || 'QTY').toUpperCase()}</th><th className="p-1 font-bold w-1/2">{(t.material || 'MATERIAL').toUpperCase()}</th><th className="p-1 font-bold text-right w-1/4">{(t.total || 'TOTAL').toUpperCase()}</th></tr></thead>
                         <tbody>
-                            {pageItems.filter(i => !i.name.toLowerCase().includes('labor')).map(item => (
+                            {pageItems.filter(i => !(i.name || '').toLowerCase().includes('labor')).map(item => (
                                 <tr key={item.id} className="border-b"><td className="p-1">{item.quantity}</td><td className="p-1">{item.name}</td><td className="p-1 text-right">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</td></tr>
                             ))}
                         </tbody>
@@ -104,7 +104,7 @@ export const ConstructionTemplate1: React.FC<PageProps> = (props) => {
                      <table className="w-full text-left text-xs">
                         <thead><tr className="bg-gray-200"><th className="p-1 font-bold w-1/2">{(t.labor || 'LABOR').toUpperCase()}</th><th className="p-1 font-bold text-right w-1/4">{(t.hours || 'HRS').toUpperCase()}</th><th className="p-1 font-bold text-right w-1/4">{(t.amount || 'AMOUNT').toUpperCase()}</th></tr></thead>
                         <tbody>
-                            {pageItems.filter(i => i.name.toLowerCase().includes('labor')).map(item => (
+                            {pageItems.filter(i => (i.name || '').toLowerCase().includes('labor')).map(item => (
                                 <tr key={item.id} className="border-b"><td className="p-1">{item.name}</td><td className="p-1 text-right">{item.quantity}</td><td className="p-1 text-right">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</td></tr>
                             ))}
                         </tbody>
@@ -271,7 +271,6 @@ export const ConstructionTemplate3: React.FC<PageProps> = (props) => {
     );
 };
 
-// All other templates will just be stubs for now, pointing to the first one.
 export const ConstructionTemplate4: React.FC<PageProps> = (props) => <ConstructionTemplate1 {...props} />;
 export const ConstructionTemplate5: React.FC<PageProps> = (props) => <ConstructionTemplate2 {...props} />;
 export const ConstructionTemplate6: React.FC<PageProps> = (props) => <ConstructionTemplate3 {...props} />;

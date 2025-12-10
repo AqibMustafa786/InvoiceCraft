@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import React from 'react';
@@ -50,7 +51,7 @@ const RoofingDetails: React.FC<{ invoice: Invoice, t: any }> = ({ invoice, t }) 
 
 // Template 1: Direct Interpretation from Image
 export const RoofingTemplate1: React.FC<PageProps> = (props) => {
-    const { invoice, pageItems, pageIndex, totalPages, subtotal, taxAmount, balanceDue, currencySymbol, t } = props;
+    const { invoice, pageItems, pageIndex, totalPages, balanceDue, currencySymbol, t } = props;
     const { business, client } = invoice;
 
     return (
@@ -113,16 +114,7 @@ export const RoofingTemplate1: React.FC<PageProps> = (props) => {
                 <footer className="mt-auto pt-4 text-xs">
                     <div className="flex justify-end">
                         <div className="w-1/3">
-                            <p className="flex justify-between p-1 border-b"><span>{(t.subtotal || 'SUBTOTAL').toUpperCase()}</span> <span>{currencySymbol}{subtotal.toFixed(2)}</span></p>
-                            <p className="flex justify-between p-1 border-b"><span>{(t.tax || 'TAX').toUpperCase()}</span> <span>{currencySymbol}{taxAmount.toFixed(2)}</span></p>
                             <p className="flex justify-between p-1 font-bold text-sm"><span>{(t.totalDue || 'TOTAL DUE').toUpperCase()}</span> <span>{currencySymbol}{balanceDue.toFixed(2)}</span></p>
-                        </div>
-                    </div>
-                    <div className="mt-4 border-t pt-2">
-                        <p className="italic text-gray-600">{invoice.termsAndConditions}</p>
-                        <div className="flex justify-between mt-8">
-                            <div><p className="border-t pt-1">{(t.customerSignature || 'Customer Signature')}</p></div>
-                            <div><p className="border-t pt-1">{(t.date || 'Date')}</p></div>
                         </div>
                     </div>
                 </footer>
@@ -131,7 +123,6 @@ export const RoofingTemplate1: React.FC<PageProps> = (props) => {
     );
 }
 
-// All other templates will just be stubs for now, pointing to the first one.
 export const RoofingTemplate2: React.FC<PageProps> = (props) => <RoofingTemplate1 {...props} />;
 export const RoofingTemplate3: React.FC<PageProps> = (props) => <RoofingTemplate1 {...props} />;
 export const RoofingTemplate4: React.FC<PageProps> = (props) => <RoofingTemplate1 {...props} />;
