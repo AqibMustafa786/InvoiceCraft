@@ -191,20 +191,20 @@ const DefaultTemplatePage: FC<PageProps> = ({ pageItems, pageIndex, totalPages, 
                     </div>
                 </div>
                 <div className="text-right">
-                    <h2 className="text-3xl font-bold text-gray-400 uppercase tracking-wider">{(commonProps.t.invoice || 'Invoice').toUpperCase()}</h2>
+                    <h2 className="text-3xl font-bold text-gray-400 uppercase tracking-wider">{((commonProps.t.invoice as string) || 'Invoice').toUpperCase()}</h2>
                     <p className="mt-1">{commonProps.invoice.invoiceNumber}</p>
                 </div>
             </header>
              <section className="flex justify-between mb-10" data-element="client-details">
                 <div className="space-y-1">
-                    <p className="text-sm font-semibold text-gray-500">{(commonProps.t.billTo || 'BILL TO').toUpperCase()}</p>
+                    <p className="text-sm font-semibold text-gray-500">{((commonProps.t.billTo as string) || 'BILL TO').toUpperCase()}</p>
                     <p className="font-bold">{commonProps.invoice.client.name}</p>
                     <p className="text-sm whitespace-pre-line">{commonProps.invoice.client.address}</p>
                 </div>
                 <div className="text-right space-y-1">
-                    <p className="text-sm font-semibold text-gray-500">{(commonProps.t.invoiceDate || 'Invoice Date').toUpperCase()}</p>
+                    <p className="text-sm font-semibold text-gray-500">{((commonProps.t.invoiceDate as string) || 'Invoice Date').toUpperCase()}</p>
                     <p>{safeFormat(new Date(commonProps.invoice.invoiceDate || new Date()), 'MMMM d, yyyy')}</p>
-                    <p className="text-sm font-semibold text-gray-500 mt-2">{(commonProps.t.dueDate || 'Due Date').toUpperCase()}</p>
+                    <p className="text-sm font-semibold text-gray-500 mt-2">{((commonProps.t.dueDate as string) || 'Due Date').toUpperCase()}</p>
                     <p>{safeFormat(new Date(commonProps.invoice.dueDate || new Date()), 'MMMM d, yyyy')}</p>
                 </div>
             </section>
@@ -226,7 +226,7 @@ const ModernTemplatePage: FC<PageProps> = ({ pageItems, pageIndex, totalPages, .
                         <h1 className="text-2xl font-bold font-headline">{commonProps.invoice.business.name}</h1>
                     )}
                  </div>
-                 <h2 className="text-3xl font-bold uppercase" style={{color: commonProps.accentColor}}>{(commonProps.t.invoice || 'Invoice').toUpperCase()}</h2>
+                 <h2 className="text-3xl font-bold uppercase" style={{color: commonProps.accentColor}}>{((commonProps.t.invoice as string) || 'Invoice').toUpperCase()}</h2>
             </div>
              <section className="flex justify-between my-8 text-sm" data-element="client-details">
                 <div className="space-y-1">
@@ -266,7 +266,7 @@ const MinimalistTemplatePage: FC<PageProps> = ({ pageItems, pageIndex, totalPage
             <header data-element="header" className="mb-12">
                 <div className="flex justify-between items-start">
                     <h1 className="text-2xl font-bold">{commonProps.invoice.business.name}</h1>
-                    <h2 className="text-2xl font-light uppercase text-gray-500">{(commonProps.t.invoice || 'Invoice').toUpperCase()}</h2>
+                    <h2 className="text-2xl font-light uppercase text-gray-500">{((commonProps.t.invoice as string) || 'Invoice').toUpperCase()}</h2>
                 </div>
                 <p className="text-xs text-gray-500 mt-1">{commonProps.invoice.business.address}</p>
             </header>
@@ -302,7 +302,7 @@ const CreativeTemplatePage: FC<PageProps> = ({ pageItems, pageIndex, totalPages,
                     <h1 className="text-3xl font-bold mt-2">{commonProps.invoice.business.name}</h1>
                 </div>
                 <div className="text-right">
-                    <h2 className="text-4xl font-extrabold uppercase" style={{color: commonProps.accentColor}}>{(commonProps.t.invoice || 'Invoice').toUpperCase()}</h2>
+                    <h2 className="text-4xl font-extrabold uppercase" style={{color: commonProps.accentColor}}>{((commonProps.t.invoice as string) || 'Invoice').toUpperCase()}</h2>
                     <p className="text-sm mt-1">{commonProps.invoice.invoiceNumber}</p>
                 </div>
             </header>
