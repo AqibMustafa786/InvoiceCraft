@@ -4,7 +4,7 @@ import './globals.css';
 import { cn } from '@/lib/utils';
 import { Toaster } from '@/components/ui/toaster';
 import { Footer } from '@/components/footer';
-import { ThemeProvider } from '@/components/theme-provider';
+import { ColorProvider, ThemeProvider } from '@/components/theme-provider';
 import { Header } from '@/components/header';
 import { FirebaseClientProvider } from '@/firebase';
 import { AuthProvider } from '@/context/auth-provider';
@@ -39,13 +39,15 @@ export default function RootLayout({
                 enableSystem
                 disableTransitionOnChange
               >
-              <div className="app-main-container relative flex min-h-screen flex-col">
-                <Header />
-                <main className="flex-1">{children}</main>
-                <Footer />
-              </div>
-              <Toaster />
-              <div id="print-container" className="hidden print:block"></div>
+              <ColorProvider>
+                <div className="app-main-container relative flex min-h-screen flex-col">
+                  <Header />
+                  <main className="flex-1">{children}</main>
+                  <Footer />
+                </div>
+                <Toaster />
+                <div id="print-container" className="hidden print:block"></div>
+              </ColorProvider>
             </ThemeProvider>
           </AuthProvider>
         </FirebaseClientProvider>
