@@ -51,75 +51,79 @@ const AutoRepairDetails: React.FC<{ invoice: Invoice, t: any }> = ({ invoice, t 
     );
 };
 
-// Template 1: Gold Standard
+// Template 1: Based on User Image
 export const AutoRepairTemplate1: React.FC<PageProps> = (props) => {
-    const { invoice, pageItems, pageIndex, totalPages, subtotal, taxAmount, balanceDue, currencySymbol, accentColor, t } = props;
+    const { invoice, pageItems, pageIndex, totalPages, balanceDue, subtotal, taxAmount, currencySymbol, t, accentColor } = props;
     const { business, client } = invoice;
 
     return (
-        <div className={`p-8 font-sans ${pageIndex < totalPages - 1 ? 'page-break-after' : ''}`} style={{ minHeight: '1056px', backgroundColor: props.backgroundColor, color: props.textColor }}>
-            <header className="mb-8 p-4 bg-gray-100 rounded-md">
-                <div className="flex justify-between items-center">
-                    <div>
-                         {business.logoUrl ? (
-                            <Image src={business.logoUrl} alt={`${business.name} Logo`} width={120} height={50} className="object-contain" />
-                         ) : (
-                            <h1 className="text-3xl font-bold">{business.name}</h1>
-                         )}
-                        <p className="text-xs whitespace-pre-line">{business.address}</p>
-                    </div>
-                    <h2 className="text-2xl font-extrabold" style={{ color: accentColor }}>{(t.invoice || 'INVOICE').toUpperCase()}</h2>
-                </div>
-            </header>
-
-            <section className="grid grid-cols-2 gap-4 text-xs mb-8">
-                <div>
-                    <p className="font-bold">{(t.customer || 'CUSTOMER').toUpperCase()}</p>
-                    <p>{client.name}</p>
-                    <p>{client.address}</p>
-                </div>
-                <div className="text-right">
-                    <p><span className="font-bold">{(t.invoiceNo || 'INVOICE #')}:</span> {invoice.invoiceNumber}</p>
-                    <p><span className="font-bold">{(t.date || 'DATE')}:</span> {safeFormat(invoice.invoiceDate, 'MM/dd/yyyy')}</p>
-                </div>
-            </section>
-
-            <AutoRepairDetails invoice={invoice} t={t} />
-
-            <main className="flex-grow">
-                <table className="w-full text-left text-xs">
-                    <thead>
-                        <tr style={{ backgroundColor: accentColor, color: 'white' }}>
-                            <th className="p-2 font-bold w-1/2">{(t.description || 'DESCRIPTION').toUpperCase()}</th>
-                            <th className="p-2 font-bold text-center">{(t.quantity || 'QTY').toUpperCase()}</th>
-                            <th className="p-2 font-bold text-right">{(t.unitPrice || 'UNIT PRICE').toUpperCase()}</th>
-                            <th className="p-2 font-bold text-right">{(t.total || 'TOTAL').toUpperCase()}</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {pageItems.map(item => (
-                            <tr key={item.id} className="border-b">
-                                <td className="p-2">{item.name}</td>
-                                <td className="p-2 text-center">{item.quantity}</td>
-                                <td className="p-2 text-right">{currencySymbol}{item.unitPrice.toFixed(2)}</td>
-                                <td className="p-2 text-right">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
-            </main>
-
-            {pageIndex === totalPages - 1 && (
-                <footer className="mt-auto pt-8">
-                    <div className="flex justify-end">
-                        <div className="w-2/5 text-xs space-y-1">
-                            <p className="grid grid-cols-2"><span>{(t.subtotal || 'Subtotal')}:</span><span className="text-right">{currencySymbol}{subtotal.toFixed(2)}</span></p>
-                            <p className="grid grid-cols-2"><span>{(t.tax || 'Tax')} ({invoice.summary.taxPercentage}%):</span><span className="text-right">{currencySymbol}{taxAmount.toFixed(2)}</span></p>
-                            <p className="grid grid-cols-2 mt-2 pt-2 border-t font-bold text-sm"><span>{(t.total || 'Total')}:</span><span className="text-right">{currencySymbol}{balanceDue.toFixed(2)}</span></p>
+        <div className={`p-0 font-sans ${pageIndex < totalPages - 1 ? 'page-break-after' : ''}`} style={{ minHeight: '1056px', backgroundColor: props.backgroundColor, color: props.textColor }}>
+            <header className="p-8 pb-20 bg-gray-100 relative" style={{color: props.textColor}}>
+                <div className="flex justify-between items-start">
+                    <div className="flex items-center gap-4">
+                        {business.logoUrl && <Image src={business.logoUrl} alt="Logo" width={50} height={50} className="rounded-md object-contain" />}
+                        <div>
+                            <h1 className="font-bold" style={{color: accentColor || '#F97316'}}>{business.name}</h1>
+                            <p className="text-xs">{business.address}</p>
+                            <p className="text-xs">{business.email} | {business.website} | {business.phone}</p>
                         </div>
                     </div>
+                </div>
+                 <div className="absolute right-0 bottom-0 w-2/3 h-24">
+                     <svg className="w-full h-full" viewBox="0 0 400 100" preserveAspectRatio="none">
+                         <path d="M0 100 L400 100 L400 0 L200 100 Z" style={{fill: accentColor || '#F97316'}}/>
+                         <path d="M0 100 L200 100 L100 0 Z" style={{fill: '#4A5568'}}/>
+                     </svg>
+                     <div className="absolute top-0 right-0 h-full w-full flex justify-end items-center pr-8">
+                        <Image src="https://storage.googleapis.com/studio-hosting-assets/invoice-template-previews/car-graphic.png" alt="Car" width={140} height={70} className="object-contain" />
+                     </div>
+                 </div>
+            </header>
+            <div className="p-8">
+                <h2 className="text-2xl font-bold mb-6">Auto Repair Invoice</h2>
+                <section className="grid grid-cols-2 gap-8 text-xs mb-8">
+                    <div>
+                        <p className="font-bold mb-1">Invoice Details:</p>
+                        <ul>
+                            <li><span className="font-semibold">Invoice Number:</span> {invoice.invoiceNumber}</li>
+                            <li><span className="font-semibold">Invoice Date:</span> {safeFormat(invoice.invoiceDate, 'MMMM d, yyyy')}</li>
+                            <li><span className="font-semibold">Due Date:</span> {safeFormat(invoice.dueDate, 'MMMM d, yyyy')}</li>
+                        </ul>
+                    </div>
+                     <div>
+                        <p className="font-bold mb-1">Billed To:</p>
+                        <ul>
+                            <li><span className="font-semibold">Customer:</span> {client.name}</li>
+                            <li><span className="font-semibold">Address:</span> {client.address}</li>
+                            <li><span className="font-semibold">Phone:</span> {client.phone}</li>
+                            <li><span className="font-semibold">Email:</span> {client.email}</li>
+                        </ul>
+                    </div>
+                </section>
+                <main className="flex-grow">
+                    <table className="w-full text-left text-xs">
+                        <thead><tr className="bg-gray-100"><th className="p-2 font-bold w-[50%]">Description</th><th className="p-2 font-bold w-[15%]">Quantity</th><th className="p-2 font-bold w-[15%]">Rate</th><th className="p-2 font-bold w-[20%] text-right">Amount</th></tr></thead>
+                        <tbody>{pageItems.map(item => (<tr key={item.id} className="border-b"><td className="p-2">{item.name}</td><td className="p-2">{item.quantity}</td><td className="p-2">{item.unitPrice.toFixed(2)}</td><td className="p-2 text-right">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</td></tr>))}</tbody>
+                    </table>
+                </main>
+                {pageIndex === totalPages - 1 && (
+                <footer className="mt-auto pt-4">
+                    <div className="flex justify-end text-xs">
+                        <div className="w-1/3 space-y-1">
+                            <p className="flex justify-between p-1"><span>Subtotal</span><span>{currencySymbol}{subtotal.toFixed(2)}</span></p>
+                            <p className="flex justify-between p-1"><span>Tax ({invoice.summary.taxPercentage}%)</span><span>{currencySymbol}{taxAmount.toFixed(2)}</span></p>
+                            <p className="flex justify-between p-1 font-bold text-sm mt-1 border-t"><span>Total</span><span>{currencySymbol}{balanceDue.toFixed(2)}</span></p>
+                        </div>
+                    </div>
+                    <div className="text-xs mt-8">
+                        <p className="font-bold">Payment Instructions:</p>
+                        <p>{invoice.paymentInstructions}</p>
+                        <p className="font-bold mt-2">Notes:</p>
+                        <p>Thank you for choosing {business.name} for your vehicle maintenance needs. If you have any questions about this invoice, please contact us at {business.phone}.</p>
+                    </div>
                 </footer>
-            )}
+                )}
+            </div>
         </div>
     );
 };
@@ -131,10 +135,10 @@ export const AutoRepairTemplate2: React.FC<PageProps> = (props) => {
     const { business, client } = invoice;
 
     return (
-        <div className={`p-8 font-mono bg-gray-900 text-white ${pageIndex < totalPages - 1 ? 'page-break-after' : ''}`} style={{ minHeight: '1056px', backgroundColor: props.backgroundColor, color: props.textColor }}>
+        <div className={`p-8 font-mono bg-gray-900 text-white ${pageIndex < totalPages - 1 ? 'page-break-after' : ''}`} style={{ minHeight: '1056px', backgroundColor: '#1A202C', color: '#E2E8F0' }}>
             <header className="flex justify-between items-center mb-8">
                 <div>
-                    <h1 className="text-3xl font-bold" style={{ color: accentColor }}>{business.name}</h1>
+                    <h1 className="text-3xl font-bold" style={{ color: accentColor || '#FBBF24' }}>{business.name}</h1>
                     <p className="text-xs text-gray-400">{(t.autoRepairService || 'Auto Repair & Service')}</p>
                 </div>
                 <div className="text-right">
@@ -173,7 +177,7 @@ export const AutoRepairTemplate3: React.FC<PageProps> = (props) => {
     const { invoice, pageItems, pageIndex, totalPages, subtotal, taxAmount, balanceDue, currencySymbol, t } = props;
     const { business, client } = invoice;
     return (
-        <div className={`p-10 font-serif bg-orange-50 ${pageIndex < totalPages - 1 ? 'page-break-after' : ''}`} style={{ minHeight: '1056px', backgroundColor: props.backgroundColor, color: props.textColor }}>
+        <div className={`p-10 font-serif bg-orange-50 ${pageIndex < totalPages - 1 ? 'page-break-after' : ''}`} style={{ minHeight: '1056px', backgroundColor: '#FFF7ED', color: '#4A5568' }}>
             <header className="text-center mb-8">
                 <h1 className="text-4xl font-bold">{business.name}</h1>
                 <p className="text-sm">{(t.qualityAutoRepair || 'Quality Auto Repair Since 1985')}</p>
@@ -254,7 +258,7 @@ export const AutoRepairTemplate5: React.FC<PageProps> = (props) => {
     const { invoice, pageItems, pageIndex, totalPages, subtotal, taxAmount, balanceDue, currencySymbol, t } = props;
     const { business, client } = invoice;
     return (
-        <div className={`p-10 font-sans ${pageIndex < totalPages - 1 ? 'page-break-after' : ''}`} style={{ minHeight: '1056px', backgroundColor: props.backgroundColor, color: props.textColor }}>
+        <div className={`p-10 font-sans ${pageIndex < totalPages - 1 ? 'page-break-after' : ''}`} style={{ minHeight: '1056px', backgroundColor: '#F9FAFB', color: '#374151' }}>
             <header className="flex justify-between items-center mb-8">
                 <h1 className="text-4xl font-extrabold">{business.name}</h1>
                 <h2 className="text-xl font-light">{(t.invoice || 'Invoice')} / {(t.receipt || 'Receipt')}</h2>
@@ -284,5 +288,3 @@ export const AutoRepairTemplate5: React.FC<PageProps> = (props) => {
         </div>
     );
 };
-
-    
