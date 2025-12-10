@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import React from 'react';
@@ -156,7 +157,11 @@ export const CleaningTemplate2: React.FC<PageProps> = (props) => {
                     <p className="font-semibold">{client.name}</p>
                     <p>{client.address}</p>
                 </div>
-                 <div className="text-right col-span-2">
+                <div>
+                     <p className="font-bold text-gray-500">{(t.project || 'Project')}:</p>
+                     <p className="font-semibold">{invoice.poNumber || 'N/A'}</p>
+                </div>
+                <div className="text-right">
                     <p><span className="font-bold">{(t.invoiceNo || 'Invoice #')}:</span> {invoice.invoiceNumber}</p>
                     <p><span className="font-bold">{(t.date || 'Date')}:</span> {safeFormat(invoice.invoiceDate, 'MMM d, yyyy')}</p>
                 </div>
@@ -245,90 +250,5 @@ export const CleaningTemplate3: React.FC<PageProps> = (props) => {
     );
 };
 
-// Template 4: Hygiene
-export const CleaningTemplate4: React.FC<PageProps> = (props) => {
-    const { invoice, pageItems, pageIndex, totalPages, subtotal, taxAmount, balanceDue, currencySymbol, t, accentColor } = props;
-    const { business, client } = invoice;
-
-    return (
-        <div className={`p-10 font-sans ${pageIndex < totalPages - 1 ? 'page-break-after' : ''}`} style={{ minHeight: '1056px', backgroundColor: props.backgroundColor, color: props.textColor }}>
-            <div className="border-t-8" style={{borderColor: accentColor}}>
-                <header className="my-8 flex justify-between items-center">
-                    <div>
-                        {business.logoUrl && <Image src={business.logoUrl} alt="Logo" width={100} height={50} className="object-contain mb-2"/>}
-                        <h1 className="text-2xl font-bold">{business.name}</h1>
-                        <p className="text-xs text-gray-500">{business.address}</p>
-                    </div>
-                    <div className="text-right">
-                        <h2 className="text-4xl font-light text-gray-400">{(t.invoice || 'INVOICE').toUpperCase()}</h2>
-                        <p className="text-xs text-gray-500">{invoice.invoiceNumber}</p>
-                    </div>
-                </header>
-                 <section className="grid grid-cols-2 gap-8 text-xs mb-8">
-                    <div><p className="font-bold text-gray-500">{(t.billTo || 'Bill To')}</p><p>{client.name}<br/>{client.address}</p></div>
-                    <div className="text-right"><p><span className="font-bold text-gray-500">{(t.date || 'Date')}: </span>{safeFormat(invoice.invoiceDate, 'MMM dd, yyyy')}</p><p><span className="font-bold text-gray-500">{(t.dueDate || 'Due Date')}: </span>{safeFormat(invoice.dueDate, 'MMM dd, yyyy')}</p></div>
-                </section>
-                <CleaningDetails invoice={invoice} t={t} />
-                <main className="flex-grow mt-4">
-                    <table className="w-full text-left text-xs">
-                        <thead><tr className="bg-gray-100"><th className="p-2 font-bold w-3/5">{(t.item || 'Item').toUpperCase()}</th><th className="p-2 font-bold text-center">{(t.qty || 'Qty').toUpperCase()}</th><th className="p-2 font-bold text-right">{(t.price || 'Price').toUpperCase()}</th><th className="p-2 font-bold text-right">{(t.total || 'Total').toUpperCase()}</th></tr></thead>
-                        <tbody>{pageItems.map(item => (<tr key={item.id} className="border-b"><td className="p-2">{item.name}</td><td className="p-2 text-center">{item.quantity}</td><td className="p-2 text-right">{currencySymbol}{item.unitPrice.toFixed(2)}</td><td className="p-2 text-right">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</td></tr>))}</tbody>
-                    </table>
-                </main>
-                {pageIndex === totalPages - 1 && (
-                <footer className="mt-auto pt-8">
-                    <div className="flex justify-end">
-                        <table className="w-2/5 text-xs">
-                            <tbody>
-                                <tr><td className="py-1">{(t.subtotal || 'Subtotal')}</td><td className="py-1 text-right">{currencySymbol}{subtotal.toFixed(2)}</td></tr>
-                                <tr><td className="py-1">{(t.tax || 'Tax')}</td><td className="py-1 text-right">{currencySymbol}{taxAmount.toFixed(2)}</td></tr>
-                                <tr className="font-bold text-base"><td className="py-2 border-t-2 border-black">{(t.total || 'Total')}</td><td className="py-2 border-t-2 border-black text-right">{currencySymbol}{balanceDue.toFixed(2)}</td></tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </footer>
-                )}
-            </div>
-        </div>
-    );
-};
-
-// Template 5: Gleam
-export const CleaningTemplate5: React.FC<PageProps> = (props) => {
-    const { invoice, pageItems, pageIndex, totalPages, subtotal, taxAmount, balanceDue, t, currencySymbol, accentColor } = props;
-    const { business, client } = invoice;
-    return (
-        <div className={`p-8 font-['Georgia',_serif] ${pageIndex < totalPages - 1 ? 'page-break-after' : ''}`} style={{ minHeight: '1056px', backgroundColor: props.backgroundColor, color: props.textColor }}>
-            <header className="mb-16 text-center">
-                 {business.logoUrl && <Image src={business.logoUrl} alt="Logo" width={70} height={70} className="mx-auto mb-4 rounded-full"/>}
-                <h1 className="text-4xl font-bold">{business.name}</h1>
-                <p className="text-sm text-gray-500">{(t.professionalCleaningServices || 'Professional Cleaning Services')}</p>
-            </header>
-            <section className="flex justify-between text-xs mb-8">
-                <div><p className="font-bold text-gray-500">{(t.invoiceTo || 'INVOICE TO')}</p><p>{client.name}</p><p>{client.address}</p></div>
-                <div className="text-right"><p><span className="font-bold text-gray-500">{(t.invoice || 'INVOICE').toUpperCase()}: </span>{invoice.invoiceNumber}</p><p><span className="font-bold text-gray-500">{(t.date || 'DATE')}: </span>{safeFormat(invoice.invoiceDate, 'MMM dd, yyyy')}</p></div>
-            </section>
-            <CleaningDetails invoice={invoice} t={t} />
-            <main className="flex-grow mt-4">
-                 <table className="w-full text-left text-xs">
-                    <thead><tr><th className="pb-2 font-bold w-1/2 border-b-2">{(t.description || 'DESCRIPTION').toUpperCase()}</th><th className="pb-2 font-bold text-center border-b-2">{(t.qty || 'QTY').toUpperCase()}</th><th className="pb-2 font-bold text-right border-b-2">{(t.price || 'PRICE').toUpperCase()}</th><th className="pb-2 font-bold text-right border-b-2">{(t.total || 'TOTAL').toUpperCase()}</th></tr></thead>
-                    <tbody>{pageItems.map(item => (<tr key={item.id}><td className="py-2 border-b">{item.name}</td><td className="py-2 border-b text-center">{item.quantity}</td><td className="py-2 border-b text-right">{currencySymbol}{item.unitPrice.toFixed(2)}</td><td className="py-2 border-b text-right">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</td></tr>))}</tbody>
-                </table>
-            </main>
-            {pageIndex === totalPages - 1 && (
-            <footer className="mt-auto pt-8">
-                <div className="flex justify-end">
-                    <div className="w-1/3 text-xs space-y-2">
-                        <p className="flex justify-between"><span>{(t.subtotal || 'Subtotal')}</span><span>{currencySymbol}{subtotal.toFixed(2)}</span></p>
-                        <p className="flex justify-between"><span>{(t.tax || 'Tax')}</span><span>{currencySymbol}{taxAmount.toFixed(2)}</span></p>
-                        <div className="h-4"></div>
-                        <p className="flex justify-between font-bold text-base" style={{color: accentColor}}><span>{(t.total || 'Total')}</span><span>{currencySymbol}{balanceDue.toFixed(2)}</span></p>
-                    </div>
-                </div>
-            </footer>
-            )}
-        </div>
-    );
-};
-
-    
+export const CleaningTemplate4: React.FC<PageProps> = (props) => <CleaningTemplate1 {...props} />;
+export const CleaningTemplate5: React.FC<PageProps> = (props) => <CleaningTemplate2 {...props} />;

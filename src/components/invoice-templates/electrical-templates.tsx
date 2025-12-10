@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import React from 'react';
@@ -269,10 +270,14 @@ export const ElectricalTemplate4: React.FC<PageProps> = (props) => {
                         <p className="text-xs text-gray-400">{(t.electricalService || 'Electrical Service')}</p>
                     </div>
                 </header>
+                 <section className="grid grid-cols-2 gap-4 mb-8 text-xs">
+                    <div><p className="font-bold">{(t.client || 'CLIENT')}:</p><p>{client.name}, {client.address}</p></div>
+                    <div className="text-right"><p className="font-bold">{(t.date || 'DATE')}:</p><p>{safeFormat(invoice.invoiceDate, 'yyyy-MM-dd')}</p></div>
+                </section>
 
                 <ElectricalDetails invoice={invoice} t={t} />
 
-                <main className="flex-grow mt-8">
+                <main className="flex-grow">
                     <table className="w-full text-left text-sm">
                         <thead className="bg-gray-50">
                             <tr>
@@ -336,7 +341,7 @@ export const ElectricalTemplate5: React.FC<PageProps> = (props) => {
             
             <ElectricalDetails invoice={invoice} t={t} />
 
-            <main className="flex-grow bg-white p-4 rounded-md shadow-sm mt-4">
+            <main className="flex-grow bg-white p-4 rounded-md shadow-sm">
                 <table className="w-full text-left text-xs">
                     <thead>
                         <tr className="border-b-2 border-gray-200">

@@ -51,7 +51,7 @@ const RoofingDetails: React.FC<{ invoice: Invoice, t: any }> = ({ invoice, t }) 
 
 // Template 1: Direct Interpretation from Image
 export const RoofingTemplate1: React.FC<PageProps> = (props) => {
-    const { invoice, pageItems, pageIndex, totalPages, balanceDue, currencySymbol, t } = props;
+    const { invoice, pageItems, pageIndex, totalPages, subtotal, balanceDue, currencySymbol, t } = props;
     const { business, client } = invoice;
 
     return (
@@ -205,91 +205,10 @@ export const RoofingTemplate3: React.FC<PageProps> = (props) => {
         </div>
     );
 };
-export const RoofingTemplate4: React.FC<PageProps> = (props) => {
-    const { invoice, pageItems, pageIndex, totalPages, subtotal, taxAmount, balanceDue, currencySymbol, t, accentColor } = props;
-    const { business, client } = invoice;
-    return (
-        <div className={`p-10 bg-white font-sans text-gray-800 flex flex-col ${pageIndex < totalPages - 1 ? 'page-break-after' : ''}`} style={{ minHeight: '1056px', backgroundColor: props.backgroundColor, color: props.textColor }}>
-            <header className="flex justify-between items-start mb-8">
-                <div>
-                    {business.logoUrl && <Image src={business.logoUrl} alt="Logo" width={100} height={50} className="object-contain" />}
-                    <h1 className="text-4xl font-bold mt-2">{business.name}</h1>
-                    <p className="text-xs text-gray-500 whitespace-pre-line">{business.address}</p>
-                </div>
-                <div className="text-right">
-                    <h2 className="text-3xl font-semibold text-gray-400">INVOICE</h2>
-                    <p className="text-xs text-gray-400">Roofing Service</p>
-                </div>
-            </header>
-            <section className="mb-8 text-xs p-4 border border-gray-200">
-                <div className="grid grid-cols-2 gap-4">
-                    <div><p className="font-bold">CUSTOMER:</p><p>{client.name}<br/>{client.address}</p></div>
-                    <div><p className="font-bold">INVOICE #:</p><p>{invoice.invoiceNumber}</p><p className="font-bold mt-2">DATE:</p><p>{safeFormat(invoice.invoiceDate, 'MM/dd/yyyy')}</p></div>
-                </div>
-                <div className="mt-4 pt-4 border-t border-gray-200"><p className="font-bold mb-1">PROJECT SPECS</p><RoofingDetails invoice={invoice} t={t} /></div>
-            </section>
-            <main className="flex-grow">
-                 <table className="w-full text-left text-xs">
-                    <thead><tr className="bg-gray-100 border-b-2 border-gray-300"><th className="p-2 font-bold w-[60%]">DESCRIPTION</th><th className="p-2 font-bold text-center">QTY</th><th className="p-2 font-bold text-right">UNIT PRICE</th><th className="p-2 font-bold text-right">TOTAL</th></tr></thead>
-                    <tbody>{pageItems.map(item => (<tr key={item.id} className="border-b"><td className="p-2">{item.name}</td><td className="p-2 text-center">{item.quantity}</td><td className="p-2 text-right">{currencySymbol}{item.unitPrice.toFixed(2)}</td><td className="p-2 text-right font-medium">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</td></tr>))}</tbody>
-                </table>
-            </main>
-            {pageIndex === totalPages - 1 && (
-            <footer className="mt-auto pt-8">
-                <div className="flex justify-end">
-                    <table className="w-1/3 text-sm">
-                        <tbody>
-                            <tr><td className="py-1 text-gray-600">Subtotal</td><td className="py-1 text-right">{currencySymbol}{subtotal.toFixed(2)}</td></tr>
-                            <tr><td className="py-1 text-gray-600">Tax</td><td className="py-1 text-right">{currencySymbol}{taxAmount.toFixed(2)}</td></tr>
-                            <tr className="font-bold text-base border-t-2 border-black"><td className="py-2">Total</td><td className="py-2 text-right">{currencySymbol}{balanceDue.toFixed(2)}</td></tr>
-                        </tbody>
-                    </table>
-                </div>
-            </footer>
-            )}
-        </div>
-    );
-};
-export const RoofingTemplate5: React.FC<PageProps> = (props) => {
-    const { invoice, pageItems, pageIndex, totalPages, subtotal, taxAmount, balanceDue, currencySymbol, t, accentColor } = props;
-    const { business, client } = invoice;
-    return (
-        <div className={`p-12 bg-white font-['Garamond',_serif] text-gray-700 flex flex-col ${pageIndex < totalPages - 1 ? 'page-break-after' : ''}`} style={{ minHeight: '1056px', backgroundColor: props.backgroundColor, color: props.textColor }}>
-            <header className="flex justify-between items-start mb-16">
-                <div>
-                    {business.logoUrl && <Image src={business.logoUrl} alt="Logo" width={80} height={40} className="object-contain" />}
-                    <h1 className="text-3xl font-bold tracking-widest mt-2">{business.name}</h1>
-                    <p className="text-xs">{business.address}</p>
-                </div>
-                <div className="text-right"><p className="text-2xl">INVOICE</p><p className="text-xs text-gray-500">Roofing</p></div>
-            </header>
-            <section className="flex justify-between mb-10 text-xs">
-                <div><p className="font-bold">TO:</p><p>{client.name}</p></div>
-                <div className="text-right"><p><span className="font-bold">INVOICE NO:</span> {invoice.invoiceNumber}</p><p><span className="font-bold">DATE:</span> {safeFormat(invoice.invoiceDate, 'MMM dd, yyyy')}</p></div>
-            </section>
-            <RoofingDetails invoice={invoice} t={t} />
-            <main className="flex-grow mt-4">
-                <table className="w-full text-left text-xs">
-                    <thead><tr><th className="p-2 font-semibold w-3/5 border-b border-gray-500">ITEM</th><th className="p-2 font-semibold text-center border-b border-gray-500">QTY</th><th className="p-2 font-semibold text-right border-b border-gray-500">RATE</th><th className="p-2 font-semibold text-right border-b border-gray-500">AMOUNT</th></tr></thead>
-                    <tbody>{pageItems.map(item => (<tr key={item.id}><td className="py-2 px-2 border-b border-gray-200">{item.name}</td><td className="py-2 px-2 border-b border-gray-200 text-center">{item.quantity}</td><td className="py-2 px-2 border-b border-gray-200 text-right">{currencySymbol}{item.unitPrice.toFixed(2)}</td><td className="py-2 px-2 border-b border-gray-200 text-right">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</td></tr>))}</tbody>
-                </table>
-            </main>
-            {pageIndex === totalPages - 1 && (
-            <footer className="mt-auto pt-8 flex justify-end">
-                <table className="w-1/3 text-xs">
-                    <tbody>
-                        <tr><td className="py-1">Subtotal</td><td className="text-right">{currencySymbol}{subtotal.toFixed(2)}</td></tr>
-                        <tr className="border-b"><td className="py-1">Tax</td><td className="text-right">{currencySymbol}{taxAmount.toFixed(2)}</td></tr>
-                        <tr className="font-bold text-lg"><td className="pt-2">Total</td><td className="pt-2 text-right">{currencySymbol}{balanceDue.toFixed(2)}</td></tr>
-                    </tbody>
-                </table>
-            </footer>
-            )}
-        </div>
-    );
-};
-export const RoofingTemplate6: React.FC<PageProps> = (props) => <RoofingTemplate1 {...props} />;
-export const RoofingTemplate7: React.FC<PageProps> = (props) => <RoofingTemplate2 {...props} />;
-export const RoofingTemplate8: React.FC<PageProps> = (props) => <RoofingTemplate3 {...props} />;
-export const RoofingTemplate9: React.FC<PageProps> = (props) => <RoofingTemplate4 {...props} />;
-export const RoofingTemplate10: React.FC<PageProps> = (props) => <RoofingTemplate5 {...props} />;
+export const RoofingTemplate4: React.FC<PageProps> = (props) => <RoofingTemplate1 {...props} />;
+export const RoofingTemplate5: React.FC<PageProps> = (props) => <RoofingTemplate2 {...props} />;
+export const RoofingTemplate6: React.FC<PageProps> = (props) => <RoofingTemplate3 {...props} />;
+export const RoofingTemplate7: React.FC<PageProps> = (props) => <RoofingTemplate1 {...props} />;
+export const RoofingTemplate8: React.FC<PageProps> = (props) => <RoofingTemplate2 {...props} />;
+export const RoofingTemplate9: React.FC<PageProps> = (props) => <RoofingTemplate3 {...props} />;
+export const RoofingTemplate10: React.FC<PageProps> = (props) => <RoofingTemplate1 {...props} />;
