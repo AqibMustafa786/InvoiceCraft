@@ -72,6 +72,7 @@ export const ElectricalTemplate1: React.FC<PageProps> = (props) => {
                 </div>
                 <div>
                     <p className="font-bold mb-1" style={{color: accentColor || '#FBBF24'}}>{(t.billFrom || 'BILL FROM').toUpperCase()}</p>
+                    {business.logoUrl && <Image src={business.logoUrl} alt="Logo" width={80} height={40} className="object-contain mb-2"/>}
                     <p>{business.name}</p>
                     <p className="whitespace-pre-line">{business.address}</p>
                     <p>{business.phone}</p>
@@ -378,5 +379,3 @@ export const ElectricalTemplate7: React.FC<PageProps> = (props) => <ElectricalTe
 export const ElectricalTemplate8: React.FC<PageProps> = (props) => <ElectricalTemplate3 {...props} />;
 export const ElectricalTemplate9: React.FC<PageProps> = (props) => <ElectricalTemplate4 {...props} />;
 export const ElectricalTemplate10: React.FC<PageProps> = (props) => <ElectricalTemplate5 {...props} />;
-
-    
