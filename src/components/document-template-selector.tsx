@@ -6,7 +6,6 @@ import { cn } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
 import Image from 'next/image';
 import type { EstimateCategory, InvoiceCategory } from '@/lib/types';
-import { useAuth } from '@/context/auth-provider';
 import { useMemo } from 'react';
 
 interface Template {
@@ -281,23 +280,13 @@ const templates: Template[] = [
 export function DocumentTemplateSelector({ selectedTemplate, onSelectTemplate, documentType, category }: DocumentTemplateSelectorProps) {
   
   const filteredTemplates = useMemo(() => {
-    const generalCategory = documentType === 'invoice' ? 'General Services' : 'all';
+    const generalCategory = documentType === 'invoice' ? 'General Services' : 'Generic';
     
-    // Always include general templates
-    const generalTemplates = templates.filter(t => t.category === generalCategory || t.category === 'Generic');
-    
-    // If the selected category is general, just return those
-    if (category === generalCategory || (documentType !== 'invoice' && category === 'Generic')) {
-      return generalTemplates;
+    if (category === generalCategory) {
+      return templates.filter(t => t.category === generalCategory);
     }
-
-    // Otherwise, get category-specific templates and combine with general ones, removing duplicates.
-    const categoryTemplates = templates.filter(t => t.category === category);
     
-    const combined = [...categoryTemplates, ...generalTemplates];
-    const uniqueTemplates = Array.from(new Map(combined.map(item => [item.id, item])).values());
-    
-    return uniqueTemplates;
+    return templates.filter(t => t.category === category);
 
   }, [category, documentType]);
 
