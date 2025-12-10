@@ -42,7 +42,33 @@ import {
 import {
     ITTemplate1, ITTemplate2, ITTemplate3, ITTemplate4, ITTemplate5
 } from './invoice-templates/it-freelance-templates';
-
+import {
+  ConsultingTemplate1, ConsultingTemplate2, ConsultingTemplate3, ConsultingTemplate4, ConsultingTemplate5
+} from './invoice-templates/consulting-templates';
+import {
+  LegalTemplate1, LegalTemplate2, LegalTemplate3, LegalTemplate4, LegalTemplate5
+} from './invoice-templates/legal-templates';
+import {
+  MedicalTemplate1, MedicalTemplate2, MedicalTemplate3, MedicalTemplate4, MedicalTemplate5
+} from './invoice-templates/medical-templates';
+import {
+  EcommerceTemplate1, EcommerceTemplate2, EcommerceTemplate3, EcommerceTemplate4, EcommerceTemplate5
+} from './invoice-templates/ecommerce-templates';
+import {
+  RetailTemplate1, RetailTemplate2, RetailTemplate3, RetailTemplate4, RetailTemplate5
+} from './invoice-templates/retail-templates';
+import {
+  PhotographyTemplate1, PhotographyTemplate2, PhotographyTemplate3, PhotographyTemplate4, PhotographyTemplate5
+} from './invoice-templates/photography-templates';
+import {
+  RealEstateTemplate1, RealEstateTemplate2, RealEstateTemplate3, RealEstateTemplate4, RealEstateTemplate5
+} from './invoice-templates/real-estate-templates';
+import {
+  TransportationTemplate1, TransportationTemplate2, TransportationTemplate3, TransportationTemplate4, TransportationTemplate5
+} from './invoice-templates/transportation-templates';
+import {
+  RentalTemplate1, RentalTemplate2, RentalTemplate3, RentalTemplate4, RentalTemplate5
+} from './invoice-templates/rental-templates';
 
 
 // --- PROPS ---
@@ -515,6 +541,51 @@ const templates: Record<string, FC<PageProps>> = {
   'it-3': ITTemplate3,
   'it-4': ITTemplate4,
   'it-5': ITTemplate5,
+  'consulting-1': ConsultingTemplate1,
+  'consulting-2': ConsultingTemplate2,
+  'consulting-3': ConsultingTemplate3,
+  'consulting-4': ConsultingTemplate4,
+  'consulting-5': ConsultingTemplate5,
+  'legal-1': LegalTemplate1,
+  'legal-2': LegalTemplate2,
+  'legal-3': LegalTemplate3,
+  'legal-4': LegalTemplate4,
+  'legal-5': LegalTemplate5,
+  'medical-1': MedicalTemplate1,
+  'medical-2': MedicalTemplate2,
+  'medical-3': MedicalTemplate3,
+  'medical-4': MedicalTemplate4,
+  'medical-5': MedicalTemplate5,
+  'ecommerce-1': EcommerceTemplate1,
+  'ecommerce-2': EcommerceTemplate2,
+  'ecommerce-3': EcommerceTemplate3,
+  'ecommerce-4': EcommerceTemplate4,
+  'ecommerce-5': EcommerceTemplate5,
+  'retail-1': RetailTemplate1,
+  'retail-2': RetailTemplate2,
+  'retail-3': RetailTemplate3,
+  'retail-4': RetailTemplate4,
+  'retail-5': RetailTemplate5,
+  'photography-1': PhotographyTemplate1,
+  'photography-2': PhotographyTemplate2,
+  'photography-3': PhotographyTemplate3,
+  'photography-4': PhotographyTemplate4,
+  'photography-5': PhotographyTemplate5,
+  'real-estate-1': RealEstateTemplate1,
+  'real-estate-2': RealEstateTemplate2,
+  'real-estate-3': RealEstateTemplate3,
+  'real-estate-4': RealEstateTemplate4,
+  'real-estate-5': RealEstateTemplate5,
+  'transportation-1': TransportationTemplate1,
+  'transportation-2': TransportationTemplate2,
+  'transportation-3': TransportationTemplate3,
+  'transportation-4': TransportationTemplate4,
+  'transportation-5': TransportationTemplate5,
+  'rental-1': RentalTemplate1,
+  'rental-2': RentalTemplate2,
+  'rental-3': RentalTemplate3,
+  'rental-4': RentalTemplate4,
+  'rental-5': RentalTemplate5,
 };
 
 

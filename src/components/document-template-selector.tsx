@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import { cn } from '@/lib/utils';
@@ -129,6 +130,76 @@ const templates: Template[] = [
   { id: 'it-3', name: 'Minimalist Grid', thumbnailUrl: '/templates/it-3.png', category: 'IT Services / Tech Support' },
   { id: 'it-4', name: 'Creative Blue', thumbnailUrl: '/templates/it-4.png', category: 'IT Services / Tech Support' },
   { id: 'it-5', name: 'Startup Vibe', thumbnailUrl: '/templates/it-5.png', category: 'IT Services / Tech Support' },
+
+  // Freelance / Agency
+  { id: 'it-1', name: 'Tech Corporate', thumbnailUrl: '/templates/it-1.png', category: 'Freelance / Agency' },
+  { id: 'it-2', name: 'Modern Dark', thumbnailUrl: '/templates/it-2.png', category: 'Freelance / Agency' },
+  { id: 'it-3', name: 'Minimalist Grid', thumbnailUrl: '/templates/it-3.png', category: 'Freelance / Agency' },
+  { id: 'it-4', name: 'Creative Blue', thumbnailUrl: '/templates/it-4.png', category: 'Freelance / Agency' },
+  { id: 'it-5', name: 'Startup Vibe', thumbnailUrl: '/templates/it-5.png', category: 'Freelance / Agency' },
+  
+  // Consulting
+  { id: 'consulting-1', name: 'Executive', thumbnailUrl: '/templates/consulting-1.png', category: 'Consulting' },
+  { id: 'consulting-2', name: 'Strategy', thumbnailUrl: '/templates/consulting-2.png', category: 'Consulting' },
+  { id: 'consulting-3', name: 'Advisory', thumbnailUrl: '/templates/consulting-3.png', category: 'Consulting' },
+  { id: 'consulting-4', name: 'Modern', thumbnailUrl: '/templates/consulting-4.png', category: 'Consulting' },
+  { id: 'consulting-5', name: 'Minimal', thumbnailUrl: '/templates/consulting-5.png', category: 'Consulting' },
+  
+  // Legal
+  { id: 'legal-1', name: 'Gavel', thumbnailUrl: '/templates/legal-1.png', category: 'Legal Services' },
+  { id: 'legal-2', name: 'Advocate', thumbnailUrl: '/templates/legal-2.png', category: 'Legal Services' },
+  { id: 'legal-3', name: 'Justice', thumbnailUrl: '/templates/legal-3.png', category: 'Legal Services' },
+  { id: 'legal-4', name: 'Paralegal', thumbnailUrl: '/templates/legal-4.png', category: 'Legal Services' },
+  { id: 'legal-5', name: 'The Firm', thumbnailUrl: '/templates/legal-5.png', category: 'Legal Services' },
+
+  // Medical
+  { id: 'medical-1', name: 'Caduceus', thumbnailUrl: '/templates/medical-1.png', category: 'Medical / Healthcare' },
+  { id: 'medical-2', name: 'Vitality', thumbnailUrl: '/templates/medical-2.png', category: 'Medical / Healthcare' },
+  { id: 'medical-3', name: 'Clinic', thumbnailUrl: '/templates/medical-3.png', category: 'Medical / Healthcare' },
+  { id: 'medical-4', name: 'Wellness', thumbnailUrl: '/templates/medical-4.png', category: 'Medical / Healthcare' },
+  { id: 'medical-5', name: 'Remedy', thumbnailUrl: '/templates/medical-5.png', category: 'Medical / Healthcare' },
+
+  // E-commerce
+  { id: 'ecommerce-1', name: 'Shopify', thumbnailUrl: '/templates/ecommerce-1.png', category: 'E-commerce / Online Store' },
+  { id: 'ecommerce-2', name: 'Marketplace', thumbnailUrl: '/templates/ecommerce-2.png', category: 'E-commerce / Online Store' },
+  { id: 'ecommerce-3', name: 'Digital Cart', thumbnailUrl: '/templates/ecommerce-3.png', category: 'E-commerce / Online Store' },
+  { id: 'ecommerce-4', name: 'Swift', thumbnailUrl: '/templates/ecommerce-4.png', category: 'E-commerce / Online Store' },
+  { id: 'ecommerce-5', name: 'Checkout', thumbnailUrl: '/templates/ecommerce-5.png', category: 'E-commerce / Online Store' },
+
+  // Retail
+  { id: 'retail-1', name: 'Boutique', thumbnailUrl: '/templates/retail-1.png', category: 'Retail / Wholesale' },
+  { id: 'retail-2', name: 'Receipt', thumbnailUrl: '/templates/retail-2.png', category: 'Retail / Wholesale' },
+  { id: 'retail-3', name: 'POS', thumbnailUrl: '/templates/retail-3.png', category: 'Retail / Wholesale' },
+  { id: 'retail-4', name: 'Supply', thumbnailUrl: '/templates/retail-4.png', category: 'Retail / Wholesale' },
+  { id: 'retail-5', name: 'Register', thumbnailUrl: '/templates/retail-5.png', category: 'Retail / Wholesale' },
+
+  // Photography
+  { id: 'photography-1', name: 'Lens', thumbnailUrl: '/templates/photography-1.png', category: 'Photography' },
+  { id: 'photography-2', name: 'Aperture', thumbnailUrl: '/templates/photography-2.png', category: 'Photography' },
+  { id: 'photography-3', name: 'Shutter', thumbnailUrl: '/templates/photography-3.png', category: 'Photography' },
+  { id: 'photography-4', name: 'Gallery', thumbnailUrl: '/templates/photography-4.png', category: 'Photography' },
+  { id: 'photography-5', name: 'Portfolio', thumbnailUrl: '/templates/photography-5.png', category: 'Photography' },
+
+  // Real Estate
+  { id: 'real-estate-1', name: 'Realty', thumbnailUrl: '/templates/real-estate-1.png', category: 'Real Estate / Property Management' },
+  { id: 'real-estate-2', name: 'Property', thumbnailUrl: '/templates/real-estate-2.png', category: 'Real Estate / Property Management' },
+  { id: 'real-estate-3', name: 'Keystone', thumbnailUrl: '/templates/real-estate-3.png', category: 'Real Estate / Property Management' },
+  { id: 'real-estate-4', name: 'Mortgage', thumbnailUrl: '/templates/real-estate-4.png', category: 'Real Estate / Property Management' },
+  { id: 'real-estate-5', name: 'Lease', thumbnailUrl: '/templates/real-estate-5.png', category: 'Real Estate / Property Management' },
+  
+  // Rental
+  { id: 'rental-1', name: 'Realty', thumbnailUrl: '/templates/real-estate-1.png', category: 'Rental / Property' },
+  { id: 'rental-2', name: 'Property', thumbnailUrl: '/templates/real-estate-2.png', category: 'Rental / Property' },
+  { id: 'rental-3', name: 'Keystone', thumbnailUrl: '/templates/real-estate-3.png', category: 'Rental / Property' },
+  { id: 'rental-4', name: 'Mortgage', thumbnailUrl: '/templates/real-estate-4.png', category: 'Rental / Property' },
+  { id: 'rental-5', name: 'Lease', thumbnailUrl: '/templates/real-estate-5.png', category: 'Rental / Property' },
+
+  // Transportation
+  { id: 'transportation-1', name: 'Freight', thumbnailUrl: '/templates/transportation-1.png', category: 'Transportation / Trucking' },
+  { id: 'transportation-2', name: 'Logistics', thumbnailUrl: '/templates/transportation-2.png', category: 'Transportation / Trucking' },
+  { id: 'transportation-3', name: 'Dispatch', thumbnailUrl: '/templates/transportation-3.png', category: 'Transportation / Trucking' },
+  { id: 'transportation-4', name: 'Cargo', thumbnailUrl: '/templates/transportation-4.png', category: 'Transportation / Trucking' },
+  { id: 'transportation-5', name: 'Haul', thumbnailUrl: '/templates/transportation-5.png', category: 'Transportation / Trucking' },
 ];
 
 export function DocumentTemplateSelector({ selectedTemplate, onSelectTemplate, documentType, category }: DocumentTemplateSelectorProps) {
