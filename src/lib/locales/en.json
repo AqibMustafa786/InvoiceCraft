@@ -60,5 +60,14 @@
     "retainer": "Retainer",
     "filingFees": "Filing Fees",
     "travelTime": "Travel (hrs)",
-    "disbursements": "Disbursements"
+    "disbursements": "Disbursements",
+    "legalInvoice": "LEGAL INVOICE",
+    "billFrom": "Bill From",
+    "fees": "Fees ($)",
+    "salesTax": "Sales Tax",
+    "other": "Other",
+    "termsAndConditions": "Terms and Conditions",
+    "thankYouForBusiness": "Thank you for your business. Please send payment within __ days of receiving this invoice. There will be a __% per __ on late invoices."
 }
+
+    
