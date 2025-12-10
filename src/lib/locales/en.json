@@ -1,4 +1,3 @@
-
 {
     "invoice": "Invoice",
     "billTo": "BILL TO",
@@ -112,5 +111,18 @@
     "subscriberName": "Subscriber Name",
     "charges": "Charges",
     "insurancePaid": "Insurance Paid",
-    "adjustmentsAndWriteOffs": "Adjustments and Write-offs"
+    "adjustmentsAndWriteOffs": "Adjustments and Write-offs",
+    "vehicleInformation": "Vehicle Information",
+    "vehicle": "Vehicle",
+    "mileage": "Mileage",
+    "licensePlate": "Plate",
+    "laborHours": "Labor Hours",
+    "laborRate": "Labor Rate",
+    "diagnosticFee": "Diagnostic Fee",
+    "shopSupplyFee": "Shop Supply Fee",
+    "towingFee": "Towing Fee",
+    "customer": "Customer",
+    "autoRepairService": "Auto Repair & Service",
+    "qualityAutoRepair": "Quality Auto Repair Since 1985",
+    "receipt": "Receipt"
 }
