@@ -1,4 +1,3 @@
-
 'use client';
 
 import { cn } from '@/lib/utils';
@@ -97,7 +96,6 @@ const templates: Template[] = [
   { id: 'landscaping-9', name: 'Simple Cut', thumbnailUrl: '/templates/landscaping-9.png', category: 'Landscaping & Lawn Care' },
   { id: 'landscaping-10', name: 'Bold Stripes', thumbnailUrl: '/templates/landscaping-10.png', category: 'Landscaping & Lawn Care' },
 
-
   // Roofing
   { id: 'roofing-1', name: 'USA Contractor', thumbnailUrl: '/templates/roofing-1.png', category: 'Roofing' },
   { id: 'roofing-2', name: 'Modern Roofing', thumbnailUrl: '/templates/roofing-2.png', category: 'Roofing' },
@@ -186,5 +184,3 @@ export function DocumentTemplateSelector({ selectedTemplate, onSelectTemplate, d
     </div>
   );
 }
-
-    
