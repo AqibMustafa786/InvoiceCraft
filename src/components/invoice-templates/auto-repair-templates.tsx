@@ -51,33 +51,30 @@ const AutoRepairDetails: React.FC<{ invoice: Invoice, t: any }> = ({ invoice, t 
     );
 };
 
-// Template 1: Based on User Image
+// Template 1: Custom design based on user image
 export const AutoRepairTemplate1: React.FC<PageProps> = (props) => {
     const { invoice, pageItems, pageIndex, totalPages, balanceDue, subtotal, taxAmount, currencySymbol, t, accentColor } = props;
     const { business, client } = invoice;
+    const secondaryColor = '#4A5568'; // A dark slate gray from the image
 
     return (
         <div className={`p-0 font-sans ${pageIndex < totalPages - 1 ? 'page-break-after' : ''}`} style={{ minHeight: '1056px', backgroundColor: props.backgroundColor, color: props.textColor }}>
-            <header className="p-8 pb-20 bg-gray-100 relative" style={{color: props.textColor}}>
-                <div className="flex justify-between items-start">
-                    <div className="flex items-center gap-4">
-                        {business.logoUrl && <Image src={business.logoUrl} alt="Logo" width={50} height={50} className="rounded-md object-contain" />}
-                        <div>
-                            <h1 className="font-bold" style={{color: accentColor || '#F97316'}}>{business.name}</h1>
-                            <p className="text-xs">{business.address}</p>
-                            <p className="text-xs">{business.email} | {business.website} | {business.phone}</p>
-                        </div>
+            <header className="relative h-48">
+                <svg className="absolute top-0 left-0 w-full h-full" viewBox="0 0 800 200" preserveAspectRatio="none">
+                    <path d={`M0 0 L800 0 L800 100 L400 0 Z`} style={{fill: accentColor || '#8B5CF6'}}/>
+                    <path d={`M0 0 L400 0 L0 100 Z`} style={{fill: secondaryColor}}/>
+                </svg>
+                <div className="relative z-10 p-8 flex justify-between items-start">
+                    <div>
+                        <h1 className="font-bold text-white" style={{color: accentColor}}>{business.name}</h1>
+                        <p className="text-xs text-gray-200">{business.address}</p>
+                        <p className="text-xs text-gray-200">{business.email} | {business.website} | {business.phone}</p>
+                    </div>
+                    <div className="flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-car"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9L1 16v1c0 .6.4 1 1 1h2"/><path d="M14 17H3"/><path d="M22 17h-2"/><path d="M5 17H3"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/></svg>
+                        <span className="text-white font-bold">Car</span>
                     </div>
                 </div>
-                 <div className="absolute right-0 bottom-0 w-2/3 h-24">
-                     <svg className="w-full h-full" viewBox="0 0 400 100" preserveAspectRatio="none">
-                         <path d="M0 100 L400 100 L400 0 L200 100 Z" style={{fill: accentColor || '#F97316'}}/>
-                         <path d="M0 100 L200 100 L100 0 Z" style={{fill: '#4A5568'}}/>
-                     </svg>
-                     <div className="absolute top-0 right-0 h-full w-full flex justify-end items-center pr-8">
-                        <Image src="https://storage.googleapis.com/studio-hosting-assets/invoice-template-previews/car-graphic.png" alt="Car" width={140} height={70} className="object-contain" />
-                     </div>
-                 </div>
             </header>
             <div className="p-8">
                 <h2 className="text-2xl font-bold mb-6">Auto Repair Invoice</h2>
@@ -103,7 +100,7 @@ export const AutoRepairTemplate1: React.FC<PageProps> = (props) => {
                 <main className="flex-grow">
                     <table className="w-full text-left text-xs">
                         <thead><tr className="bg-gray-100"><th className="p-2 font-bold w-[50%]">Description</th><th className="p-2 font-bold w-[15%]">Quantity</th><th className="p-2 font-bold w-[15%]">Rate</th><th className="p-2 font-bold w-[20%] text-right">Amount</th></tr></thead>
-                        <tbody>{pageItems.map(item => (<tr key={item.id} className="border-b"><td className="p-2">{item.name}</td><td className="p-2">{item.quantity}</td><td className="p-2">{item.unitPrice.toFixed(2)}</td><td className="p-2 text-right">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</td></tr>))}</tbody>
+                        <tbody>{pageItems.map(item => (<tr key={item.id} className="border-b"><td className="p-2">{item.name}</td><td className="p-2">{item.quantity}</td><td className="p-2">{currencySymbol}{item.unitPrice.toFixed(2)}</td><td className="p-2 text-right">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</td></tr>))}</tbody>
                     </table>
                 </main>
                 {pageIndex === totalPages - 1 && (
@@ -115,12 +112,6 @@ export const AutoRepairTemplate1: React.FC<PageProps> = (props) => {
                             <p className="flex justify-between p-1 font-bold text-sm mt-1 border-t"><span>Total</span><span>{currencySymbol}{balanceDue.toFixed(2)}</span></p>
                         </div>
                     </div>
-                    <div className="text-xs mt-8">
-                        <p className="font-bold">Payment Instructions:</p>
-                        <p>{invoice.paymentInstructions}</p>
-                        <p className="font-bold mt-2">Notes:</p>
-                        <p>Thank you for choosing {business.name} for your vehicle maintenance needs. If you have any questions about this invoice, please contact us at {business.phone}.</p>
-                    </div>
                 </footer>
                 )}
             </div>
@@ -131,7 +122,7 @@ export const AutoRepairTemplate1: React.FC<PageProps> = (props) => {
 
 // Template 2: Night Shift
 export const AutoRepairTemplate2: React.FC<PageProps> = (props) => {
-    const { invoice, pageItems, pageIndex, totalPages, subtotal, taxAmount, balanceDue, currencySymbol, accentColor, t } = props;
+    const { invoice, pageItems, pageIndex, totalPages, subtotal, taxAmount, balanceDue, currencySymbol, t, accentColor } = props;
     const { business, client } = invoice;
 
     return (
