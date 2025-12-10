@@ -60,21 +60,12 @@ export const AutoRepairTemplate1: React.FC<PageProps> = (props) => {
     return (
         <div className={`p-0 font-sans ${pageIndex < totalPages - 1 ? 'page-break-after' : ''}`} style={{ minHeight: '1056px', backgroundColor: props.backgroundColor, color: props.textColor }}>
             <header className="relative h-48">
-                <svg className="absolute top-0 left-0 w-full h-full" viewBox="0 0 800 200" preserveAspectRatio="none">
-                    <path d={`M0 0 L800 0 L800 100 L400 0 Z`} style={{fill: accentColor || '#8B5CF6'}}/>
-                    <path d={`M0 0 L400 0 L0 100 Z`} style={{fill: secondaryColor}}/>
-                </svg>
-                <div className="relative z-10 p-8 flex justify-between items-start">
-                    <div>
-                        <h1 className="font-bold text-white" style={{color: accentColor}}>{business.name}</h1>
-                        <p className="text-xs text-gray-200">{business.address}</p>
-                        <p className="text-xs text-gray-200">{business.email} | {business.website} | {business.phone}</p>
-                    </div>
-                    <div className="flex items-center gap-2">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-car"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9L1 16v1c0 .6.4 1 1 1h2"/><path d="M14 17H3"/><path d="M22 17h-2"/><path d="M5 17H3"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/></svg>
-                        <span className="text-white font-bold">Car</span>
-                    </div>
-                </div>
+                 <div className="absolute top-0 left-0 w-full h-full">
+                     <svg className="w-full h-full" viewBox="0 0 800 200" preserveAspectRatio="none">
+                        <path d={`M0 0 L800 0 L800 100 L400 0 Z`} style={{fill: accentColor || '#DC2626'}}/>
+                        <path d={`M0 0 L400 0 L0 100 Z`} style={{fill: secondaryColor}}/>
+                     </svg>
+                 </div>
             </header>
             <div className="p-8">
                 <h2 className="text-2xl font-bold mb-6">Auto Repair Invoice</h2>
