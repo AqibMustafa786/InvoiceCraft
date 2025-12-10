@@ -1,3 +1,4 @@
+
 'use client';
 
 import { cn } from '@/lib/utils';
@@ -148,7 +149,7 @@ export function DocumentTemplateSelector({ selectedTemplate, onSelectTemplate, d
   const docTypeLabel = documentType === 'invoice' ? 'Invoice' : (documentType === 'quote' ? 'Quote' : 'Estimate');
   
   return (
-    <div className="grid grid-cols-2 lg:grid-cols-3 gap-6">
+    <div className="grid grid-cols-2 gap-6">
       {filteredTemplates.map((template) => {
         return (
             <div
