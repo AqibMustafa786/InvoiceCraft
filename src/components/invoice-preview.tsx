@@ -30,7 +30,8 @@ import {
   RoofingTemplate6, RoofingTemplate7, RoofingTemplate8, RoofingTemplate9, RoofingTemplate10
 } from './invoice-templates/roofing-templates';
 import {
-  LandscapingTemplate1, LandscapingTemplate2, LandscapingTemplate3, LandscapingTemplate4, LandscapingTemplate5
+  LandscapingTemplate1, LandscapingTemplate2, LandscapingTemplate3, LandscapingTemplate4, LandscapingTemplate5,
+  LandscapingTemplate6, LandscapingTemplate7, LandscapingTemplate8, LandscapingTemplate9, LandscapingTemplate10
 } from './invoice-templates/landscaping-templates';
 import {
   CleaningTemplate1, CleaningTemplate2, CleaningTemplate3, CleaningTemplate4, CleaningTemplate5
@@ -494,6 +495,11 @@ const templates: Record<string, FC<PageProps>> = {
   'landscaping-3': LandscapingTemplate3,
   'landscaping-4': LandscapingTemplate4,
   'landscaping-5': LandscapingTemplate5,
+  'landscaping-6': LandscapingTemplate6,
+  'landscaping-7': LandscapingTemplate7,
+  'landscaping-8': LandscapingTemplate8,
+  'landscaping-9': LandscapingTemplate9,
+  'landscaping-10': LandscapingTemplate10,
   'cleaning-1': CleaningTemplate1,
   'cleaning-2': CleaningTemplate2,
   'cleaning-3': CleaningTemplate3,
@@ -704,3 +710,5 @@ export const ClientInvoicePreview: FC<InvoicePreviewProps> = (props) => {
 
 
 export { InvoicePreviewInternal as InvoicePreview };
+
+    

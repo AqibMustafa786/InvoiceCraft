@@ -91,6 +91,12 @@ const templates: Template[] = [
   { id: 'landscaping-3', name: 'Evergreen', thumbnailUrl: '/templates/landscaping-3.png', category: 'Landscaping & Lawn Care' },
   { id: 'landscaping-4', name: 'Yardly', thumbnailUrl: '/templates/landscaping-4.png', category: 'Landscaping & Lawn Care' },
   { id: 'landscaping-5', name: 'Terrascape', thumbnailUrl: '/templates/landscaping-5.png', category: 'Landscaping & Lawn Care' },
+  { id: 'landscaping-6', name: 'Eco Scape', thumbnailUrl: '/templates/landscaping-6.png', category: 'Landscaping & Lawn Care' },
+  { id: 'landscaping-7', name: 'Modern Yard', thumbnailUrl: '/templates/landscaping-7.png', category: 'Landscaping & Lawn Care' },
+  { id: 'landscaping-8', name: 'Classic Green', thumbnailUrl: '/templates/landscaping-8.png', category: 'Landscaping & Lawn Care' },
+  { id: 'landscaping-9', name: 'Simple Cut', thumbnailUrl: '/templates/landscaping-9.png', category: 'Landscaping & Lawn Care' },
+  { id: 'landscaping-10', name: 'Bold Stripes', thumbnailUrl: '/templates/landscaping-10.png', category: 'Landscaping & Lawn Care' },
+
 
   // Roofing
   { id: 'roofing-1', name: 'USA Contractor', thumbnailUrl: '/templates/roofing-1.png', category: 'Roofing' },
@@ -180,3 +186,5 @@ export function DocumentTemplateSelector({ selectedTemplate, onSelectTemplate, d
     </div>
   );
 }
+
+    
