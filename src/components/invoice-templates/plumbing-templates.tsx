@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import React from 'react';
@@ -142,6 +143,7 @@ export const PlumbingTemplate1: React.FC<PageProps> = (props) => {
     );
 }
 
+// All other templates will just be stubs for now, pointing to the first one.
 export const PlumbingTemplate2: React.FC<PageProps> = (props) => <PlumbingTemplate1 {...props} />;
 export const PlumbingTemplate3: React.FC<PageProps> = (props) => <PlumbingTemplate1 {...props} />;
 export const PlumbingTemplate4: React.FC<PageProps> = (props) => <PlumbingTemplate1 {...props} />;

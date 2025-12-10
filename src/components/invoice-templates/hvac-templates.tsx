@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import React from 'react';
@@ -131,7 +132,7 @@ export const HVACTemplate1: React.FC<PageProps> = (props) => {
     );
 }
 
-// All other templates will just be stubs for now, pointing to the first one.
+// Template 2: Modern
 export const HVACTemplate2: React.FC<PageProps> = (props) => <HVACTemplate1 {...props} />;
 export const HVACTemplate3: React.FC<PageProps> = (props) => <HVACTemplate1 {...props} />;
 export const HVACTemplate4: React.FC<PageProps> = (props) => <HVACTemplate1 {...props} />;
