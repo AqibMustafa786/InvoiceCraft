@@ -20,6 +20,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { ScrollArea } from './ui/scroll-area';
 
 const mainNavLinks = [
     { href: "/features", label: "Features", icon: <Gem /> },
@@ -162,41 +163,31 @@ export function Header() {
                         <span className="sr-only">Toggle navigation menu</span>
                         </Button>
                     </SheetTrigger>
-                    <SheetContent side="left" className="flex w-full flex-col sm:max-w-sm">
-                        <SheetHeader>
+                    <SheetContent side="left" className="flex w-full flex-col p-0 sm:max-w-sm">
+                        <SheetHeader className="p-6 pb-0">
                             <SheetTitle>
                                 <Link href="/" className="flex items-center gap-2">
                                     <span className="text-lg font-bold text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent">InvoiceCraft</span>
                                 </Link>
                             </SheetTitle>
                         </SheetHeader>
-                        <nav className="flex-grow grid gap-4 text-lg font-medium mt-8">
-                             {mainNavLinks.map(link => (
-                                <Link
-                                    key={link.href}
-                                    href={link.href}
-                                    className={cn(
-                                        "block py-2 transition",
-                                        pathname === link.href ? "text-primary font-semibold" : "text-muted-foreground hover:text-primary"
-                                    )}
-                                >
-                                    {link.label}
-                                </Link>
-                            ))}
-                             {generalToolsLinks.map(link => (
-                                <Link
-                                    key={link.href}
-                                    href={link.href}
-                                    className={cn(
-                                        "block py-2 transition",
-                                        pathname === link.href ? "text-primary font-semibold" : "text-muted-foreground hover:text-primary"
-                                    )}
-                                >
-                                    {link.label}
-                                </Link>
-                            ))}
-                        </nav>
-                         <div className='mt-auto border-t pt-6'>
+                        <ScrollArea className="flex-grow my-4 px-6">
+                            <nav className="grid gap-4 text-lg font-medium">
+                                {[...mainNavLinks, ...generalToolsLinks].map(link => (
+                                    <Link
+                                        key={link.href}
+                                        href={link.href}
+                                        className={cn(
+                                            "block py-2 transition",
+                                            pathname === link.href ? "text-primary font-semibold" : "text-muted-foreground hover:text-primary"
+                                        )}
+                                    >
+                                        {link.label}
+                                    </Link>
+                                ))}
+                            </nav>
+                        </ScrollArea>
+                         <div className='mt-auto border-t p-6'>
                             <AuthNav isMobile={true} />
                         </div>
                     </SheetContent>
