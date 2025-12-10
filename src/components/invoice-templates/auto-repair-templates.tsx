@@ -61,7 +61,11 @@ export const AutoRepairTemplate1: React.FC<PageProps> = (props) => {
             <header className="mb-8 p-4 bg-gray-100 rounded-md">
                 <div className="flex justify-between items-center">
                     <div>
-                        <h1 className="text-3xl font-bold">{business.name}</h1>
+                         {business.logoUrl ? (
+                            <Image src={business.logoUrl} alt={`${business.name} Logo`} width={120} height={50} className="object-contain" />
+                         ) : (
+                            <h1 className="text-3xl font-bold">{business.name}</h1>
+                         )}
                         <p className="text-xs whitespace-pre-line">{business.address}</p>
                     </div>
                     <h2 className="text-2xl font-extrabold" style={{ color: accentColor }}>{(t.invoice || 'INVOICE').toUpperCase()}</h2>

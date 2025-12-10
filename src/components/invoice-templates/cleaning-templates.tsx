@@ -58,7 +58,11 @@ export const CleaningTemplate1: React.FC<PageProps> = (props) => {
             <div className="p-10 relative z-10 flex-grow flex flex-col">
                 <header className="flex justify-between items-start mb-8 text-white">
                     <div>
-                        <h1 className="text-3xl font-bold">{business.name}</h1>
+                        {business.logoUrl ? (
+                            <Image src={business.logoUrl} alt={`${business.name} Logo`} width={120} height={50} className="object-contain" />
+                        ) : (
+                            <h1 className="text-3xl font-bold">{business.name}</h1>
+                        )}
                         <p className="text-xs whitespace-pre-line">{business.address}</p>
                     </div>
                     <div className="text-right">
