@@ -15,13 +15,6 @@ interface Template {
   category: EstimateCategory | InvoiceCategory;
 }
 
-interface DocumentTemplateSelectorProps {
-  selectedTemplate: string;
-  onSelectTemplate: (templateId: string) => void;
-  documentType: 'estimate' | 'quote' | 'invoice';
-  category: EstimateCategory | InvoiceCategory;
-}
-
 const templates: Template[] = [
   // General
   { id: 'default', name: 'Default', thumbnailUrl: '/templates/Default.png', category: 'General Services' },
@@ -163,11 +156,7 @@ const templates: Template[] = [
   { id: 'ecommerce-1', name: 'New Collection', thumbnailUrl: '/templates/ecommerce-1.png', category: 'E-commerce / Online Store' },
 
   // Retail
-  { id: 'retail-1', name: 'Boutique', thumbnailUrl: '/templates/retail-1.png', category: 'Retail / Wholesale' },
-  { id: 'retail-2', name: 'Receipt', thumbnailUrl: '/templates/retail-2.png', category: 'Retail / Wholesale' },
-  { id: 'retail-3', name: 'POS', thumbnailUrl: '/templates/retail-3.png', category: 'Retail / Wholesale' },
-  { id: 'retail-4', name: 'Supply', thumbnailUrl: '/templates/retail-4.png', category: 'Retail / Wholesale' },
-  { id: 'retail-5', name: 'Register', thumbnailUrl: '/templates/retail-5.png', category: 'Retail / Wholesale' },
+  { id: 'retail-1', name: 'Growers', thumbnailUrl: '/templates/retail-1.png', category: 'Retail / Wholesale' },
 
   // Photography
   { id: 'photography-1', name: 'Lens', thumbnailUrl: '/templates/photography-1.png', category: 'Photography' },
