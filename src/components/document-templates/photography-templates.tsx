@@ -24,6 +24,16 @@ const safeFormat = (date: Date | string | number | undefined | null, formatStrin
     return format(d, formatString);
 }
 
+const SignatureDisplay = ({ signature, label }: { signature: any, label: string }) => {
+    if (!signature?.image) return null;
+    return (
+        <div className="mt-8">
+            <Image src={signature.image} alt={label} width={150} height={75} className="border-b border-gray-400" />
+            <p className="text-xs text-gray-500 pt-1 border-t-2 border-gray-700 w-[150px]">{label}</p>
+        </div>
+    )
+}
+
 const PhotographyDetails: React.FC<{ document: Estimate, t: any }> = ({ document, t }) => {
     if (!document.photography) return null;
     const { photography } = document;
@@ -102,6 +112,10 @@ export const PhotographyTemplate1: React.FC<TemplateProps> = ({ document, pageIt
                             <p style={{color: accentTextColor}}>{(t.sendPaymentsTo || 'Send Payments To')}:</p>
                             <p>{business.name}</p>
                             <p>{business.email}</p>
+                            <div className="flex justify-between mt-8">
+                                <SignatureDisplay signature={document.business.ownerSignature} label="Authorized Signature" />
+                                <SignatureDisplay signature={document.clientSignature} label="Client Signature" />
+                            </div>
                         </div>
                         <div className="w-1/3 text-sm space-y-2 text-right">
                             <p className="flex justify-between"><span>{(t.totalAmount || 'Total Amount')}</span><span>{currencySymbol}{summary.subtotal.toFixed(2)}</span></p>
@@ -155,6 +169,10 @@ export const PhotographyTemplate2: React.FC<TemplateProps> = ({ document, pageIt
                  {pageIndex === totalPages - 1 && (
                     <footer className="mt-auto pt-8">
                         <div className="text-right text-3xl font-bold">{(t.total || 'Total')}: {currencySymbol}{summary.grandTotal.toFixed(2)}</div>
+                         <div className="flex justify-between mt-8">
+                            <SignatureDisplay signature={document.business.ownerSignature} label="Authorized Signature" />
+                            <SignatureDisplay signature={document.clientSignature} label="Client Signature" />
+                        </div>
                     </footer>
                 )}
             </div>
@@ -191,6 +209,10 @@ export const PhotographyTemplate3: React.FC<TemplateProps> = ({ document, pageIt
                             <p className="flex justify-between border-b pb-1"><span>{(t.tax || 'Tax')}</span><span>{currencySymbol}{summary.taxAmount.toFixed(2)}</span></p>
                             <p className="flex justify-between font-bold mt-2"><span>{(t.total || 'Total')}</span><span>{currencySymbol}{summary.grandTotal.toFixed(2)}</span></p>
                         </div>
+                    </div>
+                     <div className="flex justify-between mt-8">
+                        <SignatureDisplay signature={document.business.ownerSignature} label="Authorized Signature" />
+                        <SignatureDisplay signature={document.clientSignature} label="Client Signature" />
                     </div>
                 </footer>
             )}
@@ -233,6 +255,10 @@ export const PhotographyTemplate4: React.FC<TemplateProps> = ({ document, pageIt
                             <p className="flex justify-between font-bold text-lg mt-2 pt-2"><span>{(t.totalDue || 'Total Due')}:</span><span>{currencySymbol}{summary.grandTotal.toFixed(2)}</span></p>
                         </div>
                     </div>
+                     <div className="flex justify-between mt-8">
+                        <SignatureDisplay signature={document.business.ownerSignature} label="Authorized Signature" />
+                        <SignatureDisplay signature={document.clientSignature} label="Client Signature" />
+                    </div>
                 </footer>
                 )}
             </div>
@@ -270,6 +296,10 @@ export const PhotographyTemplate5: React.FC<TemplateProps> = ({ document, pageIt
                             <p className="flex justify-between"><span>{(t.total || 'Total')}</span><span>{currencySymbol}{summary.subtotal.toFixed(2)}</span></p>
                             <p className="flex justify-between font-bold text-xl mt-2" style={{color: style.color}}><span>{(t.amountDue || 'Amount Due')}</span><span>{currencySymbol}{summary.grandTotal.toFixed(2)}</span></p>
                         </div>
+                    </div>
+                     <div className="flex justify-between mt-8">
+                        <SignatureDisplay signature={document.business.ownerSignature} label="Authorized Signature" />
+                        <SignatureDisplay signature={document.clientSignature} label="Client Signature" />
                     </div>
                 </footer>
             )}

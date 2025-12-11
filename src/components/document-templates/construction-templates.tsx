@@ -70,7 +70,6 @@ export const ConstructionTemplate1: React.FC<TemplateProps> = ({ document, pageI
                 </div>
                 <div className="text-right">
                     <h2 className="text-3xl font-bold">{docTitle}</h2>
-                    {category !== 'Generic' && <p className="text-sm">{category}</p>}
                 </div>
             </header>
 
@@ -161,7 +160,6 @@ export const ConstructionTemplate2: React.FC<TemplateProps> = ({ document, pageI
                 </div>
                 <div className="text-right">
                     <h2 className="text-3xl font-bold">{docTitle}</h2>
-                    {category !== 'Generic' && <p className="text-sm">{category}</p>}
                 </div>
             </header>
 
@@ -215,7 +213,7 @@ export const ConstructionTemplate2: React.FC<TemplateProps> = ({ document, pageI
                             <div className="w-1/2 text-xs">
                                 <p className="font-bold text-gray-500 mb-2" style={{ color: textColor ? textColor : undefined }}>TERMS & CONDITIONS</p>
                                 <p className="whitespace-pre-line" style={{ color: textColor || '#6B7280' }}>{document.termsAndConditions}</p>
-                                <div className="flex gap-16">
+                                <div className="flex gap-16 mt-8">
                                     <SignatureDisplay signature={document.business.ownerSignature} label="Authorized Signature" />
                                     <SignatureDisplay signature={document.clientSignature} label="Client Signature" />
                                 </div>
@@ -251,7 +249,6 @@ export const ConstructionTemplate3: React.FC<TemplateProps> = ({ document, pageI
                 </div>
                 <div className="text-right">
                     <h2 className="text-3xl font-light tracking-wider mb-1">{docTitle}</h2>
-                    {category !== 'Generic' && <p className="text-sm">{category}</p>}
                 </div>
             </header>
 
@@ -300,8 +297,9 @@ export const ConstructionTemplate3: React.FC<TemplateProps> = ({ document, pageI
                         <p className="font-bold mb-1">Notes</p>
                         <p className="whitespace-pre-line" style={{ color: textColor || '#6B7280' }}>{document.termsAndConditions}</p>
                     </div>
-                     <div className="flex justify-end mt-8">
+                     <div className="flex justify-between mt-8">
                         <SignatureDisplay signature={document.business.ownerSignature} label="Authorized Signature" />
+                        <SignatureDisplay signature={document.clientSignature} label="Client Signature" />
                     </div>
                 </footer>
             )}
@@ -341,7 +339,6 @@ export const ConstructionTemplate4: React.FC<TemplateProps> = ({ document, pageI
                     <div className='flex justify-end mb-4'>
                         <div className="text-right">
                             <h2 className="text-3xl font-bold">{docTitle}</h2>
-                            {category !== 'Generic' && <p className="text-sm">{category}</p>}
                         </div>
                     </div>
                     <ConstructionDetails document={document} textColor={textColor || '#374151'} />
@@ -379,8 +376,9 @@ export const ConstructionTemplate4: React.FC<TemplateProps> = ({ document, pageI
                            <p className="font-bold uppercase tracking-wider mb-2">Payment Schedule & Terms</p>
                            <p className="whitespace-pre-line" style={{ color: textColor || '#6B7280' }}>{document.termsAndConditions}</p>
                         </div>
-                        <div className="flex justify-end mt-8">
+                        <div className="flex justify-between mt-8">
                             <SignatureDisplay signature={document.business.ownerSignature} label="Authorized Signature" />
+                            <SignatureDisplay signature={document.clientSignature} label="Client Signature" />
                         </div>
                     </footer>
                 )}
@@ -407,7 +405,6 @@ export const ConstructionTemplate5: React.FC<TemplateProps> = ({ document, pageI
                 </div>
                  <div className="text-right">
                     <h2 className="text-3xl font-extrabold text-gray-400">{docTitle}</h2>
-                    {category !== 'Generic' && <p className="text-sm text-gray-400">{category}</p>}
                 </div>
             </header>
 
@@ -478,5 +475,3 @@ export const ConstructionTemplate5: React.FC<TemplateProps> = ({ document, pageI
         </div>
     );
 };
-
-    

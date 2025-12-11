@@ -24,6 +24,16 @@ const safeFormat = (date: Date | string | number | undefined | null, formatStrin
     return format(d, formatString);
 }
 
+const SignatureDisplay = ({ signature, label }: { signature: any, label: string }) => {
+    if (!signature?.image) return null;
+    return (
+        <div className="mt-8">
+            <Image src={signature.image} alt={label} width={150} height={75} className="border-b border-gray-400" />
+            <p className="text-xs text-gray-500 pt-1 border-t-2 border-gray-700 w-[150px]">{label}</p>
+        </div>
+    )
+}
+
 const TransportationDetails: React.FC<{ document: Estimate, t: any }> = ({ document, t }) => {
     if (!document.transportation) return null;
     const { transportation } = document;
@@ -61,7 +71,7 @@ export const TransportationTemplate1: React.FC<TemplateProps> = ({ document, pag
             </header>
             <section className="grid grid-cols-3 gap-4 text-xs mb-8">
                 <div className="p-2 bg-gray-100"><p className="font-bold">{(t.to || 'To')}:</p><p>{client.name}</p><p>{client.address}</p></div>
-                <div className="p-2 bg-gray-100"><p className="font-bold">{(t.shipTo || 'Ship To')}:</p><p>{client.shippingAddress || client.address}</p></div>
+                <div className="p-2 bg-gray-100"><p className="font-bold">{(t.shipTo || 'Ship To')}:</p><p>{document.client.shippingAddress || client.address}</p></div>
                 <div className="p-2 bg-gray-100 text-right"><p><strong>#:</strong> {document.estimateNumber}</p><p><strong>{(t.date || 'Date')}:</strong> {safeFormat(document.estimateDate, 'yyyy-MM-dd')}</p></div>
             </section>
             <TransportationDetails document={document} t={t} />
@@ -77,6 +87,10 @@ export const TransportationTemplate1: React.FC<TemplateProps> = ({ document, pag
                     <div className="w-1/2">
                         <p className="flex justify-between font-bold text-2xl mt-2 pt-2 border-t-2"><span>{(t.total || 'TOTAL')}:</span><span>{currencySymbol}{summary.grandTotal.toFixed(2)}</span></p>
                     </div>
+                </div>
+                <div className="flex justify-between mt-8">
+                    <SignatureDisplay signature={document.business.ownerSignature} label="Authorized Signature" />
+                    <SignatureDisplay signature={document.clientSignature} label="Client Signature" />
                 </div>
             </footer>
             )}
@@ -123,6 +137,10 @@ export const TransportationTemplate2: React.FC<TemplateProps> = ({ document, pag
                     <p className="flex justify-between font-bold mt-2"><span>Total</span><span>{currencySymbol}{summary.grandTotal.toFixed(2)}</span></p>
                 </div>
             </div>
+             <div className="flex justify-between mt-8">
+                <SignatureDisplay signature={document.business.ownerSignature} label="Authorized Signature" />
+                <SignatureDisplay signature={document.clientSignature} label="Client Signature" />
+            </div>
         </footer>
         )}
       </div>
@@ -163,6 +181,10 @@ export const TransportationTemplate3: React.FC<TemplateProps> = ({ document, pag
                             <p className="flex justify-between font-bold text-xl mt-2 pt-2 border-t-2" style={{borderColor: style.color}}><span>Amount Due:</span><span>{currencySymbol}{summary.grandTotal.toFixed(2)}</span></p>
                         </div>
                     </div>
+                     <div className="flex justify-between mt-8">
+                        <SignatureDisplay signature={document.business.ownerSignature} label="Authorized Signature" />
+                        <SignatureDisplay signature={document.clientSignature} label="Client Signature" />
+                    </div>
                 </footer>
                 )}
             </div>
@@ -200,6 +222,10 @@ export const TransportationTemplate4: React.FC<TemplateProps> = ({ document, pag
                         <p className="flex justify-between font-bold mt-2 pt-2 border-t border-gray-500"><span>Total:</span><span>{currencySymbol}{summary.grandTotal.toFixed(2)}</span></p>
                     </div>
                 </div>
+                 <div className="flex justify-between mt-8">
+                    <SignatureDisplay signature={document.business.ownerSignature} label="Authorized Signature" />
+                    <SignatureDisplay signature={document.clientSignature} label="Client Signature" />
+                </div>
             </footer>
             )}
         </div>
@@ -233,6 +259,10 @@ export const TransportationTemplate5: React.FC<TemplateProps> = ({ document, pag
             <footer className="mt-auto pt-8">
                 <div className="flex justify-end text-lg font-bold">
                     <p>Total Due: {currencySymbol}{summary.grandTotal.toFixed(2)}</p>
+                </div>
+                 <div className="flex justify-between mt-8">
+                    <SignatureDisplay signature={document.business.ownerSignature} label="Authorized Signature" />
+                    <SignatureDisplay signature={document.clientSignature} label="Client Signature" />
                 </div>
             </footer>
             )}

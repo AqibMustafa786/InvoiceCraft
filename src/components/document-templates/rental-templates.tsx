@@ -24,6 +24,16 @@ const safeFormat = (date: Date | string | number | undefined | null, formatStrin
     return format(d, formatString);
 }
 
+const SignatureDisplay = ({ signature, label }: { signature: any, label: string }) => {
+    if (!signature?.image) return null;
+    return (
+        <div className="mt-8">
+            <Image src={signature.image} alt={label} width={150} height={75} className="border-b border-gray-400" />
+            <p className="text-xs text-gray-500 pt-1 border-t-2 border-gray-700 w-[150px]">{label}</p>
+        </div>
+    )
+}
+
 const RentalDetails: React.FC<{ document: Estimate, t: any }> = ({ document, t }) => {
     if (!document.rental) return null;
     const { rental } = document;
@@ -79,6 +89,10 @@ export const RentalTemplate1: React.FC<TemplateProps> = ({ document, pageItems, 
                         <p className="flex justify-between font-bold text-2xl mt-2 pt-2 border-t-2"><span>{(t.totalDue || 'Total Due').toUpperCase()}:</span><span>{currencySymbol}{summary.grandTotal.toFixed(2)}</span></p>
                     </div>
                 </div>
+                 <div className="flex justify-between mt-8">
+                    <SignatureDisplay signature={document.business.ownerSignature} label="Authorized Signature" />
+                    <SignatureDisplay signature={document.clientSignature} label="Client Signature" />
+                </div>
             </footer>
             )}
         </div>
@@ -116,6 +130,10 @@ export const RentalTemplate2: React.FC<TemplateProps> = ({ document, pageItems, 
                     <p className="flex justify-between font-bold mt-2"><span>Total</span><span>{currencySymbol}{summary.grandTotal.toFixed(2)}</span></p>
                 </div>
             </div>
+             <div className="flex justify-between mt-8">
+                <SignatureDisplay signature={document.business.ownerSignature} label="Authorized Signature" />
+                <SignatureDisplay signature={document.clientSignature} label="Client Signature" />
+            </div>
         </footer>
         )}
       </div>
@@ -150,6 +168,10 @@ export const RentalTemplate3: React.FC<TemplateProps> = ({ document, pageItems, 
                     <p className="flex justify-between font-bold text-xl mt-2 pt-2 border-t-2"><span>Balance Due:</span><span>{currencySymbol}{summary.grandTotal.toFixed(2)}</span></p>
                 </div>
             </div>
+             <div className="flex justify-between mt-8">
+                <SignatureDisplay signature={document.business.ownerSignature} label="Authorized Signature" />
+                <SignatureDisplay signature={document.clientSignature} label="Client Signature" />
+            </div>
         </footer>
         )}
       </div>
@@ -181,6 +203,10 @@ export const RentalTemplate4: React.FC<TemplateProps> = ({ document, pageItems, 
                 {pageIndex === totalPages - 1 && (
                 <footer className="mt-auto pt-8">
                     <div className="text-right text-2xl font-bold">Total Due: {currencySymbol}{summary.grandTotal.toFixed(2)}</div>
+                    <div className="flex justify-between mt-8">
+                        <SignatureDisplay signature={document.business.ownerSignature} label="Authorized Signature" />
+                        <SignatureDisplay signature={document.clientSignature} label="Client Signature" />
+                    </div>
                 </footer>
                 )}
             </div>
@@ -218,6 +244,10 @@ export const RentalTemplate5: React.FC<TemplateProps> = ({ document, pageItems, 
                         <p className="flex justify-between"><span>Tax</span><span>{currencySymbol}{summary.taxAmount.toFixed(2)}</span></p>
                         <p className="flex justify-between font-bold mt-2 pt-2 border-t"><span>TOTAL</span><span>{currencySymbol}{summary.grandTotal.toFixed(2)}</span></p>
                     </div>
+                </div>
+                 <div className="flex justify-between mt-8">
+                    <SignatureDisplay signature={document.business.ownerSignature} label="Authorized Signature" />
+                    <SignatureDisplay signature={document.clientSignature} label="Client Signature" />
                 </div>
             </footer>
             )}

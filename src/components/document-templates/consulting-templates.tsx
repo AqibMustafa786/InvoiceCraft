@@ -23,6 +23,16 @@ const safeFormat = (date: Date | string | number | undefined | null, formatStrin
     return isValid(d) ? format(d, formatString) : "Invalid Date";
 }
 
+const SignatureDisplay = ({ signature, label }: { signature: any, label: string }) => {
+    if (!signature?.image) return null;
+    return (
+        <div className="mt-8">
+            <Image src={signature.image} alt={label} width={150} height={75} className="border-b border-gray-400" />
+            <p className="text-xs text-gray-500 pt-1 border-t-2 border-gray-700 w-[150px]">{label}</p>
+        </div>
+    )
+}
+
 const ConsultingDetails: React.FC<{ document: Estimate; textColor: string; t: any; }> = ({ document, textColor, t }) => {
     if (!document.consulting) return null;
     const { consulting } = document;
@@ -120,6 +130,10 @@ export const ConsultingTemplate1: React.FC<TemplateProps> = ({ document, pageIte
                     <p className="font-bold">{(t.termsAndConditions || 'Terms and Conditions')}</p>
                     <p className="text-gray-600 whitespace-pre-line">{document.termsAndConditions || 'Thank you for your business. Please make payment to the account specified below.'}</p>
                 </div>
+                 <div className="flex justify-between mt-8">
+                    <SignatureDisplay signature={document.business.ownerSignature} label="Authorized Signature" />
+                    <SignatureDisplay signature={document.clientSignature} label="Client Signature" />
+                </div>
             </footer>
             )}
         </div>
@@ -168,6 +182,10 @@ export const ConsultingTemplate2: React.FC<TemplateProps> = ({ document, pageIte
                             <p className="flex justify-between font-bold text-xl mt-4"><span>{t.total || 'Total'}:</span><span>{currencySymbol}{summary.grandTotal.toFixed(2)}</span></p>
                         </div>
                     </div>
+                    <div className="flex justify-between mt-8">
+                        <SignatureDisplay signature={document.business.ownerSignature} label="Authorized Signature" />
+                        <SignatureDisplay signature={document.clientSignature} label="Client Signature" />
+                    </div>
                 </footer>
                 )}
             </div>
@@ -211,6 +229,10 @@ export const ConsultingTemplate3: React.FC<TemplateProps> = ({ document, pageIte
                             <p className="flex justify-between"><span>{t.tax || 'Tax'}:</span><span>{currencySymbol}{summary.taxAmount.toFixed(2)}</span></p>
                             <p className="flex justify-between font-bold text-sm mt-2 pt-2 border-t border-gray-300"><span>{t.total || 'Total'}:</span><span>{currencySymbol}{summary.grandTotal.toFixed(2)}</span></p>
                         </div>
+                    </div>
+                     <div className="flex justify-between mt-8">
+                        <SignatureDisplay signature={document.business.ownerSignature} label="Authorized Signature" />
+                        <SignatureDisplay signature={document.clientSignature} label="Client Signature" />
                     </div>
                 </footer>
                 )}
@@ -258,6 +280,10 @@ export const ConsultingTemplate4: React.FC<TemplateProps> = ({ document, pageIte
                             <p className="flex justify-between font-bold text-lg mt-2"><span>{(t.balanceDue || 'Balance Due')}:</span><span>{currencySymbol}{summary.grandTotal.toFixed(2)}</span></p>
                         </div>
                     </div>
+                     <div className="flex justify-between mt-8">
+                        <SignatureDisplay signature={document.business.ownerSignature} label="Authorized Signature" />
+                        <SignatureDisplay signature={document.clientSignature} label="Client Signature" />
+                    </div>
                 </footer>
                 )}
             </div>
@@ -296,6 +322,10 @@ export const ConsultingTemplate5: React.FC<TemplateProps> = ({ document, pageIte
                         <p className="flex justify-between"><span>{(t.tax || 'Tax')}</span><span>{currencySymbol}{summary.taxAmount.toFixed(2)}</span></p>
                         <p className="flex justify-between font-bold text-sm mt-2 pt-2 border-t-2 border-black"><span>{(t.total || 'Total')}</span><span>{currencySymbol}{summary.grandTotal.toFixed(2)}</span></p>
                     </div>
+                </div>
+                 <div className="flex justify-between mt-8">
+                    <SignatureDisplay signature={document.business.ownerSignature} label="Authorized Signature" />
+                    <SignatureDisplay signature={document.clientSignature} label="Client Signature" />
                 </div>
             </footer>
             )}
