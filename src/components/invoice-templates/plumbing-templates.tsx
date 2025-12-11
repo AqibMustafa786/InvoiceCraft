@@ -1,5 +1,4 @@
 
-
 'use client';
 
 import React from 'react';
@@ -36,12 +35,12 @@ const PlumbingDetails: React.FC<{ invoice: Invoice, t: any }> = ({ invoice, t })
     const { plumbing } = invoice;
     return (
         <section className="my-4 text-xs">
-            <p className="font-bold text-gray-500 mb-2 border-b">{(t.plumbingDetails || 'Plumbing Details')}</p>
+            <p className="font-bold text-gray-500 mb-2 border-b">{t.plumbingDetails || 'Plumbing Details'}</p>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-x-4 gap-y-1">
-                <p><span className="font-semibold text-gray-600">{(t.serviceType || 'Service Type')}:</span> {plumbing.serviceType}</p>
-                <p><span className="font-semibold text-gray-600">{(t.pipeMaterial || 'Pipe Material')}:</span> {plumbing.pipeMaterial}</p>
-                <p><span className="font-semibold text-gray-600">{(t.fixture || 'Fixture')}:</span> {plumbing.fixtureName}</p>
-                {plumbing.emergencyFee && <p><span className="font-semibold text-gray-600">{(t.emergencyFee || 'Emergency Fee')}:</span> ${plumbing.emergencyFee.toFixed(2)}</p>}
+                <p><span className="font-semibold text-gray-600">{t.serviceType || 'Service Type'}:</span> {plumbing.serviceType}</p>
+                <p><span className="font-semibold text-gray-600">{t.pipeMaterial || 'Pipe Material'}:</span> {plumbing.pipeMaterial}</p>
+                <p><span className="font-semibold text-gray-600">{t.fixture || 'Fixture'}:</span> {plumbing.fixtureName}</p>
+                {plumbing.emergencyFee && <p><span className="font-semibold text-gray-600">{t.emergencyFee || 'Emergency Fee'}:</span> ${plumbing.emergencyFee.toFixed(2)}</p>}
             </div>
         </section>
     );
@@ -157,7 +156,6 @@ export const PlumbingTemplate2: React.FC<PageProps> = (props) => {
                 </div>
                 <div className="text-right">
                     <h2 className="text-3xl font-bold text-gray-400">{(t.invoice || 'INVOICE').toUpperCase()}</h2>
-                    <p className="text-sm text-gray-400">{(t.plumbingService || 'Plumbing Service')}</p>
                 </div>
             </header>
 
@@ -221,7 +219,6 @@ export const PlumbingTemplate3: React.FC<PageProps> = (props) => {
                 </div>
                 <div className="text-right">
                     <h2 className="text-3xl font-light tracking-widest">{(t.invoice || 'INVOICE').toUpperCase()}</h2>
-                    <p className="text-sm text-gray-500 mt-2">{(t.plumbingService || 'Plumbing Service')}</p>
                 </div>
             </header>
 
@@ -309,7 +306,6 @@ export const PlumbingTemplate4: React.FC<PageProps> = (props) => {
                 <div className='flex justify-end mb-4'>
                     <div className="text-right">
                         <h2 className='text-2xl font-bold'>{(t.invoice || 'INVOICE').toUpperCase()}</h2>
-                        <p className="text-sm">{(t.plumbingService || 'Plumbing Service')}</p>
                     </div>
                 </div>
                  <PlumbingDetails invoice={invoice} t={t} />
@@ -365,7 +361,6 @@ export const PlumbingTemplate5: React.FC<PageProps> = (props) => {
                 </div>
                  <div className="text-right">
                      <p className="text-3xl font-bold">{(t.invoice || 'Invoice')}</p>
-                    <p className="text-xs text-gray-500">{(t.plumbingService || 'Plumbing Service')}</p>
                 </div>
             </header>
 

@@ -65,7 +65,7 @@ export const ConstructionTemplate1: React.FC<PageProps> = (props) => {
                     <p className="text-xs">{business.phone}</p>
                     <p className="text-xs">{business.email}</p>
                 </div>
-                <h2 className="text-3xl font-bold text-gray-400">{(t.invoice || 'CONSTRUCTION INVOICE').toUpperCase()}</h2>
+                <h2 className="text-3xl font-bold text-gray-400">{(t.invoice || 'INVOICE').toUpperCase()}</h2>
             </header>
             
             <section className="grid grid-cols-2 gap-8 text-xs mb-8">
@@ -147,7 +147,6 @@ export const ConstructionTemplate2: React.FC<PageProps> = (props) => {
                 </div>
                 <div className="text-right">
                     <h2 className="text-3xl font-bold">{(t.invoice || 'INVOICE').toUpperCase()}</h2>
-                    <p className="text-sm">{(t.construction || 'Construction')}</p>
                 </div>
             </header>
 
@@ -223,7 +222,6 @@ export const ConstructionTemplate3: React.FC<PageProps> = (props) => {
                 </div>
                 <div className="text-right">
                     <h2 className="text-3xl font-bold">{(t.invoice || 'Invoice')}</h2>
-                    <p className="text-sm">{(t.construction || 'Construction')}</p>
                 </div>
             </header>
 
