@@ -129,7 +129,6 @@ export const RentalTemplate3: React.FC<TemplateProps> = ({ document, pageItems, 
       <div className={`p-10 font-serif bg-white ${pageIndex < totalPages - 1 ? 'page-break-after' : ''}`} style={{ minHeight: '1056px', backgroundColor: document.backgroundColor, color: textColor }}>
         <header className="text-center mb-10">
             <h1 className="text-4xl font-bold">{business.name}</h1>
-            <p className="text-sm">Rental Services</p>
         </header>
         <div className="w-full h-px bg-gray-300 mb-8"></div>
         <section className="grid grid-cols-2 gap-8 mb-8 text-sm">
@@ -166,7 +165,7 @@ export const RentalTemplate4: React.FC<TemplateProps> = ({ document, pageItems, 
                 <h1 className="text-3xl font-bold">{docTitle}</h1>
                 <div className="mt-10 text-xs space-y-4">
                     <div><p className="opacity-70">DATE</p><p>{safeFormat(document.estimateDate, 'yyyy-MM-dd')}</p></div>
-                    <div><p className="opacity-70">ESTIMATE #</p><p>{document.estimateNumber}</p></div>
+                    <div><p className="opacity-70">{(document.documentType === 'quote' ? t.quoteNo : t.estimateNo) || 'Number #'}</p><p>{document.estimateNumber}</p></div>
                 </div>
             </div>
             <div className="w-3/4 p-10">
@@ -201,7 +200,7 @@ export const RentalTemplate5: React.FC<TemplateProps> = ({ document, pageItems, 
             <h2 className="text-center text-xl mb-8">{docTitle}</h2>
             <section className="text-xs mb-8">
                 <p><strong>To:</strong> {client.name}</p>
-                <p><strong>Estimate No:</strong> {document.estimateNumber}</p>
+                <p><strong>{(document.documentType === 'quote' ? t.quoteNo : t.estimateNo) || 'Number #'}:</strong> {document.estimateNumber}</p>
                 <p><strong>Date:</strong> {safeFormat(document.estimateDate, 'MM/dd/yyyy')}</p>
             </section>
             <RentalDetails document={document} t={t} />

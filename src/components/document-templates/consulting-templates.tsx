@@ -72,7 +72,7 @@ export const ConsultingTemplate1: React.FC<TemplateProps> = ({ document, pageIte
                     <p className="whitespace-pre-line">{client.address}</p>
                 </div>
                 <div className="text-right space-y-1">
-                    <p><span className="font-bold">{(t.estimateNo || 'Estimate #').toUpperCase()}:</span> {document.estimateNumber}</p>
+                    <p><span className="font-bold">{(document.documentType === 'quote' ? t.quoteNo : t.estimateNo) || 'Number #'}:</span> {document.estimateNumber}</p>
                     <p><span className="font-bold">{(t.date || 'DATE').toUpperCase()}:</span> {safeFormat(document.estimateDate, 'MM-dd-yyyy')}</p>
                     <p><span className="font-bold">{(t.validUntil || 'VALID UNTIL').toUpperCase()}:</span> {safeFormat(document.validUntilDate, 'MM-dd-yyyy')}</p>
                 </div>
@@ -194,12 +194,12 @@ export const ConsultingTemplate3: React.FC<TemplateProps> = ({ document, pageIte
                 </header>
                 <section className="grid grid-cols-2 gap-8 text-xs mb-8">
                     <div><p className="font-bold text-gray-500 mb-1">{t.billedTo || 'Billed To'}</p><p>{client.name}<br/>{client.address}</p></div>
-                    <div className="text-right"><p><span className="font-bold text-gray-500">{t.estimateNo || 'Estimate #'}: </span>{document.estimateNumber}</p><p><span className="font-bold text-gray-500">{t.date || 'Date'}: </span>{safeFormat(document.estimateDate, 'dd/MM/yyyy')}</p></div>
+                    <div className="text-right"><p><span className="font-bold text-gray-500">{(document.documentType === 'quote' ? t.quoteNo : t.estimateNo) || 'Number #'}: </span>{document.estimateNumber}</p><p><span className="font-bold text-gray-500">{t.date || 'Date'}: </span>{safeFormat(document.estimateDate, 'dd/MM/yyyy')}</p></div>
                 </section>
                 <ConsultingDetails document={document} textColor={textColor || '#374151'} t={t}/>
                 <main className="flex-grow mt-4">
                     <table className="w-full text-left text-xs">
-                        <thead><tr className="border-b-2 border-gray-200"><th className="py-2 font-bold w-4/5">{t.serviceDescription || 'SERVICE DESCRIPTION').toUpperCase()}</th><th className="py-2 font-bold text-right">{t.fee || 'FEE').toUpperCase()}</th></tr></thead>
+                        <thead><tr className="border-b-2 border-gray-200"><th className="py-2 font-bold w-4/5">{(t.serviceDescription || 'SERVICE DESCRIPTION').toUpperCase()}</th><th className="py-2 font-bold text-right">{(t.fee || 'FEE').toUpperCase()}</th></tr></thead>
                         <tbody>{pageItems.map(item => (<tr key={item.id} className="border-b border-gray-100"><td className="py-2">{item.name}</td><td className="py-2 text-right">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</td></tr>))}</tbody>
                     </table>
                 </main>
@@ -246,7 +246,7 @@ export const ConsultingTemplate4: React.FC<TemplateProps> = ({ document, pageIte
                 <ConsultingDetails document={document} textColor={textColor || '#374151'} t={t}/>
                 <main className="flex-grow mt-4">
                     <table className="w-full text-left text-sm">
-                        <thead><tr className="bg-gray-100"><th className="p-3 font-bold w-3/5">{t.serviceProvided || 'Service Provided'}</th><th className="p-3 font-bold text-right">{t.fee || 'Fee'}</th></tr></thead>
+                        <thead><tr className="bg-gray-100"><th className="p-3 font-bold w-3/5">{t.serviceProvided || 'Service Provided'}</th><th className="p-3 font-bold text-right">{(t.fee || 'Fee')}</th></tr></thead>
                         <tbody>{pageItems.map(item => (<tr key={item.id} className="border-b"><td className="p-3">{item.name}</td><td className="p-3 text-right">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</td></tr>))}</tbody>
                     </table>
                 </main>
@@ -254,8 +254,8 @@ export const ConsultingTemplate4: React.FC<TemplateProps> = ({ document, pageIte
                 <footer className="mt-10 pt-10 border-t">
                     <div className="flex justify-end text-sm">
                         <div className="w-1/3">
-                            <p className="flex justify-between"><span>{t.total || 'Total'}:</span><span>{currencySymbol}{summary.subtotal.toFixed(2)}</span></p>
-                            <p className="flex justify-between font-bold text-lg mt-2"><span>{t.balanceDue || 'Balance Due'}:</span><span>{currencySymbol}{summary.grandTotal.toFixed(2)}</span></p>
+                            <p className="flex justify-between"><span>{(t.total || 'Total')}:</span><span>{currencySymbol}{summary.subtotal.toFixed(2)}</span></p>
+                            <p className="flex justify-between font-bold text-lg mt-2"><span>{(t.balanceDue || 'Balance Due')}:</span><span>{currencySymbol}{summary.grandTotal.toFixed(2)}</span></p>
                         </div>
                     </div>
                 </footer>
@@ -292,9 +292,9 @@ export const ConsultingTemplate5: React.FC<TemplateProps> = ({ document, pageIte
             <footer className="mt-auto pt-8">
                 <div className="flex justify-end text-xs">
                     <div className="w-1/2">
-                        <p className="flex justify-between border-t border-dashed pt-2"><span>{t.subtotal || 'Subtotal'}</span><span>{currencySymbol}{summary.subtotal.toFixed(2)}</span></p>
-                        <p className="flex justify-between"><span>{t.tax || 'Tax'}</span><span>{currencySymbol}{summary.taxAmount.toFixed(2)}</span></p>
-                        <p className="flex justify-between font-bold text-sm mt-2 pt-2 border-t-2 border-black"><span>{t.total || 'Total'}</span><span>{currencySymbol}{summary.grandTotal.toFixed(2)}</span></p>
+                        <p className="flex justify-between border-t border-dashed pt-2"><span>{(t.subtotal || 'Subtotal')}</span><span>{currencySymbol}{summary.subtotal.toFixed(2)}</span></p>
+                        <p className="flex justify-between"><span>{(t.tax || 'Tax')}</span><span>{currencySymbol}{summary.taxAmount.toFixed(2)}</span></p>
+                        <p className="flex justify-between font-bold text-sm mt-2 pt-2 border-t-2 border-black"><span>{(t.total || 'Total')}</span><span>{currencySymbol}{summary.grandTotal.toFixed(2)}</span></p>
                     </div>
                 </div>
             </footer>

@@ -65,7 +65,7 @@ export const PhotographyTemplate1: React.FC<TemplateProps> = ({ document, pageIt
                         <p className="text-sm">{safeFormat(document.estimateDate, 'MMMM d, yyyy')}</p>
                     </div>
                     <div className="text-right">
-                        <p className="text-sm">Estimate to:</p>
+                        <p className="text-sm">{(document.documentType === 'quote' ? t.quoteTo : t.estimateTo) || 'Estimate to'}:</p>
                         <p className="text-xl font-bold">{client.name}</p>
                     </div>
                 </section>
@@ -174,7 +174,7 @@ export const PhotographyTemplate3: React.FC<TemplateProps> = ({ document, pageIt
             </header>
             <section className="grid grid-cols-2 gap-8 text-xs mb-8">
                 <div><p className="font-bold">{(t.billedTo || 'Billed To')}</p><p>{client.name}<br/>{client.address}</p></div>
-                <div className="text-right"><p><strong>{(t.estimate || 'Estimate')} #:</strong> {document.estimateNumber}</p><p><strong>{(t.date || 'Date')}:</strong> {safeFormat(document.estimateDate, 'MM/dd/yyyy')}</p></div>
+                <div className="text-right"><p><strong>{(document.documentType === 'quote' ? t.quoteNo : t.estimateNo) || 'Number #'}:</strong> {document.estimateNumber}</p><p><strong>{(t.date || 'Date')}:</strong> {safeFormat(document.estimateDate, 'MM/dd/yyyy')}</p></div>
             </section>
             <PhotographyDetails document={document} t={t} />
             <main className="flex-grow mt-4">
@@ -253,7 +253,7 @@ export const PhotographyTemplate5: React.FC<TemplateProps> = ({ document, pageIt
             </header>
             <section className="flex justify-between text-xs mb-10">
                 <div><p className="font-bold">{(t.client || 'Client')}</p><p>{client.name}</p></div>
-                <div><p className="font-bold">{(t.estimateNo || 'Estimate No.')}</p><p>{document.estimateNumber}</p></div>
+                <div><p className="font-bold">{(document.documentType === 'quote' ? t.quoteNo : t.estimateNo) || 'Number #'}</p><p>{document.estimateNumber}</p></div>
                 <div><p className="font-bold">{(t.date || 'Date')}</p><p>{safeFormat(document.estimateDate, 'yyyy-MM-dd')}</p></div>
             </section>
             <PhotographyDetails document={document} t={t} />

@@ -81,8 +81,8 @@ export const AutoRepairTemplate1: React.FC<TemplateProps> = ({ document, pageIte
                         <p><span className="font-bold w-20 inline-block">{t.email || 'Email'}:</span> {client.email}</p>
                     </div>
                     <div>
-                       <p className="p-1 text-sm font-bold rounded" style={{ backgroundColor: `${accentColor}40`}}>{t.estimateDetails || 'Estimate Details'}</p>
-                        <p className="mt-2"><span className="font-bold w-20 inline-block">{t.estimateNo || 'Estimate #'}:</span> {document.estimateNumber}</p>
+                       <p className="p-1 text-sm font-bold rounded" style={{ backgroundColor: `${accentColor}40`}}>{t.estimateDetails || 'Details'}</p>
+                        <p className="mt-2"><span className="font-bold w-20 inline-block">{(document.documentType === 'quote' ? t.quoteNo : t.estimateNo) || 'Number #'}:</span> {document.estimateNumber}</p>
                         <p><span className="font-bold w-20 inline-block">{t.date || 'Date'}:</span> {safeFormat(document.estimateDate, 'MM/dd/yyyy')}</p>
                     </div>
                 </section>
@@ -175,7 +175,7 @@ export const AutoRepairTemplate2: React.FC<TemplateProps> = ({ document, pageIte
                         <p className="text-gray-300">{client.address}</p>
                     </div>
                     <div className="text-right">
-                        <p><span className="font-bold text-gray-400">{(t.estimateNo || 'ESTIMATE #').toUpperCase()}: </span>{document.estimateNumber}</p>
+                        <p><span className="font-bold text-gray-400">{(document.documentType === 'quote' ? t.quoteNo : t.estimateNo) || 'Number #'}: </span>{document.estimateNumber}</p>
                         <p><span className="font-bold text-gray-400">{(t.date || 'DATE').toUpperCase()}: </span>{safeFormat(document.estimateDate, 'yyyy-MM-dd')}</p>
                     </div>
                 </section>
@@ -211,7 +211,7 @@ export const AutoRepairTemplate2: React.FC<TemplateProps> = ({ document, pageIte
                             <div className="w-2/5 text-sm space-y-2">
                                 <div className="flex justify-between"><span className="text-gray-400">{(t.subtotal || 'Subtotal')}:</span><span>{currencySymbol}{summary.subtotal.toFixed(2)}</span></div>
                                 <div className="flex justify-between"><span className="text-gray-400">{(t.taxesAndFees || 'Taxes & Fees')}:</span><span>{currencySymbol}{summary.taxAmount.toFixed(2)}</span></div>
-                                <div className="flex justify-between font-bold text-xl mt-2 pt-2 border-t-2 border-gray-500" style={{color: style.color || '#FBBF24'}}><span>{(t.estimateTotal || 'ESTIMATE TOTAL').toUpperCase()}:</span><span>{currencySymbol}{summary.grandTotal.toFixed(2)}</span></div>
+                                <div className="flex justify-between font-bold text-xl mt-2 pt-2 border-t-2 border-gray-500" style={{color: style.color || '#FBBF24'}}><span>{(document.documentType === 'quote' ? t.quoteTotal : t.estimateTotal) || 'TOTAL'}:</span><span>{currencySymbol}{summary.grandTotal.toFixed(2)}</span></div>
                             </div>
                         </div>
                     </footer>
@@ -246,7 +246,7 @@ export const AutoRepairTemplate3: React.FC<TemplateProps> = ({ document, pageIte
                     <p>{client.name}</p><p>{client.address}</p>
                 </div>
                  <div className="text-right">
-                    <p><span className="font-bold">{(t.estimateNo || 'Estimate #')}</span> {document.estimateNumber}</p>
+                    <p><span className="font-bold">{(document.documentType === 'quote' ? t.quoteNo : t.estimateNo) || 'Number #'}:</span> {document.estimateNumber}</p>
                     <p><span className="font-bold">{(t.date || 'Date')}:</span> {safeFormat(document.estimateDate, 'MMM dd, yyyy')}</p>
                 </div>
             </section>
@@ -314,7 +314,7 @@ export const AutoRepairTemplate4: React.FC<TemplateProps> = ({ document, pageIte
             
             <section className="my-8 grid grid-cols-2 gap-4 text-xs">
                  <div><p><span className="font-bold">{(t.to || 'TO').toUpperCase()}: </span>{client.name}</p><p>{client.address}</p></div>
-                 <div className="text-right"><p><span className="font-bold">{(t.estimateNo || 'ESTIMATE #').toUpperCase()}: </span>{document.estimateNumber}</p><p><span className="font-bold">{(t.date || 'DATE').toUpperCase()}: </span>{safeFormat(document.estimateDate, 'yyyy-MM-dd')}</p></div>
+                 <div className="text-right"><p><span className="font-bold">{(document.documentType === 'quote' ? t.quoteNo : t.estimateNo) || 'Number #'}: </span>{document.estimateNumber}</p><p><span className="font-bold">{(t.date || 'DATE').toUpperCase()}: </span>{safeFormat(document.estimateDate, 'yyyy-MM-dd')}</p></div>
             </section>
 
              <AutoRepairDetails document={document} textColor={textColor || '#374151'} t={t}/>
@@ -363,7 +363,7 @@ export const AutoRepairTemplate4: React.FC<TemplateProps> = ({ document, pageIte
 export const AutoRepairTemplate5: React.FC<TemplateProps> = ({ document, pageItems, pageIndex, totalPages, style, t }) => {
     const { business, client, summary, currency, textColor, category } = document;
     const currencySymbol = currencySymbols[currency] || '$';
-    const docTitle = document.documentType === 'quote' ? (t.estimate || 'Estimate').toUpperCase() : (t.estimate || 'Estimate').toUpperCase();
+    const docTitle = document.documentType === 'quote' ? (t.quote || 'Quote').toUpperCase() : (t.estimate || 'Estimate').toUpperCase();
 
     return (
         <div className={`p-10 bg-gray-50 font-['Roboto',_sans-serif] text-gray-900 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{minHeight: '1056px', color: textColor}}>
@@ -380,7 +380,7 @@ export const AutoRepairTemplate5: React.FC<TemplateProps> = ({ document, pageIte
             <section className="grid grid-cols-2 gap-4 mb-8 text-xs p-4 bg-white rounded-lg shadow-sm">
                 <div><p className="font-bold text-gray-500">{(t.from || 'From').toUpperCase()}:</p><p className="font-semibold">{business.name}</p><p>{business.address}</p></div>
                 <div><p className="font-bold text-gray-500">{(t.to || 'To').toUpperCase()}:</p><p className="font-semibold">{client.name}</p><p>{client.address}</p></div>
-                <div><p className="font-bold text-gray-500">{(t.estimateNo || 'ESTIMATE NO').toUpperCase()}:</p><p>{document.estimateNumber}</p></div>
+                <div><p className="font-bold text-gray-500">{(document.documentType === 'quote' ? t.quoteNo : t.estimateNo) || 'Number #'}:</p><p>{document.estimateNumber}</p></div>
                 <div><p className="font-bold text-gray-500">{(t.dateIssued || 'DATE ISSUED').toUpperCase()}:</p><p>{safeFormat(document.estimateDate, 'MMM d, yyyy')}</p></div>
             </section>
             
@@ -414,11 +414,10 @@ export const AutoRepairTemplate5: React.FC<TemplateProps> = ({ document, pageIte
                     <div className="w-1/3 text-sm space-y-1">
                         <p className="flex justify-between"><span>{(t.subtotal || 'Subtotal')}</span><span>{currencySymbol}{summary.subtotal.toFixed(2)}</span></p>
                         <p className="flex justify-between"><span>{(t.tax || 'Tax')}</span><span>{currencySymbol}{summary.taxAmount.toFixed(2)}</span></p>
-                        <p className="flex justify-between font-bold text-lg mt-2 pt-2 border-t-2 border-black"><span>{(t.totalEstimate || 'Total Estimate')}</span><span>{currencySymbol}{summary.grandTotal.toFixed(2)}</span></p>
+                        <p className="flex justify-between font-bold text-lg mt-2 pt-2 border-t-2 border-black"><span>{(document.documentType === 'quote' ? t.quoteTotal : t.estimateTotal) || 'Total'}:</span><span>{currencySymbol}{summary.grandTotal.toFixed(2)}</span></p>
                     </div>
                 </footer>
             )}
         </div>
     );
 };
-
