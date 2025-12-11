@@ -73,160 +73,7 @@ const SignatureDisplay = ({ signature, label }: { signature: any, label: string 
 }
 
 const CategoryPreview = ({ document }: { document: Estimate }) => {
-    const { category, homeRemodeling, roofing, hvac, plumbing, electrical, landscaping, cleaning, autoRepair, construction, itFreelance } = document;
-    if (category === 'Generic') return null;
-
-    const renderContent = () => {
-        switch (category) {
-            case "Home Remodeling / Renovation":
-                if (!homeRemodeling) return null;
-                return (
-                    <div className="grid grid-cols-2 gap-x-8 gap-y-2 mt-4 text-xs" data-element="category-details">
-                        <div><span className="font-bold">Project Type:</span> {homeRemodeling.projectType}</div>
-                        <div><span className="font-bold">Property Type:</span> {homeRemodeling.propertyType}</div>
-                        {homeRemodeling.squareFootage && <div><span className="font-bold">Sq. Footage:</span> {homeRemodeling.squareFootage} sq ft</div>}
-                        <div className="col-span-2"><span className="font-bold">Rooms:</span> {homeRemodeling.roomsIncluded}</div>
-                        <div><span className="font-bold">Material Grade:</span> {homeRemodeling.materialGrade}</div>
-                        <div><span className="font-bold">Demolition:</span> {homeRemodeling.demolitionRequired ? 'Yes' : 'No'}</div>
-                        <div><span className="font-bold">Permit:</span> {homeRemodeling.permitRequired ? 'Yes' : 'No'}</div>
-                        {homeRemodeling.expectedStartDate && <div><span className="font-bold">Starts:</span> {safeFormat(homeRemodeling.expectedStartDate, 'MMM d, yyyy')}</div>}
-                        {homeRemodeling.expectedCompletionDate && <div><span className="font-bold">Ends:</span> {safeFormat(homeRemodeling.expectedCompletionDate, 'MMM d, yyyy')}</div>}
-                        {homeRemodeling.specialInstructions && <div className="col-span-2"><span className="font-bold">Instructions:</span> <span className="whitespace-pre-line">{homeRemodeling.specialInstructions}</span></div>}
-                    </div>
-                );
-            case "Roofing Estimate":
-                 if (!roofing) return null;
-                 return (
-                    <div className="grid grid-cols-2 gap-x-8 gap-y-2 mt-4 text-xs" data-element="category-details">
-                        <div><span className="font-bold">Roof Material:</span> {roofing.roofMaterial}</div>
-                        <div><span className="font-bold">Shingle Brand:</span> {roofing.shingleBrand}</div>
-                        {roofing.roofSize && <div><span className="font-bold">Roof Size:</span> {roofing.roofSize} sq ft</div>}
-                        <div><span className="font-bold">Layers to Remove:</span> {roofing.layersToRemove}</div>
-                        <div><span className="font-bold">Roof Pitch:</span> {roofing.roofPitch}</div>
-                        <div><span className="font-bold">Underlayment:</span> {roofing.underlaymentType}</div>
-                        <div><span className="font-bold">Flashing Details:</span> {roofing.flashingDetails}</div>
-                        <div><span className="font-bold">Ventilation:</span> {roofing.ventilationSystem}</div>
-                        <div><span className="font-bold">Gutter Repair:</span> {roofing.gutterRepairNeeded ? 'Yes' : 'No'}</div>
-                        <div><span className="font-bold">Warranty:</span> {roofing.warranty}</div>
-                        <div className="col-span-2"><span className="font-bold">Timeline:</span> {roofing.estimatedTimeline}</div>
-                        <div><span className="font-bold">Inspection Required:</span> {roofing.inspectionRequired}</div>
-                    </div>
-                );
-            case "HVAC (Air Conditioning / Heating)":
-                if (!hvac) return null;
-                return (
-                    <div className="grid grid-cols-2 gap-x-8 gap-y-2 mt-4 text-xs" data-element="category-details">
-                        <div><span className="font-bold">Service Type:</span> {hvac.serviceType}</div>
-                        <div><span className="font-bold">System Type:</span> {hvac.systemType}</div>
-                        {hvac.unitSize && <div><span className="font-bold">Unit Size:</span> {hvac.unitSize} {hvac.systemType === 'AC' ? 'Tons' : 'BTU'}</div>}
-                        {hvac.seerRating && <div><span className="font-bold">SEER Rating:</span> {hvac.seerRating}</div>}
-                        <div><span className="font-bold">Furnace Type:</span> {hvac.furnaceType}</div>
-                        <div><span className="font-bold">Thermostat:</span> {hvac.thermostatType}</div>
-                        <div><span className="font-bold">Ductwork:</span> {hvac.ductworkRequired ? 'Required' : 'Not Required'}</div>
-                        {hvac.refrigerantType && <div><span className="font-bold">Refrigerant:</span> {hvac.refrigerantType}</div>}
-                        {hvac.existingSystemCondition && <div className="col-span-2"><span className="font-bold">Existing System:</span> {hvac.existingSystemCondition}</div>}
-                    </div>
-                );
-            case "Plumbing Estimate":
-                 if (!plumbing) return null;
-                return (
-                    <div className="grid grid-cols-2 gap-x-8 gap-y-2 mt-4 text-xs" data-element="category-details">
-                        <div><span className="font-bold">Service Type:</span> {plumbing.serviceType}</div>
-                        <div><span className="font-bold">Fixture:</span> {plumbing.fixtureType}</div>
-                        <div><span className="font-bold">Pipe Material:</span> {plumbing.pipeMaterial}</div>
-                        <div><span className="font-bold">Floor Level:</span> {plumbing.floorLevel}</div>
-                        <div><span className="font-bold">Emergency:</span> {plumbing.emergencyService ? 'Yes' : 'No'}</div>
-                        <div><span className="font-bold">Pressure Issue:</span> {plumbing.waterPressureIssue ? 'Yes' : 'No'}</div>
-                        {plumbing.leakLocation && <div className="col-span-2"><span className="font-bold">Leak Location:</span> {plumbing.leakLocation}</div>}
-                        {plumbing.estimatedRepairTime && <div><span className="font-bold">Est. Time:</span> {plumbing.estimatedRepairTime}</div>}
-                    </div>
-                );
-            case "Electrical Estimate":
-                if (!electrical) return null;
-                return (
-                    <div className="grid grid-cols-2 gap-x-8 gap-y-2 mt-4 text-xs" data-element="category-details">
-                        <div><span className="font-bold">Service:</span> {electrical.serviceType}</div>
-                        <div><span className="font-bold">Wiring:</span> {electrical.wiringType}</div>
-                        <div><span className="font-bold">Panel Upgrade:</span> {electrical.panelUpgradeNeeded ? 'Yes' : 'No'}</div>
-                        <div><span className="font-bold">Panel Size:</span> {electrical.panelSize}</div>
-                        {electrical.outletsFixturesCount && <div><span className="font-bold">Outlets/Fixtures:</span> {electrical.outletsFixturesCount}</div>}
-                        <div><span className="font-bold">Rooms:</span> {electrical.roomsInvolved}</div>
-                        <div><span className="font-bold">EV Charger:</span> {electrical.evChargerNeeded ? 'Yes' : 'No'}</div>
-                        <div><span className="font-bold">Inspection:</span> {electrical.inspectionRequired ? 'Yes' : 'No'}</div>
-                    </div>
-                );
-            case "Landscaping Estimate":
-                if (!landscaping) return null;
-                return (
-                    <div className="grid grid-cols-2 gap-x-8 gap-y-2 mt-4 text-xs" data-element="category-details">
-                        <div className="col-span-2"><span className="font-bold">Service Type:</span> {landscaping.serviceType}</div>
-                        <div><span className="font-bold">Property Size:</span> {landscaping.propertySize}</div>
-                        <div><span className="font-bold">Yard Condition:</span> {landscaping.yardCondition}</div>
-                        {landscaping.grassHeight && <div><span className="font-bold">Grass Height:</span> {landscaping.grassHeight}</div>}
-                        {landscaping.treeCount && <div><span className="font-bold">Tree Count:</span> {landscaping.treeCount}</div>}
-                        {landscaping.fenceLengthNeeded && <div className="col-span-2"><span className="font-bold">Fence Length:</span> {landscaping.fenceLengthNeeded}</div>}
-                    </div>
-                );
-            case "Cleaning Estimate":
-                if (!cleaning) return null;
-                return (
-                    <div className="grid grid-cols-2 gap-x-8 gap-y-2 mt-4 text-xs" data-element="category-details">
-                        <div><span className="font-bold">Cleaning Type:</span> {cleaning.cleaningType}</div>
-                        <div><span className="font-bold">Frequency:</span> {cleaning.frequency}</div>
-                        {cleaning.homeSize && <div><span className="font-bold">Home Size:</span> {cleaning.homeSize} sq ft</div>}
-                        {cleaning.bedrooms && <div><span className="font-bold">Bedrooms:</span> {cleaning.bedrooms}</div>}
-                        {cleaning.bathrooms && <div><span className="font-bold">Bathrooms:</span> {cleaning.bathrooms}</div>}
-                        <div><span className="font-bold">Kitchen Size:</span> {cleaning.kitchenSize}</div>
-                        <div><span className="font-bold">Has Pets:</span> {cleaning.hasPets ? 'Yes' : 'No'}</div>
-                        {cleaning.addOns.length > 0 && <div className="col-span-2"><span className="font-bold">Add-ons:</span> {cleaning.addOns.join(', ')}</div>}
-                    </div>
-                );
-            case "Auto Repair Estimate":
-                if (!autoRepair) return null;
-                return (
-                    <div className="grid grid-cols-2 gap-x-8 gap-y-2 mt-4 text-xs" data-element="category-details">
-                        <div><span className="font-bold">Vehicle:</span> {autoRepair.vehicleMake} {autoRepair.vehicleModel} ({autoRepair.vehicleYear})</div>
-                        {autoRepair.mileage && <div><span className="font-bold">Mileage:</span> {autoRepair.mileage.toLocaleString()}</div>}
-                        <div className="col-span-2"><span className="font-bold">VIN:</span> {autoRepair.vin}</div>
-                        <div className="col-span-2"><span className="font-bold">Issue:</span> {autoRepair.issueDescription}</div>
-                        <div className="col-span-2"><span className="font-bold">Parts Required:</span> {autoRepair.partsRequired}</div>
-                        <div><span className="font-bold">Diagnostic:</span> {autoRepair.diagnosticType}</div>
-                    </div>
-                );
-             case "Construction Estimate":
-                if (!construction) return null;
-                return (
-                    <div className="grid grid-cols-2 gap-x-8 gap-y-2 mt-4 text-xs" data-element="category-details">
-                        <div><span className="font-bold">Project Type:</span> {construction.projectType}</div>
-                        {construction.squareFootage && <div><span className="font-bold">Sq. Footage:</span> {construction.squareFootage} sq ft</div>}
-                        <div><span className="font-bold">Lot Size:</span> {construction.lotSize}</div>
-                        <div><span className="font-bold">Building Type:</span> {construction.buildingType}</div>
-                        <div><span className="font-bold">Permit:</span> {construction.permitRequired ? 'Yes' : 'No'}</div>
-                        <div><span className="font-bold">Drawings:</span> {construction.architectDrawingsProvided ? 'Provided' : 'Not Provided'}</div>
-                        <div><span className="font-bold">Inspection:</span> {construction.inspectionRequired ? 'Yes' : 'No'}</div>
-                        <div className="col-span-2"><span className="font-bold">Material Pref:</span> {construction.materialPreference}</div>
-                    </div>
-                );
-            case "IT / Freelance Estimate":
-                if (!itFreelance) return null;
-                return (
-                    <div className="grid grid-cols-2 gap-x-8 gap-y-2 mt-4 text-xs" data-element="category-details">
-                        <div><span className="font-bold">Project Type:</span> {itFreelance.projectType}</div>
-                        <div><span className="font-bold">Design Style:</span> {itFreelance.designStyle}</div>
-                        {itFreelance.pagesScreensCount && <div><span className="font-bold">Pages/Screens:</span> {itFreelance.pagesScreensCount}</div>}
-                        {itFreelance.revisionsIncluded && <div><span className="font-bold">Revisions:</span> {itFreelance.revisionsIncluded}</div>}
-                        <div className="col-span-2"><span className="font-bold">Timeline:</span> {itFreelance.deliveryTimeline}</div>
-                        <div className="col-span-2"><span className="font-bold">Scope:</span> <span className="whitespace-pre-line">{itFreelance.scopeOfWork}</span></div>
-                        <div className="col-span-2"><span className="font-bold">Features:</span> <span className="whitespace-pre-line">{itFreelance.featuresNeeded}</span></div>
-                        <div className="col-span-2"><span className="font-bold">Integrations:</span> <span className="whitespace-pre-line">{itFreelance.integrations}</span></div>
-                    </div>
-                );
-            default:
-                return null;
-        }
-    };
-
-    return <div data-element="category-preview-wrapper">{renderContent()}</div>;
+    return null;
 };
 
 const PageHeader = ({ document, style, pageIndex, t }: { document: Estimate, style: React.CSSProperties, pageIndex: number, t: any }) => {
@@ -321,7 +168,7 @@ const PageFooter = ({ document, style, t }: { document: Estimate, style: React.C
                         <span className="font-medium tabular-nums">{currencySymbol}{summary.subtotal.toFixed(2)}</span>
                     </div>
                      {summary.discount > 0 && (
-                        <div className="flex justify-between">
+                        <div className="flex justify-between text-red-500">
                             <span>{t.discount || 'Discount'}</span>
                             <span className="font-medium tabular-nums">-{currencySymbol}{summary.discount.toFixed(2)}</span>
                         </div>
@@ -347,7 +194,7 @@ const PageFooter = ({ document, style, t }: { document: Estimate, style: React.C
                         </div>
                     )}
                     <div className="flex justify-between items-center font-bold text-lg pt-2 mt-2" style={{ color: style.color }}>
-                        <span className="uppercase">{t.estimateTotal || 'Estimate Total'}</span>
+                        <span className="uppercase">{document.documentType === 'quote' ? t.quoteTotal || 'Quote Total' : t.estimateTotal || 'Estimate Total'}</span>
                         <span className="tabular-nums">{currencySymbol}{summary.grandTotal.toFixed(2)}</span>
                     </div>
                 </div>
@@ -660,4 +507,3 @@ export const ClientDocumentPreview: FC<DocumentPreviewProps> = (props) => {
 
 export { DocumentPreviewInternal as DocumentPreview };
 
-    

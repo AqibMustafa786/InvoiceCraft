@@ -73,9 +73,6 @@ export const RemodelingTemplate1: React.FC<TemplateProps> = ({ document, pageIte
                         }
                         <h1 className="text-3xl font-bold">{business.name}</h1>
                     </div>
-                    <div className="text-right">
-                        <h2 className="text-2xl font-bold">{docTitle}</h2>
-                    </div>
                 </div>
             </header>
 
@@ -124,7 +121,11 @@ export const RemodelingTemplate1: React.FC<TemplateProps> = ({ document, pageIte
                             ))}
                         </tbody>
                         {pageIndex === totalPages - 1 && (
-                             <tfoot>
+                            <tfoot>
+                                <tr><td colSpan={2} className="pt-4 text-right">Subtotal</td><td className="pt-4 text-right">{currencySymbol}{summary.subtotal.toFixed(2)}</td></tr>
+                                {summary.discount > 0 && (<tr><td colSpan={2} className="text-right">Discount</td><td className="text-right text-red-500">-{currencySymbol}{summary.discount.toFixed(2)}</td></tr>)}
+                                {summary.shippingCost > 0 && (<tr><td colSpan={2} className="text-right">Shipping</td><td className="text-right">{currencySymbol}{summary.shippingCost.toFixed(2)}</td></tr>)}
+                                <tr><td colSpan={2} className="text-right">Tax ({summary.taxPercentage}%)</td><td className="text-right">{currencySymbol}{summary.taxAmount.toFixed(2)}</td></tr>
                                  <tr>
                                      <td colSpan={2} className="p-2 pt-4 text-right font-bold text-base">{(t.totalCost || 'Total Cost')}</td>
                                      <td className="p-2 pt-4 text-right font-bold text-base">{currencySymbol}{summary.grandTotal.toFixed(2)}</td>
@@ -224,6 +225,8 @@ export const RemodelingTemplate2: React.FC<TemplateProps> = ({ document, pageIte
                      <div className="flex justify-end mb-8">
                         <div className="w-2/5 text-sm space-y-1">
                             <div className="flex justify-between"><span>{(t.subtotal || 'Subtotal')}</span><span>{currencySymbol}{summary.subtotal.toFixed(2)}</span></div>
+                            {summary.discount > 0 && (<div className="flex justify-between text-red-500"><span>{(t.discount || 'Discount')}</span><span>-{currencySymbol}{summary.discount.toFixed(2)}</span></div>)}
+                            {summary.shippingCost > 0 && (<div className="flex justify-between"><span>{(t.shipping || 'Shipping')}</span><span>{currencySymbol}{summary.shippingCost.toFixed(2)}</span></div>)}
                             {summary.taxAmount > 0 && <div className="flex justify-between"><span>{(t.tax || 'Tax')}</span><span>{currencySymbol}{summary.taxAmount.toFixed(2)}</span></div>}
                              <div className="flex justify-between font-bold text-base mt-2 pt-2 border-t" style={{borderColor: style.color}}><span>{(t.estimateTotal || 'Estimate Total')}</span><span>{currencySymbol}{summary.grandTotal.toFixed(2)}</span></div>
                         </div>
@@ -248,9 +251,6 @@ export const RemodelingTemplate3: React.FC<TemplateProps> = ({ document, pageIte
         <div className={`p-10 font-['Times_New_Roman',_serif] text-gray-900 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontSize: `${style.fontSize}pt`, minHeight: '1056px', backgroundColor: document.backgroundColor, color: textColor }}>
             <header className="flex justify-between items-center mb-10">
                 <h1 className="text-4xl font-bold">{business.name}</h1>
-                <div className="text-right">
-                    <h2 className="text-2xl font-bold text-gray-500">{docTitle}</h2>
-                </div>
             </header>
 
             <section className="mb-8 p-4 border border-gray-200 rounded grid grid-cols-3 gap-4 text-xs">
@@ -293,6 +293,8 @@ export const RemodelingTemplate3: React.FC<TemplateProps> = ({ document, pageIte
                          </div>
                          <div className="w-1/3 text-right text-sm">
                             <p className="py-1"><span className="text-gray-500" style={{color: textColor}}>{(t.subtotal || 'Subtotal')}: </span>{currencySymbol}{summary.subtotal.toFixed(2)}</p>
+                            {summary.discount > 0 && (<p className="py-1"><span className="text-gray-500" style={{color: textColor}}>{(t.discount || 'Discount')}: </span><span className='text-red-500'>-{currencySymbol}{summary.discount.toFixed(2)}</span></p>)}
+                            {summary.shippingCost > 0 && (<p className="py-1"><span className="text-gray-500" style={{color: textColor}}>{(t.shipping || 'Shipping')}: </span>{currencySymbol}{summary.shippingCost.toFixed(2)}</p>)}
                             <p className="py-1"><span className="text-gray-500" style={{color: textColor}}>{(t.tax || 'Tax')}: </span>{currencySymbol}{summary.taxAmount.toFixed(2)}</p>
                             <p className="py-2 mt-1 border-t-2 border-black font-bold"><span className="text-base">{(t.total || 'TOTAL').toUpperCase()}: </span><span className="text-base">{currencySymbol}{summary.grandTotal.toFixed(2)}</span></p>
                          </div>
@@ -361,6 +363,8 @@ export const RemodelingTemplate4: React.FC<TemplateProps> = ({ document, pageIte
                         <table className="w-1/3 text-sm">
                             <tbody>
                                 <tr><td className="py-1 text-gray-600" style={{color: textColor}}>{(t.subtotal || 'Subtotal')}</td><td className="py-1 text-right">{currencySymbol}{summary.subtotal.toFixed(2)}</td></tr>
+                                {summary.discount > 0 && (<tr><td className="py-1 text-gray-600" style={{color: textColor}}>{(t.discount || 'Discount')}</td><td className="py-1 text-right text-red-500">-{currencySymbol}{summary.discount.toFixed(2)}</td></tr>)}
+                                {summary.shippingCost > 0 && (<tr><td className="py-1 text-gray-600" style={{color: textColor}}>{(t.shipping || 'Shipping')}</td><td className="py-1 text-right">{currencySymbol}{summary.shippingCost.toFixed(2)}</td></tr>)}
                                 {summary.taxAmount > 0 && <tr><td className="py-1 text-gray-600" style={{color: textColor}}>{(t.tax || 'Taxes')}</td><td className="py-1 text-right">{currencySymbol}{summary.taxAmount.toFixed(2)}</td></tr>}
                                 <tr className="font-bold text-base border-t-2 border-black"><td className="py-2">{(t.total || 'Total')}</td><td className="py-2 text-right">{currencySymbol}{summary.grandTotal.toFixed(2)}</td></tr>
                             </tbody>
@@ -383,9 +387,6 @@ export const RemodelingTemplate5: React.FC<TemplateProps> = ({ document, pageIte
             <header className="flex justify-between items-start mb-12">
                 <div>
                     <h1 className="text-4xl font-bold">{business.name}</h1>
-                </div>
-                <div className="text-right">
-                    <h2 className="text-3xl font-bold">{docTitle}</h2>
                 </div>
             </header>
 
@@ -433,6 +434,8 @@ export const RemodelingTemplate5: React.FC<TemplateProps> = ({ document, pageIte
                     <div className="flex justify-end">
                         <div className="w-2/5 text-sm space-y-2">
                              <div className="flex justify-between"><span className="text-gray-600" style={{color: textColor}}>{(t.subtotal || 'Subtotal')}</span><span>{currencySymbol}{summary.subtotal.toFixed(2)}</span></div>
+                             {summary.discount > 0 && (<div className="flex justify-between text-red-500"><span className="text-gray-600" style={{color: textColor}}>{(t.discount || 'Discount')}</span><span>-{currencySymbol}{summary.discount.toFixed(2)}</span></div>)}
+                            {summary.shippingCost > 0 && (<div className="flex justify-between"><span className="text-gray-600" style={{color: textColor}}>{(t.shipping || 'Shipping')}</span><span>{currencySymbol}{summary.shippingCost.toFixed(2)}</span></div>)}
                              <div className="flex justify-between"><span className="text-gray-600" style={{color: textColor}}>{(t.tax || 'Tax')}</span><span>{currencySymbol}{summary.taxAmount.toFixed(2)}</span></div>
                              <div className="flex justify-between font-bold text-lg mt-2 pt-2 border-t border-gray-800"><span>{(t.total || 'TOTAL').toUpperCase()}</span><span>{currencySymbol}{summary.grandTotal.toFixed(2)}</span></div>
                         </div>
