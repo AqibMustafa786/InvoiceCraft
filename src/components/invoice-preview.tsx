@@ -1,5 +1,4 @@
 
-
 'use client';
 
 import { useState, useLayoutEffect, useRef, useEffect, FC } from 'react';
@@ -11,33 +10,33 @@ import { format, isValid } from 'date-fns';
 import locales from '@/lib/locales';
 import {
   ConstructionTemplate1, ConstructionTemplate2, ConstructionTemplate3, ConstructionTemplate4, ConstructionTemplate5,
-  ConstructionTemplate6, ConstructionTemplate7, ConstructionTemplate8, ConstructionTemplate9, ConstructionTemplate10
+  ConstructionTemplate6
 } from './invoice-templates/construction-templates';
 import {
   PlumbingTemplate1, PlumbingTemplate2, PlumbingTemplate3, PlumbingTemplate4, PlumbingTemplate5,
-  PlumbingTemplate6, PlumbingTemplate7, PlumbingTemplate8, PlumbingTemplate9, PlumbingTemplate10
+  PlumbingTemplate6
 } from './invoice-templates/plumbing-templates';
 import {
   ElectricalTemplate1, ElectricalTemplate2, ElectricalTemplate3, ElectricalTemplate4, ElectricalTemplate5,
-  ElectricalTemplate6, ElectricalTemplate7, ElectricalTemplate8, ElectricalTemplate9, ElectricalTemplate10
+  ElectricalTemplate6
 } from './invoice-templates/electrical-templates';
 import {
   HVACTemplate1, HVACTemplate2, HVACTemplate3, HVACTemplate4, HVACTemplate5,
-  HVACTemplate6, HVACTemplate7, HVACTemplate8, HVACTemplate9, HVACTemplate10
+  HVACTemplate6
 } from './invoice-templates/hvac-templates';
 import {
   RoofingTemplate1, RoofingTemplate2, RoofingTemplate3, RoofingTemplate4, RoofingTemplate5,
-  RoofingTemplate6, RoofingTemplate7, RoofingTemplate8, RoofingTemplate9, RoofingTemplate10
+  RoofingTemplate6
 } from './invoice-templates/roofing-templates';
 import {
   LandscapingTemplate1, LandscapingTemplate2, LandscapingTemplate3, LandscapingTemplate4, LandscapingTemplate5,
-  LandscapingTemplate6, LandscapingTemplate7, LandscapingTemplate8, LandscapingTemplate9, LandscapingTemplate10
+  LandscapingTemplate6
 } from './invoice-templates/landscaping-templates';
 import {
   CleaningTemplate1, CleaningTemplate2, CleaningTemplate3, CleaningTemplate4, CleaningTemplate5
 } from './invoice-templates/cleaning-templates';
 import {
-  AutoRepairTemplate1, AutoRepairTemplate2, AutoRepairTemplate3, AutoRepairTemplate4, AutoRepairTemplate5
+  AutoRepairTemplate1, AutoRepairTemplate2, AutoRepairTemplate3, AutoRepairTemplate4, AutoRepairTemplate5, AutoRepairTemplate6
 } from './invoice-templates/auto-repair-templates';
 import {
     ITTemplate1, ITTemplate2, ITTemplate3, ITTemplate4, ITTemplate5
@@ -472,60 +471,36 @@ const templates: Record<string, FC<PageProps>> = {
   'construction-4': ConstructionTemplate4,
   'construction-5': ConstructionTemplate5,
   'construction-6': ConstructionTemplate6,
-  'construction-7': ConstructionTemplate7,
-  'construction-8': ConstructionTemplate8,
-  'construction-9': ConstructionTemplate9,
-  'construction-10': ConstructionTemplate10,
   'plumbing-1': PlumbingTemplate1,
   'plumbing-2': PlumbingTemplate2,
   'plumbing-3': PlumbingTemplate3,
   'plumbing-4': PlumbingTemplate4,
   'plumbing-5': PlumbingTemplate5,
   'plumbing-6': PlumbingTemplate6,
-  'plumbing-7': PlumbingTemplate7,
-  'plumbing-8': PlumbingTemplate8,
-  'plumbing-9': PlumbingTemplate9,
-  'plumbing-10': PlumbingTemplate10,
   'electrical-1': ElectricalTemplate1,
   'electrical-2': ElectricalTemplate2,
   'electrical-3': ElectricalTemplate3,
   'electrical-4': ElectricalTemplate4,
   'electrical-5': ElectricalTemplate5,
   'electrical-6': ElectricalTemplate6,
-  'electrical-7': ElectricalTemplate7,
-  'electrical-8': ElectricalTemplate8,
-  'electrical-9': ElectricalTemplate9,
-  'electrical-10': ElectricalTemplate10,
   'hvac-1': HVACTemplate1,
   'hvac-2': HVACTemplate2,
   'hvac-3': HVACTemplate3,
   'hvac-4': HVACTemplate4,
   'hvac-5': HVACTemplate5,
   'hvac-6': HVACTemplate6,
-  'hvac-7': HVACTemplate7,
-  'hvac-8': HVACTemplate8,
-  'hvac-9': HVACTemplate9,
-  'hvac-10': HVACTemplate10,
   'roofing-1': RoofingTemplate1,
   'roofing-2': RoofingTemplate2,
   'roofing-3': RoofingTemplate3,
   'roofing-4': RoofingTemplate4,
   'roofing-5': RoofingTemplate5,
   'roofing-6': RoofingTemplate6,
-  'roofing-7': RoofingTemplate7,
-  'roofing-8': RoofingTemplate8,
-  'roofing-9': RoofingTemplate9,
-  'roofing-10': RoofingTemplate10,
   'landscaping-1': LandscapingTemplate1,
   'landscaping-2': LandscapingTemplate2,
   'landscaping-3': LandscapingTemplate3,
   'landscaping-4': LandscapingTemplate4,
   'landscaping-5': LandscapingTemplate5,
   'landscaping-6': LandscapingTemplate6,
-  'landscaping-7': LandscapingTemplate7,
-  'landscaping-8': LandscapingTemplate8,
-  'landscaping-9': LandscapingTemplate9,
-  'landscaping-10': LandscapingTemplate10,
   'cleaning-1': CleaningTemplate1,
   'cleaning-2': CleaningTemplate2,
   'cleaning-3': CleaningTemplate3,
@@ -536,6 +511,7 @@ const templates: Record<string, FC<PageProps>> = {
   'auto-repair-3': AutoRepairTemplate3,
   'auto-repair-4': AutoRepairTemplate4,
   'auto-repair-5': AutoRepairTemplate5,
+  'auto-repair-6': AutoRepairTemplate6,
   'it-1': ITTemplate1,
   'it-2': ITTemplate2,
   'it-3': ITTemplate3,
@@ -769,5 +745,3 @@ export const ClientInvoicePreview: FC<InvoicePreviewProps> = (props) => {
 
 
 export { InvoicePreviewInternal as InvoicePreview };
-
-    

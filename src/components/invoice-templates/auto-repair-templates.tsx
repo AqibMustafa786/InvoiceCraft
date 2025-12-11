@@ -270,3 +270,5 @@ export const AutoRepairTemplate5: React.FC<PageProps> = (props) => {
         </div>
     );
 };
+
+export const AutoRepairTemplate6: React.FC<PageProps> = (props) => <AutoRepairTemplate1 {...props} />;

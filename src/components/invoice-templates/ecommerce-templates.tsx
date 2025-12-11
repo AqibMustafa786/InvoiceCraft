@@ -30,6 +30,20 @@ const safeFormat = (date: Date | string | number | null | undefined, formatStrin
     return format(d, formatString);
 }
 
+const EcommerceDetails: React.FC<{ invoice: Invoice, t: any }> = ({ invoice, t }) => {
+    if (!invoice.ecommerce) return null;
+    const { ecommerce } = invoice;
+    return (
+        <section className="my-4 text-xs">
+            <p className="font-bold text-gray-500 mb-2 border-b">{t.orderDetails || 'Order Details'}</p>
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-x-4 gap-y-1">
+                <p><span className="font-semibold text-gray-600">{t.orderNumber || 'Order #'}:</span> {ecommerce.orderNumber}</p>
+                <p><span className="font-semibold text-gray-600">{t.shippingCarrier || 'Carrier'}:</span> {ecommerce.shippingCarrier}</p>
+                <p><span className="font-semibold text-gray-600">{t.trackingId || 'Tracking'}:</span> {ecommerce.trackingId}</p>
+            </div>
+        </section>
+    );
+};
 
 export const EcommerceTemplate1: React.FC<PageProps> = (props) => {
     const { invoice, pageItems, pageIndex, totalPages, subtotal, taxAmount, balanceDue, currencySymbol, t } = props;
@@ -76,6 +90,8 @@ export const EcommerceTemplate1: React.FC<PageProps> = (props) => {
                     </div>
                 </section>
                 
+                <EcommerceDetails invoice={invoice} t={t} />
+
                 {/* Items Table */}
                 <main className="flex-grow">
                     <table className="w-full text-left text-xs">
@@ -114,7 +130,7 @@ export const EcommerceTemplate1: React.FC<PageProps> = (props) => {
                         </div>
                          <div className="w-1/3 text-xs space-y-2">
                             <p className="flex justify-between"><span>SUBTOTAL:</span> <span>{currencySymbol}{subtotal.toFixed(2)}</span></p>
-                            <p className="flex justify-between"><span>TAX:</span> <span>{taxAmount.toFixed(2)}</span></p>
+                            <p className="flex justify-between"><span>TAX:</span> <span>{currencySymbol}{taxAmount.toFixed(2)}</span></p>
                             <div className="p-3 rounded-md text-white font-bold flex justify-between text-base" style={{backgroundColor: accentColor}}>
                                 <span>TOTAL:</span>
                                 <span>{currencySymbol}{balanceDue.toFixed(2)}</span>
@@ -132,8 +148,3 @@ export const EcommerceTemplate1: React.FC<PageProps> = (props) => {
         </div>
     );
 };
-
-export const EcommerceTemplate2: React.FC<PageProps> = (props) => <EcommerceTemplate1 {...props} />;
-export const EcommerceTemplate3: React.FC<PageProps> = (props) => <EcommerceTemplate1 {...props} />;
-export const EcommerceTemplate4: React.FC<PageProps> = (props) => <EcommerceTemplate1 {...props} />;
-export const EcommerceTemplate5: React.FC<PageProps> = (props) => <EcommerceTemplate1 {...props} />;
