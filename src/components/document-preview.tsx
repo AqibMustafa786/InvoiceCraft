@@ -1,5 +1,4 @@
 
-
 'use client';
 
 import { useState, useLayoutEffect, useRef, useEffect, FC } from 'react';
@@ -363,7 +362,7 @@ const ModernTemplatePage: FC<PageProps> = ({ document, pageItems, pageIndex, tot
 
     return (
         <div className={`p-8 md:p-10 font-sans flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ color: document.textColor, fontFamily: style.fontFamily, fontSize: `${style.fontSize}pt`, backgroundColor: document.backgroundColor, minHeight: '1056px' }}>
-            <div data-element="page-header">
+            <div data-element="page-content">
                 <PageHeader document={document} style={style} pageIndex={pageIndex} t={t}/>
                 {(pageIndex === 0) && (
                     <>
@@ -660,3 +659,5 @@ export const ClientDocumentPreview: FC<DocumentPreviewProps> = (props) => {
 };
 
 export { DocumentPreviewInternal as DocumentPreview };
+
+    

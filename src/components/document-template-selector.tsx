@@ -30,6 +30,11 @@ const templates: Template[] = [
   { id: 'construction-4', name: 'Side Accent', thumbnailUrl: '/templates/construction-4.png', category: 'Construction' },
   { id: 'construction-5', name: 'Bold Grid', thumbnailUrl: '/templates/construction-5.png', category: 'Construction' },
   { id: 'construction-6', name: 'Classic', thumbnailUrl: '/templates/construction-6.png', category: 'Construction' },
+  { id: 'construction-1', name: 'Foundation', thumbnailUrl: '/templates/construction-1.png', category: 'Construction Estimate' },
+  { id: 'construction-2', name: 'Modern Dark', thumbnailUrl: '/templates/construction-2.png', category: 'Construction Estimate' },
+  { id: 'construction-3', name: 'Minimalist', thumbnailUrl: '/templates/construction-3.png', category: 'Construction Estimate' },
+  { id: 'construction-4', name: 'Side Accent', thumbnailUrl: '/templates/construction-4.png', category: 'Construction Estimate' },
+  { id: 'construction-5', name: 'Bold Grid', thumbnailUrl: '/templates/construction-5.png', category: 'Construction Estimate' },
   
   // Remodeling
   { id: 'remodeling-1', name: 'Precision', thumbnailUrl: '/templates/remodeling-1.png', category: 'Home Remodeling / Renovation' },
@@ -45,6 +50,11 @@ const templates: Template[] = [
   { id: 'hvac-4', name: 'Corporate', thumbnailUrl: '/templates/hvac-4.png', category: 'HVAC Services' },
   { id: 'hvac-5', name: 'Minimal', thumbnailUrl: '/templates/hvac-5.png', category: 'HVAC Services' },
   { id: 'hvac-6', name: 'Direct', thumbnailUrl: '/templates/hvac-6.png', category: 'HVAC Services' },
+  { id: 'hvac-1', name: 'Classic', thumbnailUrl: '/templates/hvac-1.png', category: 'HVAC (Air Conditioning / Heating)' },
+  { id: 'hvac-2', name: 'Coolant', thumbnailUrl: '/templates/hvac-2.png', category: 'HVAC (Air Conditioning / Heating)' },
+  { id: 'hvac-3', name: 'Grid', thumbnailUrl: '/templates/hvac-3.png', category: 'HVAC (Air Conditioning / Heating)' },
+  { id: 'hvac-4', name: 'Corporate', thumbnailUrl: '/templates/hvac-4.png', category: 'HVAC (Air Conditioning / Heating)' },
+  { id: 'hvac-5', name: 'Minimal', thumbnailUrl: '/templates/hvac-5.png', category: 'HVAC (Air Conditioning / Heating)' },
 
   // Plumbing
   { id: 'plumbing-1', name: 'Classic', thumbnailUrl: '/templates/plumbing-1.png', category: 'Plumbing' },
@@ -53,6 +63,11 @@ const templates: Template[] = [
   { id: 'plumbing-4', name: 'Side Panel', thumbnailUrl: '/templates/plumbing-4.png', category: 'Plumbing' },
   { id: 'plumbing-5', name: 'Bold Grid', thumbnailUrl: '/templates/plumbing-5.png', category: 'Plumbing' },
   { id: 'plumbing-6', name: 'Direct', thumbnailUrl: '/templates/plumbing-6.png', category: 'Plumbing' },
+  { id: 'plumbing-1', name: 'Classic', thumbnailUrl: '/templates/plumbing-1.png', category: 'Plumbing Estimate' },
+  { id: 'plumbing-2', name: 'Modern Blue', thumbnailUrl: '/templates/plumbing-2.png', category: 'Plumbing Estimate' },
+  { id: 'plumbing-3', name: 'Clean', thumbnailUrl: '/templates/plumbing-3.png', category: 'Plumbing Estimate' },
+  { id: 'plumbing-4', name: 'Side Panel', thumbnailUrl: '/templates/plumbing-4.png', category: 'Plumbing Estimate' },
+  { id: 'plumbing-5', name: 'Bold Grid', thumbnailUrl: '/templates/plumbing-5.png', category: 'Plumbing Estimate' },
   
   // Electrical
   { id: 'electrical-1', name: 'Voltage', thumbnailUrl: '/templates/electrical-1.png', category: 'Electrical Services' },
@@ -61,6 +76,11 @@ const templates: Template[] = [
   { id: 'electrical-4', name: 'Wired', thumbnailUrl: '/templates/electrical-4.png', category: 'Electrical Services' },
   { id: 'electrical-5', name: 'Power Grid', thumbnailUrl: '/templates/electrical-5.png', category: 'Electrical Services' },
   { id: 'electrical-6', name: 'Volt', thumbnailUrl: '/templates/electrical-6.png', category: 'Electrical Services' },
+  { id: 'electrical-1', name: 'Voltage', thumbnailUrl: '/templates/electrical-1.png', category: 'Electrical Estimate' },
+  { id: 'electrical-2', name: 'Circuit', thumbnailUrl: '/templates/electrical-2.png', category: 'Electrical Estimate' },
+  { id: 'electrical-3', name: 'Spark', thumbnailUrl: '/templates/electrical-3.png', category: 'Electrical Estimate' },
+  { id: 'electrical-4', name: 'Wired', thumbnailUrl: '/templates/electrical-4.png', category: 'Electrical Estimate' },
+  { id: 'electrical-5', name: 'Power Grid', thumbnailUrl: '/templates/electrical-5.png', category: 'Electrical Estimate' },
 
   // Landscaping
   { id: 'landscaping-1', name: 'Classic', thumbnailUrl: '/templates/landscaping-1.png', category: 'Landscaping & Lawn Care' },
@@ -69,6 +89,11 @@ const templates: Template[] = [
   { id: 'landscaping-4', name: 'Elegant', thumbnailUrl: '/templates/landscaping-4.png', category: 'Landscaping & Lawn Care' },
   { id: 'landscaping-5', name: 'Bold', thumbnailUrl: '/templates/landscaping-5.png', category: 'Landscaping & Lawn Care' },
   { id: 'landscaping-6', name: 'Eco Scape', thumbnailUrl: '/templates/landscaping-6.png', category: 'Landscaping & Lawn Care' },
+  { id: 'landscaping-1', name: 'Classic', thumbnailUrl: '/templates/landscaping-1.png', category: 'Landscaping Estimate' },
+  { id: 'landscaping-2', name: 'Modern Green', thumbnailUrl: '/templates/landscaping-2.png', category: 'Landscaping Estimate' },
+  { id: 'landscaping-3', name: 'Side Panel', thumbnailUrl: '/templates/landscaping-3.png', category: 'Landscaping Estimate' },
+  { id: 'landscaping-4', name: 'Elegant', thumbnailUrl: '/templates/landscaping-4.png', category: 'Landscaping Estimate' },
+  { id: 'landscaping-5', name: 'Bold', thumbnailUrl: '/templates/landscaping-5.png', category: 'Landscaping Estimate' },
 
   // Roofing
   { id: 'roofing-1', name: 'USA Contractor', thumbnailUrl: '/templates/roofing-1.png', category: 'Roofing' },
@@ -77,6 +102,11 @@ const templates: Template[] = [
   { id: 'roofing-4', name: 'Clean Grid', thumbnailUrl: '/templates/roofing-4.png', category: 'Roofing' },
   { id: 'roofing-5', name: 'Side Panel', thumbnailUrl: '/templates/roofing-5.png', category: 'Roofing' },
   { id: 'roofing-6', name: 'PeakPro', thumbnailUrl: '/templates/roofing-6.png', category: 'Roofing' },
+  { id: 'roofing-1', name: 'USA Contractor', thumbnailUrl: '/templates/roofing-1.png', category: 'Roofing Estimate' },
+  { id: 'roofing-2', name: 'Modern Roofing', thumbnailUrl: '/templates/roofing-2.png', category: 'Roofing Estimate' },
+  { id: 'roofing-3', name: 'Classic Roofing', thumbnailUrl: '/templates/roofing-3.png', category: 'Roofing Estimate' },
+  { id: 'roofing-4', name: 'Clean Grid', thumbnailUrl: '/templates/roofing-4.png', category: 'Roofing Estimate' },
+  { id: 'roofing-5', name: 'Side Panel', thumbnailUrl: '/templates/roofing-5.png', category: 'Roofing Estimate' },
 
   // Auto Repair
   { id: 'auto-repair-1', name: 'Modern Red', thumbnailUrl: '/templates/auto-repair-1.png', category: 'Auto Repair' },
@@ -85,6 +115,11 @@ const templates: Template[] = [
   { id: 'auto-repair-4', name: 'Pro Service', thumbnailUrl: '/templates/auto-repair-4.png', category: 'Auto Repair' },
   { id: 'auto-repair-5', name: 'Gridline', thumbnailUrl: '/templates/auto-repair-5.png', category: 'Auto Repair' },
   { id: 'auto-repair-6', name: 'Gold Standard', thumbnailUrl: '/templates/auto-repair-6.png', category: 'Auto Repair' },
+  { id: 'auto-repair-1', name: 'Modern Red', thumbnailUrl: '/templates/auto-repair-1.png', category: 'Auto Repair Estimate' },
+  { id: 'auto-repair-2', name: 'Night Shift', thumbnailUrl: '/templates/auto-repair-2.png', category: 'Auto Repair Estimate' },
+  { id: 'auto-repair-3', name: 'Classic Garage', thumbnailUrl: '/templates/auto-repair-3.png', category: 'Auto Repair Estimate' },
+  { id: 'auto-repair-4', name: 'Pro Service', thumbnailUrl: '/templates/auto-repair-4.png', category: 'Auto Repair Estimate' },
+  { id: 'auto-repair-5', name: 'Gridline', thumbnailUrl: '/templates/auto-repair-5.png', category: 'Auto Repair Estimate' },
 
   // Cleaning
   { id: 'cleaning-1', name: 'Sparkle', thumbnailUrl: '/templates/cleaning-1.png', category: 'Cleaning Services' },
@@ -92,6 +127,11 @@ const templates: Template[] = [
   { id: 'cleaning-3', name: 'Pristine', thumbnailUrl: '/templates/cleaning-3.png', category: 'Cleaning Services' },
   { id: 'cleaning-4', name: 'Hygiene', thumbnailUrl: '/templates/cleaning-4.png', category: 'Cleaning Services' },
   { id: 'cleaning-5', name: 'Gleam', thumbnailUrl: '/templates/cleaning-5.png', category: 'Cleaning Services' },
+  { id: 'cleaning-1', name: 'Sparkle', thumbnailUrl: '/templates/cleaning-1.png', category: 'Cleaning Estimate' },
+  { id: 'cleaning-2', name: 'Fresh', thumbnailUrl: '/templates/cleaning-2.png', category: 'Cleaning Estimate' },
+  { id: 'cleaning-3', name: 'Pristine', thumbnailUrl: '/templates/cleaning-3.png', category: 'Cleaning Estimate' },
+  { id: 'cleaning-4', name: 'Hygiene', thumbnailUrl: '/templates/cleaning-4.png', category: 'Cleaning Estimate' },
+  { id: 'cleaning-5', name: 'Gleam', thumbnailUrl: '/templates/cleaning-5.png', category: 'Cleaning Estimate' },
   
   // IT Services & Freelance
   { id: 'it-1', name: 'Tech Corporate', thumbnailUrl: '/templates/it-1.png', category: 'IT Services / Tech Support' },
@@ -104,6 +144,11 @@ const templates: Template[] = [
   { id: 'it-3', name: 'Minimalist Grid', thumbnailUrl: '/templates/it-3.png', category: 'Freelance / Agency' },
   { id: 'it-4', name: 'Creative Blue', thumbnailUrl: '/templates/it-4.png', category: 'Freelance / Agency' },
   { id: 'it-5', name: 'Startup Vibe', thumbnailUrl: '/templates/it-5.png', category: 'Freelance / Agency' },
+  { id: 'it-1', name: 'Tech Corporate', thumbnailUrl: '/templates/it-1.png', category: 'IT / Freelance Estimate' },
+  { id: 'it-2', name: 'Modern Dark', thumbnailUrl: '/templates/it-2.png', category: 'IT / Freelance Estimate' },
+  { id: 'it-3', name: 'Minimalist Grid', thumbnailUrl: '/templates/it-3.png', category: 'IT / Freelance Estimate' },
+  { id: 'it-4', name: 'Creative Blue', thumbnailUrl: '/templates/it-4.png', category: 'IT / Freelance Estimate' },
+  { id: 'it-5', name: 'Startup Vibe', thumbnailUrl: '/templates/it-5.png', category: 'IT / Freelance Estimate' },
   
   // Consulting
   { id: 'consulting-1', name: 'Executive', thumbnailUrl: '/templates/consulting-1.png', category: 'Consulting' },
@@ -168,15 +213,30 @@ interface DocumentTemplateSelectorProps {
 export function DocumentTemplateSelector({ selectedTemplate, onSelectTemplate, documentType, category }: DocumentTemplateSelectorProps) {
   
   const filteredTemplates = useMemo(() => {
-    const generalCategory = documentType === 'invoice' ? 'General Services' : 'Generic';
+    let generalCategory: EstimateCategory | InvoiceCategory = documentType === 'invoice' ? 'General Services' : 'Generic';
+    let currentCategory = category;
+
+    if (documentType === 'estimate' && category) {
+      // Map invoice category to estimate category if needed
+      const categoryMap: { [key in InvoiceCategory]?: EstimateCategory } = {
+        'Construction': 'Construction Estimate',
+        'Plumbing': 'Plumbing Estimate',
+        'Electrical Services': 'Electrical Estimate',
+        'HVAC Services': 'HVAC (Air Conditioning / Heating)',
+        'Roofing': 'Roofing Estimate',
+        'Landscaping & Lawn Care': 'Landscaping Estimate',
+        'Cleaning Services': 'Cleaning Estimate',
+        'Freelance / Agency': 'IT / Freelance Estimate',
+        'Auto Repair': 'Auto Repair Estimate',
+      };
+      currentCategory = categoryMap[category as InvoiceCategory] || category;
+    }
     
-    // Strict filtering: If a specific category is chosen, show only its templates.
-    // If the general category is chosen, show only the general templates.
-    if (category === generalCategory || !category) {
+    if (currentCategory === generalCategory || !currentCategory) {
       return templates.filter(t => t.category === "General Services");
     }
     
-    return templates.filter(t => t.category === category);
+    return templates.filter(t => t.category === currentCategory);
 
   }, [category, documentType]);
 
@@ -219,3 +279,5 @@ export function DocumentTemplateSelector({ selectedTemplate, onSelectTemplate, d
     </div>
   );
 }
+
+    
