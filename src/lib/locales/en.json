@@ -148,5 +148,15 @@
     "lateFee": "Late Fee",
     "hoa": "HOA",
     "utilities": "Utilities",
-    "tenantInfo": "Tenant Information"
+    "tenantInfo": "Tenant Information",
+    "shipmentDetails": "Shipment Details",
+    "pickup": "Pickup",
+    "dropoff": "Dropoff",
+    "miles": "Miles",
+    "ratePerMile": "Rate/Mile",
+    "weight": "Weight",
+    "loadType": "Load Type",
+    "fuelSurcharge": "Fuel Surcharge",
+    "tolls": "Tolls",
+    "detention": "Detention"
 }
