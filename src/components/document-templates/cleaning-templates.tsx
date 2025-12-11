@@ -238,7 +238,7 @@ export const CleaningTemplate3: React.FC<TemplateProps> = ({ document, pageItems
                     <p className="text-xs">{business.address}</p>
                 </div>
                 <div className="text-right">
-                    <h2 className="text-3xl font-light tracking-wider">{docTitle.toUpperCase()}</h2>
+                    <h2 className="text-3xl font-light tracking-wider">{(docTitle || "Proposal").toUpperCase()}</h2>
                     {category !== 'Generic' && <p className="text-sm mt-1">{category}</p>}
                 </div>
             </header>
@@ -383,7 +383,7 @@ export const CleaningTemplate5: React.FC<TemplateProps> = ({ document, pageItems
                  <p>{client.address}</p>
             </section>
             
-            <CleaningDetails document={document} textColor={textColor || '#374151'} t={t} />
+            <CleaningDetails document={document} textColor={textColor || '#374151'} t={t}/>
 
             <main className="flex-grow bg-white p-4 rounded-md shadow-sm">
                 <table className="w-full text-left text-xs">
