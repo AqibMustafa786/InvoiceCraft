@@ -60,7 +60,6 @@ export const ElectricalTemplate1: React.FC<TemplateProps> = ({ document, pageIte
                 </div>
                 <div className="text-right">
                     <h2 className="text-2xl font-extrabold" style={{ color: accentColor }}>{docTitle}</h2>
-                    {category !== 'Generic' && <p className="text-sm" style={{ color: accentColor }}>{category}</p>}
                 </div>
             </header>
 
@@ -143,7 +142,6 @@ export const ElectricalTemplate2: React.FC<TemplateProps> = ({ document, pageIte
                 <p className="text-xs">{business.address} • {business.phone}</p>
                 <div className="mt-4">
                     <h2 className="text-3xl font-bold" style={{ color: accentColor }}>{docTitle}</h2>
-                    {category !== 'Generic' && <p className="text-sm" style={{ color: accentColor }}>{category}</p>}
                 </div>
             </header>
 
@@ -210,7 +208,6 @@ export const ElectricalTemplate3: React.FC<TemplateProps> = ({ document, pageIte
                 </div>
                 <div className="text-right">
                     <h2 className="text-3xl font-light tracking-wider">{docTitle}</h2>
-                    {category !== 'Generic' && <p className="text-sm mt-1">{category}</p>}
                 </div>
             </header>
 
@@ -257,7 +254,7 @@ export const ElectricalTemplate3: React.FC<TemplateProps> = ({ document, pageIte
                              <tbody>
                                 <tr><td className="py-1">Subtotal</td><td className="text-right">{currencySymbol}{summary.subtotal.toFixed(2)}</td></tr>
                                 <tr><td className="py-1">Tax</td><td className="text-right">{currencySymbol}{summary.taxAmount.toFixed(2)}</td></tr>
-                                <tr className="font-bold text-base border-t-2 border-black"><td className="pt-2">Total</td><td className="pt-2 text-right">{currencySymbol}{summary.grandTotal.toFixed(2)}</td></tr>
+                                <tr className="font-bold text-base border-t-2 border-black"><td className="pt-2">TOTAL</td><td className="pt-2 text-right">{currencySymbol}{summary.grandTotal.toFixed(2)}</td></tr>
                             </tbody>
                         </table>
                     </div>
@@ -284,7 +281,6 @@ export const ElectricalTemplate4: React.FC<TemplateProps> = ({ document, pageIte
                     </div>
                     <div className="text-right">
                         <h2 className="text-2xl font-bold text-gray-400">{docTitle}</h2>
-                        {category !== 'Generic' && <p className="text-xs text-gray-400">{category}</p>}
                     </div>
                 </header>
                  <section className="grid grid-cols-2 gap-4 mb-8 text-xs">
@@ -347,7 +343,6 @@ export const ElectricalTemplate5: React.FC<TemplateProps> = ({ document, pageIte
                 </div>
                 <div className="text-right">
                     <h1 className="text-2xl font-extrabold" style={{color: style.color}}>{docTitle}</h1>
-                    {category !== 'Generic' && <p className="text-sm" style={{color: style.color}}>{category}</p>}
                 </div>
             </header>
 
@@ -396,4 +391,3 @@ export const ElectricalTemplate5: React.FC<TemplateProps> = ({ document, pageIte
     );
 };
 
-    

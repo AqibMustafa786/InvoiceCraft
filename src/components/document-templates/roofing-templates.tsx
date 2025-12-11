@@ -1,5 +1,4 @@
 
-
 'use client';
 
 import React from 'react';
@@ -72,7 +71,6 @@ export const RoofingTemplate1: React.FC<TemplateProps> = ({ document, pageItems,
                 </div>
                 <div className="text-right">
                     <h2 className="text-2xl font-extrabold tracking-wider">{docTitle}</h2>
-                    {category !== 'Generic' && <p className="text-sm opacity-90">{category}</p>}
                 </div>
             </header>
 
@@ -175,7 +173,6 @@ export const RoofingTemplate2: React.FC<TemplateProps> = ({ document, pageItems,
                 </div>
                 <div className="text-right">
                     <h2 className="text-2xl font-light text-gray-400">{docTitle}</h2>
-                    {category !== 'Generic' && <p className="text-sm text-gray-400">{category}</p>}
                 </div>
             </header>
 
@@ -252,14 +249,13 @@ export const RoofingTemplate3: React.FC<TemplateProps> = ({ document, pageItems,
                 </div>
                 <div className="text-right">
                     <h2 className="text-3xl font-bold">{docTitle}</h2>
-                    {category !== 'Generic' && <p className="text-sm">{category}</p>}
                 </div>
             </header>
 
             <section className="grid grid-cols-3 gap-4 mb-8 text-xs p-4 bg-white rounded-lg shadow-sm">
-                <div><p className="font-bold text-gray-500">Client:</p><p>{client.name}</p><p>{client.address}</p></div>
+                <div><p className="font-bold text-gray-500">Client:</p><p>{client.name}<br/>{client.address}</p></div>
                 <div><p className="font-bold text-gray-500">Project Location:</p><p>{client.projectLocation || client.address}</p></div>
-                <div><p className="font-bold text-gray-500">Reference:</p><p>#{document.estimateNumber}</p><p>Date: {safeFormat(document.estimateDate, 'dd-MMM-yyyy')}</p></div>
+                <div><p className="font-bold text-gray-500">Reference:</p><p>#{document.estimateNumber}<br/>Date: {safeFormat(document.estimateDate, 'dd-MMM-yyyy')}</p></div>
             </section>
             
              {document.roofing && (
@@ -322,7 +318,6 @@ export const RoofingTemplate4: React.FC<TemplateProps> = ({ document, pageItems,
                 <div className="text-right">
                     {business.logoUrl && <Image src={business.logoUrl} alt="Logo" width={90} height={45} className="object-contain ml-auto mb-2"/>}
                     <h2 className="text-3xl font-semibold text-gray-400">{docTitle}</h2>
-                    {category !== 'Generic' && <p className="text-xs text-gray-400">{category}</p>}
                 </div>
             </header>
 
@@ -394,7 +389,6 @@ export const RoofingTemplate5: React.FC<TemplateProps> = ({ document, pageItems,
                 </div>
                 <div className="text-right">
                     <p className="text-2xl">{docTitle}</p>
-                    {category !== 'Generic' && <p className="text-xs text-gray-500">{category}</p>}
                 </div>
             </header>
 
@@ -447,3 +441,4 @@ export const RoofingTemplate5: React.FC<TemplateProps> = ({ document, pageItems,
         </div>
     );
 };
+

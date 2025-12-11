@@ -75,7 +75,6 @@ export const RemodelingTemplate1: React.FC<TemplateProps> = ({ document, pageIte
                     </div>
                     <div className="text-right">
                         <h2 className="text-2xl font-bold">{docTitle}</h2>
-                        {category !== 'Generic' && <p className="text-sm">{category.replace(' / ', ' / ')}</p>}
                     </div>
                 </div>
             </header>
@@ -177,7 +176,6 @@ export const RemodelingTemplate2: React.FC<TemplateProps> = ({ document, pageIte
                 </div>
                 <div className="text-right">
                     <h2 className="text-2xl font-light" style={{color: style.color}}>{docTitle}</h2>
-                    {category !== 'Generic' && <p className="text-sm" style={{color: style.color}}>{category.replace(' / ', ' / ')}</p>}
                     <p className="mt-2"><span className="font-bold text-gray-500">#</span> {document.estimateNumber}</p>
                     <p className="text-xs"><span className="font-bold text-gray-500">{(t.date || 'Date')}:</span> {safeFormat(new Date(document.estimateDate || new Date()), 'MM/dd/yyyy')}</p>
                 </div>
@@ -252,7 +250,6 @@ export const RemodelingTemplate3: React.FC<TemplateProps> = ({ document, pageIte
                 <h1 className="text-4xl font-bold">{business.name}</h1>
                 <div className="text-right">
                     <h2 className="text-2xl font-bold text-gray-500">{docTitle}</h2>
-                    {category !== 'Generic' && <p className="text-sm text-gray-500">{category.replace(' / ', ' / ')}</p>}
                 </div>
             </header>
 
@@ -325,7 +322,6 @@ export const RemodelingTemplate4: React.FC<TemplateProps> = ({ document, pageIte
                 </div>
                 <div className="text-right">
                     <h1 className="text-2xl font-extrabold" style={{color: style.color}}>{docTitle}</h1>
-                     {category !== 'Generic' && <p className="text-sm" style={{color: style.color}}>{category.replace(' / ', ' / ')}</p>}
                 </div>
             </header>
             
@@ -337,7 +333,7 @@ export const RemodelingTemplate4: React.FC<TemplateProps> = ({ document, pageIte
             <RemodelingDetails document={document} textColor={textColor || '#374151'} t={t}/>
 
             <main className="flex-grow">
-                 <table className="w-full text-left text-sm">
+                <table className="w-full text-left text-sm">
                     <thead className="bg-gray-100">
                         <tr>
                             <th className="p-2 font-bold w-[60%]">{(t.description || 'DESCRIPTION').toUpperCase()}</th>
@@ -390,7 +386,6 @@ export const RemodelingTemplate5: React.FC<TemplateProps> = ({ document, pageIte
                 </div>
                 <div className="text-right">
                     <h2 className="text-3xl font-bold">{docTitle}</h2>
-                    {category !== 'Generic' && <p className="text-sm" style={{color: style.color}}>{category.replace(' / ', ' / ')}</p>}
                 </div>
             </header>
 

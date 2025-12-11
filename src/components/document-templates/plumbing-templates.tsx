@@ -31,7 +31,7 @@ const PlumbingDetails: React.FC<{ document: Estimate }> = ({ document }) => {
             <p className="font-bold text-gray-500 mb-2 border-b">Plumbing Specifics</p>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-x-4 gap-y-1">
                 <p><span className="font-semibold text-gray-600">Service:</span> {plumbing.serviceType}</p>
-                <p><span className="font-semibold text-gray-600">Fixture:</span> {plumbing.fixtureType}</p>
+                <p><span className="font-semibold text-gray-600">Fixture:</span> {plumbing.fixtureName}</p>
                 <p><span className="font-semibold text-gray-600">Pipe Material:</span> {plumbing.pipeMaterial}</p>
                 <p><span className="font-semibold text-gray-600">Floor:</span> {plumbing.floorLevel}</p>
                 <p><span className="font-semibold text-gray-600">Emergency:</span> {plumbing.emergencyService ? 'Yes' : 'No'}</p>
@@ -55,12 +55,11 @@ export const PlumbingTemplate1: React.FC<TemplateProps> = ({ document, pageItems
         <div className={`p-8 bg-white font-sans text-gray-800 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: 'Arial, sans-serif', fontSize: `9pt`, minHeight: '1056px' }}>
             <header className="flex justify-between items-start mb-4">
                 <div>
-                    {business.logoUrl && <Image src={business.logoUrl} alt="Logo" width={100} height={50} className="object-contain" />}
-                    <h1 className="text-3xl font-bold">{business.name}</h1>
+                    {business.logoUrl && <Image src={business.logoUrl} alt="Logo" width={120} height={60} className="object-contain" />}
+                    <h1 className="text-3xl font-bold mt-2" style={{color: style.color}}>{business.name}</h1>
                 </div>
                 <div className="text-right">
-                    <h2 className="text-2xl font-bold">{docTitle}</h2>
-                    {category !== 'Generic' && <p className="text-sm">{category}</p>}
+                    <h2 className="text-4xl font-bold">{docTitle}</h2>
                 </div>
             </header>
 
@@ -157,7 +156,6 @@ export const PlumbingTemplate2: React.FC<TemplateProps> = ({ document, pageItems
                 </div>
                 <div className="text-right">
                     <h2 className="text-3xl font-bold text-gray-400">{docTitle}</h2>
-                    {category !== 'Generic' && <p className="text-sm text-gray-400">{category}</p>}
                 </div>
             </header>
 
@@ -222,7 +220,6 @@ export const PlumbingTemplate3: React.FC<TemplateProps> = ({ document, pageItems
                 </div>
                 <div className="text-right">
                     <h2 className="text-3xl font-light tracking-widest">{docTitle.toUpperCase()}</h2>
-                    {category !== 'Generic' && <p className="text-sm text-gray-500 mt-2">{category}</p>}
                 </div>
             </header>
 
@@ -292,7 +289,7 @@ export const PlumbingTemplate4: React.FC<TemplateProps> = ({ document, pageItems
                  <h1 className="text-3xl font-bold mb-2">{business.name}</h1>
                 <div className="text-xs space-y-4 flex-grow">
                     <div>
-                        <p className="font-bold opacity-70 mb-1">ESTIMATE FOR</p>
+                        <p className="font-bold opacity-70 mb-1">INVOICE FOR</p>
                         <p className="font-bold text-base">{client.name}</p>
                         <p>{client.address}</p>
                     </div>
@@ -306,18 +303,11 @@ export const PlumbingTemplate4: React.FC<TemplateProps> = ({ document, pageItems
                         <p>Date: {safeFormat(document.estimateDate, 'yyyy-MM-dd')}</p>
                     </div>
                 </div>
-                 {pageIndex === totalPages - 1 && (
-                    <div className="mt-auto text-xs">
-                        <p className="font-bold opacity-70 mb-2">PROJECT</p>
-                        <p>{document.projectTitle}</p>
-                    </div>
-                )}
             </div>
             <div className="w-2/3 p-10 flex flex-col">
                 <div className='flex justify-end mb-4'>
                     <div className="text-right">
                         <h2 className='text-2xl font-bold'>{docTitle}</h2>
-                        {category !== 'Generic' && <p className="text-sm">{category}</p>}
                     </div>
                 </div>
                  <PlumbingDetails document={document} />
@@ -374,7 +364,6 @@ export const PlumbingTemplate5: React.FC<TemplateProps> = ({ document, pageItems
                 </div>
                  <div className="text-right">
                      <p className="text-3xl font-bold">{docTitle}</p>
-                    {category !== 'Generic' && <p className="text-xs text-gray-500">{category}</p>}
                 </div>
             </header>
 
@@ -424,4 +413,3 @@ export const PlumbingTemplate5: React.FC<TemplateProps> = ({ document, pageItems
     );
 };
 
-    

@@ -75,7 +75,6 @@ export const HVACTemplate1: React.FC<TemplateProps> = ({ document, pageItems, pa
                 </div>
                 <div className="text-right">
                   <h2 className="text-2xl font-bold text-gray-700">{docTitle}</h2>
-                  {category !== 'Generic' && <p className="text-sm">{category.replace(' (Air Conditioning / Heating)', '')}</p>}
                 </div>
             </header>
 
@@ -161,7 +160,6 @@ export const HVACTemplate2: React.FC<TemplateProps> = ({ document, pageItems, pa
                 </div>
                 <div className="text-right">
                     <h2 className="text-3xl font-bold">{docTitle}</h2>
-                     {category !== 'Generic' && <p className="text-xs">{category.replace(' (Air Conditioning / Heating)', '')}</p>}
                 </div>
             </header>
 
@@ -208,8 +206,8 @@ export const HVACTemplate2: React.FC<TemplateProps> = ({ document, pageItems, pa
                 <footer className="mt-auto pt-8">
                      <div className="flex justify-end">
                         <div className="w-1/3 text-sm space-y-1">
-                             <div className="flex justify-between p-1"><span>Subtotal</span><span className="">{currencySymbol}{summary.subtotal.toFixed(2)}</span></div>
-                            <div className="flex justify-between p-1"><span>Tax</span><span className="">{currencySymbol}{summary.taxAmount.toFixed(2)}</span></div>
+                             <div className="flex justify-between p-1"><span>Subtotal:</span><span className="">{currencySymbol}{summary.subtotal.toFixed(2)}</span></div>
+                            <div className="flex justify-between p-1"><span>Tax:</span><span className="">{currencySymbol}{summary.taxAmount.toFixed(2)}</span></div>
                             <div className="flex justify-between font-bold text-base mt-2 pt-2 border-t-2" style={{ borderColor: accentColor }}><span style={{ color: accentColor }}>Total:</span><span>{currencySymbol}{summary.grandTotal.toFixed(2)}</span></div>
                         </div>
                     </div>
@@ -230,7 +228,7 @@ export const HVACTemplate3: React.FC<TemplateProps> = ({ document, pageItems, pa
     const docTitle = document.documentType === 'quote' ? 'Quote' : 'Estimate';
 
     return (
-        <div className={`p-10 bg-white font-sans text-gray-700 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: 'Roboto, sans-serif', fontSize: `9pt`, minHeight: '1056px', color: textColor }}>
+        <div className={`p-10 font-sans text-gray-700 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: 'Roboto, sans-serif', fontSize: `9pt`, minHeight: '1056px', backgroundColor: document.backgroundColor, color: textColor }}>
             <header className="flex justify-between items-start mb-10">
                 <div>
                      <h1 className="text-4xl font-light tracking-wide">{business.name}</h1>
@@ -238,7 +236,6 @@ export const HVACTemplate3: React.FC<TemplateProps> = ({ document, pageItems, pa
                 </div>
                 <div className="text-right">
                     <h2 className="text-3xl font-bold">{docTitle}</h2>
-                    {category !== 'Generic' && <p className="text-sm" style={{ color: style.color }}>{category.replace(' (Air Conditioning / Heating)', '')}</p>}
                 </div>
             </header>
 
@@ -306,7 +303,6 @@ export const HVACTemplate4: React.FC<TemplateProps> = ({ document, pageItems, pa
                     </div>
                     <div className="text-right">
                         <h2 className="text-3xl font-bold">ESTIMATE</h2>
-                        {category !== 'Generic' && <p className="text-xs">{category.replace(' (Air Conditioning / Heating)', '')}</p>}
                     </div>
                 </header>
                 
@@ -371,7 +367,6 @@ export const HVACTemplate5: React.FC<TemplateProps> = ({ document, pageItems, pa
         <div className={`p-10 bg-white font-sans text-gray-800 flex ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: 'Helvetica, sans-serif', fontSize: `9pt`, minHeight: '1056px' }}>
             <div className="w-1/4 pr-8 border-r border-gray-200" style={{color: textColor}}>
                 <h1 className="text-3xl font-bold" style={{ color: style.color }}>{docTitle}</h1>
-                {category !== 'Generic' && <p className="text-xs" style={{ color: style.color }}>{category.replace(' (Air Conditioning / Heating)', '')}</p>}
                 {business.logoUrl && <Image src={business.logoUrl} alt="Logo" width={80} height={40} className="mt-4 object-contain" />}
                 <div className="text-xs mt-8 space-y-4">
                     <div><p className="font-bold">Estimate #</p><p>{document.estimateNumber}</p></div>
@@ -420,4 +415,3 @@ export const HVACTemplate5: React.FC<TemplateProps> = ({ document, pageItems, pa
     );
 };
 
-    

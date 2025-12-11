@@ -73,7 +73,6 @@ export const CleaningTemplate1: React.FC<TemplateProps> = ({ document, pageItems
                     </div>
                     <div className="text-right">
                         <h2 className="text-2xl font-bold">{docTitle.toUpperCase()}</h2>
-                        {category !== 'Generic' && <p className="text-sm">{t.cleaningService || 'Cleaning Service'}</p>}
                     </div>
                 </header>
 
@@ -166,8 +165,7 @@ export const CleaningTemplate2: React.FC<TemplateProps> = ({ document, pageItems
                     <p className="text-xs text-gray-500">{business.address}</p>
                 </div>
                 <div className="text-right">
-                    <h2 className="text-2xl font-light text-gray-400">{(docTitle || "ESTIMATE").toUpperCase()}</h2>
-                    {category !== 'Generic' && <p className="text-sm text-gray-400">{category}</p>}
+                    <h2 className="text-2xl font-light text-gray-400">{docTitle.toUpperCase()}</h2>
                 </div>
             </header>
 
@@ -227,55 +225,8 @@ export const CleaningTemplate2: React.FC<TemplateProps> = ({ document, pageItems
     );
 };
 
-// Template 3: Pristine
-export const CleaningTemplate3: React.FC<TemplateProps> = ({ document, pageItems, pageIndex, totalPages, style, t }) => {
-    const { business, client, summary, currency, textColor, category } = document;
-    const currencySymbol = currencySymbols[currency] || '$';
-    const docTitle = document.documentType === 'quote' ? (t.estimate || 'ESTIMATE') : (t.estimate || 'ESTIMATE');
-
-    return (
-        <div className={`p-10 font-sans ${pageIndex < totalPages - 1 ? 'page-break-after' : ''}`} style={{ minHeight: '1056px', backgroundColor: style.color + '10', color: textColor }}>
-            <div className="bg-white p-8 shadow-lg">
-                <header className="flex justify-between items-start mb-10">
-                    <div>
-                        {business.logoUrl && <Image src={business.logoUrl} alt="Logo" width={90} height={45} className="object-contain mb-2"/>}
-                        <h1 className="text-2xl font-bold">{business.name}</h1>
-                        <p className="text-xs text-gray-500">{business.address}</p>
-                    </div>
-                    <div className="text-right">
-                        <h2 className="text-3xl font-extrabold text-gray-400">{(docTitle || "ESTIMATE").toUpperCase()}</h2>
-                        {category !== 'Generic' && <p className="text-xs text-gray-400">{category}</p>}
-                    </div>
-                </header>
-                <section className="grid grid-cols-2 gap-8 text-xs mb-8">
-                    <div><p className="font-bold text-gray-500 mb-1">{(t.billedTo || 'Billed To')}</p><p>{client.name}<br/>{client.address}</p></div>
-                    <div className="text-right"><p><span className="font-bold text-gray-500">{(t.estimateNo || 'Estimate #')}: </span>{document.estimateNumber}</p><p><span className="font-bold text-gray-500">{(t.date || 'Date')}: </span>{safeFormat(document.estimateDate, 'dd/MM/yyyy')}</p></div>
-                </section>
-                <CleaningDetails document={document} textColor={textColor || '#374151'} t={t} />
-                <main className="flex-grow mt-4">
-                    <table className="w-full text-left text-xs">
-                        <thead><tr className="bg-gray-100"><th className="p-2 font-bold w-1/2">{(t.service || 'SERVICE').toUpperCase()}</th><th className="p-2 font-bold text-center">{(t.qty || 'QTY').toUpperCase()}</th><th className="p-2 font-bold text-right">{(t.price || 'PRICE').toUpperCase()}</th><th className="p-2 font-bold text-right">{(t.amount || 'AMOUNT').toUpperCase()}</th></tr></thead>
-                        <tbody>{pageItems.map(item => (<tr key={item.id} className="border-b"><td className="p-2 whitespace-pre-line">{item.name}</td><td className="p-2 text-center">{item.quantity}</td><td className="p-2 text-right">{currencySymbol}{item.unitPrice.toFixed(2)}</td><td className="p-2 text-right">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</td></tr>))}</tbody>
-                    </table>
-                </main>
-                {pageIndex === totalPages - 1 && (
-                <footer className="mt-auto pt-8">
-                    <div className="flex justify-end">
-                        <div className="w-1/3 text-xs space-y-1">
-                            <p className="flex justify-between"><span>{(t.subtotal || 'Subtotal')}:</span><span>{currencySymbol}{summary.subtotal.toFixed(2)}</span></p>
-                            <p className="flex justify-between"><span>{(t.tax || 'Tax')}:</span><span>{currencySymbol}{summary.taxAmount.toFixed(2)}</span></p>
-                            <p className="flex justify-between font-bold text-sm mt-2 pt-2 border-t border-gray-300"><span>{(t.total || 'Total')}:</span><span>{currencySymbol}{summary.grandTotal.toFixed(2)}</span></p>
-                        </div>
-                    </div>
-                </footer>
-                )}
-            </div>
-        </div>
-    );
-};
-
 // New, simple, modern template to replace the broken one.
-export const CleaningTemplate4: React.FC<TemplateProps> = ({ document, pageItems, pageIndex, totalPages, style, t }) => {
+export const CleaningTemplate3: React.FC<TemplateProps> = ({ document, pageItems, pageIndex, totalPages, style, t }) => {
     const { business, client, summary, currency, textColor, category } = document;
     const currencySymbol = currencySymbols[currency] || '$';
     const docTitle = document.documentType === 'quote' ? (t.quote || 'Quote') : (t.estimate || 'Estimate');
@@ -341,63 +292,6 @@ export const CleaningTemplate4: React.FC<TemplateProps> = ({ document, pageItems
     );
 };
 
-export const CleaningTemplate5: React.FC<TemplateProps> = ({ document, pageItems, pageIndex, totalPages, style, t }) => {
-    const { business, client, summary, currency, textColor } = document;
-    const currencySymbol = currencySymbols[currency] || '$';
-    const docTitle = document.documentType === 'quote' ? (t.quote || 'Quote') : (t.estimate || 'Estimate');
-    return (
-        <div className={`p-10 bg-gray-50 font-['Roboto',_sans-serif] text-gray-900 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ minHeight: '1056px', color: textColor }}>
-            <header className="grid grid-cols-2 gap-4 mb-10">
-                <div>
-                    <h1 className="text-4xl font-extrabold" style={{ color: style.color }}>{business.name}</h1>
-                     <p className="text-xs">{business.address}</p>
-                </div>
-                 <div className="text-right">
-                     <p className="text-3xl font-bold">{docTitle}</p>
-                    <p className="text-xs text-gray-500">Cleaning Service</p>
-                </div>
-            </header>
+export const CleaningTemplate4: React.FC<TemplateProps> = (props) => <CleaningTemplate1 {...props} />;
+export const CleaningTemplate5: React.FC<TemplateProps> = (props) => <CleaningTemplate2 {...props} />;
 
-            <section className="mb-8 p-4 bg-white shadow-sm rounded-md text-xs">
-                 <p className="font-bold text-gray-500 mb-2">PROJECT FOR: {client.name}</p>
-                 <p className="font-semibold">{document.projectTitle}</p>
-                 <p>{client.address}</p>
-            </section>
-            
-            <CleaningDetails document={document} textColor={textColor || '#374151'} t={t}/>
-
-            <main className="flex-grow bg-white p-4 rounded-md shadow-sm">
-                <table className="w-full text-left text-xs">
-                    <thead>
-                        <tr className="border-b-2 border-gray-200">
-                            <th className="py-2 font-bold w-[60%]">DESCRIPTION</th>
-                            <th className="py-2 font-bold text-center">QTY</th>
-                            <th className="py-2 font-bold text-right">COST</th>
-                            <th className="py-2 font-bold text-right">TOTAL</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {pageItems.map(item => (
-                            <tr key={item.id} className="border-b border-gray-100">
-                                <td className="py-2 align-top whitespace-pre-line">{item.name}</td>
-                                <td className="py-2 align-top text-center">{item.quantity}</td>
-                                <td className="py-2 align-top text-right">{currencySymbol}{item.unitPrice.toFixed(2)}</td>
-                                <td className="py-2 align-top text-right font-semibold">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
-            </main>
-            
-            {pageIndex === totalPages - 1 && (
-                <footer className="mt-auto pt-6 flex justify-end">
-                    <div className="w-1/3 text-sm space-y-1">
-                        <p className="flex justify-between"><span>Subtotal</span><span>{currencySymbol}{summary.subtotal.toFixed(2)}</span></p>
-                        <p className="flex justify-between"><span>Tax</span><span>{currencySymbol}{summary.taxAmount.toFixed(2)}</span></p>
-                        <p className="flex justify-between font-bold text-lg mt-2 pt-2 border-t-2 border-black"><span>Total Estimate</span><span>{currencySymbol}{summary.grandTotal.toFixed(2)}</span></p>
-                    </div>
-                </footer>
-            )}
-        </div>
-    );
-};

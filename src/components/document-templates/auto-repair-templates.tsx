@@ -69,7 +69,6 @@ export const AutoRepairTemplate1: React.FC<TemplateProps> = ({ document, pageIte
                 </div>
                 <div className="text-right">
                     <h2 className="text-2xl font-extrabold" style={{ color: accentColor }}>{docTitle}</h2>
-                    {category !== 'Generic' && <p className="text-sm" style={{ color: accentColor }}>{category}</p>}
                 </div>
             </header>
             <div className="px-10 pb-10 flex-grow flex flex-col" style={{color: textColor}}>
@@ -166,7 +165,6 @@ export const AutoRepairTemplate2: React.FC<TemplateProps> = ({ document, pageIte
                 </div>
                 <div className="text-right">
                     <h2 className="text-2xl font-extrabold tracking-wider">{docTitle}</h2>
-                    {category !== 'Generic' && <p className="text-sm">{category}</p>}
                 </div>
             </header>
             <div className="p-10 pt-0 flex-grow flex flex-col">
@@ -239,7 +237,6 @@ export const AutoRepairTemplate3: React.FC<TemplateProps> = ({ document, pageIte
                 </div>
                 <div className="text-right">
                     <h2 className="text-3xl font-light tracking-wider">{docTitle}</h2>
-                    {category !== 'Generic' && <p className="text-sm mt-1">{category}</p>}
                 </div>
             </header>
 
@@ -312,7 +309,6 @@ export const AutoRepairTemplate4: React.FC<TemplateProps> = ({ document, pageIte
                 </div>
                 <div className="text-right">
                     <h2 className="text-2xl font-extrabold" style={{color: accentColor}}>{docTitle}</h2>
-                    {category !== 'Generic' && <p className="text-sm" style={{color: accentColor}}>{category}</p>}
                 </div>
             </header>
             
@@ -378,7 +374,6 @@ export const AutoRepairTemplate5: React.FC<TemplateProps> = ({ document, pageIte
                 </div>
                  <div className="text-right">
                     <h1 className="text-2xl font-extrabold" style={{color: style.color}}>{docTitle}</h1>
-                    {category !== 'Generic' && <p className="text-sm" style={{color: style.color}}>{category}</p>}
                 </div>
             </header>
 
@@ -426,3 +421,4 @@ export const AutoRepairTemplate5: React.FC<TemplateProps> = ({ document, pageIte
         </div>
     );
 };
+

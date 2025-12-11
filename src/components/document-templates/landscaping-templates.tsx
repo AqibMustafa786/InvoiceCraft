@@ -61,7 +61,6 @@ export const LandscapingTemplate1: React.FC<TemplateProps> = ({ document, pageIt
                 </div>
                 <div className="text-right">
                     <h1 className="text-2xl font-bold">{docTitle}</h1>
-                    {category !== 'Generic' && <p className="text-sm">{category}</p>}
                 </div>
             </header>
 
@@ -142,7 +141,6 @@ export const LandscapingTemplate2: React.FC<TemplateProps> = ({ document, pageIt
                 </div>
                 <div className="text-right">
                     <h2 className="text-2xl font-light text-gray-400">{docTitle}</h2>
-                    {category !== 'Generic' && <p className="text-sm text-gray-400">{category}</p>}
                 </div>
             </header>
 
@@ -212,7 +210,6 @@ export const LandscapingTemplate3: React.FC<TemplateProps> = ({ document, pageIt
         <div className={`bg-white font-sans text-gray-800 flex ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ minHeight: '1056px' }}>
             <div className="w-1/3 p-8 text-white" style={{ backgroundColor: style.color }}>
                 <h1 className="text-4xl font-bold mb-2">{docTitle}</h1>
-                {category !== 'Generic' && <p className="text-sm mb-8">{category}</p>}
 
                 <div className="text-sm space-y-6 flex-grow">
                     <div>
@@ -233,6 +230,7 @@ export const LandscapingTemplate3: React.FC<TemplateProps> = ({ document, pageIt
             </div>
             <div className="w-2/3 p-10 flex flex-col">
                 <header className="mb-8 text-right">
+                    {business.logoUrl && <Image src={business.logoUrl} alt="Logo" width={100} height={50} className="object-contain ml-auto mb-2"/>}
                     <h2 className="text-3xl font-bold">{business.name}</h2>
                     <p className="text-xs text-gray-500">{business.address}</p>
                 </header>
@@ -288,7 +286,6 @@ export const LandscapingTemplate4: React.FC<TemplateProps> = ({ document, pageIt
             <header className="mb-16 text-center">
                 <h1 className="text-5xl font-light tracking-widest">{business.name}</h1>
                 <h2 className="text-3xl font-light tracking-widest mt-2">{docTitle.toUpperCase()}</h2>
-                {category !== 'Generic' && <p className="text-sm text-gray-500">{category}</p>}
             </header>
 
             <section className="flex justify-between mb-10 text-xs">
@@ -348,7 +345,6 @@ export const LandscapingTemplate5: React.FC<TemplateProps> = ({ document, pageIt
                 </div>
                  <div className="text-right">
                      <p className="text-3xl font-bold">{docTitle}</p>
-                    {category !== 'Generic' && <p className="text-xs text-gray-500">{category}</p>}
                 </div>
             </header>
 
@@ -395,3 +391,4 @@ export const LandscapingTemplate5: React.FC<TemplateProps> = ({ document, pageIt
         </div>
     );
 };
+
