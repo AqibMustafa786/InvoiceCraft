@@ -60,7 +60,7 @@ const RemodelingDetails: React.FC<{ document: Estimate; textColor: string, t: an
 export const RemodelingTemplate1: React.FC<TemplateProps> = ({ document, pageItems, pageIndex, totalPages, style, t }) => {
     const { business, client, summary, currency, category, textColor } = document;
     const currencySymbol = currencySymbols[currency] || '$';
-    const docTitle = document.documentType === 'quote' ? (t.quote || 'Quote') : (t.estimate || 'Estimate');
+    const docTitle = document.documentType === 'quote' ? (t.quote || 'Quote').toUpperCase() : (t.estimate || 'Estimate').toUpperCase();
     
     return (
         <div className={`font-sans text-gray-800 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: style.fontFamily, fontSize: `${style.fontSize}pt`, minHeight: '1056px', backgroundColor: document.backgroundColor }}>
@@ -98,7 +98,7 @@ export const RemodelingTemplate1: React.FC<TemplateProps> = ({ document, pageIte
                 <div className="flex justify-between items-center mb-4">
                     <p className="font-bold">{(t.estimateCost || 'Estimate Cost')}</p>
                     <div className="flex items-center gap-2">
-                        <p className="text-xs">{(t.estimateNo || 'Estimate Number')}:</p>
+                        <p className="text-xs">{document.documentType === 'quote' ? (t.quoteNo || 'Quote #') : (t.estimateNo || 'Estimate #')}:</p>
                         <p className="p-2 px-4 text-white font-bold rounded" style={{ backgroundColor: '#0A2D4D' }}>{document.estimateNumber}</p>
                     </div>
                 </div>
@@ -256,7 +256,7 @@ export const RemodelingTemplate3: React.FC<TemplateProps> = ({ document, pageIte
             <section className="mb-8 p-4 border border-gray-200 rounded grid grid-cols-3 gap-4 text-xs">
                 <div><p className="font-bold">{(t.client || 'Client')}:</p><p>{client.name}</p><p>{client.address}</p></div>
                 <div><p className="font-bold">{(t.project || 'Project')}:</p><p>{document.projectTitle}</p><p>{client.projectLocation}</p></div>
-                <div><p className="font-bold">{(t.estimateNo || 'Estimate #')}:</p><p>{document.estimateNumber}</p><p className="font-bold mt-1">{(t.date || 'Date')}:</p><p>{safeFormat(new Date(document.estimateDate || new Date()), 'MM/dd/yyyy')}</p></div>
+                <div><p className="font-bold">{(document.documentType === 'quote' ? t.quoteNo : t.estimateNo) || 'Number #'}:</p><p>{document.estimateNumber}</p><p className="font-bold mt-1">{(t.date || 'Date')}:</p><p>{safeFormat(new Date(document.estimateDate || new Date()), 'MM/dd/yyyy')}</p></div>
             </section>
             
             <RemodelingDetails document={document} textColor={textColor || '#374151'} t={t}/>
@@ -327,7 +327,7 @@ export const RemodelingTemplate4: React.FC<TemplateProps> = ({ document, pageIte
             
             <section className="mb-8 grid grid-cols-2 gap-4 text-xs">
                  <div><p><span className="font-bold text-gray-500" style={{color: textColor}}>{(t.to || 'TO').toUpperCase()}: </span>{client.name}</p><p>{client.address}</p></div>
-                 <div className="text-right"><p><span className="font-bold text-gray-500" style={{color: textColor}}>{(t.estimateNo || 'ESTIMATE #').toUpperCase()}: </span>{document.estimateNumber}</p><p><span className="font-bold text-gray-500" style={{color: textColor}}>{(t.date || 'DATE').toUpperCase()}: </span>{safeFormat(new Date(document.estimateDate || new Date()), 'yyyy-MM-dd')}</p></div>
+                 <div className="text-right"><p><span className="font-bold text-gray-500" style={{color: textColor}}>{(document.documentType === 'quote' ? t.quoteNo : t.estimateNo) || 'Number #'}: </span>{document.estimateNumber}</p><p><span className="font-bold text-gray-500" style={{color: textColor}}>{(t.date || 'DATE').toUpperCase()}: </span>{safeFormat(new Date(document.estimateDate || new Date()), 'yyyy-MM-dd')}</p></div>
             </section>
             
             <RemodelingDetails document={document} textColor={textColor || '#374151'} t={t}/>
@@ -398,7 +398,7 @@ export const RemodelingTemplate5: React.FC<TemplateProps> = ({ document, pageIte
                 </div>
                 <div>
                      <p className="font-bold text-gray-500" style={{color: textColor}}>{(t.details || 'DETAILS').toUpperCase()}</p>
-                     <p>{(t.estimate || 'Estimate')}: {document.estimateNumber}</p>
+                     <p>{(document.documentType === 'quote' ? t.quote : t.estimate) || 'Estimate'}: {document.estimateNumber}</p>
                      <p>{(t.date || 'Date')}: {safeFormat(new Date(document.estimateDate || new Date()), 'MMM d, yyyy')}</p>
                 </div>
             </section>

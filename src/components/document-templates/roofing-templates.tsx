@@ -46,7 +46,7 @@ const RoofingDetails: React.FC<{ document: Estimate }> = ({ document }) => {
             <p><span className="text-gray-500">Underlayment:</span> <span className="font-semibold">{roofing.underlaymentType}</span></p>
             <p><span className="text-gray-500">Flashing:</span> <span className="font-semibold">{roofing.flashingDetails}</span></p>
             <p><span className="text-gray-500">Ventilation:</span> <span className="font-semibold">{roofing.ventilationSystem}</span></p>
-            <p><span className="text-gray-500">Gutter Work:</span> <span className="font-semibold">{roofing.gutterRepairNeeded}</span></p>
+            <p><span className="text-gray-500">Gutter Work:</span> <span className="font-semibold">{roofing.gutterRepairNeeded ? 'Yes' : 'No'}</span></p>
             <p><span className="text-gray-500">Warranty:</span> <span className="font-semibold">{roofing.warranty}</span></p>
             <p><span className="text-gray-500">Timeline:</span> <span className="font-semibold">{roofing.estimatedTimeline}</span></p>
             <p><span className="text-gray-500">Inspection:</span> <span className="font-semibold">{roofing.inspectionRequired}</span></p>
@@ -244,7 +244,8 @@ export const RoofingTemplate3: React.FC<TemplateProps> = ({ document, pageItems,
         <div className={`p-10 bg-gray-50 font-['Roboto'] text-gray-800 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ minHeight: '1056px' }}>
             <header className="flex justify-between items-start mb-8">
                 <div>
-                    <h1 className="text-4xl font-extrabold" style={{color: accentColor}}>{business.name}</h1>
+                    {business.logoUrl && <Image src={business.logoUrl} alt="Logo" width={80} height={40} className="object-contain" />}
+                    <h1 className="text-4xl font-extrabold mt-2" style={{color: accentColor}}>{business.name}</h1>
                     <p className="text-xs">{business.address}</p>
                 </div>
                 <div className="text-right">
@@ -278,7 +279,7 @@ export const RoofingTemplate3: React.FC<TemplateProps> = ({ document, pageItems,
                     <tbody>
                         {pageItems.map(item => (
                             <tr key={item.id} className="border-b border-gray-100">
-                                <td className="py-2 px-2 align-top whitespace-pre-line">{item.name}</td>
+                                <td className="py-2 px-2 align-top">{item.name}</td>
                                 <td className="py-2 px-2 align-top text-center">{item.quantity}</td>
                                 <td className="py-2 px-2 align-top text-right">{currencySymbol}{item.unitPrice.toFixed(2)}</td>
                                 <td className="py-2 px-2 align-top text-right font-semibold">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</td>
@@ -441,4 +442,3 @@ export const RoofingTemplate5: React.FC<TemplateProps> = ({ document, pageItems,
         </div>
     );
 };
-

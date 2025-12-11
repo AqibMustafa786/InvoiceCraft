@@ -60,7 +60,7 @@ const CleaningDetails: React.FC<{ document: Estimate; textColor: string; t: any;
 export const CleaningTemplate1: React.FC<TemplateProps> = ({ document, pageItems, pageIndex, totalPages, style, t }) => {
     const { business, client, summary, currency, textColor, category } = document;
     const currencySymbol = currencySymbols[currency] || '$';
-    const docTitle = document.documentType === 'quote' ? (t.quote || 'QUOTE') : (t.estimate || 'ESTIMATE');
+    const docTitle = document.documentType === 'quote' ? (t.quote || 'QUOTE').toUpperCase() : (t.estimate || 'ESTIMATE').toUpperCase();
 
     return (
         <div className={`bg-white font-sans text-gray-800 flex flex-col relative ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: 'Arial, sans-serif', fontSize: `10pt`, minHeight: '1056px' }}>
@@ -72,7 +72,7 @@ export const CleaningTemplate1: React.FC<TemplateProps> = ({ document, pageItems
                         <p className="text-xs whitespace-pre-line">{business.address}</p>
                     </div>
                     <div className="text-right">
-                        <h2 className="text-2xl font-bold">{docTitle.toUpperCase()}</h2>
+                        <h2 className="text-2xl font-bold">{docTitle}</h2>
                     </div>
                 </header>
 
@@ -154,7 +154,7 @@ export const CleaningTemplate2: React.FC<TemplateProps> = ({ document, pageItems
     const { business, client, summary, currency, textColor, category } = document;
     const currencySymbol = currencySymbols[currency] || '$';
     const accentColor = style.color || '#10B981'; // Green
-    const docTitle = document.documentType === 'quote' ? (t.estimate || 'ESTIMATE') : (t.estimate || 'ESTIMATE');
+    const docTitle = document.documentType === 'quote' ? (t.quote || 'QUOTE').toUpperCase() : (t.estimate || 'ESTIMATE').toUpperCase();
 
     return (
         <div className={`p-10 bg-white font-sans text-gray-700 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: 'Verdana, sans-serif', fontSize: '9.5pt', minHeight: '1056px', color: textColor }}>
@@ -165,7 +165,7 @@ export const CleaningTemplate2: React.FC<TemplateProps> = ({ document, pageItems
                     <p className="text-xs text-gray-500">{business.address}</p>
                 </div>
                 <div className="text-right">
-                    <h2 className="text-2xl font-light text-gray-400">{docTitle.toUpperCase()}</h2>
+                    <h2 className="text-2xl font-light text-gray-400">{docTitle}</h2>
                 </div>
             </header>
 
@@ -180,7 +180,7 @@ export const CleaningTemplate2: React.FC<TemplateProps> = ({ document, pageItems
                      <p className="font-semibold">{document.projectTitle || 'N/A'}</p>
                 </div>
                 <div className="text-right">
-                    <p><span className="font-bold">{(t.estimateNo || 'Estimate #')}:</span> {document.estimateNumber}</p>
+                    <p><span className="font-bold">{(document.documentType === 'quote' ? t.quoteNo : t.estimateNo) || 'Number #'}:</span> {document.estimateNumber}</p>
                     <p><span className="font-bold">{(t.date || 'Date')}:</span> {safeFormat(document.estimateDate, 'MMM d, yyyy')}</p>
                 </div>
             </section>
@@ -240,7 +240,7 @@ export const CleaningTemplate3: React.FC<TemplateProps> = ({ document, pageItems
                 </div>
                 <div className="text-right">
                     <h2 className="text-2xl font-bold" style={{ color: style.color }}>{docTitle.toUpperCase()}</h2>
-                    <p className="text-sm">#{document.estimateNumber}</p>
+                    <p>#{document.estimateNumber}</p>
                 </div>
             </header>
             <section className="grid grid-cols-2 gap-4 mb-8 text-sm">
@@ -294,4 +294,3 @@ export const CleaningTemplate3: React.FC<TemplateProps> = ({ document, pageItems
 
 export const CleaningTemplate4: React.FC<TemplateProps> = (props) => <CleaningTemplate1 {...props} />;
 export const CleaningTemplate5: React.FC<TemplateProps> = (props) => <CleaningTemplate2 {...props} />;
-
