@@ -35,17 +35,17 @@ const LegalDetails: React.FC<{ invoice: Invoice, t: any }> = ({ invoice, t }) =>
     const { legal } = invoice;
     return (
         <section className="my-4 text-xs">
-            <p className="font-bold text-gray-500 mb-2 border-b">{(t.caseDetails || 'Case Details')}</p>
+            <p className="font-bold text-gray-500 mb-2 border-b">{t.caseDetails || 'Case Details'}</p>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-x-4 gap-y-1">
-                <p><span className="font-semibold text-gray-600">{(t.caseName || 'Case Name')}:</span> {legal.caseName}</p>
-                <p><span className="font-semibold text-gray-600">{(t.caseNumber || 'Case #')}:</span> {legal.caseNumber}</p>
-                <p><span className="font-semibold text-gray-600">{(t.serviceType || 'Service Type')}:</span> {legal.serviceType}</p>
-                {legal.hourlyRate && <p><span className="font-semibold text-gray-600">{(t.hourlyRate || 'Rate')}:</span> ${legal.hourlyRate.toFixed(2)}/hr</p>}
-                {legal.hoursWorked && <p><span className="font-semibold text-gray-600">{(t.hoursWorked || 'Hours')}:</span> {legal.hoursWorked}</p>}
-                {legal.retainerAmount && <p><span className="font-semibold text-gray-600">{(t.retainer || 'Retainer')}:</span> ${legal.retainerAmount.toFixed(2)}</p>}
-                {legal.courtFilingFees && <p><span className="font-semibold text-gray-600">{(t.filingFees || 'Filing Fees')}:</span> ${legal.courtFilingFees.toFixed(2)}</p>}
-                {legal.travelTime && <p><span className="font-semibold text-gray-600">{(t.travelTime || 'Travel (hrs)')}:</span> {legal.travelTime}</p>}
-                {legal.additionalDisbursements && <p className="col-span-full"><span className="font-semibold text-gray-600">{(t.disbursements || 'Disbursements')}:</span> {legal.additionalDisbursements}</p>}
+                <p><span className="font-semibold text-gray-600">{t.caseName || 'Case Name'}:</span> {legal.caseName}</p>
+                <p><span className="font-semibold text-gray-600">{t.caseNumber || 'Case #'}:</span> {legal.caseNumber}</p>
+                <p><span className="font-semibold text-gray-600">{t.serviceType || 'Service Type'}:</span> {legal.serviceType}</p>
+                {legal.hourlyRate && <p><span className="font-semibold text-gray-600">{t.hourlyRate || 'Rate'}:</span> ${legal.hourlyRate.toFixed(2)}/hr</p>}
+                {legal.hoursWorked && <p><span className="font-semibold text-gray-600">{t.hoursWorked || 'Hours'}:</span> {legal.hoursWorked}</p>}
+                {legal.retainerAmount && <p><span className="font-semibold text-gray-600">{t.retainer || 'Retainer'}:</span> ${legal.retainerAmount.toFixed(2)}</p>}
+                {legal.courtFilingFees && <p><span className="font-semibold text-gray-600">{t.filingFees || 'Filing Fees'}:</span> ${legal.courtFilingFees.toFixed(2)}</p>}
+                {legal.travelTime && <p><span className="font-semibold text-gray-600">{t.travelTime || 'Travel (hrs)'}:</span> {legal.travelTime}</p>}
+                {legal.additionalDisbursements && <p className="col-span-full"><span className="font-semibold text-gray-600">{t.disbursements || 'Disbursements'}:</span> {legal.additionalDisbursements}</p>}
             </div>
         </section>
     );
@@ -162,8 +162,8 @@ export const LegalTemplate2: React.FC<PageProps> = (props) => {
             </header>
             <div className="p-10">
                 <section className="grid grid-cols-2 gap-8 text-xs mb-8">
-                    <div><p className="font-bold">{(t.billedTo || 'Billed To')}</p><p>{client.name}<br/>{client.address}</p></div>
-                    <div className="text-right"><p><strong>{(t.date || 'Date')}:</strong> {safeFormat(invoice.invoiceDate, 'MMMM d, yyyy')}</p></div>
+                     <div><p className="font-bold">{(t.billedTo || 'Billed To')}</p><p>{client.name}<br/>{client.address}</p></div>
+                     <div className="text-right"><p><strong>{(t.date || 'Date')}:</strong> {safeFormat(invoice.invoiceDate, 'MMMM d, yyyy')}</p></div>
                 </section>
                 <LegalDetails invoice={invoice} t={t} />
                 <main className="flex-grow mt-4">
@@ -172,14 +172,10 @@ export const LegalTemplate2: React.FC<PageProps> = (props) => {
                         <tbody>{pageItems.map(item => (<tr key={item.id} className="border-b"><td className="py-2">{item.name}</td><td className="py-2 text-right">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</td></tr>))}</tbody>
                     </table>
                 </main>
-                {pageIndex === totalPages - 1 && (
-                <footer className="mt-auto pt-8">
-                    <div className="flex justify-end text-right text-sm">
-                        <div className="w-1/3">
-                            <p className="flex justify-between font-bold text-xl"><span>{(t.totalDue || 'Total Due')}:</span><span>{currencySymbol}{balanceDue.toFixed(2)}</span></p>
-                        </div>
-                    </div>
-                </footer>
+                 {pageIndex === totalPages - 1 && (
+                    <footer className="mt-auto pt-8">
+                        <div className="text-right text-3xl font-bold">{(t.total || 'Total')}: {currencySymbol}{balanceDue.toFixed(2)}</div>
+                    </footer>
                 )}
             </div>
         </div>
@@ -196,7 +192,6 @@ export const LegalTemplate3: React.FC<PageProps> = (props) => {
                 <header className="flex justify-between items-start mb-8">
                     <div>
                         <h1 className="text-2xl font-bold">{business.name}</h1>
-                        <p className="text-xs text-gray-500">{(t.legalServices || 'Legal Services')}</p>
                     </div>
                     <div className="text-right">
                         <h2 className="text-3xl font-light text-gray-400">{(t.invoice || 'INVOICE').toUpperCase()}</h2>
@@ -293,5 +288,3 @@ export const LegalTemplate5: React.FC<PageProps> = (props) => {
         </div>
     )
 };
-
-    

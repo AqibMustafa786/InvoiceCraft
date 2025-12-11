@@ -121,7 +121,7 @@ export const RealEstateTemplate1: React.FC<PageProps> = (props) => {
 export const RealEstateTemplate2: React.FC<PageProps> = (props) => {
     const { invoice, pageItems, pageIndex, totalPages, subtotal, taxAmount, balanceDue, currencySymbol, t, accentColor } = props;
     const { business, client } = invoice;
-    const docTitle = (t.invoice || 'Invoice').toUpperCase();
+    const docTitle = (t.invoice || 'INVOICE').toUpperCase();
     return (
       <div className={`p-10 bg-gray-50 font-sans ${pageIndex < totalPages - 1 ? 'page-break-after' : ''}`} style={{ minHeight: '1056px', backgroundColor: props.backgroundColor, color: props.textColor }}>
         <header className="flex justify-between items-center mb-8 pb-4 border-b-2">
@@ -161,7 +161,6 @@ export const RealEstateTemplate3: React.FC<PageProps> = (props) => {
       <div className={`p-10 font-serif bg-white ${pageIndex < totalPages - 1 ? 'page-break-after' : ''}`} style={{ minHeight: '1056px', backgroundColor: props.backgroundColor, color: props.textColor }}>
         <header className="text-center mb-10">
             <h1 className="text-4xl font-bold">{business.name}</h1>
-            <p className="text-sm">Real Estate & Property Management</p>
         </header>
         <div className="w-full h-px bg-gray-300 mb-8"></div>
         <section className="grid grid-cols-2 gap-8 mb-8 text-sm">
@@ -226,12 +225,13 @@ export const RealEstateTemplate5: React.FC<PageProps> = (props) => {
         <div className={`p-10 font-serif ${pageIndex < totalPages - 1 ? 'page-break-after' : ''}`} style={{ minHeight: '1056px', backgroundColor: '#FDFBF7', color: '#5A4A42' }}>
             <header className="text-center mb-10">
                 <h1 className="text-2xl font-bold">{business.name}</h1>
-                <p className="text-xs">{business.address}</p>
+                <p className="text-xs">{business.address} | {business.phone}</p>
             </header>
             <h2 className="text-center text-xl mb-8">INVOICE</h2>
-            <section className="grid grid-cols-2 gap-4 text-xs mb-8">
-                <div><p><strong>TO:</strong> {client.name}</p></div>
-                <div className="text-right"><p><strong>DATE:</strong> {safeFormat(invoice.invoiceDate, 'MM/dd/yyyy')}</p><p><strong>INVOICE #:</strong> {invoice.invoiceNumber}</p></div>
+            <section className="text-xs mb-8">
+                <p><strong>To:</strong> {client.name}</p>
+                <p><strong>Invoice No:</strong> {invoice.invoiceNumber}</p>
+                <p><strong>Date:</strong> {safeFormat(invoice.invoiceDate, 'MM/dd/yyyy')}</p>
             </section>
             <RealEstateDetails invoice={invoice} t={t} />
             <main className="flex-grow mt-4">

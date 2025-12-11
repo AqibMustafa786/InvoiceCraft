@@ -150,7 +150,6 @@ export const MedicalTemplate2: React.FC<PageProps> = (props) => {
         <div className={`p-10 font-serif bg-gray-50 ${pageIndex < totalPages - 1 ? 'page-break-after' : ''}`} style={{ minHeight: '1056px', backgroundColor: props.backgroundColor, color: props.textColor }}>
             <header className="text-center mb-10">
                 <h1 className="text-4xl font-bold">{business.name}</h1>
-                <p className="text-sm text-gray-500">{t.medicalBillingStatement || 'Medical Billing Statement'}</p>
             </header>
             <section className="grid grid-cols-2 gap-8 mb-8 text-xs">
                 <div><p className="font-bold">{t.patient || 'Patient'}:</p><p>{client.name}</p><p>{client.address}</p></div>

@@ -68,7 +68,6 @@ export const CleaningTemplate1: React.FC<PageProps> = (props) => {
                     </div>
                     <div className="text-right">
                         <h2 className="text-2xl font-bold">{(t.invoice || 'INVOICE').toUpperCase()}</h2>
-                        <p className="text-sm">{(t.cleaningService || 'Cleaning Service')}</p>
                     </div>
                 </header>
 
@@ -147,7 +146,6 @@ export const CleaningTemplate2: React.FC<PageProps> = (props) => {
                 </div>
                 <div className="text-right">
                     <h2 className="text-2xl font-light text-gray-400">{(t.invoice || 'INVOICE').toUpperCase()}</h2>
-                    <p className="text-sm text-gray-400">{(t.cleaningService || 'Cleaning Service')}</p>
                 </div>
             </header>
 
@@ -236,8 +234,8 @@ export const CleaningTemplate3: React.FC<PageProps> = (props) => {
                 </main>
                 {pageIndex === totalPages - 1 && (
                 <footer className="mt-auto pt-8">
-                    <div className="flex justify-end">
-                        <div className="w-1/3 text-xs space-y-1">
+                    <div className="flex justify-end text-sm">
+                        <div className="w-1/3 space-y-1">
                             <p className="flex justify-between"><span>{(t.subtotal || 'Subtotal')}:</span><span>{currencySymbol}{subtotal.toFixed(2)}</span></p>
                             <p className="flex justify-between"><span>{(t.tax || 'Tax')}:</span><span>{currencySymbol}{taxAmount.toFixed(2)}</span></p>
                             <p className="flex justify-between font-bold text-sm mt-2 pt-2 border-t border-gray-300"><span>{(t.total || 'Total')}:</span><span>{currencySymbol}{balanceDue.toFixed(2)}</span></p>

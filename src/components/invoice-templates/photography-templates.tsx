@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import React from 'react';
@@ -55,6 +56,7 @@ export const PhotographyTemplate1: React.FC<PageProps> = (props) => {
     const { invoice, pageItems, pageIndex, totalPages, balanceDue, subtotal, taxAmount, currencySymbol, t } = props;
     const { business, client } = invoice;
     const accentTextColor = "#D4AF37"; // A gold-like color for accents
+    const docTitle = (t.invoice || 'INVOICE').toUpperCase();
 
     return (
         <div className={`font-serif bg-[#333333] text-white flex flex-col ${pageIndex < totalPages - 1 ? 'page-break-after' : ''}`} style={{ minHeight: '1056px' }}>
@@ -65,7 +67,7 @@ export const PhotographyTemplate1: React.FC<PageProps> = (props) => {
             <div className="p-10 flex-grow flex flex-col">
                 <section className="grid grid-cols-2 gap-8 mb-8">
                     <div>
-                        <h1 className="text-4xl tracking-wider">{(t.invoice || 'INVOICE').toUpperCase()}</h1>
+                        <h1 className="text-4xl tracking-wider">{docTitle}</h1>
                         <p className="text-sm mt-2">No. {invoice.invoiceNumber}</p>
                         <p className="text-sm">{safeFormat(invoice.invoiceDate, 'MMMM d, yyyy')}</p>
                     </div>
@@ -137,7 +139,6 @@ export const PhotographyTemplate2: React.FC<PageProps> = (props) => {
             <header className="p-10 flex justify-between items-start" style={{backgroundColor: accentColor || '#111827', color: 'white'}}>
                  <div>
                     <h1 className="text-3xl font-bold">{business.name}</h1>
-                    <p className="text-xs opacity-80">{t.photographyServices || 'Photography Services'}</p>
                 </div>
                  <div className="text-right">
                     <h2 className="text-2xl font-bold">{(t.invoice || 'INVOICE').toUpperCase()}</h2>
@@ -173,7 +174,6 @@ export const PhotographyTemplate3: React.FC<PageProps> = (props) => {
          <div className={`p-10 font-serif bg-gray-50 text-gray-700 ${pageIndex < totalPages - 1 ? 'page-break-after' : ''}`} style={{ minHeight: '1056px' }}>
             <header className="text-center mb-10">
                 <h1 className="text-4xl font-bold">{business.name}</h1>
-                <p className="text-sm">{(t.photography || 'Photography')}</p>
             </header>
             <section className="grid grid-cols-2 gap-8 text-xs mb-8">
                 <div><p className="font-bold">{(t.billedTo || 'Billed To')}</p><p>{client.name}<br/>{client.address}</p></div>

@@ -52,6 +52,7 @@ const LandscapingDetails: React.FC<{ invoice: Invoice, t: any }> = ({ invoice, t
 export const LandscapingTemplate1: React.FC<PageProps> = (props) => {
     const { invoice, pageItems, pageIndex, totalPages, subtotal, taxAmount, balanceDue, t, currencySymbol, accentColor } = props;
     const { business, client } = invoice;
+    const docTitle = (t.invoice || 'INVOICE').toUpperCase();
 
     return (
         <div className={`p-10 bg-white font-sans text-gray-800 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: 'Arial, sans-serif', fontSize: '10pt', minHeight: '1056px', color: props.textColor, backgroundColor: props.backgroundColor }}>
@@ -64,8 +65,7 @@ export const LandscapingTemplate1: React.FC<PageProps> = (props) => {
                      <p className="text-xs">{business.address}</p>
                 </div>
                 <div className="text-right">
-                    <h1 className="text-2xl font-bold">{(t.invoice || 'INVOICE').toUpperCase()}</h1>
-                    <p className="text-sm">{(t.landscapingLawnCare || 'Landscaping & Lawn Care')}</p>
+                    <h1 className="text-2xl font-bold">{docTitle}</h1>
                 </div>
             </header>
 
@@ -134,6 +134,7 @@ export const LandscapingTemplate1: React.FC<PageProps> = (props) => {
 export const LandscapingTemplate2: React.FC<PageProps> = (props) => {
     const { invoice, pageItems, pageIndex, totalPages, subtotal, taxAmount, balanceDue, t, currencySymbol, accentColor } = props;
     const { business, client } = invoice;
+    const docTitle = (t.invoice || 'INVOICE').toUpperCase();
 
     return (
         <div className={`p-10 bg-white font-sans text-gray-700 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: 'Verdana, sans-serif', fontSize: '9.5pt', minHeight: '1056px', color: props.textColor, backgroundColor: props.backgroundColor }}>
@@ -144,8 +145,7 @@ export const LandscapingTemplate2: React.FC<PageProps> = (props) => {
                     <p className="text-xs text-gray-500">{business.address}</p>
                 </div>
                 <div className="text-right">
-                    <h2 className="text-2xl font-light text-gray-400">{(t.invoice || 'INVOICE').toUpperCase()}</h2>
-                    <p className="text-sm text-gray-400">{(t.landscapingLawnCare || 'Landscaping & Lawn Care')}</p>
+                    <h2 className="text-2xl font-light text-gray-400">{docTitle}</h2>
                 </div>
             </header>
 
@@ -209,12 +209,12 @@ export const LandscapingTemplate2: React.FC<PageProps> = (props) => {
 export const LandscapingTemplate3: React.FC<PageProps> = (props) => {
     const { invoice, pageItems, pageIndex, totalPages, subtotal, taxAmount, balanceDue, t, currencySymbol, accentColor } = props;
     const { business, client } = invoice;
+    const docTitle = (t.invoice || 'INVOICE').toUpperCase();
 
     return (
         <div className={`bg-white font-sans text-gray-800 flex ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ minHeight: '1056px', backgroundColor: props.backgroundColor, color: props.textColor }}>
             <div className="w-1/3 p-8 text-white" style={{ backgroundColor: accentColor }}>
-                <h1 className="text-4xl font-bold mb-2">{(t.invoice || 'INVOICE').toUpperCase()}</h1>
-                <p className="text-sm mb-8">{(t.landscapingLawnCare || 'Landscaping & Lawn Care')}</p>
+                <h1 className="text-4xl font-bold mb-2">{docTitle}</h1>
 
                 <div className="text-sm space-y-6 flex-grow">
                     <div>
@@ -222,7 +222,11 @@ export const LandscapingTemplate3: React.FC<PageProps> = (props) => {
                         <p className="font-bold text-lg">{client.name}</p>
                         <p>{client.address}</p>
                     </div>
-                     <div>
+                    <div>
+                        <p className="font-bold opacity-80 mb-1">{(t.project || 'PROJECT').toUpperCase()}</p>
+                        <p>{invoice.poNumber || 'N/A'}</p>
+                    </div>
+                    <div>
                         <p className="font-bold opacity-80 mb-1">{(t.details || 'DETAILS').toUpperCase()}</p>
                         <p># {invoice.invoiceNumber}</p>
                         <p>{(t.date || 'Date')}: {safeFormat(invoice.invoiceDate, 'yyyy-MM-dd')}</p>

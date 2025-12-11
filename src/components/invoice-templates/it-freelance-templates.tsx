@@ -118,11 +118,9 @@ export const ITTemplate2: React.FC<PageProps> = (props) => {
                 <div>
                     {business.logoUrl && <Image src={business.logoUrl} alt="Logo" width={100} height={50} className="object-contain mb-2 filter invert brightness-0"/>}
                     <h1 className="text-4xl font-bold" style={{ color: accentColor || '#4C1D95' }}>{business.name}</h1>
-                    <p className="text-xs text-gray-400">{t.softwareAndITSolutions || 'Software & IT Solutions'}</p>
                 </div>
                 <div className="text-right">
                     <h2 className="text-3xl font-light text-gray-400">{docTitle}</h2>
-                    {category !== 'General Services' && <p className="text-sm text-gray-400">{category}</p>}
                 </div>
             </header>
 
@@ -187,7 +185,6 @@ export const ITTemplate3: React.FC<PageProps> = (props) => {
                 </div>
                  <div className="text-right">
                     <h2 className="text-2xl font-extrabold tracking-tighter">{docTitle}</h2>
-                    {category !== 'General Services' && <p className="text-sm">{category}</p>}
                 </div>
             </header>
 
@@ -324,7 +321,6 @@ export const ITTemplate5: React.FC<PageProps> = (props) => {
                 </div>
                  <div className="text-right">
                     <p className="text-2xl font-extrabold tracking-tighter text-gray-400">{docTitle}</p>
-                    {category !== 'General Services' && <p className="text-xs text-gray-400">{category}</p>}
                 </div>
             </header>
 
@@ -380,5 +376,3 @@ export const ITTemplate5: React.FC<PageProps> = (props) => {
         </div>
     );
 };
-
-    

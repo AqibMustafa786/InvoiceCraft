@@ -141,7 +141,6 @@ export const ConsultingTemplate2: React.FC<PageProps> = (props) => {
                 <header className="flex justify-between items-center">
                     <div>
                         <h1 className="text-3xl font-bold">{business.name}</h1>
-                        <p className="text-sm opacity-80">{(t.consultingServices || 'Consulting Services')}</p>
                     </div>
                     <div className="text-right">
                         <h2 className="text-2xl font-bold">{(t.invoice || 'INVOICE').toUpperCase()}</h2>

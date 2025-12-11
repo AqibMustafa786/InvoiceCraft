@@ -35,15 +35,15 @@ const RetailDetails: React.FC<{ invoice: Invoice, t: any }> = ({ invoice, t }) =
     const { retail } = invoice;
     return (
         <section className="my-4 text-xs">
-            <p className="font-bold text-gray-500 mb-2 border-b">{(t.productDetails || 'Product Details')}</p>
+            <p className="font-bold text-gray-500 mb-2 border-b">{t.productDetails || 'Product Details'}</p>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-x-4 gap-y-1">
-                <p><span className="font-semibold text-gray-600">{(t.sku || 'SKU')}:</span> {retail.sku}</p>
-                <p><span className="font-semibold text-gray-600">{(t.productCategory || 'Category')}:</span> {retail.productCategory}</p>
-                <p><span className="font-semibold text-gray-600">{(t.unitOfMeasure || 'Unit')}:</span> {retail.unitOfMeasure}</p>
-                <p><span className="font-semibold text-gray-600">{(t.batchNumber || 'Batch #')}:</span> {retail.batchNumber}</p>
-                {retail.stockQuantity && <p><span className="font-semibold text-gray-600">{(t.stockQuantity || 'Stock')}:</span> {retail.stockQuantity}</p>}
-                {retail.wholesalePrice && <p><span className="font-semibold text-gray-600">{(t.wholesalePrice || 'Wholesale')}:</span> ${retail.wholesalePrice.toFixed(2)}</p>}
-                {retail.shippingPalletCost && <p><span className="font-semibold text-gray-600">{(t.palletCost || 'Pallet Cost')}:</span> ${retail.shippingPalletCost.toFixed(2)}</p>}
+                <p><span className="font-semibold text-gray-600">{t.sku || 'SKU'}:</span> {retail.sku}</p>
+                <p><span className="font-semibold text-gray-600">{t.productCategory || 'Category'}:</span> {retail.productCategory}</p>
+                <p><span className="font-semibold text-gray-600">{t.unitOfMeasure || 'Unit'}:</span> {retail.unitOfMeasure}</p>
+                <p><span className="font-semibold text-gray-600">{t.batchNumber || 'Batch #'}:</span> {retail.batchNumber}</p>
+                {retail.stockQuantity && <p><span className="font-semibold text-gray-600">{t.stockQuantity || 'Stock'}:</span> {retail.stockQuantity}</p>}
+                {retail.wholesalePrice && <p><span className="font-semibold text-gray-600">{t.wholesalePrice || 'Wholesale'}:</span> ${retail.wholesalePrice.toFixed(2)}</p>}
+                {retail.shippingPalletCost && <p><span className="font-semibold text-gray-600">{t.palletCost || 'Pallet Cost'}:</span> ${retail.shippingPalletCost.toFixed(2)}</p>}
             </div>
         </section>
     );

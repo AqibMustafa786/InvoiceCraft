@@ -121,7 +121,6 @@ export const AutoRepairTemplate2: React.FC<PageProps> = (props) => {
             <header className="flex justify-between items-center mb-8">
                 <div>
                     <h1 className="text-3xl font-bold" style={{ color: accentColor || '#FBBF24' }}>{business.name}</h1>
-                    <p className="text-xs text-gray-400">{(t.autoRepairService || 'Auto Repair & Service')}</p>
                 </div>
                 <div className="text-right">
                     <h2 className="text-2xl font-bold">{(t.invoice || 'INVOICE').toUpperCase()}</h2>

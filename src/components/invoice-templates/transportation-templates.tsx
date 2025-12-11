@@ -60,7 +60,6 @@ export const TransportationTemplate1: React.FC<PageProps> = (props) => {
             <header className="flex justify-between items-start mb-8">
                 <div>
                     <h1 className="text-3xl font-bold">{business.name}</h1>
-                    <p className="text-xs">{(t.logisticsAndTransportation || 'Logistics & Transportation')}</p>
                 </div>
                 <h2 className="text-4xl font-bold text-gray-400">{(t.invoice || 'INVOICE').toUpperCase()}</h2>
             </header>
@@ -112,8 +111,8 @@ export const TransportationTemplate2: React.FC<PageProps> = (props) => {
                 <table className="w-full text-left text-sm">
                     <thead className="bg-gray-100">
                         <tr>
-                            <th className="p-2 font-bold w-4/5">Description</th>
-                            <th className="p-2 font-bold text-right">Total</th>
+                            <th className="p-2 w-4/5 font-bold">DESCRIPTION</th>
+                            <th className="p-2 font-bold text-right">TOTAL</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -125,11 +124,11 @@ export const TransportationTemplate2: React.FC<PageProps> = (props) => {
             </main>
             {pageIndex === totalPages - 1 && (
             <footer className="mt-auto pt-8">
-                <div className="flex justify-end">
-                    <div className="w-2/5 text-sm">
-                        <p className="flex justify-between py-1"><span>Subtotal:</span><span>{currencySymbol}{subtotal.toFixed(2)}</span></p>
-                        <p className="flex justify-between py-1"><span>Tax:</span><span>{currencySymbol}{taxAmount.toFixed(2)}</span></p>
-                        <p className="flex justify-between font-bold text-lg mt-2 pt-2 border-t"><span>Balance Due:</span><span>{currencySymbol}{balanceDue.toFixed(2)}</span></p>
+                <div className="flex justify-end text-sm">
+                    <div className="w-1/3">
+                        <p className="flex justify-between"><span>Subtotal</span><span>{currencySymbol}{subtotal.toFixed(2)}</span></p>
+                        <p className="flex justify-between border-b pb-1"><span>Tax</span><span>{currencySymbol}{taxAmount.toFixed(2)}</span></p>
+                        <p className="flex justify-between font-bold mt-2"><span>Total</span><span>{currencySymbol}{balanceDue.toFixed(2)}</span></p>
                     </div>
                 </div>
             </footer>
@@ -223,7 +222,7 @@ export const TransportationTemplate5: React.FC<PageProps> = (props) => {
         <div className={`p-12 font-serif text-gray-800 ${pageIndex < totalPages - 1 ? 'page-break-after' : ''}`} style={{ minHeight: '1056px', backgroundColor: props.backgroundColor, color: props.textColor }}>
             <header className="text-center mb-10">
                 <h1 className="text-3xl font-bold">{business.name}</h1>
-                <p className="text-xs">{business.address}</p>
+                <p className="text-xs">{business.address} | {business.phone}</p>
             </header>
             <h2 className="text-2xl font-bold text-center mb-8">{docTitle}</h2>
             <section className="text-xs mb-8">
