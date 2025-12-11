@@ -55,7 +55,7 @@ export const ConsultingTemplate1: React.FC<PageProps> = (props) => {
             {/* Header */}
             <header className="flex justify-between items-start mb-10">
                 <div>
-                    <h1 className="text-2xl font-bold">{business.name || 'Aqib Digital Solutions'}</h1>
+                    <h1 className="text-2xl font-bold">{business.name || 'Your Company'}</h1>
                     <p className="text-xs text-gray-600 whitespace-pre-line">{business.address || '123 Main St, Anytown, USA 12345'}</p>
                 </div>
                 {business.logoUrl && (
@@ -64,7 +64,7 @@ export const ConsultingTemplate1: React.FC<PageProps> = (props) => {
             </header>
 
             {/* Title */}
-            <div className="text-center my-8">
+            <div className="text-left my-8">
                 <h2 className="text-3xl font-bold tracking-wider">CONSULTANT INVOICE</h2>
             </div>
             
@@ -81,9 +81,11 @@ export const ConsultingTemplate1: React.FC<PageProps> = (props) => {
                     <p><span className="font-bold">Due Date:</span> {safeFormat(invoice.dueDate, 'MM-dd-yyyy')}</p>
                 </div>
             </section>
+
+            <ConsultingDetails invoice={invoice} t={t} />
             
             {/* Items Table */}
-            <main className="flex-grow">
+            <main className="flex-grow mt-4">
                 <table className="w-full text-left text-xs">
                     <thead>
                         <tr className="bg-gray-800 text-white">
