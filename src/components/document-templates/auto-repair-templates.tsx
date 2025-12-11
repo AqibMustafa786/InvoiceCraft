@@ -55,13 +55,13 @@ const AutoRepairDetails: React.FC<{ document: Estimate; textColor: string; t: an
 
 // Template 1: Direct Interpretation
 export const AutoRepairTemplate1: React.FC<TemplateProps> = ({ document, pageItems, pageIndex, totalPages, style, t }) => {
-    const { business, client, summary, currency, textColor, category } = document;
+    const { business, client, summary, currency, textColor } = document;
     const currencySymbol = currencySymbols[currency] || '$';
     const accentColor = style.color || '#FBBF24'; // Default to a gold/yellow
     const docTitle = document.documentType === 'quote' ? (t.quote || 'QUOTE').toUpperCase() : (t.estimate || 'ESTIMATE').toUpperCase();
 
     return (
-        <div className={`bg-white font-sans text-gray-800 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: 'Arial, sans-serif', fontSize: '9pt', minHeight: '1056px' }}>
+        <div className={`bg-white font-sans text-gray-800 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: 'Arial, sans-serif', fontSize: '9pt', minHeight: '1056px', backgroundColor: document.backgroundColor, color: textColor }}>
             <header className="p-10 flex justify-between items-start">
                 <div>
                     <h1 className="text-3xl font-bold">{business.name}</h1>
@@ -112,9 +112,13 @@ export const AutoRepairTemplate1: React.FC<TemplateProps> = ({ document, pageIte
                         </tbody>
                          {pageIndex === totalPages - 1 && (
                             <tfoot>
-                                 <tr>
+                                <tr><td colSpan={3} className="p-2 text-right">Subtotal</td><td className="p-2 text-right">{currencySymbol}{summary.subtotal.toFixed(2)}</td></tr>
+                                {summary.discount > 0 && <tr><td colSpan={3} className="p-2 text-right">Discount</td><td className="p-2 text-right text-red-600">-{currencySymbol}{summary.discount.toFixed(2)}</td></tr>}
+                                {summary.shippingCost > 0 && <tr><td colSpan={3} className="p-2 text-right">Shipping/Extra</td><td className="p-2 text-right">{currencySymbol}{summary.shippingCost.toFixed(2)}</td></tr>}
+                                <tr><td colSpan={3} className="p-2 text-right">Tax ({summary.taxPercentage}%)</td><td className="p-2 text-right">{currencySymbol}{summary.taxAmount.toFixed(2)}</td></tr>
+                                <tr>
                                     <td colSpan={3} className="p-2 pt-2 text-right font-bold text-base">{(t.total || 'Total')}</td>
-                                    <td className="p-2 pt-2 text-right font-bold text-base">{currencySymbol}{summary.subtotal.toFixed(2)}</td>
+                                    <td className="p-2 pt-2 text-right font-bold text-base">{currencySymbol}{summary.grandTotal.toFixed(2)}</td>
                                 </tr>
                             </tfoot>
                          )}
@@ -135,12 +139,10 @@ export const AutoRepairTemplate1: React.FC<TemplateProps> = ({ document, pageIte
                         </section>
                         <div className="flex justify-between items-end border p-4 rounded-md">
                             <div>
-                                <p className="font-bold mb-2">{(t.termsAndConditions || 'Terms and Conditions')}</p>
-                                <p>{(t.signatureAgreement || 'By signing below, the customer agrees to the repair estimate and authorizes')} {business.name}<br/> {(t.signatureAgreement2 || 'to proceed with repairs, understanding that additional costs may apply and will be discussed.')}</p>
+                                <SignatureDisplay signature={document.business.ownerSignature} label="Authorized Signature" />
                             </div>
                             <div className="text-center">
-                                {document.clientSignature ? <Image src={document.clientSignature.image} alt="signature" width={120} height={60} /> : <div className="w-40 h-10 border-b border-gray-400"></div>}
-                                <p className="text-xs mt-1">{(t.customerSignature || 'Customer Signature')}</p>
+                                <SignatureDisplay signature={document.clientSignature} label="Customer Signature" />
                             </div>
                         </div>
                     </footer>
@@ -152,12 +154,12 @@ export const AutoRepairTemplate1: React.FC<TemplateProps> = ({ document, pageIte
 
 // Template 2: Modern Dark
 export const AutoRepairTemplate2: React.FC<TemplateProps> = ({ document, pageItems, pageIndex, totalPages, style, t }) => {
-    const { business, client, summary, currency, textColor, category } = document;
+    const { business, client, summary, currency, textColor } = document;
     const currencySymbol = currencySymbols[currency] || '$';
     const docTitle = document.documentType === 'quote' ? (t.quote || 'QUOTE').toUpperCase() : (t.estimate || 'ESTIMATE').toUpperCase();
 
     return (
-        <div className={`bg-gray-800 text-white font-sans flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: 'Roboto, sans-serif', fontSize: '9.5pt', minHeight: '1056px', color: textColor }}>
+        <div className={`bg-gray-800 text-white font-sans flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: 'Roboto, sans-serif', fontSize: '9.5pt', minHeight: '1056px', color: textColor, backgroundColor: document.backgroundColor }}>
             <header className="p-10 flex justify-between items-start">
                 <div>
                     <h1 className="text-3xl font-bold">{business.name}</h1>
@@ -210,9 +212,15 @@ export const AutoRepairTemplate2: React.FC<TemplateProps> = ({ document, pageIte
                          <div className="flex justify-end mb-6">
                             <div className="w-2/5 text-sm space-y-2">
                                 <div className="flex justify-between"><span className="text-gray-400">{(t.subtotal || 'Subtotal')}:</span><span>{currencySymbol}{summary.subtotal.toFixed(2)}</span></div>
+                                {summary.discount > 0 && <div className="flex justify-between"><span className="text-gray-400">Discount:</span><span className="text-red-400">-{currencySymbol}{summary.discount.toFixed(2)}</span></div>}
+                                {summary.shippingCost > 0 && <div className="flex justify-between"><span className="text-gray-400">Shipping:</span><span>{currencySymbol}{summary.shippingCost.toFixed(2)}</span></div>}
                                 <div className="flex justify-between"><span className="text-gray-400">{(t.taxesAndFees || 'Taxes & Fees')}:</span><span>{currencySymbol}{summary.taxAmount.toFixed(2)}</span></div>
                                 <div className="flex justify-between font-bold text-xl mt-2 pt-2 border-t-2 border-gray-500" style={{color: style.color || '#FBBF24'}}><span>{(document.documentType === 'quote' ? t.quoteTotal : t.estimateTotal) || 'TOTAL'}:</span><span>{currencySymbol}{summary.grandTotal.toFixed(2)}</span></div>
                             </div>
+                        </div>
+                        <div className="flex justify-between items-end text-xs">
+                            <SignatureDisplay signature={document.business.ownerSignature} label="Authorized Signature" />
+                            <SignatureDisplay signature={document.clientSignature} label="Customer Signature" />
                         </div>
                     </footer>
                 )}
@@ -224,12 +232,12 @@ export const AutoRepairTemplate2: React.FC<TemplateProps> = ({ document, pageIte
 
 // Template 3: Minimalist & Clean
 export const AutoRepairTemplate3: React.FC<TemplateProps> = ({ document, pageItems, pageIndex, totalPages, style, t }) => {
-    const { business, client, summary, currency, textColor, category } = document;
+    const { business, client, summary, currency, textColor } = document;
     const currencySymbol = currencySymbols[currency] || '$';
     const docTitle = document.documentType === 'quote' ? (t.quote || 'Quote') : (t.estimate || 'Estimate');
 
     return (
-        <div className={`p-12 bg-white font-['Garamond',_serif] text-gray-700 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{minHeight: '1056px', color: textColor }}>
+        <div className={`p-12 bg-white font-['Garamond',_serif] text-gray-700 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{minHeight: '1056px', color: textColor, backgroundColor: document.backgroundColor }}>
             <header className="flex justify-between items-start mb-12">
                 <div>
                     <h1 className="text-4xl font-light tracking-wider">{business.name}</h1>
@@ -282,10 +290,16 @@ export const AutoRepairTemplate3: React.FC<TemplateProps> = ({ document, pageIte
                         <table className="w-1/3 text-xs">
                              <tbody>
                                 <tr><td className="py-1">{(t.subtotal || 'Subtotal')}</td><td className="text-right">{currencySymbol}{summary.subtotal.toFixed(2)}</td></tr>
+                                {summary.discount > 0 && <tr><td className="py-1">Discount</td><td className="text-right text-red-600">-{currencySymbol}{summary.discount.toFixed(2)}</td></tr>}
+                                {summary.shippingCost > 0 && <tr><td className="py-1">Shipping</td><td className="text-right">{currencySymbol}{summary.shippingCost.toFixed(2)}</td></tr>}
                                 <tr><td className="py-1">{(t.tax || 'Tax')}</td><td className="text-right">{currencySymbol}{summary.taxAmount.toFixed(2)}</td></tr>
                                 <tr className="font-bold text-base border-t-2 border-black"><td className="pt-2">{(t.total || 'TOTAL').toUpperCase()}</td><td className="pt-2 text-right">{currencySymbol}{summary.grandTotal.toFixed(2)}</td></tr>
                             </tbody>
                         </table>
+                    </div>
+                    <div className="flex justify-between mt-8">
+                        <SignatureDisplay signature={document.business.ownerSignature} label="Authorized Signature" />
+                        <SignatureDisplay signature={document.clientSignature} label="Customer Signature" />
                     </div>
                 </footer>
             )}
@@ -295,13 +309,13 @@ export const AutoRepairTemplate3: React.FC<TemplateProps> = ({ document, pageIte
 
 // Template 4: Corporate Blue Accents
 export const AutoRepairTemplate4: React.FC<TemplateProps> = ({ document, pageItems, pageIndex, totalPages, style, t }) => {
-    const { business, client, summary, currency, textColor, category } = document;
+    const { business, client, summary, currency, textColor } = document;
     const currencySymbol = currencySymbols[currency] || '$';
     const accentColor = style.color || '#3B82F6';
     const docTitle = document.documentType === 'quote' ? (t.quote || 'QUOTE').toUpperCase() : (t.estimate || 'ESTIMATE').toUpperCase();
 
     return (
-        <div className={`p-10 bg-white font-sans text-gray-800 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ minHeight: '1056px', color: textColor }}>
+        <div className={`p-10 bg-white font-sans text-gray-800 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ minHeight: '1056px', color: textColor, backgroundColor: document.backgroundColor }}>
             <header className="flex justify-between items-start pb-4 border-b-2" style={{borderColor: accentColor}}>
                 <div>
                   <h1 className="text-3xl font-bold">{business.name}</h1>
@@ -348,10 +362,16 @@ export const AutoRepairTemplate4: React.FC<TemplateProps> = ({ document, pageIte
                         <table className="w-1/3 text-sm">
                             <tbody>
                                 <tr><td className="py-1">{(t.subtotal || 'Subtotal')}</td><td className="py-1 text-right">{currencySymbol}{summary.subtotal.toFixed(2)}</td></tr>
+                                {summary.discount > 0 && <tr><td className="py-1">Discount</td><td className="py-1 text-right text-red-600">-{currencySymbol}{summary.discount.toFixed(2)}</td></tr>}
+                                {summary.shippingCost > 0 && <tr><td className="py-1">Shipping</td><td className="py-1 text-right">{currencySymbol}{summary.shippingCost.toFixed(2)}</td></tr>}
                                 {summary.taxAmount > 0 && <tr><td className="py-1">{(t.tax || 'Taxes')}</td><td className="py-1 text-right">{currencySymbol}{summary.taxAmount.toFixed(2)}</td></tr>}
                                 <tr className="font-bold text-base border-t-2 border-black"><td className="py-2">{(t.total || 'Total')}</td><td className="py-2 text-right">{currencySymbol}{summary.grandTotal.toFixed(2)}</td></tr>
                             </tbody>
                         </table>
+                    </div>
+                    <div className="flex justify-between mt-8">
+                        <SignatureDisplay signature={document.business.ownerSignature} label="Authorized Signature" />
+                        <SignatureDisplay signature={document.clientSignature} label="Customer Signature" />
                     </div>
                 </footer>
             )}
@@ -361,12 +381,12 @@ export const AutoRepairTemplate4: React.FC<TemplateProps> = ({ document, pageIte
 
 // Template 5: Grid Layout
 export const AutoRepairTemplate5: React.FC<TemplateProps> = ({ document, pageItems, pageIndex, totalPages, style, t }) => {
-    const { business, client, summary, currency, textColor, category } = document;
+    const { business, client, summary, currency, textColor } = document;
     const currencySymbol = currencySymbols[currency] || '$';
     const docTitle = document.documentType === 'quote' ? (t.quote || 'Quote').toUpperCase() : (t.estimate || 'Estimate').toUpperCase();
 
     return (
-        <div className={`p-10 bg-gray-50 font-['Roboto',_sans-serif] text-gray-900 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{minHeight: '1056px', color: textColor}}>
+        <div className={`p-10 bg-gray-50 font-['Roboto',_sans-serif] text-gray-900 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{minHeight: '1056px', color: textColor, backgroundColor: document.backgroundColor}}>
             <header className="flex justify-between items-start mb-8">
                 <div>
                   {business.logoUrl ? <Image src={business.logoUrl} alt="Logo" width={100} height={40} className="object-contain" /> : <h1 className="text-3xl font-bold">{business.name}</h1>}
@@ -413,6 +433,8 @@ export const AutoRepairTemplate5: React.FC<TemplateProps> = ({ document, pageIte
                 <footer className="mt-auto pt-6 flex justify-end">
                     <div className="w-1/3 text-sm space-y-1">
                         <p className="flex justify-between"><span>{(t.subtotal || 'Subtotal')}</span><span>{currencySymbol}{summary.subtotal.toFixed(2)}</span></p>
+                        {summary.discount > 0 && <p className="flex justify-between"><span>Discount</span><span className="text-red-600">-{currencySymbol}{summary.discount.toFixed(2)}</span></p>}
+                        {summary.shippingCost > 0 && <p className="flex justify-between"><span>Shipping</span><span>{currencySymbol}{summary.shippingCost.toFixed(2)}</span></p>}
                         <p className="flex justify-between"><span>{(t.tax || 'Tax')}</span><span>{currencySymbol}{summary.taxAmount.toFixed(2)}</span></p>
                         <p className="flex justify-between font-bold text-lg mt-2 pt-2 border-t-2 border-black"><span>{(document.documentType === 'quote' ? t.quoteTotal : t.estimateTotal) || 'Total'}:</span><span>{currencySymbol}{summary.grandTotal.toFixed(2)}</span></p>
                     </div>
