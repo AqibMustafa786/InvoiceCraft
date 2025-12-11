@@ -125,7 +125,7 @@
     "autoRepairService": "Auto Repair & Service",
     "qualityAutoRepair": "Quality Auto Repair Since 1985",
     "receipt": "Receipt",
-    "sessionDetails": "Session Details",
+    "sessionDetails": "SESSION DETAILS",
     "eventType": "Event",
     "shootDate": "Date",
     "coverage": "Coverage",
@@ -136,7 +136,17 @@
     "equipmentFee": "Gear",
     "sendPaymentsTo": "Send Payments To",
     "amountDue": "Amount due",
-    "thankYou": "Thank you!"
+    "thankYou": "Thank you!",
+    "propertyDetails": "Property Details",
+    "property": "Property",
+    "unit": "Unit",
+    "leaseTerm": "Lease Term",
+    "tenant": "Tenant",
+    "rent": "Rent",
+    "cleaningFee": "Cleaning",
+    "maintenance": "Maintenance",
+    "lateFee": "Late Fee",
+    "hoa": "HOA",
+    "utilities": "Utilities",
+    "tenantInfo": "Tenant Information"
 }
-
-    
