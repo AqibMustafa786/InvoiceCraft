@@ -118,6 +118,7 @@
     "mileage": "Mileage",
     "licensePlate": "Plate",
     "laborHours": "Labor Hours",
+    "laborRate": "Labor Rate",
     "diagnosticFee": "Diagnostic Fee",
     "shopSupplyFee": "Shop Supply Fee",
     "towingFee": "Towing Fee",
@@ -158,5 +159,16 @@
     "loadType": "Load Type",
     "fuelSurcharge": "Fuel Surcharge",
     "tolls": "Tolls",
-    "detention": "Detention"
+    "detention": "Detention",
+    "rentalDetails": "Rental Details",
+    "itemRented": "Item",
+    "rentalStart": "Start",
+    "rentalEnd": "End",
+    "dailyRate": "Daily Rate",
+    "days": "Days",
+    "securityDeposit": "Deposit",
+    "damageCharges": "Damages",
+    "deliveryFee": "Delivery",
+    "pickupFee": "Pickup"
 }
+
