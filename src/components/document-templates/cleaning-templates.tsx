@@ -40,7 +40,7 @@ const CleaningDetails: React.FC<{ document: Estimate; textColor: string; t: any;
     const { cleaning } = document;
     return (
         <section className="my-4 text-xs" style={{color: textColor}}>
-            <p className="font-bold border-b" >{t.cleaningSpecifics || 'Cleaning Specifics'}</p>
+            <p className="font-bold border-b" >{(t.cleaningSpecifics || 'Cleaning Specifics')}</p>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-x-4 gap-y-1 mt-2">
                 <p><span className="font-semibold">{t.type || 'Type'}:</span> {cleaning.cleaningType}</p>
                 <p><span className="font-semibold">{t.frequency || 'Frequency'}:</span> {cleaning.frequency}</p>
@@ -56,7 +56,7 @@ const CleaningDetails: React.FC<{ document: Estimate; textColor: string; t: any;
 };
 
 
-// Template 1: Direct interpretation of user image
+// Template 1: Sparkle
 export const CleaningTemplate1: React.FC<TemplateProps> = ({ document, pageItems, pageIndex, totalPages, style, t }) => {
     const { business, client, summary, currency, textColor, category } = document;
     const currencySymbol = currencySymbols[currency] || '$';
@@ -158,14 +158,14 @@ export const CleaningTemplate2: React.FC<TemplateProps> = ({ document, pageItems
     const docTitle = document.documentType === 'quote' ? (t.estimate || 'ESTIMATE') : (t.estimate || 'ESTIMATE');
 
     return (
-        <div className={`p-10 bg-white font-sans text-gray-700 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: 'Inter, sans-serif', fontSize: '9pt', minHeight: '1056px', color: textColor }}>
+        <div className={`p-10 bg-white font-sans text-gray-700 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: 'Verdana, sans-serif', fontSize: '9.5pt', minHeight: '1056px', color: textColor }}>
             <header className="flex justify-between items-start mb-10 pb-4 border-b-2 border-gray-100">
                 <div>
                     <h1 className="text-3xl font-bold" style={{ color: accentColor }}>{business.name}</h1>
                     <p className="text-xs text-gray-500">{business.address}</p>
                 </div>
                 <div className='text-right'>
-                    <h2 className="text-2xl font-extrabold" >{docTitle.toUpperCase()}</h2>
+                    <h2 className="text-2xl font-light text-gray-400">{(docTitle || "ESTIMATE").toUpperCase()}</h2>
                     {category !== 'Generic' && <p className="text-sm text-gray-400">{category}</p>}
                 </div>
             </header>
@@ -224,70 +224,66 @@ export const CleaningTemplate2: React.FC<TemplateProps> = ({ document, pageItems
     );
 };
 
-// Template 3: Minimalist Checklist
+// New Simple Template
 export const CleaningTemplate3: React.FC<TemplateProps> = ({ document, pageItems, pageIndex, totalPages, style, t }) => {
-    const { business, client, summary, currency, textColor, category } = document;
+    const { business, client, summary, currency, textColor } = document;
     const currencySymbol = currencySymbols[currency] || '$';
-    const docTitle = document.documentType === 'quote' ? (t.proposal || 'Proposal') : (t.proposal || 'Proposal');
+    const docTitle = document.documentType === 'quote' ? (t.quote || 'Quote') : (t.estimate || 'Estimate');
 
     return (
-        <div className={`p-12 bg-white font-['Garamond',_serif] text-gray-700 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ minHeight: '1056px', color: textColor }}>
-            <header className="flex justify-between items-start mb-12">
+        <div className={`p-10 bg-white font-sans text-gray-800 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ minHeight: '1056px', color: textColor }}>
+            <header className="flex justify-between items-start mb-8 pb-4 border-b">
                 <div>
-                    <h1 className="text-4xl font-light tracking-wider">{business.name}</h1>
+                    <h1 className="text-3xl font-bold">{business.name}</h1>
                     <p className="text-xs">{business.address}</p>
                 </div>
                 <div className="text-right">
-                    <h2 className="text-3xl font-light tracking-wider">{(docTitle || "Proposal").toUpperCase()}</h2>
-                    {category !== 'Generic' && <p className="text-sm mt-1">{category}</p>}
+                    <h2 className="text-2xl font-bold">{docTitle.toUpperCase()}</h2>
+                    <p className="text-sm">#{document.estimateNumber}</p>
                 </div>
             </header>
-
-            <section className="flex justify-between mb-10 text-xs">
-                 <div>
-                    <p className="font-bold mb-1">{t.preparedFor || 'Prepared For'}</p>
-                    <p>{client.name}</p><p>{client.address}</p>
+            <section className="grid grid-cols-2 gap-4 mb-8 text-sm">
+                <div>
+                    <p className="font-bold">Billed To:</p>
+                    <p>{client.name}</p>
+                    <p>{client.address}</p>
                 </div>
-                 <div className="text-right">
-                    <p><span className="font-bold">{t.estimateNo || 'Estimate #'}</span> {document.estimateNumber}</p>
-                    <p><span className="font-bold">{t.date || 'Date'}:</span> {safeFormat(document.estimateDate, 'MMM dd, yyyy')}</p>
+                <div className="text-right">
+                    <p><span className="font-bold">Date:</span> {safeFormat(document.estimateDate, 'MM/dd/yyyy')}</p>
+                    <p><span className="font-bold">Valid Until:</span> {safeFormat(document.validUntilDate, 'MM/dd/yyyy')}</p>
                 </div>
             </section>
             
             <CleaningDetails document={document} textColor={textColor || '#374151'} t={t}/>
 
             <main className="flex-grow">
-                <table className="w-full text-left text-xs">
-                    <thead>
+                <table className="w-full text-left text-sm">
+                    <thead className="bg-gray-100">
                         <tr>
-                            <th className="p-2 font-semibold w-1/2 border-b-2 border-gray-300">{t.task.toUpperCase() || 'TASK'}</th>
-                            <th className="p-2 font-semibold text-center border-b-2 border-gray-300">{t.completed.toUpperCase() || 'COMPLETED'}</th>
-                            <th className="p-2 font-semibold text-right border-b-2 border-gray-300">{t.cost.toUpperCase() || 'COST'}</th>
+                            <th className="p-2 font-bold w-3/5">Service Description</th>
+                            <th className="p-2 font-bold text-center">Qty</th>
+                            <th className="p-2 font-bold text-right">Unit Price</th>
+                            <th className="p-2 font-bold text-right">Total</th>
                         </tr>
                     </thead>
                     <tbody>
                         {pageItems.map(item => (
-                            <tr key={item.id}>
-                                <td className="p-2 border-b border-gray-200 whitespace-pre-line">{item.name}</td>
-                                <td className="p-2 border-b border-gray-200 text-center">
-                                    <div className="w-4 h-4 border border-gray-400 inline-block"></div>
-                                </td>
-                                <td className="p-2 border-b border-gray-200 text-right">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</td>
+                            <tr key={item.id} className="border-b">
+                                <td className="p-2">{item.name}</td>
+                                <td className="p-2 text-center">{item.quantity}</td>
+                                <td className="p-2 text-right">{currencySymbol}{item.unitPrice.toFixed(2)}</td>
+                                <td className="p-2 text-right font-medium">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</td>
                             </tr>
                         ))}
                     </tbody>
                 </table>
             </main>
-
             {pageIndex === totalPages - 1 && (
-                <footer className="mt-auto pt-8">
-                    <div className="flex justify-end">
-                        <table className="w-1/3 text-xs">
-                             <tbody>
-                                <tr><td className="py-1">{t.subtotal || 'Subtotal'}</td><td className="text-right">{currencySymbol}{summary.subtotal.toFixed(2)}</td></tr>
-                                <tr className="font-bold text-base border-t-2 border-black"><td className="pt-2">{t.total.toUpperCase() || 'TOTAL'}</td><td className="pt-2 text-right">{currencySymbol}{summary.grandTotal.toFixed(2)}</td></tr>
-                            </tbody>
-                        </table>
+                <footer className="mt-auto pt-8 text-right">
+                    <div className="inline-block w-1/3 text-sm">
+                         <p className="flex justify-between"><span>Subtotal:</span><span>{currencySymbol}{summary.subtotal.toFixed(2)}</span></p>
+                         <p className="flex justify-between"><span>Tax:</span><span>{currencySymbol}{summary.taxAmount.toFixed(2)}</span></p>
+                         <p className="flex justify-between font-bold text-base mt-2 pt-2 border-t"><span>Total:</span><span>{currencySymbol}{summary.grandTotal.toFixed(2)}</span></p>
                     </div>
                 </footer>
             )}
@@ -304,7 +300,9 @@ export const CleaningTemplate4: React.FC<TemplateProps> = ({ document, pageItems
     return (
         <div className={`bg-white font-sans text-gray-800 flex ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ minHeight: '1056px' }}>
             <div className="w-1/3 p-8 text-white flex flex-col" style={{ backgroundColor: style.color }}>
-                <h1 className="text-3xl font-bold mb-2">{business.name}</h1>
+                <h1 className="text-3xl font-bold mb-2">{docTitle.toUpperCase()}</h1>
+                {category !== 'Generic' && <p className="text-sm mb-8">{category}</p>}
+
                 <div className="text-sm space-y-6 flex-grow">
                     <div>
                         <p className="font-bold opacity-80 mb-1">{t.client.toUpperCase() || 'CLIENT'}</p>
@@ -318,7 +316,7 @@ export const CleaningTemplate4: React.FC<TemplateProps> = ({ document, pageItems
                     <div>
                         <p className="font-bold opacity-80 mb-1">{t.details.toUpperCase() || 'DETAILS'}</p>
                         <p>#{document.estimateNumber}</p>
-                        <p>{t.date || 'Date'}: {safeFormat(document.estimateDate, 'yyyy-MM-dd')}</p>
+                        <p>{(t.date || 'Date')}: {safeFormat(document.estimateDate, 'yyyy-MM-dd')}</p>
                     </div>
                 </div>
                  {pageIndex === totalPages - 1 && (
@@ -330,16 +328,16 @@ export const CleaningTemplate4: React.FC<TemplateProps> = ({ document, pageItems
             </div>
             <div className="w-2/3 p-10 flex flex-col" style={{color: textColor}}>
                 <header className="mb-8 text-right">
-                     <h2 className="text-2xl font-bold">{docTitle.toUpperCase()}</h2>
-                    {category !== 'Generic' && <p className="text-sm">{category}</p>}
+                     <h2 className="text-3xl font-bold">{business.name}</h2>
+                    <p className="text-xs text-gray-500">{business.address}</p>
                 </header>
                  <CleaningDetails document={document} textColor={textColor || '#374151'} t={t}/>
                 <main className="flex-grow">
                     <table className="w-full text-left text-sm">
                         <thead className="border-b-2 border-gray-300">
                             <tr>
-                                <th className="py-2 font-bold w-2/3">{t.service.toUpperCase() || 'SERVICE'}</th>
-                                <th className="py-2 font-bold text-right">{t.total.toUpperCase() || 'TOTAL'}</th>
+                                <th className="py-2 font-bold w-2/3">{(t.serviceItem || 'SERVICE/ITEM').toUpperCase()}</th>
+                                <th className="py-2 font-bold text-right">{(t.total || 'TOTAL').toUpperCase()}</th>
                             </tr>
                         </thead>
                         <tbody>
