@@ -1,4 +1,3 @@
-
 'use client';
 
 import React from 'react';
@@ -68,9 +67,14 @@ export const ConstructionTemplate1: React.FC<TemplateProps> = ({ document, pageI
                 <div>
                     <h1 className="text-4xl font-bold">{business.name}</h1>
                     <p className="text-xs whitespace-pre-line">{business.address}</p>
+                    <p className="text-xs">{business.phone}</p>
+                    <p className="text-xs">{business.email}</p>
+                    {business.website && <p className="text-xs">{business.website}</p>}
                 </div>
                 <div className="text-right">
                     <h2 className="text-3xl font-bold">{docTitle}</h2>
+                    {business.licenseNumber && <p className="text-xs">Lic #: {business.licenseNumber}</p>}
+                    {business.taxId && <p className="text-xs">Tax ID: {business.taxId}</p>}
                 </div>
             </header>
 
@@ -158,7 +162,7 @@ export const ConstructionTemplate2: React.FC<TemplateProps> = ({ document, pageI
                     ) : (
                         <h1 className="text-4xl font-bold">{business.name}</h1>
                     )}
-                    <p className="text-xs whitespace-pre-line mt-2 text-gray-300">{business.address}</p>
+                    <p className="text-xs whitespace-pre-line mt-2 text-gray-300">{business.address}<br/>{business.phone}<br/>{business.email}</p>
                 </div>
                 <div className="text-right">
                     <h2 className="text-3xl font-bold">{docTitle}</h2>
@@ -247,7 +251,7 @@ export const ConstructionTemplate3: React.FC<TemplateProps> = ({ document, pageI
             <header className="flex justify-between items-start mb-12">
                  <div>
                     <h1 className="text-4xl font-light tracking-wider mb-1">{business.name}</h1>
-                    <p className="text-xs whitespace-pre-line">{business.address}</p>
+                    <p className="text-xs whitespace-pre-line">{business.address}<br/>{business.phone}</p>
                 </div>
                 <div className="text-right">
                     <h2 className="text-3xl font-light tracking-wider mb-1">{docTitle}</h2>
@@ -485,7 +489,3 @@ export const ConstructionTemplate5: React.FC<TemplateProps> = ({ document, pageI
 };
 
 export const ConstructionTemplate6: React.FC<TemplateProps> = (props) => <ConstructionTemplate1 {...props} />;
-export const ConstructionTemplate7: React.FC<TemplateProps> = (props) => <ConstructionTemplate2 {...props} />;
-export const ConstructionTemplate8: React.FC<TemplateProps> = (props) => <ConstructionTemplate3 {...props} />;
-export const ConstructionTemplate9: React.FC<TemplateProps> = (props) => <ConstructionTemplate4 {...props} />;
-export const ConstructionTemplate10: React.FC<TemplateProps> = (props) => <ConstructionTemplate5 {...props} />;
