@@ -58,7 +58,7 @@ import {
   RetailTemplate1
 } from './invoice-templates/retail-templates';
 import {
-  PhotographyTemplate1, PhotographyTemplate2, PhotographyTemplate3, PhotographyTemplate4, PhotographyTemplate5
+  PhotographyTemplate1
 } from './invoice-templates/photography-templates';
 import {
   RealEstateTemplate1, RealEstateTemplate2, RealEstateTemplate3, RealEstateTemplate4, RealEstateTemplate5
@@ -559,10 +559,6 @@ const templates: Record<string, FC<PageProps>> = {
   'ecommerce-1': EcommerceTemplate1,
   'retail-1': RetailTemplate1,
   'photography-1': PhotographyTemplate1,
-  'photography-2': PhotographyTemplate2,
-  'photography-3': PhotographyTemplate3,
-  'photography-4': PhotographyTemplate4,
-  'photography-5': PhotographyTemplate5,
   'real-estate-1': RealEstateTemplate1,
   'real-estate-2': RealEstateTemplate2,
   'real-estate-3': RealEstateTemplate3,
