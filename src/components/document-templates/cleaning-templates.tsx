@@ -60,7 +60,7 @@ const CleaningDetails: React.FC<{ document: Estimate; textColor: string; t: any;
 export const CleaningTemplate1: React.FC<TemplateProps> = ({ document, pageItems, pageIndex, totalPages, style, t }) => {
     const { business, client, summary, currency, textColor, category } = document;
     const currencySymbol = currencySymbols[currency] || '$';
-    const docTitle = document.documentType === 'quote' ? t.quote.toUpperCase() || 'QUOTE' : t.estimate.toUpperCase() || 'ESTIMATE';
+    const docTitle = document.documentType === 'quote' ? (t.quote || 'QUOTE').toUpperCase() : (t.estimate || 'ESTIMATE').toUpperCase();
 
     return (
         <div className={`bg-white font-sans text-gray-800 flex flex-col relative ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: 'Arial, sans-serif', fontSize: `10pt`, minHeight: '1056px' }}>
@@ -155,11 +155,11 @@ export const CleaningTemplate2: React.FC<TemplateProps> = ({ document, pageItems
     const { business, client, summary, currency, textColor, category } = document;
     const currencySymbol = currencySymbols[currency] || '$';
     const accentColor = style.color || '#10B981'; // Green
-    const docTitle = document.documentType === 'quote' ? t.estimate.toUpperCase() || 'ESTIMATE' : t.estimate.toUpperCase() || 'ESTIMATE';
+    const docTitle = document.documentType === 'quote' ? (t.estimate || 'ESTIMATE').toUpperCase() : (t.estimate || 'ESTIMATE').toUpperCase();
 
     return (
         <div className={`p-10 bg-white font-sans text-gray-700 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: 'Inter, sans-serif', fontSize: '9pt', minHeight: '1056px', color: textColor }}>
-            <header className="flex justify-between items-start mb-10">
+            <header className="flex justify-between items-start mb-10 pb-4 border-b-2 border-gray-100">
                 <div>
                     <h1 className="text-3xl font-bold" style={{ color: accentColor }}>{business.name}</h1>
                     <p className="text-xs text-gray-500">{business.address}</p>
@@ -299,7 +299,7 @@ export const CleaningTemplate3: React.FC<TemplateProps> = ({ document, pageItems
 export const CleaningTemplate4: React.FC<TemplateProps> = ({ document, pageItems, pageIndex, totalPages, style, t }) => {
     const { business, client, summary, currency, textColor, category } = document;
     const currencySymbol = currencySymbols[currency] || '$';
-    const docTitle = document.documentType === 'quote' ? t.quote.toUpperCase() || 'QUOTE' : t.estimate.toUpperCase() || 'ESTIMATE';
+    const docTitle = document.documentType === 'quote' ? (t.quote || 'QUOTE').toUpperCase() : (t.estimate || 'ESTIMATE').toUpperCase();
 
     return (
         <div className={`bg-white font-sans text-gray-800 flex ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ minHeight: '1056px' }}>
@@ -362,7 +362,7 @@ export const CleaningTemplate4: React.FC<TemplateProps> = ({ document, pageItems
 export const CleaningTemplate5: React.FC<TemplateProps> = ({ document, pageItems, pageIndex, totalPages, style, t }) => {
     const { business, client, summary, currency, textColor, category } = document;
     const currencySymbol = currencySymbols[currency] || '$';
-    const docTitle = document.documentType === 'quote' ? t.estimate || 'Estimate' : t.estimate || 'Estimate';
+    const docTitle = document.documentType === 'quote' ? (t.estimate || 'Estimate') : (t.estimate || 'Estimate');
 
     return (
         <div className={`p-10 bg-gray-50 font-['Roboto'] text-gray-900 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ minHeight: '1056px', color: textColor }}>
