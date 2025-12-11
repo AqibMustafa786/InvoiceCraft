@@ -52,10 +52,10 @@ import {
   MedicalTemplate1, MedicalTemplate2, MedicalTemplate3, MedicalTemplate4, MedicalTemplate5
 } from './invoice-templates/medical-templates';
 import {
-  EcommerceTemplate1, EcommerceTemplate2, EcommerceTemplate3, EcommerceTemplate4, EcommerceTemplate5
+  EcommerceTemplate1
 } from './invoice-templates/ecommerce-templates';
 import {
-  RetailTemplate1, RetailTemplate2, RetailTemplate3, RetailTemplate4, RetailTemplate5
+  RetailTemplate1
 } from './invoice-templates/retail-templates';
 import {
   PhotographyTemplate1, PhotographyTemplate2, PhotographyTemplate3, PhotographyTemplate4, PhotographyTemplate5
@@ -557,15 +557,7 @@ const templates: Record<string, FC<PageProps>> = {
   'medical-4': MedicalTemplate4,
   'medical-5': MedicalTemplate5,
   'ecommerce-1': EcommerceTemplate1,
-  'ecommerce-2': EcommerceTemplate2,
-  'ecommerce-3': EcommerceTemplate3,
-  'ecommerce-4': EcommerceTemplate4,
-  'ecommerce-5': EcommerceTemplate5,
   'retail-1': RetailTemplate1,
-  'retail-2': RetailTemplate2,
-  'retail-3': RetailTemplate3,
-  'retail-4': RetailTemplate4,
-  'retail-5': RetailTemplate5,
   'photography-1': PhotographyTemplate1,
   'photography-2': PhotographyTemplate2,
   'photography-3': PhotographyTemplate3,
