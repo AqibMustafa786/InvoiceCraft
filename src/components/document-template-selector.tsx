@@ -160,11 +160,7 @@ const templates: Template[] = [
   { id: 'medical-5', name: 'Remedy', thumbnailUrl: '/templates/medical-5.png', category: 'Medical / Healthcare' },
 
   // E-commerce
-  { id: 'ecommerce-1', name: 'Shopify', thumbnailUrl: '/templates/ecommerce-1.png', category: 'E-commerce / Online Store' },
-  { id: 'ecommerce-2', name: 'Marketplace', thumbnailUrl: '/templates/ecommerce-2.png', category: 'E-commerce / Online Store' },
-  { id: 'ecommerce-3', name: 'Digital Cart', thumbnailUrl: '/templates/ecommerce-3.png', category: 'E-commerce / Online Store' },
-  { id: 'ecommerce-4', name: 'Swift', thumbnailUrl: '/templates/ecommerce-4.png', category: 'E-commerce / Online Store' },
-  { id: 'ecommerce-5', name: 'Checkout', thumbnailUrl: '/templates/ecommerce-5.png', category: 'E-commerce / Online Store' },
+  { id: 'ecommerce-1', name: 'New Collection', thumbnailUrl: '/templates/ecommerce-1.png', category: 'E-commerce / Online Store' },
 
   // Retail
   { id: 'retail-1', name: 'Boutique', thumbnailUrl: '/templates/retail-1.png', category: 'Retail / Wholesale' },
