@@ -35,13 +35,22 @@ const RetailDetails: React.FC<{ invoice: Invoice, t: any }> = ({ invoice, t }) =
     const { retail } = invoice;
     return (
         <section className="my-4 text-xs">
-            {/* Can add retail specific details here if needed in the future */}
+            <p className="font-bold text-gray-500 mb-2 border-b">{(t.productDetails || 'Product Details')}</p>
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-x-4 gap-y-1">
+                <p><span className="font-semibold text-gray-600">{(t.sku || 'SKU')}:</span> {retail.sku}</p>
+                <p><span className="font-semibold text-gray-600">{(t.productCategory || 'Category')}:</span> {retail.productCategory}</p>
+                <p><span className="font-semibold text-gray-600">{(t.unitOfMeasure || 'Unit')}:</span> {retail.unitOfMeasure}</p>
+                <p><span className="font-semibold text-gray-600">{(t.batchNumber || 'Batch #')}:</span> {retail.batchNumber}</p>
+                {retail.stockQuantity && <p><span className="font-semibold text-gray-600">{(t.stockQuantity || 'Stock')}:</span> {retail.stockQuantity}</p>}
+                {retail.wholesalePrice && <p><span className="font-semibold text-gray-600">{(t.wholesalePrice || 'Wholesale')}:</span> ${retail.wholesalePrice.toFixed(2)}</p>}
+                {retail.shippingPalletCost && <p><span className="font-semibold text-gray-600">{(t.palletCost || 'Pallet Cost')}:</span> ${retail.shippingPalletCost.toFixed(2)}</p>}
+            </div>
         </section>
     );
 };
 
 export const RetailTemplate1: React.FC<PageProps> = (props) => {
-    const { invoice, pageItems, pageIndex, totalPages, balanceDue, currencySymbol, t, accentColor } = props;
+    const { invoice, pageItems, pageIndex, totalPages, balanceDue, currencySymbol, t, accentColor, subtotal, taxAmount } = props;
     const { business, client } = invoice;
 
     return (
@@ -65,8 +74,8 @@ export const RetailTemplate1: React.FC<PageProps> = (props) => {
             <footer className="mt-auto pt-8">
                 <div className="flex justify-end text-sm">
                     <div className="w-1/3">
-                        <p className="flex justify-between py-1"><span>{(t.subtotal || 'Subtotal')}</span><span>{currencySymbol}{props.subtotal.toFixed(2)}</span></p>
-                        <p className="flex justify-between py-1"><span>{(t.tax || 'Tax')}</span><span>{currencySymbol}{props.taxAmount.toFixed(2)}</span></p>
+                        <p className="flex justify-between py-1"><span>{(t.subtotal || 'Subtotal')}</span><span>{currencySymbol}{subtotal.toFixed(2)}</span></p>
+                        <p className="flex justify-between py-1"><span>{(t.tax || 'Tax')}</span><span>{currencySymbol}{taxAmount.toFixed(2)}</span></p>
                         <p className="flex justify-between font-bold text-lg mt-2 pt-2 border-t-2 border-black"><span>{(t.total || 'TOTAL')}</span><span>{currencySymbol}{balanceDue.toFixed(2)}</span></p>
                     </div>
                 </div>
