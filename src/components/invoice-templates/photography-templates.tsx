@@ -80,8 +80,8 @@ export const PhotographyTemplate1: React.FC<PageProps> = (props) => {
             <footer className="mt-auto pt-8">
                 <div className="flex justify-end text-right text-sm">
                     <div className="w-2/5">
-                        <p className="flex justify-between py-1"><span>{(t.total || 'Total')}:</span><span>{currencySymbol}{props.total.toFixed(2)}</span></p>
-                        <p className="flex justify-between py-1"><span>{(t.amountPaid || 'Amount Paid')}:</span><span>- {currencySymbol}{(invoice.amountPaid || 0).toFixed(2)}</span></p>
+                        <p className="flex justify-between py-1"><span className="text-gray-600">{(t.total || 'Total')}:</span><span>{currencySymbol}{props.total.toFixed(2)}</span></p>
+                        <p className="flex justify-between py-1"><span className="text-gray-600">{(t.amountPaid || 'Amount Paid')}:</span><span>- {currencySymbol}{(invoice.amountPaid || 0).toFixed(2)}</span></p>
                         <p className="flex justify-between font-bold text-lg mt-2 pt-2 border-t-2 border-black"><span>{(t.balanceDue || 'Balance Due')}:</span><span>{currencySymbol}{balanceDue.toFixed(2)}</span></p>
                     </div>
                 </div>
