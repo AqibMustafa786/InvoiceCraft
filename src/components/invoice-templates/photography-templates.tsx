@@ -1,5 +1,4 @@
 
-
 'use client';
 
 import React from 'react';
@@ -66,7 +65,7 @@ export const PhotographyTemplate1: React.FC<PageProps> = (props) => {
             <div className="p-10 flex-grow flex flex-col">
                 <section className="grid grid-cols-2 gap-8 mb-8">
                     <div>
-                        <h1 className="text-4xl tracking-wider">INVOICE</h1>
+                        <h1 className="text-4xl tracking-wider">{(t.invoice || 'INVOICE').toUpperCase()}</h1>
                         <p className="text-sm mt-2">No. {invoice.invoiceNumber}</p>
                         <p className="text-sm">{safeFormat(invoice.invoiceDate, 'MMMM d, yyyy')}</p>
                     </div>
@@ -135,4 +134,3 @@ export const PhotographyTemplate3: React.FC<PageProps> = (props) => <Photography
 export const PhotographyTemplate4: React.FC<PageProps> = (props) => <PhotographyTemplate1 {...props} />;
 // Template 5: Portfolio
 export const PhotographyTemplate5: React.FC<PageProps> = (props) => <PhotographyTemplate1 {...props} />;
-
