@@ -45,7 +45,7 @@
     "features": "Features",
     "integrations": "Integrations",
     "milestone": "Milestone",
-    "hourlyRate": "Hourly Rate",
+    "hourlyRate": "Rate",
     "fixedRate": "Fixed Rate",
     "hoursLogged": "Hours Logged",
     "attorneysAtLaw": "Attorneys at Law",
@@ -124,7 +124,19 @@
     "customer": "Customer",
     "autoRepairService": "Auto Repair & Service",
     "qualityAutoRepair": "Quality Auto Repair Since 1985",
-    "receipt": "Receipt"
+    "receipt": "Receipt",
+    "sessionDetails": "Session Details",
+    "eventType": "Event",
+    "shootDate": "Date",
+    "coverage": "Coverage",
+    "package": "Package",
+    "editedPhotos": "Edits",
+    "rawFiles": "RAWs",
+    "travelFee": "Travel",
+    "equipmentFee": "Gear",
+    "sendPaymentsTo": "Send Payments To",
+    "amountDue": "Amount due",
+    "thankYou": "Thank you!"
 }
 
     

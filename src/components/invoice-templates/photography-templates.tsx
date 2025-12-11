@@ -75,14 +75,16 @@ export const PhotographyTemplate1: React.FC<PageProps> = (props) => {
                     </div>
                 </section>
 
-                <main className="flex-grow">
+                <PhotographyDetails invoice={invoice} t={t} />
+
+                <main className="flex-grow mt-4">
                     <table className="w-full text-left text-sm">
                         <thead>
                             <tr className="border-b" style={{borderColor: accentTextColor}}>
-                                <th className="py-2 font-normal w-3/5" style={{color: accentTextColor}}>Description</th>
-                                <th className="py-2 font-normal text-right" style={{color: accentTextColor}}>Price</th>
-                                <th className="py-2 font-normal text-center" style={{color: accentTextColor}}>Qty</th>
-                                <th className="py-2 font-normal text-right" style={{color: accentTextColor}}>Total</th>
+                                <th className="py-2 font-normal w-3/5" style={{color: accentTextColor}}>{(t.description || 'Description').toUpperCase()}</th>
+                                <th className="py-2 font-normal text-right" style={{color: accentTextColor}}>{(t.price || 'Price').toUpperCase()}</th>
+                                <th className="py-2 font-normal text-center" style={{color: accentTextColor}}>{(t.quantity || 'Qty').toUpperCase()}</th>
+                                <th className="py-2 font-normal text-right" style={{color: accentTextColor}}>{(t.total || 'Total').toUpperCase()}</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -102,14 +104,14 @@ export const PhotographyTemplate1: React.FC<PageProps> = (props) => {
                 <footer className="mt-auto pt-8">
                     <div className="flex justify-between items-start">
                         <div className="text-sm">
-                            <p style={{color: accentTextColor}}>Send Payments To:</p>
+                            <p style={{color: accentTextColor}}>{(t.sendPaymentsTo || 'Send Payments To')}:</p>
                             <p>{business.name}</p>
                             <p>{business.email}</p>
                         </div>
                         <div className="w-1/3 text-sm space-y-2 text-right">
-                            <p className="flex justify-between"><span>Total Amount</span><span>{currencySymbol}{subtotal.toFixed(2)}</span></p>
-                            <p className="flex justify-between"><span>Tax</span><span>{currencySymbol}{taxAmount.toFixed(2)}</span></p>
-                            <p className="flex justify-between font-bold text-base mt-2 pt-2" style={{color: accentTextColor}}><span>Amount due</span><span>{currencySymbol}{balanceDue.toFixed(2)}</span></p>
+                            <p className="flex justify-between"><span>{(t.totalAmount || 'Total Amount')}</span><span>{currencySymbol}{subtotal.toFixed(2)}</span></p>
+                            <p className="flex justify-between"><span>{(t.tax || 'Tax')}</span><span>{currencySymbol}{taxAmount.toFixed(2)}</span></p>
+                            <p className="flex justify-between font-bold text-base mt-2 pt-2" style={{color: accentTextColor}}><span>{(t.amountDue || 'Amount due')}</span><span>{currencySymbol}{balanceDue.toFixed(2)}</span></p>
                         </div>
                     </div>
                 </footer>
