@@ -1,4 +1,3 @@
-
 'use client';
 
 import React from 'react';
@@ -86,6 +85,10 @@ export const RentalTemplate1: React.FC<TemplateProps> = ({ document, pageItems, 
             <footer className="mt-auto pt-8">
                 <div className="flex justify-end text-right text-sm">
                     <div className="w-1/2">
+                        <p className="flex justify-between py-1"><span>{t.subtotal || 'Subtotal'}:</span><span>{currencySymbol}{summary.subtotal.toFixed(2)}</span></p>
+                        {summary.discount > 0 && <p className="flex justify-between py-1 text-red-600"><span>{t.discount || 'Discount'}:</span><span>-{currencySymbol}{summary.discount.toFixed(2)}</span></p>}
+                        {summary.shippingCost > 0 && <p className="flex justify-between py-1"><span>{t.shipping || 'Other Fees'}:</span><span>{currencySymbol}{summary.shippingCost.toFixed(2)}</span></p>}
+                        <p className="flex justify-between py-1"><span>{t.tax || 'Tax'}:</span><span>{currencySymbol}{summary.taxAmount.toFixed(2)}</span></p>
                         <p className="flex justify-between font-bold text-2xl mt-2 pt-2 border-t-2"><span>{(t.totalDue || 'Total Due').toUpperCase()}:</span><span>{currencySymbol}{summary.grandTotal.toFixed(2)}</span></p>
                     </div>
                 </div>
@@ -126,6 +129,8 @@ export const RentalTemplate2: React.FC<TemplateProps> = ({ document, pageItems, 
             <div className="flex justify-end text-sm">
                 <div className="w-1/3">
                     <p className="flex justify-between"><span>Subtotal</span><span>{currencySymbol}{summary.subtotal.toFixed(2)}</span></p>
+                    {summary.discount > 0 && <p className="flex justify-between text-red-600"><span>Discount</span><span>-{currencySymbol}{summary.discount.toFixed(2)}</span></p>}
+                    {summary.shippingCost > 0 && <p className="flex justify-between"><span>Shipping</span><span>{currencySymbol}{summary.shippingCost.toFixed(2)}</span></p>}
                     <p className="flex justify-between border-b pb-1"><span>Tax</span><span>{currencySymbol}{summary.taxAmount.toFixed(2)}</span></p>
                     <p className="flex justify-between font-bold mt-2"><span>Total</span><span>{currencySymbol}{summary.grandTotal.toFixed(2)}</span></p>
                 </div>
@@ -165,6 +170,9 @@ export const RentalTemplate3: React.FC<TemplateProps> = ({ document, pageItems, 
             <div className="flex justify-end text-sm">
                 <div className="w-1/3">
                     <p className="flex justify-between py-1"><span>Total:</span><span>{currencySymbol}{summary.subtotal.toFixed(2)}</span></p>
+                    {summary.discount > 0 && <p className="flex justify-between py-1 text-red-600"><span>Discount:</span><span>-{currencySymbol}{summary.discount.toFixed(2)}</span></p>}
+                    {summary.shippingCost > 0 && <p className="flex justify-between py-1"><span>Shipping:</span><span>{currencySymbol}{summary.shippingCost.toFixed(2)}</span></p>}
+                    <p className="flex justify-between py-1"><span>Tax:</span><span>{currencySymbol}{summary.taxAmount.toFixed(2)}</span></p>
                     <p className="flex justify-between font-bold text-xl mt-2 pt-2 border-t-2"><span>Balance Due:</span><span>{currencySymbol}{summary.grandTotal.toFixed(2)}</span></p>
                 </div>
             </div>
@@ -178,16 +186,17 @@ export const RentalTemplate3: React.FC<TemplateProps> = ({ document, pageItems, 
     );
 };
 export const RentalTemplate4: React.FC<TemplateProps> = ({ document, pageItems, pageIndex, totalPages, style, t }) => {
-    const { business, client, summary, currency, textColor, category } = document;
+    const { business, client, summary, currency, textColor } = document;
     const currencySymbol = currencySymbols[currency] || '$';
-    const docTitle = document.documentType === 'quote' ? (t.quote || 'QUOTE') : (t.estimate || 'ESTIMATE');
+    const docTitle = document.documentType === 'quote' ? t.quote || 'QUOTE' : t.estimate || 'ESTIMATE';
+
     return (
         <div className={`flex ${pageIndex < totalPages - 1 ? 'page-break-after' : ''}`} style={{ minHeight: '1056px', backgroundColor: document.backgroundColor, color: textColor }}>
             <div className="w-1/4 p-8 text-white" style={{backgroundColor: style.color || '#be123c'}}>
                 <h1 className="text-3xl font-bold">{docTitle}</h1>
                 <div className="mt-10 text-xs space-y-4">
                     <div><p className="opacity-70">DATE</p><p>{safeFormat(document.estimateDate, 'yyyy-MM-dd')}</p></div>
-                    <div><p className="opacity-70">{(document.documentType === 'quote' ? t.quoteNo : t.estimateNo) || 'Number #'}</p><p>{document.estimateNumber}</p></div>
+                    <div><p className="opacity-70">#</p><p>{document.estimateNumber}</p></div>
                 </div>
             </div>
             <div className="w-3/4 p-10">
@@ -217,16 +226,17 @@ export const RentalTemplate5: React.FC<TemplateProps> = ({ document, pageItems, 
     const { business, client, summary, currency, textColor, category } = document;
     const currencySymbol = currencySymbols[currency] || '$';
     const docTitle = document.documentType === 'quote' ? (t.quote || 'Quote') : (t.estimate || 'Estimate');
+
     return (
         <div className={`p-10 font-serif ${pageIndex < totalPages - 1 ? 'page-break-after' : ''}`} style={{ minHeight: '1056px', backgroundColor: '#FDFBF7', color: '#5A4A42' }}>
             <header className="text-center mb-10">
                 <h1 className="text-2xl font-bold">{business.name}</h1>
                 <p className="text-xs">{business.address} | {business.phone}</p>
             </header>
-            <h2 className="text-center text-xl mb-8">{docTitle}</h2>
+            <h2 className="text-center text-xl mb-8">RENTAL {docTitle.toUpperCase()}</h2>
             <section className="text-xs mb-8">
                 <p><strong>To:</strong> {client.name}</p>
-                <p><strong>{(document.documentType === 'quote' ? t.quoteNo : t.estimateNo) || 'Number #'}:</strong> {document.estimateNumber}</p>
+                <p><strong>No:</strong> {document.estimateNumber}</p>
                 <p><strong>Date:</strong> {safeFormat(document.estimateDate, 'MM/dd/yyyy')}</p>
             </section>
             <RentalDetails document={document} t={t} />
@@ -241,6 +251,8 @@ export const RentalTemplate5: React.FC<TemplateProps> = ({ document, pageItems, 
                 <div className="flex justify-end text-sm">
                     <div className="w-1/3">
                         <p className="flex justify-between"><span>Subtotal</span><span>{currencySymbol}{summary.subtotal.toFixed(2)}</span></p>
+                        {summary.discount > 0 && <p className="flex justify-between text-red-600"><span>Discount</span><span>-{currencySymbol}{summary.discount.toFixed(2)}</span></p>}
+                        {summary.shippingCost > 0 && <p className="flex justify-between"><span>Shipping</span><span>{currencySymbol}{summary.shippingCost.toFixed(2)}</span></p>}
                         <p className="flex justify-between"><span>Tax</span><span>{currencySymbol}{summary.taxAmount.toFixed(2)}</span></p>
                         <p className="flex justify-between font-bold mt-2 pt-2 border-t"><span>TOTAL</span><span>{currencySymbol}{summary.grandTotal.toFixed(2)}</span></p>
                     </div>

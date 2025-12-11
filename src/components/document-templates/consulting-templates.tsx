@@ -1,4 +1,3 @@
-
 'use client';
 
 import React from 'react';
@@ -120,6 +119,8 @@ export const ConsultingTemplate1: React.FC<TemplateProps> = ({ document, pageIte
                 <div className="flex justify-end text-sm mb-8">
                     <div className="w-2/5 space-y-2">
                         <p className="flex justify-between"><span>{(t.subtotal || 'Subtotal')}:</span><span>{currencySymbol}{summary.subtotal.toFixed(2)}</span></p>
+                        {summary.discount > 0 && <p className="flex justify-between text-red-600"><span>{(t.discount || 'Discount')}:</span><span>-{currencySymbol}{summary.discount.toFixed(2)}</span></p>}
+                        {summary.shippingCost > 0 && <p className="flex justify-between"><span>{(t.shipping || 'Shipping')}:</span><span>{currencySymbol}{summary.shippingCost.toFixed(2)}</span></p>}
                         <p className="flex justify-between"><span>{(t.tax || 'Tax')} ({summary.taxPercentage}%):</span><span>{currencySymbol}{summary.taxAmount.toFixed(2)}</span></p>
                         <p className="flex justify-between font-bold text-base mt-2 pt-2 border-t"><span>{(t.total || 'Total')}:</span><span>{currencySymbol}{summary.grandTotal.toFixed(2)}</span></p>
                     </div>
@@ -153,7 +154,6 @@ export const ConsultingTemplate2: React.FC<TemplateProps> = ({ document, pageIte
                 <header className="flex justify-between items-center">
                     <div>
                         <h1 className="text-3xl font-bold">{business.name}</h1>
-                        <p className="text-sm opacity-80">{t.consultingServices || 'Consulting Services'}</p>
                     </div>
                     <div className="text-right">
                         <h2 className="text-2xl font-bold">{docTitle}</h2>
@@ -178,6 +178,8 @@ export const ConsultingTemplate2: React.FC<TemplateProps> = ({ document, pageIte
                     <div className="flex justify-end text-sm">
                         <div className="w-1/2">
                             <p className="flex justify-between"><span>{t.subtotal || 'Subtotal'}:</span><span>{currencySymbol}{summary.subtotal.toFixed(2)}</span></p>
+                            {summary.discount > 0 && <p className="flex justify-between text-red-600"><span>{t.discount || 'Discount'}:</span><span>-{currencySymbol}{summary.discount.toFixed(2)}</span></p>}
+                            {summary.shippingCost > 0 && <p className="flex justify-between"><span>{t.shipping || 'Shipping'}:</span><span>{currencySymbol}{summary.shippingCost.toFixed(2)}</span></p>}
                             <p className="flex justify-between"><span>{t.tax || 'Tax'} ({summary.taxPercentage}%):</span><span>{currencySymbol}{summary.taxAmount.toFixed(2)}</span></p>
                             <p className="flex justify-between font-bold text-xl mt-4"><span>{t.total || 'Total'}:</span><span>{currencySymbol}{summary.grandTotal.toFixed(2)}</span></p>
                         </div>
@@ -226,6 +228,8 @@ export const ConsultingTemplate3: React.FC<TemplateProps> = ({ document, pageIte
                     <div className="flex justify-end text-sm">
                         <div className="w-1/3 space-y-1">
                             <p className="flex justify-between"><span>{t.subtotal || 'Subtotal'}:</span><span>{currencySymbol}{summary.subtotal.toFixed(2)}</span></p>
+                            {summary.discount > 0 && <p className="flex justify-between text-red-600"><span>{t.discount || 'Discount'}:</span><span>-{currencySymbol}{summary.discount.toFixed(2)}</span></p>}
+                            {summary.shippingCost > 0 && <p className="flex justify-between"><span>{t.shipping || 'Shipping'}:</span><span>{currencySymbol}{summary.shippingCost.toFixed(2)}</span></p>}
                             <p className="flex justify-between"><span>{t.tax || 'Tax'}:</span><span>{currencySymbol}{summary.taxAmount.toFixed(2)}</span></p>
                             <p className="flex justify-between font-bold text-sm mt-2 pt-2 border-t border-gray-300"><span>{t.total || 'Total'}:</span><span>{currencySymbol}{summary.grandTotal.toFixed(2)}</span></p>
                         </div>
@@ -276,7 +280,10 @@ export const ConsultingTemplate4: React.FC<TemplateProps> = ({ document, pageIte
                 <footer className="mt-10 pt-10 border-t">
                     <div className="flex justify-end text-sm">
                         <div className="w-1/3">
-                            <p className="flex justify-between"><span>{(t.total || 'Total')}:</span><span>{currencySymbol}{summary.subtotal.toFixed(2)}</span></p>
+                            <p className="flex justify-between"><span>{t.total || 'Total'}:</span><span>{currencySymbol}{summary.subtotal.toFixed(2)}</span></p>
+                             {summary.discount > 0 && <p className="flex justify-between text-red-600"><span>{t.discount || 'Discount'}:</span><span>-{currencySymbol}{summary.discount.toFixed(2)}</span></p>}
+                             {summary.shippingCost > 0 && <p className="flex justify-between"><span>{t.shipping || 'Shipping'}:</span><span>{currencySymbol}{summary.shippingCost.toFixed(2)}</span></p>}
+                             <p className="flex justify-between"><span>{t.tax || 'Tax'}:</span><span>{currencySymbol}{summary.taxAmount.toFixed(2)}</span></p>
                             <p className="flex justify-between font-bold text-lg mt-2"><span>{(t.balanceDue || 'Balance Due')}:</span><span>{currencySymbol}{summary.grandTotal.toFixed(2)}</span></p>
                         </div>
                     </div>
@@ -319,6 +326,8 @@ export const ConsultingTemplate5: React.FC<TemplateProps> = ({ document, pageIte
                 <div className="flex justify-end text-xs">
                     <div className="w-1/2">
                         <p className="flex justify-between border-t border-dashed pt-2"><span>{(t.subtotal || 'Subtotal')}</span><span>{currencySymbol}{summary.subtotal.toFixed(2)}</span></p>
+                        {summary.discount > 0 && <p className="flex justify-between text-red-600"><span>{t.discount || 'Discount'}</span><span>-{currencySymbol}{summary.discount.toFixed(2)}</span></p>}
+                        {summary.shippingCost > 0 && <p className="flex justify-between"><span>{t.shipping || 'Shipping'}</span><span>{currencySymbol}{summary.shippingCost.toFixed(2)}</span></p>}
                         <p className="flex justify-between"><span>{(t.tax || 'Tax')}</span><span>{currencySymbol}{summary.taxAmount.toFixed(2)}</span></p>
                         <p className="flex justify-between font-bold text-sm mt-2 pt-2 border-t-2 border-black"><span>{(t.total || 'Total')}</span><span>{currencySymbol}{summary.grandTotal.toFixed(2)}</span></p>
                     </div>
