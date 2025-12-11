@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import React from 'react';
@@ -50,7 +51,7 @@ const PhotographyDetails: React.FC<{ invoice: Invoice, t: any }> = ({ invoice, t
     );
 };
 
-// Template 1: Dark, elegant theme based on user image
+// Template 1: Lens
 export const PhotographyTemplate1: React.FC<PageProps> = (props) => {
     const { invoice, pageItems, pageIndex, totalPages, balanceDue, subtotal, taxAmount, currencySymbol, t } = props;
     const { business, client } = invoice;
@@ -126,3 +127,12 @@ export const PhotographyTemplate1: React.FC<PageProps> = (props) => {
         </div>
     );
 }
+// Template 2: Shutter
+export const PhotographyTemplate2: React.FC<PageProps> = (props) => <PhotographyTemplate1 {...props} />;
+// Template 3: Aperture
+export const PhotographyTemplate3: React.FC<PageProps> = (props) => <PhotographyTemplate1 {...props} />;
+// Template 4: Golden Hour
+export const PhotographyTemplate4: React.FC<PageProps> = (props) => <PhotographyTemplate1 {...props} />;
+// Template 5: Portfolio
+export const PhotographyTemplate5: React.FC<PageProps> = (props) => <PhotographyTemplate1 {...props} />;
+

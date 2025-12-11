@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import { cn } from '@/lib/utils';
@@ -179,6 +180,11 @@ const templates: Template[] = [
 
   // Photography
   { id: 'photography-1', name: 'Lens', thumbnailUrl: '/templates/photography-1.png', category: 'Photography' },
+  { id: 'photography-2', name: 'Shutter', thumbnailUrl: '/templates/photography-2.png', category: 'Photography' },
+  { id: 'photography-3', name: 'Aperture', thumbnailUrl: '/templates/photography-3.png', category: 'Photography' },
+  { id: 'photography-4', name: 'Golden Hour', thumbnailUrl: '/templates/photography-4.png', category: 'Photography' },
+  { id: 'photography-5', name: 'Portfolio', thumbnailUrl: '/templates/photography-5.png', category: 'Photography' },
+
 
   // Real Estate
   { id: 'real-estate-1', name: 'Realty', thumbnailUrl: '/templates/real-estate-1.png', category: 'Real Estate / Property Management' },
@@ -279,5 +285,3 @@ export function DocumentTemplateSelector({ selectedTemplate, onSelectTemplate, d
     </div>
   );
 }
-
-    
