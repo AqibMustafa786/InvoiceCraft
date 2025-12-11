@@ -60,7 +60,7 @@ const CleaningDetails: React.FC<{ document: Estimate; textColor: string; t: any;
 export const CleaningTemplate1: React.FC<TemplateProps> = ({ document, pageItems, pageIndex, totalPages, style, t }) => {
     const { business, client, summary, currency, textColor, category } = document;
     const currencySymbol = currencySymbols[currency] || '$';
-    const docTitle = document.documentType === 'quote' ? (t.quote || 'QUOTE').toUpperCase() : (t.estimate || 'ESTIMATE').toUpperCase();
+    const docTitle = document.documentType === 'quote' ? (t.quote || 'QUOTE') : (t.estimate || 'ESTIMATE');
 
     return (
         <div className={`bg-white font-sans text-gray-800 flex flex-col relative ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: 'Arial, sans-serif', fontSize: `10pt`, minHeight: '1056px' }}>
@@ -72,7 +72,7 @@ export const CleaningTemplate1: React.FC<TemplateProps> = ({ document, pageItems
                         <p className="text-xs whitespace-pre-line">{business.address}</p>
                     </div>
                     <div className="text-right">
-                        <h2 className="text-2xl font-bold">{docTitle}</h2>
+                        <h2 className="text-2xl font-bold">{docTitle.toUpperCase()}</h2>
                         {category !== 'Generic' && <p className="text-sm">{t.cleaningService || 'Cleaning Service'}</p>}
                     </div>
                 </header>
@@ -155,7 +155,7 @@ export const CleaningTemplate2: React.FC<TemplateProps> = ({ document, pageItems
     const { business, client, summary, currency, textColor, category } = document;
     const currencySymbol = currencySymbols[currency] || '$';
     const accentColor = style.color || '#10B981'; // Green
-    const docTitle = document.documentType === 'quote' ? (t.estimate || 'ESTIMATE').toUpperCase() : (t.estimate || 'ESTIMATE').toUpperCase();
+    const docTitle = document.documentType === 'quote' ? (t.estimate || 'ESTIMATE') : (t.estimate || 'ESTIMATE');
 
     return (
         <div className={`p-10 bg-white font-sans text-gray-700 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: 'Inter, sans-serif', fontSize: '9pt', minHeight: '1056px', color: textColor }}>
@@ -165,14 +165,14 @@ export const CleaningTemplate2: React.FC<TemplateProps> = ({ document, pageItems
                     <p className="text-xs text-gray-500">{business.address}</p>
                 </div>
                 <div className='text-right'>
-                    <h2 className="text-2xl font-extrabold" >{docTitle}</h2>
+                    <h2 className="text-2xl font-extrabold" >{docTitle.toUpperCase()}</h2>
                     {category !== 'Generic' && <p className="text-sm text-gray-400">{category}</p>}
                 </div>
             </header>
 
             <section className="grid grid-cols-2 gap-8 mb-8 text-xs p-4 rounded-md" style={{backgroundColor: `${accentColor}1A`}}>
                  <div>
-                    <p className="font-bold mb-1">{t.customer.toUpperCase() || 'CUSTOMER'}</p>
+                    <p className="font-bold mb-1">{(t.customer || 'CUSTOMER').toUpperCase()}</p>
                     <p>{client.name}</p>
                     <p>{client.address}</p>
                 </div>
@@ -228,7 +228,7 @@ export const CleaningTemplate2: React.FC<TemplateProps> = ({ document, pageItems
 export const CleaningTemplate3: React.FC<TemplateProps> = ({ document, pageItems, pageIndex, totalPages, style, t }) => {
     const { business, client, summary, currency, textColor, category } = document;
     const currencySymbol = currencySymbols[currency] || '$';
-    const docTitle = document.documentType === 'quote' ? t.proposal || 'Proposal' : t.proposal || 'Proposal';
+    const docTitle = document.documentType === 'quote' ? (t.proposal || 'Proposal') : (t.proposal || 'Proposal');
 
     return (
         <div className={`p-12 bg-white font-['Garamond',_serif] text-gray-700 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ minHeight: '1056px', color: textColor }}>
@@ -238,7 +238,7 @@ export const CleaningTemplate3: React.FC<TemplateProps> = ({ document, pageItems
                     <p className="text-xs">{business.address}</p>
                 </div>
                 <div className="text-right">
-                    <h2 className="text-3xl font-light tracking-wider">{docTitle}</h2>
+                    <h2 className="text-3xl font-light tracking-wider">{docTitle.toUpperCase()}</h2>
                     {category !== 'Generic' && <p className="text-sm mt-1">{category}</p>}
                 </div>
             </header>
@@ -299,7 +299,7 @@ export const CleaningTemplate3: React.FC<TemplateProps> = ({ document, pageItems
 export const CleaningTemplate4: React.FC<TemplateProps> = ({ document, pageItems, pageIndex, totalPages, style, t }) => {
     const { business, client, summary, currency, textColor, category } = document;
     const currencySymbol = currencySymbols[currency] || '$';
-    const docTitle = document.documentType === 'quote' ? (t.quote || 'QUOTE').toUpperCase() : (t.estimate || 'ESTIMATE').toUpperCase();
+    const docTitle = document.documentType === 'quote' ? (t.quote || 'QUOTE') : (t.estimate || 'ESTIMATE');
 
     return (
         <div className={`bg-white font-sans text-gray-800 flex ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ minHeight: '1056px' }}>
@@ -330,7 +330,7 @@ export const CleaningTemplate4: React.FC<TemplateProps> = ({ document, pageItems
             </div>
             <div className="w-2/3 p-10 flex flex-col" style={{color: textColor}}>
                 <header className="mb-8 text-right">
-                     <h2 className="text-2xl font-bold">{docTitle}</h2>
+                     <h2 className="text-2xl font-bold">{docTitle.toUpperCase()}</h2>
                     {category !== 'Generic' && <p className="text-sm">{category}</p>}
                 </header>
                  <CleaningDetails document={document} textColor={textColor || '#374151'} t={t}/>
@@ -378,7 +378,7 @@ export const CleaningTemplate5: React.FC<TemplateProps> = ({ document, pageItems
             </header>
 
             <section className="mb-8 p-4 bg-white shadow-sm rounded-md text-xs">
-                 <p className="font-bold text-gray-500 mb-2">{t.projectFor.toUpperCase() || 'PROJECT FOR'}: {client.name}</p>
+                 <p className="font-bold text-gray-500 mb-2">{(t.projectFor || 'PROJECT FOR').toUpperCase()}: {client.name}</p>
                  <p className="font-semibold">{document.projectTitle}</p>
                  <p>{client.address}</p>
             </section>
@@ -389,10 +389,10 @@ export const CleaningTemplate5: React.FC<TemplateProps> = ({ document, pageItems
                 <table className="w-full text-left text-xs">
                     <thead>
                         <tr className="border-b-2 border-gray-200">
-                            <th className="py-2 font-bold w-3/5">{t.description.toUpperCase() || 'DESCRIPTION'}</th>
-                            <th className="py-2 font-bold text-center">{t.quantity.toUpperCase() || 'QTY'}</th>
-                            <th className="py-2 font-bold text-right">{t.cost.toUpperCase() || 'COST'}</th>
-                            <th className="py-2 font-bold text-right">{t.total.toUpperCase() || 'TOTAL'}</th>
+                            <th className="py-2 font-bold w-3/5">{(t.description || 'DESCRIPTION').toUpperCase()}</th>
+                            <th className="py-2 font-bold text-center">{(t.quantity || 'QTY').toUpperCase()}</th>
+                            <th className="py-2 font-bold text-right">{(t.cost || 'COST').toUpperCase()}</th>
+                            <th className="py-2 font-bold text-right">{(t.total || 'TOTAL').toUpperCase()}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -411,9 +411,9 @@ export const CleaningTemplate5: React.FC<TemplateProps> = ({ document, pageItems
             {pageIndex === totalPages - 1 && (
                 <footer className="mt-auto pt-6 flex justify-end">
                     <div className="w-1/3 text-sm space-y-1">
-                        <p className="flex justify-between"><span>{t.subtotal || 'Subtotal'}</span><span>{currencySymbol}{summary.subtotal.toFixed(2)}</span></p>
-                        <p className="flex justify-between"><span>{t.tax || 'Tax'}</span><span>{currencySymbol}{summary.taxAmount.toFixed(2)}</span></p>
-                        <p className="flex justify-between font-bold text-lg mt-2 pt-2 border-t-2 border-black"><span>{t.totalEstimate || 'Total Estimate'}</span><span>{currencySymbol}{summary.grandTotal.toFixed(2)}</span></p>
+                        <p className="flex justify-between"><span>{(t.subtotal || 'Subtotal')}</span><span>{currencySymbol}{summary.subtotal.toFixed(2)}</span></p>
+                        <p className="flex justify-between"><span>{(t.tax || 'Tax')}</span><span>{currencySymbol}{summary.taxAmount.toFixed(2)}</span></p>
+                        <p className="flex justify-between font-bold text-lg mt-2 pt-2 border-t-2 border-black"><span>{(t.totalEstimate || 'Total Estimate')}</span><span>{currencySymbol}{summary.grandTotal.toFixed(2)}</span></p>
                     </div>
                 </footer>
             )}
