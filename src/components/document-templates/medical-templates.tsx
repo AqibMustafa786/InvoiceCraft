@@ -1,3 +1,4 @@
+
 'use client';
 
 import React from 'react';
@@ -216,7 +217,7 @@ export const MedicalTemplate4: React.FC<TemplateProps> = ({ document, pageItems,
             <MedicalDetails document={document} t={t} />
             <main className="flex-grow mt-4">
                 <table className="w-full text-left text-sm">
-                    <thead><tr className="border-b"><th className="pb-2 font-bold w-4/5">{t.procedure || 'Procedure'}</th><th className="pb-2 font-bold text-right">{t.fee || 'Fee'}</th></tr></thead>
+                    <thead><tr className="border-b"><th className="pb-2 font-bold w-4/5">{(t.procedure || 'Procedure')}</th><th className="pb-2 font-bold text-right">{(t.fee || 'Fee')}</th></tr></thead>
                     <tbody>{pageItems.map(item => (<tr key={item.id} className="border-b"><td className="py-2">{item.name}</td><td className="py-2 text-right">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</td></tr>))}</tbody>
                 </table>
             </main>
@@ -263,8 +264,14 @@ export const MedicalTemplate5: React.FC<TemplateProps> = ({ document, pageItems,
             </main>
             {pageIndex === totalPages - 1 && (
             <footer className="mt-auto pt-8">
-                <div className="flex justify-end text-lg font-bold">
-                    <p><span>{t.pleaseRemit || 'Please Remit'}: </span><span style={{color: style.color}}>{currencySymbol}{summary.grandTotal.toFixed(2)}</span></p>
+                <div className="flex justify-end text-sm">
+                    <div className="w-1/2">
+                        <p className="flex justify-between"><span>{t.subtotal || 'Subtotal'}</span><span>{currencySymbol}{summary.subtotal.toFixed(2)}</span></p>
+                        {summary.discount > 0 && <p className="flex justify-between text-red-600"><span>{t.discount || 'Discount'}:</span><span>-{currencySymbol}{summary.discount.toFixed(2)}</span></p>}
+                        {summary.shippingCost > 0 && <p className="flex justify-between"><span>{t.shipping || 'Other Fees'}:</span><span>{currencySymbol}{summary.shippingCost.toFixed(2)}</span></p>}
+                        <p className="flex justify-between"><span>{t.tax || 'Tax'}:</span><span>{currencySymbol}{summary.taxAmount.toFixed(2)}</span></p>
+                        <p className="flex justify-between font-bold text-xl mt-2" style={{color: style.color}}><span>{t.pleaseRemit || 'Please Remit'}: </span><span>{currencySymbol}{summary.grandTotal.toFixed(2)}</span></p>
+                    </div>
                 </div>
             </footer>
             )}

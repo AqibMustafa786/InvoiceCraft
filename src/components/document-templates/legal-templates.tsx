@@ -1,3 +1,4 @@
+
 'use client';
 
 import React from 'react';
@@ -58,6 +59,8 @@ const LegalDetails: React.FC<{ document: Estimate, t: any }> = ({ document, t })
 export const LegalTemplate1: React.FC<TemplateProps> = ({ document, pageItems, pageIndex, totalPages, style, t }) => {
     const { business, client, summary, currency, textColor } = document;
     const currencySymbol = currencySymbols[currency] || '$';
+    const docTitle = document.documentType === 'quote' ? t.quote || 'Quote' : t.estimate || 'Estimate';
+
 
     return (
         <div className={`p-10 font-serif bg-white ${pageIndex < totalPages - 1 ? 'page-break-after' : ''}`} style={{ minHeight: '1056px', color: textColor }}>
@@ -69,9 +72,9 @@ export const LegalTemplate1: React.FC<TemplateProps> = ({ document, pageItems, p
                     </div>
                 </div>
                 <div className="text-xs space-y-1 text-right">
-                    <p><span className="font-bold">Invoice No.</span> {document.estimateNumber}</p>
-                    <p><span className="font-bold">Invoice Date:</span> {safeFormat(document.estimateDate, 'yyyy-MM-dd')}</p>
-                    <p><span className="font-bold">Due Date:</span> {safeFormat(document.validUntilDate, 'yyyy-MM-dd')}</p>
+                    <p><span className="font-bold">{document.documentType === 'quote' ? 'Quote No.' : 'Estimate No.'}</span> {document.estimateNumber}</p>
+                    <p><span className="font-bold">Date:</span> {safeFormat(document.estimateDate, 'yyyy-MM-dd')}</p>
+                    <p><span className="font-bold">Valid Until:</span> {safeFormat(document.validUntilDate, 'yyyy-MM-dd')}</p>
                 </div>
             </header>
             
@@ -221,13 +224,13 @@ export const LegalTemplate3: React.FC<TemplateProps> = ({ document, pageItems, p
                     </div>
                 </header>
                 <section className="grid grid-cols-2 gap-8 text-xs mb-8">
-                    <div><p className="font-bold">Client</p><p>{client.name}<br/>{client.address}</p></div>
-                    <div className="text-right"><p><strong>Date:</strong> {safeFormat(document.estimateDate, 'dd-MMM-yyyy')}</p></div>
+                    <div><p className="font-bold">{t.client || 'Client'}</p><p>{client.name}<br/>{client.address}</p></div>
+                    <div className="text-right"><p><strong>{t.date || 'Date'}:</strong> {safeFormat(document.estimateDate, 'dd-MMM-yyyy')}</p></div>
                 </section>
                 <LegalDetails document={document} t={t} />
                 <main className="flex-grow mt-4">
                     <table className="w-full text-left text-xs">
-                        <thead><tr className="bg-gray-100"><th className="p-2 font-bold w-4/5">Service Description</th><th className="p-2 font-bold text-right">Fee</th></tr></thead>
+                        <thead><tr className="bg-gray-100"><th className="p-2 font-bold w-4/5">{(t.serviceDescription || 'Service Description')}</th><th className="p-2 font-bold text-right">{(t.fee || 'Fee')}</th></tr></thead>
                         <tbody>{pageItems.map(item => (<tr key={item.id} className="border-b"><td className="p-2">{item.name}</td><td className="p-2 text-right">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</td></tr>))}</tbody>
                     </table>
                 </main>
@@ -235,11 +238,11 @@ export const LegalTemplate3: React.FC<TemplateProps> = ({ document, pageItems, p
                 <footer className="mt-auto pt-8">
                     <div className="flex justify-end text-sm">
                         <div className="w-2/5 space-y-1">
-                            <p className="flex justify-between"><span>Subtotal:</span><span>{currencySymbol}{summary.subtotal.toFixed(2)}</span></p>
-                            {summary.discount > 0 && <p className="flex justify-between text-red-600"><span>Discount:</span><span>-{currencySymbol}{summary.discount.toFixed(2)}</span></p>}
-                            {summary.shippingCost > 0 && <p className="flex justify-between"><span>Other Fees:</span><span>{currencySymbol}{summary.shippingCost.toFixed(2)}</span></p>}
-                            <p className="flex justify-between"><span>Tax:</span><span>{currencySymbol}{summary.taxAmount.toFixed(2)}</span></p>
-                            <p className="flex justify-between font-bold text-sm mt-2 pt-2 border-t border-gray-300"><span>Total:</span><span>{currencySymbol}{summary.grandTotal.toFixed(2)}</span></p>
+                            <p className="flex justify-between"><span>{t.subtotal || 'Subtotal'}:</span><span>{currencySymbol}{summary.subtotal.toFixed(2)}</span></p>
+                            {summary.discount > 0 && <p className="flex justify-between text-red-600"><span>{t.discount || 'Discount'}:</span><span>-{currencySymbol}{summary.discount.toFixed(2)}</span></p>}
+                            {summary.shippingCost > 0 && <p className="flex justify-between"><span>{t.shipping || 'Other Fees'}:</span><span>{currencySymbol}{summary.shippingCost.toFixed(2)}</span></p>}
+                            <p className="flex justify-between"><span>{t.tax || 'Tax'}:</span><span>{currencySymbol}{summary.taxAmount.toFixed(2)}</span></p>
+                            <p className="flex justify-between font-bold text-sm mt-2 pt-2 border-t border-gray-300"><span>{t.total || 'Total'}:</span><span>{currencySymbol}{summary.grandTotal.toFixed(2)}</span></p>
                         </div>
                     </div>
                     <div className="flex justify-between mt-8">
@@ -266,13 +269,13 @@ export const LegalTemplate4: React.FC<TemplateProps> = ({ document, pageItems, p
             </header>
             <div className="w-full h-px bg-gray-300 mb-8"></div>
             <section className="grid grid-cols-2 gap-8 mb-8 text-sm">
-                <div><p className="font-bold">{t.statementOfAccountFor || 'Statement of Account For'}:</p><p>{client.name}</p></div>
-                <div className="text-right"><p><strong>{docTitle} #:</strong> {document.estimateNumber}</p><p><strong>{t.date || 'DATE'}:</strong> {safeFormat(document.estimateDate, 'MMMM d, yyyy')}</p></div>
+                <div><p className="font-bold">{(t.statementOfAccountFor || 'Statement of Account For')}:</p><p>{client.name}</p></div>
+                <div className="text-right"><p><strong>{docTitle} #:</strong> {document.estimateNumber}</p><p><strong>{(t.date || 'DATE')}:</strong> {safeFormat(document.estimateDate, 'MMMM d, yyyy')}</p></div>
             </section>
             <LegalDetails document={document} t={t} />
             <main className="flex-grow mt-4">
                 <table className="w-full text-left text-sm">
-                    <thead><tr className="border-b-2 border-t-2"><th className="py-2 w-3/5">Professional Services Rendered</th><th className="py-2 text-right">Amount</th></tr></thead>
+                    <thead><tr className="border-b-2 border-t-2"><th className="py-2 w-3/5">{(t.professionalServicesRendered || 'Professional Services Rendered')}</th><th className="py-2 text-right">{(t.amount || 'Amount')}</th></tr></thead>
                     <tbody>{pageItems.map(item => (<tr key={item.id} className="border-b"><td className="py-2">{item.name}</td><td className="py-2 text-right">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</td></tr>))}</tbody>
                 </table>
             </main>
@@ -280,11 +283,11 @@ export const LegalTemplate4: React.FC<TemplateProps> = ({ document, pageItems, p
             <footer className="mt-auto pt-8">
                 <div className="flex justify-end text-sm">
                     <div className="w-1/3">
-                        <p className="flex justify-between py-1"><span>Total:</span><span>{currencySymbol}{summary.subtotal.toFixed(2)}</span></p>
-                        {summary.discount > 0 && <p className="flex justify-between py-1 text-red-600"><span>Discount:</span><span>-{currencySymbol}{summary.discount.toFixed(2)}</span></p>}
-                        {summary.shippingCost > 0 && <p className="flex justify-between py-1"><span>Other Fees:</span><span>{currencySymbol}{summary.shippingCost.toFixed(2)}</span></p>}
-                        <p className="flex justify-between py-1"><span>Tax:</span><span>{currencySymbol}{summary.taxAmount.toFixed(2)}</span></p>
-                        <p className="flex justify-between font-bold text-xl mt-2 pt-2 border-t-2"><span>Balance Due:</span><span>{currencySymbol}{summary.grandTotal.toFixed(2)}</span></p>
+                        <p className="flex justify-between py-1"><span>{t.total || 'Total'}:</span><span>{currencySymbol}{summary.subtotal.toFixed(2)}</span></p>
+                        {summary.discount > 0 && <p className="flex justify-between py-1 text-red-600"><span>{t.discount || 'Discount'}:</span><span>-{currencySymbol}{summary.discount.toFixed(2)}</span></p>}
+                        {summary.shippingCost > 0 && <p className="flex justify-between py-1"><span>{t.shipping || 'Other Fees'}:</span><span>{currencySymbol}{summary.shippingCost.toFixed(2)}</span></p>}
+                        <p className="flex justify-between py-1"><span>{t.tax || 'Tax'}:</span><span>{currencySymbol}{summary.taxAmount.toFixed(2)}</span></p>
+                        <p className="flex justify-between font-bold text-xl mt-2 pt-2 border-t-2"><span>{(t.balanceDue || 'Balance Due')}:</span><span>{currencySymbol}{summary.grandTotal.toFixed(2)}</span></p>
                     </div>
                 </div>
                 <div className="flex justify-between mt-8">
@@ -308,13 +311,13 @@ export const LegalTemplate5: React.FC<TemplateProps> = ({ document, pageItems, p
             <div className="w-3/4 p-10">
                 <header className="text-right mb-10"><h2 className="text-4xl font-bold">{docTitle.toUpperCase()}</h2></header>
                 <section className="text-sm mb-10">
-                    <p className="font-bold">Client: {client.name}</p>
-                    <p><strong>Estimate #:</strong> {document.estimateNumber} | <strong>Date:</strong> {safeFormat(document.estimateDate, 'yyyy-MM-dd')}</p>
+                    <p className="font-bold">{(t.client || 'Client')}: {client.name}</p>
+                    <p><strong>{docTitle} #:</strong> {document.estimateNumber} | <strong>{(t.date || 'Date')}:</strong> {safeFormat(document.estimateDate, 'yyyy-MM-dd')}</p>
                 </section>
                 <LegalDetails document={document} t={t} />
                 <main className="flex-grow mt-4">
                     <table className="w-full text-left text-sm">
-                        <thead><tr className="bg-gray-100"><th className="p-2 font-bold w-4/5">Description</th><th className="p-2 font-bold text-right">Total</th></tr></thead>
+                        <thead><tr className="bg-gray-100"><th className="p-2 font-bold w-4/5">{(t.description || 'Description')}</th><th className="p-2 font-bold text-right">{(t.total || 'Total')}</th></tr></thead>
                         <tbody>{pageItems.map(item => (<tr key={item.id} className="border-b"><td className="p-2">{item.name}</td><td className="p-2 text-right">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</td></tr>))}</tbody>
                     </table>
                 </main>
@@ -322,11 +325,11 @@ export const LegalTemplate5: React.FC<TemplateProps> = ({ document, pageItems, p
                 <footer className="mt-auto pt-8">
                     <div className="flex justify-end">
                       <div className="w-1/2 text-right">
-                        <div className="flex justify-between text-sm"><span>Subtotal:</span><span>{currencySymbol}{summary.subtotal.toFixed(2)}</span></div>
-                        {summary.discount > 0 && <div className="flex justify-between text-sm text-red-600"><span>Discount:</span><span>-{currencySymbol}{summary.discount.toFixed(2)}</span></div>}
-                        {summary.shippingCost > 0 && <div className="flex justify-between text-sm"><span>Other Fees:</span><span>{currencySymbol}{summary.shippingCost.toFixed(2)}</span></div>}
-                        <div className="flex justify-between text-sm"><span>Tax:</span><span>{currencySymbol}{summary.taxAmount.toFixed(2)}</span></div>
-                        <div className="flex justify-between text-2xl font-bold mt-2 pt-2 border-t"><span>Total Due:</span><span>{currencySymbol}{summary.grandTotal.toFixed(2)}</span></div>
+                        <div className="flex justify-between text-sm"><span>{t.subtotal || 'Subtotal'}:</span><span>{currencySymbol}{summary.subtotal.toFixed(2)}</span></div>
+                        {summary.discount > 0 && <div className="flex justify-between text-sm text-red-600"><span>{t.discount || 'Discount'}:</span><span>-{currencySymbol}{summary.discount.toFixed(2)}</span></div>}
+                        {summary.shippingCost > 0 && <div className="flex justify-between text-sm"><span>{t.shipping || 'Other Fees'}:</span><span>{currencySymbol}{summary.shippingCost.toFixed(2)}</span></div>}
+                        <div className="flex justify-between text-sm"><span>{t.tax || 'Tax'}:</span><span>{currencySymbol}{summary.taxAmount.toFixed(2)}</span></div>
+                        <div className="flex justify-between text-2xl font-bold mt-2 pt-2 border-t"><span>{(t.totalDue || 'Total Due')}:</span><span>{currencySymbol}{summary.grandTotal.toFixed(2)}</span></div>
                       </div>
                     </div>
                     <div className="flex justify-between mt-8">

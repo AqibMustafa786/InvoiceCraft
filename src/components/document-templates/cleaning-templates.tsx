@@ -123,15 +123,19 @@ export const CleaningTemplate1: React.FC<TemplateProps> = ({ document, pageItems
                 {pageIndex === totalPages - 1 && (
                     <footer className="mt-auto pt-8">
                         <div className="flex justify-end mb-8">
-                             <table className="w-1/3 text-sm">
+                             <table className="w-2/5 text-sm">
                                 <tbody>
-                                    <tr className="border-t-2"><td className="p-2 text-right font-bold">{t.subtotal || 'Subtotal'}</td><td className="p-2 text-right font-bold" style={{backgroundColor: style.color, color: 'white'}}>{currencySymbol}{summary.subtotal.toFixed(2)}</td></tr>
+                                    <tr><td className="p-2 text-right">{(t.subtotal || 'Subtotal')}</td><td className="p-2 text-right">{currencySymbol}{summary.subtotal.toFixed(2)}</td></tr>
+                                    {summary.discount > 0 && <tr><td className="p-2 text-right text-red-500">{(t.discount || 'Discount')}</td><td className="p-2 text-right text-red-500">-{currencySymbol}{summary.discount.toFixed(2)}</td></tr>}
+                                    {summary.shippingCost > 0 && <tr><td className="p-2 text-right">{(t.shipping || 'Shipping')}</td><td className="p-2 text-right">{currencySymbol}{summary.shippingCost.toFixed(2)}</td></tr>}
+                                    <tr><td className="p-2 text-right">{(t.tax || 'Tax')} ({summary.taxPercentage}%)</td><td className="p-2 text-right">{currencySymbol}{summary.taxAmount.toFixed(2)}</td></tr>
+                                    <tr className="border-t-2" style={{borderColor: style.color}}><td className="p-2 text-right font-bold">{(t.total || 'Total')}</td><td className="p-2 text-right font-bold">{currencySymbol}{summary.grandTotal.toFixed(2)}</td></tr>
                                 </tbody>
                              </table>
                         </div>
                         <div className="grid grid-cols-2 gap-8 items-end text-xs">
                              <div>
-                                <p className="font-bold text-base mb-2">{t.termsAndConditions || 'Terms and Conditions'}:</p>
+                                <p className="font-bold text-base mb-2">{(t.termsAndConditions || 'Terms and Conditions')}:</p>
                                 <ul className="list-disc list-inside space-y-1">
                                    <li className="whitespace-pre-line">{document.termsAndConditions}</li>
                                 </ul>
@@ -215,6 +219,8 @@ export const CleaningTemplate2: React.FC<TemplateProps> = ({ document, pageItems
                      <div className="flex justify-end">
                         <div className="w-1/3 text-sm space-y-1">
                             <p className="flex justify-between"><span>{(t.subtotal || 'Subtotal')}:</span><span>{currencySymbol}{summary.subtotal.toFixed(2)}</span></p>
+                            {summary.discount > 0 && <p className="flex justify-between text-red-500"><span>{(t.discount || 'Discount')}:</span><span>-{currencySymbol}{summary.discount.toFixed(2)}</span></p>}
+                            {summary.shippingCost > 0 && <p className="flex justify-between"><span>{(t.shipping || 'Shipping')}</span><span>{currencySymbol}{summary.shippingCost.toFixed(2)}</span></p>}
                             <p className="flex justify-between"><span>{(t.tax || 'Tax')}:</span><span>{currencySymbol}{summary.taxAmount.toFixed(2)}</span></p>
                             <p className="flex justify-between font-bold text-base mt-2 pt-2 border-t border-black"><span>{(t.total || 'Total')}:</span><span>{currencySymbol}{summary.grandTotal.toFixed(2)}</span></p>
                         </div>
@@ -283,6 +289,8 @@ export const CleaningTemplate3: React.FC<TemplateProps> = ({ document, pageItems
                 <footer className="mt-auto pt-8 text-right">
                     <div className="inline-block w-2/5 text-sm">
                          <p className="flex justify-between"><span>Subtotal:</span><span>{currencySymbol}{summary.subtotal.toFixed(2)}</span></p>
+                         {summary.discount > 0 && <p className="flex justify-between text-red-500"><span>Discount:</span><span>-{currencySymbol}{summary.discount.toFixed(2)}</span></p>}
+                         {summary.shippingCost > 0 && <p className="flex justify-between"><span>Shipping:</span><span>{currencySymbol}{summary.shippingCost.toFixed(2)}</span></p>}
                          <p className="flex justify-between"><span>Tax:</span><span>{currencySymbol}{summary.taxAmount.toFixed(2)}</span></p>
                          <p className="flex justify-between font-bold text-base mt-2 pt-2 border-t"><span>Total:</span><span>{currencySymbol}{summary.grandTotal.toFixed(2)}</span></p>
                     </div>

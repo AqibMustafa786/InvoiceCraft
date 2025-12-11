@@ -119,6 +119,8 @@ export const PhotographyTemplate1: React.FC<TemplateProps> = ({ document, pageIt
                         </div>
                         <div className="w-1/3 text-sm space-y-2 text-right">
                             <p className="flex justify-between"><span>{(t.totalAmount || 'Total Amount')}</span><span>{currencySymbol}{summary.subtotal.toFixed(2)}</span></p>
+                            {summary.discount > 0 && <p className="flex justify-between text-red-400"><span>{(t.discount || 'Discount')}</span><span>-{currencySymbol}{summary.discount.toFixed(2)}</span></p>}
+                            {summary.shippingCost > 0 && <p className="flex justify-between"><span>{(t.shipping || 'Shipping')}</span><span>{currencySymbol}{summary.shippingCost.toFixed(2)}</span></p>}
                             <p className="flex justify-between"><span>{(t.tax || 'Tax')}</span><span>{currencySymbol}{summary.taxAmount.toFixed(2)}</span></p>
                             <p className="flex justify-between font-bold text-base mt-2 pt-2" style={{color: accentTextColor}}><span>{(t.amountDue || 'Amount due')}</span><span>{currencySymbol}{summary.grandTotal.toFixed(2)}</span></p>
                         </div>
@@ -206,6 +208,8 @@ export const PhotographyTemplate3: React.FC<TemplateProps> = ({ document, pageIt
                     <div className="flex justify-end text-sm">
                         <div className="w-1/3 space-y-1">
                             <p className="flex justify-between"><span>{(t.subtotal || 'Subtotal')}</span><span>{currencySymbol}{summary.subtotal.toFixed(2)}</span></p>
+                            {summary.discount > 0 && <p className="flex justify-between text-red-500"><span>{(t.discount || 'Discount')}</span><span>-{currencySymbol}{summary.discount.toFixed(2)}</span></p>}
+                            {summary.shippingCost > 0 && <p className="flex justify-between"><span>{(t.shipping || 'Shipping')}</span><span>{currencySymbol}{summary.shippingCost.toFixed(2)}</span></p>}
                             <p className="flex justify-between border-b pb-1"><span>{(t.tax || 'Tax')}</span><span>{currencySymbol}{summary.taxAmount.toFixed(2)}</span></p>
                             <p className="flex justify-between font-bold mt-2"><span>{(t.total || 'Total')}</span><span>{currencySymbol}{summary.grandTotal.toFixed(2)}</span></p>
                         </div>
@@ -251,6 +255,8 @@ export const PhotographyTemplate4: React.FC<TemplateProps> = ({ document, pageIt
                      <div className="flex justify-end text-sm">
                         <div className="w-2/5">
                             <p className="flex justify-between py-1"><span>{(t.subtotal || 'Subtotal')}:</span><span>{currencySymbol}{summary.subtotal.toFixed(2)}</span></p>
+                            {summary.discount > 0 && <p className="flex justify-between py-1 text-red-500"><span>{(t.discount || 'Discount')}:</span><span>-{currencySymbol}{summary.discount.toFixed(2)}</span></p>}
+                            {summary.shippingCost > 0 && <p className="flex justify-between py-1"><span>{(t.shipping || 'Shipping')}:</span><span>{currencySymbol}{summary.shippingCost.toFixed(2)}</span></p>}
                             <p className="flex justify-between py-1 border-b"><span>{(t.tax || 'Tax')}:</span><span>{currencySymbol}{summary.taxAmount.toFixed(2)}</span></p>
                             <p className="flex justify-between font-bold text-lg mt-2 pt-2"><span>{(t.totalDue || 'Total Due')}:</span><span>{currencySymbol}{summary.grandTotal.toFixed(2)}</span></p>
                         </div>
@@ -294,6 +300,8 @@ export const PhotographyTemplate5: React.FC<TemplateProps> = ({ document, pageIt
                      <div className="flex justify-end">
                         <div className="w-1/3 text-sm">
                             <p className="flex justify-between"><span>{(t.total || 'Total')}</span><span>{currencySymbol}{summary.subtotal.toFixed(2)}</span></p>
+                            {summary.discount > 0 && <p className="flex justify-between text-red-500"><span>{(t.discount || 'Discount')}</span><span>-{currencySymbol}{summary.discount.toFixed(2)}</span></p>}
+                            {summary.shippingCost > 0 && <p className="flex justify-between"><span>{(t.shipping || 'Shipping')}</span><span>{currencySymbol}{summary.shippingCost.toFixed(2)}</span></p>}
                             <p className="flex justify-between font-bold text-xl mt-2" style={{color: style.color}}><span>{(t.amountDue || 'Amount Due')}</span><span>{currencySymbol}{summary.grandTotal.toFixed(2)}</span></p>
                         </div>
                     </div>

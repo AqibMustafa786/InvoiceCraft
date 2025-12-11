@@ -2,7 +2,7 @@
 'use client';
 
 import { useState, useLayoutEffect, useRef, useEffect, FC } from 'react';
-import type { Estimate } from '@/lib/types';
+import type { Estimate, Quote } from '@/lib/types';
 import { Card, CardContent } from '@/components/ui/card';
 import Image from 'next/image';
 import { format, isValid } from 'date-fns';
@@ -16,12 +16,20 @@ import { RoofingTemplate1, RoofingTemplate2, RoofingTemplate3, RoofingTemplate4,
 import { AutoRepairTemplate1, AutoRepairTemplate2, AutoRepairTemplate3, AutoRepairTemplate4, AutoRepairTemplate5 } from './document-templates/auto-repair-templates';
 import { CleaningTemplate1, CleaningTemplate2, CleaningTemplate3, CleaningTemplate4, CleaningTemplate5 } from './document-templates/cleaning-templates';
 import { ITTemplate1, ITTemplate2, ITTemplate3, ITTemplate4, ITTemplate5 } from './document-templates/it-freelance-templates';
+import { ConsultingTemplate1, ConsultingTemplate2, ConsultingTemplate3, ConsultingTemplate4, ConsultingTemplate5 } from './document-templates/consulting-templates';
+import { LegalTemplate1, LegalTemplate2, LegalTemplate3, LegalTemplate4, LegalTemplate5 } from './document-templates/legal-templates';
+import { MedicalTemplate1, MedicalTemplate2, MedicalTemplate3, MedicalTemplate4, MedicalTemplate5 } from './document-templates/medical-templates';
+import { RetailTemplate1 } from './document-templates/retail-templates';
+import { PhotographyTemplate1, PhotographyTemplate2, PhotographyTemplate3, PhotographyTemplate4, PhotographyTemplate5 } from './document-templates/photography-templates';
+import { RealEstateTemplate1, RealEstateTemplate2, RealEstateTemplate3, RealEstateTemplate4, RealEstateTemplate5 } from './document-templates/real-estate-templates';
+import { TransportationTemplate1, TransportationTemplate2, TransportationTemplate3, TransportationTemplate4, TransportationTemplate5 } from './document-templates/transportation-templates';
+import { RentalTemplate1, RentalTemplate2, RentalTemplate3, RentalTemplate4, RentalTemplate5 } from './document-templates/rental-templates';
 import locales from '@/lib/locales';
 
 
 // --- PROPS ---
 interface DocumentPreviewProps {
-  document: Estimate;
+  document: Estimate | Quote;
   accentColor: string;
   backgroundColor?: string;
   textColor?: string;
@@ -30,7 +38,7 @@ interface DocumentPreviewProps {
 }
 
 interface CommonTemplateProps {
-  document: Estimate;
+  document: Estimate | Quote;
   accentColor: string;
   backgroundColor?: string;
   textColor?: string;
@@ -38,10 +46,10 @@ interface CommonTemplateProps {
 }
 
 interface PageProps extends CommonTemplateProps {
-    pageItems: Estimate['lineItems'];
+    pageItems: (Estimate | Quote)['lineItems'];
     pageIndex: number;
     totalPages: number;
-    summary: Estimate['summary'];
+    summary: (Estimate | Quote)['summary'];
     style: React.CSSProperties;
 }
 
@@ -72,11 +80,7 @@ const SignatureDisplay = ({ signature, label }: { signature: any, label: string 
     )
 }
 
-const CategoryPreview = ({ document }: { document: Estimate }) => {
-    return null;
-};
-
-const PageHeader = ({ document, style, pageIndex, t }: { document: Estimate, style: React.CSSProperties, pageIndex: number, t: any }) => {
+const PageHeader = ({ document, style, pageIndex, t }: { document: Estimate | Quote, style: React.CSSProperties, pageIndex: number, t: any }) => {
     const { business } = document;
     const documentTitle = document.documentType === 'quote' ? t.quote || 'Quote' : t.estimate || 'Estimate';
     
@@ -110,7 +114,7 @@ const PageHeader = ({ document, style, pageIndex, t }: { document: Estimate, sty
                 </div>
                  <div className="w-1/2 text-right">
                     <div className="flex justify-end">
-                        <span className="font-bold w-24">{t.estimateNumber || 'Estimate #'}</span>
+                        <span className="font-bold w-24">{document.documentType === 'quote' ? t.quoteNumber : t.estimateNumber || 'Estimate #'}</span>
                         <span className="w-24 text-left">{document.estimateNumber}</span>
                     </div>
                     <div className="flex justify-end mt-1">
@@ -123,7 +127,7 @@ const PageHeader = ({ document, style, pageIndex, t }: { document: Estimate, sty
     );
 };
 
-const PageClientDetails = ({ document, t }: { document: Estimate, t: any }) => (
+const PageClientDetails = ({ document, t }: { document: Estimate | Quote, t: any }) => (
      <section data-element="client-details" className="flex justify-between items-start my-8 text-xs">
         <div className="w-1/3 space-y-0.5">
             <p className="font-bold mb-1">{t.billTo || 'BILL TO'}</p>
@@ -145,7 +149,7 @@ const PageClientDetails = ({ document, t }: { document: Estimate, t: any }) => (
 );
 
 
-const PageFooter = ({ document, style, t }: { document: Estimate, style: React.CSSProperties, t: any }) => {
+const PageFooter = ({ document, style, t }: { document: Estimate | Quote, style: React.CSSProperties, t: any }) => {
     const { summary } = document;
     const currencySymbol = currencySymbols[document.currency] || '$';
     const subtotalLessDiscount = summary.subtotal - (summary.discount || 0);
@@ -214,7 +218,6 @@ const ModernTemplatePage: FC<PageProps> = ({ document, pageItems, pageIndex, tot
                 {(pageIndex === 0) && (
                     <>
                         <PageClientDetails document={document} t={t}/>
-                        <CategoryPreview document={document} />
                     </>
                 )}
             </div>
@@ -299,6 +302,42 @@ const templates: { [key: string]: FC<PageProps> } = {
   'it-3': ITTemplate3,
   'it-4': ITTemplate4,
   'it-5': ITTemplate5,
+  'consulting-1': ConsultingTemplate1,
+  'consulting-2': ConsultingTemplate2,
+  'consulting-3': ConsultingTemplate3,
+  'consulting-4': ConsultingTemplate4,
+  'consulting-5': ConsultingTemplate5,
+  'legal-1': LegalTemplate1,
+  'legal-2': LegalTemplate2,
+  'legal-3': LegalTemplate3,
+  'legal-4': LegalTemplate4,
+  'legal-5': LegalTemplate5,
+  'medical-1': MedicalTemplate1,
+  'medical-2': MedicalTemplate2,
+  'medical-3': MedicalTemplate3,
+  'medical-4': MedicalTemplate4,
+  'medical-5': MedicalTemplate5,
+  'retail-1': RetailTemplate1,
+  'photography-1': PhotographyTemplate1,
+  'photography-2': PhotographyTemplate2,
+  'photography-3': PhotographyTemplate3,
+  'photography-4': PhotographyTemplate4,
+  'photography-5': PhotographyTemplate5,
+  'real-estate-1': RealEstateTemplate1,
+  'real-estate-2': RealEstateTemplate2,
+  'real-estate-3': RealEstateTemplate3,
+  'real-estate-4': RealEstateTemplate4,
+  'real-estate-5': RealEstateTemplate5,
+  'transportation-1': TransportationTemplate1,
+  'transportation-2': TransportationTemplate2,
+  'transportation-3': TransportationTemplate3,
+  'transportation-4': TransportationTemplate4,
+  'transportation-5': TransportationTemplate5,
+  'rental-1': RentalTemplate1,
+  'rental-2': RentalTemplate2,
+  'rental-3': RentalTemplate3,
+  'rental-4': RentalTemplate4,
+  'rental-5': RentalTemplate5,
 };
 
 
@@ -308,7 +347,7 @@ const AVAILABLE_HEIGHT = PAGE_HEIGHT - PAGE_PADDING;
 
 
 const DocumentPreviewInternal: FC<DocumentPreviewProps> = ({ document, accentColor, backgroundColor, textColor, id = 'document-preview', isPrint = false }) => {
-  const [paginatedItems, setPaginatedItems] = useState<Estimate['lineItems'][][]>(document ? [document.lineItems] : [[]]);
+  const [paginatedItems, setPaginatedItems] = useState<(Estimate | Quote)['lineItems'][]>(document ? [document.lineItems] : [[]]);
   const [needsRemeasure, setNeedsRemeasure] = useState(true);
   const containerRef = useRef<HTMLDivElement>(null);
   
@@ -372,8 +411,8 @@ const DocumentPreviewInternal: FC<DocumentPreviewProps> = ({ document, accentCol
             const tableHeaderHeight = tableHeaderEl.offsetHeight;
             const footerHeight = footerEl.offsetHeight;
 
-            const pages: Estimate['lineItems'][][] = [];
-            let currentPageItems: Estimate['lineItems'][] = [];
+            const pages: (Estimate | Quote)['lineItems'][] = [];
+            let currentPageItems: (Estimate | Quote)['lineItems'] = [];
             let currentPageHeight = 0;
 
             for (let i = 0; i < document.lineItems.length; i++) {
@@ -453,7 +492,6 @@ const DocumentPreviewInternal: FC<DocumentPreviewProps> = ({ document, accentCol
         <div style={{ position: 'absolute', left: '-9999px' }}>
              <PageHeader document={document} style={dynamicColorStyle} pageIndex={0} t={t}/>
              <PageClientDetails document={document} t={t}/>
-             <CategoryPreview document={document} />
              <PageFooter document={document} style={dynamicColorStyle} t={t} />
         </div>
         {itemsToRender.map((pageItems, pageIndex) => (
@@ -506,4 +544,3 @@ export const ClientDocumentPreview: FC<DocumentPreviewProps> = (props) => {
 };
 
 export { DocumentPreviewInternal as DocumentPreview };
-
