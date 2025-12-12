@@ -1,8 +1,11 @@
+
+'use client';
 import Link from "next/link";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import Image from "next/image";
 import { ArrowRight } from "lucide-react";
 import { PageHeader, PageHeaderDescription, PageHeaderHeading } from "@/components/page-header";
+import { motion } from 'framer-motion';
 
 const blogPosts = [
   {
@@ -53,6 +56,29 @@ const blogPosts = [
 ];
 
 
+const containerVariants = {
+  hidden: { opacity: 1 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1
+    }
+  }
+};
+
+const cardVariants = {
+  hidden: { opacity: 0, y: 30 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+        duration: 0.5,
+        ease: 'easeOut'
+    }
+  }
+};
+
+
 export default function BlogPage() {
   return (
     <div className="container mx-auto p-4 md:p-8">
@@ -61,35 +87,42 @@ export default function BlogPage() {
         <PageHeaderDescription>Tips, tutorials, and insights on invoicing, finance, and freelance life.</PageHeaderDescription>
       </PageHeader>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      <motion.div
+        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+        variants={containerVariants}
+        initial="hidden"
+        animate="visible"
+      >
         {blogPosts.map((post) => (
-          <Card key={post.slug} className="flex flex-col overflow-hidden bg-card/50 backdrop-blur-sm shadow-lg hover:shadow-primary/20 transition-shadow duration-300">
-            <div className="relative w-full h-48">
-               <Image 
-                src={post.imageUrl} 
-                alt={post.title} 
-                fill 
-                className="object-cover" 
-                data-ai-hint={post.imageHint}
-              />
-            </div>
-            <CardHeader>
-              <CardTitle className="text-xl">{post.title}</CardTitle>
-              <CardDescription>
-                by {post.author} on {new Date(post.date).toLocaleDateString()}
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="flex-1">
-              <p className="text-muted-foreground">{post.description}</p>
-            </CardContent>
-            <CardFooter>
-              <Link href={`/blog/${post.slug}`} className="font-semibold text-primary hover:underline flex items-center gap-2">
-                Read More <ArrowRight className="h-4 w-4" />
-              </Link>
-            </CardFooter>
-          </Card>
+          <motion.div key={post.slug} variants={cardVariants} whileHover={{ y: -5, scale: 1.02 }} transition={{ duration: 0.2 }}>
+            <Card className="flex flex-col overflow-hidden bg-card/50 backdrop-blur-sm shadow-lg hover:shadow-primary/20 transition-shadow duration-300 h-full">
+              <div className="relative w-full h-48">
+                 <Image 
+                  src={post.imageUrl} 
+                  alt={post.title} 
+                  fill 
+                  className="object-cover" 
+                  data-ai-hint={post.imageHint}
+                />
+              </div>
+              <CardHeader>
+                <CardTitle className="text-xl">{post.title}</CardTitle>
+                <CardDescription>
+                  by {post.author} on {new Date(post.date).toLocaleDateString()}
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="flex-1">
+                <p className="text-muted-foreground">{post.description}</p>
+              </CardContent>
+              <CardFooter>
+                <Link href={`/blog/${post.slug}`} className="font-semibold text-primary hover:underline flex items-center gap-2">
+                  Read More <ArrowRight className="h-4 w-4" />
+                </Link>
+              </CardFooter>
+            </Card>
+          </motion.div>
         ))}
-      </div>
+      </motion.div>
     </div>
   );
 }

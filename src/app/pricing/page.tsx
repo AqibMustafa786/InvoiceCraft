@@ -17,6 +17,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useDoc } from "@/firebase/firestore/use-doc";
 import { doc } from "firebase/firestore";
 import { useFirebase, useMemoFirebase } from "@/firebase/provider";
+import { motion } from 'framer-motion';
 
 
 const plans = [
@@ -158,44 +159,45 @@ export default function PricingPage() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
         {plans.map((plan) => (
-          <Card 
-            key={plan.title} 
-            className={`flex flex-col bg-card/50 backdrop-blur-sm shadow-lg ${plan.variant === 'primary' ? 'border-primary border-2 shadow-primary/20' : 'border'}`}
-          >
-            <CardHeader>
-              <CardTitle>{plan.title}</CardTitle>
-              <CardDescription>{plan.description}</CardDescription>
-              <div className="flex items-baseline pt-4">
-                <span className="text-4xl font-bold">{plan.title === 'Free' ? plan.price.monthly : plan.price[billingCycle]}</span>
-                {plan.title !== "Free" && <span className="text-muted-foreground">/{billingCycle === 'monthly' ? 'month' : 'year'}</span>}
-              </div>
-            </CardHeader>
-            <CardContent className="flex-1 space-y-4">
-              <ul className="space-y-3 text-muted-foreground">
-                {plan.features.map((feature, index) => (
-                  <li key={index} className="flex items-center gap-2">
-                    {feature.included ? <Check className="h-5 w-5 text-primary" /> : <X className="h-5 w-5 text-muted-foreground/50" />}
-                    <span>{feature.text}</span>
-                  </li>
-                ))}
-              </ul>
-            </CardContent>
-            <CardFooter>
-               {plan.title === 'Business' ? (
-                <Button 
-                  className={`w-full text-white bg-gradient-to-r from-primary to-accent shadow-lg hover:scale-105 transition-transform`} 
-                  onClick={handleCheckout}
-                  disabled={isLoading}
-                >
-                   {isLoading ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Please wait</> : 'Choose Business'}
-                </Button>
-              ) : (
-                <Button asChild className="w-full" variant="outline">
-                    <Link href={plan.ctaLink}>{plan.cta}</Link>
-                </Button>
-              )}
-            </CardFooter>
-          </Card>
+          <motion.div key={plan.title} whileHover={{ y: -8, scale: 1.03 }} transition={{ type: "spring", stiffness: 300 }}>
+            <Card 
+              className={`flex flex-col bg-card/50 backdrop-blur-sm shadow-lg h-full ${plan.variant === 'primary' ? 'border-primary border-2 shadow-primary/20' : 'border'}`}
+            >
+              <CardHeader>
+                <CardTitle>{plan.title}</CardTitle>
+                <CardDescription>{plan.description}</CardDescription>
+                <div className="flex items-baseline pt-4">
+                  <span className="text-4xl font-bold">{plan.title === 'Free' ? plan.price.monthly : plan.price[billingCycle]}</span>
+                  {plan.title !== "Free" && <span className="text-muted-foreground">/{billingCycle === 'monthly' ? 'month' : 'year'}</span>}
+                </div>
+              </CardHeader>
+              <CardContent className="flex-1 space-y-4">
+                <ul className="space-y-3 text-muted-foreground">
+                  {plan.features.map((feature, index) => (
+                    <li key={index} className="flex items-center gap-2">
+                      {feature.included ? <Check className="h-5 w-5 text-primary" /> : <X className="h-5 w-5 text-muted-foreground/50" />}
+                      <span>{feature.text}</span>
+                    </li>
+                  ))}
+                </ul>
+              </CardContent>
+              <CardFooter>
+                 {plan.title === 'Business' ? (
+                  <Button 
+                    className={`w-full text-white bg-gradient-to-r from-primary to-accent shadow-lg hover:scale-105 transition-transform`} 
+                    onClick={handleCheckout}
+                    disabled={isLoading}
+                  >
+                     {isLoading ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Please wait</> : 'Choose Business'}
+                  </Button>
+                ) : (
+                  <Button asChild className="w-full" variant="outline">
+                      <Link href={plan.ctaLink}>{plan.cta}</Link>
+                  </Button>
+                )}
+              </CardFooter>
+            </Card>
+          </motion.div>
         ))}
       </div>
       

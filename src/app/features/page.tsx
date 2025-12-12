@@ -156,8 +156,8 @@ export default function FeaturesPage() {
             <h2 className="text-3xl font-bold font-headline mb-8 text-center">{category.category}</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {category.features.map((feature, index) => (
-                <motion.div key={feature.name} custom={index} variants={cardVariants}>
-                  <Card className="flex flex-col text-center items-center p-6 bg-card/50 backdrop-blur-sm shadow-lg h-full transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-1">
+                <motion.div key={feature.name} custom={index} variants={cardVariants} whileHover={{ y: -5, scale: 1.02 }} transition={{ duration: 0.2 }}>
+                  <Card className="flex flex-col text-center items-center p-6 bg-card/50 backdrop-blur-sm shadow-lg h-full transition-all duration-300 hover:shadow-primary/20">
                     <CardHeader className="p-0 items-center">
                       {feature.icon}
                       <CardTitle className="mt-4 text-xl">{feature.name}</CardTitle>
