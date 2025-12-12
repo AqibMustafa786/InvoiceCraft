@@ -24,6 +24,16 @@ const safeFormat = (date: Date | string | number | undefined | null, formatStrin
     return format(d, formatString);
 }
 
+const SignatureDisplay = ({ signature, label }: { signature: any, label: string }) => {
+    if (!signature?.image) return null;
+    return (
+        <div className="mt-8">
+            <Image src={signature.image} alt={label} width={150} height={75} className="border-b border-gray-400" />
+            <p className="text-xs text-gray-500 pt-1 border-t-2 border-gray-700 w-[150px]">{label}</p>
+        </div>
+    )
+}
+
 const MedicalDetails: React.FC<{ document: Estimate, t: any }> = ({ document, t }) => {
     if (!document.medical) return null;
     const { medical } = document;
@@ -217,7 +227,7 @@ export const MedicalTemplate4: React.FC<TemplateProps> = ({ document, pageItems,
             <MedicalDetails document={document} t={t} />
             <main className="flex-grow mt-4">
                 <table className="w-full text-left text-sm">
-                    <thead><tr className="border-b"><th className="pb-2 font-bold w-4/5">{(t.procedure || 'Procedure')}</th><th className="pb-2 font-bold text-right">{(t.fee || 'Fee')}</th></tr></thead>
+                    <thead><tr className="border-b"><th className="pb-2 font-bold w-4/5">{t.procedure || 'Procedure'}</th><th className="pb-2 font-bold text-right">{t.fee || 'Fee'}</th></tr></thead>
                     <tbody>{pageItems.map(item => (<tr key={item.id} className="border-b"><td className="py-2">{item.name}</td><td className="py-2 text-right">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</td></tr>))}</tbody>
                 </table>
             </main>
@@ -278,3 +288,5 @@ export const MedicalTemplate5: React.FC<TemplateProps> = ({ document, pageItems,
         </div>
     );
 };
+
+    
