@@ -9,6 +9,7 @@ import { Separator } from '@/components/ui/separator';
 import Image from 'next/image';
 import { format, isValid } from 'date-fns';
 import locales from '@/lib/locales';
+import { GenericTemplate1, GenericTemplate2, GenericTemplate3, GenericTemplate4, GenericTemplate5 } from './document-templates/generic-templates';
 import {
   ConstructionTemplate1, ConstructionTemplate2, ConstructionTemplate3, ConstructionTemplate4, ConstructionTemplate5,
   ConstructionTemplate6
@@ -158,7 +159,7 @@ const InvoiceFooter: FC<{
                 </div>
                 {invoice.summary.discount > 0 && (
                     <div className="flex justify-between text-sm">
-                        <span className="text-muted-foreground">{t.discount} ({invoice.summary.discount}%)</span>
+                        <span className="text-muted-foreground">{t.discount}</span>
                         <span className="font-medium text-destructive tabular-nums">-{currencySymbol}{discountAmount.toFixed(2)}</span>
                     </div>
                 )}

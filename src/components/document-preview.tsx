@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import { useState, useLayoutEffect, useRef, useEffect, FC } from 'react';
@@ -6,6 +7,7 @@ import type { Estimate, Quote } from '@/lib/types';
 import { Card, CardContent } from '@/components/ui/card';
 import Image from 'next/image';
 import { format, isValid } from 'date-fns';
+import { GenericTemplate1, GenericTemplate2, GenericTemplate3, GenericTemplate4, GenericTemplate5 } from './document-templates/generic-templates';
 import { ConstructionTemplate1, ConstructionTemplate2, ConstructionTemplate3, ConstructionTemplate4, ConstructionTemplate5 } from './document-templates/construction-templates';
 import { RemodelingTemplate1, RemodelingTemplate2, RemodelingTemplate3, RemodelingTemplate4, RemodelingTemplate5 } from './document-templates/remodeling-templates';
 import { HVACTemplate1, HVACTemplate2, HVACTemplate3, HVACTemplate4, HVACTemplate5 } from './document-templates/hvac-templates';
@@ -68,190 +70,12 @@ const safeFormat = (date: Date | string | number | undefined | null, formatStrin
     return format(d, formatString);
 }
 
-const SignatureDisplay = ({ signature, label }: { signature: any, label: string }) => {
-    if (!signature?.image) return null;
-    return (
-        <div className="mt-4" data-element="signature">
-            <p className="text-xs text-gray-500">{label}</p>
-            <Image src={signature.image} alt="Signature" width={150} height={75} className="mt-1 border-b" />
-            <p className="text-xs text-gray-600 mt-1">Signed by: {signature.signerName}</p>
-            <p className="text-xs text-gray-500">Date: {safeFormat(signature.signedAt, 'MMM d, yyyy, h:mm a')}</p>
-        </div>
-    )
-}
-
-const PageHeader = ({ document, style, pageIndex, t }: { document: Estimate | Quote, style: React.CSSProperties, pageIndex: number, t: any }) => {
-    const { business } = document;
-    const documentTitle = document.documentType === 'quote' ? t.quote || 'Quote' : t.estimate || 'Estimate';
-    
-    return (
-        <div data-element="page-header-content" className="flex flex-col">
-            {pageIndex === 0 && (
-                 <div className="flex justify-between items-start mb-8">
-                    <div className="w-1/2">
-                        {business.logoUrl ? (
-                            <Image src={business.logoUrl} alt={`${business.name} Logo`} width={100} height={100} className="object-contain" data-ai-hint="logo" />
-                        ) : (
-                            <h2 className="text-xl font-bold" style={{ color: style.color }}>{business.name}</h2>
-                        )}
-                    </div>
-                    <div className="w-1/2 text-right">
-                       <h2 className="text-3xl font-bold mb-4" style={{ color: business.logoUrl ? style.color : 'inherit' }}>{documentTitle}</h2>
-                    </div>
-                </div>
-            )}
-             <div className="flex justify-between items-start text-xs">
-                <div className="w-1/2 space-y-0.5">
-                    {pageIndex === 0 && (
-                        <>
-                            {business.licenseNumber && <p>{t.license || 'Lic #'}: {business.licenseNumber}</p>}
-                            {business.taxId && <p>{t.taxId || 'Tax ID'}: {business.taxId}</p>}
-                            <p>{business.phone}</p>
-                            <p>{business.email}</p>
-                            <p className="whitespace-pre-line">{business.address}</p>
-                        </>
-                    )}
-                </div>
-                 <div className="w-1/2 text-right">
-                    <div className="flex justify-end">
-                        <span className="font-bold w-24">{document.documentType === 'quote' ? t.quoteNumber : t.estimateNumber || 'Estimate #'}</span>
-                        <span className="w-24 text-left">{document.estimateNumber}</span>
-                    </div>
-                    <div className="flex justify-end mt-1">
-                        <span className="font-bold w-24">{t.date || 'Date'}</span>
-                        <span className="w-24 text-left">{safeFormat(document.estimateDate, 'MM/dd/yyyy')}</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-    );
-};
-
-const PageClientDetails = ({ document, t }: { document: Estimate | Quote, t: any }) => (
-     <section data-element="client-details" className="flex justify-between items-start my-8 text-xs">
-        <div className="w-1/3 space-y-0.5">
-            <p className="font-bold mb-1">{t.billTo || 'BILL TO'}</p>
-            <p className="font-semibold">{document.client.name}</p>
-            {document.client.companyName && <p>{document.client.companyName}</p>}
-            {document.client.email && <p>{document.client.email}</p>}
-            {document.client.phone && <p>{document.client.phone}</p>}
-            <p className="whitespace-pre-line">{document.client.address}</p>
-        </div>
-        <div className="w-1/3 space-y-0.5">
-            {document.client.projectLocation && (
-                <>
-                    <p className="font-bold mb-1">{t.projectLocation || 'PROJECT LOCATION'}</p>
-                    <p className="whitespace-pre-line">{document.client.projectLocation}</p>
-                </>
-            )}
-        </div>
-    </section>
-);
-
-
-const PageFooter = ({ document, style, t }: { document: Estimate | Quote, style: React.CSSProperties, t: any }) => {
-    const { summary } = document;
-    const currencySymbol = currencySymbols[document.currency] || '$';
-    const subtotalLessDiscount = summary.subtotal - (summary.discount || 0);
-    const taxRate = summary.taxPercentage || 0;
-
-    return (
-        <div data-element="footer" className="avoid-page-break">
-            <section className="flex justify-between items-start mt-6">
-                <div className="w-1/2 text-xs">
-                    <p className="font-bold mb-1">{t.notes || 'Notes'}</p>
-                    <p className="whitespace-pre-line">{document.termsAndConditions}</p>
-                    <div className="flex gap-8">
-                        <SignatureDisplay signature={document.business.ownerSignature} label={t.authorizedSignature || "Authorized Signature"} />
-                        <SignatureDisplay signature={document.clientSignature} label={t.clientSignature || "Client Signature"} />
-                    </div>
-                </div>
-                <div className="w-2/5 space-y-1 text-xs">
-                    <div className="flex justify-between">
-                        <span>{t.subtotal || 'Subtotal'}</span>
-                        <span className="font-medium tabular-nums">{currencySymbol}{summary.subtotal.toFixed(2)}</span>
-                    </div>
-                     {summary.discount > 0 && (
-                        <div className="flex justify-between text-red-500">
-                            <span>{t.discount || 'Discount'}</span>
-                            <span className="font-medium tabular-nums">-{currencySymbol}{summary.discount.toFixed(2)}</span>
-                        </div>
-                    )}
-                    <div className="flex justify-between font-bold border-b pb-1 mb-1">
-                        <span>{t.subtotalLessDiscount || 'Subtotal less discount'}</span>
-                        <span className="tabular-nums">{currencySymbol}{subtotalLessDiscount.toFixed(2)}</span>
-                    </div>
-                    {taxRate > 0 && (
-                         <div className="flex justify-between">
-                            <span>{t.taxRate || 'Tax Rate'}</span>
-                            <span className="tabular-nums">{taxRate.toFixed(2)}%</span>
-                        </div>
-                    )}
-                    <div className="flex justify-between">
-                        <span>{t.totalTax || 'Total tax'}</span>
-                        <span className="font-medium tabular-nums">{currencySymbol}{summary.taxAmount.toFixed(2)}</span>
-                    </div>
-                     {summary.shippingCost > 0 && (
-                        <div className="flex justify-between">
-                            <span>{t.shipping || 'Shipping/Handling'}</span>
-                            <span className="font-medium tabular-nums">{currencySymbol}{summary.shippingCost.toFixed(2)}</span>
-                        </div>
-                    )}
-                    <div className="flex justify-between items-center font-bold text-lg pt-2 mt-2" style={{ color: style.color }}>
-                        <span className="uppercase">{document.documentType === 'quote' ? t.quoteTotal || 'Quote Total' : t.estimateTotal || 'Estimate Total'}</span>
-                        <span className="tabular-nums">{currencySymbol}{summary.grandTotal.toFixed(2)}</span>
-                    </div>
-                </div>
-            </section>
-        </div>
-    );
-};
-
-
-const ModernTemplatePage: FC<PageProps> = ({ document, pageItems, pageIndex, totalPages, style, t }) => {
-    const currencySymbol = currencySymbols[document.currency] || '$';
-
-    return (
-        <div className={`p-8 md:p-10 font-sans flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ color: document.textColor, fontFamily: style.fontFamily, fontSize: `${style.fontSize}pt`, backgroundColor: document.backgroundColor, minHeight: '1056px' }}>
-            <div data-element="page-content">
-                <PageHeader document={document} style={style} pageIndex={pageIndex} t={t}/>
-                {(pageIndex === 0) && (
-                    <>
-                        <PageClientDetails document={document} t={t}/>
-                    </>
-                )}
-            </div>
-            
-            <section className="mt-8 flex-grow">
-                <table className="w-full text-left text-xs" data-element="items-table">
-                    <thead style={{ backgroundColor: style.color, color: 'white' }} data-element="table-header">
-                        <tr>
-                            <th className="p-2 font-bold w-1/2">{t.item || 'Item/Service Description'}</th>
-                            <th className="p-2 font-bold text-right">{t.quantity || 'Quantity'}</th>
-                            <th className="p-2 font-bold text-right">{t.rate || 'Item Price'}</th>
-                            <th className="p-2 font-bold text-right">{t.amount || 'Amount'}</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {pageItems.map(item => (
-                            <tr key={item.id} className="border-b" data-element="table-row">
-                                <td className="p-2 whitespace-pre-line">{item.name || ''}</td>
-                                <td className="p-2 text-right tabular-nums">{item.quantity}</td>
-                                <td className="p-2 text-right tabular-nums">{currencySymbol}{item.unitPrice.toFixed(2)}</td>
-                                <td className="p-2 text-right tabular-nums">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
-            </section>
-
-            {pageIndex === totalPages - 1 && <PageFooter document={document} style={style} t={t}/>}
-        </div>
-    );
-};
-
 const templates: { [key: string]: FC<PageProps> } = {
-  'default': ModernTemplatePage,
+  'generic-1': GenericTemplate1,
+  'generic-2': GenericTemplate2,
+  'generic-3': GenericTemplate3,
+  'generic-4': GenericTemplate4,
+  'generic-5': GenericTemplate5,
   'construction-1': ConstructionTemplate1,
   'construction-2': ConstructionTemplate2,
   'construction-3': ConstructionTemplate3,
@@ -370,7 +194,7 @@ const DocumentPreviewInternal: FC<DocumentPreviewProps> = ({ document, accentCol
       fontSize: `${document?.fontSize || 10}pt`,
   }
 
-  const TemplateComponent = templates[document.template] || templates.default;
+  const TemplateComponent = templates[document.template] || templates['generic-1'];
   
   useLayoutEffect(() => {
     if (!document || !isPrint || !needsRemeasure || !TemplateComponent) return;
@@ -490,9 +314,7 @@ const DocumentPreviewInternal: FC<DocumentPreviewProps> = ({ document, accentCol
     return (
       <div id={id} style={{backgroundColor: backgroundColor}} ref={containerRef}>
         <div style={{ position: 'absolute', left: '-9999px' }}>
-             <PageHeader document={document} style={dynamicColorStyle} pageIndex={0} t={t}/>
-             <PageClientDetails document={document} t={t}/>
-             <PageFooter document={document} style={dynamicColorStyle} t={t} />
+             {/* This is a dummy for measurement */}
         </div>
         {itemsToRender.map((pageItems, pageIndex) => (
            <TemplateComponent

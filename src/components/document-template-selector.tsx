@@ -16,7 +16,14 @@ interface Template {
 }
 
 const templates: Template[] = [
-  // General
+  // General for Estimates
+  { id: 'generic-1', name: 'Classic', thumbnailUrl: '/templates/generic-1.png', category: 'Generic' },
+  { id: 'generic-2', name: 'Modern', thumbnailUrl: '/templates/generic-2.png', category: 'Generic' },
+  { id: 'generic-3', name: 'Minimal', thumbnailUrl: '/templates/generic-3.png', category: 'Generic' },
+  { id: 'generic-4', name: 'Side Accent', thumbnailUrl: '/templates/generic-4.png', category: 'Generic' },
+  { id: 'generic-5', name: 'Bold Grid', thumbnailUrl: '/templates/generic-5.png', category: 'Generic' },
+
+  // General for Invoices
   { id: 'default', name: 'Default', thumbnailUrl: '/templates/Default.png', category: 'General Services' },
   { id: 'modern', name: 'Modern', thumbnailUrl: '/templates/Modern.png', category: 'General Services' },
   { id: 'minimalist', name: 'Minimalist', thumbnailUrl: '/templates/Minimalist.png', category: 'General Services' },
@@ -238,8 +245,16 @@ export function DocumentTemplateSelector({ selectedTemplate, onSelectTemplate, d
       currentCategory = categoryMap[category as InvoiceCategory] || category;
     }
     
-    if (currentCategory === generalCategory || !currentCategory) {
-      return templates.filter(t => t.category === "General Services");
+    if (!currentCategory || currentCategory === 'General Services' && documentType !== 'invoice') {
+        currentCategory = 'Generic';
+    }
+
+    if (currentCategory === 'General Services' && documentType === 'invoice') {
+        return templates.filter(t => t.category === "General Services");
+    }
+
+    if (currentCategory === 'Generic') {
+        return templates.filter(t => t.category === "Generic");
     }
     
     return templates.filter(t => t.category === currentCategory);
