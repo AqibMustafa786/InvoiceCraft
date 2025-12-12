@@ -251,13 +251,13 @@ export const CleaningTemplate3: React.FC<TemplateProps> = ({ document, pageItems
             </header>
             <section className="grid grid-cols-2 gap-4 mb-8 text-sm">
                 <div>
-                    <p className="font-bold">Billed To:</p>
+                    <p className="font-bold">{t.billTo || 'Billed To'}:</p>
                     <p>{client.name}</p>
                     <p>{client.address}</p>
                 </div>
                 <div className="text-right">
-                    <p><span className="font-bold">Date:</span> {safeFormat(document.estimateDate, 'MM/dd/yyyy')}</p>
-                    <p><span className="font-bold">Valid Until:</span> {safeFormat(document.validUntilDate, 'MM/dd/yyyy')}</p>
+                    <p><span className="font-bold">{t.date || 'Date'}:</span> {safeFormat(document.estimateDate, 'MM/dd/yyyy')}</p>
+                    <p><span className="font-bold">{t.validUntil || 'Valid Until'}:</span> {safeFormat(document.validUntilDate, 'MM/dd/yyyy')}</p>
                 </div>
             </section>
             
@@ -267,10 +267,10 @@ export const CleaningTemplate3: React.FC<TemplateProps> = ({ document, pageItems
                 <table className="w-full text-left text-sm">
                     <thead className="bg-gray-100">
                         <tr>
-                            <th className="p-2 font-bold w-3/5">Service Description</th>
-                            <th className="p-2 font-bold text-center">Qty</th>
-                            <th className="p-2 font-bold text-right">Unit Price</th>
-                            <th className="p-2 font-bold text-right">Total</th>
+                            <th className="p-2 font-bold w-3/5">{t.serviceDescription || 'Service Description'}</th>
+                            <th className="p-2 font-bold text-center">{t.quantity || 'Qty'}</th>
+                            <th className="p-2 font-bold text-right">{t.unitPrice || 'Unit Price'}</th>
+                            <th className="p-2 font-bold text-right">{t.total || 'Total'}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -288,11 +288,11 @@ export const CleaningTemplate3: React.FC<TemplateProps> = ({ document, pageItems
             {pageIndex === totalPages - 1 && (
                 <footer className="mt-auto pt-8 text-right">
                     <div className="inline-block w-2/5 text-sm">
-                         <p className="flex justify-between"><span>Subtotal:</span><span>{currencySymbol}{summary.subtotal.toFixed(2)}</span></p>
-                         {summary.discount > 0 && <p className="flex justify-between text-red-500"><span>Discount:</span><span>-{currencySymbol}{summary.discount.toFixed(2)}</span></p>}
-                         {summary.shippingCost > 0 && <p className="flex justify-between"><span>Shipping:</span><span>{currencySymbol}{summary.shippingCost.toFixed(2)}</span></p>}
-                         <p className="flex justify-between"><span>Tax:</span><span>{currencySymbol}{summary.taxAmount.toFixed(2)}</span></p>
-                         <p className="flex justify-between font-bold text-base mt-2 pt-2 border-t"><span>Total:</span><span>{currencySymbol}{summary.grandTotal.toFixed(2)}</span></p>
+                         <p className="flex justify-between"><span>{t.subtotal || 'Subtotal'}:</span><span>{currencySymbol}{summary.subtotal.toFixed(2)}</span></p>
+                         {summary.discount > 0 && <p className="flex justify-between text-red-500"><span>{t.discount || 'Discount'}:</span><span>-{currencySymbol}{summary.discount.toFixed(2)}</span></p>}
+                         {summary.shippingCost > 0 && <p className="flex justify-between"><span>{t.shipping || 'Shipping'}:</span><span>{currencySymbol}{summary.shippingCost.toFixed(2)}</span></p>}
+                         <p className="flex justify-between"><span>{t.tax || 'Tax'}:</span><span>{currencySymbol}{summary.taxAmount.toFixed(2)}</span></p>
+                         <p className="flex justify-between font-bold text-base mt-2 pt-2 border-t"><span>{t.total || 'Total'}:</span><span>{currencySymbol}{summary.grandTotal.toFixed(2)}</span></p>
                     </div>
                 </footer>
             )}
@@ -302,3 +302,5 @@ export const CleaningTemplate3: React.FC<TemplateProps> = ({ document, pageItems
 
 export const CleaningTemplate4: React.FC<TemplateProps> = (props) => <CleaningTemplate1 {...props} />;
 export const CleaningTemplate5: React.FC<TemplateProps> = (props) => <CleaningTemplate2 {...props} />;
+
+    

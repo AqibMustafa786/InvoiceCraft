@@ -112,10 +112,10 @@ export const AutoRepairTemplate1: React.FC<TemplateProps> = ({ document, pageIte
                         </tbody>
                          {pageIndex === totalPages - 1 && (
                             <tfoot>
-                                <tr><td colSpan={3} className="p-2 text-right">Subtotal</td><td className="p-2 text-right">{currencySymbol}{summary.subtotal.toFixed(2)}</td></tr>
-                                {summary.discount > 0 && <tr><td colSpan={3} className="p-2 text-right">Discount</td><td className="p-2 text-right text-red-600">-{currencySymbol}{summary.discount.toFixed(2)}</td></tr>}
-                                {summary.shippingCost > 0 && <tr><td colSpan={3} className="p-2 text-right">Shipping/Extra</td><td className="p-2 text-right">{currencySymbol}{summary.shippingCost.toFixed(2)}</td></tr>}
-                                <tr><td colSpan={3} className="p-2 text-right">Tax ({summary.taxPercentage}%)</td><td className="p-2 text-right">{currencySymbol}{summary.taxAmount.toFixed(2)}</td></tr>
+                                <tr><td colSpan={3} className="p-2 text-right">{t.subtotal || 'Subtotal'}</td><td className="p-2 text-right">{currencySymbol}{summary.subtotal.toFixed(2)}</td></tr>
+                                {summary.discount > 0 && <tr><td colSpan={3} className="p-2 text-right">{t.discount || 'Discount'}</td><td className="p-2 text-right text-red-600">-{currencySymbol}{summary.discount.toFixed(2)}</td></tr>}
+                                {summary.shippingCost > 0 && <tr><td colSpan={3} className="p-2 text-right">{t.shipping || 'Shipping/Extra'}</td><td className="p-2 text-right">{currencySymbol}{summary.shippingCost.toFixed(2)}</td></tr>}
+                                <tr><td colSpan={3} className="p-2 text-right">{t.tax || 'Tax'} ({summary.taxPercentage}%)</td><td className="p-2 text-right">{currencySymbol}{summary.taxAmount.toFixed(2)}</td></tr>
                                 <tr>
                                     <td colSpan={3} className="p-2 pt-2 text-right font-bold text-base">{(t.total || 'Total')}</td>
                                     <td className="p-2 pt-2 text-right font-bold text-base">{currencySymbol}{summary.grandTotal.toFixed(2)}</td>
@@ -139,10 +139,10 @@ export const AutoRepairTemplate1: React.FC<TemplateProps> = ({ document, pageIte
                         </section>
                         <div className="flex justify-between items-end border p-4 rounded-md">
                             <div>
-                                <SignatureDisplay signature={document.business.ownerSignature} label="Authorized Signature" />
+                                <SignatureDisplay signature={document.business.ownerSignature} label={t.authorizedSignature || "Authorized Signature"} />
                             </div>
                             <div className="text-center">
-                                <SignatureDisplay signature={document.clientSignature} label="Customer Signature" />
+                                <SignatureDisplay signature={document.clientSignature} label={t.customerSignature || "Customer Signature"} />
                             </div>
                         </div>
                     </footer>
@@ -212,15 +212,15 @@ export const AutoRepairTemplate2: React.FC<TemplateProps> = ({ document, pageIte
                          <div className="flex justify-end mb-6">
                             <div className="w-2/5 text-sm space-y-2">
                                 <div className="flex justify-between"><span className="text-gray-400">{(t.subtotal || 'Subtotal')}:</span><span>{currencySymbol}{summary.subtotal.toFixed(2)}</span></div>
-                                {summary.discount > 0 && <div className="flex justify-between"><span className="text-gray-400">Discount:</span><span className="text-red-400">-{currencySymbol}{summary.discount.toFixed(2)}</span></div>}
-                                {summary.shippingCost > 0 && <div className="flex justify-between"><span className="text-gray-400">Shipping:</span><span>{currencySymbol}{summary.shippingCost.toFixed(2)}</span></div>}
+                                {summary.discount > 0 && <div className="flex justify-between"><span className="text-gray-400">{t.discount || 'Discount'}:</span><span className="text-red-400">-{currencySymbol}{summary.discount.toFixed(2)}</span></div>}
+                                {summary.shippingCost > 0 && <div className="flex justify-between"><span className="text-gray-400">{t.shipping || 'Shipping'}:</span><span>{currencySymbol}{summary.shippingCost.toFixed(2)}</span></div>}
                                 <div className="flex justify-between"><span className="text-gray-400">{(t.taxesAndFees || 'Taxes & Fees')}:</span><span>{currencySymbol}{summary.taxAmount.toFixed(2)}</span></div>
                                 <div className="flex justify-between font-bold text-xl mt-2 pt-2 border-t-2 border-gray-500" style={{color: style.color || '#FBBF24'}}><span>{(document.documentType === 'quote' ? t.quoteTotal : t.estimateTotal) || 'TOTAL'}:</span><span>{currencySymbol}{summary.grandTotal.toFixed(2)}</span></div>
                             </div>
                         </div>
                         <div className="flex justify-between items-end text-xs">
-                            <SignatureDisplay signature={document.business.ownerSignature} label="Authorized Signature" />
-                            <SignatureDisplay signature={document.clientSignature} label="Customer Signature" />
+                            <SignatureDisplay signature={document.business.ownerSignature} label={t.authorizedSignature || "Authorized Signature"} />
+                            <SignatureDisplay signature={document.clientSignature} label={t.customerSignature || "Customer Signature"} />
                         </div>
                     </footer>
                 )}
@@ -290,16 +290,16 @@ export const AutoRepairTemplate3: React.FC<TemplateProps> = ({ document, pageIte
                         <table className="w-1/3 text-xs">
                              <tbody>
                                 <tr><td className="py-1">{(t.subtotal || 'Subtotal')}</td><td className="text-right">{currencySymbol}{summary.subtotal.toFixed(2)}</td></tr>
-                                {summary.discount > 0 && <tr><td className="py-1">Discount</td><td className="text-right text-red-600">-{currencySymbol}{summary.discount.toFixed(2)}</td></tr>}
-                                {summary.shippingCost > 0 && <tr><td className="py-1">Shipping</td><td className="text-right">{currencySymbol}{summary.shippingCost.toFixed(2)}</td></tr>}
+                                {summary.discount > 0 && <tr><td className="py-1">{t.discount || 'Discount'}</td><td className="text-right text-red-600">-{currencySymbol}{summary.discount.toFixed(2)}</td></tr>}
+                                {summary.shippingCost > 0 && <tr><td className="py-1">{t.shipping || 'Shipping'}</td><td className="text-right">{currencySymbol}{summary.shippingCost.toFixed(2)}</td></tr>}
                                 <tr><td className="py-1">{(t.tax || 'Tax')}</td><td className="text-right">{currencySymbol}{summary.taxAmount.toFixed(2)}</td></tr>
                                 <tr className="font-bold text-base border-t-2 border-black"><td className="pt-2">{(t.total || 'TOTAL').toUpperCase()}</td><td className="pt-2 text-right">{currencySymbol}{summary.grandTotal.toFixed(2)}</td></tr>
                             </tbody>
                         </table>
                     </div>
                     <div className="flex justify-between mt-8">
-                        <SignatureDisplay signature={document.business.ownerSignature} label="Authorized Signature" />
-                        <SignatureDisplay signature={document.clientSignature} label="Customer Signature" />
+                        <SignatureDisplay signature={document.business.ownerSignature} label={t.authorizedSignature || "Authorized Signature"} />
+                        <SignatureDisplay signature={document.clientSignature} label={t.customerSignature || "Customer Signature"} />
                     </div>
                 </footer>
             )}
@@ -362,16 +362,16 @@ export const AutoRepairTemplate4: React.FC<TemplateProps> = ({ document, pageIte
                         <table className="w-1/3 text-sm">
                             <tbody>
                                 <tr><td className="py-1">{(t.subtotal || 'Subtotal')}</td><td className="py-1 text-right">{currencySymbol}{summary.subtotal.toFixed(2)}</td></tr>
-                                {summary.discount > 0 && <tr><td className="py-1">Discount</td><td className="py-1 text-right text-red-600">-{currencySymbol}{summary.discount.toFixed(2)}</td></tr>}
-                                {summary.shippingCost > 0 && <tr><td className="py-1">Shipping</td><td className="py-1 text-right">{currencySymbol}{summary.shippingCost.toFixed(2)}</td></tr>}
+                                {summary.discount > 0 && <tr><td className="py-1">{t.discount || 'Discount'}</td><td className="py-1 text-right text-red-600">-{currencySymbol}{summary.discount.toFixed(2)}</td></tr>}
+                                {summary.shippingCost > 0 && <tr><td className="py-1">{t.shipping || 'Shipping'}</td><td className="py-1 text-right">{currencySymbol}{summary.shippingCost.toFixed(2)}</td></tr>}
                                 {summary.taxAmount > 0 && <tr><td className="py-1">{(t.tax || 'Taxes')}</td><td className="py-1 text-right">{currencySymbol}{summary.taxAmount.toFixed(2)}</td></tr>}
                                 <tr className="font-bold text-base border-t-2 border-black"><td className="py-2">{(t.total || 'Total')}</td><td className="py-2 text-right">{currencySymbol}{summary.grandTotal.toFixed(2)}</td></tr>
                             </tbody>
                         </table>
                     </div>
                     <div className="flex justify-between mt-8">
-                        <SignatureDisplay signature={document.business.ownerSignature} label="Authorized Signature" />
-                        <SignatureDisplay signature={document.clientSignature} label="Customer Signature" />
+                        <SignatureDisplay signature={document.business.ownerSignature} label={t.authorizedSignature || "Authorized Signature"} />
+                        <SignatureDisplay signature={document.clientSignature} label={t.customerSignature || "Customer Signature"} />
                     </div>
                 </footer>
             )}
@@ -433,13 +433,15 @@ export const AutoRepairTemplate5: React.FC<TemplateProps> = ({ document, pageIte
                 <footer className="mt-auto pt-6 flex justify-end">
                     <div className="w-1/3 text-sm space-y-1">
                         <p className="flex justify-between"><span>{(t.subtotal || 'Subtotal')}</span><span>{currencySymbol}{summary.subtotal.toFixed(2)}</span></p>
-                        {summary.discount > 0 && <p className="flex justify-between"><span>Discount</span><span className="text-red-600">-{currencySymbol}{summary.discount.toFixed(2)}</span></p>}
-                        {summary.shippingCost > 0 && <p className="flex justify-between"><span>Shipping</span><span>{currencySymbol}{summary.shippingCost.toFixed(2)}</span></p>}
+                        {summary.discount > 0 && <p className="flex justify-between"><span>{t.discount || 'Discount'}</span><span className="text-red-600">-{currencySymbol}{summary.discount.toFixed(2)}</span></p>}
+                        {summary.shippingCost > 0 && <p className="flex justify-between"><span>{t.shipping || 'Shipping'}</span><span>{currencySymbol}{summary.shippingCost.toFixed(2)}</span></p>}
                         <p className="flex justify-between"><span>{(t.tax || 'Tax')}</span><span>{currencySymbol}{summary.taxAmount.toFixed(2)}</span></p>
-                        <p className="flex justify-between font-bold text-lg mt-2 pt-2 border-t-2 border-black"><span>{(document.documentType === 'quote' ? t.quoteTotal : t.estimateTotal) || 'Total'}:</span><span>{currencySymbol}{summary.grandTotal.toFixed(2)}</span></p>
+                        <p className="flex justify-between font-bold text-lg mt-2 pt-2 border-t-2 border-black"><span>{(document.documentType === 'quote' ? t.quoteTotal : t.estimateTotal) || 'Total Estimate'}:</span><span>{currencySymbol}{summary.grandTotal.toFixed(2)}</span></p>
                     </div>
                 </footer>
             )}
         </div>
     );
 };
+
+    
