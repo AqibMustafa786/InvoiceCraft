@@ -1,3 +1,4 @@
+
 'use client';
 
 import { ChangeEvent, Dispatch, SetStateAction, useState, useEffect } from 'react';
@@ -114,7 +115,7 @@ const roofMaterials = [
 ];
 
 const shingleBrands = ["GAF", "Owens Corning", "CertainTeed", "Tamko", "IKO", "Atlas", "Malarkey"];
-const underlaymentTypes = ["Synthetic Underlayment", "15# Felt", "30# Felt", "Ice &amp; Water Shield (Full Roof)", "Ice &amp; Water Shield (Eaves Only)"];
+const underlaymentTypes = ["Synthetic Underlayment", "15# Felt", "30# Felt", "Ice & Water Shield (Full Roof)", "Ice & Water Shield (Eaves Only)"];
 
 interface Preset {
   name: string;
@@ -1162,7 +1163,7 @@ export function DocumentForm({ document, setDocument, accentColor, setAccentColo
                           <DialogTitle>Save Line Item Preset</DialogTitle>
                           <DialogDescription>
                               Save the current set of line items for quick use in the future.
-                          </AlertDialogDescription>
+                          </DialogDescription>
                       </DialogHeader>
                       <div className="space-y-2">
                           <Label htmlFor="preset-name">Preset Name</Label>
