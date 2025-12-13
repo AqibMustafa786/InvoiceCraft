@@ -1,4 +1,3 @@
-
 'use client';
 
 import React from 'react';
@@ -113,8 +112,7 @@ export const HVACTemplate1: React.FC<TemplateProps> = ({ document, pageItems, pa
                  <table className="w-full text-left text-xs">
                     <thead>
                         <tr style={{ backgroundColor: `${style.color}20`}}>
-                            <th className="p-2 font-bold w-1/6">{t.serviceNo || 'SERVICE NO.'}</th>
-                            <th className="p-2 font-bold w-2/5">{t.description || 'DESCRIPTION'}</th>
+                            <th className="p-2 font-bold w-3/5">{t.description || 'DESCRIPTION'}</th>
                             <th className="p-2 font-bold text-center">{t.quantity || 'QUANTITY'}</th>
                             <th className="p-2 font-bold text-right">{t.unitCost || 'UNIT COST'}</th>
                             <th className="p-2 font-bold text-right">{t.subtotal || 'SUB-TOTAL'}</th>
@@ -123,7 +121,6 @@ export const HVACTemplate1: React.FC<TemplateProps> = ({ document, pageItems, pa
                     <tbody>
                         {pageItems.map((item, index) => (
                             <tr key={item.id} className="border-b border-gray-200">
-                                <td className="p-2 align-top">{`SRVC-${String(index + 1).padStart(4,'0')}`}</td>
                                 <td className="p-2 align-top whitespace-pre-line">{item.name}</td>
                                 <td className="p-2 align-top text-center">{item.quantity}</td>
                                 <td className="p-2 align-top text-right">{currencySymbol}{item.unitPrice.toFixed(2)}</td>
@@ -156,12 +153,12 @@ export const HVACTemplate1: React.FC<TemplateProps> = ({ document, pageItems, pa
     );
 };
 
-// Template 2: Blue Accents, Modern
+// Template 2: Coolant
 export const HVACTemplate2: React.FC<TemplateProps> = ({ document, pageItems, pageIndex, totalPages, style, t }) => {
     const { business, client, summary, currency, textColor, category } = document;
     const currencySymbol = currencySymbols[currency] || '$';
     const accentColor = style.color || '#3B82F6';
-    const docTitle = document.documentType === 'quote' ? (t.quote || 'QUOTE') : (t.estimate || 'ESTIMATE');
+    const docTitle = document.documentType === 'quote' ? (t.quote || 'QUOTE').toUpperCase() : (t.estimate || 'ESTIMATE').toUpperCase();
 
     return (
         <div className={`p-8 bg-white font-sans text-gray-800 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: 'Inter, sans-serif', fontSize: `9pt`, minHeight: '1056px', color: textColor }}>
