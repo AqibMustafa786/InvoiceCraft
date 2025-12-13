@@ -75,7 +75,7 @@ const getInitialEstimate = (): Omit<Estimate, 'userId' | 'companyId'> => ({
   projectTitle: 'New Project',
   referenceNumber: 'REF-001',
   
-  termsAndConditions: 'This estimate is valid for 30 days. Prices are subject to change thereafter. Payment Terms: 50% upfront, 50% on completion.',
+  termsAndConditions: 'This {docType} is valid for 30 days. Prices are subject to change thereafter. Payment Terms: 50% upfront, 50% on completion.',
   
   template: 'default',
   documentType: 'estimate',
@@ -521,5 +521,3 @@ export default function CreateEstimatePage() {
     </>
   );
 }
-
-    

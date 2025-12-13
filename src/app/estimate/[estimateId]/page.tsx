@@ -3,7 +3,7 @@
 export const dynamic = 'force-dynamic';
 
 import { useEffect, useState } from 'react';
-import { doc, updateDoc, arrayUnion, serverTimestamp, getDocs, collectionGroup, query, where, getDoc, Firestore } from 'firebase/firestore';
+import { doc, updateDoc, arrayUnion, serverTimestamp, getDocs, collectionGroup, query, where, Firestore } from 'firebase/firestore';
 import { useFirebase, useDoc, useMemoFirebase } from '@/firebase';
 import type { Estimate } from '@/lib/types';
 import { EstimatePreview } from '@/components/estimate-preview';
@@ -25,24 +25,16 @@ import {
 } from "@/components/ui/alert-dialog"
 import { Skeleton } from '@/components/ui/skeleton';
 
-async function findEstimate(firestore: Firestore, estimateId: string): Promise<Estimate | null> {
-    // A more robust way to fetch a document when its full path is not known
-    // is often to have a known top-level collection.
-    const docRef = doc(firestore, 'estimates', estimateId);
-    const docSnap = await getDoc(docRef);
-
-    if (docSnap.exists()) {
-        return { id: docSnap.id, ...docSnap.data() } as Estimate;
-    }
-    
-    // Fallback query for cases where it might be in a subcollection, though less ideal.
-    console.warn("Falling back to collectionGroup query for estimate. This might be slow.");
+async function findEstimate(firestore: Firestore, estimateId: string): Promise<{ data: Estimate, ref: any } | null> {
     const q = query(collectionGroup(firestore, 'estimates'), where('id', '==', estimateId));
     const querySnapshot = await getDocs(q);
 
     if (!querySnapshot.empty) {
         const docSnap = querySnapshot.docs[0];
-        return { id: docSnap.id, ...docSnap.data() } as Estimate;
+        return { 
+            data: { id: docSnap.id, ...docSnap.data() } as Estimate,
+            ref: docSnap.ref
+        };
     }
     
     return null;
@@ -55,16 +47,11 @@ export default function PublicEstimatePage({ params }: { params: { estimateId: s
     const [isDeclineAlertOpen, setIsDeclineAlertOpen] = useState(false);
     const { toast } = useToast();
     const [estimate, setEstimate] = useState<Estimate | null>(null);
+    const [docRef, setDocRef] = useState<any>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<Error | null>(null);
 
-    const docRef = useMemoFirebase(() => {
-        if (!firestore || !estimate) return null;
-        // Since we now store estimates at the root, the path is simple.
-        return doc(firestore, 'estimates', estimate.id);
-    }, [firestore, estimate]);
-
-    useEffect(() => {
+     useEffect(() => {
         if (typeof window !== 'undefined' && document) {
             const computedColor = getComputedStyle(document.documentElement).getPropertyValue('--primary').trim();
             if (computedColor) {
@@ -78,9 +65,10 @@ export default function PublicEstimatePage({ params }: { params: { estimateId: s
                 return;
             };
             try {
-                const foundEstimate = await findEstimate(firestore, params.estimateId);
-                if (foundEstimate) {
-                    setEstimate(foundEstimate);
+                const foundEstimateResult = await findEstimate(firestore, params.estimateId);
+                if (foundEstimateResult) {
+                    setEstimate(foundEstimateResult.data);
+                    setDocRef(foundEstimateResult.ref);
                 } else {
                     setError(new Error('Estimate not found.'));
                 }
@@ -219,4 +207,3 @@ export default function PublicEstimatePage({ params }: { params: { estimateId: s
     );
 }
 
-    

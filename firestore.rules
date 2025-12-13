@@ -37,15 +37,6 @@ service cloud.firestore {
       allow read, update, delete: if isSignedIn() && isOwner(userId);
       allow create: if isSignedIn();
     }
-    
-    match /estimates/{estimateId} {
-        // Allow read if the user is the owner of the document.
-        allow get: if isSignedIn() && resource.data.userId == request.auth.uid;
-        // Allow list only for queries made by the application logic (e.g., dashboard)
-        allow list: if isSignedIn();
-        // Allow create, update, delete if the user is the owner
-        allow create, update, delete: if isSignedIn() && request.resource.data.userId == request.auth.uid;
-    }
 
     // COMPANY DATA
     match /companies/{companyId} {
@@ -68,7 +59,8 @@ service cloud.firestore {
       }
 
       match /estimates/{estimateId} {
-          allow read, update, delete: if belongsToCompany(companyId);
+          allow read: if resource.data.isPublic == true || belongsToCompany(companyId);
+          allow list, update, delete: if belongsToCompany(companyId);
           allow create: if belongsToCompany(companyId) && 
                         (getUserData().plan == 'business' || list(/databases/$(database)/documents/companies/$(companyId)/estimates,).size() < 3);
       }
