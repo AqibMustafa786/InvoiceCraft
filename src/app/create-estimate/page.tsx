@@ -285,6 +285,7 @@ export default function CreateEstimatePage() {
         initialDocument = {
          ...baseEstimate,
          ...loadedDraft,
+         id: draftId,
          userId: user.uid,
          companyId: companyId || '',
          business: { ...baseEstimate.business, ...loadedDraft.business },
@@ -306,7 +307,7 @@ export default function CreateEstimatePage() {
         const newDocId = firestore ? doc(collection(firestore, 'companies', 'temp', ESTIMATES_COLLECTION)).id : crypto.randomUUID();
         initialDocument = {
             ...getInitialEstimate(),
-            id: newDocId,
+            id: newDocId, // temporary random ID
             userId: user.uid,
             companyId: companyId || '',
         };
@@ -326,6 +327,11 @@ export default function CreateEstimatePage() {
     }
   }, []);
 
+  const generateNewId = (doc: Estimate | Quote): string => {
+    const clientName = doc.client.name.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase();
+    const estimateNumber = doc.estimateNumber || 'new';
+    return `${clientName}-${estimateNumber}`;
+  }
 
   const handlePrint = () => {
     window.print();
@@ -350,8 +356,13 @@ export default function CreateEstimatePage() {
         return isValid(d) ? Timestamp.fromDate(d) : null;
     };
     
+    // Check if it's a new document (not yet saved to its final ID)
+    const isNew = !searchParams.get('draftId');
+    const newId = isNew ? generateNewId(document) : document.id;
+
     const draftToSave: any = {
       ...document,
+      id: newId,
       userId: user.uid, 
       companyId: companyId,
       updatedAt: serverTimestamp(),
@@ -390,7 +401,7 @@ export default function CreateEstimatePage() {
       draftToSave.createdAt = serverTimestamp();
     }
     
-    const finalDocRef = doc(firestore, 'companies', companyId, ESTIMATES_COLLECTION, document.id);
+    const finalDocRef = doc(firestore, 'companies', companyId, ESTIMATES_COLLECTION, newId);
     setDocumentNonBlocking(finalDocRef, draftToSave, { merge: true });
 
     toast({
@@ -398,8 +409,9 @@ export default function CreateEstimatePage() {
       description: "Your estimate draft has been saved online.",
     });
 
-    if (!searchParams.get('draftId')) {
-      router.push(`/create-estimate?draftId=${document.id}`, { scroll: false });
+    if (isNew) {
+      setDocument(prev => prev ? { ...prev, id: newId } : null);
+      router.push(`/create-estimate?draftId=${newId}`, { scroll: false });
     }
   };
 
@@ -579,3 +591,4 @@ export default function CreateEstimatePage() {
     </>
   );
 }
+

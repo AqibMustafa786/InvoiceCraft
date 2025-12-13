@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import { ChangeEvent, Dispatch, SetStateAction, useState, useEffect } from 'react';
@@ -461,7 +462,7 @@ export function DocumentForm({ document, setDocument, accentColor, setAccentColo
   const docNumberName = documentType === 'quote' ? 'Quote Number' : 'Estimate Number';
 
   return (
-    <div className="space-y-6">
+    <>
       <fieldset disabled={isSigned} className="space-y-6 group">
         <Card className="bg-card/50 backdrop-blur-sm group-disabled:opacity-70">
             <CardHeader>
@@ -1303,6 +1304,7 @@ export function DocumentForm({ document, setDocument, accentColor, setAccentColo
             </CardContent>
         </Card>
       </fieldset>
-    </div>
+    </>
   );
 }
+
