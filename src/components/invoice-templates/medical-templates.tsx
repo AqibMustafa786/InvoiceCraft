@@ -252,7 +252,7 @@ export const MedicalTemplate4: React.FC<PageProps> = (props) => {
                 <div className="flex justify-end text-right">
                     <div className="w-1/3 text-sm">
                         <p className="flex justify-between"><span>{t.subtotal || 'Subtotal'}</span><span>{currencySymbol}{subtotal.toFixed(2)}</span></p>
-                        <p className="flex justify-between"><span>{t.adjustments || 'Adjustments'}</span><span>{currencySymbol}{taxAmount > 0 ? taxAmount.toFixed(2) : '0.00'}</span></p>
+                        <p className="flex justify-between"><span>{t.adjustments || 'Adjustments'}</span><span>{currencySymbol}{(taxAmount > 0 ? taxAmount.toFixed(2) : '0.00')}</span></p>
                         <p className="flex justify-between font-bold mt-2"><span>{t.balanceDue || 'Balance Due'}</span><span>{currencySymbol}{balanceDue.toFixed(2)}</span></p>
                     </div>
                 </div>

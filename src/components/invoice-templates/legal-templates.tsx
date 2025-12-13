@@ -148,11 +148,10 @@ export const LegalTemplate1: React.FC<PageProps> = (props) => {
                     <p className="font-bold">Terms and Conditions</p>
                     <p>{invoice.paymentInstructions}</p>
                 </div>
-                 {business.ownerSignature && (
-                    <div className="mt-8">
-                        <SignatureDisplay signature={business.ownerSignature} label="Authorized Signature" />
-                    </div>
-                )}
+                <div className="flex justify-between mt-8">
+                  <SignatureDisplay signature={business.ownerSignature} label="Authorized Signature" />
+                  <SignatureDisplay signature={invoice.clientSignature} label="Client Signature" />
+                </div>
             </footer>
             )}
         </div>
@@ -191,11 +190,10 @@ export const LegalTemplate2: React.FC<PageProps> = (props) => {
                  {pageIndex === totalPages - 1 && (
                     <footer className="mt-auto pt-8">
                         <div className="text-right text-3xl font-bold">{(t.total || 'Total')}: {currencySymbol}{balanceDue.toFixed(2)}</div>
-                        {business.ownerSignature && (
-                            <div className="mt-8 flex justify-end">
-                                <SignatureDisplay signature={business.ownerSignature} label="Authorized Signature" />
-                            </div>
-                        )}
+                        <div className="flex justify-between mt-8">
+                            <SignatureDisplay signature={business.ownerSignature} label="Authorized Signature" />
+                            <SignatureDisplay signature={invoice.clientSignature} label="Client Signature" />
+                        </div>
                     </footer>
                 )}
             </div>
@@ -235,14 +233,13 @@ export const LegalTemplate3: React.FC<PageProps> = (props) => {
                         <div className="w-2/5">
                             <p className="flex justify-between py-1"><span>{(t.subtotal || 'Subtotal')}:</span><span>{currencySymbol}{subtotal.toFixed(2)}</span></p>
                             <p className="flex justify-between py-1 border-b"><span>{(t.tax || 'Tax')}:</span><span>{currencySymbol}{taxAmount.toFixed(2)}</span></p>
-                            <p className="flex justify-between font-bold text-lg mt-2 pt-2"><span>{(t.total || 'Total')}:</span><span>{currencySymbol}{balanceDue.toFixed(2)}</span></p>
+                            <p className="flex justify-between font-bold text-sm mt-2 pt-2"><span>{(t.total || 'Total')}:</span><span>{currencySymbol}{balanceDue.toFixed(2)}</span></p>
                         </div>
                     </div>
-                    {business.ownerSignature && (
-                        <div className="mt-8">
-                            <SignatureDisplay signature={business.ownerSignature} label="Authorized Signature" />
-                        </div>
-                    )}
+                    <div className="flex justify-between mt-8">
+                      <SignatureDisplay signature={business.ownerSignature} label="Authorized Signature" />
+                      <SignatureDisplay signature={invoice.clientSignature} label="Client Signature" />
+                    </div>
                 </footer>
                 )}
             </div>
@@ -279,11 +276,10 @@ export const LegalTemplate4: React.FC<PageProps> = (props) => {
                         <p className="flex justify-between font-bold text-xl mt-2 pt-2 border-t-2"><span>{(t.balanceDue || 'Balance Due')}:</span><span>{currencySymbol}{balanceDue.toFixed(2)}</span></p>
                     </div>
                 </div>
-                {business.ownerSignature && (
-                    <div className="mt-8">
-                        <SignatureDisplay signature={business.ownerSignature} label="Authorized Signature" />
-                    </div>
-                )}
+                <div className="flex justify-between mt-8">
+                  <SignatureDisplay signature={business.ownerSignature} label="Authorized Signature" />
+                  <SignatureDisplay signature={invoice.clientSignature} label="Client Signature" />
+                </div>
             </footer>
             )}
         </div>
@@ -312,11 +308,10 @@ export const LegalTemplate5: React.FC<PageProps> = (props) => {
                 {pageIndex === totalPages - 1 && (
                 <footer className="mt-auto pt-8">
                     <div className="text-right text-2xl font-bold">{(t.totalDue || 'Total Due')}: {currencySymbol}{balanceDue.toFixed(2)}</div>
-                    {business.ownerSignature && (
-                        <div className="mt-8 flex justify-end">
-                            <SignatureDisplay signature={business.ownerSignature} label="Authorized Signature" />
-                        </div>
-                    )}
+                    <div className="flex justify-between mt-8">
+                      <SignatureDisplay signature={business.ownerSignature} label="Authorized Signature" />
+                      <SignatureDisplay signature={invoice.clientSignature} label="Client Signature" />
+                    </div>
                 </footer>
                 )}
             </div>

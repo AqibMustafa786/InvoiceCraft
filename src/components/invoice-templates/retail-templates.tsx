@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import React from 'react';
@@ -138,8 +139,12 @@ export const RetailTemplate1: React.FC<PageProps> = (props) => {
                 <footer className="mt-4 pt-4">
                     <div className="flex justify-between items-start">
                         <div>
-                            <p className="font-bold text-xs">SIGNATURE:</p>
-                            <div className="w-48 h-12 border border-gray-400 mt-1"></div>
+                            {business.ownerSignature && (
+                                <div>
+                                    <p className="font-bold text-xs">SIGNATURE:</p>
+                                    <Image src={business.ownerSignature.image} alt="Signature" width={120} height={40} className="mt-1" />
+                                </div>
+                            )}
                         </div>
                         <div className="w-1/3 text-xs">
                              <table className="w-full">

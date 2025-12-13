@@ -65,15 +65,16 @@ const RentalDetails: React.FC<{ invoice: Invoice, t: any }> = ({ invoice, t }) =
 };
 
 export const RentalTemplate1: React.FC<PageProps> = (props) => {
-    const { invoice, pageItems, pageIndex, totalPages, balanceDue, currencySymbol, t, accentColor } = props;
+    const { invoice, pageItems, pageIndex, totalPages, balanceDue, currencySymbol, t, accentColor, total, subtotal, taxAmount } = props;
     const { business, client } = invoice;
+    const docTitle = (t.rentalInvoice || 'RENTAL INVOICE').toUpperCase();
 
     return (
         <div className={`p-10 font-sans ${pageIndex < totalPages - 1 ? 'page-break-after' : ''}`} style={{ minHeight: '1056px', backgroundColor: props.backgroundColor, color: props.textColor }}>
             <header className="flex justify-between items-start mb-8">
                 {business.logoUrl ? <Image src={business.logoUrl} alt="Logo" width={100} height={100} className="object-contain" /> : <h1 className="text-3xl font-bold">{business.name}</h1>}
                 <div className="text-right">
-                    <h2 className="text-4xl font-bold" style={{color: accentColor}}>{(t.rentalInvoice || 'RENTAL INVOICE').toUpperCase()}</h2>
+                    <h2 className="text-4xl font-bold" style={{color: accentColor}}>{docTitle}</h2>
                     <p>#{invoice.invoiceNumber}</p>
                 </div>
             </header>
@@ -85,14 +86,19 @@ export const RentalTemplate1: React.FC<PageProps> = (props) => {
             <main className="flex-grow mt-4">
                 <table className="w-full text-left text-sm">
                     <thead><tr className="border-b-2"><th className="pb-2 font-bold w-3/5">{(t.item || 'Item').toUpperCase()}</th><th className="pb-2 font-bold text-right">{(t.total || 'Total').toUpperCase()}</th></tr></thead>
-                    <tbody>{pageItems.map(item => (<tr key={item.id}><td className="py-2">{item.name}</td><td className="py-2 text-right">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</td></tr>))}</tbody>
+                    <tbody>
+                        {pageItems.map(item => (
+                            <tr key={item.id}><td className="py-2">{item.name}</td><td className="py-2 text-right">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</td></tr>
+                        ))}
+                    </tbody>
                 </table>
             </main>
             {pageIndex === totalPages - 1 && (
             <footer className="mt-auto pt-8">
                 <div className="flex justify-end text-right text-sm">
                     <div className="w-1/2">
-                        <p className="flex justify-between font-bold text-2xl mt-2 pt-2 border-t-2"><span>{(t.totalDue || 'Total Due').toUpperCase()}:</span><span>{currencySymbol}{balanceDue.toFixed(2)}</span></p>
+                        <p className="flex justify-between py-1"><span className="text-gray-600">{t.totalCharges || 'Total Charges'}:</span><span>{currencySymbol}{total.toFixed(2)}</span></p>
+                        <p className="flex justify-between font-bold text-2xl mt-2 pt-2 border-t-2"><span>{(t.balanceDue || 'Balance Due').toUpperCase()}:</span><span>{currencySymbol}{balanceDue.toFixed(2)}</span></p>
                     </div>
                 </div>
                  {business.ownerSignature && (

@@ -124,6 +124,12 @@ export const CleaningTemplate1: React.FC<PageProps> = (props) => {
                                 </tbody>
                              </table>
                         </div>
+                         {business.ownerSignature && (
+                            <div className="mt-8">
+                                <p className="text-sm font-semibold text-gray-500">Authorized Signature</p>
+                                <Image src={business.ownerSignature.image} alt="Owner Signature" width={150} height={75} />
+                            </div>
+                        )}
                     </footer>
                 )}
             </div>
@@ -199,6 +205,12 @@ export const CleaningTemplate2: React.FC<PageProps> = (props) => {
                             <p className="flex justify-between font-bold text-base mt-2 pt-2 border-t border-black"><span>{(t.total || 'Total')}:</span><span>{currencySymbol}{balanceDue.toFixed(2)}</span></p>
                         </div>
                     </div>
+                     {business.ownerSignature && (
+                        <div className="mt-8">
+                            <p className="text-sm font-semibold text-gray-500">Authorized Signature</p>
+                            <Image src={business.ownerSignature.image} alt="Owner Signature" width={150} height={75} />
+                        </div>
+                    )}
                 </footer>
             )}
         </div>
@@ -212,24 +224,26 @@ export const CleaningTemplate3: React.FC<PageProps> = (props) => {
 
     return (
         <div className={`p-10 font-sans ${pageIndex < totalPages - 1 ? 'page-break-after' : ''}`} style={{ minHeight: '1056px', backgroundColor: accentColor + '10', color: props.textColor }}>
-            <div className="bg-white p-8">
-                <header className="flex justify-between items-center mb-10">
+            <div className="bg-white p-8 shadow-lg">
+                <header className="flex justify-between items-start mb-8">
                     <div>
                         {business.logoUrl && <Image src={business.logoUrl} alt="Logo" width={90} height={45} className="object-contain mb-2"/>}
                         <h1 className="text-2xl font-bold">{business.name}</h1>
-                        <p className="text-xs text-gray-500">{business.address}</p>
                     </div>
-                    <h2 className="text-3xl font-extrabold text-gray-400">{(t.invoice || 'INVOICE').toUpperCase()}</h2>
+                    <div className="text-right">
+                        <h2 className="text-3xl font-extrabold text-gray-400">{(t.invoice || 'INVOICE').toUpperCase()}</h2>
+                        <p className="text-xs"># {invoice.invoiceNumber}</p>
+                    </div>
                 </header>
                 <section className="grid grid-cols-2 gap-8 text-xs mb-8">
                     <div><p className="font-bold text-gray-500 mb-1">{(t.billedTo || 'Billed To')}</p><p>{client.name}<br/>{client.address}</p></div>
-                    <div className="text-right"><p><span className="font-bold text-gray-500">{(t.invoiceNo || 'Invoice #')}: </span>{invoice.invoiceNumber}</p><p><span className="font-bold text-gray-500">{(t.date || 'Date')}: </span>{safeFormat(invoice.invoiceDate, 'dd/MM/yyyy')}</p></div>
+                    <div className="text-right"><p><span className="font-bold text-gray-500">{(t.date || 'Date')}: </span>{safeFormat(invoice.invoiceDate, 'dd/MM/yyyy')}</p></div>
                 </section>
                 <CleaningDetails invoice={invoice} t={t} />
                 <main className="flex-grow mt-4">
                     <table className="w-full text-left text-xs">
-                        <thead><tr className="border-b-2 border-gray-200"><th className="py-2 font-bold w-1/2">{(t.service || 'SERVICE').toUpperCase()}</th><th className="py-2 font-bold text-center">{(t.qty || 'QTY').toUpperCase()}</th><th className="py-2 font-bold text-right">{(t.price || 'PRICE').toUpperCase()}</th><th className="py-2 font-bold text-right">{(t.amount || 'AMOUNT').toUpperCase()}</th></tr></thead>
-                        <tbody>{pageItems.map(item => (<tr key={item.id} className="border-b border-gray-100"><td className="py-2">{item.name}</td><td className="py-2 text-center">{item.quantity}</td><td className="py-2 text-right">{currencySymbol}{item.unitPrice.toFixed(2)}</td><td className="py-2 text-right">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</td></tr>))}</tbody>
+                        <thead><tr className="bg-gray-100"><th className="p-2 font-bold w-4/5">{(t.serviceDescription || 'Service Description')}</th><th className="p-2 font-bold text-right">{(t.fee || 'Fee')}</th></tr></thead>
+                        <tbody>{pageItems.map(item => (<tr key={item.id} className="border-b"><td className="p-2">{item.name}</td><td className="p-2 text-right">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</td></tr>))}</tbody>
                     </table>
                 </main>
                 {pageIndex === totalPages - 1 && (
@@ -241,6 +255,12 @@ export const CleaningTemplate3: React.FC<PageProps> = (props) => {
                             <p className="flex justify-between font-bold text-sm mt-2 pt-2 border-t border-gray-300"><span>{(t.total || 'Total')}:</span><span>{currencySymbol}{balanceDue.toFixed(2)}</span></p>
                         </div>
                     </div>
+                    {business.ownerSignature && (
+                        <div className="mt-8">
+                            <p className="text-sm font-semibold text-gray-500">Authorized Signature</p>
+                            <Image src={business.ownerSignature.image} alt="Owner Signature" width={150} height={75} />
+                        </div>
+                    )}
                 </footer>
                 )}
             </div>

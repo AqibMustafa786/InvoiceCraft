@@ -9,7 +9,6 @@ import { Separator } from '@/components/ui/separator';
 import Image from 'next/image';
 import { format, isValid } from 'date-fns';
 import locales from '@/lib/locales';
-import { GenericTemplate1, GenericTemplate2, GenericTemplate3, GenericTemplate4, GenericTemplate5 } from './document-templates/generic-templates';
 import {
   ConstructionTemplate1, ConstructionTemplate2, ConstructionTemplate3, ConstructionTemplate4, ConstructionTemplate5,
   ConstructionTemplate6
@@ -391,7 +390,7 @@ const UsaTemplatePage: FC<PageProps> = ({ pageItems, pageIndex, totalPages, ...c
                         ) : (
                             <h1 className="text-3xl font-bold mb-1" style={{color: accentColor}}>{invoice.business.name}</h1>
                         )}
-                        <p className="text-xs whitespace-pre-line">{invoice.business.address}</p>
+                        <p className="text-xs text-gray-600 whitespace-pre-line">{invoice.business.address}</p>
                     </div>
                      <div className="text-right">
                         <h2 className="text-4xl font-bold">INVOICE</h2>

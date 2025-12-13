@@ -281,7 +281,7 @@ export const ConsultingTemplate4: React.FC<PageProps> = (props) => {
                             <p className="flex justify-between font-bold text-lg mt-2"><span>{(t.balanceDue || 'Balance Due')}:</span><span>{currencySymbol}{balanceDue.toFixed(2)}</span></p>
                         </div>
                     </div>
-                    {business.ownerSignature && (
+                     {business.ownerSignature && (
                         <div className="mt-8 flex justify-end">
                             <SignatureDisplay signature={business.ownerSignature} label="Authorized Signature" />
                         </div>

@@ -218,7 +218,7 @@ export const AutoRepairTemplate3: React.FC<PageProps> = (props) => {
 
 // Template 4: Pro Service
 export const AutoRepairTemplate4: React.FC<PageProps> = (props) => {
-    const { invoice, pageItems, pageIndex, totalPages, subtotal, taxAmount, balanceDue, currencySymbol, t, accentColor } = props;
+    const { invoice, pageItems, pageIndex, totalPages, balanceDue, currencySymbol, t, accentColor } = props;
     const { business, client } = invoice;
     return (
         <div className={`flex ${pageIndex < totalPages - 1 ? 'page-break-after' : ''}`} style={{ minHeight: '1056px', backgroundColor: props.backgroundColor, color: props.textColor }}>
@@ -247,12 +247,6 @@ export const AutoRepairTemplate4: React.FC<PageProps> = (props) => {
                 </main>
                 {pageIndex === totalPages - 1 && (
                 <footer className="mt-auto pt-8">
-                    <div className="flex justify-end text-xs">
-                        <div className="w-1/2">
-                            <p className="flex justify-between"><span>{(t.subtotal || 'Subtotal')}</span><span>{currencySymbol}{subtotal.toFixed(2)}</span></p>
-                            <p className="flex justify-between"><span>{(t.tax || 'Tax')}</span><span>{currencySymbol}{taxAmount.toFixed(2)}</span></p>
-                        </div>
-                    </div>
                      {business.ownerSignature && (
                         <div className="mt-8 flex justify-end">
                             <SignatureDisplay signature={business.ownerSignature} label="Authorized Signature" />
