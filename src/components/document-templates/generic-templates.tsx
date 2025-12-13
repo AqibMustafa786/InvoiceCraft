@@ -43,11 +43,19 @@ export const GenericTemplate1: React.FC<TemplateProps> = ({ document, pageItems,
         <div className={`p-10 font-sans text-gray-800 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: style.fontFamily, fontSize: `${style.fontSize}pt`, minHeight: '1056px', backgroundColor: document.backgroundColor, color: textColor }}>
             <header className="flex justify-between items-start pb-4 border-b-2" style={{ borderColor: style.color }}>
                 <div>
-                    {business.logoUrl && <Image src={business.logoUrl} alt="Logo" width={80} height={40} className="object-contain mb-2"/>}
-                    <h1 className="text-4xl font-bold">{business.name}</h1>
-                    <p className="text-xs whitespace-pre-line">{business.address}</p>
-                    {business.phone && <p className="text-xs">{business.phone}</p>}
-                    {business.email && <p className="text-xs">{business.email}</p>}
+                    {business.logoUrl ? (
+                         <Image src={business.logoUrl} alt="Logo" width={120} height={50} className="object-contain mb-2"/>
+                    ) : (
+                        <h1 className="text-4xl font-bold mb-2">{business.name}</h1>
+                    )}
+                    <div className="text-xs space-y-0.5" style={{ color: textColor || '#6B7280' }}>
+                        <p className="whitespace-pre-line">{business.address}</p>
+                        {business.phone && <p>{business.phone}</p>}
+                        {business.email && <p>{business.email}</p>}
+                        {business.website && <p>{business.website}</p>}
+                        {business.licenseNumber && <p>{t.license || 'Lic #'}: {business.licenseNumber}</p>}
+                        {business.taxId && <p>{t.taxId || 'Tax ID'}: {business.taxId}</p>}
+                    </div>
                 </div>
                 <div className="text-right">
                     <h2 className="text-3xl font-bold">{docTitle}</h2>
@@ -57,9 +65,9 @@ export const GenericTemplate1: React.FC<TemplateProps> = ({ document, pageItems,
             <section className="grid grid-cols-2 gap-8 my-8 text-sm">
                 <div>
                     <p className="font-bold">{((t.billTo as string) || 'BILLED TO').toUpperCase()}</p>
-                    <p>{client.name}</p>
+                    <p className="font-bold mt-1" style={{color: style.color}}>{client.name}</p>
                     {client.companyName && <p>{client.companyName}</p>}
-                    <p className="whitespace-pre-line">{client.address}</p>
+                    <p className="whitespace-pre-line mt-1">{client.address}</p>
                     {client.phone && <p>{client.phone}</p>}
                     {client.email && <p>{client.email}</p>}
                 </div>
@@ -127,8 +135,13 @@ export const GenericTemplate2: React.FC<TemplateProps> = ({ document, pageItems,
         <div className={`p-0 font-sans text-gray-800 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: style.fontFamily, fontSize: `${style.fontSize}pt`, minHeight: '1056px', backgroundColor: document.backgroundColor }}>
             <header className="p-10 text-white flex justify-between items-start" style={{ backgroundColor: '#1F2937' }}>
                 <div>
-                     {business.logoUrl && <Image src={business.logoUrl} alt="Logo" width={120} height={50} className="mb-2" />}
+                     {business.logoUrl && <Image src={business.logoUrl} alt="Logo" width={120} height={50} className="mb-2 object-contain filter invert brightness-0" />}
                     <h1 className="text-4xl font-bold mt-2">{business.name}</h1>
+                     <div className="text-xs space-y-0.5 mt-2" style={{ color: '#D1D5DB' }}>
+                        <p className="whitespace-pre-line">{business.address}</p>
+                        {business.phone && <p>{business.phone}</p>}
+                        {business.email && <p>{business.email}</p>}
+                    </div>
                 </div>
                 <div className="text-right">
                     <h2 className="text-3xl font-bold">{docTitle}</h2>
@@ -138,7 +151,7 @@ export const GenericTemplate2: React.FC<TemplateProps> = ({ document, pageItems,
             <div className="p-10 flex-grow flex flex-col" style={{color: textColor}}>
                  <section className="grid grid-cols-2 gap-8 mb-8 text-sm">
                     <div>
-                        <p className="font-bold text-gray-500 mb-1">{(t.clientInformation || 'CLIENT INFORMATION')}</p>
+                        <p className="font-bold text-gray-500 mb-1" style={{color: textColor ? textColor : undefined}}>{(t.clientInformation || 'CLIENT INFORMATION')}</p>
                         <p className="font-bold">{client.name}</p>
                         {client.companyName && <p>{client.companyName}</p>}
                         <p className="whitespace-pre-line">{client.address}</p>
@@ -146,7 +159,7 @@ export const GenericTemplate2: React.FC<TemplateProps> = ({ document, pageItems,
                         {client.email && <p>{client.email}</p>}
                     </div>
                     <div className="text-right">
-                        <p className="font-bold text-gray-500 mb-1">{(t.projectDetails || 'PROJECT DETAILS')}</p>
+                        <p className="font-bold text-gray-500 mb-1" style={{color: textColor ? textColor : undefined}}>{(t.projectDetails || 'PROJECT DETAILS')}</p>
                         <p>{document.projectTitle}</p>
                         <p className="mt-2"><span className="font-bold">{(t.dateIssued || 'Date Issued')}:</span> {safeFormat(document.estimateDate, 'MMM d, yyyy')}</p>
                     </div>
@@ -190,7 +203,7 @@ export const GenericTemplate2: React.FC<TemplateProps> = ({ document, pageItems,
                         </div>
                         <div className="mt-8 text-xs">
                            <p className="font-bold mb-1">{(t.termsAndConditions || 'Terms & Conditions')}</p>
-                           <p className="whitespace-pre-line text-gray-600" style={{color: textColor}}>{document.termsAndConditions}</p>
+                           <p className="whitespace-pre-line" style={{ color: textColor || '#6B7280' }}>{document.termsAndConditions}</p>
                         </div>
                          <div className="flex justify-between items-end mt-4">
                             <SignatureDisplay signature={document.business.ownerSignature} label={(t.authorizedSignature || 'Authorized Signature')} />
@@ -215,6 +228,10 @@ export const GenericTemplate3: React.FC<TemplateProps> = ({ document, pageItems,
                  <div>
                     {business.logoUrl && <Image src={business.logoUrl} alt="Logo" width={80} height={40} className="mb-2 object-contain" />}
                     <h1 className="text-4xl font-light tracking-wider mb-1">{business.name}</h1>
+                    <div className="text-xs" style={{ color: textColor || '#6B7280' }}>
+                        <p>{business.phone}</p>
+                        <p>{business.email}</p>
+                    </div>
                 </div>
                 <div className="text-right">
                     <h2 className="text-3xl font-light tracking-wider mb-1">{docTitle}</h2>
@@ -288,8 +305,10 @@ export const GenericTemplate4: React.FC<TemplateProps> = ({ document, pageItems,
                 <div className="text-sm space-y-4 mt-8">
                   <div>
                     <p className="font-bold opacity-80 mb-1">{t.client || 'CLIENT'}</p>
-                    <p>{client.name}</p>
+                    <p className="font-bold text-lg">{client.name}</p>
                     {client.companyName && <p>{client.companyName}</p>}
+                    <p>{client.phone}</p>
+                    <p>{client.email}</p>
                   </div>
                   <div>
                     <p className="font-bold opacity-80 mb-1">{t.details || 'DETAILS'}</p>
@@ -337,10 +356,6 @@ export const GenericTemplate4: React.FC<TemplateProps> = ({ document, pageItems,
                                 <div className="flex justify-between p-3 bg-gray-800 text-white rounded-b-lg font-bold text-base"><span>{(t.total || 'Total')}:</span><span>{currencySymbol}{summary.grandTotal.toFixed(2)}</span></div>
                             </div>
                         </div>
-                        <div className="mt-8 text-xs">
-                           <p className="font-bold uppercase tracking-wider mb-2">{(t.paymentScheduleAndTerms || 'Payment Schedule & Terms')}</p>
-                           <p className="whitespace-pre-line" style={{ color: textColor || '#6B7280' }}>{document.termsAndConditions}</p>
-                        </div>
                         <div className="flex justify-between items-end mt-4">
                             <SignatureDisplay signature={document.business.ownerSignature} label={(t.authorizedSignature || 'Authorized Signature')} />
                             <SignatureDisplay signature={document.clientSignature} label={(t.clientSignature || 'Client Signature')} />
@@ -362,8 +377,11 @@ export const GenericTemplate5: React.FC<TemplateProps> = ({ document, pageItems,
         <div className={`p-10 font-sans text-gray-900 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: style.fontFamily, fontSize: `${style.fontSize}pt`, minHeight: '1056px', backgroundColor: document.backgroundColor, color: textColor }}>
             <header className="flex justify-between items-start mb-8">
                 <div className="flex items-center gap-4">
-                     {business.logoUrl && <Image src={business.logoUrl} alt="Logo" width={100} height={40} className="object-contain" />}
-                     <h1 className="text-4xl font-bold">{business.name}</h1>
+                     {business.logoUrl ? (
+                        <Image src={business.logoUrl} alt="Logo" width={100} height={40} className="object-contain" />
+                     ) : (
+                        <h1 className="text-4xl font-bold">{business.name}</h1>
+                     )}
                 </div>
                  <div className="text-right">
                     <h2 className="text-3xl font-extrabold text-gray-400">{docTitle}</h2>
@@ -372,20 +390,22 @@ export const GenericTemplate5: React.FC<TemplateProps> = ({ document, pageItems,
 
             <section className="grid grid-cols-3 gap-8 mb-10 text-xs">
                 <div className="p-4 bg-gray-50 rounded">
-                    <p className="font-bold text-gray-500 mb-2">{(t.client || 'CLIENT')}</p>
+                    <p className="font-bold text-gray-500 mb-2" style={{color: textColor}}>{(t.client || 'CLIENT')}</p>
                     <p className="font-bold text-base">{client.name}</p>
                     {client.companyName && <p>{client.companyName}</p>}
                     <p className="whitespace-pre-line">{client.address}</p>
+                    {client.phone && <p>{client.phone}</p>}
                 </div>
                 <div className="p-4 bg-gray-50 rounded">
-                    <p className="font-bold text-gray-500 mb-2">{(t.details || 'DETAILS')}</p>
+                    <p className="font-bold text-gray-500 mb-2" style={{color: textColor}}>{(t.details || 'DETAILS')}</p>
                     <p><span className="font-semibold">No:</span> {document.estimateNumber}</p>
                     <p><span className="font-semibold">{(t.date || 'Date')}:</span> {safeFormat(document.estimateDate, 'MMM dd, yyyy')}</p>
                 </div>
                 <div className="p-4 bg-gray-50 rounded break-words">
-                    <p className="font-bold text-gray-500 mb-2">{(t.contact || 'CONTACT')}</p>
-                    <p>{client.phone}</p>
-                    <p>{client.email}</p>
+                    <p className="font-bold text-gray-500 mb-2" style={{color: textColor}}>{(t.contact || 'CONTACT')}</p>
+                    <p>{business.phone}</p>
+                    <p>{business.email}</p>
+                    <p>{business.website}</p>
                 </div>
             </section>
             
