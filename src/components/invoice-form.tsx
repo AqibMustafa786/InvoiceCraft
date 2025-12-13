@@ -604,6 +604,10 @@ export function InvoiceForm({ invoice, setInvoice, accentColor, setAccentColor, 
             <Label htmlFor="shippingAddress">Shipping Address (if different)</Label>
             <Textarea id="shippingAddress" name="shippingAddress" value={invoice.client.shippingAddress || ''} onChange={(e) => handleNestedChange('client', e)} />
           </div>
+          <div className="space-y-2">
+            <Label htmlFor="projectLocation">Project Location (if different)</Label>
+            <Textarea id="projectLocation" name="projectLocation" value={invoice.client.projectLocation ?? ''} onChange={(e) => handleNestedChange('client', e)} />
+        </div>
         </CardContent>
       </Card>
       

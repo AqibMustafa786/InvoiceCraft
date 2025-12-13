@@ -199,6 +199,12 @@ const InvoiceFooter: FC<{
                 <p className="text-sm text-muted-foreground mt-1 whitespace-pre-line">{invoice.paymentInstructions}</p>
             </footer>
         )}
+         {invoice.business.ownerSignature && (
+            <div className="mt-8">
+                <p className="text-sm font-semibold text-gray-500">Authorized Signature</p>
+                <Image src={invoice.business.ownerSignature.image} alt="Owner Signature" width={150} height={75} />
+            </div>
+        )}
     </div>
 );
 
@@ -453,6 +459,12 @@ const UsaTemplatePage: FC<PageProps> = ({ pageItems, pageIndex, totalPages, ...c
                         <p className="font-bold">Notes:</p>
                         <p className="text-gray-600 whitespace-pre-line">{invoice.paymentInstructions}</p>
                     </footer>
+                )}
+                 {invoice.business.ownerSignature && (
+                    <div className="mt-8">
+                        <p className="text-sm font-semibold text-gray-500">Authorized Signature</p>
+                        <Image src={invoice.business.ownerSignature.image} alt="Owner Signature" width={150} height={75} />
+                    </div>
                 )}
             </div>
         </div>
