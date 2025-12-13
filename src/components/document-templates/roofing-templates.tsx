@@ -75,7 +75,7 @@ export const RoofingTemplate1: React.FC<TemplateProps> = ({ document, pageItems,
                 </div>
             </header>
 
-            <div className="p-10 pt-0 flex-grow">
+            <div className="p-10 pt-0 flex-grow flex flex-col">
                  <section className="mb-8 p-6 bg-white border border-gray-200 rounded-lg shadow-sm grid grid-cols-2 gap-8 text-xs">
                     <div>
                         <p className="font-bold text-gray-500 mb-2">{t.customerInformation || 'Customer Information'}</p>
@@ -103,7 +103,7 @@ export const RoofingTemplate1: React.FC<TemplateProps> = ({ document, pageItems,
                     <p className="text-gray-700 whitespace-pre-line">{document.projectTitle}</p>
                 </section>
                 
-                <main>
+                <main className="flex-grow">
                     <table className="w-full text-left text-sm">
                         <thead style={{ backgroundColor: '#374151' }} className="text-white text-xs">
                             <tr>
@@ -125,7 +125,11 @@ export const RoofingTemplate1: React.FC<TemplateProps> = ({ document, pageItems,
                         </tbody>
                         {pageIndex === totalPages - 1 &&
                             <tfoot>
-                                 <tr>
+                                <tr><td colSpan={3} className="p-2 text-right">{t.subtotal || 'Subtotal'}</td><td className="p-2 text-right">{currencySymbol}{summary.subtotal.toFixed(2)}</td></tr>
+                                {summary.discount > 0 && <tr><td colSpan={3} className="p-2 text-right">{t.discount || 'Discount'}</td><td className="p-2 text-right text-red-600">-{currencySymbol}{summary.discount.toFixed(2)}</td></tr>}
+                                {summary.shippingCost > 0 && <tr><td colSpan={3} className="p-2 text-right">{t.shipping || 'Shipping/Extra'}</td><td className="p-2 text-right">{currencySymbol}{summary.shippingCost.toFixed(2)}</td></tr>}
+                                <tr><td colSpan={3} className="p-2 text-right">{t.tax || 'Tax'} ({summary.taxPercentage}%)</td><td className="p-2 text-right">{currencySymbol}{summary.taxAmount.toFixed(2)}</td></tr>
+                                <tr>
                                     <td colSpan={3} className="p-2 text-right font-bold text-base">{t.totalEstimatedCost || 'Total Estimated Cost'}</td>
                                     <td className="p-2 text-right font-bold text-base">{currencySymbol}{summary.grandTotal.toFixed(2)}</td>
                                 </tr>
@@ -133,27 +137,27 @@ export const RoofingTemplate1: React.FC<TemplateProps> = ({ document, pageItems,
                         }
                     </table>
                 </main>
-            </div>
             
-            {pageIndex === totalPages - 1 && (
-                <footer className="p-10 pt-0 mt-auto">
-                    <div className="flex justify-between items-end">
-                        <div className="text-xs w-1/2">
-                            <p className="font-bold text-gray-500 mb-2">{t.termsAndConditions || 'Terms & Conditions'}</p>
-                            <p className="whitespace-pre-line">{document.termsAndConditions}</p>
-                            <div className="flex gap-16 mt-8">
-                                <SignatureDisplay signature={document.business.ownerSignature} label={"Owner Signature"} />
-                                <SignatureDisplay signature={document.clientSignature} label={"Client Signature"} />
+                {pageIndex === totalPages - 1 && (
+                    <footer className="pt-8 mt-auto">
+                        <div className="flex justify-between items-end">
+                            <div className="text-xs w-1/2">
+                                <p className="font-bold text-gray-500 mb-2">{t.termsAndConditions || 'Terms & Conditions'}</p>
+                                <p className="whitespace-pre-line">{document.termsAndConditions}</p>
                             </div>
                         </div>
-                    </div>
-                     <div className="flex justify-between items-center text-xs text-gray-500 mt-8 pt-4 border-t">
-                        <p>{business.email}</p>
-                        <p>{business.phone}</p>
-                        <p>{business.website}</p>
-                    </div>
-                </footer>
-            )}
+                        <div className="flex justify-between items-end mt-8">
+                            <SignatureDisplay signature={document.business.ownerSignature} label={"Owner Signature"} />
+                            <SignatureDisplay signature={document.clientSignature} label={"Client Signature"} />
+                        </div>
+                        <div className="flex justify-between items-center text-xs text-gray-500 mt-8 pt-4 border-t">
+                            <p>{business.email}</p>
+                            <p>{business.phone}</p>
+                            <p>{business.website}</p>
+                        </div>
+                    </footer>
+                )}
+            </div>
         </div>
     );
 };
@@ -192,7 +196,7 @@ export const RoofingTemplate2: React.FC<TemplateProps> = ({ document, pageItems,
              {document.roofing && (
                 <section className="mb-8 p-4 bg-gray-50 rounded-md text-xs">
                     <p className="font-bold text-gray-500 mb-2">{t.projectDetails || 'Project Details'}</p>
-                    <RoofingDetails document={document} t={t} />
+                    <RoofingDetails document={document} t={t}/>
                 </section>
             )}
             
@@ -224,6 +228,8 @@ export const RoofingTemplate2: React.FC<TemplateProps> = ({ document, pageItems,
                      <div className="flex justify-end">
                         <div className="w-1/3 text-sm space-y-1">
                             <p className="flex justify-between"><span>{t.subtotal || 'Subtotal'}:</span><span>{currencySymbol}{summary.subtotal.toFixed(2)}</span></p>
+                            {summary.discount > 0 && <p className="flex justify-between">{t.discount || 'Discount'}: <span className="text-red-600">-{currencySymbol}{summary.discount.toFixed(2)}</span></p>}
+                            {summary.shippingCost > 0 && <p className="flex justify-between">{t.shipping || 'Shipping/Extra'}: <span>{currencySymbol}{summary.shippingCost.toFixed(2)}</span></p>}
                             <p className="flex justify-between"><span>{t.tax || 'Tax'}:</span><span>{currencySymbol}{summary.taxAmount.toFixed(2)}</span></p>
                             <p className="flex justify-between font-bold text-base mt-2 pt-2 border-t border-black"><span>{t.total || 'Total'}:</span><span>{currencySymbol}{summary.grandTotal.toFixed(2)}</span></p>
                         </div>
@@ -298,9 +304,15 @@ export const RoofingTemplate3: React.FC<TemplateProps> = ({ document, pageItems,
                     <div className="w-1/2 text-xs">
                         <p className="font-bold text-gray-500 mb-2">{t.termsAndConditions || 'Terms & Conditions'}</p>
                         <p className="whitespace-pre-line">{document.termsAndConditions}</p>
+                         <div className="flex gap-16 mt-8">
+                            <SignatureDisplay signature={document.business.ownerSignature} label={"Owner Signature"} />
+                            <SignatureDisplay signature={document.clientSignature} label={"Client Signature"} />
+                        </div>
                     </div>
                     <div className="w-2/5 text-sm space-y-1">
                         <p className="flex justify-between p-1"><span>{t.subtotal || 'Subtotal'}</span><span>{currencySymbol}{summary.subtotal.toFixed(2)}</span></p>
+                        {summary.discount > 0 && <p className="flex justify-between p-1">{t.discount || 'Discount'}: <span className="text-red-600">-{currencySymbol}{summary.discount.toFixed(2)}</span></p>}
+                        {summary.shippingCost > 0 && <p className="flex justify-between p-1">{t.shipping || 'Shipping/Extra'}: <span>{currencySymbol}{summary.shippingCost.toFixed(2)}</span></p>}
                         <p className="flex justify-between p-1"><span>{t.tax || 'Tax'}</span><span>{currencySymbol}{summary.taxAmount.toFixed(2)}</span></p>
                         <p className="flex justify-between font-bold text-lg mt-2 pt-2 border-t-2 border-gray-300"><span>{t.totalEstimate || 'Total Estimate'}</span><span>{currencySymbol}{summary.grandTotal.toFixed(2)}</span></p>
                     </div>
@@ -370,9 +382,15 @@ export const RoofingTemplate4: React.FC<TemplateProps> = ({ document, pageItems,
                      <div className="w-1/2 text-xs">
                         <p className="font-bold text-gray-500 mb-2">{t.termsAndConditions || 'Terms & Conditions'}</p>
                         <p className="whitespace-pre-line">{document.termsAndConditions}</p>
+                         <div className="flex gap-16 mt-8">
+                            <SignatureDisplay signature={document.business.ownerSignature} label={"Owner Signature"} />
+                            <SignatureDisplay signature={document.clientSignature} label={"Client Signature"} />
+                        </div>
                      </div>
                      <div className="w-1/3 text-sm">
                          <p className="flex justify-between"><span>{t.subtotal || 'Subtotal'}:</span><span>{currencySymbol}{summary.subtotal.toFixed(2)}</span></p>
+                         {summary.discount > 0 && <p className="flex justify-between">{t.discount || 'Discount'}: <span className="text-red-600">-{currencySymbol}{summary.discount.toFixed(2)}</span></p>}
+                         {summary.shippingCost > 0 && <p className="flex justify-between">{t.shipping || 'Shipping/Extra'}: <span>{currencySymbol}{summary.shippingCost.toFixed(2)}</span></p>}
                          <p className="flex justify-between border-b pb-1"><span>{t.tax || 'Tax'}:</span><span>{currencySymbol}{summary.taxAmount.toFixed(2)}</span></p>
                          <p className="flex justify-between font-bold text-lg mt-2"><span>{t.total || 'Total'}:</span><span>{currencySymbol}{summary.grandTotal.toFixed(2)}</span></p>
                     </div>
@@ -446,9 +464,15 @@ export const RoofingTemplate5: React.FC<TemplateProps> = ({ document, pageItems,
                         </div>
                         <div className="inline-block w-1/2 text-sm">
                             <p className="flex justify-between"><span>{t.subtotal || 'Subtotal'}:</span><span>{currencySymbol}{summary.subtotal.toFixed(2)}</span></p>
+                            {summary.discount > 0 && <p className="flex justify-between">{t.discount || 'Discount'}: <span className="text-red-600">-{currencySymbol}{summary.discount.toFixed(2)}</span></p>}
+                            {summary.shippingCost > 0 && <p className="flex justify-between">{t.shipping || 'Shipping/Extra'}: <span>{currencySymbol}{summary.shippingCost.toFixed(2)}</span></p>}
                             <p className="flex justify-between"><span>{t.tax || 'Tax'}:</span><span>{currencySymbol}{summary.taxAmount.toFixed(2)}</span></p>
                             <div className="w-full h-px bg-gray-300 my-2"></div>
                             <p className="flex justify-between font-bold text-lg"><span>{t.total || 'Total'}:</span><span>{currencySymbol}{summary.grandTotal.toFixed(2)}</span></p>
+                        </div>
+                         <div className="flex justify-between mt-8">
+                            <SignatureDisplay signature={document.business.ownerSignature} label={"Owner Signature"} />
+                            <SignatureDisplay signature={document.clientSignature} label={"Client Signature"} />
                         </div>
                     </footer>
                 )}
