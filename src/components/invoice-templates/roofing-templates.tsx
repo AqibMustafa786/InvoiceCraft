@@ -60,9 +60,10 @@ export const RoofingTemplate1: React.FC<PageProps> = (props) => {
                  <div>
                      {business.logoUrl && <Image src={business.logoUrl} alt="Logo" width={80} height={40} className="object-contain" />}
                      <h1 className="text-3xl font-bold mt-2">{business.name}</h1>
+                     <p className="text-xs opacity-80">Roofing Services</p>
                 </div>
                 <div className="text-right">
-                    <h2 className="text-2xl font-extrabold tracking-wider">{(t.invoice || 'INVOICE').toUpperCase()}</h2>
+                    <h2 className="text-2xl font-extrabold tracking-wider">INVOICE</h2>
                 </div>
             </header>
 
@@ -117,7 +118,7 @@ export const RoofingTemplate1: React.FC<PageProps> = (props) => {
                         {pageIndex === totalPages - 1 &&
                             <tfoot>
                                  <tr>
-                                    <td colSpan={3} className="p-2 text-right font-bold text-base">Total Estimated Cost</td>
+                                    <td colSpan={3} className="p-2 text-right font-bold text-base">Total Due</td>
                                     <td className="p-2 text-right font-bold text-base">{currencySymbol}{balanceDue.toFixed(2)}</td>
                                 </tr>
                             </tfoot>
@@ -226,7 +227,7 @@ export const RoofingTemplate3: React.FC<PageProps> = (props) => {
 
             <section className="grid grid-cols-3 gap-4 mb-8 text-xs p-4 bg-white rounded-lg shadow-sm">
                 <div><p className="font-bold text-gray-500">Client:</p><p>{client.name}<br/>{client.address}</p></div>
-                <div><p className="font-bold text-gray-500">Project Location:</p><p>{invoice.client.shippingAddress || client.address}</p></div>
+                <div><p className="font-bold text-gray-500">Project Location:</p><p>{client.shippingAddress || client.address}</p></div>
                 <div><p className="font-bold text-gray-500">Reference:</p><p>#{invoice.invoiceNumber}<br/>Date: {safeFormat(invoice.invoiceDate, 'dd-MMM-yyyy')}</p></div>
             </section>
             
@@ -267,7 +268,6 @@ export const RoofingTemplate3: React.FC<PageProps> = (props) => {
         </div>
     );
 };
-
 
 export const RoofingTemplate4: React.FC<PageProps> = (props) => <RoofingTemplate1 {...props} />;
 export const RoofingTemplate5: React.FC<PageProps> = (props) => <RoofingTemplate2 {...props} />;

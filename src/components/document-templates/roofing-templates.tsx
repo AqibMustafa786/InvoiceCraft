@@ -143,7 +143,7 @@ export const RoofingTemplate1: React.FC<TemplateProps> = ({ document, pageItems,
                         </div>
                          <div className="text-right">
                              <p className="text-xs mb-8">Date: {safeFormat(document.estimateDate, 'MMMM d, yyyy')}</p>
-                             <SignatureDisplay signature={document.business.ownerSignature} label={document.business.ownerSignature?.signerName || business.name} />
+                             <SignatureDisplay signature={document.business.ownerSignature} label={business.name} />
                          </div>
                     </div>
                      <div className="flex justify-between items-center text-xs text-gray-500 mt-8 pt-4 border-t">
@@ -297,11 +297,141 @@ export const RoofingTemplate3: React.FC<TemplateProps> = ({ document, pageItems,
     );
 };
 
+// Template 4: NEW - Clean Grid
+export const RoofingTemplate4: React.FC<TemplateProps> = ({ document, pageItems, pageIndex, totalPages, style }) => {
+    const { business, client, summary, currency } = document;
+    const currencySymbol = currencySymbols[currency] || '$';
+    const docTitle = document.documentType === 'quote' ? 'QUOTE' : 'ESTIMATE';
 
-export const RoofingTemplate4: React.FC<TemplateProps> = (props) => <RoofingTemplate1 {...props} />;
-export const RoofingTemplate5: React.FC<TemplateProps> = (props) => <RoofingTemplate2 {...props} />;
-export const RoofingTemplate6: React.FC<TemplateProps> = (props) => <RoofingTemplate3 {...props} />;
-export const RoofingTemplate7: React.FC<TemplateProps> = (props) => <RoofingTemplate1 {...props} />;
-export const RoofingTemplate8: React.FC<TemplateProps> = (props) => <RoofingTemplate2 {...props} />;
-export const RoofingTemplate9: React.FC<TemplateProps> = (props) => <RoofingTemplate3 {...props} />;
-export const RoofingTemplate10: React.FC<TemplateProps> = (props) => <RoofingTemplate1 {...props} />;
+    return (
+        <div className={`p-10 bg-white font-sans text-gray-800 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ minHeight: '1056px' }}>
+            <header className="flex justify-between items-start mb-8 pb-4 border-b">
+                <div>
+                    <h1 className="text-2xl font-bold">{business.name}</h1>
+                    <p className="text-xs">{business.address}</p>
+                </div>
+                <div className="text-right">
+                    <h2 className="text-3xl font-light">{docTitle}</h2>
+                </div>
+            </header>
+            <section className="grid grid-cols-2 gap-8 text-xs mb-8">
+                <div>
+                    <p className="font-bold mb-1">To:</p>
+                    <p>{client.name}</p>
+                    <p>{client.address}</p>
+                </div>
+                <div className="text-right">
+                    <p><strong>Estimate #:</strong> {document.estimateNumber}</p>
+                    <p><strong>Date:</strong> {safeFormat(document.estimateDate, 'MMM d, yyyy')}</p>
+                </div>
+            </section>
+            
+            {document.roofing && (
+                <section className="mb-8 text-xs">
+                    <p className="font-bold mb-2 text-center text-sm tracking-wider border-y py-1 bg-gray-50">SCOPE OF WORK</p>
+                    <RoofingDetails document={document} />
+                </section>
+            )}
+
+            <main className="flex-grow">
+                <table className="w-full text-left text-xs">
+                    <thead className="bg-gray-100">
+                        <tr>
+                            <th className="p-2 font-bold w-4/5">Description</th>
+                            <th className="p-2 font-bold text-right">Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {pageItems.map(item => (
+                            <tr key={item.id} className="border-b">
+                                <td className="p-2">{item.name}</td>
+                                <td className="p-2 text-right">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </main>
+            
+            {pageIndex === totalPages - 1 && (
+                <footer className="mt-auto pt-8 flex justify-end">
+                     <div className="w-1/3 text-sm">
+                         <p className="flex justify-between"><span>Subtotal:</span><span>{currencySymbol}{summary.subtotal.toFixed(2)}</span></p>
+                         <p className="flex justify-between border-b pb-1"><span>Tax:</span><span>{currencySymbol}{summary.taxAmount.toFixed(2)}</span></p>
+                         <p className="flex justify-between font-bold text-lg mt-2"><span>Total:</span><span>{currencySymbol}{summary.grandTotal.toFixed(2)}</span></p>
+                    </div>
+                </footer>
+            )}
+        </div>
+    );
+};
+
+// Template 5: NEW - Side Panel
+export const RoofingTemplate5: React.FC<TemplateProps> = ({ document, pageItems, pageIndex, totalPages, style }) => {
+    const { business, client, summary, currency } = document;
+    const currencySymbol = currencySymbols[currency] || '$';
+    const docTitle = document.documentType === 'quote' ? 'QUOTE' : 'ESTIMATE';
+
+    return (
+        <div className={`bg-white font-sans text-gray-800 flex ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ minHeight: '1056px' }}>
+            <div className="w-1/3 p-8 text-white" style={{ backgroundColor: style.color || '#4B5563' }}>
+                <h2 className="text-3xl font-bold mb-10">{docTitle}</h2>
+                <div className="text-sm space-y-4">
+                    <div>
+                        <p className="font-bold opacity-80 mb-1">Prepared For</p>
+                        <p>{client.name}</p>
+                    </div>
+                    <div>
+                        <p className="font-bold opacity-80 mb-1">Date</p>
+                        <p>{safeFormat(document.estimateDate, 'MMMM d, yyyy')}</p>
+                    </div>
+                    <div>
+                        <p className="font-bold opacity-80 mb-1">Estimate #</p>
+                        <p>{document.estimateNumber}</p>
+                    </div>
+                </div>
+            </div>
+            <div className="w-2/3 p-10 flex flex-col">
+                <header className="mb-10 text-right">
+                    <h1 className="text-2xl font-bold">{business.name}</h1>
+                    <p className="text-xs text-gray-500">{business.address}</p>
+                </header>
+
+                {document.roofing && (
+                    <section className="mb-8 text-xs">
+                        <p className="font-bold mb-2 text-center text-sm tracking-wider border-y py-1 bg-gray-50">Project Details</p>
+                        <RoofingDetails document={document} />
+                    </section>
+                )}
+
+                <main className="flex-grow">
+                    <table className="w-full text-left text-sm">
+                        <thead className="border-b">
+                            <tr>
+                                <th className="pb-2 font-bold w-4/5">Description</th>
+                                <th className="pb-2 font-bold text-right">Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {pageItems.map(item => (
+                                <tr key={item.id}>
+                                    <td className="py-2 border-b">{item.name}</td>
+                                    <td className="py-2 border-b text-right">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </main>
+                {pageIndex === totalPages - 1 && (
+                    <footer className="mt-auto pt-8 text-right">
+                        <div className="inline-block w-1/2 text-sm">
+                            <p className="flex justify-between"><span>Subtotal:</span><span>{currencySymbol}{summary.subtotal.toFixed(2)}</span></p>
+                            <p className="flex justify-between"><span>Tax:</span><span>{currencySymbol}{summary.taxAmount.toFixed(2)}</span></p>
+                            <div className="w-full h-px bg-gray-300 my-2"></div>
+                            <p className="flex justify-between font-bold text-lg"><span>Total:</span><span>{currencySymbol}{summary.grandTotal.toFixed(2)}</span></p>
+                        </div>
+                    </footer>
+                )}
+            </div>
+        </div>
+    );
+};
