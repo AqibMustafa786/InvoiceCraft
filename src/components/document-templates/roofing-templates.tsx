@@ -143,7 +143,7 @@ export const RoofingTemplate1: React.FC<TemplateProps> = ({ document, pageItems,
                         </div>
                          <div className="text-right">
                              <p className="text-xs mb-8">Date: {safeFormat(document.estimateDate, 'MMMM d, yyyy')}</p>
-                             <SignatureDisplay signature={document.business.ownerSignature} label="David Martinez" />
+                             <SignatureDisplay signature={document.business.ownerSignature} label={document.business.ownerSignature?.signerName || business.name} />
                          </div>
                     </div>
                      <div className="flex justify-between items-center text-xs text-gray-500 mt-8 pt-4 border-t">
