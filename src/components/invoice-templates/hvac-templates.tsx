@@ -1,5 +1,4 @@
 
-
 'use client';
 
 import React from 'react';
@@ -139,12 +138,9 @@ export const HVACTemplate1: React.FC<PageProps> = (props) => {
                     <div className="w-1/2 text-xs">
                         <p className="font-bold mb-1" style={{ color: accentColor }}>{(t.termsAndConditions || 'TERMS & CONDITION')}:</p>
                         <p className="whitespace-pre-line">{invoice.paymentInstructions}</p>
-                        {business.ownerSignature && (
-                           <div className="mt-8">
-                               <p className="text-sm font-semibold text-gray-500">Authorized Signature</p>
-                               <Image src={business.ownerSignature.image} alt="Owner Signature" width={150} height={75} />
-                           </div>
-                       )}
+                         <div className="flex gap-16 mt-8">
+                            <SignatureDisplay signature={business.ownerSignature} label={(t.authorizedSignature || 'Authorized Signature')} />
+                        </div>
                     </div>
                      <div className="w-2/5">
                         <div className="space-y-1 text-xs">
@@ -152,8 +148,8 @@ export const HVACTemplate1: React.FC<PageProps> = (props) => {
                             {discountAmount > 0 && <div className="flex justify-between p-1"><span>{(t.discount || 'Discount')}:</span><span className="font-medium text-red-500">-{currencySymbol}{discountAmount.toFixed(2)}</span></div>}
                             {invoice.summary.shippingCost > 0 && <div className="flex justify-between p-1"><span>{(t.shipping || 'Shipping')}:</span><span className="font-medium">{currencySymbol}{invoice.summary.shippingCost.toFixed(2)}</span></div>}
                             <div className="flex justify-between p-1"><span>{(t.tax || 'Tax')} ({invoice.summary.taxPercentage}%):</span><span className="font-medium">{currencySymbol}{taxAmount.toFixed(2)}</span></div>
-                            <div className="flex justify-between font-bold p-1 border-t"><span >{(t.total || 'Total')}:</span><span >{currencySymbol}{total.toFixed(2)}</span></div>
-                             {(invoice.amountPaid || 0) > 0 && <div className="flex justify-between p-1 text-green-600"><span className="font-bold">{(t.amountPaid || 'Amount Paid')}:</span><span className="font-medium">-{currencySymbol}{(invoice.amountPaid || 0).toFixed(2)}</span></div>}
+                            <div className="flex justify-between p-1 font-bold"><span>{(t.total || 'Total')}:</span><span>{currencySymbol}{total.toFixed(2)}</span></div>
+                            {(invoice.amountPaid || 0) > 0 && <div className="flex justify-between p-1 text-green-600"><span className="font-bold">{(t.amountPaid || 'Amount Paid')}:</span><span className="font-medium">-{currencySymbol}{(invoice.amountPaid || 0).toFixed(2)}</span></div>}
                             <div className="flex justify-between p-2 mt-1 border-t-2 border-gray-400 font-bold" style={{ color: accentColor }}><span className="text-base">{(t.balanceDue || 'BALANCE DUE')}:</span><span className="text-base">{currencySymbol}{balanceDue.toFixed(2)}</span></div>
                         </div>
                     </div>
@@ -239,14 +235,12 @@ export const HVACTemplate2: React.FC<PageProps> = (props) => {
                         </div>
                     </div>
                     <div className="mt-8 text-xs">
-                        <p className="font-bold tracking-wider">{(t.notes || 'NOTES').toUpperCase()}</p>
+                        <p className="font-bold tracking-wider">{(t.termsAndConditions || 'TERMS & CONDITIONS')}</p>
                         <p className="whitespace-pre-line">{invoice.paymentInstructions}</p>
                     </div>
-                    {business.ownerSignature && (
-                        <div className="mt-8">
-                            <SignatureDisplay signature={business.ownerSignature} label="Authorized Signature" />
-                        </div>
-                    )}
+                    <div className="flex justify-between mt-8">
+                        <SignatureDisplay signature={business.ownerSignature} label={(t.authorizedSignature || 'Authorized Signature')} />
+                    </div>
                 </footer>
             )}
         </div>
@@ -275,8 +269,8 @@ export const HVACTemplate3: React.FC<PageProps> = (props) => {
 
             <section className="mb-8 p-4 border rounded-md grid grid-cols-3 gap-4 text-xs">
                 <div><p className="font-bold">{(t.from || 'From')}:</p><p>{business.name}<br/>{business.address}</p></div>
-                <div><p className="font-bold">{(t.to || 'To')}:</p><p>{client.name}<br/>{client.address}</p></div>
-                <div><p className="font-bold">{(t.details || 'Details')}:</p><p>{(t.date || 'Date')}: {safeFormat(invoice.invoiceDate, 'MM-dd-yyyy')}<br/>Due: {safeFormat(invoice.dueDate, 'MM-dd-yyyy')}</p></div>
+                <div><p className="font-bold">{(t.to || 'To')}:</p><p>{client.name}<br/>{client.address}<br/>{client.email}</p></div>
+                <div><p className="font-bold">{(t.details || 'Details')}:</p><p>{(t.date || 'Date')}: {safeFormat(invoice.invoiceDate, 'MM-dd-yyyy')}<br/>Due: {safeFormat(invoice.dueDate, 'MM-dd-yyyy')}<br/>PO: {invoice.poNumber}</p></div>
             </section>
             
              <HvacDetails invoice={invoice} t={t}/>
@@ -333,51 +327,4 @@ export const HVACTemplate4: React.FC<PageProps> = (props) => <HVACTemplate1 {...
 export const HVACTemplate5: React.FC<PageProps> = (props) => <HVACTemplate2 {...props} />;
 export const HVACTemplate6: React.FC<PageProps> = (props) => <HVACTemplate3 {...props} />;
 
-```
-- src/components/marquee.tsx:
-    <content><![CDATA[import { cn } from '@/lib/utils';
-
-const Marquee = () => {
-  const slogans = [
-    'From Hustle to Paid, Seamlessly.',
-    'Your Work, Billed Beautifully.',
-    'Crafting Clarity in Every Document.',
-    'Effortless Invoicing, Elevated.',
-  ];
-
-  const repeatedSlogans = Array(4).fill(slogans).flat();
-
-  return (
-    <div className="relative flex w-full overflow-x-hidden">
-      <div className="py-4 animate-marquee whitespace-nowrap flex">
-        {repeatedSlogans.map((slogan, index) => (
-          <span
-            key={index}
-            className={cn(
-              'mx-4 text-xl font-semibold',
-              index % 2 === 0 ? 'text-muted-foreground' : 'text-foreground'
-            )}
-          >
-            {slogan}
-          </span>
-        ))}
-      </div>
-
-       <div className="absolute top-0 py-4 animate-marquee-cont whitespace-nowrap flex">
-        {repeatedSlogans.map((slogan, index) => (
-          <span
-            key={index}
-            className={cn(
-              'mx-4 text-xl font-semibold',
-              index % 2 === 0 ? 'text-muted-foreground' : 'text-foreground'
-            )}
-          >
-            {slogan}
-          </span>
-        ))}
-      </div>
-    </div>
-  );
-};
-
-export default Marquee;
+    
