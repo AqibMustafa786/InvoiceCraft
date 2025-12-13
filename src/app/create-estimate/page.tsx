@@ -15,7 +15,7 @@ import { useToast } from '@/hooks/use-toast';
 import Link from 'next/link';
 import { useFirebase, useMemoFirebase } from '@/firebase';
 import { useAuth } from '@/context/auth-provider';
-import { doc, serverTimestamp, Timestamp, collection, addDoc, getDoc, setDoc } from 'firebase/firestore';
+import { doc, serverTimestamp, Timestamp, collection, addDoc, getDoc, setDoc, getDocs, query, where, CollectionReference } from 'firebase/firestore';
 import { setDocumentNonBlocking } from '@/firebase/non-blocking-updates';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useDoc } from '@/firebase/firestore/use-doc';
@@ -579,4 +579,3 @@ export default function CreateEstimatePage() {
     </>
   );
 }
-
