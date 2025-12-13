@@ -443,5 +443,3 @@ export const AutoRepairTemplate5: React.FC<TemplateProps> = ({ document, pageIte
         </div>
     );
 };
-
-    

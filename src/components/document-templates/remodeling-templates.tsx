@@ -188,6 +188,7 @@ export const RemodelingTemplate2: React.FC<TemplateProps> = ({ document, pageIte
                 <div className="text-xs">
                      <p className="font-bold text-gray-500 mb-1" style={{color: textColor}}>{t.client || 'Client'}</p>
                      <p className="font-semibold">{client.name}</p>
+                     <p>{client.companyName}</p>
                      <p>{client.address}</p>
                      <p>{client.email}</p>
                      <p>{client.phone}</p>
@@ -450,5 +451,3 @@ export const RemodelingTemplate5: React.FC<TemplateProps> = ({ document, pageIte
         </div>
     );
 };
-
-    

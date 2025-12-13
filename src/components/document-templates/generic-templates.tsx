@@ -1,3 +1,4 @@
+
 'use client';
 
 import React from 'react';
@@ -135,12 +136,12 @@ export const GenericTemplate2: React.FC<TemplateProps> = ({ document, pageItems,
         <div className={`p-0 font-sans text-gray-800 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: style.fontFamily, fontSize: `${style.fontSize}pt`, minHeight: '1056px', backgroundColor: document.backgroundColor }}>
             <header className="p-10 text-white flex justify-between items-start" style={{ backgroundColor: '#1F2937' }}>
                 <div>
-                     {business.logoUrl && <Image src={business.logoUrl} alt="Logo" width={120} height={50} className="mb-2 object-contain filter invert brightness-0" />}
-                    <h1 className="text-4xl font-bold mt-2">{business.name}</h1>
+                     {business.logoUrl ? <Image src={business.logoUrl} alt="Logo" width={120} height={50} className="mb-2 object-contain filter invert brightness-0" /> : <h1 className="text-4xl font-bold">{business.name}</h1>}
                      <div className="text-xs space-y-0.5 mt-2" style={{ color: '#D1D5DB' }}>
                         <p className="whitespace-pre-line">{business.address}</p>
                         {business.phone && <p>{business.phone}</p>}
                         {business.email && <p>{business.email}</p>}
+                        {business.website && <p>{business.website}</p>}
                     </div>
                 </div>
                 <div className="text-right">
@@ -226,11 +227,11 @@ export const GenericTemplate3: React.FC<TemplateProps> = ({ document, pageItems,
         <div className={`p-10 font-sans text-gray-700 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: style.fontFamily, fontSize: `${style.fontSize}pt`, minHeight: '1056px', backgroundColor: document.backgroundColor, color: textColor }}>
             <header className="flex justify-between items-start mb-12">
                  <div>
-                    {business.logoUrl && <Image src={business.logoUrl} alt="Logo" width={80} height={40} className="mb-2 object-contain" />}
-                    <h1 className="text-4xl font-light tracking-wider mb-1">{business.name}</h1>
+                    {business.logoUrl ? <Image src={business.logoUrl} alt="Logo" width={80} height={40} className="mb-2 object-contain" /> : <h1 className="text-4xl font-light tracking-wider mb-1">{business.name}</h1>}
                     <div className="text-xs" style={{ color: textColor || '#6B7280' }}>
                         <p>{business.phone}</p>
                         <p>{business.email}</p>
+                        {business.website && <p>{business.website}</p>}
                     </div>
                 </div>
                 <div className="text-right">
@@ -300,8 +301,7 @@ export const GenericTemplate4: React.FC<TemplateProps> = ({ document, pageItems,
     return (
         <div className={`font-sans text-gray-800 flex ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: style.fontFamily, fontSize: `${style.fontSize}pt`, minHeight: '1056px', backgroundColor: document.backgroundColor }}>
             <div className="w-1/4 p-8 text-white" style={{ backgroundColor: style.color }}>
-                {business.logoUrl && <Image src={business.logoUrl} alt="Logo" width={80} height={80} className="mb-4 object-contain filter invert brightness-0" />}
-                <h1 className="text-4xl font-bold mb-2">{business.name}</h1>
+                {business.logoUrl ? <Image src={business.logoUrl} alt="Logo" width={80} height={80} className="mb-4 object-contain filter invert brightness-0" /> : <h1 className="text-4xl font-bold mb-2">{business.name}</h1>}
                 <div className="text-sm space-y-4 mt-8">
                   <div>
                     <p className="font-bold opacity-80 mb-1">{t.client || 'CLIENT'}</p>
@@ -394,7 +394,6 @@ export const GenericTemplate5: React.FC<TemplateProps> = ({ document, pageItems,
                     <p className="font-bold text-base">{client.name}</p>
                     {client.companyName && <p>{client.companyName}</p>}
                     <p className="whitespace-pre-line">{client.address}</p>
-                    {client.phone && <p>{client.phone}</p>}
                 </div>
                 <div className="p-4 bg-gray-50 rounded">
                     <p className="font-bold text-gray-500 mb-2" style={{color: textColor}}>{(t.details || 'DETAILS')}</p>

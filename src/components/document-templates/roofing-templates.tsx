@@ -269,12 +269,7 @@ export const RoofingTemplate3: React.FC<TemplateProps> = ({ document, pageItems,
             <main className="flex-grow bg-white p-4 rounded-lg shadow-sm">
                 <table className="w-full text-left text-xs">
                     <thead>
-                        <tr style={{ backgroundColor: `${accentColor}1A`}} className="border-b-2" style={{ borderColor: accentColor }}>
-                            <th className="py-2 px-2 font-bold w-[50%]">Item Description</th>
-                            <th className="py-2 px-2 font-bold text-center">Qty</th>
-                            <th className="py-2 px-2 font-bold text-right">Price</th>
-                            <th className="py-2 px-2 font-bold text-right">Total</th>
-                        </tr>
+                        <tr style={{ backgroundColor: `${accentColor}1A`}} className="border-b-2" style={{ borderColor: accentColor }}><th className="py-2 px-2 font-bold w-[50%]">Item Description</th><th className="py-2 px-2 font-bold text-center">Qty</th><th className="py-2 px-2 font-bold text-right">Price</th><th className="py-2 px-2 font-bold text-right">Total</th></tr>
                     </thead>
                     <tbody>
                         {pageItems.map(item => (
@@ -303,142 +298,10 @@ export const RoofingTemplate3: React.FC<TemplateProps> = ({ document, pageItems,
 };
 
 
-// Template 4: Corporate Clean
-export const RoofingTemplate4: React.FC<TemplateProps> = ({ document, pageItems, pageIndex, totalPages, style }) => {
-    const { business, client, summary, currency, category } = document;
-    const currencySymbol = currencySymbols[currency] || '$';
-    const docTitle = document.documentType === 'quote' ? 'QUOTE' : 'ESTIMATE';
-
-    return (
-        <div className={`p-10 bg-white font-sans text-gray-800 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: 'Helvetica, sans-serif', fontSize: '9pt', minHeight: '1056px' }}>
-            <header className="flex justify-between items-start mb-8">
-                <div>
-                    <h1 className="text-4xl font-bold">{business.name}</h1>
-                    <p className="text-xs text-gray-500 whitespace-pre-line">{business.address}</p>
-                </div>
-                <div className="text-right">
-                    {business.logoUrl && <Image src={business.logoUrl} alt="Logo" width={90} height={45} className="object-contain ml-auto mb-2"/>}
-                    <h2 className="text-3xl font-semibold text-gray-400">{docTitle}</h2>
-                </div>
-            </header>
-
-            <section className="mb-8 text-xs p-4 border border-gray-200">
-                <div className="grid grid-cols-2 gap-4">
-                    <div><p className="font-bold">CUSTOMER:</p><p>{client.name}<br/>{client.address}</p></div>
-                    <div><p className="font-bold">ESTIMATE #:</p><p>{document.estimateNumber}</p><p className="font-bold mt-2">DATE:</p><p>{safeFormat(document.estimateDate, 'MM/dd/yyyy')}</p></div>
-                </div>
-                 {document.roofing && (
-                    <div className="mt-4 pt-4 border-t border-gray-200">
-                        <p className="font-bold mb-1">PROJECT SPECS</p>
-                        <RoofingDetails document={document} />
-                    </div>
-                )}
-            </section>
-            
-            <main className="flex-grow">
-                 <table className="w-full text-left text-xs">
-                    <thead>
-                        <tr className="bg-gray-100 border-b-2 border-gray-300">
-                            <th className="p-2 font-bold w-[60%]">DESCRIPTION</th>
-                            <th className="p-2 font-bold text-center">QTY</th>
-                            <th className="p-2 font-bold text-right">UNIT PRICE</th>
-                            <th className="p-2 font-bold text-right">TOTAL</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {pageItems.map(item => (
-                            <tr key={item.id} className="border-b">
-                                <td className="p-2 align-top whitespace-pre-line">{item.name}</td>
-                                <td className="p-2 align-top text-center">{item.quantity}</td>
-                                <td className="p-2 align-top text-right">{currencySymbol}{item.unitPrice.toFixed(2)}</td>
-                                <td className="p-2 align-top text-right font-medium">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
-            </main>
-            
-            {pageIndex === totalPages - 1 && (
-                <footer className="mt-auto pt-8">
-                     <div className="flex justify-end">
-                        <table className="w-1/3 text-sm">
-                            <tbody>
-                                <tr><td className="py-1 text-gray-600">Subtotal</td><td className="py-1 text-right">{currencySymbol}{summary.subtotal.toFixed(2)}</td></tr>
-                                <tr><td className="py-1 text-gray-600">Tax</td><td className="py-1 text-right">{currencySymbol}{summary.taxAmount.toFixed(2)}</td></tr>
-                                <tr className="font-bold text-base border-t-2 border-black"><td className="py-2">Total</td><td className="py-2 text-right">{currencySymbol}{summary.grandTotal.toFixed(2)}</td></tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </footer>
-            )}
-        </div>
-    );
-};
-
-// Template 5: Minimal & Wide
-export const RoofingTemplate5: React.FC<TemplateProps> = ({ document, pageItems, pageIndex, totalPages, style }) => {
-    const { business, client, summary, currency, category } = document;
-    const currencySymbol = currencySymbols[currency] || '$';
-    const docTitle = document.documentType === 'quote' ? 'QUOTE' : 'ESTIMATE';
-
-    return (
-        <div className={`p-12 bg-white font-['Garamond',_serif] text-gray-700 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ minHeight: '1056px' }}>
-            <header className="flex justify-between items-start mb-16">
-                <div>
-                    <h1 className="text-3xl font-bold tracking-widest">{business.name}</h1>
-                    <p className="text-xs">{business.address}</p>
-                </div>
-                <div className="text-right">
-                    <p className="text-2xl">{docTitle}</p>
-                </div>
-            </header>
-
-            <section className="flex justify-between mb-10 text-xs">
-                <div><p className="font-bold">TO:</p><p>{client.name}</p></div>
-                <div className="text-right"><p><span className="font-bold">ESTIMATE NO:</span> {document.estimateNumber}</p><p><span className="font-bold">DATE:</span> {safeFormat(document.estimateDate, 'MMM dd, yyyy')}</p></div>
-            </section>
-            
-             {document.roofing && (
-                <section className="mb-8 text-xs">
-                    <p className="font-bold border-b border-gray-500 pb-1 mb-2">Project Information</p>
-                    <RoofingDetails document={document} />
-                </section>
-            )}
-
-            <main className="flex-grow">
-                <table className="w-full text-left text-xs">
-                    <thead>
-                        <tr>
-                            <th className="p-2 font-semibold w-3/5 border-b border-gray-500">ITEM</th>
-                            <th className="p-2 font-semibold text-center border-b border-gray-500">QTY</th>
-                            <th className="p-2 font-semibold text-right border-b border-gray-500">RATE</th>
-                            <th className="p-2 font-semibold text-right border-b border-gray-500">AMOUNT</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {pageItems.map(item => (
-                            <tr key={item.id}>
-                                <td className="py-2 px-2 border-b border-gray-200 whitespace-pre-line">{item.name}</td>
-                                <td className="py-2 px-2 border-b border-gray-200 text-center">{item.quantity}</td>
-                                <td className="py-2 px-2 border-b border-gray-200 text-right">{currencySymbol}{item.unitPrice.toFixed(2)}</td>
-                                <td className="py-2 px-2 border-b border-gray-200 text-right">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
-            </main>
-            
-            {pageIndex === totalPages - 1 && (
-                <footer className="mt-auto pt-8 flex justify-end">
-                    <table className="w-1/3 text-xs">
-                         <tbody>
-                            <tr><td className="py-1">Subtotal</td><td className="text-right">{currencySymbol}{summary.subtotal.toFixed(2)}</td></tr>
-                            <tr className="border-b"><td className="py-1">Tax</td><td className="text-right">{currencySymbol}{summary.taxAmount.toFixed(2)}</td></tr>
-                            <tr className="font-bold text-lg"><td className="pt-2">Total</td><td className="pt-2 text-right">{currencySymbol}{summary.grandTotal.toFixed(2)}</td></tr>
-                        </tbody>
-                    </table>
-                </footer>
-            )}
-        </div>
-    );
-};
+export const RoofingTemplate4: React.FC<TemplateProps> = (props) => <RoofingTemplate1 {...props} />;
+export const RoofingTemplate5: React.FC<TemplateProps> = (props) => <RoofingTemplate2 {...props} />;
+export const RoofingTemplate6: React.FC<TemplateProps> = (props) => <RoofingTemplate3 {...props} />;
+export const RoofingTemplate7: React.FC<TemplateProps> = (props) => <RoofingTemplate1 {...props} />;
+export const RoofingTemplate8: React.FC<TemplateProps> = (props) => <RoofingTemplate2 {...props} />;
+export const RoofingTemplate9: React.FC<TemplateProps> = (props) => <RoofingTemplate3 {...props} />;
+export const RoofingTemplate10: React.FC<TemplateProps> = (props) => <RoofingTemplate1 {...props} />;
