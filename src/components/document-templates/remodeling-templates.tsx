@@ -94,7 +94,6 @@ export const RemodelingTemplate1: React.FC<TemplateProps> = ({ document, pageIte
                         <p><span className="font-bold">{t.address || 'Address'}:</span> {client.address}</p>
                         <p><span className="font-bold">{t.phone || 'Phone'}:</span> {client.phone}</p>
                         <p><span className="font-bold">{t.email || 'Email'}:</span> {client.email}</p>
-                        <p><span className="font-bold">{t.date || 'Date'}:</span> {safeFormat(document.estimateDate, 'MMMM d, yyyy')}</p>
                     </div>
                 </section>
 
@@ -252,6 +251,9 @@ export const RemodelingTemplate2: React.FC<TemplateProps> = ({ document, pageIte
                          <p className="font-bold mb-1">{t.notesAndTerms || 'Notes and Terms'}</p>
                          <p className="whitespace-pre-line">{document.termsAndConditions}</p>
                      </div>
+                     <div className="flex justify-end mt-4">
+                        <SignatureDisplay signature={document.business.ownerSignature} label={(t.authorizedSignature || 'Authorized Signature')} style={{alignItems: 'flex-end', textAlign: 'right'}} />
+                    </div>
                 </footer>
             )}
         </div>
@@ -420,6 +422,9 @@ export const RemodelingTemplate4: React.FC<TemplateProps> = ({ document, pageIte
                             </tbody>
                         </table>
                     </div>
+                    <div className="flex justify-end mt-4">
+                       <SignatureDisplay signature={document.business.ownerSignature} label={(t.authorizedSignature || 'Authorized Signature')} style={{alignItems: 'flex-end', textAlign: 'right'}} />
+                    </div>
                 </footer>
             )}
         </div>
@@ -437,8 +442,10 @@ export const RemodelingTemplate5: React.FC<TemplateProps> = ({ document, pageIte
             <header className="flex justify-between items-start mb-12">
                 <div>
                     <h1 className="text-4xl font-bold">{business.name}</h1>
-                    {business.licenseNumber && <p className="text-xs text-gray-500 mt-2">Lic #: {business.licenseNumber}</p>}
-                    {business.taxId && <p className="text-xs text-gray-500 mt-1">Tax ID: {business.taxId}</p>}
+                    <div className="text-xs text-gray-500" style={{color: textColor}}>
+                        {business.licenseNumber && <p className="mt-2">Lic #: {business.licenseNumber}</p>}
+                        {business.taxId && <p className="mt-1">Tax ID: {business.taxId}</p>}
+                    </div>
                 </div>
             </header>
 
@@ -493,6 +500,9 @@ export const RemodelingTemplate5: React.FC<TemplateProps> = ({ document, pageIte
                              <div className="flex justify-between"><span className="text-gray-600" style={{color: textColor}}>{t.tax || 'Tax'}</span><span>{currencySymbol}{summary.taxAmount.toFixed(2)}</span></div>
                              <div className="flex justify-between font-bold text-lg mt-2 pt-2 border-t border-gray-800"><span>{t.total || 'TOTAL'}</span><span>{currencySymbol}{summary.grandTotal.toFixed(2)}</span></div>
                         </div>
+                    </div>
+                     <div className="flex justify-end mt-4">
+                       <SignatureDisplay signature={document.business.ownerSignature} label={(t.authorizedSignature || 'Authorized Signature')} style={{alignItems: 'flex-end', textAlign: 'right'}} />
                     </div>
                 </footer>
             )}
