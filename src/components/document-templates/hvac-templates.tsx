@@ -34,7 +34,7 @@ const SignatureDisplay = ({ signature, label, style }: { signature: any, label: 
     )
 }
 
-const HvacDetails: React.FC<{ document: Estimate; textColor: string; t: any; }> = ({ document, textColor, t }) => {
+const HvacDetails: React.FC<{ document: Estimate; textColor: string, t: any; }> = ({ document, textColor, t }) => {
     if (!document.hvac) return null;
     const { hvac } = document;
     return (
@@ -222,14 +222,14 @@ export const HVACTemplate2: React.FC<TemplateProps> = ({ document, pageItems, pa
                      <div className="flex justify-end">
                         <div className="w-1/3 text-sm space-y-1">
                              <div className="flex justify-between p-1"><span>{t.subtotal || 'Subtotal'}:</span><span className="">{currencySymbol}{summary.subtotal.toFixed(2)}</span></div>
-                             {summary.discount > 0 && <div className="flex justify-between p-1"><span>{t.discount || 'Discount'}:</span><span className="text-red-500">-{currencySymbol}{summary.discount.toFixed(2)}</span></div>}
-                            {summary.shippingCost > 0 && <div className="flex justify-between p-1"><span>{t.shipping || 'Shipping'}:</span><span>{currencySymbol}{summary.shippingCost.toFixed(2)}</span></div>}
+                             {summary.discount > 0 && <div className="flex justify-between p-1 text-red-500"><span>{t.discount || 'Discount'}:</span><span className="">-{currencySymbol}{summary.discount.toFixed(2)}</span></div>}
+                             {summary.shippingCost > 0 && <div className="flex justify-between p-1"><span>{t.shipping || 'Shipping'}:</span><span>{currencySymbol}{summary.shippingCost.toFixed(2)}</span></div>}
                             <div className="flex justify-between p-1"><span>{t.tax || 'Tax'}:</span><span className="">{currencySymbol}{summary.taxAmount.toFixed(2)}</span></div>
                             <div className="flex justify-between font-bold text-base mt-2 pt-2 border-t-2" style={{ borderColor: accentColor }}><span style={{ color: accentColor }}>{t.total || 'Total'}:</span><span>{currencySymbol}{summary.grandTotal.toFixed(2)}</span></div>
                         </div>
                     </div>
                     <div className="mt-8 text-xs">
-                        <p className="font-bold tracking-wider">{t.notes || 'NOTES'}</p>
+                        <p className="font-bold tracking-wider">{t.termsAndConditions || 'TERMS & CONDITIONS'}</p>
                         <p className="whitespace-pre-line">{document.termsAndConditions}</p>
                     </div>
                     <div className="flex justify-between mt-8">
@@ -295,7 +295,7 @@ export const HVACTemplate3: React.FC<TemplateProps> = ({ document, pageItems, pa
             {pageIndex === totalPages - 1 && (
                  <footer className="mt-auto pt-8 flex justify-between items-start">
                      <div className="w-1/2 text-xs">
-                         <p className="font-bold mb-1">{t.terms || 'TERMS'}</p>
+                         <p className="font-bold mb-1">{t.termsAndConditions || 'TERMS'}</p>
                          <p className="whitespace-pre-line">{document.termsAndConditions}</p>
                          <div className="flex gap-16 mt-8">
                             <SignatureDisplay signature={document.business.ownerSignature} label={(t.authorizedSignature || 'Authorized Signature')} />
@@ -445,6 +445,7 @@ export const HVACTemplate5: React.FC<TemplateProps> = ({ document, pageItems, pa
                                  <div className="flex justify-between font-bold text-lg mt-2 pt-2 border-t border-gray-800"><span>{t.totalEstimate || 'Total Estimate'}:</span><span>{currencySymbol}{summary.grandTotal.toFixed(2)}</span></div>
                             </div>
                         </div>
+                        <p className="whitespace-pre-line mt-4 text-xs">{document.termsAndConditions}</p>
                         <div className="flex justify-between mt-8">
                             <SignatureDisplay signature={document.business.ownerSignature} label={(t.authorizedSignature || 'Authorized Signature')} />
                             <SignatureDisplay signature={document.clientSignature} label={(t.clientSignature || 'Client Signature')} />
