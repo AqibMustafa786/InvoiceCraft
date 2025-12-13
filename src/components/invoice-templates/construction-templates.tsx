@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import React from 'react';
@@ -82,7 +83,7 @@ export const ConstructionTemplate1: React.FC<PageProps> = (props) => {
             
             <section className="grid grid-cols-2 gap-8 text-xs mb-8">
                 <div>
-                    <p className="font-bold">{t.client || 'Client'}</p>
+                    <p className="font-bold">{(t.client || 'Client')}</p>
                     <p>{client.name}</p>
                     <p className="whitespace-pre-line">{client.address}</p>
                     <p>{client.phone}</p>
@@ -264,9 +265,9 @@ export const ConstructionTemplate3: React.FC<PageProps> = (props) => {
             </header>
 
             <section className="mb-8 p-4 border rounded-md grid grid-cols-3 gap-4 text-xs">
-                <div><p className="font-bold">{(t.from || 'From')}:</p><p>{business.name}</p><p>{business.address}</p></div>
-                <div><p className="font-bold">{(t.to || 'To')}:</p><p>{client.name}</p><p>{client.address}</p></div>
-                <div><p className="font-bold">{(t.details || 'Details')}:</p><p># {invoice.invoiceNumber}</p><p>{(t.date || 'Date')}: {safeFormat(invoice.invoiceDate, 'MM-dd-yyyy')}</p></div>
+                <div><p className="font-bold">{(t.from || 'From')}:</p><p>{business.name}<br/>{business.address}</p></div>
+                <div><p className="font-bold">{(t.to || 'To')}:</p><p>{client.name}<br/>{client.address}<br/>{client.phone}<br/>{client.email}</p></div>
+                <div><p className="font-bold">{(t.details || 'Details')}:</p><p># {invoice.invoiceNumber}<br/>{(t.date || 'Date')}: {safeFormat(invoice.invoiceDate, 'MM-dd-yyyy')}<br/>PO: {invoice.poNumber}</p></div>
             </section>
             
              <ConstructionDetails invoice={invoice} t={t} />
@@ -397,8 +398,7 @@ export const ConstructionTemplate4: React.FC<PageProps> = (props) => {
                             </tbody>
                         </table>
                     </div>
-                    <div className="flex justify-between mt-8">
-                        <p className="text-xs max-w-md">{invoice.paymentInstructions}</p>
+                    <div className="flex justify-end mt-4">
                        {business.ownerSignature && <SignatureDisplay signature={business.ownerSignature} label="Authorized Signature" />}
                     </div>
                 </footer>
@@ -428,6 +428,7 @@ export const ConstructionTemplate5: React.FC<PageProps> = (props) => {
                     <p>{client.name}</p>
                     <p>{client.address}</p>
                     <p>{client.email}</p>
+                    <p>{client.phone}</p>
                 </div>
                 <div>
                      <p className="font-bold text-gray-500">{(t.details || 'DETAILS')}</p>
