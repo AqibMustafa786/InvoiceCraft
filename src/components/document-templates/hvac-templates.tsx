@@ -1,3 +1,4 @@
+
 'use client';
 
 import React from 'react';
@@ -23,15 +24,14 @@ const safeFormat = (date: Date | string | number | undefined | null, formatStrin
     return format(d, formatString);
 }
 
-const SignatureDisplay = ({ signature, label }: { signature: any, label: string }) => {
+const SignatureDisplay = ({ signature, label, style }: { signature: any, label: string, style?: React.CSSProperties }) => {
     if (!signature?.image) return null;
     return (
-        <div className="mt-8">
-            <p className="text-xs text-gray-500">{label}</p>
-            <Image src={signature.image} alt={label} width={150} height={75} className="mt-1" />
-            <p className="text-xs border-t border-gray-400 pt-1 w-[150px]">{signature.signerName}</p>
+        <div className="mt-8" style={style}>
+            <Image src={signature.image} alt={label} width={150} height={75} className="border-b" style={{borderColor: '#374151'}} />
+            <p className="text-xs pt-1 border-t-2 w-[150px]" style={{borderColor: '#374151'}}>{label}</p>
         </div>
-    );
+    )
 }
 
 const HvacDetails: React.FC<{ document: Estimate; textColor: string; t: any; }> = ({ document, textColor, t }) => {
@@ -63,7 +63,7 @@ export const HVACTemplate1: React.FC<TemplateProps> = ({ document, pageItems, pa
     const docTitle = document.documentType === 'quote' ? (t.quote || 'QUOTE') : (t.estimate || 'ESTIMATE');
     
     return (
-        <div className={`p-8 bg-white font-sans text-gray-800 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: 'Arial, sans-serif', fontSize: `9pt`, minHeight: '1056px', color: textColor }}>
+        <div className={`p-8 bg-white font-sans text-gray-800 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: 'Arial, sans-serif', fontSize: `9pt`, minHeight: '1056px', color: textColor, backgroundColor: document.backgroundColor }}>
             <header className="flex justify-between items-start pb-4 border-b-2" style={{ borderColor: style.color }}>
                 <div className="flex items-center gap-4">
                      {business.logoUrl && <Image src={business.logoUrl} alt="Logo" width={50} height={50} className="object-contain" />}
@@ -82,11 +82,7 @@ export const HVACTemplate1: React.FC<TemplateProps> = ({ document, pageItems, pa
             </header>
 
             <section className="grid grid-cols-2 gap-4 my-6 text-xs border-b pb-6">
-                <div>
-                    <p className="font-bold text-gray-500 mb-1">{t.serviceContractor || 'SERVICE CONTRACTOR'}</p>
-                    <p>{business.name}</p>
-                </div>
-                <div className="p-4 bg-gray-50 rounded-md">
+                 <div>
                     <p className="font-bold text-gray-500 mb-1">{t.clientInformation || 'CLIENT INFORMATION'}</p>
                     <p className="font-semibold">{client.name}</p>
                     {client.companyName && <p>{client.companyName}</p>}
@@ -94,16 +90,20 @@ export const HVACTemplate1: React.FC<TemplateProps> = ({ document, pageItems, pa
                     <p>{client.email}</p>
                     <p>{client.phone}</p>
                 </div>
-                 <div>
+                 <div className="p-4 bg-gray-50 rounded-md">
                     <p className="font-bold text-gray-500 mb-1">{t.projectTitle || 'PROJECT TITLE'}</p>
                     <p>{document.projectTitle}</p>
+                     {client.projectLocation && (
+                        <>
+                         <p className="font-bold text-gray-500 mt-2 mb-1">{t.projectLocation || 'PROJECT LOCATION'}</p>
+                         <p>{client.projectLocation}</p>
+                        </>
+                     )}
+                     <p className="font-bold text-gray-500 mt-2 mb-1">{t.dateIssued || 'Date Issued'}</p>
+                     <p>{safeFormat(document.estimateDate, 'MMM d, yyyy')}</p>
+                     <p className="font-bold text-gray-500 mt-2 mb-1">{t.validUntil || 'Valid Until'}</p>
+                     <p>{safeFormat(document.validUntilDate, 'MMM d, yyyy')}</p>
                 </div>
-                 {client.projectLocation && (
-                    <div>
-                        <p className="font-bold text-gray-500 mb-1">{t.projectLocation || 'PROJECT LOCATION'}</p>
-                        <p>{client.projectLocation}</p>
-                    </div>
-                 )}
             </section>
             
             <HvacDetails document={document} textColor={textColor || '#374151'} t={t} />
@@ -119,7 +119,7 @@ export const HVACTemplate1: React.FC<TemplateProps> = ({ document, pageItems, pa
                         </tr>
                     </thead>
                     <tbody>
-                        {pageItems.map((item, index) => (
+                        {pageItems.map((item) => (
                             <tr key={item.id} className="border-b border-gray-200">
                                 <td className="p-2 align-top whitespace-pre-line">{item.name}</td>
                                 <td className="p-2 align-top text-center">{item.quantity}</td>
@@ -136,7 +136,10 @@ export const HVACTemplate1: React.FC<TemplateProps> = ({ document, pageItems, pa
                     <div className="w-1/2 text-xs">
                         <p className="font-bold mb-1" style={{ color: style.color }}>{t.termsAndConditions || 'TERMS & CONDITION'}:</p>
                         <p className="whitespace-pre-line">{document.termsAndConditions}</p>
-                        <SignatureDisplay signature={business.ownerSignature} label={t.authorizedSignature || "Authorized Signature"}/>
+                         <div className="flex gap-16 mt-8">
+                            <SignatureDisplay signature={document.business.ownerSignature} label={(t.authorizedSignature || 'Authorized Signature')} />
+                            <SignatureDisplay signature={document.clientSignature} label={(t.clientSignature || 'Client Signature')} />
+                        </div>
                     </div>
                      <div className="w-2/5">
                         <div className="space-y-1 text-xs">
@@ -161,16 +164,14 @@ export const HVACTemplate2: React.FC<TemplateProps> = ({ document, pageItems, pa
     const docTitle = document.documentType === 'quote' ? (t.quote || 'QUOTE').toUpperCase() : (t.estimate || 'ESTIMATE').toUpperCase();
 
     return (
-        <div className={`p-8 bg-white font-sans text-gray-800 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: 'Inter, sans-serif', fontSize: `9pt`, minHeight: '1056px', color: textColor }}>
+        <div className={`p-8 bg-white font-sans text-gray-800 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: 'Inter, sans-serif', fontSize: `9pt`, minHeight: '1056px', color: textColor, backgroundColor: document.backgroundColor }}>
             <header className="flex justify-between items-start mb-8">
                 <div>
                     <h1 className="text-4xl font-extrabold" style={{ color: accentColor }}>{business.name}</h1>
                     <p className="text-xs whitespace-pre-line">{business.address}</p>
-                    <p className="text-xs">{business.phone} | {business.email}</p>
                 </div>
                 <div className="text-right">
                     <h2 className="text-3xl font-bold">{docTitle}</h2>
-                    <p className="text-xs text-gray-500">#{document.estimateNumber}</p>
                 </div>
             </header>
 
@@ -221,7 +222,7 @@ export const HVACTemplate2: React.FC<TemplateProps> = ({ document, pageItems, pa
                      <div className="flex justify-end">
                         <div className="w-1/3 text-sm space-y-1">
                              <div className="flex justify-between p-1"><span>{t.subtotal || 'Subtotal'}:</span><span className="">{currencySymbol}{summary.subtotal.toFixed(2)}</span></div>
-                            {summary.discount > 0 && <div className="flex justify-between p-1"><span>{t.discount || 'Discount'}:</span><span className="text-red-500">-{currencySymbol}{summary.discount.toFixed(2)}</span></div>}
+                             {summary.discount > 0 && <div className="flex justify-between p-1"><span>{t.discount || 'Discount'}:</span><span className="text-red-500">-{currencySymbol}{summary.discount.toFixed(2)}</span></div>}
                             {summary.shippingCost > 0 && <div className="flex justify-between p-1"><span>{t.shipping || 'Shipping'}:</span><span>{currencySymbol}{summary.shippingCost.toFixed(2)}</span></div>}
                             <div className="flex justify-between p-1"><span>{t.tax || 'Tax'}:</span><span className="">{currencySymbol}{summary.taxAmount.toFixed(2)}</span></div>
                             <div className="flex justify-between font-bold text-base mt-2 pt-2 border-t-2" style={{ borderColor: accentColor }}><span style={{ color: accentColor }}>{t.total || 'Total'}:</span><span>{currencySymbol}{summary.grandTotal.toFixed(2)}</span></div>
@@ -230,7 +231,10 @@ export const HVACTemplate2: React.FC<TemplateProps> = ({ document, pageItems, pa
                     <div className="mt-8 text-xs">
                         <p className="font-bold tracking-wider">{t.notes || 'NOTES'}</p>
                         <p className="whitespace-pre-line">{document.termsAndConditions}</p>
-                        <SignatureDisplay signature={business.ownerSignature} label={t.authorizedSignature || "Authorized Signature"}/>
+                    </div>
+                    <div className="flex justify-between mt-8">
+                        <SignatureDisplay signature={document.business.ownerSignature} label={(t.authorizedSignature || 'Authorized Signature')} />
+                        <SignatureDisplay signature={document.clientSignature} label={(t.clientSignature || 'Client Signature')} />
                     </div>
                 </footer>
             )}
@@ -293,7 +297,10 @@ export const HVACTemplate3: React.FC<TemplateProps> = ({ document, pageItems, pa
                      <div className="w-1/2 text-xs">
                          <p className="font-bold mb-1">{t.terms || 'TERMS'}</p>
                          <p className="whitespace-pre-line">{document.termsAndConditions}</p>
-                         <SignatureDisplay signature={business.ownerSignature} label={t.authorizedSignature || "Authorized Signature"}/>
+                         <div className="flex gap-16 mt-8">
+                            <SignatureDisplay signature={document.business.ownerSignature} label={(t.authorizedSignature || 'Authorized Signature')} />
+                            <SignatureDisplay signature={document.clientSignature} label={(t.clientSignature || 'Client Signature')} />
+                        </div>
                      </div>
                      <div className="w-1/3 text-right text-sm">
                          <p className="py-1 flex justify-between"><span>{t.subtotal || 'Subtotal'}:</span><span>{currencySymbol}{summary.subtotal.toFixed(2)}</span></p>
@@ -312,10 +319,10 @@ export const HVACTemplate3: React.FC<TemplateProps> = ({ document, pageItems, pa
 export const HVACTemplate4: React.FC<TemplateProps> = ({ document, pageItems, pageIndex, totalPages, style, t }) => {
     const { business, client, summary, currency, textColor, category } = document;
     const currencySymbol = currencySymbols[currency] || '$';
-    const docTitle = document.documentType === 'quote' ? (t.estimate || 'ESTIMATE') : (t.estimate || 'ESTIMATE');
+    const docTitle = document.documentType === 'quote' ? (t.estimate || 'ESTIMATE').toUpperCase() : (t.estimate || 'ESTIMATE').toUpperCase();
 
     return (
-        <div className={`bg-white font-sans text-gray-800 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: 'Arial, sans-serif', fontSize: `9pt`, minHeight: '1056px', color: textColor }}>
+        <div className={`bg-white font-sans text-gray-800 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: 'Arial, sans-serif', fontSize: `9pt`, minHeight: '1056px', color: textColor, backgroundColor: document.backgroundColor }}>
             <div className="p-10">
                 <header className="flex justify-between items-start mb-5 pb-5 border-b-8" style={{ borderColor: style.color }}>
                     <div>
@@ -374,6 +381,10 @@ export const HVACTemplate4: React.FC<TemplateProps> = ({ document, pageItems, pa
                             </table>
                         </div>
                         <p className="text-xs text-center whitespace-pre-line">{document.termsAndConditions}</p>
+                         <div className="flex justify-between mt-8">
+                            <SignatureDisplay signature={document.business.ownerSignature} label={(t.authorizedSignature || 'Authorized Signature')} />
+                            <SignatureDisplay signature={document.clientSignature} label={(t.clientSignature || 'Client Signature')} />
+                        </div>
                     </div>
                 </footer>
             )}
@@ -388,8 +399,8 @@ export const HVACTemplate5: React.FC<TemplateProps> = ({ document, pageItems, pa
     const docTitle = document.documentType === 'quote' ? (t.estimate || 'ESTIMATE') : (t.estimate || 'ESTIMATE');
 
     return (
-        <div className={`p-10 bg-white font-sans text-gray-800 flex ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: 'Helvetica, sans-serif', fontSize: `9pt`, minHeight: '1056px' }}>
-            <div className="w-1/4 pr-8 border-r border-gray-200" style={{color: textColor}}>
+        <div className={`p-10 bg-white font-sans text-gray-800 flex ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: 'Helvetica, sans-serif', fontSize: `9pt`, minHeight: '1056px', backgroundColor: document.backgroundColor, color: textColor }}>
+            <div className="w-1/4 pr-8 border-r border-gray-200">
                 <h1 className="text-3xl font-bold" style={{ color: style.color }}>{docTitle}</h1>
                 {business.logoUrl && <Image src={business.logoUrl} alt="Logo" width={80} height={40} className="mt-4 object-contain" />}
                 <div className="text-xs mt-8 space-y-4">
@@ -399,7 +410,7 @@ export const HVACTemplate5: React.FC<TemplateProps> = ({ document, pageItems, pa
                     <div><p className="font-bold">{t.to || 'To'}</p><p>{client.name}</p><p>{client.address}</p></div>
                 </div>
             </div>
-            <div className="w-3/4 pl-8 flex flex-col" style={{color: textColor}}>
+            <div className="w-3/4 pl-8 flex flex-col">
                 <HvacDetails document={document} textColor={textColor || '#374151'} t={t}/>
                 <main className="flex-grow">
                     <table className="w-full text-left text-xs">
@@ -433,6 +444,10 @@ export const HVACTemplate5: React.FC<TemplateProps> = ({ document, pageItems, pa
                                  <div className="flex justify-between"><span>{t.tax || 'Tax'}:</span><span>{currencySymbol}{summary.taxAmount.toFixed(2)}</span></div>
                                  <div className="flex justify-between font-bold text-lg mt-2 pt-2 border-t border-gray-800"><span>{t.totalEstimate || 'Total Estimate'}:</span><span>{currencySymbol}{summary.grandTotal.toFixed(2)}</span></div>
                             </div>
+                        </div>
+                        <div className="flex justify-between mt-8">
+                            <SignatureDisplay signature={document.business.ownerSignature} label={(t.authorizedSignature || 'Authorized Signature')} />
+                            <SignatureDisplay signature={document.clientSignature} label={(t.clientSignature || 'Client Signature')} />
                         </div>
                     </footer>
                 )}
