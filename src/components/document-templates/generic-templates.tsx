@@ -46,8 +46,8 @@ export const GenericTemplate1: React.FC<TemplateProps> = ({ document, pageItems,
                     {business.logoUrl && <Image src={business.logoUrl} alt="Logo" width={80} height={40} className="object-contain mb-2"/>}
                     <h1 className="text-4xl font-bold">{business.name}</h1>
                     <p className="text-xs whitespace-pre-line">{business.address}</p>
-                    <p className="text-xs">{business.phone}</p>
-                    <p className="text-xs">{business.email}</p>
+                    {business.phone && <p className="text-xs">{business.phone}</p>}
+                    {business.email && <p className="text-xs">{business.email}</p>}
                 </div>
                 <div className="text-right">
                     <h2 className="text-3xl font-bold">{docTitle}</h2>
@@ -56,14 +56,16 @@ export const GenericTemplate1: React.FC<TemplateProps> = ({ document, pageItems,
 
             <section className="grid grid-cols-2 gap-8 my-8 text-sm">
                 <div>
-                    <p className="font-bold">{(t.billTo || 'BILLED TO')}</p>
+                    <p className="font-bold">{((t.billTo as string) || 'BILLED TO').toUpperCase()}</p>
                     <p>{client.name}</p>
-                    <p>{client.companyName}</p>
+                    {client.companyName && <p>{client.companyName}</p>}
                     <p className="whitespace-pre-line">{client.address}</p>
+                    {client.phone && <p>{client.phone}</p>}
+                    {client.email && <p>{client.email}</p>}
                 </div>
                 <div className="text-right">
-                    <p><span className="font-bold">{(t.date || 'Date')}:</span> {safeFormat(document.estimateDate, 'MMM d, yyyy')}</p>
-                    <p><span className="font-bold">{(t.validUntil || 'Valid Until')}:</span> {safeFormat(document.validUntilDate, 'MMM d, yyyy')}</p>
+                    <p><span className="font-bold">{t.date || 'Date'}:</span> {safeFormat(document.estimateDate, 'MMM d, yyyy')}</p>
+                    <p><span className="font-bold">{t.validUntil || 'Valid Until'}:</span> {safeFormat(document.validUntilDate, 'MMM d, yyyy')}</p>
                 </div>
             </section>
             
@@ -71,10 +73,10 @@ export const GenericTemplate1: React.FC<TemplateProps> = ({ document, pageItems,
                  <table className="w-full text-left text-sm">
                     <thead className="border-b" style={{ borderColor: style.color }}>
                         <tr>
-                            <th className="p-2 pb-1 font-bold w-1/2">{(t.description || 'DESCRIPTION')}</th>
-                            <th className="p-2 pb-1 font-bold text-right">{(t.quantity || 'QTY')}</th>
-                            <th className="p-2 pb-1 font-bold text-right">{(t.price || 'PRICE')}</th>
-                            <th className="p-2 pb-1 font-bold text-right">{(t.total || 'TOTAL')}</th>
+                            <th className="p-2 pb-1 font-bold w-1/2">{(t.description || 'DESCRIPTION').toUpperCase()}</th>
+                            <th className="p-2 pb-1 font-bold text-right">{(t.quantity || 'QTY').toUpperCase()}</th>
+                            <th className="p-2 pb-1 font-bold text-right">{(t.price || 'PRICE').toUpperCase()}</th>
+                            <th className="p-2 pb-1 font-bold text-right">{(t.total || 'TOTAL').toUpperCase()}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -138,7 +140,10 @@ export const GenericTemplate2: React.FC<TemplateProps> = ({ document, pageItems,
                     <div>
                         <p className="font-bold text-gray-500 mb-1">{(t.clientInformation || 'CLIENT INFORMATION')}</p>
                         <p className="font-bold">{client.name}</p>
+                        {client.companyName && <p>{client.companyName}</p>}
                         <p className="whitespace-pre-line">{client.address}</p>
+                        {client.phone && <p>{client.phone}</p>}
+                        {client.email && <p>{client.email}</p>}
                     </div>
                     <div className="text-right">
                         <p className="font-bold text-gray-500 mb-1">{(t.projectDetails || 'PROJECT DETAILS')}</p>
@@ -219,7 +224,10 @@ export const GenericTemplate3: React.FC<TemplateProps> = ({ document, pageItems,
             <section className="mb-10 text-sm">
                 <p className="font-bold mb-1">{(t.client || 'CLIENT')}:</p>
                 <p>{client.name}</p>
+                {client.companyName && <p>{client.companyName}</p>}
                 <p className="whitespace-pre-line">{client.address}</p>
+                {client.phone && <p>{client.phone}</p>}
+                {client.email && <p>{client.email}</p>}
             </section>
             
             <main className="flex-grow">
@@ -275,8 +283,20 @@ export const GenericTemplate4: React.FC<TemplateProps> = ({ document, pageItems,
     return (
         <div className={`font-sans text-gray-800 flex ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: style.fontFamily, fontSize: `${style.fontSize}pt`, minHeight: '1056px', backgroundColor: document.backgroundColor }}>
             <div className="w-1/4 p-8 text-white" style={{ backgroundColor: style.color }}>
-                {business.logoUrl && <Image src={business.logoUrl} alt="Logo" width={80} height={80} className="mb-4 object-contain" />}
+                {business.logoUrl && <Image src={business.logoUrl} alt="Logo" width={80} height={80} className="mb-4 object-contain filter invert brightness-0" />}
                 <h1 className="text-4xl font-bold mb-2">{business.name}</h1>
+                <div className="text-sm space-y-4 mt-8">
+                  <div>
+                    <p className="font-bold opacity-80 mb-1">{t.client || 'CLIENT'}</p>
+                    <p>{client.name}</p>
+                    {client.companyName && <p>{client.companyName}</p>}
+                  </div>
+                  <div>
+                    <p className="font-bold opacity-80 mb-1">{t.details || 'DETAILS'}</p>
+                    <p>#{document.estimateNumber}</p>
+                    <p>{t.date || 'Date'}: {safeFormat(document.estimateDate, 'yyyy-MM-dd')}</p>
+                  </div>
+                </div>
             </div>
             <div className="w-3/4 p-10 flex flex-col" style={{color: textColor}}>
                  <main className="flex-grow">
@@ -354,6 +374,7 @@ export const GenericTemplate5: React.FC<TemplateProps> = ({ document, pageItems,
                 <div className="p-4 bg-gray-50 rounded">
                     <p className="font-bold text-gray-500 mb-2">{(t.client || 'CLIENT')}</p>
                     <p className="font-bold text-base">{client.name}</p>
+                    {client.companyName && <p>{client.companyName}</p>}
                     <p className="whitespace-pre-line">{client.address}</p>
                 </div>
                 <div className="p-4 bg-gray-50 rounded">
@@ -363,8 +384,8 @@ export const GenericTemplate5: React.FC<TemplateProps> = ({ document, pageItems,
                 </div>
                 <div className="p-4 bg-gray-50 rounded break-words">
                     <p className="font-bold text-gray-500 mb-2">{(t.contact || 'CONTACT')}</p>
-                    <p>{business.phone}</p>
-                    <p>{business.email}</p>
+                    <p>{client.phone}</p>
+                    <p>{client.email}</p>
                 </div>
             </section>
             
