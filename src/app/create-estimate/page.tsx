@@ -221,7 +221,7 @@ function PrintableDocument({ doc, accentColor, backgroundColor, textColor }: { d
 
 
 export default function CreateEstimatePage() {
-  const { user, userProfile } = useAuth();
+  const { user, userProfile, isLoading: isAuthLoading } = useAuth();
   const [document, setDocument] = useState<Estimate | Quote | null>(null);
   const [accentColor, setAccentColor] = useState<string>('hsl(var(--primary))');
   const [backgroundColor, setBackgroundColor] = useState<string>('#FFFFFF');
@@ -231,7 +231,18 @@ export default function CreateEstimatePage() {
   
   const { firestore } = useFirebase();
   const router = useRouter();
+  const searchParams = useSearchParams();
   
+  const draftId = searchParams.get('draftId');
+  const companyId = userProfile?.companyId;
+
+  const docRef = useMemoFirebase(() => {
+    if (!draftId || !firestore || !companyId) return null;
+    return doc(firestore, 'companies', companyId, ESTIMATES_COLLECTION, draftId);
+  }, [draftId, firestore, companyId]);
+
+  const { data: remoteDraft, isLoading: isDraftLoading } = useDoc<Estimate>(docRef);
+
   const computeSummary = useCallback((est: Estimate | Quote): Estimate | Quote => {
     const subtotal = est.lineItems.reduce((acc, item) => acc + (Number(item.quantity) || 0) * (Number(item.unitPrice) || 0), 0);
     const taxableTotal = est.lineItems.filter(i => i.taxable !== false).reduce((s, i) => s + ((Number(i.quantity) || 0) * (Number(i.unitPrice) || 0)), 0);
@@ -253,16 +264,58 @@ export default function CreateEstimatePage() {
   }, []);
 
   useEffect(() => {
-    // Initialize with a default document client-side to ensure the form is always visible
-    const newDocId = firestore ? doc(collection(firestore, 'companies', 'temp', ESTIMATES_COLLECTION)).id : crypto.randomUUID();
-    const initialDoc: Estimate = {
-        ...getInitialEstimate(),
-        id: newDocId,
-        userId: user?.uid || '',
-        companyId: userProfile?.companyId || '',
-    };
-    setDocument(initialDoc);
-  }, [user, userProfile, firestore]);
+    if (isAuthLoading || (draftId && isDraftLoading)) return;
+    if (!user) {
+        router.push('/login');
+        return;
+    }
+
+    let initialDocument: Estimate;
+
+    if (draftId && remoteDraft) {
+       const baseEstimate = getInitialEstimate();
+       const fromJSON = (key: string, value: any) => {
+           if (['estimateDate', 'validUntilDate', 'expectedStartDate', 'expectedCompletionDate', 'createdAt', 'updatedAt'].includes(key) && value) {
+               return value.toDate ? value.toDate() : (isValid(new Date(value)) ? new Date(value) : null);
+           }
+           return value;
+       };
+       const loadedDraft = JSON.parse(JSON.stringify(remoteDraft), fromJSON);
+       
+        initialDocument = {
+         ...baseEstimate,
+         ...loadedDraft,
+         userId: user.uid,
+         companyId: companyId || '',
+         business: { ...baseEstimate.business, ...loadedDraft.business },
+         client: { ...baseEstimate.client, ...loadedDraft.client },
+         summary: { ...baseEstimate.summary, ...loadedDraft.summary },
+         homeRemodeling: { ...baseEstimate.homeRemodeling, ...(loadedDraft.homeRemodeling || {}) },
+         roofing: { ...baseEstimate.roofing, ...(loadedDraft.roofing || {}) },
+         hvac: { ...baseEstimate.hvac, ...(loadedDraft.hvac || {}) },
+         plumbing: { ...baseEstimate.plumbing, ...(loadedDraft.plumbing || {}) },
+         electrical: { ...baseEstimate.electrical, ...(loadedDraft.electrical || {}) },
+         landscaping: { ...baseEstimate.landscaping, ...(loadedDraft.landscaping || {}) },
+         cleaning: { ...baseEstimate.cleaning, ...(loadedDraft.cleaning || {}) },
+         autoRepair: { ...baseEstimate.autoRepair, ...(loadedDraft.autoRepair || {}) },
+         construction: { ...baseEstimate.construction, ...(loadedDraft.construction || {}) },
+         itFreelance: { ...baseEstimate.itFreelance, ...(loadedDraft.itFreelance || {}) },
+       };
+
+    } else {
+        const newDocId = firestore ? doc(collection(firestore, 'companies', 'temp', ESTIMATES_COLLECTION)).id : crypto.randomUUID();
+        initialDocument = {
+            ...getInitialEstimate(),
+            id: newDocId,
+            userId: user.uid,
+            companyId: companyId || '',
+        };
+    }
+    
+    setDocument(initialDocument);
+
+  }, [draftId, remoteDraft, isDraftLoading, user, isAuthLoading, companyId, firestore, router]);
+
 
   useEffect(() => {
      if (typeof window !== 'undefined' && window.document) {
@@ -344,15 +397,20 @@ export default function CreateEstimatePage() {
       title: "Estimate Draft Saved",
       description: "Your estimate draft has been saved online.",
     });
+
+    if (!searchParams.get('draftId')) {
+      router.push(`/create-estimate?draftId=${document.id}`, { scroll: false });
+    }
   };
 
   const handleNew = () => {
-    const newDocId = firestore ? doc(collection(firestore, 'companies', 'temp', ESTIMATES_COLLECTION)).id : crypto.randomUUID();
+    if(!user || !companyId) return;
+    const newDocId = firestore ? doc(collection(firestore, 'companies', companyId, ESTIMATES_COLLECTION)).id : crypto.randomUUID();
     const newDoc: Estimate = { 
         ...getInitialEstimate(), 
         id: newDocId, 
-        userId: user?.uid || '', 
-        companyId: userProfile?.companyId || '',
+        userId: user.uid, 
+        companyId: companyId,
     };
     setDocument(newDoc);
     router.push('/create-estimate', { scroll: false });
@@ -521,3 +579,4 @@ export default function CreateEstimatePage() {
     </>
   );
 }
+
