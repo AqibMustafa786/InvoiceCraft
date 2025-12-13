@@ -69,7 +69,7 @@ export const RemodelingTemplate1: React.FC<TemplateProps> = ({ document, pageIte
                     <div className="flex items-center gap-3">
                         {business.logoUrl ? 
                             <Image src={business.logoUrl} alt="logo" width={40} height={40}/> :
-                            <div className="w-10 h-10 bg-white flex items-center justify-center rounded-md"><span style={{color: '#0A2D4D'}}>🏠</span></div>
+                            null
                         }
                         <h1 className="text-3xl font-bold">{business.name}</h1>
                     </div>
@@ -95,8 +95,7 @@ export const RemodelingTemplate1: React.FC<TemplateProps> = ({ document, pageIte
                     </div>
                 </section>
 
-                <div className="flex justify-between items-center mb-4">
-                    <p className="font-bold">{t.estimateCost || 'Estimate Cost'}</p>
+                <div className="flex justify-end items-center mb-4">
                     <div className="flex items-center gap-2">
                         <p className="text-xs">{document.documentType === 'quote' ? (t.quoteNo || 'Quote #') : (t.estimateNo || 'Estimate #')}:</p>
                         <p className="p-2 px-4 text-white font-bold rounded" style={{ backgroundColor: '#0A2D4D' }}>{document.estimateNumber}</p>
@@ -147,10 +146,6 @@ export const RemodelingTemplate1: React.FC<TemplateProps> = ({ document, pageIte
                                 <ul className="list-disc list-inside text-gray-600 space-y-1" style={{color: textColor}}>
                                    <li className="whitespace-pre-line">{document.termsAndConditions}</li>
                                 </ul>
-                                <div className="mt-4">
-                                    <p className="font-bold mb-2">{t.paymentInformation || 'Payment Information'}:</p>
-                                    <p className="text-gray-600" style={{color: textColor}}>{(t.paymentDetailsOnAcceptance || 'Details provided upon acceptance.')}</p>
-                                </div>
                             </div>
                              <div className="text-right">
                                  <p className="mb-1">{t.date || 'Date'}: {safeFormat(document.estimateDate, 'MMMM d, yyyy')}</p>
