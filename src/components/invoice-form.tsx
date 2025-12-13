@@ -533,40 +533,6 @@ export function InvoiceForm({ invoice, setInvoice, accentColor, setAccentColor, 
                     </div>
                 </div>
             </div>
-            <div className="space-y-2">
-                <Label>Owner Signature</Label>
-                <div className="flex gap-2">
-                    <Dialog open={isSignatureDialogOpen} onOpenChange={setIsSignatureDialogOpen}>
-                        <DialogTrigger asChild>
-                            <Button variant="outline" className="w-full">
-                                <Pencil className="mr-2 h-4 w-4" />
-                                {invoice.business.ownerSignature ? 'Edit Signature' : 'Add Signature'}
-                            </Button>
-                        </DialogTrigger>
-                        <DialogContent>
-                            <DialogHeader>
-                                <DialogTitle>Owner Signature</DialogTitle>
-                                <DialogDescription>
-                                    Draw your signature below. This will be saved with the document.
-                                </DialogDescription>
-                            </DialogHeader>
-                            <SignaturePad onSave={handleOwnerSignatureSave} signerName={invoice.business.name} />
-                        </DialogContent>
-                    </Dialog>
-                    {invoice.business.ownerSignature && (
-                      <Button variant="destructive" onClick={handleDeleteSignature}>
-                          <Trash2 className="mr-2 h-4 w-4" />
-                          Delete
-                      </Button>
-                    )}
-                </div>
-
-                {invoice.business.ownerSignature && (
-                    <div className="p-4 border rounded-md bg-muted/50">
-                        <Image src={invoice.business.ownerSignature.image} alt="Owner Signature" width={150} height={75} />
-                    </div>
-                )}
-            </div>
         </CardContent>
       </Card>
 
@@ -1051,8 +1017,42 @@ export function InvoiceForm({ invoice, setInvoice, accentColor, setAccentColor, 
             <Label htmlFor="paymentInstructions">Payment Instructions / Notes</Label>
             <Textarea id="paymentInstructions" name="paymentInstructions" value={invoice.paymentInstructions} onChange={handleInputChange} />
           </div>
+          <div className="space-y-2">
+            <Label>Owner Signature</Label>
+            <div className="flex gap-2">
+                <Dialog open={isSignatureDialogOpen} onOpenChange={setIsSignatureDialogOpen}>
+                    <DialogTrigger asChild>
+                        <Button variant="outline" className="w-full">
+                            <Pencil className="mr-2 h-4 w-4" />
+                            {invoice.business.ownerSignature ? 'Edit Signature' : 'Add Signature'}
+                        </Button>
+                    </DialogTrigger>
+                    <DialogContent>
+                        <DialogHeader>
+                            <DialogTitle>Owner Signature</DialogTitle>
+                            <DialogDescription>
+                                Draw your signature below. This will be saved with the document.
+                            </DialogDescription>
+                        </DialogHeader>
+                        <SignaturePad onSave={handleOwnerSignatureSave} signerName={invoice.business.name} />
+                    </DialogContent>
+                </Dialog>
+                {invoice.business.ownerSignature && (
+                    <Button variant="destructive" onClick={handleDeleteSignature}>
+                        <Trash2 className="mr-2 h-4 w-4" />
+                        Delete
+                    </Button>
+                )}
+            </div>
+            {invoice.business.ownerSignature && (
+                <div className="p-4 border rounded-md bg-muted/50">
+                    <Image src={invoice.business.ownerSignature.image} alt="Owner Signature" width={150} height={75} />
+                </div>
+            )}
+        </div>
         </CardContent>
       </Card>
     </div>
   );
 }
+
