@@ -179,14 +179,20 @@ export const RemodelingTemplate2: React.FC<TemplateProps> = ({ document, pageIte
             <header className="flex justify-between items-start mb-10">
                 <div>
                      {business.logoUrl ? <Image src={business.logoUrl} alt="Logo" width={100} height={50} className="mb-2 object-contain"/> : <h1 className="text-3xl font-bold">{business.name}</h1>}
-                    <p className="text-xs text-gray-500 whitespace-pre-line" style={{color: textColor}}>{business.address}</p>
-                    {business.phone && <p className="text-xs text-gray-500" style={{color: textColor}}>{business.phone}</p>}
-                    {business.email && <p className="text-xs text-gray-500" style={{color: textColor}}>{business.email}</p>}
+                    <div className="text-xs text-gray-500" style={{color: textColor}}>
+                        <p className="whitespace-pre-line">{business.address}</p>
+                        {business.phone && <p>{business.phone}</p>}
+                        {business.email && <p>{business.email}</p>}
+                        {business.website && <p>{business.website}</p>}
+                        {business.licenseNumber && <p>Lic #: {business.licenseNumber}</p>}
+                        {business.taxId && <p>Tax ID: {business.taxId}</p>}
+                    </div>
                 </div>
                 <div className="text-right">
                     <h2 className="text-2xl font-light" style={{color: style.color}}>{docTitle}</h2>
                     <p className="mt-2"><span className="font-bold text-gray-500">#</span> {document.estimateNumber}</p>
-                    <p className="text-xs"><span className="font-bold text-gray-500">{t.date || 'Date'}:</span> {safeFormat(new Date(document.estimateDate || new Date()), 'MM/dd/yyyy')}</p>
+                    <p className="text-xs"><span className="font-bold text-gray-500">{t.date || 'Date'}:</span> {safeFormat(document.estimateDate, 'MM/dd/yyyy')}</p>
+                    <p className="text-xs"><span className="font-bold text-gray-500">{t.validUntil || 'Valid Until'}:</span> {safeFormat(document.validUntilDate, 'MM/dd/yyyy')}</p>
                 </div>
             </header>
             
@@ -194,7 +200,7 @@ export const RemodelingTemplate2: React.FC<TemplateProps> = ({ document, pageIte
                 <div className="text-xs">
                      <p className="font-bold text-gray-500 mb-1" style={{color: textColor}}>{t.client || 'Client'}</p>
                      <p className="font-semibold">{client.name}</p>
-                     <p>{client.companyName}</p>
+                     {client.companyName && <p>{client.companyName}</p>}
                      <p>{client.address}</p>
                      <p>{client.email}</p>
                      <p>{client.phone}</p>
@@ -210,8 +216,8 @@ export const RemodelingTemplate2: React.FC<TemplateProps> = ({ document, pageIte
 
             <main className="flex-grow">
                  <table className="w-full text-left text-sm">
-                    <thead>
-                        <tr className="border-b-2" style={{borderColor: style.color}}>
+                    <thead className="border-b-2" style={{borderColor: style.color}}>
+                        <tr>
                             <th className="py-2 font-bold w-[60%]">{t.serviceDescription || 'Service Description'}</th>
                             <th className="py-2 font-bold text-center">{t.quantity || 'Qty'}</th>
                             <th className="py-2 font-bold text-right">{t.unitPrice || 'Unit Price'}</th>
@@ -269,8 +275,10 @@ export const RemodelingTemplate3: React.FC<TemplateProps> = ({ document, pageIte
                 <div>
                     <p className="font-bold">{t.client || 'Client'}:</p>
                     <p>{client.name}</p>
+                    {client.companyName && <p>{client.companyName}</p>}
                     <p>{client.address}</p>
                     <p>{client.email}</p>
+                    <p>{client.phone}</p>
                 </div>
                 <div>
                     <p className="font-bold">{t.project || 'Project'}:</p>
@@ -281,7 +289,9 @@ export const RemodelingTemplate3: React.FC<TemplateProps> = ({ document, pageIte
                     <p className="font-bold">{document.documentType === 'quote' ? t.quoteNo : t.estimateNo || 'Number #'}:</p>
                     <p>{document.estimateNumber}</p>
                     <p className="font-bold mt-1">{t.date || 'Date'}:</p>
-                    <p>{safeFormat(new Date(document.estimateDate || new Date()), 'MM/dd/yyyy')}</p>
+                    <p>{safeFormat(document.estimateDate, 'MM/dd/yyyy')}</p>
+                    <p className="font-bold mt-1">{t.validUntil || 'Valid Until'}:</p>
+                    <p>{safeFormat(document.validUntilDate, 'MM/dd/yyyy')}</p>
                 </div>
             </section>
             
@@ -346,18 +356,30 @@ export const RemodelingTemplate4: React.FC<TemplateProps> = ({ document, pageIte
             <header className="flex justify-between items-center mb-8 pb-4 border-b-4" style={{borderColor: style.color}}>
                 <div>
                     <p className="font-bold text-3xl">{business.name}</p>
-                    <p className="text-xs text-gray-500" style={{color: textColor}}>{business.address}</p>
-                    {business.website && <p className="text-xs text-gray-500" style={{color: textColor}}>{business.website}</p>}
+                    <div className="text-xs text-gray-500" style={{color: textColor}}>
+                        <p>{business.address}</p>
+                        {business.website && <p>{business.website}</p>}
+                        {business.licenseNumber && <p>Lic #: {business.licenseNumber}</p>}
+                        {business.taxId && <p>Tax ID: {business.taxId}</p>}
+                    </div>
                 </div>
                 <div className="text-right">
                     <h1 className="text-2xl font-extrabold" style={{color: style.color}}>{docTitle}</h1>
-                    {business.licenseNumber && <p className="text-xs text-gray-500" style={{color: textColor}}>Lic #: {business.licenseNumber}</p>}
                 </div>
             </header>
             
             <section className="mb-8 grid grid-cols-2 gap-4 text-xs">
-                 <div><p><span className="font-bold text-gray-500" style={{color: textColor}}>{t.to || 'TO'}: </span>{client.name}</p><p>{client.address}</p><p>{client.email}</p></div>
-                 <div className="text-right"><p><span className="font-bold text-gray-500" style={{color: textColor}}>{document.documentType === 'quote' ? t.quoteNo : t.estimateNo || 'Number #'}: </span>{document.estimateNumber}</p><p><span className="font-bold text-gray-500" style={{color: textColor}}>{t.date || 'DATE'}: </span>{safeFormat(new Date(document.estimateDate || new Date()), 'yyyy-MM-dd')}</p></div>
+                 <div>
+                    <p className="font-bold">{t.clientInfo || 'Client Information'}:</p>
+                    <p>{client.name}</p>
+                    {client.companyName && <p>{client.companyName}</p>}
+                    <p>{client.address}</p>
+                    <p>{client.phone} | {client.email}</p>
+                </div>
+                 <div className="text-right">
+                    <p><span className="font-bold text-gray-500" style={{color: textColor}}>{document.documentType === 'quote' ? t.quoteNo : t.estimateNo || 'Number #'}: </span>{document.estimateNumber}</p>
+                    <p><span className="font-bold text-gray-500" style={{color: textColor}}>{t.date || 'DATE'}: </span>{safeFormat(document.estimateDate, 'yyyy-MM-dd')}</p>
+                 </div>
             </section>
             
             <RemodelingDetails document={document} textColor={textColor || '#374151'} t={t}/>
@@ -415,7 +437,8 @@ export const RemodelingTemplate5: React.FC<TemplateProps> = ({ document, pageIte
             <header className="flex justify-between items-start mb-12">
                 <div>
                     <h1 className="text-4xl font-bold">{business.name}</h1>
-                    {business.taxId && <p className="text-xs text-gray-500 mt-2">Tax ID: {business.taxId}</p>}
+                    {business.licenseNumber && <p className="text-xs text-gray-500 mt-2">Lic #: {business.licenseNumber}</p>}
+                    {business.taxId && <p className="text-xs text-gray-500 mt-1">Tax ID: {business.taxId}</p>}
                 </div>
             </header>
 
@@ -429,7 +452,9 @@ export const RemodelingTemplate5: React.FC<TemplateProps> = ({ document, pageIte
                 <div>
                      <p className="font-bold text-gray-500" style={{color: textColor}}>{t.details || 'DETAILS'}</p>
                      <p>{(document.documentType === 'quote' ? t.quote : t.estimate) || 'Estimate'}: {document.estimateNumber}</p>
-                     <p>{t.date || 'Date'}: {safeFormat(new Date(document.estimateDate || new Date()), 'MMM d, yyyy')}</p>
+                     <p>{t.date || 'Date'}: {safeFormat(document.estimateDate, 'MMM d, yyyy')}</p>
+                     <p className="font-bold mt-2">{t.projectTitle || 'Project Title'}:</p>
+                     <p>{document.projectTitle}</p>
                 </div>
             </section>
             
@@ -474,3 +499,4 @@ export const RemodelingTemplate5: React.FC<TemplateProps> = ({ document, pageIte
         </div>
     );
 };
+
