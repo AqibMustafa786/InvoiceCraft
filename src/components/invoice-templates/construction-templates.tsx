@@ -1,5 +1,4 @@
 
-
 'use client';
 
 import React from 'react';
@@ -169,7 +168,7 @@ export const ConstructionTemplate2: React.FC<PageProps> = (props) => {
                     ) : (
                         <h1 className="text-4xl font-bold">{business.name}</h1>
                     )}
-                    <p className="text-xs whitespace-pre-line mt-2 text-gray-300">{business.address}<br/>{business.phone}<br/>{business.email}</p>
+                    <p className="text-xs whitespace-pre-line mt-2 text-gray-300">{business.address}<br/>{business.phone}<br/>{business.email}<br/>{business.website}</p>
                 </div>
                 <div className="text-right">
                     <h2 className="text-3xl font-bold">{(t.invoice || 'INVOICE').toUpperCase()}</h2>
@@ -184,6 +183,8 @@ export const ConstructionTemplate2: React.FC<PageProps> = (props) => {
                         <p className="whitespace-pre-line">{client.address}</p>
                         <p>{client.phone}</p>
                         <p>{client.email}</p>
+                        {client.shippingAddress && <p className="mt-2"><span className="font-bold text-gray-500">Ship To:</span><br/>{client.shippingAddress}</p>}
+                        {client.projectLocation && <p className="mt-2"><span className="font-bold text-gray-500">Project Location:</span><br/>{client.projectLocation}</p>}
                     </div>
                     <div className="text-right">
                         <p className="font-bold text-gray-500 mb-1" style={{color: textColor ? textColor : undefined}}>{(t.invoiceDetails || 'INVOICE DETAILS')}</p>
@@ -263,8 +264,8 @@ export const ConstructionTemplate3: React.FC<PageProps> = (props) => {
             </header>
 
             <section className="mb-8 p-4 border rounded-md grid grid-cols-3 gap-4 text-xs">
-                <div><p className="font-bold">{(t.from || 'From')}:</p><p className="font-bold">{business.name}</p><p>{business.address}</p></div>
-                <div><p className="font-bold">{(t.to || 'To')}:</p><p className="font-bold">{client.name}</p><p>{client.address}</p></div>
+                <div><p className="font-bold">{(t.from || 'From')}:</p><p>{business.name}</p><p>{business.address}</p></div>
+                <div><p className="font-bold">{(t.to || 'To')}:</p><p>{client.name}</p><p>{client.address}</p></div>
                 <div><p className="font-bold">{(t.details || 'Details')}:</p><p># {invoice.invoiceNumber}</p><p>{(t.date || 'Date')}: {safeFormat(invoice.invoiceDate, 'MM-dd-yyyy')}</p></div>
             </section>
             
@@ -389,7 +390,7 @@ export const ConstructionTemplate4: React.FC<PageProps> = (props) => {
                                 <tr><td className="py-1 text-gray-600" style={{color: textColor}}>{(t.subtotal || 'Subtotal')}</td><td className="py-1 text-right">{currencySymbol}{subtotal.toFixed(2)}</td></tr>
                                 {discountAmount > 0 && (<tr><td className="py-1 text-gray-600" style={{color: textColor}}>{(t.discount || 'Discount')}</td><td className="py-1 text-right text-red-500">-{currencySymbol}{discountAmount.toFixed(2)}</td></tr>)}
                                 {invoice.summary.shippingCost > 0 && (<tr><td className="py-1 text-gray-600" style={{color: textColor}}>{(t.shipping || 'Shipping')}</td><td className="py-1 text-right">{currencySymbol}{invoice.summary.shippingCost.toFixed(2)}</td></tr>)}
-                                {taxAmount > 0 && <tr><td className="py-1 text-gray-600" style={{color: textColor}}>{(t.tax || 'Taxes')}</td><td className="py-1 text-right">{currencySymbol}{taxAmount.toFixed(2)}</td></tr>}
+                                {taxAmount > 0 && <tr><td className="py-1 text-gray-600" style={{color: textColor}}>{(t.taxes || 'Taxes')}</td><td className="py-1 text-right">{currencySymbol}{taxAmount.toFixed(2)}</td></tr>}
                                 <tr className="font-bold text-base border-t-2 border-black"><td className="py-2">{(t.total || 'Total')}</td><td className="py-2 text-right">{currencySymbol}{total.toFixed(2)}</td></tr>
                                 {(invoice.amountPaid || 0) > 0 && <tr className="font-bold text-green-600"><td>Amount Paid</td><td className="text-right">-{currencySymbol}{(invoice.amountPaid || 0).toFixed(2)}</td></tr>}
                                 <tr className="font-bold text-lg bg-gray-100"><td className="p-2">Balance Due</td><td className="p-2 text-right">{currencySymbol}{balanceDue.toFixed(2)}</td></tr>
@@ -417,6 +418,7 @@ export const ConstructionTemplate5: React.FC<PageProps> = (props) => {
             <header className="flex justify-between items-start mb-12">
                 <div>
                     <h1 className="text-4xl font-bold">{business.name}</h1>
+                    <p className="text-xs">{business.licenseNumber && `Lic#: ${business.licenseNumber}`}</p>
                 </div>
             </header>
 
@@ -424,11 +426,15 @@ export const ConstructionTemplate5: React.FC<PageProps> = (props) => {
                 <div>
                     <p className="font-bold text-gray-500">{(t.client || 'CLIENT')}</p>
                     <p>{client.name}</p>
+                    <p>{client.address}</p>
+                    <p>{client.email}</p>
                 </div>
                 <div>
                      <p className="font-bold text-gray-500">{(t.details || 'DETAILS')}</p>
                      <p>{docTitle}: {invoice.invoiceNumber}</p>
                      <p>{t.date || 'Date'}: {safeFormat(invoice.invoiceDate, 'MMM d, yyyy')}</p>
+                     <p className="font-bold mt-2">{(t.projectTitle || 'Project Title')}:</p>
+                     <p>{invoice.poNumber}</p>
                 </div>
             </section>
             
