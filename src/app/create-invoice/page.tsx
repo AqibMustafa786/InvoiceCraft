@@ -5,7 +5,7 @@ export const dynamic = 'force-dynamic';
 
 import { useState, useEffect, useCallback } from 'react';
 import { createPortal } from 'react-dom';
-import type { Invoice, LineItem, ConstructionInfo, PlumbingInfo, ElectricalInfo, HVACInfo, RoofingInfo, LandscapingInfo, CleaningInfo, ITFreelanceInfo, ConsultingInfo, LegalInfo, MedicalInfo, AutoRepairInfo, EcommerceInfo, RentalInfo, RetailInfo, PhotographyInfo, RealEstateInfo, TransportationInfo, ITServiceInfo } from '@/lib/types';
+import type { Invoice, LineItem } from '@/lib/types';
 import { InvoiceForm } from '@/components/invoice-form';
 import { ClientInvoicePreview } from '@/components/invoice-preview';
 import { Button } from '@/components/ui/button';
@@ -15,7 +15,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { useFirebase, useMemoFirebase } from '@/firebase';
-import { doc, serverTimestamp, Timestamp } from 'firebase/firestore';
+import { doc, serverTimestamp, Timestamp, collection } from 'firebase/firestore';
 import { setDocumentNonBlocking } from '@/firebase/non-blocking-updates';
 import { useDoc } from '@/firebase/firestore/use-doc';
 import { DocumentTemplateSelector } from '@/components/document-template-selector';
@@ -81,6 +81,7 @@ const getInitialInvoice = (): Omit<Invoice, 'userId' | 'companyId'> => ({
   backgroundColor: '#FFFFFF',
   textColor: '#374151',
   amountPaid: 0,
+  poNumber: '',
 
   construction: {
     jobSiteAddress: '',
@@ -170,7 +171,7 @@ const getInitialInvoice = (): Omit<Invoice, 'userId' | 'companyId'> => ({
     vehicleModel: '',
     year: null,
     licensePlate: '',
-vin: '',
+    vin: '',
     odometer: null,
     laborHours: null,
     laborRate: null,
@@ -345,6 +346,7 @@ export default function CreateInvoicePage() {
         initialInvoice = {
          ...baseInvoice,
          ...loadedDraft,
+         id: draftId,
          userId: user.uid,
          companyId: companyId || '',
          business: { ...baseInvoice.business, ...loadedDraft.business },
@@ -372,10 +374,14 @@ export default function CreateInvoicePage() {
        };
 
     } else {
-        const newInvoice = getInitialInvoice();
-        newInvoice.id = crypto.randomUUID();
-        newInvoice.invoiceNumber = `INV-${new Date().getFullYear()}-${String(Math.floor(Math.random() * 1000)).padStart(3, '0')}`;
-        initialInvoice = {...newInvoice, userId: user.uid, companyId: companyId || ''};
+        const newDocId = firestore ? doc(collection(firestore, 'companies', 'temp', INVOICES_COLLECTION)).id : crypto.randomUUID();
+        initialInvoice = {
+            ...getInitialInvoice(),
+            id: newDocId,
+            invoiceNumber: `INV-${new Date().getFullYear()}-${String(Math.floor(Math.random() * 1000)).padStart(3, '0')}`,
+            userId: user.uid, 
+            companyId: companyId || ''
+        };
     }
     
     setInvoice(initialInvoice);
@@ -388,7 +394,7 @@ export default function CreateInvoicePage() {
            setAccentColor(`hsl(${computedColor})`);
         }
     }
-  }, [draftId, remoteDraft, isDraftLoading, user, isAuthLoading, companyId, router]);
+  }, [draftId, remoteDraft, isDraftLoading, user, isAuthLoading, companyId, router, firestore]);
 
   useEffect(() => {
     if (invoice) {
@@ -399,6 +405,11 @@ export default function CreateInvoicePage() {
     }
   }, [invoice, computeSummary]);
 
+  const generateNewId = (doc: Invoice): string => {
+    const clientName = doc.client.name.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase();
+    const invoiceNumber = doc.invoiceNumber || 'new';
+    return `${clientName}-${invoiceNumber}`;
+  }
 
   const handlePrint = () => {
     window.print();
@@ -413,9 +424,13 @@ export default function CreateInvoicePage() {
         const d = val.toDate ? val.toDate() : new Date(val);
         return isValid(d) ? Timestamp.fromDate(d) : null;
     };
+    
+    const isNew = !searchParams.get('draftId');
+    const newId = isNew ? generateNewId(invoice) : invoice.id;
 
     const draftToSave: any = {
       ...invoice,
+      id: newId,
       userId: user.uid,
       companyId: companyId,
       updatedAt: serverTimestamp(),
@@ -459,23 +474,30 @@ export default function CreateInvoicePage() {
       draftToSave.createdAt = serverTimestamp();
     }
     
-    const docRef = doc(firestore, 'companies', companyId, INVOICES_COLLECTION, invoice.id);
+    const docRef = doc(firestore, 'companies', companyId, INVOICES_COLLECTION, newId);
     setDocumentNonBlocking(docRef, draftToSave, { merge: true });
 
     toast({
       title: "Draft Saved",
       description: "Your invoice draft has been saved online.",
     });
-    if (!searchParams.get('draftId')) {
-      router.push(`/create-invoice?draftId=${invoice.id}`, { scroll: false });
+
+    if (isNew) {
+      setInvoice(prev => prev ? { ...prev, id: newId } : null);
+      router.push(`/create-invoice?draftId=${newId}`, { scroll: false });
     }
   };
   
   const handleNew = () => {
-    if(!user) return;
-    const newInvoice = {...getInitialInvoice(), userId: user.uid, companyId: companyId || ''};
-    newInvoice.id = crypto.randomUUID();
-    newInvoice.invoiceNumber = `INV-${String(Math.floor(Math.random() * 1000)).padStart(3, '0')}`;
+    if(!user || !companyId) return;
+    const newDocId = firestore ? doc(collection(firestore, 'companies', companyId, INVOICES_COLLECTION)).id : crypto.randomUUID();
+    const newInvoice: Invoice = {
+      ...getInitialInvoice(), 
+      id: newDocId,
+      invoiceNumber: `INV-${String(Math.floor(Math.random() * 1000)).padStart(3, '0')}`,
+      userId: user.uid, 
+      companyId: companyId
+    };
     setInvoice(newInvoice);
     if (typeof window !== 'undefined' && window.document) {
         const computedColor = getComputedStyle(window.document.documentElement).getPropertyValue('--primary').trim();

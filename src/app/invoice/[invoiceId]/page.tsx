@@ -4,8 +4,8 @@
 export const dynamic = 'force-dynamic';
 
 import { useEffect, useState } from 'react';
-import { doc } from 'firebase/firestore';
-import { useFirebase, useDoc, useMemoFirebase } from '@/firebase';
+import { doc, getDocs, collectionGroup, query, where, Firestore } from 'firebase/firestore';
+import { useFirebase } from '@/firebase';
 import type { Invoice } from '@/lib/types';
 import { ClientInvoicePreview } from '@/components/invoice-preview';
 import { Button } from '@/components/ui/button';
@@ -13,23 +13,60 @@ import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 import { Badge } from '@/components/ui/badge';
 import { isValid } from 'date-fns';
+import { Skeleton } from '@/components/ui/skeleton';
+
+async function findInvoice(firestore: Firestore, invoiceId: string): Promise<{ data: Invoice, ref: any } | null> {
+    const q = query(collectionGroup(firestore, 'invoices'), where('id', '==', invoiceId));
+    const querySnapshot = await getDocs(q);
+
+    if (!querySnapshot.empty) {
+        const docSnap = querySnapshot.docs[0];
+        return { 
+            data: { id: docSnap.id, ...docSnap.data() } as Invoice,
+            ref: docSnap.ref
+        };
+    }
+    
+    return null;
+}
 
 export default function PublicInvoicePage({ params }: { params: { invoiceId: string } }) {
     const { firestore, user } = useFirebase();
-    const [logoUrl, setLogoUrl] = useState<string | null>(null);
     const [accentColor, setAccentColor] = useState('hsl(var(--primary))');
+    const [invoice, setInvoice] = useState<Invoice | null>(null);
+    const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState<Error | null>(null);
 
-    const invoiceRef = useMemoFirebase(() => firestore ? doc(firestore, 'invoices', params.invoiceId) : null, [firestore, params.invoiceId]);
-    const { data: invoiceData, isLoading, error } = useDoc<Invoice>(invoiceRef);
-
-    useEffect(() => {
+     useEffect(() => {
         if (typeof window !== 'undefined' && document) {
             const computedColor = getComputedStyle(document.documentElement).getPropertyValue('--primary').trim();
             if (computedColor) {
                 setAccentColor(`hsl(${computedColor})`);
             }
         }
-    }, []);
+
+        const fetchInvoice = async () => {
+            if (!firestore || !params.invoiceId) {
+                setIsLoading(false);
+                return;
+            };
+            try {
+                const foundInvoiceResult = await findInvoice(firestore, params.invoiceId);
+                if (foundInvoiceResult) {
+                    setInvoice(foundInvoiceResult.data);
+                } else {
+                    setError(new Error('Invoice not found.'));
+                }
+            } catch (err: any) {
+                setError(err);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+        fetchInvoice();
+
+    }, [firestore, params.invoiceId]);
+
 
     const fromJSON = (key: string, value: any) => {
         if (['invoiceDate', 'dueDate', 'createdAt', 'updatedAt'].includes(key) && value) {
@@ -38,11 +75,18 @@ export default function PublicInvoicePage({ params }: { params: { invoiceId: str
         return value;
     };
     
-    const invoice = invoiceData ? JSON.parse(JSON.stringify(invoiceData), fromJSON) as Invoice : null;
-    const isOwner = user && invoice && user.uid === invoice.userId;
+    const loadedInvoice = invoice ? JSON.parse(JSON.stringify(invoice), fromJSON) as Invoice : null;
+    const isOwner = user && loadedInvoice && user.uid === loadedInvoice.userId;
 
     if (isLoading) {
-        return <div className="container mx-auto p-8 text-center">Loading invoice...</div>;
+        return (
+            <div className="container mx-auto p-8">
+                <div className="max-w-4xl mx-auto">
+                    <Skeleton className="h-10 w-48 mb-8" />
+                    <Skeleton className="w-full h-[800px]" />
+                </div>
+            </div>
+        );
     }
 
     if (error) {
@@ -50,7 +94,7 @@ export default function PublicInvoicePage({ params }: { params: { invoiceId: str
         return <div className="container mx-auto p-8 text-center text-destructive">Error: Could not load invoice. This link may be invalid or you may not have permission.</div>;
     }
 
-    if (!invoice) {
+    if (!loadedInvoice) {
         return <div className="container mx-auto p-8 text-center">This invoice could not be found.</div>;
     }
     
@@ -77,21 +121,19 @@ export default function PublicInvoicePage({ params }: { params: { invoiceId: str
                     ) : <div></div>}
                    
                     <div className="flex items-center gap-4">
-                         <Badge variant={getStatusVariant(invoice.status)} className="text-lg px-4 py-1 capitalize">
-                            {invoice.status}
+                         <Badge variant={getStatusVariant(loadedInvoice.status)} className="text-lg px-4 py-1 capitalize">
+                            {loadedInvoice.status}
                         </Badge>
                     </div>
                 </div>
 
                 <ClientInvoicePreview 
-                    invoice={invoice}
+                    invoice={loadedInvoice}
                     accentColor={accentColor} 
-                    backgroundColor={invoice.backgroundColor || '#FFFFFF'} 
-                    textColor={invoice.textColor || '#374151'}
+                    backgroundColor={loadedInvoice.backgroundColor || '#FFFFFF'} 
+                    textColor={loadedInvoice.textColor || '#374151'}
                 />
             </div>
         </div>
     );
 }
-
-    
