@@ -108,28 +108,30 @@ export const RemodelingTemplate1: React.FC<TemplateProps> = ({ document, pageIte
                     <table className="w-full text-left text-sm">
                         <thead style={{ backgroundColor: '#0A2D4D', color: 'white' }}>
                             <tr>
-                                <th className="p-2 font-bold w-[25%]">{t.costType || 'Cost Type'}</th>
                                 <th className="p-2 font-bold w-[50%]">{t.description || 'Description'}</th>
-                                <th className="p-2 font-bold text-right">{t.price || 'Price'}</th>
+                                <th className="p-2 font-bold text-center">{t.quantity || 'Qty'}</th>
+                                <th className="p-2 font-bold text-right">{t.unitPrice || 'Unit Price'}</th>
+                                <th className="p-2 font-bold text-right">{t.total || 'Total'}</th>
                             </tr>
                         </thead>
                         <tbody>
                             {pageItems.map(item => (
                                 <tr key={item.id} className="border-b border-gray-200">
-                                    <td className="p-2 align-top font-semibold">{item.name}</td>
-                                    <td className="p-2 align-top text-gray-600 whitespace-pre-line" style={{color: textColor}}>{item.description}</td>
+                                    <td className="p-2 align-top text-gray-600 whitespace-pre-line" style={{color: textColor}}>{item.name}</td>
+                                    <td className="p-2 align-top text-center">{item.quantity}</td>
+                                    <td className="p-2 align-top text-right">{currencySymbol}{item.unitPrice.toFixed(2)}</td>
                                     <td className="p-2 align-top text-right font-semibold">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</td>
                                 </tr>
                             ))}
                         </tbody>
                         {pageIndex === totalPages - 1 && (
                             <tfoot>
-                                <tr><td colSpan={2} className="pt-4 text-right">{t.subtotal || 'Subtotal'}</td><td className="pt-4 text-right">{currencySymbol}{summary.subtotal.toFixed(2)}</td></tr>
-                                {summary.discount > 0 && (<tr><td colSpan={2} className="text-right">{t.discount || 'Discount'}</td><td className="text-right text-red-500">-{currencySymbol}{summary.discount.toFixed(2)}</td></tr>)}
-                                {summary.shippingCost > 0 && (<tr><td colSpan={2} className="text-right">{t.shipping || 'Shipping'}</td><td className="text-right">{currencySymbol}{summary.shippingCost.toFixed(2)}</td></tr>)}
-                                <tr><td colSpan={2} className="text-right">{t.tax || 'Tax'} ({summary.taxPercentage}%)</td><td className="text-right">{currencySymbol}{summary.taxAmount.toFixed(2)}</td></tr>
+                                <tr><td colSpan={3} className="pt-4 text-right">{t.subtotal || 'Subtotal'}</td><td className="pt-4 text-right">{currencySymbol}{summary.subtotal.toFixed(2)}</td></tr>
+                                {summary.discount > 0 && (<tr><td colSpan={3} className="text-right">{t.discount || 'Discount'}</td><td className="text-right text-red-500">-{currencySymbol}{summary.discount.toFixed(2)}</td></tr>)}
+                                {summary.shippingCost > 0 && (<tr><td colSpan={3} className="text-right">{t.shipping || 'Shipping'}</td><td className="text-right">{currencySymbol}{summary.shippingCost.toFixed(2)}</td></tr>)}
+                                <tr><td colSpan={3} className="text-right">{t.tax || 'Tax'} ({summary.taxPercentage}%)</td><td className="text-right">{currencySymbol}{summary.taxAmount.toFixed(2)}</td></tr>
                                  <tr>
-                                     <td colSpan={2} className="p-2 pt-4 text-right font-bold text-base">{t.totalCost || 'Total Cost'}</td>
+                                     <td colSpan={3} className="p-2 pt-4 text-right font-bold text-base">{t.totalCost || 'Total Cost'}</td>
                                      <td className="p-2 pt-4 text-right font-bold text-base">{currencySymbol}{summary.grandTotal.toFixed(2)}</td>
                                  </tr>
                              </tfoot>
