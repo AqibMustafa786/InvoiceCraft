@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import React from 'react';
@@ -28,6 +29,16 @@ const safeFormat = (date: Date | string | number | null | undefined, formatStrin
     const d = new Date(date);
     if (!isValid(d)) return "Invalid Date";
     return format(d, formatString);
+}
+
+const SignatureDisplay = ({ signature, label }: { signature: any, label: string }) => {
+    if (!signature?.image) return null;
+    return (
+        <div className="mt-8">
+            <Image src={signature.image} alt={label} width={150} height={75} className="border-b border-gray-400" />
+            <p className="text-xs text-gray-500 pt-1 border-t-2 border-gray-700 w-[150px]">{label}</p>
+        </div>
+    )
 }
 
 const RentalDetails: React.FC<{ invoice: Invoice, t: any }> = ({ invoice, t }) => {
@@ -84,6 +95,11 @@ export const RentalTemplate1: React.FC<PageProps> = (props) => {
                         <p className="flex justify-between font-bold text-2xl mt-2 pt-2 border-t-2"><span>{(t.totalDue || 'Total Due').toUpperCase()}:</span><span>{currencySymbol}{balanceDue.toFixed(2)}</span></p>
                     </div>
                 </div>
+                 {business.ownerSignature && (
+                    <div className="mt-8 flex justify-start">
+                        <SignatureDisplay signature={business.ownerSignature} label="Authorized Signature" />
+                    </div>
+                )}
             </footer>
             )}
         </div>
@@ -120,13 +136,18 @@ export const RentalTemplate2: React.FC<PageProps> = (props) => {
                     <p className="flex justify-between font-bold mt-2"><span>Total</span><span>{currencySymbol}{balanceDue.toFixed(2)}</span></p>
                 </div>
             </div>
+             {business.ownerSignature && (
+                <div className="mt-8">
+                    <SignatureDisplay signature={business.ownerSignature} label="Authorized Signature" />
+                </div>
+            )}
         </footer>
         )}
       </div>
     );
 };
 export const RentalTemplate3: React.FC<PageProps> = (props) => {
-    const { invoice, pageItems, pageIndex, totalPages, subtotal, taxAmount, balanceDue, currencySymbol, t, accentColor } = props;
+    const { invoice, pageItems, pageIndex, totalPages, subtotal, balanceDue, currencySymbol, t, accentColor } = props;
     const { business, client } = invoice;
     const docTitle = (t.invoice || 'Invoice');
     return (
@@ -154,6 +175,11 @@ export const RentalTemplate3: React.FC<PageProps> = (props) => {
                     <p className="flex justify-between font-bold text-xl mt-2 pt-2 border-t-2"><span>Balance Due:</span><span>{currencySymbol}{balanceDue.toFixed(2)}</span></p>
                 </div>
             </div>
+            {business.ownerSignature && (
+                <div className="mt-8">
+                    <SignatureDisplay signature={business.ownerSignature} label="Authorized Signature" />
+                </div>
+            )}
         </footer>
         )}
       </div>
@@ -184,6 +210,11 @@ export const RentalTemplate4: React.FC<PageProps> = (props) => {
                 {pageIndex === totalPages - 1 && (
                 <footer className="mt-auto pt-8">
                     <div className="text-right text-2xl font-bold">Total Due: {currencySymbol}{balanceDue.toFixed(2)}</div>
+                    {business.ownerSignature && (
+                        <div className="mt-8 flex justify-end">
+                            <SignatureDisplay signature={business.ownerSignature} label="Authorized Signature" />
+                        </div>
+                    )}
                 </footer>
                 )}
             </div>
@@ -221,6 +252,11 @@ export const RentalTemplate5: React.FC<PageProps> = (props) => {
                         <p className="flex justify-between font-bold mt-2 pt-2 border-t"><span>TOTAL</span><span>{currencySymbol}{balanceDue.toFixed(2)}</span></p>
                     </div>
                 </div>
+                 {business.ownerSignature && (
+                    <div className="mt-8">
+                        <SignatureDisplay signature={business.ownerSignature} label="Authorized Signature" />
+                    </div>
+                )}
             </footer>
             )}
         </div>

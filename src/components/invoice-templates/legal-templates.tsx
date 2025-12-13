@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import React from 'react';
@@ -28,6 +29,16 @@ const safeFormat = (date: Date | string | number | null | undefined, formatStrin
     const d = new Date(date);
     if (!isValid(d)) return "Invalid Date";
     return format(d, formatString);
+}
+
+const SignatureDisplay = ({ signature, label }: { signature: any, label: string }) => {
+    if (!signature?.image) return null;
+    return (
+        <div className="mt-8">
+            <Image src={signature.image} alt={label} width={150} height={75} className="border-b border-gray-400" />
+            <p className="text-xs text-gray-500 pt-1 border-t-2 border-gray-700 w-[150px]">{label}</p>
+        </div>
+    )
 }
 
 const LegalDetails: React.FC<{ invoice: Invoice, t: any }> = ({ invoice, t }) => {
@@ -67,8 +78,8 @@ export const LegalTemplate1: React.FC<PageProps> = (props) => {
                 </div>
                 <div className="text-xs space-y-1 text-right">
                     <p><span className="font-bold">Invoice No.</span> {invoice.invoiceNumber}</p>
-                    <p><span className="font-bold">Invoice Date:</span> {safeFormat(invoice.invoiceDate, 'yyyy-MM-dd')}</p>
-                    <p><span className="font-bold">Due Date:</span> {safeFormat(invoice.dueDate, 'yyyy-MM-dd')}</p>
+                    <p><span className="font-bold">{t.date || 'Date'}:</span> {safeFormat(invoice.invoiceDate, 'yyyy-MM-dd')}</p>
+                    <p><span className="font-bold">{t.dueDate || 'Due Date'}:</span> {safeFormat(invoice.dueDate, 'yyyy-MM-dd')}</p>
                 </div>
             </header>
             
@@ -137,6 +148,11 @@ export const LegalTemplate1: React.FC<PageProps> = (props) => {
                     <p className="font-bold">Terms and Conditions</p>
                     <p>{invoice.paymentInstructions}</p>
                 </div>
+                 {business.ownerSignature && (
+                    <div className="mt-8">
+                        <SignatureDisplay signature={business.ownerSignature} label="Authorized Signature" />
+                    </div>
+                )}
             </footer>
             )}
         </div>
@@ -150,10 +166,10 @@ export const LegalTemplate2: React.FC<PageProps> = (props) => {
     const { business, client } = invoice;
      return (
         <div className={`font-sans ${pageIndex < totalPages - 1 ? 'page-break-after' : ''}`} style={{ minHeight: '1056px', backgroundColor: props.backgroundColor, color: props.textColor }}>
-            <header className="p-10 text-white flex justify-between" style={{backgroundColor: '#1a202c'}}>
+            <header className="p-10 text-white flex justify-between" style={{backgroundColor: accentColor || '#1a202c'}}>
                 <div>
                     <h1 className="text-2xl font-bold">{business.name}</h1>
-                    <p className="text-xs">{business.address}</p>
+                    <p className="text-xs opacity-80">{t.attorneysAtLaw || 'Attorneys at Law'}</p>
                 </div>
                 <div className="text-right">
                     <h2 className="text-3xl font-bold">{(t.invoice || 'INVOICE').toUpperCase()}</h2>
@@ -161,27 +177,31 @@ export const LegalTemplate2: React.FC<PageProps> = (props) => {
                 </div>
             </header>
             <div className="p-10">
-                <section className="grid grid-cols-2 gap-8 text-xs mb-8">
-                     <div><p className="font-bold">{(t.billedTo || 'Billed To')}</p><p>{client.name}<br/>{client.address}</p></div>
+                <section className="grid grid-cols-2 gap-8 text-sm mb-8">
+                     <div><p className="font-bold">{(t.client || 'Client')}</p><p>{client.name}<br/>{client.address}</p></div>
                      <div className="text-right"><p><strong>{(t.date || 'Date')}:</strong> {safeFormat(invoice.invoiceDate, 'MMMM d, yyyy')}</p></div>
                 </section>
                 <LegalDetails invoice={invoice} t={t} />
                 <main className="flex-grow mt-4">
                     <table className="w-full text-left text-sm">
-                        <thead><tr className="border-b-2"><th className="pb-2 font-bold">{(t.service || 'SERVICE')}</th><th className="pb-2 font-bold text-right">{(t.total || 'TOTAL')}</th></tr></thead>
+                        <thead><tr className="border-b-2"><th className="pb-2 font-bold w-3/5">{(t.description || 'Description')}</th><th className="pb-2 font-bold text-right">{(t.amount || 'Amount')}</th></tr></thead>
                         <tbody>{pageItems.map(item => (<tr key={item.id} className="border-b"><td className="py-2">{item.name}</td><td className="py-2 text-right">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</td></tr>))}</tbody>
                     </table>
                 </main>
                  {pageIndex === totalPages - 1 && (
                     <footer className="mt-auto pt-8">
                         <div className="text-right text-3xl font-bold">{(t.total || 'Total')}: {currencySymbol}{balanceDue.toFixed(2)}</div>
+                        {business.ownerSignature && (
+                            <div className="mt-8 flex justify-end">
+                                <SignatureDisplay signature={business.ownerSignature} label="Authorized Signature" />
+                            </div>
+                        )}
                     </footer>
                 )}
             </div>
         </div>
-     )
+    );
 };
-
 // Template 3: Justice
 export const LegalTemplate3: React.FC<PageProps> = (props) => {
     const { invoice, pageItems, pageIndex, totalPages, subtotal, taxAmount, balanceDue, currencySymbol, t } = props;
@@ -218,6 +238,11 @@ export const LegalTemplate3: React.FC<PageProps> = (props) => {
                             <p className="flex justify-between font-bold text-lg mt-2 pt-2"><span>{(t.total || 'Total')}:</span><span>{currencySymbol}{balanceDue.toFixed(2)}</span></p>
                         </div>
                     </div>
+                    {business.ownerSignature && (
+                        <div className="mt-8">
+                            <SignatureDisplay signature={business.ownerSignature} label="Authorized Signature" />
+                        </div>
+                    )}
                 </footer>
                 )}
             </div>
@@ -254,6 +279,11 @@ export const LegalTemplate4: React.FC<PageProps> = (props) => {
                         <p className="flex justify-between font-bold text-xl mt-2 pt-2 border-t-2"><span>{(t.balanceDue || 'Balance Due')}:</span><span>{currencySymbol}{balanceDue.toFixed(2)}</span></p>
                     </div>
                 </div>
+                {business.ownerSignature && (
+                    <div className="mt-8">
+                        <SignatureDisplay signature={business.ownerSignature} label="Authorized Signature" />
+                    </div>
+                )}
             </footer>
             )}
         </div>
@@ -282,6 +312,11 @@ export const LegalTemplate5: React.FC<PageProps> = (props) => {
                 {pageIndex === totalPages - 1 && (
                 <footer className="mt-auto pt-8">
                     <div className="text-right text-2xl font-bold">{(t.totalDue || 'Total Due')}: {currencySymbol}{balanceDue.toFixed(2)}</div>
+                    {business.ownerSignature && (
+                        <div className="mt-8 flex justify-end">
+                            <SignatureDisplay signature={business.ownerSignature} label="Authorized Signature" />
+                        </div>
+                    )}
                 </footer>
                 )}
             </div>

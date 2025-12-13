@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import React from 'react';
@@ -28,6 +29,16 @@ const safeFormat = (date: Date | string | number | null | undefined, formatStrin
     const d = new Date(date);
     if (!isValid(d)) return "Invalid Date";
     return format(d, formatString);
+}
+
+const SignatureDisplay = ({ signature, label }: { signature: any, label: string }) => {
+    if (!signature?.image) return null;
+    return (
+        <div className="mt-8">
+            <Image src={signature.image} alt={label} width={150} height={75} className="border-b border-gray-400" />
+            <p className="text-xs text-gray-500 pt-1 border-t-2 border-gray-700 w-[150px]">{label}</p>
+        </div>
+    )
 }
 
 const MedicalDetails: React.FC<{ invoice: Invoice, t: any }> = ({ invoice, t }) => {
@@ -125,11 +136,9 @@ export const MedicalTemplate1: React.FC<PageProps> = (props) => {
                         </div>
                     </div>
                      <div className="flex justify-between items-end mt-16 text-xs">
-                        <div>
-                             <p>{t.onlineConsultations || 'Online consultations 24/7'}</p>
-                             <p>{t.laboratories || 'Loboratories'}</p>
-                             <p>{t.deliveryOfMedicines || 'Delivery of medicines'}</p>
-                        </div>
+                        {business.ownerSignature && (
+                            <SignatureDisplay signature={business.ownerSignature} label="Authorized Signature" />
+                        )}
                         <div className="text-right">
                              <p className="text-lg font-bold">{business.name}</p>
                              <p>{business.website}</p>
@@ -171,6 +180,11 @@ export const MedicalTemplate2: React.FC<PageProps> = (props) => {
                         <p className="flex justify-between font-bold mt-2"><span>{t.balanceDue || 'Balance Due'}:</span><span>{currencySymbol}{balanceDue.toFixed(2)}</span></p>
                     </div>
                 </div>
+                {business.ownerSignature && (
+                    <div className="mt-8">
+                        <SignatureDisplay signature={business.ownerSignature} label="Authorized Signature" />
+                    </div>
+                )}
             </footer>
             )}
         </div>
@@ -203,6 +217,11 @@ export const MedicalTemplate3: React.FC<PageProps> = (props) => {
                 {pageIndex === totalPages - 1 && (
                 <footer className="mt-auto pt-8">
                     <div className="flex justify-end text-xl font-bold"><p><span>{t.total || 'Total'}: </span><span>{currencySymbol}{balanceDue.toFixed(2)}</span></p></div>
+                     {business.ownerSignature && (
+                        <div className="mt-8 flex justify-end">
+                            <SignatureDisplay signature={business.ownerSignature} label="Authorized Signature" />
+                        </div>
+                    )}
                 </footer>
                 )}
             </div>
@@ -237,6 +256,11 @@ export const MedicalTemplate4: React.FC<PageProps> = (props) => {
                         <p className="flex justify-between font-bold mt-2"><span>{t.balanceDue || 'Balance Due'}</span><span>{currencySymbol}{balanceDue.toFixed(2)}</span></p>
                     </div>
                 </div>
+                 {business.ownerSignature && (
+                    <div className="mt-8 flex justify-start">
+                        <SignatureDisplay signature={business.ownerSignature} label="Authorized Signature" />
+                    </div>
+                )}
             </footer>
             )}
         </div>
@@ -254,10 +278,13 @@ export const MedicalTemplate5: React.FC<PageProps> = (props) => {
                 <p className="text-xs">{business.address} | {business.phone}</p>
             </header>
             <h2 className="text-center text-xl font-semibold mb-8">{t.statementOfAccount || 'STATEMENT OF ACCOUNT'}</h2>
-            <section className="text-sm mb-8"><p><strong>{t.patient || 'Patient'}:</strong> {client.name}</p><p><strong>{t.accountNo || 'Account #'}:</strong> {invoice.medical?.patientId || 'N/A'}</p></section>
+            <section className="text-xs mb-8">
+                <p><strong>{t.patient || 'Patient'}:</strong> {client.name}</p>
+                <p><strong>{t.accountNo || 'Account #'}:</strong> {invoice.medical?.patientId || 'N/A'}</p>
+            </section>
             <MedicalDetails invoice={invoice} t={t} />
             <main className="flex-grow mt-4">
-                <table className="w-full text-left text-sm">
+                <table className="w-full text-left text-xs">
                     <thead><tr className="bg-gray-100"><th className="p-2 font-bold w-2/3">{t.service || 'Service'}</th><th className="p-2 font-bold text-right">{t.charge || 'Charge'}</th></tr></thead>
                     <tbody>{pageItems.map(item => (<tr key={item.id} className="border-b"><td className="p-2">{item.name}</td><td className="p-2 text-right">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</td></tr>))}</tbody>
                 </table>
@@ -266,9 +293,14 @@ export const MedicalTemplate5: React.FC<PageProps> = (props) => {
             <footer className="mt-auto pt-8">
                 <div className="flex justify-end text-sm">
                     <div className="w-1/2">
-                        <p className="flex justify-between font-bold text-xl" style={{color: props.accentColor}}><span>{t.pleaseRemit || 'Please Remit'}:</span><span>{currencySymbol}{balanceDue.toFixed(2)}</span></p>
+                        <p className="flex justify-between font-bold text-xl" style={{color: props.accentColor}}><span>{t.pleaseRemit || 'Please Remit'}: </span><span>{currencySymbol}{balanceDue.toFixed(2)}</span></p>
                     </div>
                 </div>
+                {business.ownerSignature && (
+                    <div className="mt-8">
+                        <SignatureDisplay signature={business.ownerSignature} label="Authorized Signature" />
+                    </div>
+                )}
             </footer>
             )}
         </div>

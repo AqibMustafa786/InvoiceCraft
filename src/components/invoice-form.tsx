@@ -21,6 +21,8 @@ import {
 } from "@/components/ui/select";
 import { Checkbox } from './ui/checkbox';
 import { RadioGroup, RadioGroupItem } from './ui/radio-group';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from './ui/dialog';
+import { SignaturePad } from './signature-pad';
 
 
 interface InvoiceFormProps {
@@ -153,6 +155,7 @@ export function InvoiceForm({ invoice, setInvoice, accentColor, setAccentColor, 
   const [bgColorInput, setBgColorInput] = useState(backgroundColor);
   const [textColorInput, setTextColorInput] = useState(textColor);
   const [logoUrl, setLogoUrl] = useState<string | null>(invoice.business.logoUrl || null);
+  const [isSignatureDialogOpen, setIsSignatureDialogOpen] = useState(false);
   
   useEffect(() => {
     setAccentColorInput(accentColor);
@@ -332,6 +335,31 @@ export function InvoiceForm({ invoice, setInvoice, accentColor, setAccentColor, 
     }
   };
   
+  const handleOwnerSignatureSave = (image: string, signerName: string) => {
+    setInvoice(prev => ({
+        ...prev,
+        business: {
+            ...prev.business,
+            ownerSignature: {
+                image,
+                signerName,
+                signedAt: new Date(),
+            }
+        }
+    }));
+    setIsSignatureDialogOpen(false);
+  };
+  
+  const handleDeleteSignature = () => {
+    const { ownerSignature, ...businessRest } = invoice.business;
+    setInvoice(prev => ({
+      ...prev,
+      business: {
+        ...businessRest
+      }
+    }));
+  };
+
   const currencySymbol = currencies.find(c => c.value === invoice.currency)?.label.split(' ')[1] || '$';
 
   return (
@@ -504,6 +532,40 @@ export function InvoiceForm({ invoice, setInvoice, accentColor, setAccentColor, 
                         <Input id="businessTaxId" name="taxId" value={invoice.business.taxId ?? ''} onChange={(e) => handleNestedChange('business', e)} className="pl-10" />
                     </div>
                 </div>
+            </div>
+            <div className="space-y-2">
+                <Label>Owner Signature</Label>
+                <div className="flex gap-2">
+                    <Dialog open={isSignatureDialogOpen} onOpenChange={setIsSignatureDialogOpen}>
+                        <DialogTrigger asChild>
+                            <Button variant="outline" className="w-full">
+                                <Pencil className="mr-2 h-4 w-4" />
+                                {invoice.business.ownerSignature ? 'Edit Signature' : 'Add Signature'}
+                            </Button>
+                        </DialogTrigger>
+                        <DialogContent>
+                            <DialogHeader>
+                                <DialogTitle>Owner Signature</DialogTitle>
+                                <DialogDescription>
+                                    Draw your signature below. This will be saved with the document.
+                                </DialogDescription>
+                            </DialogHeader>
+                            <SignaturePad onSave={handleOwnerSignatureSave} signerName={invoice.business.name} />
+                        </DialogContent>
+                    </Dialog>
+                    {invoice.business.ownerSignature && (
+                      <Button variant="destructive" onClick={handleDeleteSignature}>
+                          <Trash2 className="mr-2 h-4 w-4" />
+                          Delete
+                      </Button>
+                    )}
+                </div>
+
+                {invoice.business.ownerSignature && (
+                    <div className="p-4 border rounded-md bg-muted/50">
+                        <Image src={invoice.business.ownerSignature.image} alt="Owner Signature" width={150} height={75} />
+                    </div>
+                )}
             </div>
         </CardContent>
       </Card>

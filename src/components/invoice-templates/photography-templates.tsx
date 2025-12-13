@@ -31,6 +31,16 @@ const safeFormat = (date: Date | string | number | null | undefined, formatStrin
     return format(d, formatString);
 }
 
+const SignatureDisplay = ({ signature, label }: { signature: any, label: string }) => {
+    if (!signature?.image) return null;
+    return (
+        <div className="mt-8">
+            <Image src={signature.image} alt={label} width={150} height={75} className="border-b border-gray-400" />
+            <p className="text-xs text-gray-500 pt-1 border-t-2 border-gray-700 w-[150px]">{label}</p>
+        </div>
+    )
+}
+
 const PhotographyDetails: React.FC<{ invoice: Invoice, t: any }> = ({ invoice, t }) => {
     if (!invoice.photography) return null;
     const { photography } = invoice;
@@ -83,10 +93,10 @@ export const PhotographyTemplate1: React.FC<PageProps> = (props) => {
                     <table className="w-full text-left text-sm">
                         <thead>
                             <tr className="border-b" style={{borderColor: accentTextColor}}>
-                                <th className="py-2 font-normal w-3/5" style={{color: accentTextColor}}>{(t.description || 'Description').toUpperCase()}</th>
-                                <th className="py-2 font-normal text-right" style={{color: accentTextColor}}>{(t.price || 'Price').toUpperCase()}</th>
-                                <th className="py-2 font-normal text-center" style={{color: accentTextColor}}>{(t.quantity || 'Qty').toUpperCase()}</th>
-                                <th className="py-2 font-normal text-right" style={{color: accentTextColor}}>{(t.total || 'Total').toUpperCase()}</th>
+                                <th className="py-2 font-normal w-3/5" style={{color: accentTextColor}}>{t.description.toUpperCase()}</th>
+                                <th className="py-2 font-normal text-right" style={{color: accentTextColor}}>{t.price.toUpperCase()}</th>
+                                <th className="py-2 font-normal text-center" style={{color: accentTextColor}}>{t.quantity.toUpperCase()}</th>
+                                <th className="py-2 font-normal text-right" style={{color: accentTextColor}}>{t.total.toUpperCase()}</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -106,9 +116,14 @@ export const PhotographyTemplate1: React.FC<PageProps> = (props) => {
                 <footer className="mt-auto pt-8">
                     <div className="flex justify-between items-start">
                         <div className="text-sm">
-                            <p style={{color: accentTextColor}}>{(t.sendPaymentsTo || 'Send Payments To')}:</p>
+                            <p style={{color: accentTextColor}}>{t.sendPaymentsTo || 'Send Payments To'}:</p>
                             <p>{business.name}</p>
                             <p>{business.email}</p>
+                            {business.ownerSignature && (
+                                <div className="mt-8">
+                                    <SignatureDisplay signature={business.ownerSignature} label={t.authorizedSignature || 'Authorized Signature'} />
+                                </div>
+                            )}
                         </div>
                         <div className="w-1/3 text-sm space-y-2 text-right">
                             <p className="flex justify-between"><span>{(t.totalAmount || 'Total Amount')}</span><span>{currencySymbol}{subtotal.toFixed(2)}</span></p>
@@ -160,6 +175,11 @@ export const PhotographyTemplate2: React.FC<PageProps> = (props) => {
                  {pageIndex === totalPages - 1 && (
                     <footer className="mt-auto pt-8">
                         <div className="text-right text-3xl font-bold">{(t.total || 'Total')}: {currencySymbol}{balanceDue.toFixed(2)}</div>
+                         {business.ownerSignature && (
+                            <div className="mt-8 flex justify-end">
+                                <SignatureDisplay signature={business.ownerSignature} label="Authorized Signature" />
+                            </div>
+                        )}
                     </footer>
                 )}
             </div>
@@ -174,6 +194,7 @@ export const PhotographyTemplate3: React.FC<PageProps> = (props) => {
          <div className={`p-10 font-serif bg-gray-50 text-gray-700 ${pageIndex < totalPages - 1 ? 'page-break-after' : ''}`} style={{ minHeight: '1056px' }}>
             <header className="text-center mb-10">
                 <h1 className="text-4xl font-bold">{business.name}</h1>
+                <p className="text-sm">{(t.photography || 'Photography')}</p>
             </header>
             <section className="grid grid-cols-2 gap-8 text-xs mb-8">
                 <div><p className="font-bold">{(t.billedTo || 'Billed To')}</p><p>{client.name}<br/>{client.address}</p></div>
@@ -195,6 +216,11 @@ export const PhotographyTemplate3: React.FC<PageProps> = (props) => {
                             <p className="flex justify-between font-bold mt-2"><span>{(t.total || 'Total')}</span><span>{currencySymbol}{balanceDue.toFixed(2)}</span></p>
                         </div>
                     </div>
+                     {business.ownerSignature && (
+                        <div className="mt-8">
+                            <SignatureDisplay signature={business.ownerSignature} label="Authorized Signature" />
+                        </div>
+                    )}
                 </footer>
             )}
         </div>
@@ -234,6 +260,11 @@ export const PhotographyTemplate4: React.FC<PageProps> = (props) => {
                             <p className="flex justify-between font-bold text-lg mt-2 pt-2"><span>{(t.totalDue || 'Total Due')}:</span><span>{currencySymbol}{balanceDue.toFixed(2)}</span></p>
                         </div>
                     </div>
+                     {business.ownerSignature && (
+                        <div className="mt-8 flex justify-end">
+                            <SignatureDisplay signature={business.ownerSignature} label="Authorized Signature" />
+                        </div>
+                    )}
                 </footer>
                 )}
             </div>
@@ -242,7 +273,7 @@ export const PhotographyTemplate4: React.FC<PageProps> = (props) => {
 };
 // Template 5: Portfolio
 export const PhotographyTemplate5: React.FC<PageProps> = (props) => {
-    const { invoice, pageItems, pageIndex, totalPages, subtotal, taxAmount, balanceDue, currencySymbol, t, accentColor } = props;
+    const { invoice, pageItems, pageIndex, totalPages, subtotal, balanceDue, currencySymbol, t, accentColor } = props;
     const { business, client } = invoice;
     return (
         <div className={`font-serif p-10 ${pageIndex < totalPages - 1 ? 'page-break-after' : ''}`} style={{ minHeight: '1056px', borderLeft: `10px solid ${accentColor || '#1f2937'}` }}>
@@ -270,6 +301,11 @@ export const PhotographyTemplate5: React.FC<PageProps> = (props) => {
                             <p className="flex justify-between font-bold text-xl mt-2" style={{color: accentColor}}><span>{(t.amountDue || 'Amount Due')}</span><span>{currencySymbol}{balanceDue.toFixed(2)}</span></p>
                         </div>
                     </div>
+                     {business.ownerSignature && (
+                        <div className="mt-8 flex justify-start">
+                            <SignatureDisplay signature={business.ownerSignature} label="Authorized Signature" />
+                        </div>
+                    )}
                 </footer>
             )}
         </div>
