@@ -60,7 +60,7 @@ const ConstructionDetails: React.FC<{ invoice: Invoice, t: any }> = ({ invoice, 
 };
 
 export const ConstructionTemplate1: React.FC<PageProps> = (props) => {
-    const { invoice, pageItems, pageIndex, totalPages, subtotal, taxAmount, balanceDue, t, currencySymbol } = props;
+    const { invoice, pageItems, pageIndex, totalPages, subtotal, taxAmount, discountAmount, total, balanceDue, t, currencySymbol } = props;
     const { business, client } = invoice;
     const totalLabor = pageItems.filter(i => (i.name || '').toLowerCase().includes('labor')).reduce((acc, i) => acc + (i.quantity * i.unitPrice), 0);
     const totalMaterials = pageItems.filter(i => !(i.name || '').toLowerCase().includes('labor')).reduce((acc, i) => acc + (i.quantity * i.unitPrice), 0);
@@ -123,8 +123,12 @@ export const ConstructionTemplate1: React.FC<PageProps> = (props) => {
                          <div className="flex justify-end">
                             <div className="w-full text-xs space-y-1">
                                 <p className="grid grid-cols-2"><span className="font-bold">{(t.subtotal || 'SUBTOTAL').toUpperCase()}:</span> <span className="text-right">{currencySymbol}{subtotal.toFixed(2)}</span></p>
+                                {discountAmount > 0 && <p className="grid grid-cols-2"><span className="font-bold">{(t.discount || 'DISCOUNT').toUpperCase()}:</span> <span className="text-right">-{currencySymbol}{discountAmount.toFixed(2)}</span></p>}
+                                {invoice.summary.shippingCost > 0 && <p className="grid grid-cols-2"><span className="font-bold">{(t.shipping || 'SHIPPING').toUpperCase()}:</span> <span className="text-right">{currencySymbol}{invoice.summary.shippingCost.toFixed(2)}</span></p>}
                                 <p className="grid grid-cols-2"><span className="font-bold">{(t.tax || 'TAX').toUpperCase()} ({invoice.summary.taxPercentage}%):</span> <span className="text-right">{currencySymbol}{taxAmount.toFixed(2)}</span></p>
-                                <p className="grid grid-cols-2 bg-gray-200 p-1 font-bold text-sm"><span className="">{(t.grandTotal || 'GRAND TOTAL').toUpperCase()}:</span> <span className="text-right">{currencySymbol}{balanceDue.toFixed(2)}</span></p>
+                                <p className="grid grid-cols-2 bg-gray-200 p-1 font-bold text-sm"><span className="">{(t.grandTotal || 'GRAND TOTAL').toUpperCase()}:</span> <span className="text-right">{currencySymbol}{total.toFixed(2)}</span></p>
+                                {(invoice.amountPaid || 0) > 0 && <p className="grid grid-cols-2"><span className="font-bold">{(t.amountPaid || 'AMOUNT PAID').toUpperCase()}:</span> <span className="text-right">-{currencySymbol}{(invoice.amountPaid || 0).toFixed(2)}</span></p>}
+                                <p className="grid grid-cols-2 bg-gray-300 p-1 font-bold text-sm"><span className="">{(t.balanceDue || 'BALANCE DUE').toUpperCase()}:</span> <span className="text-right">{currencySymbol}{balanceDue.toFixed(2)}</span></p>
                             </div>
                         </div>
                      )}
@@ -133,7 +137,10 @@ export const ConstructionTemplate1: React.FC<PageProps> = (props) => {
             {pageIndex === totalPages - 1 && (
                 <footer className="mt-8 text-xs pt-4 border-t">
                     <p><span className="font-bold">{(t.paymentTerms || 'Payment Terms')}:</span> {invoice.paymentInstructions}</p>
-                    {business.ownerSignature && <SignatureDisplay signature={business.ownerSignature} label="Authorized Signature" />}
+                    <div className="flex justify-between mt-8">
+                       <SignatureDisplay signature={business.ownerSignature} label="Authorized Signature" />
+                       <SignatureDisplay signature={invoice.clientSignature} label="Client Signature" />
+                   </div>
                 </footer>
             )}
         </div>
@@ -142,14 +149,14 @@ export const ConstructionTemplate1: React.FC<PageProps> = (props) => {
 
 // Template 2: Modern Dark Header
 export const ConstructionTemplate2: React.FC<PageProps> = (props) => {
-    const { invoice, pageItems, pageIndex, totalPages, subtotal, taxAmount, balanceDue, t, currencySymbol, textColor } = props;
+    const { invoice, pageItems, pageIndex, totalPages, subtotal, taxAmount, discountAmount, total, balanceDue, t, currencySymbol, textColor } = props;
     const { business, client } = invoice;
     return (
         <div className={`p-0 font-sans text-gray-800 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ minHeight: '1056px', backgroundColor: props.backgroundColor, color: props.textColor }}>
             <header className="p-10 text-white flex justify-between items-start" style={{ backgroundColor: '#1F2937' }}>
                 <div>
                      {business.logoUrl ? (
-                        <Image src={business.logoUrl} alt="Logo" width={120} height={50} />
+                        <Image src={business.logoUrl} alt="Logo" width={120} height={50} className="filter invert brightness-0"/>
                     ) : (
                         <h1 className="text-4xl font-bold">{business.name}</h1>
                     )}
@@ -212,8 +219,12 @@ export const ConstructionTemplate2: React.FC<PageProps> = (props) => {
                             <div className="w-2/5">
                                 <div className="bg-gray-100 p-4 rounded-lg text-sm">
                                     <div className="flex justify-between py-1"><span>{(t.subtotal || 'Subtotal')}:</span><span className="font-medium">{currencySymbol}{subtotal.toFixed(2)}</span></div>
+                                    {discountAmount > 0 && <div className="flex justify-between py-1 text-red-600"><span>{(t.discount || 'Discount')}:</span><span className="font-medium">-{currencySymbol}{discountAmount.toFixed(2)}</span></div>}
+                                    {invoice.summary.shippingCost > 0 && <div className="flex justify-between py-1"><span>{(t.shipping || 'Shipping/Extra')}:</span><span className="font-medium">{currencySymbol}{invoice.summary.shippingCost.toFixed(2)}</span></div>}
                                     <div className="flex justify-between py-1"><span>{(t.tax || 'Tax')} ({invoice.summary.taxPercentage}%):</span><span className="font-medium">{currencySymbol}{taxAmount.toFixed(2)}</span></div>
-                                    <div className="flex justify-between font-bold text-base mt-2 pt-2 border-t-2 border-gray-300"><span>{(t.grandTotal || 'Grand Total')}:</span><span>{currencySymbol}{balanceDue.toFixed(2)}</span></div>
+                                    <div className="flex justify-between font-bold text-base mt-2 pt-2 border-t-2 border-gray-300"><span>{(t.grandTotal || 'Grand Total')}:</span><span>{currencySymbol}{total.toFixed(2)}</span></div>
+                                    {(invoice.amountPaid || 0) > 0 && <div className="flex justify-between py-1 text-green-600"><span>{(t.amountPaid || 'Amount Paid')}:</span><span className="font-medium">-{currencySymbol}{(invoice.amountPaid || 0).toFixed(2)}</span></div>}
+                                    <div className="flex justify-between font-bold text-lg mt-2 pt-2 border-t-2 border-gray-400"><span>{(t.balanceDue || 'Balance Due')}:</span><span>{currencySymbol}{balanceDue.toFixed(2)}</span></div>
                                 </div>
                             </div>
                         </div>
@@ -226,7 +237,7 @@ export const ConstructionTemplate2: React.FC<PageProps> = (props) => {
 
 // Template 3: Minimalist & Clean
 export const ConstructionTemplate3: React.FC<PageProps> = (props) => {
-    const { invoice, pageItems, pageIndex, totalPages, subtotal, taxAmount, balanceDue, t, currencySymbol, textColor } = props;
+    const { invoice, pageItems, pageIndex, totalPages, subtotal, taxAmount, discountAmount, total, balanceDue, t, currencySymbol, textColor } = props;
     const { business, client } = invoice;
     return (
         <div className={`p-10 font-sans text-gray-700 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ minHeight: '1056px', backgroundColor: props.backgroundColor, color: props.textColor }}>
@@ -276,15 +287,22 @@ export const ConstructionTemplate3: React.FC<PageProps> = (props) => {
                      <div className="flex justify-end mb-8">
                         <div className="w-1/3 text-sm">
                             <div className="flex justify-between py-1"><span>{(t.subtotal || 'Subtotal')}</span><span className="font-medium">{currencySymbol}{subtotal.toFixed(2)}</span></div>
+                             {discountAmount > 0 && <div className="flex justify-between py-1 text-red-600"><span>{(t.discount || 'Discount')}</span><span className="font-medium">-{currencySymbol}{discountAmount.toFixed(2)}</span></div>}
+                            {invoice.summary.shippingCost > 0 && <div className="flex justify-between py-1"><span>{(t.shipping || 'Shipping/Extra')}</span><span className="font-medium">{currencySymbol}{invoice.summary.shippingCost.toFixed(2)}</span></div>}
                             <div className="flex justify-between py-1"><span>{(t.tax || 'Tax')}</span><span className="font-medium">{currencySymbol}{taxAmount.toFixed(2)}</span></div>
-                            <div className="flex justify-between py-2 mt-1 border-t-2 border-black font-bold"><span>{(t.total || 'Total')}</span><span>{currencySymbol}{balanceDue.toFixed(2)}</span></div>
+                            <div className="flex justify-between py-1 font-bold"><span>{(t.total || 'Total')}</span><span>{currencySymbol}{total.toFixed(2)}</span></div>
+                            {(invoice.amountPaid || 0) > 0 && <div className="flex justify-between py-1 text-green-600"><span>{(t.amountPaid || 'Amount Paid')}</span><span className="font-medium">-{currencySymbol}{(invoice.amountPaid || 0).toFixed(2)}</span></div>}
+                            <div className="flex justify-between py-2 mt-1 border-t-2 border-black font-bold"><span>{(t.balanceDue || 'Balance Due')}</span><span>{currencySymbol}{balanceDue.toFixed(2)}</span></div>
                         </div>
                     </div>
                     <div className="text-xs">
                         <p className="font-bold mb-1">{(t.notes || 'Notes')}</p>
                         <p className="whitespace-pre-line">{invoice.paymentInstructions}</p>
                     </div>
-                    {business.ownerSignature && <SignatureDisplay signature={business.ownerSignature} label="Authorized Signature" />}
+                     <div className="flex justify-between mt-8">
+                        <SignatureDisplay signature={business.ownerSignature} label="Authorized Signature" />
+                        <SignatureDisplay signature={invoice.clientSignature} label="Client Signature" />
+                    </div>
                 </footer>
             )}
         </div>
@@ -292,7 +310,7 @@ export const ConstructionTemplate3: React.FC<PageProps> = (props) => {
 };
 
 export const ConstructionTemplate4: React.FC<PageProps> = (props) => {
-    const { invoice, pageItems, pageIndex, totalPages, subtotal, taxAmount, balanceDue, currencySymbol, t, accentColor, textColor } = props;
+    const { invoice, pageItems, pageIndex, totalPages, subtotal, taxAmount, discountAmount, total, balanceDue, currencySymbol, t, accentColor, textColor } = props;
     const { business, client } = invoice;
     const docTitle = (t.invoice || 'INVOICE').toUpperCase();
 
@@ -352,8 +370,12 @@ export const ConstructionTemplate4: React.FC<PageProps> = (props) => {
                         <table className="w-1/3 text-sm">
                             <tbody>
                                 <tr><td className="py-1 text-gray-600">{(t.subtotal || 'Subtotal')}</td><td className="py-1 text-right">{currencySymbol}{subtotal.toFixed(2)}</td></tr>
+                                {discountAmount > 0 && (<tr><td className="py-1 text-gray-600">{(t.discount || 'Discount')}</td><td className="py-1 text-right text-red-500">-{currencySymbol}{discountAmount.toFixed(2)}</td></tr>)}
+                                {invoice.summary.shippingCost > 0 && (<tr><td className="py-1 text-gray-600">{(t.shipping || 'Shipping')}</td><td className="py-1 text-right">{currencySymbol}{invoice.summary.shippingCost.toFixed(2)}</td></tr>)}
                                 {taxAmount > 0 && <tr><td className="py-1 text-gray-600">{(t.tax || 'Taxes')}</td><td className="py-1 text-right">{currencySymbol}{taxAmount.toFixed(2)}</td></tr>}
-                                <tr className="font-bold text-base border-t-2 border-black"><td className="py-2">{(t.total || 'Total')}</td><td className="py-2 text-right">{currencySymbol}{balanceDue.toFixed(2)}</td></tr>
+                                <tr className="font-bold text-base border-t-2 border-black"><td className="py-2">{(t.total || 'Total')}</td><td className="py-2 text-right">{currencySymbol}{total.toFixed(2)}</td></tr>
+                                {(invoice.amountPaid || 0) > 0 && <tr className="font-bold text-green-600"><td>Amount Paid</td><td className="text-right">-{currencySymbol}{(invoice.amountPaid || 0).toFixed(2)}</td></tr>}
+                                <tr className="font-bold text-lg bg-gray-100"><td className="p-2">Balance Due</td><td className="p-2 text-right">{currencySymbol}{balanceDue.toFixed(2)}</td></tr>
                             </tbody>
                         </table>
                     </div>
@@ -368,7 +390,7 @@ export const ConstructionTemplate4: React.FC<PageProps> = (props) => {
 
 // Template 5: Minimal Side-by-Side
 export const ConstructionTemplate5: React.FC<PageProps> = (props) => {
-    const { invoice, pageItems, pageIndex, totalPages, subtotal, taxAmount, balanceDue, currencySymbol, t, textColor } = props;
+    const { invoice, pageItems, pageIndex, totalPages, subtotal, taxAmount, discountAmount, total, balanceDue, currencySymbol, t, textColor } = props;
     const { business, client } = invoice;
     const docTitle = (t.invoice || 'INVOICE').toUpperCase();
 
@@ -422,8 +444,12 @@ export const ConstructionTemplate5: React.FC<PageProps> = (props) => {
                     <div className="flex justify-end">
                         <div className="w-2/5 text-sm space-y-2">
                              <div className="flex justify-between"><span className="text-gray-600">{(t.subtotal || 'Subtotal')}</span><span>{currencySymbol}{subtotal.toFixed(2)}</span></div>
+                             {discountAmount > 0 && (<div className="flex justify-between text-red-500"><span className="text-gray-600">{(t.discount || 'Discount')}</span><span>-{currencySymbol}{discountAmount.toFixed(2)}</span></div>)}
+                            {invoice.summary.shippingCost > 0 && (<div className="flex justify-between"><span className="text-gray-600">{(t.shipping || 'Shipping')}</span><span>{currencySymbol}{invoice.summary.shippingCost.toFixed(2)}</span></div>)}
                              <div className="flex justify-between"><span className="text-gray-600">{(t.tax || 'Tax')}</span><span>{currencySymbol}{taxAmount.toFixed(2)}</span></div>
-                             <div className="flex justify-between font-bold text-lg mt-2 pt-2 border-t border-gray-800"><span>{(t.total || 'TOTAL')}</span><span>{currencySymbol}{balanceDue.toFixed(2)}</span></div>
+                             <div className="flex justify-between font-bold text-lg mt-2 pt-2 border-t border-gray-800"><span>{(t.total || 'TOTAL')}</span><span>{currencySymbol}{total.toFixed(2)}</span></div>
+                             {(invoice.amountPaid || 0) > 0 && <div className="flex justify-between text-green-600"><span>{(t.amountPaid || 'Amount Paid')}</span><span>-{currencySymbol}{(invoice.amountPaid || 0).toFixed(2)}</span></div>}
+                             <div className="flex justify-between font-bold text-xl bg-gray-100 p-2 rounded"><span>Balance Due</span><span>{currencySymbol}{balanceDue.toFixed(2)}</span></div>
                         </div>
                     </div>
                      <div className="flex justify-end mt-4">
@@ -437,9 +463,5 @@ export const ConstructionTemplate5: React.FC<PageProps> = (props) => {
 
 
 export const ConstructionTemplate6: React.FC<PageProps> = (props) => <ConstructionTemplate1 {...props} />;
-export const ConstructionTemplate7: React.FC<PageProps> = (props) => <ConstructionTemplate2 {...props} />;
-export const ConstructionTemplate8: React.FC<PageProps> = (props) => <ConstructionTemplate3 {...props} />;
-export const ConstructionTemplate9: React.FC<PageProps> = (props) => <ConstructionTemplate4 {...props} />;
-export const ConstructionTemplate10: React.FC<PageProps> = (props) => <ConstructionTemplate5 {...props} />;
 
     
