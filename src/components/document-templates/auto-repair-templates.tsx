@@ -1,4 +1,3 @@
-
 'use client';
 
 import React from 'react';
@@ -59,6 +58,7 @@ export const AutoRepairTemplate1: React.FC<TemplateProps> = ({ document, pageIte
     const currencySymbol = currencySymbols[currency] || '$';
     const accentColor = style.color || '#FBBF24'; // Default to a gold/yellow
     const docTitle = document.documentType === 'quote' ? (t.quote || 'QUOTE').toUpperCase() : (t.estimate || 'ESTIMATE').toUpperCase();
+    const docTypeTerm = document.documentType === 'quote' ? 'quote' : 'estimate';
 
     return (
         <div className={`bg-white font-sans text-gray-800 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: 'Arial, sans-serif', fontSize: '9pt', minHeight: '1056px', backgroundColor: document.backgroundColor, color: textColor }}>
@@ -134,7 +134,7 @@ export const AutoRepairTemplate1: React.FC<TemplateProps> = ({ document, pageIte
                             </div>
                              <div>
                                 <p className="font-bold mb-2">{(t.additionalNotes || 'Additional Notes')}</p>
-                                <p className="whitespace-pre-line">{document.termsAndConditions}</p>
+                                <p className="whitespace-pre-line">{document.termsAndConditions.replace(/estimate/gi, docTypeTerm)}</p>
                             </div>
                         </section>
                         <div className="flex justify-between items-end border p-4 rounded-md">
@@ -157,6 +157,7 @@ export const AutoRepairTemplate2: React.FC<TemplateProps> = ({ document, pageIte
     const { business, client, summary, currency, textColor } = document;
     const currencySymbol = currencySymbols[currency] || '$';
     const docTitle = document.documentType === 'quote' ? (t.quote || 'QUOTE').toUpperCase() : (t.estimate || 'ESTIMATE').toUpperCase();
+    const docTypeTerm = document.documentType === 'quote' ? 'quote' : 'estimate';
 
     return (
         <div className={`bg-gray-800 text-white font-sans flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: 'Roboto, sans-serif', fontSize: '9.5pt', minHeight: '1056px', color: textColor, backgroundColor: document.backgroundColor }}>
@@ -214,7 +215,7 @@ export const AutoRepairTemplate2: React.FC<TemplateProps> = ({ document, pageIte
                                 <div className="flex justify-between"><span className="text-gray-400">{(t.subtotal || 'Subtotal')}:</span><span>{currencySymbol}{summary.subtotal.toFixed(2)}</span></div>
                                 {summary.discount > 0 && <div className="flex justify-between"><span className="text-gray-400">{t.discount || 'Discount'}:</span><span className="text-red-400">-{currencySymbol}{summary.discount.toFixed(2)}</span></div>}
                                 {summary.shippingCost > 0 && <div className="flex justify-between"><span className="text-gray-400">{t.shipping || 'Shipping'}:</span><span>{currencySymbol}{summary.shippingCost.toFixed(2)}</span></div>}
-                                <div className="flex justify-between"><span className="text-gray-400">{(t.taxesAndFees || 'Taxes & Fees')}:</span><span>{currencySymbol}{summary.taxAmount.toFixed(2)}</span></div>
+                                <div className="flex justify-between"><span className="text-gray-400">{(t.taxesAndFees || 'Taxes &amp; Fees')}:</span><span>{currencySymbol}{summary.taxAmount.toFixed(2)}</span></div>
                                 <div className="flex justify-between font-bold text-xl mt-2 pt-2 border-t-2 border-gray-500" style={{color: style.color || '#FBBF24'}}><span>{(document.documentType === 'quote' ? t.quoteTotal : t.estimateTotal) || 'TOTAL'}:</span><span>{currencySymbol}{summary.grandTotal.toFixed(2)}</span></div>
                             </div>
                         </div>
@@ -235,6 +236,7 @@ export const AutoRepairTemplate3: React.FC<TemplateProps> = ({ document, pageIte
     const { business, client, summary, currency, textColor } = document;
     const currencySymbol = currencySymbols[currency] || '$';
     const docTitle = document.documentType === 'quote' ? (t.quote || 'Quote') : (t.estimate || 'Estimate');
+    const docTypeTerm = document.documentType === 'quote' ? 'quote' : 'estimate';
 
     return (
         <div className={`p-12 bg-white font-['Garamond',_serif] text-gray-700 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{minHeight: '1056px', color: textColor, backgroundColor: document.backgroundColor }}>
@@ -313,6 +315,7 @@ export const AutoRepairTemplate4: React.FC<TemplateProps> = ({ document, pageIte
     const currencySymbol = currencySymbols[currency] || '$';
     const accentColor = style.color || '#3B82F6';
     const docTitle = document.documentType === 'quote' ? (t.quote || 'QUOTE').toUpperCase() : (t.estimate || 'ESTIMATE').toUpperCase();
+    const docTypeTerm = document.documentType === 'quote' ? 'quote' : 'estimate';
 
     return (
         <div className={`p-10 bg-white font-sans text-gray-800 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ minHeight: '1056px', color: textColor, backgroundColor: document.backgroundColor }}>
@@ -384,6 +387,7 @@ export const AutoRepairTemplate5: React.FC<TemplateProps> = ({ document, pageIte
     const { business, client, summary, currency, textColor } = document;
     const currencySymbol = currencySymbols[currency] || '$';
     const docTitle = document.documentType === 'quote' ? (t.quote || 'Quote').toUpperCase() : (t.estimate || 'Estimate').toUpperCase();
+    const docTypeTerm = document.documentType === 'quote' ? 'quote' : 'estimate';
 
     return (
         <div className={`p-10 bg-gray-50 font-['Roboto',_sans-serif] text-gray-900 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{minHeight: '1056px', color: textColor, backgroundColor: document.backgroundColor}}>
@@ -443,3 +447,4 @@ export const AutoRepairTemplate5: React.FC<TemplateProps> = ({ document, pageIte
         </div>
     );
 };
+

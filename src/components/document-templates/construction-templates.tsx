@@ -60,6 +60,7 @@ export const ConstructionTemplate1: React.FC<TemplateProps> = ({ document, pageI
     const { business, client, summary, currency, textColor, category } = document;
     const currencySymbol = currencySymbols[currency] || '$';
     const docTitle = document.documentType === 'quote' ? (t.quote || 'QUOTE') : (t.estimate || 'ESTIMATE');
+    const docTypeTerm = document.documentType === 'quote' ? 'quote' : 'estimate';
     
     return (
         <div className={`p-10 font-sans text-gray-800 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: style.fontFamily, fontSize: `${style.fontSize}pt`, minHeight: '1056px', backgroundColor: document.backgroundColor, color: textColor }}>
@@ -133,8 +134,8 @@ export const ConstructionTemplate1: React.FC<TemplateProps> = ({ document, pageI
                         </div>
                     </div>
                     <div className="mt-8 text-xs">
-                        <p className="font-bold mb-1">{(t.termsAndConditions || 'Terms & Conditions')}</p>
-                        <p className="whitespace-pre-line" style={{ color: textColor || '#6B7280' }}>{document.termsAndConditions}</p>
+                        <p className="font-bold mb-1">{(t.termsAndConditions || 'Terms &amp; Conditions')}</p>
+                        <p className="whitespace-pre-line" style={{ color: textColor || '#6B7280' }}>{document.termsAndConditions.replace(/estimate/gi, docTypeTerm)}</p>
                     </div>
                     <div className="flex justify-between mt-8">
                         <SignatureDisplay signature={document.business.ownerSignature} label={(t.authorizedSignature || 'Authorized Signature')} />
@@ -152,6 +153,7 @@ export const ConstructionTemplate2: React.FC<TemplateProps> = ({ document, pageI
     const { business, client, summary, currency, textColor, category } = document;
     const currencySymbol = currencySymbols[currency] || '$';
     const docTitle = document.documentType === 'quote' ? (t.quote || 'QUOTE') : (t.estimate || 'ESTIMATE');
+    const docTypeTerm = document.documentType === 'quote' ? 'quote' : 'estimate';
 
     return (
         <div className={`p-0 font-sans text-gray-800 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: style.fontFamily, fontSize: `${style.fontSize}pt`, minHeight: '1056px', backgroundColor: document.backgroundColor }}>
@@ -216,8 +218,8 @@ export const ConstructionTemplate2: React.FC<TemplateProps> = ({ document, pageI
                     <footer className="mt-auto pt-8">
                         <div className="flex justify-between items-start">
                             <div className="w-1/2 text-xs">
-                                <p className="font-bold text-gray-500 mb-2" style={{ color: textColor ? textColor : undefined }}>{(t.termsAndConditions || 'TERMS & CONDITIONS')}</p>
-                                <p className="whitespace-pre-line" style={{ color: textColor || '#6B7280' }}>{document.termsAndConditions}</p>
+                                <p className="font-bold text-gray-500 mb-2" style={{ color: textColor ? textColor : undefined }}>{(t.termsAndConditions || 'TERMS &amp; CONDITIONS')}</p>
+                                <p className="whitespace-pre-line" style={{ color: textColor || '#6B7280' }}>{document.termsAndConditions.replace(/estimate/gi, docTypeTerm)}</p>
                                 <div className="flex gap-16 mt-8">
                                     <SignatureDisplay signature={document.business.ownerSignature} label={(t.authorizedSignature || 'Authorized Signature')} />
                                     <SignatureDisplay signature={document.clientSignature} label={(t.clientSignature || 'Client Signature')} />
@@ -245,6 +247,7 @@ export const ConstructionTemplate3: React.FC<TemplateProps> = ({ document, pageI
     const { business, client, summary, currency, textColor, category } = document;
     const currencySymbol = currencySymbols[currency] || '$';
     const docTitle = document.documentType === 'quote' ? (t.quote || 'Quote') : (t.estimate || 'Estimate');
+    const docTypeTerm = document.documentType === 'quote' ? 'quote' : 'estimate';
 
     return (
         <div className={`p-10 font-sans text-gray-700 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: style.fontFamily, fontSize: `${style.fontSize}pt`, minHeight: '1056px', backgroundColor: document.backgroundColor, color: textColor }}>
@@ -295,7 +298,7 @@ export const ConstructionTemplate3: React.FC<TemplateProps> = ({ document, pageI
                      <div className="flex justify-end mb-8">
                         <div className="w-1/3 text-sm">
                             <div className="flex justify-between py-1"><span>{(t.subtotal || 'Subtotal')}</span><span className="font-medium">{currencySymbol}{summary.subtotal.toFixed(2)}</span></div>
-                            {summary.discount > 0 && <div className="flex justify-between py-1 text-red-600"><span>{(t.discount || 'Discount')}</span><span className="font-medium">-{currencySymbol}{summary.discount.toFixed(2)}</span></div>}
+                             {summary.discount > 0 && <div className="flex justify-between py-1 text-red-600"><span>{(t.discount || 'Discount')}</span><span className="font-medium">-{currencySymbol}{summary.discount.toFixed(2)}</span></div>}
                             {summary.shippingCost > 0 && <div className="flex justify-between py-1"><span>{(t.shipping || 'Shipping/Extra')}</span><span className="font-medium">{currencySymbol}{summary.shippingCost.toFixed(2)}</span></div>}
                             <div className="flex justify-between py-1"><span>{(t.tax || 'Tax')}</span><span className="font-medium">{currencySymbol}{summary.taxAmount.toFixed(2)}</span></div>
                             <div className="flex justify-between py-2 mt-1 border-t-2 border-black font-bold"><span>{(t.total || 'Total')}</span><span>{currencySymbol}{summary.grandTotal.toFixed(2)}</span></div>
@@ -303,7 +306,7 @@ export const ConstructionTemplate3: React.FC<TemplateProps> = ({ document, pageI
                     </div>
                     <div className="text-xs">
                         <p className="font-bold mb-1">{(t.notes || 'Notes')}</p>
-                        <p className="whitespace-pre-line" style={{ color: textColor || '#6B7280' }}>{document.termsAndConditions}</p>
+                        <p className="whitespace-pre-line" style={{ color: textColor || '#6B7280' }}>{document.termsAndConditions.replace(/estimate/gi, docTypeTerm)}</p>
                     </div>
                      <div className="flex justify-between mt-8">
                         <SignatureDisplay signature={document.business.ownerSignature} label={(t.authorizedSignature || 'Authorized Signature')} />
@@ -320,6 +323,7 @@ export const ConstructionTemplate4: React.FC<TemplateProps> = ({ document, pageI
     const { business, client, summary, currency, textColor, category } = document;
     const currencySymbol = currencySymbols[currency] || '$';
     const docTitle = document.documentType === 'quote' ? (t.quote || 'QUOTE') : (t.estimate || 'ESTIMATE');
+    const docTypeTerm = document.documentType === 'quote' ? 'quote' : 'estimate';
 
     return (
         <div className={`font-sans text-gray-800 flex ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: style.fontFamily, fontSize: `${style.fontSize}pt`, minHeight: '1056px', backgroundColor: document.backgroundColor }}>
@@ -383,12 +387,12 @@ export const ConstructionTemplate4: React.FC<TemplateProps> = ({ document, pageI
                             </div>
                         </div>
                         <div className="mt-8 text-xs">
-                           <p className="font-bold uppercase tracking-wider mb-2">{(t.paymentScheduleAndTerms || 'Payment Schedule & Terms')}</p>
-                           <p className="whitespace-pre-line" style={{ color: textColor || '#6B7280' }}>{document.termsAndConditions}</p>
+                           <p className="font-bold uppercase tracking-wider mb-2">{(t.paymentScheduleAndTerms || 'Payment Schedule &amp; Terms')}</p>
+                           <p className="whitespace-pre-line" style={{ color: textColor || '#6B7280' }}>{document.termsAndConditions.replace(/estimate/gi, docTypeTerm)}</p>
                         </div>
                         <div className="flex justify-between mt-8">
                             <SignatureDisplay signature={document.business.ownerSignature} label={(t.authorizedSignature || 'Authorized Signature')} />
-                            <SignatureDisplay signature={document.clientSignature} label={(t.clientSignature || 'Client Signature')} />
+                            <SignatureDisplay signature={document.clientSignature} label={(t.clientApproval || 'Client Approval')} />
                         </div>
                     </footer>
                 )}
@@ -402,6 +406,7 @@ export const ConstructionTemplate5: React.FC<TemplateProps> = ({ document, pageI
     const { business, client, summary, currency, textColor, category } = document;
     const currencySymbol = currencySymbols[currency] || '$';
     const docTitle = document.documentType === 'quote' ? (t.quote || 'QUOTE') : (t.estimate || 'ESTIMATE');
+    const docTypeTerm = document.documentType === 'quote' ? 'quote' : 'estimate';
 
     return (
         <div className={`p-10 font-sans text-gray-900 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: style.fontFamily, fontSize: `${style.fontSize}pt`, minHeight: '1056px', backgroundColor: document.backgroundColor, color: textColor }}>
@@ -422,13 +427,13 @@ export const ConstructionTemplate5: React.FC<TemplateProps> = ({ document, pageI
                 <div className="p-4 bg-gray-50 rounded">
                     <p className="font-bold text-gray-500 mb-2" style={{color: textColor}}>{(t.client || 'CLIENT')}</p>
                     <p className="font-bold text-base">{client.name}</p>
+                    {client.companyName && <p>{client.companyName}</p>}
                     <p className="whitespace-pre-line">{client.address}</p>
                 </div>
                 <div className="p-4 bg-gray-50 rounded">
                     <p className="font-bold text-gray-500 mb-2" style={{color: textColor}}>{(t.details || 'DETAILS')}</p>
-                    <p><span className="font-semibold">{(t.estimateNo || 'Estimate No')}:</span> {document.estimateNumber}</p>
+                    <p><span className="font-semibold">No:</span> {document.estimateNumber}</p>
                     <p><span className="font-semibold">{(t.date || 'Date')}:</span> {safeFormat(document.estimateDate, 'MMM dd, yyyy')}</p>
-                    <p><span className="font-semibold">{(t.expires || 'Expires')}:</span> {safeFormat(document.validUntilDate, 'MMM dd, yyyy')}</p>
                 </div>
                 <div className="p-4 bg-gray-50 rounded break-words">
                     <p className="font-bold text-gray-500 mb-2" style={{color: textColor}}>{(t.contact || 'CONTACT')}</p>
@@ -468,11 +473,11 @@ export const ConstructionTemplate5: React.FC<TemplateProps> = ({ document, pageI
                      <div className="flex justify-between items-start">
                          <div className="w-1/2 text-xs">
                              <p className="font-bold mb-1">{(t.terms || 'TERMS')}</p>
-                             <p className="whitespace-pre-line" style={{ color: textColor || '#6B7280' }}>{document.termsAndConditions}</p>
+                             <p className="whitespace-pre-line" style={{ color: textColor || '#6B7280' }}>{document.termsAndConditions.replace(/estimate/gi, docTypeTerm)}</p>
                          </div>
                          <div className="w-2/5">
                             <div className="flex justify-between p-2"><span>{(t.subtotal || 'Subtotal')}</span><span className="font-medium">{currencySymbol}{summary.subtotal.toFixed(2)}</span></div>
-                            {summary.discount > 0 && <div className="flex justify-between p-2 text-red-600"><span>{(t.discount || 'Discount')}</span><span className="font-medium">-{currencySymbol}{summary.discount.toFixed(2)}</span></div>}
+                             {summary.discount > 0 && <div className="flex justify-between p-2 text-red-600"><span>{(t.discount || 'Discount')}</span><span className="font-medium">-{currencySymbol}{summary.discount.toFixed(2)}</span></div>}
                             {summary.shippingCost > 0 && <div className="flex justify-between p-2"><span>{(t.shipping || 'Shipping/Extra')}</span><span className="font-medium">{currencySymbol}{summary.shippingCost.toFixed(2)}</span></div>}
                             <div className="flex justify-between p-2"><span>{(t.tax || 'Tax')}</span><span className="font-medium">{currencySymbol}{summary.taxAmount.toFixed(2)}</span></div>
                             <div className="flex justify-between p-2 mt-2 border-t-2 border-black font-bold text-xl"><span >{(t.total || 'TOTAL').toUpperCase()}</span><span >{currencySymbol}{summary.grandTotal.toFixed(2)}</span></div>

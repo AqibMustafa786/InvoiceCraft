@@ -1,4 +1,3 @@
-
 'use client';
 
 import React from 'react';
@@ -61,6 +60,7 @@ export const CleaningTemplate1: React.FC<TemplateProps> = ({ document, pageItems
     const { business, client, summary, currency, textColor, category } = document;
     const currencySymbol = currencySymbols[currency] || '$';
     const docTitle = document.documentType === 'quote' ? (t.quote || 'QUOTE').toUpperCase() : (t.estimate || 'ESTIMATE').toUpperCase();
+    const docTypeTerm = document.documentType === 'quote' ? 'quote' : 'estimate';
 
     return (
         <div className={`bg-white font-sans text-gray-800 flex flex-col relative ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: 'Arial, sans-serif', fontSize: `10pt`, minHeight: '1056px' }}>
@@ -137,7 +137,7 @@ export const CleaningTemplate1: React.FC<TemplateProps> = ({ document, pageItems
                              <div>
                                 <p className="font-bold text-base mb-2">{(t.termsAndConditions || 'Terms and Conditions')}:</p>
                                 <ul className="list-disc list-inside space-y-1">
-                                   <li className="whitespace-pre-line">{document.termsAndConditions}</li>
+                                   <li className="whitespace-pre-line">{document.termsAndConditions.replace(/estimate/gi, docTypeTerm)}</li>
                                 </ul>
                             </div>
                             <div className="text-center">
@@ -159,6 +159,7 @@ export const CleaningTemplate2: React.FC<TemplateProps> = ({ document, pageItems
     const currencySymbol = currencySymbols[currency] || '$';
     const accentColor = style.color || '#10B981'; // Green
     const docTitle = document.documentType === 'quote' ? (t.quote || 'QUOTE').toUpperCase() : (t.estimate || 'ESTIMATE').toUpperCase();
+    const docTypeTerm = document.documentType === 'quote' ? 'quote' : 'estimate';
 
     return (
         <div className={`p-10 bg-white font-sans text-gray-700 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: 'Verdana, sans-serif', fontSize: '9.5pt', minHeight: '1056px', color: textColor }}>
@@ -236,6 +237,7 @@ export const CleaningTemplate3: React.FC<TemplateProps> = ({ document, pageItems
     const { business, client, summary, currency, textColor, category } = document;
     const currencySymbol = currencySymbols[currency] || '$';
     const docTitle = document.documentType === 'quote' ? (t.quote || 'Quote') : (t.estimate || 'Estimate');
+    const docTypeTerm = document.documentType === 'quote' ? 'quote' : 'estimate';
 
     return (
         <div className={`p-10 bg-white font-sans text-gray-800 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ minHeight: '1056px', color: textColor }}>
@@ -302,5 +304,3 @@ export const CleaningTemplate3: React.FC<TemplateProps> = ({ document, pageItems
 
 export const CleaningTemplate4: React.FC<TemplateProps> = (props) => <CleaningTemplate1 {...props} />;
 export const CleaningTemplate5: React.FC<TemplateProps> = (props) => <CleaningTemplate2 {...props} />;
-
-    
