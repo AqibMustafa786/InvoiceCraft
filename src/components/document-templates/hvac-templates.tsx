@@ -12,6 +12,7 @@ interface TemplateProps {
   pageIndex: number;
   totalPages: number;
   style: React.CSSProperties;
+  t: any;
 }
 
 const currencySymbols: { [key: string]: string } = { USD: '$', EUR: '€', GBP: '£', JPY: '¥', PKR: '₨' };
@@ -34,22 +35,22 @@ const SignatureDisplay = ({ signature, label }: { signature: any, label: string 
     );
 }
 
-const HvacDetails: React.FC<{ document: Estimate; textColor: string; }> = ({ document, textColor }) => {
+const HvacDetails: React.FC<{ document: Estimate; textColor: string; t: any; }> = ({ document, textColor, t }) => {
     if (!document.hvac) return null;
     const { hvac } = document;
     return (
         <section className="my-4 text-xs" style={{color: textColor}}>
-            <p className="font-bold border-b">HVAC Specifications</p>
+            <p className="font-bold border-b">{t.hvacSpecifications || 'HVAC Specifications'}</p>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-x-4 gap-y-1 mt-2">
-                <p><span className="font-semibold">Service:</span> {hvac.serviceType}</p>
-                <p><span className="font-semibold">System:</span> {hvac.systemType}</p>
-                {hvac.unitSize && <p><span className="font-semibold">Unit Size:</span> {hvac.unitSize}</p>}
+                <p><span className="font-semibold">{t.service || 'Service'}:</span> {hvac.serviceType}</p>
+                <p><span className="font-semibold">{t.system || 'System'}:</span> {hvac.systemType}</p>
+                {hvac.unitSize && <p><span className="font-semibold">{t.unitSize || 'Unit Size'}:</span> {hvac.unitSize}</p>}
                 {hvac.seerRating && <p><span className="font-semibold">SEER:</span> {hvac.seerRating}</p>}
-                <p><span className="font-semibold">Furnace:</span> {hvac.furnaceType}</p>
-                <p><span className="font-semibold">Thermostat:</span> {hvac.thermostatType}</p>
-                <p><span className="font-semibold">Ductwork:</span> {hvac.ductworkRequired ? 'Required' : 'Not Required'}</p>
-                {hvac.refrigerantType && <p><span className="font-semibold">Refrigerant:</span> {hvac.refrigerantType}</p>}
-                {hvac.existingSystemCondition && <p className="col-span-full"><span className="font-semibold">Existing System:</span> {hvac.existingSystemCondition}</p>}
+                <p><span className="font-semibold">{t.furnace || 'Furnace'}:</span> {hvac.furnaceType}</p>
+                <p><span className="font-semibold">{t.thermostat || 'Thermostat'}:</span> {hvac.thermostatType}</p>
+                <p><span className="font-semibold">{t.ductwork || 'Ductwork'}:</span> {hvac.ductworkRequired ? (t.required || 'Required') : (t.notRequired || 'Not Required')}</p>
+                {hvac.refrigerantType && <p><span className="font-semibold">{t.refrigerant || 'Refrigerant'}:</span> {hvac.refrigerantType}</p>}
+                {hvac.existingSystemCondition && <p className="col-span-full"><span className="font-semibold">{t.existingSystem || 'Existing System'}:</span> {hvac.existingSystemCondition}</p>}
             </div>
         </section>
     );
@@ -57,10 +58,10 @@ const HvacDetails: React.FC<{ document: Estimate; textColor: string; }> = ({ doc
 
 
 // Base Template inspired by user image
-export const HVACTemplate1: React.FC<TemplateProps> = ({ document, pageItems, pageIndex, totalPages, style }) => {
+export const HVACTemplate1: React.FC<TemplateProps> = ({ document, pageItems, pageIndex, totalPages, style, t }) => {
     const { business, client, summary, currency, textColor, category } = document;
     const currencySymbol = currencySymbols[currency] || '$';
-    const docTitle = document.documentType === 'quote' ? 'QUOTE' : 'ESTIMATE';
+    const docTitle = document.documentType === 'quote' ? (t.quote || 'QUOTE') : (t.estimate || 'ESTIMATE');
     
     return (
         <div className={`p-8 bg-white font-sans text-gray-800 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: 'Arial, sans-serif', fontSize: `9pt`, minHeight: '1056px', color: textColor }}>
@@ -71,41 +72,52 @@ export const HVACTemplate1: React.FC<TemplateProps> = ({ document, pageItems, pa
                         <h1 className="text-3xl font-bold">{business.name}</h1>
                         <p className="text-xs whitespace-pre-line">{business.address}</p>
                         <p className="text-xs">{business.email} | {business.phone}</p>
+                         {business.website && <p className="text-xs">{business.website}</p>}
+                         {business.licenseNumber && <p className="text-xs">Lic #: {business.licenseNumber}</p>}
                     </div>
                 </div>
                 <div className="text-right">
                   <h2 className="text-2xl font-bold text-gray-700">{docTitle}</h2>
+                  <p className="text-xs">#{document.estimateNumber}</p>
                 </div>
             </header>
 
             <section className="grid grid-cols-2 gap-4 my-6 text-xs border-b pb-6">
                 <div>
-                    <p className="font-bold text-gray-500 mb-1">SERVICE CONTRACTOR</p>
+                    <p className="font-bold text-gray-500 mb-1">{t.serviceContractor || 'SERVICE CONTRACTOR'}</p>
                     <p>{business.name}</p>
-                    <p className="whitespace-pre-line">{business.address}</p>
-                    <p>{business.email}</p>
-                    <p>{business.phone}</p>
                 </div>
                 <div className="p-4 bg-gray-50 rounded-md">
-                    <p className="font-bold text-gray-500 mb-1">CLIENT INFORMATION</p>
-                    <p>{client.name}</p>
+                    <p className="font-bold text-gray-500 mb-1">{t.clientInformation || 'CLIENT INFORMATION'}</p>
+                    <p className="font-semibold">{client.name}</p>
+                    {client.companyName && <p>{client.companyName}</p>}
                     <p className="whitespace-pre-line">{client.address}</p>
                     <p>{client.email}</p>
                     <p>{client.phone}</p>
                 </div>
+                 <div>
+                    <p className="font-bold text-gray-500 mb-1">{t.projectTitle || 'PROJECT TITLE'}</p>
+                    <p>{document.projectTitle}</p>
+                </div>
+                 {client.projectLocation && (
+                    <div>
+                        <p className="font-bold text-gray-500 mb-1">{t.projectLocation || 'PROJECT LOCATION'}</p>
+                        <p>{client.projectLocation}</p>
+                    </div>
+                 )}
             </section>
             
-            <HvacDetails document={document} textColor={textColor || '#374151'} />
+            <HvacDetails document={document} textColor={textColor || '#374151'} t={t} />
 
             <main className="flex-grow">
                  <table className="w-full text-left text-xs">
                     <thead>
                         <tr style={{ backgroundColor: `${style.color}20`}}>
-                            <th className="p-2 font-bold w-1/6">SERVICE NO.</th>
-                            <th className="p-2 font-bold w-2/5">DESCRIPTION</th>
-                            <th className="p-2 font-bold text-center">QUANTITY</th>
-                            <th className="p-2 font-bold text-right">UNIT COST</th>
-                            <th className="p-2 font-bold text-right">SUB-TOTAL</th>
+                            <th className="p-2 font-bold w-1/6">{t.serviceNo || 'SERVICE NO.'}</th>
+                            <th className="p-2 font-bold w-2/5">{t.description || 'DESCRIPTION'}</th>
+                            <th className="p-2 font-bold text-center">{t.quantity || 'QUANTITY'}</th>
+                            <th className="p-2 font-bold text-right">{t.unitCost || 'UNIT COST'}</th>
+                            <th className="p-2 font-bold text-right">{t.subtotal || 'SUB-TOTAL'}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -125,17 +137,17 @@ export const HVACTemplate1: React.FC<TemplateProps> = ({ document, pageItems, pa
             {pageIndex === totalPages - 1 && (
                 <footer className="mt-auto pt-6 flex justify-between items-end">
                     <div className="w-1/2 text-xs">
-                        <p className="font-bold mb-1" style={{ color: style.color }}>TERMS & CONDITION:</p>
+                        <p className="font-bold mb-1" style={{ color: style.color }}>{t.termsAndConditions || 'TERMS & CONDITION'}:</p>
                         <p className="whitespace-pre-line">{document.termsAndConditions}</p>
+                        <SignatureDisplay signature={business.ownerSignature} label={t.authorizedSignature || "Authorized Signature"}/>
                     </div>
                      <div className="w-2/5">
                         <div className="space-y-1 text-xs">
-                            <div className="flex justify-between p-1"><span>Sub-total:</span><span className="font-medium">{currencySymbol}{summary.subtotal.toFixed(2)}</span></div>
-                            <div className="flex justify-between p-1"><span>Tax ({summary.taxPercentage}%):</span><span className="font-medium">{currencySymbol}{summary.taxAmount.toFixed(2)}</span></div>
-                            <div className="flex justify-between p-2 mt-1 border-t-2 border-gray-400 font-bold" style={{ color: style.color }}><span className="text-base">TOTAL ESTIMATE COST:</span><span className="text-base">{currencySymbol}{summary.grandTotal.toFixed(2)}</span></div>
-                        </div>
-                        <div className="mt-8 text-center">
-                            <SignatureDisplay signature={document.clientSignature} label="RECEIVER'S NAME OVER PRINTED NAME" />
+                            <div className="flex justify-between p-1"><span>{t.subtotal || 'Sub-total'}:</span><span className="font-medium">{currencySymbol}{summary.subtotal.toFixed(2)}</span></div>
+                            {summary.discount > 0 && <div className="flex justify-between p-1"><span>{t.discount || 'Discount'}:</span><span className="font-medium text-red-500">-{currencySymbol}{summary.discount.toFixed(2)}</span></div>}
+                            {summary.shippingCost > 0 && <div className="flex justify-between p-1"><span>{t.shipping || 'Shipping'}:</span><span className="font-medium">{currencySymbol}{summary.shippingCost.toFixed(2)}</span></div>}
+                            <div className="flex justify-between p-1"><span>{t.tax || 'Tax'} ({summary.taxPercentage}%):</span><span className="font-medium">{currencySymbol}{summary.taxAmount.toFixed(2)}</span></div>
+                            <div className="flex justify-between p-2 mt-1 border-t-2 border-gray-400 font-bold" style={{ color: style.color }}><span className="text-base">{t.totalCost || 'TOTAL COST'}:</span><span className="text-base">{currencySymbol}{summary.grandTotal.toFixed(2)}</span></div>
                         </div>
                     </div>
                 </footer>
@@ -145,48 +157,53 @@ export const HVACTemplate1: React.FC<TemplateProps> = ({ document, pageItems, pa
 };
 
 // Template 2: Blue Accents, Modern
-export const HVACTemplate2: React.FC<TemplateProps> = ({ document, pageItems, pageIndex, totalPages, style }) => {
+export const HVACTemplate2: React.FC<TemplateProps> = ({ document, pageItems, pageIndex, totalPages, style, t }) => {
     const { business, client, summary, currency, textColor, category } = document;
     const currencySymbol = currencySymbols[currency] || '$';
     const accentColor = style.color || '#3B82F6';
-    const docTitle = document.documentType === 'quote' ? 'QUOTE' : 'ESTIMATE';
+    const docTitle = document.documentType === 'quote' ? (t.quote || 'QUOTE') : (t.estimate || 'ESTIMATE');
 
     return (
         <div className={`p-8 bg-white font-sans text-gray-800 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: 'Inter, sans-serif', fontSize: `9pt`, minHeight: '1056px', color: textColor }}>
             <header className="flex justify-between items-start mb-8">
                 <div>
                     <h1 className="text-4xl font-extrabold" style={{ color: accentColor }}>{business.name}</h1>
-                    <p className="text-xs">{business.address}</p>
+                    <p className="text-xs whitespace-pre-line">{business.address}</p>
+                    <p className="text-xs">{business.phone} | {business.email}</p>
                 </div>
                 <div className="text-right">
                     <h2 className="text-3xl font-bold">{docTitle}</h2>
+                    <p className="text-xs text-gray-500">#{document.estimateNumber}</p>
                 </div>
             </header>
 
             <section className="grid grid-cols-2 gap-8 my-6 text-xs">
                 <div className="space-y-1">
-                    <p className="font-bold tracking-wider">PREPARED FOR</p>
+                    <p className="font-bold tracking-wider">{t.preparedFor || 'PREPARED FOR'}</p>
                     <p className="font-bold">{client.name}</p>
+                    {client.companyName && <p>{client.companyName}</p>}
                     <p>{client.address}</p>
                     <p>{client.email}</p>
                 </div>
                 <div className="space-y-1">
-                    <p className="font-bold tracking-wider">PROJECT LOCATION</p>
-                    <p>{document.projectTitle}</p>
+                    <p className="font-bold tracking-wider">{t.projectLocation || 'PROJECT LOCATION'}</p>
+                    <p className="font-bold">{document.projectTitle}</p>
                     <p>{client.projectLocation || client.address}</p>
+                    <p className="mt-2"><span className="font-bold">{(t.dateIssued || 'Date Issued')}:</span> {safeFormat(document.estimateDate, 'MMM d, yyyy')}</p>
+                    <p><span className="font-bold">{(t.validUntil || 'Valid Until')}:</span> {safeFormat(document.validUntilDate, 'MMM d, yyyy')}</p>
                 </div>
             </section>
             
-             <HvacDetails document={document} textColor={textColor || '#374151'}/>
+             <HvacDetails document={document} textColor={textColor || '#374151'} t={t}/>
 
             <main className="flex-grow">
                  <table className="w-full text-left text-xs">
                     <thead>
                         <tr className="border-b-2" style={{ borderColor: accentColor }}>
-                            <th className="py-2 font-bold w-1/2">DESCRIPTION</th>
-                            <th className="py-2 font-bold text-center">QTY</th>
-                            <th className="py-2 font-bold text-right">UNIT PRICE</th>
-                            <th className="py-2 font-bold text-right">TOTAL</th>
+                            <th className="py-2 font-bold w-1/2">{(t.description || 'DESCRIPTION').toUpperCase()}</th>
+                            <th className="py-2 font-bold text-center">{(t.quantity || 'QTY').toUpperCase()}</th>
+                            <th className="py-2 font-bold text-right">{(t.unitPrice || 'UNIT PRICE').toUpperCase()}</th>
+                            <th className="py-2 font-bold text-right">{(t.total || 'TOTAL').toUpperCase()}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -206,14 +223,17 @@ export const HVACTemplate2: React.FC<TemplateProps> = ({ document, pageItems, pa
                 <footer className="mt-auto pt-8">
                      <div className="flex justify-end">
                         <div className="w-1/3 text-sm space-y-1">
-                             <div className="flex justify-between p-1"><span>Subtotal:</span><span className="">{currencySymbol}{summary.subtotal.toFixed(2)}</span></div>
-                            <div className="flex justify-between p-1"><span>Tax:</span><span className="">{currencySymbol}{summary.taxAmount.toFixed(2)}</span></div>
-                            <div className="flex justify-between font-bold text-base mt-2 pt-2 border-t-2" style={{ borderColor: accentColor }}><span style={{ color: accentColor }}>Total:</span><span>{currencySymbol}{summary.grandTotal.toFixed(2)}</span></div>
+                             <div className="flex justify-between p-1"><span>{t.subtotal || 'Subtotal'}:</span><span className="">{currencySymbol}{summary.subtotal.toFixed(2)}</span></div>
+                            {summary.discount > 0 && <div className="flex justify-between p-1"><span>{t.discount || 'Discount'}:</span><span className="text-red-500">-{currencySymbol}{summary.discount.toFixed(2)}</span></div>}
+                            {summary.shippingCost > 0 && <div className="flex justify-between p-1"><span>{t.shipping || 'Shipping'}:</span><span>{currencySymbol}{summary.shippingCost.toFixed(2)}</span></div>}
+                            <div className="flex justify-between p-1"><span>{t.tax || 'Tax'}:</span><span className="">{currencySymbol}{summary.taxAmount.toFixed(2)}</span></div>
+                            <div className="flex justify-between font-bold text-base mt-2 pt-2 border-t-2" style={{ borderColor: accentColor }}><span style={{ color: accentColor }}>{t.total || 'Total'}:</span><span>{currencySymbol}{summary.grandTotal.toFixed(2)}</span></div>
                         </div>
                     </div>
                     <div className="mt-8 text-xs">
-                        <p className="font-bold tracking-wider">NOTES</p>
+                        <p className="font-bold tracking-wider">{t.notes || 'NOTES'}</p>
                         <p className="whitespace-pre-line">{document.termsAndConditions}</p>
+                        <SignatureDisplay signature={business.ownerSignature} label={t.authorizedSignature || "Authorized Signature"}/>
                     </div>
                 </footer>
             )}
@@ -222,39 +242,40 @@ export const HVACTemplate2: React.FC<TemplateProps> = ({ document, pageItems, pa
 };
 
 // Template 3: Clean & Grid-based
-export const HVACTemplate3: React.FC<TemplateProps> = ({ document, pageItems, pageIndex, totalPages, style }) => {
+export const HVACTemplate3: React.FC<TemplateProps> = ({ document, pageItems, pageIndex, totalPages, style, t }) => {
     const { business, client, summary, currency, textColor, category } = document;
     const currencySymbol = currencySymbols[currency] || '$';
-    const docTitle = document.documentType === 'quote' ? 'Quote' : 'Estimate';
+    const docTitle = document.documentType === 'quote' ? (t.quote || 'Quote') : (t.estimate || 'Estimate');
 
     return (
         <div className={`p-10 font-sans text-gray-700 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: 'Roboto, sans-serif', fontSize: `9pt`, minHeight: '1056px', backgroundColor: document.backgroundColor, color: textColor }}>
             <header className="flex justify-between items-start mb-10">
                 <div>
                      <h1 className="text-4xl font-light tracking-wide">{business.name}</h1>
-                     <p className="text-xs">{business.address}</p>
+                     <p className="text-xs whitespace-pre-line">{business.address}</p>
                 </div>
                 <div className="text-right">
                     <h2 className="text-3xl font-bold">{docTitle}</h2>
+                    <p className="text-xs text-gray-500">#{document.estimateNumber}</p>
                 </div>
             </header>
 
             <section className="mb-8 p-4 border rounded-md grid grid-cols-3 gap-4 text-xs">
-                <div><p className="font-bold">From:</p><p className="font-bold">{business.name}</p><p>{business.address}</p></div>
-                <div><p className="font-bold">To:</p><p className="font-bold">{client.name}</p><p>{client.address}</p></div>
-                <div><p className="font-bold">Details:</p><p># {document.estimateNumber}</p><p>Date: {safeFormat(document.estimateDate, 'MM-dd-yyyy')}</p></div>
+                <div><p className="font-bold">{t.from || 'From'}:</p><p className="font-bold">{business.name}</p><p>{business.address}</p></div>
+                <div><p className="font-bold">{t.to || 'To'}:</p><p className="font-bold">{client.name}</p><p>{client.address}</p></div>
+                <div><p className="font-bold">{t.details || 'Details'}:</p><p>{t.date || 'Date'}: {safeFormat(document.estimateDate, 'MM-dd-yyyy')}</p></div>
             </section>
             
-             <HvacDetails document={document} textColor={textColor || '#374151'} />
+             <HvacDetails document={document} textColor={textColor || '#374151'} t={t}/>
 
             <main className="flex-grow">
                  <table className="w-full text-left text-xs">
                     <thead>
                         <tr className="bg-gray-100">
-                            <th className="p-2 font-bold w-1/2">SERVICE DESCRIPTION</th>
-                            <th className="p-2 font-bold text-center">QUANTITY</th>
-                            <th className="p-2 font-bold text-right">RATE</th>
-                            <th className="p-2 font-bold text-right">AMOUNT</th>
+                            <th className="p-2 font-bold w-1/2">{(t.serviceDescription || 'SERVICE DESCRIPTION').toUpperCase()}</th>
+                            <th className="p-2 font-bold text-center">{(t.quantity || 'QUANTITY').toUpperCase()}</th>
+                            <th className="p-2 font-bold text-right">{(t.rate || 'RATE').toUpperCase()}</th>
+                            <th className="p-2 font-bold text-right">{(t.amount || 'AMOUNT').toUpperCase()}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -273,13 +294,16 @@ export const HVACTemplate3: React.FC<TemplateProps> = ({ document, pageItems, pa
             {pageIndex === totalPages - 1 && (
                  <footer className="mt-auto pt-8 flex justify-between items-start">
                      <div className="w-1/2 text-xs">
-                         <p className="font-bold mb-1">TERMS</p>
+                         <p className="font-bold mb-1">{t.terms || 'TERMS'}</p>
                          <p className="whitespace-pre-line">{document.termsAndConditions}</p>
+                         <SignatureDisplay signature={business.ownerSignature} label={t.authorizedSignature || "Authorized Signature"}/>
                      </div>
                      <div className="w-1/3 text-right text-sm">
-                         <p className="py-1 flex justify-between"><span>Subtotal:</span><span>{currencySymbol}{summary.subtotal.toFixed(2)}</span></p>
-                         <p className="py-1 flex justify-between"><span>Tax:</span><span>{currencySymbol}{summary.taxAmount.toFixed(2)}</span></p>
-                         <p className="py-2 mt-2 flex justify-between border-t-2 border-black font-bold text-base"><span>TOTAL:</span><span>{currencySymbol}{summary.grandTotal.toFixed(2)}</span></p>
+                         <p className="py-1 flex justify-between"><span>{t.subtotal || 'Subtotal'}:</span><span>{currencySymbol}{summary.subtotal.toFixed(2)}</span></p>
+                         {summary.discount > 0 && <p className="py-1 flex justify-between text-red-500"><span>{t.discount || 'Discount'}:</span><span>-{currencySymbol}{summary.discount.toFixed(2)}</span></p>}
+                         {summary.shippingCost > 0 && <p className="py-1 flex justify-between"><span>{t.shipping || 'Shipping'}:</span><span>{currencySymbol}{summary.shippingCost.toFixed(2)}</span></p>}
+                         <p className="py-1 flex justify-between"><span>{t.tax || 'Tax'}:</span><span>{currencySymbol}{summary.taxAmount.toFixed(2)}</span></p>
+                         <p className="py-2 mt-2 flex justify-between border-t-2 border-black font-bold text-base"><span>{t.total || 'TOTAL'}:</span><span>{currencySymbol}{summary.grandTotal.toFixed(2)}</span></p>
                      </div>
                  </footer>
             )}
@@ -288,10 +312,10 @@ export const HVACTemplate3: React.FC<TemplateProps> = ({ document, pageItems, pa
 };
 
 // Template 4: Corporate Blue
-export const HVACTemplate4: React.FC<TemplateProps> = ({ document, pageItems, pageIndex, totalPages, style }) => {
+export const HVACTemplate4: React.FC<TemplateProps> = ({ document, pageItems, pageIndex, totalPages, style, t }) => {
     const { business, client, summary, currency, textColor, category } = document;
     const currencySymbol = currencySymbols[currency] || '$';
-    const docTitle = document.documentType === 'quote' ? 'ESTIMATE' : 'ESTIMATE';
+    const docTitle = document.documentType === 'quote' ? (t.estimate || 'ESTIMATE') : (t.estimate || 'ESTIMATE');
 
     return (
         <div className={`bg-white font-sans text-gray-800 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: 'Arial, sans-serif', fontSize: `9pt`, minHeight: '1056px', color: textColor }}>
@@ -299,28 +323,29 @@ export const HVACTemplate4: React.FC<TemplateProps> = ({ document, pageItems, pa
                 <header className="flex justify-between items-start mb-5 pb-5 border-b-8" style={{ borderColor: style.color }}>
                     <div>
                         <h1 className="text-4xl font-extrabold">{business.name}</h1>
-                        <p className="text-xs">{business.address}</p>
+                        <p className="text-xs whitespace-pre-line">{business.address}</p>
+                        <p className="text-xs">{business.website}</p>
                     </div>
                     <div className="text-right">
-                        <h2 className="text-3xl font-bold">ESTIMATE</h2>
+                        <h2 className="text-3xl font-bold">{docTitle}</h2>
                     </div>
                 </header>
                 
                 <section className="grid grid-cols-2 gap-4 mb-8 text-xs">
-                    <div className="space-y-0.5"><p className="font-bold">CLIENT:</p><p>{client.name}<br/>{client.address}</p></div>
-                    <div className="text-right space-y-0.5"><p className="font-bold">DATE:</p><p>{safeFormat(document.estimateDate, 'MMMM dd, yyyy')}</p></div>
+                    <div className="space-y-0.5"><p className="font-bold">{t.client || 'CLIENT'}:</p><p>{client.name}<br/>{client.address}</p></div>
+                    <div className="text-right space-y-0.5"><p className="font-bold">{t.date || 'DATE'}:</p><p>{safeFormat(document.estimateDate, 'MMMM dd, yyyy')}</p></div>
                 </section>
 
-                <HvacDetails document={document} textColor={textColor || '#374151'} />
+                <HvacDetails document={document} textColor={textColor || '#374151'} t={t} />
                 
                 <main className="flex-grow">
                      <table className="w-full text-left text-xs">
                         <thead className="border-b-2 border-gray-300">
                             <tr>
-                                <th className="pb-2 font-bold w-1/2">SERVICE</th>
-                                <th className="pb-2 font-bold text-center">QTY</th>
-                                <th className="pb-2 font-bold text-right">UNIT PRICE</th>
-                                <th className="pb-2 font-bold text-right">SUBTOTAL</th>
+                                <th className="pb-2 font-bold w-1/2">{(t.service || 'SERVICE').toUpperCase()}</th>
+                                <th className="pb-2 font-bold text-center">{(t.quantity || 'QTY').toUpperCase()}</th>
+                                <th className="pb-2 font-bold text-right">{(t.unitPrice || 'UNIT PRICE').toUpperCase()}</th>
+                                <th className="pb-2 font-bold text-right">{(t.subtotal || 'SUBTOTAL').toUpperCase()}</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -343,9 +368,11 @@ export const HVACTemplate4: React.FC<TemplateProps> = ({ document, pageItems, pa
                         <div className="flex justify-end mb-4">
                             <table className="w-2/5 text-xs">
                                 <tbody>
-                                    <tr><td className="py-1">Subtotal</td><td className="py-1 text-right">{currencySymbol}{summary.subtotal.toFixed(2)}</td></tr>
-                                    <tr><td className="py-1">Tax ({summary.taxPercentage}%)</td><td className="py-1 text-right">{currencySymbol}{summary.taxAmount.toFixed(2)}</td></tr>
-                                    <tr className="font-bold text-lg"><td className="py-2 border-t-2 border-black">Total</td><td className="py-2 border-t-2 border-black text-right">{currencySymbol}{summary.grandTotal.toFixed(2)}</td></tr>
+                                    <tr><td className="py-1">{t.subtotal || 'Subtotal'}</td><td className="py-1 text-right">{currencySymbol}{summary.subtotal.toFixed(2)}</td></tr>
+                                    {summary.discount > 0 && <tr><td className="py-1 text-red-500">{t.discount || 'Discount'}</td><td className="py-1 text-right text-red-500">-{currencySymbol}{summary.discount.toFixed(2)}</td></tr>}
+                                    {summary.shippingCost > 0 && <tr><td className="py-1">{t.shipping || 'Shipping'}</td><td className="py-1 text-right">{currencySymbol}{summary.shippingCost.toFixed(2)}</td></tr>}
+                                    <tr><td className="py-1">{t.tax || 'Tax'} ({summary.taxPercentage}%)</td><td className="py-1 text-right">{currencySymbol}{summary.taxAmount.toFixed(2)}</td></tr>
+                                    <tr className="font-bold text-lg"><td className="py-2 border-t-2 border-black">{t.total || 'Total'}</td><td className="py-2 border-t-2 border-black text-right">{currencySymbol}{summary.grandTotal.toFixed(2)}</td></tr>
                                 </tbody>
                             </table>
                         </div>
@@ -358,10 +385,10 @@ export const HVACTemplate4: React.FC<TemplateProps> = ({ document, pageItems, pa
 };
 
 // Template 5: Minimal with side details
-export const HVACTemplate5: React.FC<TemplateProps> = ({ document, pageItems, pageIndex, totalPages, style }) => {
+export const HVACTemplate5: React.FC<TemplateProps> = ({ document, pageItems, pageIndex, totalPages, style, t }) => {
     const { business, client, summary, currency, textColor, category } = document;
     const currencySymbol = currencySymbols[currency] || '$';
-    const docTitle = document.documentType === 'quote' ? 'ESTIMATE' : 'ESTIMATE';
+    const docTitle = document.documentType === 'quote' ? (t.estimate || 'ESTIMATE') : (t.estimate || 'ESTIMATE');
 
     return (
         <div className={`p-10 bg-white font-sans text-gray-800 flex ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: 'Helvetica, sans-serif', fontSize: `9pt`, minHeight: '1056px' }}>
@@ -369,22 +396,22 @@ export const HVACTemplate5: React.FC<TemplateProps> = ({ document, pageItems, pa
                 <h1 className="text-3xl font-bold" style={{ color: style.color }}>{docTitle}</h1>
                 {business.logoUrl && <Image src={business.logoUrl} alt="Logo" width={80} height={40} className="mt-4 object-contain" />}
                 <div className="text-xs mt-8 space-y-4">
-                    <div><p className="font-bold">Estimate #</p><p>{document.estimateNumber}</p></div>
-                    <div><p className="font-bold">Date</p><p>{safeFormat(document.estimateDate, 'MMM d, yyyy')}</p></div>
-                    <div><p className="font-bold">From</p><p>{business.name}</p><p>{business.address}</p></div>
-                    <div><p className="font-bold">To</p><p>{client.name}</p><p>{client.address}</p></div>
+                    <div><p className="font-bold">{t.estimateNo || 'Estimate #'}</p><p>{document.estimateNumber}</p></div>
+                    <div><p className="font-bold">{t.date || 'Date'}</p><p>{safeFormat(document.estimateDate, 'MMM d, yyyy')}</p></div>
+                    <div><p className="font-bold">{t.from || 'From'}</p><p>{business.name}</p><p>{business.address}</p></div>
+                    <div><p className="font-bold">{t.to || 'To'}</p><p>{client.name}</p><p>{client.address}</p></div>
                 </div>
             </div>
             <div className="w-3/4 pl-8 flex flex-col" style={{color: textColor}}>
-                <HvacDetails document={document} textColor={textColor || '#374151'}/>
+                <HvacDetails document={document} textColor={textColor || '#374151'} t={t}/>
                 <main className="flex-grow">
                     <table className="w-full text-left text-xs">
                         <thead>
                             <tr>
-                                <th className="pb-2 font-bold w-1/2 border-b-2 border-gray-300">ITEM/SERVICE</th>
-                                <th className="pb-2 font-bold text-center border-b-2 border-gray-300">QTY</th>
-                                <th className="pb-2 font-bold text-right border-b-2 border-gray-300">UNIT PRICE</th>
-                                <th className="pb-2 font-bold text-right border-b-2 border-gray-300">LINE TOTAL</th>
+                                <th className="pb-2 font-bold w-1/2 border-b-2 border-gray-300">{(t.itemService || 'ITEM/SERVICE').toUpperCase()}</th>
+                                <th className="pb-2 font-bold text-center border-b-2 border-gray-300">{(t.quantity || 'QTY').toUpperCase()}</th>
+                                <th className="pb-2 font-bold text-right border-b-2 border-gray-300">{(t.unitPrice || 'UNIT PRICE').toUpperCase()}</th>
+                                <th className="pb-2 font-bold text-right border-b-2 border-gray-300">{(t.lineTotal || 'LINE TOTAL').toUpperCase()}</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -403,9 +430,11 @@ export const HVACTemplate5: React.FC<TemplateProps> = ({ document, pageItems, pa
                      <footer className="mt-auto pt-8">
                          <div className="flex justify-end">
                             <div className="w-1/2 text-sm space-y-2">
-                                 <div className="flex justify-between"><span>Subtotal:</span><span>{currencySymbol}{summary.subtotal.toFixed(2)}</span></div>
-                                 <div className="flex justify-between"><span>Tax:</span><span>{currencySymbol}{summary.taxAmount.toFixed(2)}</span></div>
-                                 <div className="flex justify-between font-bold text-lg mt-2 pt-2 border-t border-gray-800"><span>Total Estimate:</span><span>{currencySymbol}{summary.grandTotal.toFixed(2)}</span></div>
+                                 <div className="flex justify-between"><span>{t.subtotal || 'Subtotal'}:</span><span>{currencySymbol}{summary.subtotal.toFixed(2)}</span></div>
+                                 {summary.discount > 0 && <div className="flex justify-between"><span>{t.discount || 'Discount'}:</span><span className="text-red-500">-{currencySymbol}{summary.discount.toFixed(2)}</span></div>}
+                                 {summary.shippingCost > 0 && <div className="flex justify-between"><span>{t.shipping || 'Shipping'}:</span><span>{currencySymbol}{summary.shippingCost.toFixed(2)}</span></div>}
+                                 <div className="flex justify-between"><span>{t.tax || 'Tax'}:</span><span>{currencySymbol}{summary.taxAmount.toFixed(2)}</span></div>
+                                 <div className="flex justify-between font-bold text-lg mt-2 pt-2 border-t border-gray-800"><span>{t.totalEstimate || 'Total Estimate'}:</span><span>{currencySymbol}{summary.grandTotal.toFixed(2)}</span></div>
                             </div>
                         </div>
                     </footer>
@@ -414,4 +443,3 @@ export const HVACTemplate5: React.FC<TemplateProps> = ({ document, pageItems, pa
         </div>
     );
 };
-
