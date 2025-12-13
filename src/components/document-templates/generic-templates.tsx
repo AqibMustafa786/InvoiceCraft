@@ -37,12 +37,13 @@ const SignatureDisplay = ({ signature, label, style }: { signature: any, label: 
 export const GenericTemplate1: React.FC<TemplateProps> = ({ document, pageItems, pageIndex, totalPages, style, t }) => {
     const { business, client, summary, currency, textColor } = document;
     const currencySymbol = currencySymbols[currency] || '$';
-    const docTitle = document.documentType === 'quote' ? (t.quote || 'QUOTE') : (t.estimate || 'ESTIMATE');
+    const docTitle = document.documentType === 'quote' ? (t.quote || 'QUOTE').toUpperCase() : (t.estimate || 'ESTIMATE').toUpperCase();
     
     return (
         <div className={`p-10 font-sans text-gray-800 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: style.fontFamily, fontSize: `${style.fontSize}pt`, minHeight: '1056px', backgroundColor: document.backgroundColor, color: textColor }}>
             <header className="flex justify-between items-start pb-4 border-b-2" style={{ borderColor: style.color }}>
                 <div>
+                    {business.logoUrl && <Image src={business.logoUrl} alt="Logo" width={80} height={40} className="object-contain mb-2"/>}
                     <h1 className="text-4xl font-bold">{business.name}</h1>
                     <p className="text-xs whitespace-pre-line">{business.address}</p>
                     <p className="text-xs">{business.phone}</p>
@@ -50,7 +51,6 @@ export const GenericTemplate1: React.FC<TemplateProps> = ({ document, pageItems,
                 </div>
                 <div className="text-right">
                     <h2 className="text-3xl font-bold">{docTitle}</h2>
-                    {business.logoUrl && <Image src={business.logoUrl} alt="Logo" width={80} height={40} className="object-contain ml-auto mt-2"/>}
                 </div>
             </header>
 
@@ -105,6 +105,10 @@ export const GenericTemplate1: React.FC<TemplateProps> = ({ document, pageItems,
                         <p className="font-bold mb-1">{(t.termsAndConditions || 'Terms & Conditions')}</p>
                         <p className="whitespace-pre-line" style={{ color: textColor || '#6B7280' }}>{document.termsAndConditions}</p>
                     </div>
+                    <div className="flex justify-between items-end mt-4">
+                        <SignatureDisplay signature={document.business.ownerSignature} label={(t.authorizedSignature || 'Authorized Signature')} />
+                        <SignatureDisplay signature={document.clientSignature} label={(t.clientSignature || 'Client Signature')} />
+                    </div>
                 </footer>
             )}
         </div>
@@ -115,13 +119,13 @@ export const GenericTemplate1: React.FC<TemplateProps> = ({ document, pageItems,
 export const GenericTemplate2: React.FC<TemplateProps> = ({ document, pageItems, pageIndex, totalPages, style, t }) => {
     const { business, client, summary, currency, textColor } = document;
     const currencySymbol = currencySymbols[currency] || '$';
-    const docTitle = document.documentType === 'quote' ? (t.quote || 'QUOTE') : (t.estimate || 'ESTIMATE');
+    const docTitle = document.documentType === 'quote' ? (t.quote || 'QUOTE').toUpperCase() : (t.estimate || 'ESTIMATE').toUpperCase();
 
     return (
         <div className={`p-0 font-sans text-gray-800 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: style.fontFamily, fontSize: `${style.fontSize}pt`, minHeight: '1056px', backgroundColor: document.backgroundColor }}>
             <header className="p-10 text-white flex justify-between items-start" style={{ backgroundColor: '#1F2937' }}>
                 <div>
-                     {business.logoUrl && <Image src={business.logoUrl} alt="Logo" width={120} height={50} />}
+                     {business.logoUrl && <Image src={business.logoUrl} alt="Logo" width={120} height={50} className="mb-2" />}
                     <h1 className="text-4xl font-bold mt-2">{business.name}</h1>
                 </div>
                 <div className="text-right">
@@ -179,6 +183,14 @@ export const GenericTemplate2: React.FC<TemplateProps> = ({ document, pageItems,
                                 </div>
                             </div>
                         </div>
+                        <div className="mt-8 text-xs">
+                           <p className="font-bold mb-1">{(t.termsAndConditions || 'Terms & Conditions')}</p>
+                           <p className="whitespace-pre-line text-gray-600" style={{color: textColor}}>{document.termsAndConditions}</p>
+                        </div>
+                         <div className="flex justify-between items-end mt-4">
+                            <SignatureDisplay signature={document.business.ownerSignature} label={(t.authorizedSignature || 'Authorized Signature')} />
+                            <SignatureDisplay signature={document.clientSignature} label={(t.clientSignature || 'Client Signature')} />
+                        </div>
                     </footer>
                 )}
             </div>
@@ -190,12 +202,13 @@ export const GenericTemplate2: React.FC<TemplateProps> = ({ document, pageItems,
 export const GenericTemplate3: React.FC<TemplateProps> = ({ document, pageItems, pageIndex, totalPages, style, t }) => {
     const { business, client, summary, currency, textColor } = document;
     const currencySymbol = currencySymbols[currency] || '$';
-    const docTitle = document.documentType === 'quote' ? (t.quote || 'Quote') : (t.estimate || 'Estimate');
+    const docTitle = document.documentType === 'quote' ? (t.quote || 'Quote').toUpperCase() : (t.estimate || 'Estimate').toUpperCase();
 
     return (
         <div className={`p-10 font-sans text-gray-700 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: style.fontFamily, fontSize: `${style.fontSize}pt`, minHeight: '1056px', backgroundColor: document.backgroundColor, color: textColor }}>
             <header className="flex justify-between items-start mb-12">
                  <div>
+                    {business.logoUrl && <Image src={business.logoUrl} alt="Logo" width={80} height={40} className="mb-2 object-contain" />}
                     <h1 className="text-4xl font-light tracking-wider mb-1">{business.name}</h1>
                 </div>
                 <div className="text-right">
@@ -237,11 +250,15 @@ export const GenericTemplate3: React.FC<TemplateProps> = ({ document, pageItems,
                      <div className="flex justify-end mb-8">
                         <div className="w-1/3 text-sm">
                             <div className="flex justify-between py-1"><span>{(t.subtotal || 'Subtotal')}</span><span className="font-medium">{currencySymbol}{summary.subtotal.toFixed(2)}</span></div>
-                            {summary.discount > 0 && <div className="flex justify-between py-1 text-red-600"><span>{(t.discount || 'Discount')}</span><span className="font-medium">-{currencySymbol}{summary.discount.toFixed(2)}</span></div>}
+                             {summary.discount > 0 && <div className="flex justify-between py-1 text-red-600"><span>{(t.discount || 'Discount')}</span><span className="font-medium">-{currencySymbol}{summary.discount.toFixed(2)}</span></div>}
                             {summary.shippingCost > 0 && <div className="flex justify-between py-1"><span>{(t.shipping || 'Shipping/Extra')}</span><span className="font-medium">{currencySymbol}{summary.shippingCost.toFixed(2)}</span></div>}
                             <div className="flex justify-between py-1"><span>{(t.tax || 'Tax')}</span><span className="font-medium">{currencySymbol}{summary.taxAmount.toFixed(2)}</span></div>
                             <div className="flex justify-between py-2 mt-1 border-t-2 border-black font-bold"><span>{(t.total || 'Total')}</span><span>{currencySymbol}{summary.grandTotal.toFixed(2)}</span></div>
                         </div>
+                    </div>
+                     <div className="flex justify-between items-end mt-4">
+                        <SignatureDisplay signature={document.business.ownerSignature} label={(t.authorizedSignature || 'Authorized Signature')} />
+                        <SignatureDisplay signature={document.clientSignature} label={(t.clientSignature || 'Client Signature')} />
                     </div>
                 </footer>
             )}
@@ -253,11 +270,12 @@ export const GenericTemplate3: React.FC<TemplateProps> = ({ document, pageItems,
 export const GenericTemplate4: React.FC<TemplateProps> = ({ document, pageItems, pageIndex, totalPages, style, t }) => {
     const { business, client, summary, currency, textColor } = document;
     const currencySymbol = currencySymbols[currency] || '$';
-    const docTitle = document.documentType === 'quote' ? (t.quote || 'QUOTE') : (t.estimate || 'ESTIMATE');
+    const docTitle = document.documentType === 'quote' ? (t.quote || 'QUOTE').toUpperCase() : (t.estimate || 'ESTIMATE').toUpperCase();
 
     return (
         <div className={`font-sans text-gray-800 flex ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: style.fontFamily, fontSize: `${style.fontSize}pt`, minHeight: '1056px', backgroundColor: document.backgroundColor }}>
             <div className="w-1/4 p-8 text-white" style={{ backgroundColor: style.color }}>
+                {business.logoUrl && <Image src={business.logoUrl} alt="Logo" width={80} height={80} className="mb-4 object-contain" />}
                 <h1 className="text-4xl font-bold mb-2">{business.name}</h1>
             </div>
             <div className="w-3/4 p-10 flex flex-col" style={{color: textColor}}>
@@ -293,11 +311,19 @@ export const GenericTemplate4: React.FC<TemplateProps> = ({ document, pageItems,
                          <div className="flex justify-end">
                             <div className="w-1/2 text-sm">
                                 <div className="flex justify-between p-2 bg-gray-50 rounded-t-lg"><span>{(t.subtotal || 'Subtotal')}:</span><span className="font-medium">{currencySymbol}{summary.subtotal.toFixed(2)}</span></div>
-                                {summary.discount > 0 && <div className="flex justify-between p-2 text-red-600"><span>{(t.discount || 'Discount')}:</span><span className="font-medium">-{currencySymbol}{summary.discount.toFixed(2)}</span></div>}
+                                 {summary.discount > 0 && <div className="flex justify-between p-2 text-red-600"><span>{(t.discount || 'Discount')}:</span><span className="font-medium">-{currencySymbol}{summary.discount.toFixed(2)}</span></div>}
                                 {summary.shippingCost > 0 && <div className="flex justify-between p-2"><span>{(t.shipping || 'Shipping/Extra')}:</span><span className="font-medium">{currencySymbol}{summary.shippingCost.toFixed(2)}</span></div>}
                                 <div className="flex justify-between p-2"><span>{(t.tax || 'Tax')} ({summary.taxPercentage}%):</span><span className="font-medium">{currencySymbol}{summary.taxAmount.toFixed(2)}</span></div>
                                 <div className="flex justify-between p-3 bg-gray-800 text-white rounded-b-lg font-bold text-base"><span>{(t.total || 'Total')}:</span><span>{currencySymbol}{summary.grandTotal.toFixed(2)}</span></div>
                             </div>
+                        </div>
+                        <div className="mt-8 text-xs">
+                           <p className="font-bold uppercase tracking-wider mb-2">{(t.paymentScheduleAndTerms || 'Payment Schedule & Terms')}</p>
+                           <p className="whitespace-pre-line" style={{ color: textColor || '#6B7280' }}>{document.termsAndConditions}</p>
+                        </div>
+                        <div className="flex justify-between items-end mt-4">
+                            <SignatureDisplay signature={document.business.ownerSignature} label={(t.authorizedSignature || 'Authorized Signature')} />
+                            <SignatureDisplay signature={document.clientSignature} label={(t.clientSignature || 'Client Signature')} />
                         </div>
                     </footer>
                 )}
@@ -310,13 +336,14 @@ export const GenericTemplate4: React.FC<TemplateProps> = ({ document, pageItems,
 export const GenericTemplate5: React.FC<TemplateProps> = ({ document, pageItems, pageIndex, totalPages, style, t }) => {
     const { business, client, summary, currency, textColor } = document;
     const currencySymbol = currencySymbols[currency] || '$';
-    const docTitle = document.documentType === 'quote' ? (t.quote || 'QUOTE') : (t.estimate || 'ESTIMATE');
+    const docTitle = document.documentType === 'quote' ? (t.quote || 'QUOTE').toUpperCase() : (t.estimate || 'ESTIMATE').toUpperCase();
 
     return (
         <div className={`p-10 font-sans text-gray-900 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: style.fontFamily, fontSize: `${style.fontSize}pt`, minHeight: '1056px', backgroundColor: document.backgroundColor, color: textColor }}>
             <header className="flex justify-between items-start mb-8">
-                <div>
+                <div className="flex items-center gap-4">
                      {business.logoUrl && <Image src={business.logoUrl} alt="Logo" width={100} height={40} className="object-contain" />}
+                     <h1 className="text-4xl font-bold">{business.name}</h1>
                 </div>
                  <div className="text-right">
                     <h2 className="text-3xl font-extrabold text-gray-400">{docTitle}</h2>
@@ -373,12 +400,16 @@ export const GenericTemplate5: React.FC<TemplateProps> = ({ document, pageItems,
                          </div>
                          <div className="w-2/5">
                             <div className="flex justify-between p-2"><span>{(t.subtotal || 'Subtotal')}</span><span className="font-medium">{currencySymbol}{summary.subtotal.toFixed(2)}</span></div>
-                            {summary.discount > 0 && <div className="flex justify-between p-2 text-red-600"><span>{(t.discount || 'Discount')}</span><span className="font-medium">-{currencySymbol}{summary.discount.toFixed(2)}</span></div>}
+                             {summary.discount > 0 && <div className="flex justify-between p-2 text-red-600"><span>{(t.discount || 'Discount')}</span><span className="font-medium">-{currencySymbol}{summary.discount.toFixed(2)}</span></div>}
                             {summary.shippingCost > 0 && <div className="flex justify-between p-2"><span>{(t.shipping || 'Shipping/Extra')}</span><span className="font-medium">{currencySymbol}{summary.shippingCost.toFixed(2)}</span></div>}
                             <div className="flex justify-between p-2"><span>{(t.tax || 'Tax')}</span><span className="font-medium">{currencySymbol}{summary.taxAmount.toFixed(2)}</span></div>
                             <div className="flex justify-between p-2 mt-2 border-t-2 border-black font-bold text-xl"><span >{(t.total || 'TOTAL').toUpperCase()}</span><span >{currencySymbol}{summary.grandTotal.toFixed(2)}</span></div>
                          </div>
                      </div>
+                      <div className="flex justify-between mt-12">
+                        <SignatureDisplay signature={document.business.ownerSignature} label={(t.companySignature || 'Company Signature')} />
+                        <SignatureDisplay signature={document.clientSignature} label={(t.clientApproval || 'Client Approval')} />
+                    </div>
                 </footer>
             )}
         </div>
