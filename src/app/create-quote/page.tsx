@@ -32,7 +32,7 @@ const getInitialLineItem = (): LineItem => ({ id: crypto.randomUUID(), name: '',
 
 const getInitialQuote = (): Omit<Quote, 'userId'> => ({
   id: crypto.randomUUID(),
-  estimateNumber: `QTE-${new Date().getFullYear()}-001`,
+  estimateNumber: `QTE-${new Date().getFullYear()}-${String(Math.floor(Math.random() * 1000)).padStart(3, '0')}`,
   estimateDate: new Date(),
   validUntilDate: addDays(new Date(), 30),
   status: 'draft',
@@ -214,7 +214,6 @@ export default function CreateQuotePage() {
   const handleNew = () => {
     if (!user) return;
     const newQuote = {...getInitialQuote(), userId: user.uid};
-    newQuote.estimateNumber = `QTE-${new Date().getFullYear()}-${String(Math.floor(Math.random() * 1000)).padStart(3, '0')}`;
     setDocument(newQuote);
     if (typeof window !== 'undefined' && window.document) {
         const computedColor = getComputedStyle(window.document.documentElement).getPropertyValue('--primary').trim();

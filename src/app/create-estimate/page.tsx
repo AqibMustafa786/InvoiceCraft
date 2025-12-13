@@ -308,6 +308,7 @@ export default function CreateEstimatePage() {
         initialDocument = {
             ...getInitialEstimate(),
             id: newDocId, // temporary random ID
+            estimateNumber: `EST-${new Date().getFullYear()}-${String(Math.floor(Math.random() * 1000)).padStart(3, '0')}`,
             userId: user.uid,
             companyId: companyId || '',
         };
@@ -421,6 +422,7 @@ export default function CreateEstimatePage() {
     const newDoc: Estimate = { 
         ...getInitialEstimate(), 
         id: newDocId, 
+        estimateNumber: `EST-${new Date().getFullYear()}-${String(Math.floor(Math.random() * 1000)).padStart(3, '0')}`,
         userId: user.uid, 
         companyId: companyId,
     };
@@ -591,4 +593,5 @@ export default function CreateEstimatePage() {
     </>
   );
 }
+
 

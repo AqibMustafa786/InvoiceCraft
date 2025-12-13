@@ -494,7 +494,7 @@ export default function CreateInvoicePage() {
     const newInvoice: Invoice = {
       ...getInitialInvoice(), 
       id: newDocId,
-      invoiceNumber: `INV-${String(Math.floor(Math.random() * 1000)).padStart(3, '0')}`,
+      invoiceNumber: `INV-${new Date().getFullYear()}-${String(Math.floor(Math.random() * 1000)).padStart(3, '0')}`,
       userId: user.uid, 
       companyId: companyId
     };
