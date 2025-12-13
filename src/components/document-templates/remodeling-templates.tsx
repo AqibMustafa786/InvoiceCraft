@@ -79,12 +79,15 @@ export const RemodelingTemplate1: React.FC<TemplateProps> = ({ document, pageIte
             <div className="p-10 flex-grow flex flex-col" style={{color: textColor}}>
                  <section className="grid grid-cols-2 gap-8 text-xs mb-8">
                     <div>
+                        <p className="font-bold mb-2">{t.businessInfo || 'Business Information'}</p>
                         <p>{business.phone}</p>
                         <p>{business.email}</p>
                         <p className="whitespace-pre-line">{business.address}</p>
                     </div>
                     <div className="space-y-1">
+                        <p className="font-bold mb-2">{t.clientInfo || 'Client Information'}</p>
                         <p><span className="font-bold">{t.name || 'Name'}:</span> {client.name}</p>
+                        {client.companyName && <p><span className="font-bold">{t.company || 'Company'}:</span> {client.companyName}</p>}
                         <p><span className="font-bold">{t.address || 'Address'}:</span> {client.address}</p>
                         <p><span className="font-bold">{t.phone || 'Phone'}:</span> {client.phone}</p>
                         <p><span className="font-bold">{t.email || 'Email'}:</span> {client.email}</p>
@@ -171,8 +174,7 @@ export const RemodelingTemplate2: React.FC<TemplateProps> = ({ document, pageIte
         <div className={`p-10 font-sans text-gray-700 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: style.fontFamily, fontSize: `${style.fontSize}pt`, minHeight: '1056px', backgroundColor: document.backgroundColor, color: textColor }}>
             <header className="flex justify-between items-start mb-10">
                 <div>
-                     {business.logoUrl && <Image src={business.logoUrl} alt="Logo" width={100} height={50} className="mb-2 object-contain"/>}
-                    <h1 className="text-3xl font-bold">{business.name}</h1>
+                     {business.logoUrl ? <Image src={business.logoUrl} alt="Logo" width={100} height={50} className="mb-2 object-contain"/> : <h1 className="text-3xl font-bold">{business.name}</h1>}
                     <p className="text-xs text-gray-500 whitespace-pre-line" style={{color: textColor}}>{business.address}</p>
                 </div>
                 <div className="text-right">
@@ -187,6 +189,8 @@ export const RemodelingTemplate2: React.FC<TemplateProps> = ({ document, pageIte
                      <p className="font-bold text-gray-500 mb-1" style={{color: textColor}}>{t.client || 'Client'}</p>
                      <p className="font-semibold">{client.name}</p>
                      <p>{client.address}</p>
+                     <p>{client.email}</p>
+                     <p>{client.phone}</p>
                 </div>
                  <div className="text-xs text-right">
                      <p className="font-bold text-gray-500 mb-1" style={{color: textColor}}>{t.project || 'Project'}</p>
@@ -251,10 +255,11 @@ export const RemodelingTemplate3: React.FC<TemplateProps> = ({ document, pageIte
         <div className={`p-10 font-['Times_New_Roman',_serif] text-gray-900 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontSize: `${style.fontSize}pt`, minHeight: '1056px', backgroundColor: document.backgroundColor, color: textColor }}>
             <header className="flex justify-between items-center mb-10">
                 <h1 className="text-4xl font-bold">{business.name}</h1>
+                <h2 className="text-2xl font-light">{docTitle}</h2>
             </header>
 
             <section className="mb-8 p-4 border border-gray-200 rounded grid grid-cols-3 gap-4 text-xs">
-                <div><p className="font-bold">{t.client || 'Client'}:</p><p>{client.name}</p><p>{client.address}</p></div>
+                <div><p className="font-bold">{t.client || 'Client'}:</p><p>{client.name}</p><p>{client.address}</p><p>{client.email}</p></div>
                 <div><p className="font-bold">{t.project || 'Project'}:</p><p>{document.projectTitle}</p><p>{client.projectLocation}</p></div>
                 <div><p className="font-bold">{document.documentType === 'quote' ? t.quoteNo : t.estimateNo || 'Number #'}:</p><p>{document.estimateNumber}</p><p className="font-bold mt-1">{t.date || 'Date'}:</p><p>{safeFormat(new Date(document.estimateDate || new Date()), 'MM/dd/yyyy')}</p></div>
             </section>
@@ -286,7 +291,7 @@ export const RemodelingTemplate3: React.FC<TemplateProps> = ({ document, pageIte
             
             {pageIndex === totalPages - 1 && (
                  <footer className="mt-auto pt-8">
-                     <div className="flex justify-between">
+                     <div className="flex justify-between items-start">
                          <div className="w-2/3 text-xs text-gray-600" style={{color: textColor}}>
                             <p className="font-bold mb-1">{t.terms || 'TERMS'}</p>
                             <p className="whitespace-pre-line">{document.termsAndConditions}</p>
@@ -328,7 +333,7 @@ export const RemodelingTemplate4: React.FC<TemplateProps> = ({ document, pageIte
             </header>
             
             <section className="mb-8 grid grid-cols-2 gap-4 text-xs">
-                 <div><p><span className="font-bold text-gray-500" style={{color: textColor}}>{t.to || 'TO'}: </span>{client.name}</p><p>{client.address}</p></div>
+                 <div><p><span className="font-bold text-gray-500" style={{color: textColor}}>{t.to || 'TO'}: </span>{client.name}</p><p>{client.address}</p><p>{client.email}</p></div>
                  <div className="text-right"><p><span className="font-bold text-gray-500" style={{color: textColor}}>{document.documentType === 'quote' ? t.quoteNo : t.estimateNo || 'Number #'}: </span>{document.estimateNumber}</p><p><span className="font-bold text-gray-500" style={{color: textColor}}>{t.date || 'DATE'}: </span>{safeFormat(new Date(document.estimateDate || new Date()), 'yyyy-MM-dd')}</p></div>
             </section>
             
