@@ -351,21 +351,19 @@ export default function DashboardPage() {
                 if (inv.status === 'paid') {
                     stats.totalRevenue += grandTotal;
                 }
-                if (inv.status === 'sent') {
+                if (inv.status === 'sent' || inv.status === 'overdue') {
                     stats.outstanding += grandTotal;
                 }
                 if (inv.status === 'overdue') {
                     stats.overdue += grandTotal;
-                    stats.outstanding += grandTotal;
                 }
             });
         }
-        if (estimates) {
-            stats.drafts += estimates.filter(e => e.status === 'draft').length;
-        }
-         if (quotes) {
-            stats.drafts += quotes.filter(q => q.status === 'draft').length;
-        }
+
+        const draftEstimates = estimates ? estimates.filter(e => e.status === 'draft').length : 0;
+        const draftQuotes = quotes ? quotes.filter(q => q.status === 'draft').length : 0;
+        const draftInvoices = invoices ? invoices.filter(i => i.status === 'draft').length : 0;
+        stats.drafts = draftEstimates + draftQuotes + draftInvoices;
 
         return stats;
 
@@ -620,16 +618,52 @@ export default function DashboardPage() {
                     </motion.div>
                 </motion.div>
 
-                 <motion.div
-                    className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-8"
+                <motion.div
+                    className="grid gap-6 md:grid-cols-2 lg:grid-cols-4 mb-8"
                     variants={pageVariants}
                     initial="hidden"
                     animate="visible"
                 >
-                    <Card><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Total Revenue</CardTitle><DollarSign className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent><div className="text-2xl font-bold">${dashboardStats.totalRevenue.toFixed(2)}</div></CardContent></Card>
-                    <Card><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Outstanding</CardTitle><Clock className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent><div className="text-2xl font-bold">${dashboardStats.outstanding.toFixed(2)}</div></CardContent></Card>
-                    <Card><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Overdue</CardTitle><FileWarning className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent><div className="text-2xl font-bold text-destructive">${dashboardStats.overdue.toFixed(2)}</div></CardContent></Card>
-                    <Card><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Drafts</CardTitle><FileText className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent><div className="text-2xl font-bold">{dashboardStats.drafts}</div></CardContent></Card>
+                    <Card className="bg-card/70 backdrop-blur-sm">
+                        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                            <CardTitle className="text-sm font-medium">Total Revenue</CardTitle>
+                            <DollarSign className="h-5 w-5 text-green-500" />
+                        </CardHeader>
+                        <CardContent>
+                            <div className="text-3xl font-bold text-green-500">${dashboardStats.totalRevenue.toFixed(2)}</div>
+                            <p className="text-xs text-muted-foreground">Sum of all paid invoices.</p>
+                        </CardContent>
+                    </Card>
+                     <Card className="bg-card/70 backdrop-blur-sm">
+                        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                            <CardTitle className="text-sm font-medium">Outstanding</CardTitle>
+                            <Clock className="h-5 w-5 text-blue-500" />
+                        </CardHeader>
+                        <CardContent>
+                            <div className="text-3xl font-bold text-blue-500">${dashboardStats.outstanding.toFixed(2)}</div>
+                            <p className="text-xs text-muted-foreground">Sum of sent & overdue invoices.</p>
+                        </CardContent>
+                    </Card>
+                     <Card className="bg-card/70 backdrop-blur-sm">
+                        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                            <CardTitle className="text-sm font-medium">Overdue</CardTitle>
+                            <FileWarning className="h-5 w-5 text-red-500" />
+                        </CardHeader>
+                        <CardContent>
+                            <div className="text-3xl font-bold text-red-500">${dashboardStats.overdue.toFixed(2)}</div>
+                             <p className="text-xs text-muted-foreground">Sum of all unpaid, overdue invoices.</p>
+                        </CardContent>
+                    </Card>
+                    <Card className="bg-card/70 backdrop-blur-sm">
+                        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                            <CardTitle className="text-sm font-medium">Drafts</CardTitle>
+                            <FileText className="h-5 w-5 text-yellow-500" />
+                        </CardHeader>
+                        <CardContent>
+                            <div className="text-3xl font-bold text-yellow-500">{dashboardStats.drafts}</div>
+                             <p className="text-xs text-muted-foreground">Documents pending completion.</p>
+                        </CardContent>
+                    </Card>
                 </motion.div>
                 
                 <motion.div initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.3, delay: 0.1 }}>
