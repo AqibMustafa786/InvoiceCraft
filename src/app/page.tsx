@@ -68,14 +68,18 @@ export default function HomePage() {
                 className="flex flex-col items-center justify-center gap-4 mt-8 sm:flex-row"
                 variants={itemVariants}
               >
-                <Button asChild size="lg" className="w-full text-lg sm:w-auto">
-                  <Link href="/create-invoice">Create Free Invoice</Link>
-                </Button>
-                <Button asChild variant="outline" size="lg" className="w-full text-lg sm:w-auto">
-                  <Link href="/features">
-                    Learn More
-                  </Link>
-                </Button>
+                 <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.98 }}>
+                    <Button asChild size="lg" className="w-full text-lg sm:w-auto">
+                        <Link href="/create-invoice">Create Free Invoice</Link>
+                    </Button>
+                 </motion.div>
+                 <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.98 }}>
+                    <Button asChild variant="outline" size="lg" className="w-full text-lg sm:w-auto">
+                        <Link href="/features">
+                            Learn More
+                        </Link>
+                    </Button>
+                </motion.div>
               </motion.div>
             </motion.div>
           </div>

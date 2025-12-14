@@ -65,12 +65,12 @@ type DocumentType = Invoice | Estimate | Quote;
 
 const pageVariants = {
     hidden: { opacity: 0, y: -10 },
-    visible: { opacity: 1, y: 0, transition: { staggerChildren: 0.1, duration: 0.2 } },
+    visible: { opacity: 1, y: 0, transition: { staggerChildren: 0.08, duration: 0.3 } },
 };
 
 const tableContainerVariants = {
     hidden: { opacity: 0 },
-    visible: { opacity: 1, transition: { staggerChildren: 0.04 } },
+    visible: { opacity: 1, transition: { staggerChildren: 0.04, delayChildren: 0.1 } },
 };
 
 const tableRowVariants = {
@@ -425,18 +425,24 @@ export default function DashboardPage() {
                         <p className="text-muted-foreground">Manage your invoices, estimates, and quotes here.</p>
                     </motion.div>
                     <motion.div className="flex gap-2" variants={pageVariants}>
-                        <Button onClick={handleCreateInvoice}>
-                            <FilePlus2 className="mr-2 h-4 w-4" />
-                            New Invoice
-                        </Button>
-                         <Button onClick={handleCreateEstimate} variant="outline">
-                            <FilePlus2 className="mr-2 h-4 w-4" />
-                            New Estimate
-                        </Button>
-                         <Button onClick={handleCreateQuote} variant="outline">
-                            <FilePlus2 className="mr-2 h-4 w-4" />
-                            New Quote
-                        </Button>
+                        <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.98 }}>
+                            <Button onClick={handleCreateInvoice}>
+                                <FilePlus2 className="mr-2 h-4 w-4" />
+                                New Invoice
+                            </Button>
+                        </motion.div>
+                         <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.98 }}>
+                            <Button onClick={handleCreateEstimate} variant="outline">
+                                <FilePlus2 className="mr-2 h-4 w-4" />
+                                New Estimate
+                            </Button>
+                        </motion.div>
+                         <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.98 }}>
+                            <Button onClick={handleCreateQuote} variant="outline">
+                                <FilePlus2 className="mr-2 h-4 w-4" />
+                                New Quote
+                            </Button>
+                        </motion.div>
                     </motion.div>
                 </motion.div>
                 
