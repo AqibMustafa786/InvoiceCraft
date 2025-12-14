@@ -12,7 +12,7 @@
     --card: 0 0% 90%;
     --card-foreground: 222.2 84% 4.9%;
  
-    --popover: 0 0% 90%;
+    --popover: var(--card);
     --popover-foreground: 222.2 84% 4.9%;
  
     --primary: 24 95% 53%;
@@ -34,8 +34,8 @@
     --success-foreground: 142.1 76.2% 96.3%;
 
     --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    --input: 214.3 31.8% 81.4%;
+    --ring: hsl(var(--primary));
  
     --radius: 0.5rem;
 
@@ -77,7 +77,7 @@
 
     --border: 217.2 32.6% 25.5%;
     --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 93.5% 64.9%;
+    --ring: hsl(var(--primary));
   }
 }
  
@@ -140,6 +140,7 @@
   size: letter;
   margin: 0;
 }
+
 
 
 
