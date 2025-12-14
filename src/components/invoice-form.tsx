@@ -556,47 +556,47 @@ export function InvoiceForm({ invoice, setInvoice, accentColor, setAccentColor, 
               <Label htmlFor="businessName">Business Name</Label>
               <div className="relative flex items-center">
                   <Briefcase className="absolute left-3 h-5 w-5 text-muted-foreground" />
-                  <Input id="businessName" name="name" value={invoice.business.name} onChange={(e) => handleNestedChange('business', e)} className="pl-10" />
+                  <Input id="businessName" name="name" autoComplete="off" value={invoice.business.name} onChange={(e) => handleNestedChange('business', e)} className="pl-10" />
               </div>
             </div>
             <div className="space-y-2">
               <Label htmlFor="businessAddress">Business Address</Label>
-              <Textarea id="businessAddress" name="address" value={invoice.business.address} onChange={(e) => handleNestedChange('business', e)} placeholder="Street, City, State, Zip"/>
+              <Textarea id="businessAddress" name="address" autoComplete="off" value={invoice.business.address} onChange={(e) => handleNestedChange('business', e)} placeholder="Street, City, State, Zip"/>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                  <div className="space-y-2">
                     <Label htmlFor="businessPhone">Phone Number</Label>
                     <div className="relative flex items-center">
                         <Phone className="absolute left-3 h-5 w-5 text-muted-foreground" />
-                        <Input id="businessPhone" name="phone" value={invoice.business.phone} onChange={(e) => handleNestedChange('business', e)} className="pl-10" />
+                        <Input id="businessPhone" name="phone" autoComplete="off" value={invoice.business.phone} onChange={(e) => handleNestedChange('business', e)} className="pl-10" />
                     </div>
                 </div>
                 <div className="space-y-2">
                     <Label htmlFor="businessEmail">Email Address</Label>
                     <div className="relative flex items-center">
                         <Mail className="absolute left-3 h-5 w-5 text-muted-foreground" />
-                        <Input id="businessEmail" name="email" value={invoice.business.email} onChange={(e) => handleNestedChange('business', e)} className="pl-10" />
+                        <Input id="businessEmail" name="email" autoComplete="off" value={invoice.business.email} onChange={(e) => handleNestedChange('business', e)} className="pl-10" />
                     </div>
                 </div>
                  <div className="space-y-2">
                     <Label htmlFor="businessWebsite">Website (optional)</Label>
                     <div className="relative flex items-center">
                         <Globe className="absolute left-3 h-5 w-5 text-muted-foreground" />
-                        <Input id="businessWebsite" name="website" value={invoice.business.website} onChange={(e) => handleNestedChange('business', e)} className="pl-10" />
+                        <Input id="businessWebsite" name="website" autoComplete="off" value={invoice.business.website} onChange={(e) => handleNestedChange('business', e)} className="pl-10" />
                     </div>
                 </div>
                  <div className="space-y-2">
                     <Label htmlFor="businessLicense">License Number (optional)</Label>
                      <div className="relative flex items-center">
                         <Award className="absolute left-3 h-5 w-5 text-muted-foreground" />
-                        <Input id="businessLicense" name="licenseNumber" value={invoice.business.licenseNumber} onChange={(e) => handleNestedChange('business', e)} className="pl-10" />
+                        <Input id="businessLicense" name="licenseNumber" autoComplete="off" value={invoice.business.licenseNumber} onChange={(e) => handleNestedChange('business', e)} className="pl-10" />
                     </div>
                 </div>
                 <div className="space-y-2 md:col-span-2">
                     <Label htmlFor="businessTaxId">Tax ID / EIN (optional)</Label>
                      <div className="relative flex items-center">
                         <Hash className="absolute left-3 h-5 w-5 text-muted-foreground" />
-                        <Input id="businessTaxId" name="taxId" value={invoice.business.taxId ?? ''} onChange={(e) => handleNestedChange('business', e)} className="pl-10" />
+                        <Input id="businessTaxId" name="taxId" autoComplete="off" value={invoice.business.taxId ?? ''} onChange={(e) => handleNestedChange('business', e)} className="pl-10" />
                     </div>
                 </div>
             </div>
@@ -637,10 +637,6 @@ export function InvoiceForm({ invoice, setInvoice, accentColor, setAccentColor, 
             <Label htmlFor="shippingAddress">Shipping Address (if different)</Label>
             <Textarea id="shippingAddress" name="shippingAddress" value={invoice.client.shippingAddress || ''} onChange={(e) => handleNestedChange('client', e)} />
           </div>
-          <div className="space-y-2">
-            <Label htmlFor="projectLocation">Project Location (if different)</Label>
-            <Textarea id="projectLocation" name="projectLocation" value={invoice.client.projectLocation ?? ''} onChange={(e) => handleNestedChange('client', e)} />
-        </div>
         </CardContent>
       </Card>
       
@@ -1198,6 +1194,7 @@ export function InvoiceForm({ invoice, setInvoice, accentColor, setAccentColor, 
     </div>
   );
 }
+
 
 
 

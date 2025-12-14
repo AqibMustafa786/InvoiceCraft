@@ -1,5 +1,4 @@
 
-
 'use client';
 
 import { useState, useEffect, useCallback, useMemo } from 'react';
@@ -33,12 +32,24 @@ const INVOICES_COLLECTION = 'invoices';
 const getInitialLineItem = (): LineItem => ({ id: crypto.randomUUID(), name: '', quantity: 1, unitPrice: 0, taxable: false });
 
 const normalizeAuditLog = (auditLog: any): AuditLogEntry[] => {
-  if (Array.isArray(auditLog)) return auditLog;
-  if (auditLog && typeof auditLog === 'object') {
-    return Object.values(auditLog);
-  }
-  return [];
+  if (!auditLog) return [];
+  const entries = Array.isArray(auditLog) ? auditLog : Object.values(auditLog);
+  return entries.map(entry => ({
+      ...entry,
+      timestamp: toDateSafe(entry.timestamp)
+  }));
 };
+
+const toDateSafe = (value: any): Date | null => {
+    if (!value) return null;
+    if (value instanceof Date) return value;
+    if (value.toDate && typeof value.toDate === 'function') {
+        return value.toDate();
+    }
+    const d = new Date(value);
+    return isValid(d) ? d : null;
+};
+
 
 const diff = (original: any, updated: any): string[] => {
     const changes: string[] = [];
@@ -342,7 +353,13 @@ export default function CreateInvoicePage() {
     return doc(firestore, 'companies', companyId, INVOICES_COLLECTION, draftId);
   }, [draftId, firestore, companyId]);
 
+  const companyDocRef = useMemoFirebase(() => {
+    if (!firestore || !companyId) return null;
+    return doc(firestore, 'companies', companyId);
+  }, [firestore, companyId]);
+
   const { data: remoteDraft, isLoading: isDraftLoading } = useDoc<Invoice>(docRef);
+  const { data: companyData, isLoading: isCompanyLoading } = useDoc(companyDocRef);
 
   const computeSummary = useCallback((inv: Invoice): Invoice => {
     const subtotal = inv.lineItems.reduce((acc, item) => acc + (Number(item.quantity) || 0) * (Number(item.unitPrice) || 0), 0);
@@ -370,7 +387,7 @@ export default function CreateInvoicePage() {
   }, [invoice, computeSummary]);
 
   useEffect(() => {
-    if (isAuthLoading || (draftId && isDraftLoading)) return;
+    if (isAuthLoading || (draftId && isDraftLoading) || isCompanyLoading) return;
     if (!user || !userProfile) {
         router.push('/login');
         return;
@@ -429,11 +446,23 @@ export default function CreateInvoicePage() {
             id: crypto.randomUUID(),
             action: 'created',
             timestamp: new Date(),
-            user: user.email || 'Unknown',
+            user: { name: user.displayName || user.email, email: user.email },
             version: 1,
         };
+
+        const baseInvoice = getInitialInvoice();
+        
         initialInvoice = {
-            ...getInitialInvoice(),
+            ...baseInvoice,
+            business: {
+                ...baseInvoice.business,
+                name: companyData?.name || 'Your Company',
+                address: companyData?.address || '123 Main St, Anytown, USA 12345',
+                phone: companyData?.phone || '+1 (123) 456-7890',
+                email: companyData?.email || user.email || 'contact@yourcompany.com',
+                website: companyData?.website || 'www.yourcompany.com',
+                logoUrl: companyData?.logoUrl || '',
+            },
             id: newDocId,
             invoiceNumber: `INV-${new Date().getFullYear()}-${String(Math.floor(Math.random() * 1000)).padStart(3, '0')}`,
             userId: user.uid, 
@@ -453,7 +482,7 @@ export default function CreateInvoicePage() {
            setAccentColor(`hsl(${computedColor})`);
         }
     }
-  }, [draftId, remoteDraft, isDraftLoading, user, userProfile, isAuthLoading, companyId, router, firestore]);
+  }, [draftId, remoteDraft, isDraftLoading, user, userProfile, isAuthLoading, companyId, router, firestore, companyData, isCompanyLoading]);
   
   const serializedInvoice = useMemo(() => invoice ? JSON.stringify(invoice) : '', [invoice]);
 
@@ -485,7 +514,7 @@ export default function CreateInvoicePage() {
             id: crypto.randomUUID(),
             action: isNew ? 'created' : 'updated',
             timestamp: new Date(),
-            user: user.email || 'Unknown',
+            user: { name: user.displayName || user.email, email: user.email },
             version: newVersion,
             changes: changes
         };
@@ -548,11 +577,21 @@ export default function CreateInvoicePage() {
         id: crypto.randomUUID(),
         action: 'created',
         timestamp: new Date(),
-        user: user.email || 'Unknown',
+        user: { name: user.displayName || user.email, email: user.email },
         version: 1,
     };
+    const baseInvoice = getInitialInvoice();
     const newInvoice: Invoice = {
-      ...getInitialInvoice(), 
+      ...baseInvoice,
+      business: {
+        ...baseInvoice.business,
+        name: companyData?.name || 'Your Company',
+        address: companyData?.address || '123 Main St, Anytown, USA 12345',
+        phone: companyData?.phone || '+1 (123) 456-7890',
+        email: companyData?.email || user.email || 'contact@yourcompany.com',
+        website: companyData?.website || 'www.yourcompany.com',
+        logoUrl: companyData?.logoUrl || '',
+      },
       id: newDocId,
       invoiceNumber: `INV-${new Date().getFullYear()}-${String(Math.floor(Math.random() * 1000)).padStart(3, '0')}`,
       userId: user.uid, 
@@ -574,7 +613,7 @@ export default function CreateInvoicePage() {
       });
   };
 
-  if (!processedInvoice || (draftId && isDraftLoading) || isAuthLoading) {
+  if (!processedInvoice || (draftId && isDraftLoading) || isAuthLoading || isCompanyLoading) {
     return (
         <div className="container mx-auto p-4 md:p-8">
             <h1 className="text-3xl font-bold font-headline">Loading...</h1>
@@ -690,6 +729,7 @@ export default function CreateInvoicePage() {
     
 
     
+
 
 
 
