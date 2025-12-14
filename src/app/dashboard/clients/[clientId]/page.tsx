@@ -18,9 +18,26 @@ import type { Client, Invoice, Estimate } from '@/lib/types';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from '@/components/ui/badge';
-
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import * as z from 'zod';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 
 const CLIENTS_COLLECTION = 'clients';
+
+const clientSchema = z.object({
+  name: z.string().min(1, { message: "Full name is required." }),
+  companyName: z.string().optional(),
+  email: z.string().email({ message: "Invalid email format." }).refine(val => val.endsWith('@gmail.com'), { message: "Please enter a valid Gmail address." }),
+  phone: z.string().optional(),
+  address: z.string().optional(),
+  shippingAddress: z.string().optional(),
+  website: z.string().optional(),
+  taxId: z.string().optional(),
+  notes: z.string().optional(),
+});
+
+type ClientFormValues = z.infer<typeof clientSchema>;
 
 export default function ClientProfilePage() {
   const { clientId } = useParams();
@@ -28,19 +45,9 @@ export default function ClientProfilePage() {
   const { user, userProfile } = useAuth();
   const { firestore } = useFirebase();
   const { toast } = useToast();
+  const [isSaving, setIsSaving] = useState(false);
 
   const isNewClient = clientId === 'new';
-  const [clientData, setClientData] = useState<Partial<Client>>({
-    name: '',
-    companyName: '',
-    email: '',
-    phone: '',
-    address: '',
-    shippingAddress: '',
-    website: '',
-    taxId: '',
-    notes: ''
-  });
 
   const docRef = useMemoFirebase(() => {
     if (isNewClient || !firestore || !userProfile?.companyId) return null;
@@ -55,35 +62,41 @@ export default function ClientProfilePage() {
   const { data: invoices } = useCollection<Invoice>(invoicesQuery);
   const { data: estimates } = useCollection<Estimate>(estimatesQuery);
 
+  const form = useForm<ClientFormValues>({
+    resolver: zodResolver(clientSchema),
+    defaultValues: {
+      name: '',
+      companyName: '',
+      email: '',
+      phone: '',
+      address: '',
+      shippingAddress: '',
+      website: '',
+      taxId: '',
+      notes: ''
+    }
+  });
+
   useEffect(() => {
     if (existingClient) {
-      setClientData(existingClient);
+      form.reset(existingClient);
     }
-  }, [existingClient]);
+  }, [existingClient, form]);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    setClientData(prev => ({ ...prev, [name]: value }));
-  };
-
-  const handleSave = async () => {
+  const onSubmit = async (data: ClientFormValues) => {
+    setIsSaving(true);
     if (!firestore || !userProfile?.companyId) {
       toast({ title: "Error", description: "Cannot save client. User or company not identified.", variant: "destructive" });
-      return;
-    }
-    
-    if (!clientData.name || !clientData.email) {
-      toast({ title: "Validation Error", description: "Name and Email are required.", variant: "destructive" });
+      setIsSaving(false);
       return;
     }
 
     try {
       let idToSave: string;
       if (isNewClient) {
-        const safeName = clientData.name.toLowerCase().replace(/[^a-z0-9]/g, '-');
-        const safeCompany = (clientData.companyName || '').toLowerCase().replace(/[^a-z0-9]/g, '-');
+        const safeName = data.name.toLowerCase().replace(/[^a-z0-9]/g, '-');
+        const safeCompany = (data.companyName || '').toLowerCase().replace(/[^a-z0-9]/g, '-');
         const baseId = safeCompany ? `${safeName}-${safeCompany}` : safeName;
-        // Add a short random suffix to prevent collisions
         idToSave = `${baseId}-${Math.random().toString(36).substring(2, 7)}`;
       } else {
         idToSave = clientId as string;
@@ -92,20 +105,12 @@ export default function ClientProfilePage() {
       const dataToSave: Client = {
         id: idToSave,
         companyId: userProfile.companyId,
-        name: clientData.name,
-        email: clientData.email,
-        companyName: clientData.companyName || '',
-        phone: clientData.phone || '',
-        address: clientData.address || '',
-        shippingAddress: clientData.shippingAddress || '',
-        website: clientData.website || '',
-        taxId: clientData.taxId || '',
-        notes: clientData.notes || '',
+        ...data,
         updatedAt: serverTimestamp(),
         createdAt: isNewClient ? serverTimestamp() : existingClient?.createdAt,
       };
 
-      await setDoc(doc(firestore, 'companies', userProfile.companyId, CLIENTS_COLLECTION, idToSave), dataToSave);
+      await setDoc(doc(firestore, 'companies', userProfile.companyId, CLIENTS_COLLECTION, idToSave), dataToSave, { merge: true });
       
       toast({ title: "Success", description: `Client ${isNewClient ? 'created' : 'updated'} successfully.` });
       
@@ -115,6 +120,8 @@ export default function ClientProfilePage() {
     } catch (error) {
       console.error("Error saving client: ", error);
       toast({ title: "Error", description: "Failed to save client data.", variant: "destructive" });
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -128,7 +135,7 @@ export default function ClientProfilePage() {
         <Button variant="outline" size="icon" onClick={() => router.push('/dashboard')}>
           <ArrowLeft className="h-4 w-4" />
         </Button>
-        <h1 className="text-3xl font-bold font-headline">{isNewClient ? 'Create New Client' : clientData.name}</h1>
+        <h1 className="text-3xl font-bold font-headline">{isNewClient ? 'Create New Client' : form.getValues('name')}</h1>
       </div>
 
       <Card>
@@ -136,61 +143,59 @@ export default function ClientProfilePage() {
           <CardTitle>Client Information</CardTitle>
           <CardDescription>Manage the contact and address details for this client.</CardDescription>
         </CardHeader>
-        <CardContent className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="space-y-2">
-              <Label htmlFor="name">Full Name</Label>
-              <Input id="name" name="name" value={clientData.name} onChange={handleInputChange} />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="companyName">Company Name</Label>
-              <Input id="companyName" name="companyName" value={clientData.companyName} onChange={handleInputChange} />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
-              <Input id="email" name="email" type="email" value={clientData.email} onChange={handleInputChange} />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="phone">Phone</Label>
-              <Input id="phone" name="phone" value={clientData.phone} onChange={handleInputChange} />
-            </div>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="space-y-2">
-              <Label htmlFor="address">Billing Address</Label>
-              <Textarea id="address" name="address" value={clientData.address} onChange={handleInputChange} />
-            </div>
-             <div className="space-y-2">
-              <Label htmlFor="shippingAddress">Shipping Address</Label>
-              <Textarea id="shippingAddress" name="shippingAddress" value={clientData.shippingAddress} onChange={handleInputChange} />
-            </div>
-          </div>
-           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-             <div className="space-y-2">
-                <Label htmlFor="website">Website</Label>
-                <div className="relative flex items-center">
-                    <Globe className="absolute left-3 h-5 w-5 text-muted-foreground" />
-                    <Input id="website" name="website" value={clientData.website} onChange={handleInputChange} className="pl-10" />
-                </div>
+        <CardContent>
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <FormField control={form.control} name="name" render={({ field }) => (
+                  <FormItem><FormLabel>Full Name</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
+                )} />
+                <FormField control={form.control} name="companyName" render={({ field }) => (
+                  <FormItem><FormLabel>Company Name</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
+                )} />
+                <FormField control={form.control} name="email" render={({ field }) => (
+                  <FormItem><FormLabel>Email</FormLabel><FormControl><Input type="email" {...field} /></FormControl><FormMessage /></FormItem>
+                )} />
+                <FormField control={form.control} name="phone" render={({ field }) => (
+                  <FormItem><FormLabel>Phone</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
+                )} />
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="taxId">Tax ID / VAT Number</Label>
-                 <div className="relative flex items-center">
-                    <Hash className="absolute left-3 h-5 w-5 text-muted-foreground" />
-                    <Input id="taxId" name="taxId" value={clientData.taxId} onChange={handleInputChange} className="pl-10" />
-                </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <FormField control={form.control} name="address" render={({ field }) => (
+                  <FormItem><FormLabel>Billing Address</FormLabel><FormControl><Textarea {...field} /></FormControl><FormMessage /></FormItem>
+                )} />
+                <FormField control={form.control} name="shippingAddress" render={({ field }) => (
+                  <FormItem><FormLabel>Shipping Address</FormLabel><FormControl><Textarea {...field} /></FormControl><FormMessage /></FormItem>
+                )} />
               </div>
-           </div>
-            <div className="space-y-2">
-                <Label htmlFor="notes">Internal Notes</Label>
-                 <div className="relative flex items-center">
-                    <Pencil className="absolute left-3 top-3 h-5 w-5 text-muted-foreground" />
-                    <Textarea id="notes" name="notes" value={clientData.notes} onChange={handleInputChange} className="pl-10"/>
-                 </div>
-            </div>
-          <div className="flex justify-end pt-4">
-            <Button onClick={handleSave}><Save className="mr-2 h-4 w-4" /> Save Client</Button>
-          </div>
+               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                 <FormField control={form.control} name="website" render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Website</FormLabel>
+                    <FormControl><div className="relative flex items-center"><Globe className="absolute left-3 h-5 w-5 text-muted-foreground" /><Input className="pl-10" {...field} /></div></FormControl>
+                    <FormMessage />
+                  </FormItem>
+                 )} />
+                  <FormField control={form.control} name="taxId" render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Tax ID / VAT Number</FormLabel>
+                      <FormControl><div className="relative flex items-center"><Hash className="absolute left-3 h-5 w-5 text-muted-foreground" /><Input className="pl-10" {...field} /></div></FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )} />
+               </div>
+                <FormField control={form.control} name="notes" render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Internal Notes</FormLabel>
+                    <FormControl><div className="relative flex items-center"><Pencil className="absolute left-3 top-3 h-5 w-5 text-muted-foreground" /><Textarea className="pl-10" {...field} /></div></FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )} />
+              <div className="flex justify-end pt-4">
+                <Button type="submit" disabled={isSaving}><Save className="mr-2 h-4 w-4" /> {isSaving ? 'Saving...' : 'Save Client'}</Button>
+              </div>
+            </form>
+          </Form>
         </CardContent>
       </Card>
 
@@ -198,7 +203,7 @@ export default function ClientProfilePage() {
         <Card>
           <CardHeader>
             <CardTitle>Associated Documents</CardTitle>
-            <CardDescription>All invoices and estimates related to {clientData.name}.</CardDescription>
+            <CardDescription>All invoices and estimates related to {form.getValues('name')}.</CardDescription>
           </CardHeader>
           <CardContent>
              <Tabs defaultValue="invoices">
@@ -254,3 +259,4 @@ export default function ClientProfilePage() {
   );
 }
 
+    
