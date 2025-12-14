@@ -9,7 +9,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { DatePicker } from '@/components/ui/datepicker';
-import { ImageUp, Plus, Trash2, Palette, X, Mail, Truck, Hash, Wallet, Phone, Globe, Briefcase, Award, User, FileText, Building, Pencil, Type, Package, Hammer, Ruler, ListTree, CheckSquare, Sparkles, Calendar, TextQuote, Wind, Thermometer, Wrench, Zap, Trees, Droplets, Car, Code, DraftingCompass, PaintBucket, Paintbrush, Receipt, Scale, Hospital, HeartPulse, HardHat } from 'lucide-react';
+import { ImageUp, Plus, Trash2, Palette, X, Mail, Truck, Hash, Wallet, Phone, Globe, Briefcase, Award, User, FileText, Building, Pencil, Type, Package, Hammer, Ruler, ListTree, CheckSquare, Sparkles, Calendar, TextQuote, Wind, Thermometer, Wrench, Zap, Trees, Droplets, Car, Code, DraftingCompass, PaintBucket, Paintbrush, Receipt, Scale, Hospital, HeartPulse, HardHat, Save } from 'lucide-react';
 import Image from 'next/image';
 import {
   Select,
@@ -20,8 +20,19 @@ import {
 } from "@/components/ui/select";
 import { Checkbox } from './ui/checkbox';
 import { RadioGroup, RadioGroupItem } from './ui/radio-group';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from './ui/dialog';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger, DialogFooter, DialogClose } from './ui/dialog';
 import { SignaturePad } from './signature-pad';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 
 interface InvoiceFormProps {
@@ -34,6 +45,11 @@ interface InvoiceFormProps {
   textColor: string;
   setTextColor: Dispatch<SetStateAction<string>>;
   toast: (options: { title: string; description: string; variant?: "default" | "destructive" }) => void;
+}
+
+interface Preset {
+  name: string;
+  items: Omit<LineItem, 'id'>[];
 }
 
 const currencies = [
@@ -155,6 +171,22 @@ export function InvoiceForm({ invoice, setInvoice, accentColor, setAccentColor, 
   const [textColorInput, setTextColorInput] = useState(textColor);
   const [logoUrl, setLogoUrl] = useState<string | null>(invoice.business.logoUrl || null);
   const [isSignatureDialogOpen, setIsSignatureDialogOpen] = useState(false);
+  const [presets, setPresets] = useState<Preset[]>([]);
+  const [selectedPreset, setSelectedPreset] = useState<string>('');
+  const [isSavePresetOpen, setIsSavePresetOpen] = useState(false);
+  const [newPresetName, setNewPresetName] = useState('');
+
+  // Load presets from localStorage on mount
+  useEffect(() => {
+    try {
+      const savedPresets = localStorage.getItem('lineItemPresets');
+      if (savedPresets) {
+        setPresets(JSON.parse(savedPresets));
+      }
+    } catch (error) {
+      console.error("Could not load presets from localStorage", error);
+    }
+  }, []);
   
   useEffect(() => {
     setAccentColorInput(accentColor);
@@ -357,6 +389,42 @@ export function InvoiceForm({ invoice, setInvoice, accentColor, setAccentColor, 
         ...businessRest
       }
     }));
+  };
+
+  const handleSavePreset = () => {
+    if (!newPresetName.trim()) {
+      toast({ title: 'Preset Name Required', description: 'Please enter a name for your preset.', variant: 'destructive' });
+      return;
+    }
+    const newPreset: Preset = {
+      name: newPresetName.trim(),
+      items: invoice.lineItems.map(({ id, ...item }) => item), // Exclude IDs
+    };
+    const updatedPresets = [...presets, newPreset];
+    setPresets(updatedPresets);
+    localStorage.setItem('lineItemPresets', JSON.stringify(updatedPresets));
+    toast({ title: 'Preset Saved', description: `"${newPreset.name}" has been saved.` });
+    setIsSavePresetOpen(false);
+    setNewPresetName('');
+  };
+
+  const handleLoadPreset = () => {
+    if (!selectedPreset) return;
+    const preset = presets.find(p => p.name === selectedPreset);
+    if (preset) {
+      const newItems = preset.items.map(item => ({ ...item, id: crypto.randomUUID() }));
+      setInvoice(prev => ({ ...prev, lineItems: [...prev.lineItems, ...newItems] }));
+      toast({ title: 'Preset Loaded', description: `Items from "${preset.name}" have been added.` });
+    }
+  };
+
+  const handleDeletePreset = () => {
+    if (!selectedPreset) return;
+    const updatedPresets = presets.filter(p => p.name !== selectedPreset);
+    setPresets(updatedPresets);
+    localStorage.setItem('lineItemPresets', JSON.stringify(updatedPresets));
+    toast({ title: 'Preset Deleted', description: `"${selectedPreset}" has been deleted.` });
+    setSelectedPreset(''); // Clear selection
   };
 
   const currencySymbol = currencies.find(c => c.value === invoice.currency)?.label.split(' ')[1] || '$';
@@ -926,6 +994,82 @@ export function InvoiceForm({ invoice, setInvoice, accentColor, setAccentColor, 
           <CardTitle>Items</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
+           {/* Presets UI */}
+            <div className="p-4 border rounded-lg bg-background/50 space-y-4">
+              <Label className="font-semibold">Line Item Presets</Label>
+              <div className="flex flex-wrap items-end gap-2">
+                <div className="flex-grow space-y-2">
+                    <Label htmlFor="preset-select" className="text-xs text-muted-foreground">Load a saved group of items</Label>
+                    <Select value={selectedPreset} onValueChange={setSelectedPreset} disabled={presets.length === 0}>
+                        <SelectTrigger id="preset-select">
+                            <SelectValue placeholder="Select a preset..." />
+                        </SelectTrigger>
+                        <SelectContent>
+                            {presets.map((p, index) => <SelectItem key={`${p.name}-${index}`} value={p.name}>{p.name}</SelectItem>)}
+                        </SelectContent>
+                    </Select>
+                </div>
+                
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                      <Button variant="secondary" disabled={!selectedPreset}>Load Preset</Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                      <AlertDialogHeader>
+                          <AlertDialogTitle>Add items from preset?</AlertDialogTitle>
+                          <AlertDialogDescription>
+                              This will add the items from the preset to your current list, not replace them.
+                          </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                          <AlertDialogCancel>Cancel</AlertDialogCancel>
+                          <AlertDialogAction onClick={handleLoadPreset}>Load</AlertDialogAction>
+                      </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <Button variant="destructive" disabled={!selectedPreset}><Trash2 className="mr-2 h-4 w-4" />Delete Preset</Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                      <AlertDialogHeader>
+                          <AlertDialogTitle>Delete this preset?</AlertDialogTitle>
+                          <AlertDialogDescription>
+                              This will permanently delete the "{selectedPreset}" preset. This action cannot be undone.
+                          </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                          <AlertDialogCancel>Cancel</AlertDialogCancel>
+                          <AlertDialogAction onClick={handleDeletePreset}>Delete</AlertDialogAction>
+                      </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+
+                <Dialog open={isSavePresetOpen} onOpenChange={setIsSavePresetOpen}>
+                  <DialogTrigger asChild>
+                    <Button variant="outline"><Save className="mr-2 h-4 w-4" /> Save as Preset</Button>
+                  </DialogTrigger>
+                  <DialogContent>
+                      <DialogHeader>
+                          <DialogTitle>Save Line Item Preset</DialogTitle>
+                          <DialogDescription>
+                              Save the current set of line items for quick use in the future.
+                          </DialogDescription>
+                      </DialogHeader>
+                      <div className="space-y-2">
+                          <Label htmlFor="preset-name">Preset Name</Label>
+                          <Input id="preset-name" value={newPresetName} onChange={(e) => setNewPresetName(e.target.value)} placeholder="e.g., Standard Website Package"/>
+                      </div>
+                      <DialogFooter>
+                          <DialogClose asChild><Button variant="ghost">Cancel</Button></DialogClose>
+                          <Button onClick={handleSavePreset}>Save Preset</Button>
+                      </DialogFooter>
+                  </DialogContent>
+                </Dialog>
+              </div>
+            </div>
+
           <div className="hidden md:grid md:grid-cols-[2fr_100px_120px_120px_auto] gap-x-4 text-sm font-medium text-muted-foreground">
             <Label>Item Name</Label>
             <Label>Quantity</Label>
@@ -1054,5 +1198,6 @@ export function InvoiceForm({ invoice, setInvoice, accentColor, setAccentColor, 
     </div>
   );
 }
+
 
 
