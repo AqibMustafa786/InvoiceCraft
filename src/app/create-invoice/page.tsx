@@ -42,15 +42,30 @@ const normalizeAuditLog = (auditLog: any): AuditLogEntry[] => {
 
 const diff = (original: any, updated: any): string[] => {
     const changes: string[] = [];
+    if (!original || !updated) return changes;
+
     const allKeys = new Set([...Object.keys(original), ...Object.keys(updated)]);
 
+    const formatKey = (key: string) => key.replace(/([A-Z])/g, ' $1').replace(/^./, (str) => str.toUpperCase());
+
     allKeys.forEach(key => {
-        if (typeof original[key] === 'object' && original[key] !== null && typeof updated[key] === 'object' && updated[key] !== null) {
-            if (JSON.stringify(original[key]) !== JSON.stringify(updated[key])) {
-                changes.push(`Updated section: ${key}`);
+        if (key === 'auditLog' || key === 'updatedAt' || key === 'createdAt') return;
+
+        const originalValue = original[key];
+        const updatedValue = updated[key];
+
+        if (JSON.stringify(originalValue) !== JSON.stringify(updatedValue)) {
+            if (typeof updatedValue === 'object' && updatedValue !== null && !Array.isArray(updatedValue)) {
+                 Object.keys(updatedValue).forEach(subKey => {
+                    const subOriginal = originalValue?.[subKey] ?? 'nothing';
+                    const subUpdated = updatedValue[subKey];
+                    if(JSON.stringify(subOriginal) !== JSON.stringify(subUpdated)){
+                        changes.push(`Updated ${formatKey(key)}: Changed ${formatKey(subKey)} from '${subOriginal}' to '${subUpdated}'`);
+                    }
+                 });
+            } else {
+                 changes.push(`Changed ${formatKey(key)} from '${originalValue}' to '${updatedValue}'`);
             }
-        } else if (original[key] !== updated[key]) {
-            changes.push(`Changed ${key} from '${original[key]}' to '${updated[key]}'`);
         }
     });
     return changes;
@@ -413,7 +428,7 @@ export default function CreateInvoicePage() {
         const newAuditLogEntry: AuditLogEntry = {
             id: crypto.randomUUID(),
             action: 'created',
-            timestamp: Timestamp.now(),
+            timestamp: new Date(),
             user: user.email || 'Unknown',
             version: 1,
         };
@@ -459,26 +474,24 @@ export default function CreateInvoicePage() {
     const isNew = !searchParams.get('draftId');
     const newId = isNew ? generateNewId(invoice) : invoice.id;
 
-    // Diffing
     const changes = diff(originalInvoice, invoice);
     const existingLog = normalizeAuditLog(invoice.auditLog);
     
-    let newAuditLog: AuditLogEntry[] = [...existingLog];
+    let updatedAuditLog: AuditLogEntry[] = [...existingLog];
 
     if (changes.length > 0) {
         const newVersion = (existingLog[existingLog.length - 1]?.version || 0) + 1;
         const newAuditLogEntry: AuditLogEntry = {
             id: crypto.randomUUID(),
-            action: 'updated',
-            timestamp: Timestamp.now(),
+            action: isNew ? 'created' : 'updated',
+            timestamp: new Date(),
             user: user.email || 'Unknown',
             version: newVersion,
             changes: changes
         };
-        newAuditLog.push(newAuditLogEntry);
+        updatedAuditLog.push(newAuditLogEntry);
     }
     
-    // Sanitize dates before saving
     const safeTimestamp = (value: any): Timestamp | null => {
         if (!value) return null;
         if (value instanceof Timestamp) return value;
@@ -491,11 +504,11 @@ export default function CreateInvoicePage() {
       id: newId,
       userId: user.uid,
       companyId: companyId,
-      updatedAt: serverTimestamp(),
-      auditLog: newAuditLog.map(log => ({ ...log, timestamp: safeTimestamp(log.timestamp) })),
+      updatedAt: Timestamp.now(),
+      auditLog: updatedAuditLog.map(log => ({ ...log, timestamp: safeTimestamp(log.timestamp) })),
       invoiceDate: safeTimestamp(invoice.invoiceDate),
       dueDate: safeTimestamp(invoice.dueDate),
-      createdAt: invoice.createdAt ? safeTimestamp(invoice.createdAt) : serverTimestamp(),
+      createdAt: safeTimestamp(invoice.createdAt) || Timestamp.now(),
     };
 
     const dateCategories = ['construction', 'medical', 'photography', 'rental'];
@@ -519,7 +532,7 @@ export default function CreateInvoicePage() {
       description: "Your invoice draft has been saved online.",
     });
 
-    const updatedInvoiceState = { ...invoice, id: newId, auditLog: newAuditLog };
+    const updatedInvoiceState = { ...invoice, id: newId, auditLog: updatedAuditLog };
     setInvoice(updatedInvoiceState);
     setOriginalInvoice(JSON.parse(JSON.stringify(updatedInvoiceState)));
 
@@ -534,7 +547,7 @@ export default function CreateInvoicePage() {
     const newAuditLogEntry: AuditLogEntry = {
         id: crypto.randomUUID(),
         action: 'created',
-        timestamp: Timestamp.now(),
+        timestamp: new Date(),
         user: user.email || 'Unknown',
         version: 1,
     };
@@ -677,6 +690,7 @@ export default function CreateInvoicePage() {
     
 
     
+
 
 
 
