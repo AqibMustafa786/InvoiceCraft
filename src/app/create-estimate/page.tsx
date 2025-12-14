@@ -41,6 +41,23 @@ const normalizeAuditLog = (auditLog: any): AuditLogEntry[] => {
   return [];
 };
 
+const diff = (original: any, updated: any): string[] => {
+    const changes: string[] = [];
+    const allKeys = new Set([...Object.keys(original), ...Object.keys(updated)]);
+
+    allKeys.forEach(key => {
+        if (key === 'auditLog' || key === 'updatedAt') return;
+        
+        const originalValue = JSON.stringify(original[key]);
+        const updatedValue = JSON.stringify(updated[key]);
+
+        if (originalValue !== updatedValue) {
+            changes.push(`Updated ${key}`);
+        }
+    });
+    return changes;
+};
+
 const getInitialEstimate = (): Omit<Estimate, 'userId' | 'companyId'> => ({
   id: '', 
   estimateNumber: '',
@@ -230,6 +247,7 @@ function PrintableDocument({ doc, accentColor, backgroundColor, textColor }: { d
 export default function CreateEstimatePage() {
   const { user, userProfile, isLoading: isAuthLoading } = useAuth();
   const [document, setDocument] = useState<Estimate | Quote | null>(null);
+  const [originalDocument, setOriginalDocument] = useState<Estimate | Quote | null>(null);
   const [accentColor, setAccentColor] = useState<string>('hsl(var(--primary))');
   const [backgroundColor, setBackgroundColor] = useState<string>('#FFFFFF');
   const [textColor, setTextColor] = useState<string>('#374151');
@@ -324,6 +342,7 @@ export default function CreateEstimatePage() {
     } else {
         const newDocId = firestore ? doc(collection(firestore, 'companies', 'temp', ESTIMATES_COLLECTION)).id : crypto.randomUUID();
         const newAuditLogEntry: AuditLogEntry = {
+            id: crypto.randomUUID(),
             action: 'created',
             timestamp: Timestamp.now(),
             user: user.email || 'Unknown',
@@ -340,6 +359,7 @@ export default function CreateEstimatePage() {
     }
     
     setDocument(initialDocument);
+    setOriginalDocument(JSON.parse(JSON.stringify(initialDocument)));
 
   }, [draftId, remoteDraft, isDraftLoading, user, userProfile, isAuthLoading, companyId, firestore, router]);
 
@@ -364,7 +384,7 @@ export default function CreateEstimatePage() {
   };
   
     const handleSaveDraft = () => {
-    if (!document || !firestore || !user || !userProfile?.companyId) {
+    if (!document || !firestore || !user || !userProfile?.companyId || !originalDocument) {
          toast({
           title: "Cannot Save Draft",
           description: "You must be logged in to save a draft.",
@@ -377,24 +397,29 @@ export default function CreateEstimatePage() {
     const isNew = !searchParams.get('draftId');
     const newId = isNew ? generateNewId(document) : document.id;
 
+    const changes = diff(originalDocument, document);
     const existingLog = normalizeAuditLog(document.auditLog);
-    const newVersion = (existingLog.length || 0) + 1;
+    let updatedAuditLog: AuditLogEntry[] = [...existingLog];
 
-    const newAuditLogEntry: AuditLogEntry = {
-        action: isNew ? 'created' : 'updated',
-        timestamp: Timestamp.now(),
-        user: user.email || 'Unknown',
-        version: newVersion,
-    };
+    if (changes.length > 0) {
+        const newVersion = (existingLog[existingLog.length - 1]?.version || 0) + 1;
+        const newAuditLogEntry: AuditLogEntry = {
+            id: crypto.randomUUID(),
+            action: isNew ? 'created' : 'updated',
+            timestamp: Timestamp.now(),
+            user: user.email || 'Unknown',
+            version: newVersion,
+            changes: changes,
+        };
+        updatedAuditLog.push(newAuditLogEntry);
+    }
     
-    const updatedAuditLog = [...existingLog, newAuditLogEntry];
 
     // Sanitize dates before saving
-    const safeTimestamp = (value: any) => {
-        if (value instanceof Timestamp) return value;
-        if (value instanceof Date && isValid(value)) return Timestamp.fromDate(value);
+    const safeTimestamp = (value: any): Timestamp | null => {
         if (!value) return null;
-        const d = new Date(value);
+        if (value instanceof Timestamp) return value;
+        const d = value.toDate ? value.toDate() : new Date(value);
         return isValid(d) ? Timestamp.fromDate(d) : null;
     };
 
@@ -426,16 +451,9 @@ export default function CreateEstimatePage() {
       description: "Your estimate draft has been saved online.",
     });
 
-    setDocument(prev => {
-        if (!prev) return null;
-        const updatedDoc = { ...prev, id: newId, auditLog: updatedAuditLog };
-        return JSON.parse(JSON.stringify(updatedDoc), (key, value) => {
-             if (['estimateDate', 'validUntilDate', 'expectedStartDate', 'expectedCompletionDate', 'createdAt', 'updatedAt', 'timestamp'].includes(key) && value) {
-               return value.toDate ? value.toDate() : (isValid(new Date(value)) ? new Date(value) : null);
-           }
-           return value;
-        });
-    });
+    const updatedDocState = { ...document, id: newId, auditLog: updatedAuditLog };
+    setDocument(updatedDocState);
+    setOriginalDocument(JSON.parse(JSON.stringify(updatedDocState)));
 
     if (isNew) {
       router.push(`/create-estimate?draftId=${newId}`, { scroll: false });
@@ -447,6 +465,7 @@ export default function CreateEstimatePage() {
     if(!user || !companyId) return;
     const newDocId = firestore ? doc(collection(firestore, 'companies', companyId, ESTIMATES_COLLECTION)).id : crypto.randomUUID();
     const newAuditLogEntry: AuditLogEntry = {
+        id: crypto.randomUUID(),
         action: 'created',
         timestamp: Timestamp.now(),
         user: user.email || 'Unknown',
@@ -461,6 +480,7 @@ export default function CreateEstimatePage() {
         auditLog: [newAuditLogEntry]
     };
     setDocument(newDoc);
+    setOriginalDocument(JSON.parse(JSON.stringify(newDoc)));
     router.push('/create-estimate', { scroll: false });
   };
 

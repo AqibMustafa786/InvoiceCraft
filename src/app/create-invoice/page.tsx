@@ -14,7 +14,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { useFirebase, useMemoFirebase } from '@/firebase';
-import { doc, serverTimestamp, Timestamp, collection } from 'firebase/firestore';
+import { doc, serverTimestamp, Timestamp, collection, getDoc } from 'firebase/firestore';
 import { setDocumentNonBlocking } from '@/firebase/non-blocking-updates';
 import { useDoc } from '@/firebase/firestore/use-doc';
 import { DocumentTemplateSelector } from '@/components/document-template-selector';
@@ -40,6 +40,21 @@ const normalizeAuditLog = (auditLog: any): AuditLogEntry[] => {
   return [];
 };
 
+const diff = (original: any, updated: any): string[] => {
+    const changes: string[] = [];
+    const allKeys = new Set([...Object.keys(original), ...Object.keys(updated)]);
+
+    allKeys.forEach(key => {
+        if (typeof original[key] === 'object' && original[key] !== null && typeof updated[key] === 'object' && updated[key] !== null) {
+            if (JSON.stringify(original[key]) !== JSON.stringify(updated[key])) {
+                changes.push(`Updated section: ${key}`);
+            }
+        } else if (original[key] !== updated[key]) {
+            changes.push(`Changed ${key} from '${original[key]}' to '${updated[key]}'`);
+        }
+    });
+    return changes;
+};
 
 const getInitialInvoice = (): Omit<Invoice, 'userId' | 'companyId'> => ({
   id: '',
@@ -294,6 +309,7 @@ function PrintableInvoice({ doc, accentColor, backgroundColor, textColor }: { do
 
 export default function CreateInvoicePage() {
   const [invoice, setInvoice] = useState<Invoice | null>(null);
+  const [originalInvoice, setOriginalInvoice] = useState<Invoice | null>(null);
   const [accentColor, setAccentColor] = useState<string>('hsl(var(--primary))');
   const [backgroundColor, setBackgroundColor] = useState<string>('#FFFFFF');
   const [textColor, setTextColor] = useState<string>('#374151');
@@ -395,6 +411,7 @@ export default function CreateInvoicePage() {
     } else {
         const newDocId = firestore ? doc(collection(firestore, 'companies', 'temp', INVOICES_COLLECTION)).id : crypto.randomUUID();
         const newAuditLogEntry: AuditLogEntry = {
+            id: crypto.randomUUID(),
             action: 'created',
             timestamp: Timestamp.now(),
             user: user.email || 'Unknown',
@@ -411,6 +428,7 @@ export default function CreateInvoicePage() {
     }
     
     setInvoice(initialInvoice);
+    setOriginalInvoice(JSON.parse(JSON.stringify(initialInvoice))); // Deep copy
     setBackgroundColor(initialInvoice.backgroundColor || '#FFFFFF');
     setTextColor(initialInvoice.textColor || '#374151');
     
@@ -435,30 +453,36 @@ export default function CreateInvoicePage() {
     window.print();
   };
 
-  const handleSaveDraft = () => {
-    if (!invoice || !firestore || !user || !companyId) return;
+  const handleSaveDraft = async () => {
+    if (!invoice || !firestore || !user || !companyId || !originalInvoice) return;
     
     const isNew = !searchParams.get('draftId');
     const newId = isNew ? generateNewId(invoice) : invoice.id;
 
+    // Diffing
+    const changes = diff(originalInvoice, invoice);
     const existingLog = normalizeAuditLog(invoice.auditLog);
-    const newVersion = existingLog.length + 1;
-
-    const newAuditLogEntry: AuditLogEntry = {
-        action: isNew ? 'created' : 'updated',
-        timestamp: Timestamp.now(),
-        user: user.email || 'Unknown',
-        version: newVersion,
-    };
     
-    const updatedAuditLog = [...existingLog, newAuditLogEntry];
+    let newAuditLog: AuditLogEntry[] = [...existingLog];
 
+    if (changes.length > 0) {
+        const newVersion = (existingLog[existingLog.length - 1]?.version || 0) + 1;
+        const newAuditLogEntry: AuditLogEntry = {
+            id: crypto.randomUUID(),
+            action: 'updated',
+            timestamp: Timestamp.now(),
+            user: user.email || 'Unknown',
+            version: newVersion,
+            changes: changes
+        };
+        newAuditLog.push(newAuditLogEntry);
+    }
+    
     // Sanitize dates before saving
-    const safeTimestamp = (value: any) => {
-        if (value instanceof Timestamp) return value;
-        if (value instanceof Date && isValid(value)) return Timestamp.fromDate(value);
+    const safeTimestamp = (value: any): Timestamp | null => {
         if (!value) return null;
-        const d = new Date(value);
+        if (value instanceof Timestamp) return value;
+        const d = value.toDate ? value.toDate() : new Date(value);
         return isValid(d) ? Timestamp.fromDate(d) : null;
     };
 
@@ -468,55 +492,36 @@ export default function CreateInvoicePage() {
       userId: user.uid,
       companyId: companyId,
       updatedAt: serverTimestamp(),
-      auditLog: updatedAuditLog.map(log => ({ ...log, timestamp: safeTimestamp(log.timestamp.toDate ? log.timestamp.toDate() : log.timestamp) })),
+      auditLog: newAuditLog.map(log => ({ ...log, timestamp: safeTimestamp(log.timestamp) })),
       invoiceDate: safeTimestamp(invoice.invoiceDate),
       dueDate: safeTimestamp(invoice.dueDate),
       createdAt: invoice.createdAt ? safeTimestamp(invoice.createdAt) : serverTimestamp(),
     };
 
-    if (invoice.construction) {
-        draftToSave.construction = { ...invoice.construction };
-        const start = safeTimestamp(invoice.construction.projectStartDate);
-        if(start) draftToSave.construction.projectStartDate = start;
-        const end = safeTimestamp(invoice.construction.projectEndDate);
-        if(end) draftToSave.construction.projectEndDate = end;
-    }
-    if (invoice.medical) {
-        draftToSave.medical = { ...invoice.medical };
-        const visitDate = safeTimestamp(invoice.medical.visitDate);
-        if(visitDate) draftToSave.medical.visitDate = visitDate;
-    }
-     if (invoice.photography) {
-        draftToSave.photography = { ...invoice.photography };
-        const shootDate = safeTimestamp(invoice.photography.shootDate);
-        if(shootDate) draftToSave.photography.shootDate = shootDate;
-    }
-     if (invoice.rental) {
-        draftToSave.rental = { ...invoice.rental };
-        const start = safeTimestamp(invoice.rental.rentalStartDate);
-        if(start) draftToSave.rental.rentalStartDate = start;
-        const end = safeTimestamp(invoice.rental.rentalEndDate);
-        if(end) draftToSave.rental.rentalEndDate = end;
-    }
+    const dateCategories = ['construction', 'medical', 'photography', 'rental'];
+    dateCategories.forEach(cat => {
+        if ((invoice as any)[cat]) {
+            draftToSave[cat] = { ...(invoice as any)[cat] };
+            Object.keys(draftToSave[cat]).forEach(key => {
+                if (key.toLowerCase().includes('date')) {
+                    const dateVal = draftToSave[cat][key];
+                    draftToSave[cat][key] = safeTimestamp(dateVal);
+                }
+            });
+        }
+    });
 
     const docRef = doc(firestore, 'companies', companyId, INVOICES_COLLECTION, newId);
-    setDocumentNonBlocking(docRef, draftToSave, { merge: true });
+    await setDocumentNonBlocking(docRef, draftToSave, { merge: true });
 
     toast({
       title: "Draft Saved",
       description: "Your invoice draft has been saved online.",
     });
 
-    setInvoice(prev => {
-        if (!prev) return null;
-        const updatedDoc = { ...prev, id: newId, auditLog: updatedAuditLog };
-        return JSON.parse(JSON.stringify(updatedDoc), (key, value) => {
-             if (['invoiceDate', 'dueDate', 'createdAt', 'updatedAt', 'projectStartDate', 'projectEndDate', 'visitDate', 'shootDate', 'rentalStartDate', 'rentalEndDate', 'timestamp'].includes(key) && value) {
-               return value.toDate ? value.toDate() : (isValid(new Date(value)) ? new Date(value) : null);
-           }
-           return value;
-        });
-    });
+    const updatedInvoiceState = { ...invoice, id: newId, auditLog: newAuditLog };
+    setInvoice(updatedInvoiceState);
+    setOriginalInvoice(JSON.parse(JSON.stringify(updatedInvoiceState)));
 
     if (isNew) {
       router.push(`/create-invoice?draftId=${newId}`, { scroll: false });
@@ -527,6 +532,7 @@ export default function CreateInvoicePage() {
     if(!user || !companyId) return;
     const newDocId = firestore ? doc(collection(firestore, 'companies', companyId, INVOICES_COLLECTION)).id : crypto.randomUUID();
     const newAuditLogEntry: AuditLogEntry = {
+        id: crypto.randomUUID(),
         action: 'created',
         timestamp: Timestamp.now(),
         user: user.email || 'Unknown',
@@ -541,6 +547,7 @@ export default function CreateInvoicePage() {
       auditLog: [newAuditLogEntry]
     };
     setInvoice(newInvoice);
+    setOriginalInvoice(JSON.parse(JSON.stringify(newInvoice)));
     if (typeof window !== 'undefined' && window.document) {
         const computedColor = getComputedStyle(window.document.documentElement).getPropertyValue('--primary').trim();
         if (computedColor) {
@@ -670,6 +677,7 @@ export default function CreateInvoicePage() {
     
 
     
+
 
 
 

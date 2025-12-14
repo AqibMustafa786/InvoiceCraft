@@ -65,7 +65,7 @@ export function HistoryModal({ isOpen, onClose, auditLog }: HistoryModalProps) {
             
             {sortedLog.length > 0 ? (
                 sortedLog.map((entry) => (
-                    <div key={entry.version} className="pl-20 relative">
+                    <div key={entry.id || entry.version} className="pl-20 relative">
                        <div className="absolute left-10 top-1 w-4 h-4 rounded-full bg-primary -translate-x-1/2 border-4 border-background"></div>
                        <div className="flex items-start justify-between">
                             <div>

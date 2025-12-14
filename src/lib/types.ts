@@ -1,5 +1,4 @@
 
-
 import { z } from 'zod';
 
 export interface LineItem {
@@ -266,6 +265,7 @@ export interface ITFreelanceInfo {
 }
 
 export interface AuditLogEntry {
+    id: string;
     action: 'created' | 'updated' | 'viewed' | 'signed' | 'declined' | 'sent';
     timestamp: any; // Firestore Timestamp
     user?: string; // email of the user
