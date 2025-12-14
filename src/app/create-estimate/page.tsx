@@ -366,8 +366,11 @@ export default function CreateEstimatePage() {
       userId: user.uid, 
       companyId: companyId,
       updatedAt: serverTimestamp(),
-      createdAt: document.createdAt || serverTimestamp(), // Add createdAt if it doesn't exist
     };
+
+    if (!document.createdAt) {
+      draftToSave.createdAt = serverTimestamp();
+    }
 
     const dateFields = ['estimateDate', 'validUntilDate'];
     dateFields.forEach(field => {
@@ -589,5 +592,6 @@ export default function CreateEstimatePage() {
     </>
   );
 }
+
 
 

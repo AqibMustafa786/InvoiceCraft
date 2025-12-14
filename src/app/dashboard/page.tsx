@@ -264,9 +264,15 @@ export default function DashboardPage() {
 
     const toDateSafe = (value: any): Date | null => {
         if (!value) return null;
-        if (value.toDate && typeof value.toDate === 'function') {
+        // Check if it's a Firestore Timestamp
+        if (value && typeof value.toDate === 'function') {
             return value.toDate();
         }
+        // Check if it's already a Date object
+        if (value instanceof Date) {
+            return isValid(value) ? value : null;
+        }
+        // Try parsing from string or number
         const d = new Date(value);
         return isValid(d) ? d : null;
     };
