@@ -136,7 +136,7 @@ export const RentalTemplate1: React.FC<PageProps> = (props) => {
 }
 
 export const RentalTemplate2: React.FC<PageProps> = (props) => {
-    const { invoice, pageItems, pageIndex, totalPages, subtotal, taxAmount, discountAmount, total, balanceDue, currencySymbol, t } = props;
+    const { invoice, pageItems, pageIndex, totalPages, subtotal, taxAmount, discountAmount, total, balanceDue, currencySymbol, t, accentColor } = props;
     const { business, client } = invoice;
     const docTitle = (t.invoice || 'INVOICE').toUpperCase();
     return (
@@ -171,12 +171,12 @@ export const RentalTemplate2: React.FC<PageProps> = (props) => {
         {pageIndex === totalPages - 1 && (
         <footer className="mt-auto pt-8">
             <div className="flex justify-end text-sm">
-                <div className="w-1/3 space-y-1">
+                <div className="w-1/3">
                     <p className="flex justify-between"><span>Subtotal</span><span>{currencySymbol}{subtotal.toFixed(2)}</span></p>
                     {discountAmount > 0 && <p className="flex justify-between text-red-600"><span>Discount</span><span>-{currencySymbol}{discountAmount.toFixed(2)}</span></p>}
                     {invoice.summary.shippingCost > 0 && <p className="flex justify-between"><span>Shipping</span><span>{currencySymbol}{invoice.summary.shippingCost.toFixed(2)}</span></p>}
                     <p className="flex justify-between border-b pb-1"><span>Tax</span><span>{currencySymbol}{taxAmount.toFixed(2)}</span></p>
-                    <p className="flex justify-between font-bold"><span>Total</span><span>{currencySymbol}{total.toFixed(2)}</span></p>
+                    <p className="flex justify-between font-bold mt-2"><span>Total</span><span>{currencySymbol}{total.toFixed(2)}</span></p>
                      {(invoice.amountPaid || 0) > 0 && <p className="flex justify-between text-green-600"><span>Paid</span><span>-{currencySymbol}{(invoice.amountPaid || 0).toFixed(2)}</span></p>}
                     <p className="flex justify-between font-bold mt-2 pt-2 border-t"><span>Balance Due</span><span>{currencySymbol}{balanceDue.toFixed(2)}</span></p>
                 </div>
@@ -321,5 +321,3 @@ export const RentalTemplate5: React.FC<PageProps> = (props) => {
         </div>
     );
 };
-
-```
