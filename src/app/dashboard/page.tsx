@@ -26,7 +26,7 @@ import {
 import { FilePlus2, Edit, Trash2, Filter, X, MoreHorizontal, FileText, Share2, DollarSign, Clock, FileWarning, Files } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from 'next/navigation';
-import { format, isWithinInterval, isValid } from 'date-fns';
+import { format, isWithinInterval, isValid, startOfMonth } from 'date-fns';
 import { FilterSheet, type DashboardFilters } from '@/components/dashboard/filter-sheet';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
@@ -37,7 +37,7 @@ import { collection, doc, setDoc, query, Timestamp, where } from 'firebase/fires
 import { deleteDocumentNonBlocking, updateDocumentNonBlocking } from '@/firebase';
 import { Skeleton } from '@/components/ui/skeleton';
 import { motion } from 'framer-motion';
-
+import { BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
 const INVOICES_COLLECTION = 'invoices';
 const ESTIMATES_COLLECTION = 'estimates';
@@ -330,6 +330,28 @@ export default function DashboardPage() {
             });
     }, [invoices, estimates, quotes, filters, calculateTotal, user]);
 
+    const chartData = useMemo(() => {
+        const statusCounts: { [key in DocumentStatus]?: number } = {};
+        const monthlyRevenue: { [key: string]: number } = {};
+
+        combinedDocuments.forEach(doc => {
+            statusCounts[doc.status] = (statusCounts[doc.status] || 0) + 1;
+
+            if (doc.documentType === 'invoice' && doc.status === 'paid' && doc.invoiceDate) {
+                const month = format(startOfMonth(doc.invoiceDate), 'MMM yyyy');
+                monthlyRevenue[month] = (monthlyRevenue[month] || 0) + (doc.summary?.grandTotal || 0);
+            }
+        });
+
+        const statusChartData = Object.entries(statusCounts).map(([name, value]) => ({ name, value }));
+        const revenueChartData = Object.entries(monthlyRevenue).map(([name, value]) => ({ name, revenue: value }));
+
+        return { statusChartData, revenueChartData };
+    }, [combinedDocuments]);
+
+    const PIE_CHART_COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8', '#ff4d4d'];
+
+
     const filteredDocs = (docType: 'invoice' | 'estimate' | 'quote') => {
         return combinedDocuments.filter(doc => doc.documentType === docType);
     };
@@ -523,9 +545,9 @@ export default function DashboardPage() {
                         <Skeleton className="h-5 w-80" />
                     </div>
                     <div className="flex gap-2">
-                        <Skeleton className="h-10 w-36" />
-                        <Skeleton className="h-10 w-36" />
-                        <Skeleton className="h-10 w-36" />
+                        <Skeleton className="h-10 w-36 rounded-full" />
+                        <Skeleton className="h-10 w-36 rounded-full" />
+                        <Skeleton className="h-10 w-36 rounded-full" />
                     </div>
                 </div>
                  <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-8">
@@ -588,19 +610,19 @@ export default function DashboardPage() {
                     </motion.div>
                     <motion.div className="flex gap-2" variants={pageVariants}>
                          <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.98 }}>
-                            <Button onClick={handleCreateInvoice}>
+                            <Button onClick={handleCreateInvoice} className="rounded-full">
                                 <FilePlus2 className="mr-2 h-4 w-4" />
                                 New Invoice
                             </Button>
                         </motion.div>
                          <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.98 }}>
-                            <Button onClick={handleCreateEstimate} variant="outline">
+                            <Button onClick={handleCreateEstimate} variant="outline" className="rounded-full">
                                 <FilePlus2 className="mr-2 h-4 w-4" />
                                 New Estimate
                             </Button>
                         </motion.div>
                          <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.98 }}>
-                            <Button onClick={handleCreateQuote} variant="outline">
+                            <Button onClick={handleCreateQuote} variant="outline" className="rounded-full">
                                 <FilePlus2 className="mr-2 h-4 w-4" />
                                 New Quote
                             </Button>
@@ -614,6 +636,46 @@ export default function DashboardPage() {
                     <Card className="bg-card/50 backdrop-blur-sm"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Drafts</CardTitle><FileText className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent><div className="text-2xl font-bold">{dashboardStats.drafts}</div></CardContent></Card>
                 </div>
                 
+                 <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3 mb-8">
+                    <Card className="lg:col-span-2 bg-card/50 backdrop-blur-sm shadow-lg hover:shadow-primary/20 transition-shadow">
+                        <CardHeader>
+                            <CardTitle>Monthly Revenue</CardTitle>
+                            <CardDescription>Revenue from paid invoices over the last few months.</CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            <ResponsiveContainer width="100%" height={300}>
+                                <BarChart data={chartData.revenueChartData}>
+                                    <CartesianGrid strokeDasharray="3 3" />
+                                    <XAxis dataKey="name" />
+                                    <YAxis />
+                                    <Tooltip />
+                                    <Legend />
+                                    <Bar dataKey="revenue" fill="hsl(var(--primary))" />
+                                </BarChart>
+                            </ResponsiveContainer>
+                        </CardContent>
+                    </Card>
+                     <Card className="bg-card/50 backdrop-blur-sm shadow-lg hover:shadow-primary/20 transition-shadow">
+                        <CardHeader>
+                            <CardTitle>Document Status</CardTitle>
+                            <CardDescription>Distribution of all your documents.</CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            <ResponsiveContainer width="100%" height={300}>
+                                <PieChart>
+                                    <Pie data={chartData.statusChartData} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={100} label>
+                                        {chartData.statusChartData.map((entry, index) => (
+                                            <Cell key={`cell-${index}`} fill={PIE_CHART_COLORS[index % PIE_CHART_COLORS.length]} />
+                                        ))}
+                                    </Pie>
+                                    <Tooltip />
+                                    <Legend />
+                                </PieChart>
+                            </ResponsiveContainer>
+                        </CardContent>
+                    </Card>
+                </div>
+
                 <motion.div initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.3, delay: 0.1 }}>
                     <Card className="bg-card/50 backdrop-blur-sm shadow-lg hover:shadow-primary/20 transition-shadow duration-300">
                         <Tabs defaultValue="invoices">
