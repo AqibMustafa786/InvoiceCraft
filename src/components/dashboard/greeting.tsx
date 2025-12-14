@@ -37,7 +37,7 @@ export function Greeting() {
       initial={{ opacity: 0, y: -20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, ease: 'easeOut' }}
-      className="mb-4 text-3xl font-semibold text-center text-foreground"
+      className="my-8 text-3xl font-semibold text-center text-foreground"
     >
       {greeting}
     </motion.div>
