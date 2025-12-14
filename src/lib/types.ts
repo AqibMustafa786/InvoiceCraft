@@ -268,7 +268,7 @@ export interface AuditLogEntry {
     id: string;
     action: 'created' | 'updated' | 'viewed' | 'signed' | 'declined' | 'sent';
     timestamp: any; // Firestore Timestamp
-    user?: string; // email of the user
+    user: string; // email of the user
     version: number;
     changes?: string[];
 }
@@ -314,7 +314,7 @@ export interface Invoice {
   createdAt?: any;
   updatedAt?: any;
   amountPaid?: number;
-  auditLog?: AuditLogEntry[];
+  auditLog: AuditLogEntry[];
 
   // Category specific data
   construction?: ConstructionInfo;
@@ -398,7 +398,7 @@ export interface Estimate {
   isPublic: boolean;
   
   clientSignature?: SignatureInfo;
-  auditLog?: AuditLogEntry[];
+  auditLog: AuditLogEntry[];
 
   fontFamily?: string;
   fontSize?: number;

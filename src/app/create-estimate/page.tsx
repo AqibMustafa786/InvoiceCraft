@@ -420,7 +420,7 @@ export default function CreateEstimatePage() {
         const newVersion = (existingLog[existingLog.length - 1]?.version || 0) + 1;
         const newAuditLogEntry: AuditLogEntry = {
             id: crypto.randomUUID(),
-            action: isNew ? 'created' : 'updated',
+            action: 'updated',
             timestamp: new Date(),
             user: user.email || 'Unknown',
             version: newVersion,

@@ -306,6 +306,7 @@ export default function DashboardPage() {
         const { business, client, lineItems, summary, projectTitle, currency, language, estimateNumber, auditLog } = estimate;
 
         const newAuditLogEntry: AuditLogEntry = {
+            id: crypto.randomUUID(),
             action: 'created',
             timestamp: new Date(),
             user: user.email || 'Unknown',
