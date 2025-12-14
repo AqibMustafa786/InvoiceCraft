@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import { useState, useMemo, useCallback } from 'react';
@@ -37,6 +38,7 @@ import { collection, doc, setDoc, query, Timestamp } from 'firebase/firestore';
 import { deleteDocumentNonBlocking, updateDocumentNonBlocking } from '@/firebase';
 import { Skeleton } from '@/components/ui/skeleton';
 import { motion } from 'framer-motion';
+import { Greeting } from '@/components/dashboard/greeting';
 
 const INVOICES_COLLECTION = 'invoices';
 const ESTIMATES_COLLECTION = 'estimates';
@@ -630,35 +632,38 @@ export default function DashboardPage() {
                 </AlertDialog>
 
                 <motion.div 
-                    className="flex justify-between items-center mb-8 gap-4 flex-wrap"
+                    className="mb-8"
                     variants={pageVariants}
                     initial="hidden"
                     animate="visible"
                 >
-                    <motion.div variants={pageVariants}>
-                        <h1 className="text-3xl font-bold font-headline">Dashboard</h1>
-                        <p className="text-muted-foreground">An overview of your financial documents and activities.</p>
-                    </motion.div>
-                    <motion.div className="flex gap-2" variants={pageVariants}>
-                         <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.98 }}>
-                            <Button onClick={handleCreateInvoice} className="rounded-full">
-                                <FilePlus2 className="mr-2 h-4 w-4" />
-                                New Invoice
-                            </Button>
+                    <Greeting />
+                    <div className="flex justify-between items-center gap-4 flex-wrap">
+                        <motion.div variants={pageVariants}>
+                            <h1 className="text-3xl font-bold font-headline">Dashboard</h1>
+                            <p className="text-muted-foreground">An overview of your financial documents and activities.</p>
                         </motion.div>
-                         <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.98 }}>
-                            <Button onClick={handleCreateEstimate} variant="outline" className="rounded-full">
-                                <FilePlus2 className="mr-2 h-4 w-4" />
-                                New Estimate
-                            </Button>
+                        <motion.div className="flex gap-2" variants={pageVariants}>
+                            <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.98 }}>
+                                <Button onClick={handleCreateInvoice} className="rounded-full">
+                                    <FilePlus2 className="mr-2 h-4 w-4" />
+                                    New Invoice
+                                </Button>
+                            </motion.div>
+                            <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.98 }}>
+                                <Button onClick={handleCreateEstimate} variant="outline" className="rounded-full">
+                                    <FilePlus2 className="mr-2 h-4 w-4" />
+                                    New Estimate
+                                </Button>
+                            </motion.div>
+                            <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.98 }}>
+                                <Button onClick={handleCreateQuote} variant="outline" className="rounded-full">
+                                    <FilePlus2 className="mr-2 h-4 w-4" />
+                                    New Quote
+                                </Button>
+                            </motion.div>
                         </motion.div>
-                         <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.98 }}>
-                            <Button onClick={handleCreateQuote} variant="outline" className="rounded-full">
-                                <FilePlus2 className="mr-2 h-4 w-4" />
-                                New Quote
-                            </Button>
-                        </motion.div>
-                    </motion.div>
+                    </div>
                 </motion.div>
 
                 <motion.div initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.3, delay: 0.1 }}>
