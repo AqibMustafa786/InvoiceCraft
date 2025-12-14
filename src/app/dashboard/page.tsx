@@ -7,6 +7,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Bar, BarChart, CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
+import { ChartContainer, ChartTooltipContent } from '@/components/ui/chart';
 import {
     AlertDialog,
     AlertDialogAction,
@@ -26,7 +28,7 @@ import {
 import { FilePlus2, Edit, Trash2, Filter, X, MoreHorizontal, FileText, Share2, DollarSign, Clock, FileWarning, Files } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from 'next/navigation';
-import { format, isWithinInterval, isValid } from 'date-fns';
+import { format, isWithinInterval, isValid, startOfMonth } from 'date-fns';
 import { FilterSheet, type DashboardFilters } from '@/components/dashboard/filter-sheet';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
@@ -265,15 +267,12 @@ export default function DashboardPage() {
 
     const toDateSafe = (value: any): Date | null => {
         if (!value) return null;
-        // Check if it's a Firestore Timestamp
         if (value && typeof value.toDate === 'function') {
             return value.toDate();
         }
-        // Check if it's already a Date object
         if (value instanceof Date) {
             return isValid(value) ? value : null;
         }
-        // Try parsing from string or number
         const d = new Date(value);
         return isValid(d) ? d : null;
     };
@@ -310,7 +309,7 @@ export default function DashboardPage() {
                   clientName = (doc as Estimate | Quote).client.name;
                 }
                 
-                if (!date || !isValid(date)) return true; // Keep docs with invalid dates for now to avoid hiding them on error
+                if (!date || !isValid(date)) return true;
 
                 const clientNameMatch = filters.clientName ? (clientName || '').toLowerCase().includes(filters.clientName.toLowerCase()) : true;
                 const statusMatch = filters.status ? doc.status === filters.status : true;
@@ -343,13 +342,23 @@ export default function DashboardPage() {
             outstanding: 0,
             overdue: 0,
             totalDocuments: (invoices?.length || 0) + (estimates?.length || 0) + (quotes?.length || 0),
+            monthlyRevenue: {} as Record<string, number>,
+            statusCounts: {} as Record<DocumentStatus, number>,
         };
+
+        STATUS_OPTIONS.forEach(s => stats.statusCounts[s] = 0);
 
         if (invoices) {
             invoices.forEach(inv => {
                 const grandTotal = inv.summary?.grandTotal || 0;
+                 if (inv.status) {
+                    stats.statusCounts[inv.status] = (stats.statusCounts[inv.status] || 0) + 1;
+                }
+
                 if (inv.status === 'paid') {
                     stats.totalRevenue += grandTotal;
+                    const month = format(toDateSafe(inv.invoiceDate) || new Date(), 'yyyy-MM');
+                    stats.monthlyRevenue[month] = (stats.monthlyRevenue[month] || 0) + grandTotal;
                 }
                 if (inv.status === 'sent' || inv.status === 'overdue') {
                     stats.outstanding += grandTotal;
@@ -362,6 +371,27 @@ export default function DashboardPage() {
         return stats;
 
     }, [invoices, estimates, quotes]);
+    
+    const chartData = useMemo(() => {
+        const data = Object.entries(dashboardStats.monthlyRevenue)
+            .map(([month, revenue]) => ({ month, revenue }))
+            .sort((a, b) => new Date(a.month).getTime() - new Date(b.month).getTime());
+        return data;
+    }, [dashboardStats.monthlyRevenue]);
+
+    const barChartData = useMemo(() => {
+        return Object.entries(dashboardStats.statusCounts)
+        .filter(([status, count]) => count > 0)
+        .map(([status, count]) => ({ status, count }));
+    }, [dashboardStats.statusCounts]);
+
+    const chartConfig = {
+      revenue: { label: "Revenue", color: "hsl(var(--primary))" },
+    };
+    
+     const barChartConfig = {
+      count: { label: "Count", color: "hsl(var(--primary))" },
+    };
 
 
     const activeFilterCount = useMemo(() => {
@@ -611,54 +641,22 @@ export default function DashboardPage() {
                         </motion.div>
                     </motion.div>
                 </motion.div>
-
-                <motion.div
-                    className="grid gap-6 md:grid-cols-2 lg:grid-cols-4 mb-8"
-                    variants={pageVariants}
-                    initial="hidden"
-                    animate="visible"
-                >
-                    <Card className="bg-card/70 backdrop-blur-sm">
-                        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                            <CardTitle className="text-sm font-medium">Total Revenue</CardTitle>
-                            <DollarSign className="h-5 w-5 text-green-500" />
-                        </CardHeader>
-                        <CardContent>
-                            <div className="text-3xl font-bold text-green-500">${dashboardStats.totalRevenue.toFixed(2)}</div>
-                            <p className="text-xs text-muted-foreground">Sum of all paid invoices.</p>
-                        </CardContent>
+                 <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4 mb-8">
+                    <Card className="bg-card/50 backdrop-blur-sm"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Total Revenue</CardTitle><DollarSign className="h-5 w-5 text-green-400" /></CardHeader><CardContent><div className="text-3xl font-bold text-green-400">${dashboardStats.totalRevenue.toFixed(2)}</div><p className="text-xs text-muted-foreground">Sum of all paid invoices.</p></CardContent></Card>
+                    <Card className="bg-card/50 backdrop-blur-sm"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Outstanding</CardTitle><Clock className="h-5 w-5 text-blue-400" /></CardHeader><CardContent><div className="text-3xl font-bold text-blue-400">${dashboardStats.outstanding.toFixed(2)}</div><p className="text-xs text-muted-foreground">Sum of sent & overdue invoices.</p></CardContent></Card>
+                    <Card className="bg-card/50 backdrop-blur-sm"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Overdue</CardTitle><FileWarning className="h-5 w-5 text-red-400" /></CardHeader><CardContent><div className="text-3xl font-bold text-red-400">${dashboardStats.overdue.toFixed(2)}</div><p className="text-xs text-muted-foreground">Sum of all unpaid, overdue invoices.</p></CardContent></Card>
+                    <Card className="bg-card/50 backdrop-blur-sm"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Total Documents</CardTitle><Files className="h-5 w-5 text-yellow-400" /></CardHeader><CardContent><div className="text-3xl font-bold text-yellow-400">{dashboardStats.totalDocuments}</div><p className="text-xs text-muted-foreground">All invoices, estimates, and quotes.</p></CardContent></Card>
+                </div>
+                 <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 mb-8">
+                    <Card className="lg:col-span-2 bg-card/50 backdrop-blur-sm">
+                        <CardHeader><CardTitle>Monthly Revenue Trend</CardTitle></CardHeader>
+                        <CardContent><ChartContainer config={chartConfig} className="min-h-[200px] w-full"><LineChart data={chartData} margin={{left: 12, right: 12}}><CartesianGrid vertical={false} /><XAxis dataKey="month" tickLine={false} axisLine={false} tickMargin={8} tickFormatter={(value) => value.slice(-2)} /><Tooltip cursor={false} content={<ChartTooltipContent />} /><Line dataKey="revenue" type="monotone" stroke="hsl(var(--primary))" strokeWidth={2} dot={false} /></LineChart></ChartContainer></CardContent>
                     </Card>
-                     <Card className="bg-card/70 backdrop-blur-sm">
-                        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                            <CardTitle className="text-sm font-medium">Outstanding</CardTitle>
-                            <Clock className="h-5 w-5 text-blue-500" />
-                        </CardHeader>
-                        <CardContent>
-                            <div className="text-3xl font-bold text-blue-500">${dashboardStats.outstanding.toFixed(2)}</div>
-                            <p className="text-xs text-muted-foreground">Sum of sent & overdue invoices.</p>
-                        </CardContent>
+                    <Card className="bg-card/50 backdrop-blur-sm">
+                        <CardHeader><CardTitle>Documents by Status</CardTitle></CardHeader>
+                        <CardContent><ChartContainer config={barChartConfig} className="min-h-[200px] w-full"><BarChart data={barChartData} layout="vertical" margin={{left: 10}}><XAxis type="number" hide /><YAxis dataKey="status" type="category" tickLine={false} tickMargin={10} axisLine={false} tickFormatter={(value) => value.charAt(0).toUpperCase() + value.slice(1)} /><Tooltip cursor={false} content={<ChartTooltipContent />} /><Bar dataKey="count" layout="vertical" fill="hsl(var(--primary))" radius={4} /></BarChart></ChartContainer></CardContent>
                     </Card>
-                     <Card className="bg-card/70 backdrop-blur-sm">
-                        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                            <CardTitle className="text-sm font-medium">Overdue</CardTitle>
-                            <FileWarning className="h-5 w-5 text-red-500" />
-                        </CardHeader>
-                        <CardContent>
-                            <div className="text-3xl font-bold text-red-500">${dashboardStats.overdue.toFixed(2)}</div>
-                             <p className="text-xs text-muted-foreground">Sum of all unpaid, overdue invoices.</p>
-                        </CardContent>
-                    </Card>
-                    <Card className="bg-card/70 backdrop-blur-sm">
-                        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                            <CardTitle className="text-sm font-medium">Total Documents</CardTitle>
-                            <Files className="h-5 w-5 text-yellow-500" />
-                        </CardHeader>
-                        <CardContent>
-                            <div className="text-3xl font-bold text-yellow-500">{dashboardStats.totalDocuments}</div>
-                             <p className="text-xs text-muted-foreground">All invoices, estimates, and quotes.</p>
-                        </CardContent>
-                    </Card>
-                </motion.div>
+                </div>
                 
                 <motion.div initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.3, delay: 0.1 }}>
                     <Card className="bg-card/50 backdrop-blur-sm">
