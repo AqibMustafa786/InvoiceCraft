@@ -28,18 +28,49 @@ export function Greeting() {
     setGreeting(getGreetingMessage());
   }, [user, userProfile]);
 
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+      },
+    },
+  };
+
+  const wordVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        type: 'spring',
+        stiffness: 100,
+        damping: 10,
+      },
+    },
+  };
+
   if (!greeting) {
     return null;
   }
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: -20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5, ease: 'easeOut' }}
-      className="my-8 text-3xl font-semibold text-center text-foreground"
+      variants={containerVariants}
+      initial="hidden"
+      animate="visible"
+      className="my-8 text-3xl font-semibold text-center text-foreground flex justify-center gap-2"
     >
-      {greeting}
+      {greeting.split(' ').map((word, index) => (
+        <motion.span
+          key={index}
+          variants={wordVariants}
+          style={{ display: 'inline-block' }}
+        >
+          {word}
+        </motion.span>
+      ))}
     </motion.div>
   );
 }
