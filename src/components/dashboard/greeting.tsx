@@ -32,7 +32,7 @@ export function Greeting() {
   }
 
   return (
-    <div className="mb-4 text-lg font-semibold text-muted-foreground">
+    <div className="mb-4 text-3xl font-semibold text-muted-foreground text-center">
       {greeting}
     </div>
   );
