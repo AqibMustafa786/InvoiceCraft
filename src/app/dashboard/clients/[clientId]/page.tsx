@@ -78,7 +78,16 @@ export default function ClientProfilePage() {
     }
 
     try {
-      let idToSave = isNewClient ? doc(collection(firestore, 'companies', userProfile.companyId, CLIENTS_COLLECTION)).id : (clientId as string);
+      let idToSave: string;
+      if (isNewClient) {
+        const safeName = clientData.name.toLowerCase().replace(/[^a-z0-9]/g, '-');
+        const safeCompany = (clientData.companyName || '').toLowerCase().replace(/[^a-z0-9]/g, '-');
+        const baseId = safeCompany ? `${safeName}-${safeCompany}` : safeName;
+        // Add a short random suffix to prevent collisions
+        idToSave = `${baseId}-${Math.random().toString(36).substring(2, 7)}`;
+      } else {
+        idToSave = clientId as string;
+      }
       
       const dataToSave: Client = {
         id: idToSave,
@@ -244,3 +253,4 @@ export default function ClientProfilePage() {
     </div>
   );
 }
+
