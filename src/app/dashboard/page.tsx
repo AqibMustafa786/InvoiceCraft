@@ -6,6 +6,7 @@ import type { Invoice, Estimate, DocumentStatus, Quote } from '@/lib/types';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
     AlertDialog,
     AlertDialogAction,
@@ -22,7 +23,7 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { FilePlus2, Edit, Trash2, Filter, X, MoreHorizontal, FileText, Share2 } from "lucide-react";
+import { FilePlus2, Edit, Trash2, Filter, X, MoreHorizontal, FileText, Share2, DollarSign, Clock, FileWarning } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from 'next/navigation';
 import { format, isWithinInterval, isValid } from 'date-fns';
@@ -332,6 +333,45 @@ export default function DashboardPage() {
             });
     }, [invoices, estimates, quotes, filters, calculateTotal, user]);
 
+    const filteredDocs = (docType: 'invoice' | 'estimate' | 'quote') => {
+        return combinedDocuments.filter(doc => doc.documentType === docType);
+    };
+
+    const dashboardStats = useMemo(() => {
+        const stats = {
+            totalRevenue: 0,
+            outstanding: 0,
+            overdue: 0,
+            drafts: 0,
+        };
+
+        if (invoices) {
+            invoices.forEach(inv => {
+                const grandTotal = inv.summary?.grandTotal || 0;
+                if (inv.status === 'paid') {
+                    stats.totalRevenue += grandTotal;
+                }
+                if (inv.status === 'sent') {
+                    stats.outstanding += grandTotal;
+                }
+                if (inv.status === 'overdue') {
+                    stats.overdue += grandTotal;
+                    stats.outstanding += grandTotal;
+                }
+            });
+        }
+        if (estimates) {
+            stats.drafts += estimates.filter(e => e.status === 'draft').length;
+        }
+         if (quotes) {
+            stats.drafts += quotes.filter(q => q.status === 'draft').length;
+        }
+
+        return stats;
+
+    }, [invoices, estimates, quotes]);
+
+
     const activeFilterCount = useMemo(() => {
         let count = 0;
         if (filters.clientName) count++;
@@ -360,6 +400,132 @@ export default function DashboardPage() {
     
     const isLoading = isAuthLoading || isLoadingInvoices || isLoadingEstimates || isLoadingQuotes;
 
+    const renderTable = (docs: DocumentType[], docType: 'invoice' | 'estimate' | 'quote') => (
+        <div className="overflow-x-auto">
+            <Table>
+                <TableHeader>
+                    <TableRow>
+                        <TableHead>Number</TableHead>
+                        <TableHead>Client</TableHead>
+                        <TableHead>Amount</TableHead>
+                        <TableHead>Status</TableHead>
+                        <TableHead>Updated</TableHead>
+                        <TableHead>Created</TableHead>
+                        <TableHead className="text-right">Actions</TableHead>
+                    </TableRow>
+                </TableHeader>
+                <motion.tbody
+                    variants={tableContainerVariants}
+                    initial="hidden"
+                    animate="visible"
+                    as={TableBody}
+                >
+                    {isLoading ? (
+                        <TableRow>
+                            <TableCell colSpan={7} className="text-center h-24">
+                                Loading documents...
+                            </TableCell>
+                        </TableRow>
+                    ) : docs.length > 0 ? docs.map((doc) => {
+                        const isInvoice = doc.documentType === 'invoice';
+                        const docNumber = isInvoice ? (doc as Invoice).invoiceNumber : (doc as Estimate | Quote).estimateNumber;
+                        const clientName = isInvoice ? (doc as Invoice).client.name : (doc as Estimate | Quote).client.name;
+                        
+                        let docCollection: string;
+                        let editUrl: string;
+                        
+                        if(docType === 'invoice') {
+                            docCollection = INVOICES_COLLECTION;
+                            editUrl = `/create-invoice?draftId=${doc.id}`;
+                        } else if (docType === 'estimate') {
+                            docCollection = ESTIMATES_COLLECTION;
+                            editUrl = `/create-estimate?draftId=${doc.id}`;
+                        } else {
+                            docCollection = QUOTES_COLLECTION;
+                            editUrl = `/create-quote?draftId=${doc.id}`;
+                        }
+
+                        return (
+                        <motion.tr
+                            key={doc.id}
+                            variants={tableRowVariants}
+                            className="transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted"
+                            as={TableRow}
+                        >
+                            <TableCell className="font-medium">{docNumber}</TableCell>
+                            <TableCell>{clientName}</TableCell>
+                            <TableCell>{currencySymbols[doc.currency] || '$'}{calculateTotal(doc).toFixed(2)}</TableCell>
+                            <TableCell>
+                                <DropdownMenu>
+                                    <DropdownMenuTrigger asChild>
+                                        <Button variant="outline" className="capitalize w-28 justify-start">
+                                            <Badge variant={getStatusVariant(doc.status)} className="w-full justify-center">{doc.status}</Badge>
+                                        </Button>
+                                    </DropdownMenuTrigger>
+                                    <DropdownMenuContent align="start">
+                                        {STATUS_OPTIONS.map(status => (
+                                            <DropdownMenuItem
+                                                key={status}
+                                                disabled={doc.status === status}
+                                                onClick={() => handleStatusChange(doc.id, docCollection, status)}
+                                                className="capitalize"
+                                            >
+                                                {status}
+                                            </DropdownMenuItem>
+                                        ))}
+                                    </DropdownMenuContent>
+                                </DropdownMenu>
+                            </TableCell>
+                            <TableCell>{doc.updatedAt ? format(doc.updatedAt, 'yyyy-MM-dd HH:mm') : 'N/A'}</TableCell>
+                            <TableCell>{doc.createdAt ? format(doc.createdAt, 'yyyy-MM-dd HH:mm') : 'N/A'}</TableCell>
+                            <TableCell className="text-right">
+                                <DropdownMenu>
+                                    <DropdownMenuTrigger asChild>
+                                        <Button variant="ghost" size="icon">
+                                            <MoreHorizontal className="h-4 w-4" />
+                                            <span className="sr-only">More actions</span>
+                                        </Button>
+                                    </DropdownMenuTrigger>
+                                    <DropdownMenuContent align="end">
+                                        <DropdownMenuItem asChild>
+                                            <Link href={editUrl} className="cursor-pointer">
+                                                <Edit className="mr-2 h-4 w-4" />
+                                                <span>Edit</span>
+                                            </Link>
+                                        </DropdownMenuItem>
+                                        {(docType === 'estimate' || docType === 'quote') && (
+                                            <>
+                                                <DropdownMenuItem onClick={() => handleShare(doc.id, doc.documentType as 'estimate' | 'quote')} className="cursor-pointer">
+                                                    <Share2 className="mr-2 h-4 w-4" />
+                                                    <span>Share Link</span>
+                                                </DropdownMenuItem>
+                                                <DropdownMenuItem onClick={() => handleConvertToInvoice(doc as Estimate | Quote)} className="cursor-pointer">
+                                                    <FileText className="mr-2 h-4 w-4" />
+                                                    <span>Convert to Invoice</span>
+                                                </DropdownMenuItem>
+                                            </>
+                                        )}
+                                        <DropdownMenuItem onClick={() => setDeleteCandidate({id: doc.id, collection: docCollection})} className="text-destructive cursor-pointer">
+                                            <Trash2 className="mr-2 h-4 w-4" />
+                                            <span>Delete</span>
+                                        </DropdownMenuItem>
+                                    </DropdownMenuContent>
+                                </DropdownMenu>
+                            </TableCell>
+                        </motion.tr>
+                        )
+                    }) : (
+                        <TableRow>
+                            <TableCell colSpan={7} className="text-center h-24">
+                                No documents found.
+                            </TableCell>
+                        </TableRow>
+                    )}
+                </motion.tbody>
+            </Table>
+        </div>
+    );
+
     if (isLoading) {
         return (
             <div className="container mx-auto p-4 md:p-8">
@@ -374,15 +540,17 @@ export default function DashboardPage() {
                         <Skeleton className="h-10 w-36" />
                     </div>
                 </div>
+                 <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-8">
+                    <Skeleton className="h-28 w-full" />
+                    <Skeleton className="h-28 w-full" />
+                    <Skeleton className="h-28 w-full" />
+                    <Skeleton className="h-28 w-full" />
+                </div>
                 <Card className="bg-card/50 backdrop-blur-sm">
                     <CardHeader>
-                        <Skeleton className="h-8 w-48 mb-2" />
-                        <Skeleton className="h-5 w-72" />
+                        <Skeleton className="h-10 w-full max-w-sm" />
                     </CardHeader>
                     <CardContent>
-                        <div className="flex justify-between items-center mb-4">
-                            <Skeleton className="h-10 w-28" />
-                        </div>
                         <div className="space-y-2">
                             {[...Array(5)].map((_, i) => (
                                 <Skeleton key={i} className="h-12 w-full" />
@@ -428,7 +596,7 @@ export default function DashboardPage() {
                 >
                     <motion.div variants={pageVariants}>
                         <h1 className="text-3xl font-bold font-headline">Dashboard</h1>
-                        <p className="text-muted-foreground">Manage your invoices, estimates, and quotes here.</p>
+                        <p className="text-muted-foreground">An overview of your financial documents and activities.</p>
                     </motion.div>
                     <motion.div className="flex gap-2" variants={pageVariants}>
                          <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.98 }}>
@@ -451,175 +619,65 @@ export default function DashboardPage() {
                         </motion.div>
                     </motion.div>
                 </motion.div>
+
+                 <motion.div
+                    className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-8"
+                    variants={pageVariants}
+                    initial="hidden"
+                    animate="visible"
+                >
+                    <Card><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Total Revenue</CardTitle><DollarSign className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent><div className="text-2xl font-bold">${dashboardStats.totalRevenue.toFixed(2)}</div></CardContent></Card>
+                    <Card><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Outstanding</CardTitle><Clock className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent><div className="text-2xl font-bold">${dashboardStats.outstanding.toFixed(2)}</div></CardContent></Card>
+                    <Card><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Overdue</CardTitle><FileWarning className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent><div className="text-2xl font-bold text-destructive">${dashboardStats.overdue.toFixed(2)}</div></CardContent></Card>
+                    <Card><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Drafts</CardTitle><FileText className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent><div className="text-2xl font-bold">{dashboardStats.drafts}</div></CardContent></Card>
+                </motion.div>
                 
                 <motion.div initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.3, delay: 0.1 }}>
                     <Card className="bg-card/50 backdrop-blur-sm">
-                        <CardHeader>
-                            <CardTitle>My Documents</CardTitle>
-                            <CardDescription>A list of your saved documents from Firestore.</CardDescription>
-                        </CardHeader>
-                        <CardContent>
-                            <div className="flex justify-between items-center mb-4 gap-2 flex-wrap">
-                                <Button variant="outline" onClick={() => setIsFilterSheetOpen(true)}>
-                                <Filter className="mr-2 h-4 w-4" />
-                                Filter
-                                {activeFilterCount > 0 && (
-                                    <Badge variant="secondary" className="ml-2 rounded-full h-5 w-5 p-0 flex items-center justify-center">{activeFilterCount}</Badge>
-                                )}
-                                </Button>
-                            </div>
-
-                            {activeFilterCount > 0 && (
-                                <div className="flex items-center gap-2 mb-4 flex-wrap">
-                                    <span className="text-sm font-medium">Active filters:</span>
-                                    {filters.clientName && <Badge variant="outline">Client: {filters.clientName}</Badge>}
-                                    {filters.status && <Badge variant="outline">Status: {filters.status}</Badge>}
-                                    {filters.amountMin !== null && <Badge variant="outline">Min Amount: ${filters.amountMin}</Badge>}
-                                    {filters.amountMax !== null && <Badge variant="outline">Max Amount: ${filters.amountMax}</Badge>}
-                                    {filters.dateFrom && <Badge variant="outline">From: {format(filters.dateFrom, 'MMM d, yyyy')}</Badge>}
-                                    {filters.dateTo && <Badge variant="outline">To: {format(filters.dateTo, 'MMM d, yyyy')}</Badge>}
-                                    <Button variant="ghost" size="icon" className="h-6 w-6" onClick={resetFilters}>
-                                        <X className="h-4 w-4" />
-                                        <span className="sr-only">Clear all filters</span>
-                                    </Button>
+                        <Tabs defaultValue="invoices">
+                            <CardHeader>
+                                <div className="flex justify-between items-end">
+                                    <div>
+                                        <CardTitle>My Documents</CardTitle>
+                                        <CardDescription>A list of your saved documents from Firestore.</CardDescription>
+                                    </div>
+                                     <TabsList>
+                                        <TabsTrigger value="invoices">Invoices</TabsTrigger>
+                                        <TabsTrigger value="estimates">Estimates</TabsTrigger>
+                                        <TabsTrigger value="quotes">Quotes</TabsTrigger>
+                                    </TabsList>
                                 </div>
-                            )}
-
-                            <div className="overflow-x-auto">
-                                <Table>
-                                    <TableHeader>
-                                        <TableRow>
-                                            <TableHead>Type</TableHead>
-                                            <TableHead>Number</TableHead>
-                                            <TableHead>Client</TableHead>
-                                            <TableHead>Amount</TableHead>
-                                            <TableHead>Status</TableHead>
-                                            <TableHead>Updated</TableHead>
-                                            <TableHead>Created</TableHead>
-                                            <TableHead className="text-right">Actions</TableHead>
-                                        </TableRow>
-                                    </TableHeader>
-                                    <motion.tbody
-                                        variants={tableContainerVariants}
-                                        initial="hidden"
-                                        animate="visible"
-                                        as={TableBody}
-                                    >
-                                        {isLoading ? (
-                                            <TableRow>
-                                                <TableCell colSpan={8} className="text-center h-24">
-                                                    Loading documents...
-                                                </TableCell>
-                                            </TableRow>
-                                        ) : (invoicesError || estimatesError || quotesError) ? (
-                                            <TableRow>
-                                                <TableCell colSpan={8} className="text-center h-24 text-destructive">
-                                                Error loading documents. Please check your connection and security rules.
-                                                </TableCell>
-                                            </TableRow>
-                                        ) : combinedDocuments.length > 0 ? combinedDocuments.map((doc) => {
-                                            const isInvoice = doc.documentType === 'invoice';
-                                            const isEstimate = doc.documentType === 'estimate';
-                                            const isQuote = doc.documentType === 'quote';
-
-                                            const docNumber = isInvoice ? (doc as Invoice).invoiceNumber : (doc as Estimate | Quote).estimateNumber;
-                                            const clientName = isInvoice ? (doc as Invoice).client.name : (doc as Estimate | Quote).client.name;
-                                            
-                                            let docCollection: string;
-                                            let editUrl: string;
-                                            
-                                            if(isInvoice) {
-                                                docCollection = INVOICES_COLLECTION;
-                                                editUrl = `/create-invoice?draftId=${doc.id}`;
-                                            } else if (isEstimate) {
-                                                docCollection = ESTIMATES_COLLECTION;
-                                                editUrl = `/create-estimate?draftId=${doc.id}`;
-                                            } else {
-                                                docCollection = QUOTES_COLLECTION;
-                                                editUrl = `/create-quote?draftId=${doc.id}`;
-                                            }
-
-                                            return (
-                                            <motion.tr
-                                                key={doc.id}
-                                                variants={tableRowVariants}
-                                                className="transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted"
-                                                as={TableRow}
-                                            >
-                                                <TableCell><Badge variant={isInvoice ? 'secondary' : (isEstimate ? 'default' : 'outline')}>{doc.documentType}</Badge></TableCell>
-                                                <TableCell className="font-medium">{docNumber}</TableCell>
-                                                <TableCell>{clientName}</TableCell>
-                                                <TableCell>{currencySymbols[doc.currency] || '$'}{calculateTotal(doc).toFixed(2)}</TableCell>
-                                                <TableCell>
-                                                    <DropdownMenu>
-                                                        <DropdownMenuTrigger asChild>
-                                                            <Button variant="outline" className="capitalize w-28 justify-start">
-                                                                <Badge variant={getStatusVariant(doc.status)} className="w-full justify-center">{doc.status}</Badge>
-                                                            </Button>
-                                                        </DropdownMenuTrigger>
-                                                        <DropdownMenuContent align="start">
-                                                            {STATUS_OPTIONS.map(status => (
-                                                                <DropdownMenuItem
-                                                                    key={status}
-                                                                    disabled={doc.status === status}
-                                                                    onClick={() => handleStatusChange(doc.id, docCollection, status)}
-                                                                    className="capitalize"
-                                                                >
-                                                                    {status}
-                                                                </DropdownMenuItem>
-                                                            ))}
-                                                        </DropdownMenuContent>
-                                                    </DropdownMenu>
-                                                </TableCell>
-                                                <TableCell>{doc.updatedAt ? format(doc.updatedAt, 'yyyy-MM-dd HH:mm') : 'N/A'}</TableCell>
-                                                <TableCell>{doc.createdAt ? format(doc.createdAt, 'yyyy-MM-dd HH:mm') : 'N/A'}</TableCell>
-                                                <TableCell className="text-right">
-                                                    <DropdownMenu>
-                                                        <DropdownMenuTrigger asChild>
-                                                            <Button variant="ghost" size="icon">
-                                                                <MoreHorizontal className="h-4 w-4" />
-                                                                <span className="sr-only">More actions</span>
-                                                            </Button>
-                                                        </DropdownMenuTrigger>
-                                                        <DropdownMenuContent align="end">
-                                                            <DropdownMenuItem asChild>
-                                                                <Link href={editUrl} className="cursor-pointer">
-                                                                    <Edit className="mr-2 h-4 w-4" />
-                                                                    <span>Edit</span>
-                                                                </Link>
-                                                            </DropdownMenuItem>
-                                                            {(isEstimate || isQuote) && (
-                                                                <>
-                                                                    <DropdownMenuItem onClick={() => handleShare(doc.id, doc.documentType as 'estimate' | 'quote')} className="cursor-pointer">
-                                                                        <Share2 className="mr-2 h-4 w-4" />
-                                                                        <span>Share Link</span>
-                                                                    </DropdownMenuItem>
-                                                                    <DropdownMenuItem onClick={() => handleConvertToInvoice(doc as Estimate | Quote)} className="cursor-pointer">
-                                                                        <FileText className="mr-2 h-4 w-4" />
-                                                                        <span>Convert to Invoice</span>
-                                                                    </DropdownMenuItem>
-                                                                </>
-                                                            )}
-                                                            <DropdownMenuItem onClick={() => setDeleteCandidate({id: doc.id, collection: docCollection})} className="text-destructive cursor-pointer">
-                                                                <Trash2 className="mr-2 h-4 w-4" />
-                                                                <span>Delete</span>
-                                                            </DropdownMenuItem>
-                                                        </DropdownMenuContent>
-                                                    </DropdownMenu>
-                                                </TableCell>
-                                            </motion.tr>
-                                            )
-                                        }) : (
-                                            <TableRow>
-                                                <TableCell colSpan={8} className="text-center h-24">
-                                                    No documents found. Create one!
-                                                </TableCell>
-                                            </TableRow>
-                                        )}
-                                    </motion.tbody>
-                                </Table>
-                            </div>
-                        </CardContent>
+                            </CardHeader>
+                            <CardContent>
+                                <div className="flex justify-between items-center mb-4 gap-2 flex-wrap">
+                                    <Button variant="outline" onClick={() => setIsFilterSheetOpen(true)}>
+                                    <Filter className="mr-2 h-4 w-4" />
+                                    Filter
+                                    {activeFilterCount > 0 && (
+                                        <Badge variant="secondary" className="ml-2 rounded-full h-5 w-5 p-0 flex items-center justify-center">{activeFilterCount}</Badge>
+                                    )}
+                                    </Button>
+                                    {activeFilterCount > 0 && (
+                                        <div className="flex items-center gap-2 flex-wrap">
+                                            <span className="text-sm font-medium">Active filters:</span>
+                                            {filters.clientName && <Badge variant="outline">Client: {filters.clientName}</Badge>}
+                                            {filters.status && <Badge variant="outline">Status: {filters.status}</Badge>}
+                                            {filters.amountMin !== null && <Badge variant="outline">Min: ${filters.amountMin}</Badge>}
+                                            {filters.amountMax !== null && <Badge variant="outline">Max: ${filters.amountMax}</Badge>}
+                                            {filters.dateFrom && <Badge variant="outline">From: {format(filters.dateFrom, 'MMM d, yy')}</Badge>}
+                                            {filters.dateTo && <Badge variant="outline">To: {format(filters.dateTo, 'MMM d, yy')}</Badge>}
+                                            <Button variant="ghost" size="icon" className="h-6 w-6" onClick={resetFilters}>
+                                                <X className="h-4 w-4" />
+                                                <span className="sr-only">Clear filters</span>
+                                            </Button>
+                                        </div>
+                                    )}
+                                </div>
+                                <TabsContent value="invoices">{renderTable(filteredDocs('invoice'), 'invoice')}</TabsContent>
+                                <TabsContent value="estimates">{renderTable(filteredDocs('estimate'), 'estimate')}</TabsContent>
+                                <TabsContent value="quotes">{renderTable(filteredDocs('quote'), 'quote')}</TabsContent>
+                            </CardContent>
+                        </Tabs>
                     </Card>
                 </motion.div>
             </div>
