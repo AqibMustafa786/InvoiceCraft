@@ -38,6 +38,7 @@ import { deleteDocumentNonBlocking, updateDocumentNonBlocking } from '@/firebase
 import { Skeleton } from '@/components/ui/skeleton';
 import { motion } from 'framer-motion';
 import { Greeting } from '@/components/dashboard/greeting';
+import { KpiDetailsModal } from '@/components/dashboard/kpi-details-modal';
 
 const INVOICES_COLLECTION = 'invoices';
 const ESTIMATES_COLLECTION = 'estimates';
@@ -82,9 +83,10 @@ const tableRowVariants = {
 interface DashboardStatsGridProps {
     documents: DocumentType[];
     docType: 'invoice' | 'estimate' | 'quote';
+    onKpiClick: (title: string, data: DocumentType[]) => void;
 }
 
-const DashboardStatsGrid: React.FC<DashboardStatsGridProps> = ({ documents, docType }) => {
+const DashboardStatsGrid: React.FC<DashboardStatsGridProps> = ({ documents, docType, onKpiClick }) => {
     const stats = useMemo(() => {
         const uniqueClients = new Set(documents.map(d => d.client.name)).size;
         
@@ -102,6 +104,7 @@ const DashboardStatsGrid: React.FC<DashboardStatsGridProps> = ({ documents, docT
             const paidInvoices = documents.filter(d => d.status === 'paid') as Invoice[];
             const outstandingInvoices = documents.filter(d => d.status === 'sent') as Invoice[];
             const overdueInvoices = documents.filter(d => d.status === 'overdue') as Invoice[];
+            const draftInvoices = documents.filter(d => d.status === 'draft') as Invoice[];
             const nonDraftInvoices = documents.filter(d => d.status !== 'draft') as Invoice[];
 
             const totalRevenue = paidInvoices.reduce((acc, doc) => acc + (doc.summary?.grandTotal || 0), 0);
@@ -112,11 +115,13 @@ const DashboardStatsGrid: React.FC<DashboardStatsGridProps> = ({ documents, docT
             
             return {
                 totalRevenue, outstanding, overdue, totalInvoiced, avgInvoiceValue, uniqueClients, mostUsedCategory,
-                drafts: documents.filter(d => d.status === 'draft').length,
+                paidInvoices, outstandingInvoices, overdueInvoices, draftInvoices,
+                drafts: draftInvoices.length,
                 paidCount: paidInvoices.length,
             };
         } else {
             const acceptedDocs = documents.filter(d => d.status === 'accepted');
+            const draftDocs = documents.filter(d => d.status === 'draft');
             const totalValue = documents.reduce((acc, doc) => acc + (doc.summary?.grandTotal || 0), 0);
             const acceptedValue = acceptedDocs.reduce((acc, doc) => acc + (doc.summary?.grandTotal || 0), 0);
             const nonDraftDocs = documents.filter(d => d.status !== 'draft');
@@ -126,9 +131,10 @@ const DashboardStatsGrid: React.FC<DashboardStatsGridProps> = ({ documents, docT
 
             return {
                 totalValue, acceptedValue, conversionRateValue, conversionRateCount, avgValue, uniqueClients, mostUsedCategory,
+                acceptedDocs, draftDocs,
                 acceptedCount: acceptedDocs.length,
                 pendingCount: documents.filter(d => d.status === 'sent').length,
-                draftCount: documents.filter(d => d.status === 'draft').length,
+                draftCount: draftDocs.length,
             };
         }
     }, [documents, docType]);
@@ -142,14 +148,14 @@ const DashboardStatsGrid: React.FC<DashboardStatsGridProps> = ({ documents, docT
         const s = stats as any;
         return (
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-8">
-                <Card className="bg-card/50 backdrop-blur-sm shadow-lg transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-1"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Total Revenue</CardTitle><DollarSign className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent><div className="text-2xl font-bold">{formatCurrency(s.totalRevenue)}</div><p className="text-xs text-muted-foreground">{s.paidCount} paid invoices</p></CardContent></Card>
-                <Card className="bg-card/50 backdrop-blur-sm shadow-lg transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-1"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Pending</CardTitle><Clock className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent><div className="text-2xl font-bold">{formatCurrency(s.outstanding)}</div></CardContent></Card>
-                <Card className="bg-card/50 backdrop-blur-sm shadow-lg transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-1"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Overdue</CardTitle><FileWarning className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent><div className="text-2xl font-bold">{formatCurrency(s.overdue)}</div></CardContent></Card>
+                <Card as="button" onClick={() => onKpiClick('Total Revenue', s.paidInvoices)} className="text-left w-full bg-card/50 backdrop-blur-sm shadow-lg transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-1"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Total Revenue</CardTitle><DollarSign className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent><div className="text-2xl font-bold">{formatCurrency(s.totalRevenue)}</div><p className="text-xs text-muted-foreground">{s.paidCount} paid invoices</p></CardContent></Card>
+                <Card as="button" onClick={() => onKpiClick('Pending Invoices', s.outstandingInvoices)} className="text-left w-full bg-card/50 backdrop-blur-sm shadow-lg transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-1"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Pending</CardTitle><Clock className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent><div className="text-2xl font-bold">{formatCurrency(s.outstanding)}</div></CardContent></Card>
+                <Card as="button" onClick={() => onKpiClick('Overdue Invoices', s.overdueInvoices)} className="text-left w-full bg-card/50 backdrop-blur-sm shadow-lg transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-1"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Overdue</CardTitle><FileWarning className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent><div className="text-2xl font-bold">{formatCurrency(s.overdue)}</div></CardContent></Card>
                 <Card className="bg-card/50 backdrop-blur-sm shadow-lg transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-1"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Total Invoiced</CardTitle><Files className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent><div className="text-2xl font-bold">{formatCurrency(s.totalInvoiced)}</div></CardContent></Card>
                 <Card className="bg-card/50 backdrop-blur-sm shadow-lg transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-1"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Avg. Invoice Value</CardTitle><AreaChart className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent><div className="text-2xl font-bold">{formatCurrency(s.avgInvoiceValue)}</div></CardContent></Card>
                 <Card className="bg-card/50 backdrop-blur-sm shadow-lg transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-1"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Unique Clients</CardTitle><Users className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent><div className="text-2xl font-bold">{s.uniqueClients}</div></CardContent></Card>
                 <Card className="bg-card/50 backdrop-blur-sm shadow-lg transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-1"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Most Used Category</CardTitle><Package className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent><div className="text-lg font-bold">{s.mostUsedCategory || 'N/A'}</div></CardContent></Card>
-                <Card className="bg-card/50 backdrop-blur-sm shadow-lg transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-1"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Drafts</CardTitle><FileText className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent><div className="text-2xl font-bold">{s.drafts}</div></CardContent></Card>
+                <Card as="button" onClick={() => onKpiClick('Draft Invoices', s.draftInvoices)} className="text-left w-full bg-card/50 backdrop-blur-sm shadow-lg transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-1"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Drafts</CardTitle><FileText className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent><div className="text-2xl font-bold">{s.drafts}</div></CardContent></Card>
             </div>
         );
     } else {
@@ -157,13 +163,13 @@ const DashboardStatsGrid: React.FC<DashboardStatsGridProps> = ({ documents, docT
         return (
              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-8">
                 <Card className="bg-card/50 backdrop-blur-sm shadow-lg transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-1"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Total Quoted Value</CardTitle><DollarSign className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent><div className="text-2xl font-bold">{formatCurrency(s.totalValue)}</div></CardContent></Card>
-                <Card className="bg-card/50 backdrop-blur-sm shadow-lg transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-1"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Accepted Value</CardTitle><CheckCircle className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent><div className="text-2xl font-bold">{formatCurrency(s.acceptedValue)}</div></CardContent></Card>
+                <Card as="button" onClick={() => onKpiClick(`Accepted ${docType}s`, s.acceptedDocs)} className="text-left w-full bg-card/50 backdrop-blur-sm shadow-lg transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-1"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Accepted Value</CardTitle><CheckCircle className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent><div className="text-2xl font-bold">{formatCurrency(s.acceptedValue)}</div></CardContent></Card>
                 <Card className="bg-card/50 backdrop-blur-sm shadow-lg transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-1"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Conversion Rate (Value)</CardTitle><Percent className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent><div className="text-2xl font-bold">{s.conversionRateValue.toFixed(1)}%</div></CardContent></Card>
                 <Card className="bg-card/50 backdrop-blur-sm shadow-lg transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-1"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Avg. {docType} Value</CardTitle><AreaChart className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent><div className="text-2xl font-bold">{formatCurrency(s.avgValue)}</div></CardContent></Card>
                 <Card className="bg-card/50 backdrop-blur-sm shadow-lg transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-1"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Conversion Rate (Count)</CardTitle><Percent className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent><div className="text-2xl font-bold">{s.conversionRateCount.toFixed(1)}%</div></CardContent></Card>
-                <Card className="bg-card/50 backdrop-blur-sm shadow-lg transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-1"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Accepted</CardTitle><CheckCircle className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent><div className="text-2xl font-bold">{s.acceptedCount}</div></CardContent></Card>
+                <Card as="button" onClick={() => onKpiClick(`Accepted ${docType}s`, s.acceptedDocs)} className="text-left w-full bg-card/50 backdrop-blur-sm shadow-lg transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-1"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Accepted</CardTitle><CheckCircle className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent><div className="text-2xl font-bold">{s.acceptedCount}</div></CardContent></Card>
                 <Card className="bg-card/50 backdrop-blur-sm shadow-lg transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-1"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Most Used Category</CardTitle><Package className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent><div className="text-lg font-bold">{s.mostUsedCategory || 'N/A'}</div></CardContent></Card>
-                <Card className="bg-card/50 backdrop-blur-sm shadow-lg transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-1"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Drafts</CardTitle><FileText className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent><div className="text-2xl font-bold">{s.draftCount}</div></CardContent></Card>
+                <Card as="button" onClick={() => onKpiClick(`Draft ${docType}s`, s.draftDocs)} className="text-left w-full bg-card/50 backdrop-blur-sm shadow-lg transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-1"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Drafts</CardTitle><FileText className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent><div className="text-2xl font-bold">{s.draftCount}</div></CardContent></Card>
             </div>
         );
     }
@@ -174,6 +180,7 @@ export default function DashboardPage() {
     const [deleteCandidate, setDeleteCandidate] = useState<{ id: string; collection: string } | null>(null);
     const [filters, setFilters] = useState<DashboardFilters>(initialFilters);
     const [isFilterSheetOpen, setIsFilterSheetOpen] = useState(false);
+    const [modalState, setModalState] = useState<{ isOpen: boolean; title: string; data: DocumentType[] }>({ isOpen: false, title: '', data: [] });
     const { toast } = useToast();
     const { firestore } = useFirebase();
     const { user, userProfile, isLoading: isAuthLoading } = useAuth();
@@ -206,6 +213,9 @@ export default function DashboardPage() {
     const canCreateInvoice = isBusinessPlan || (invoices?.length || 0) < 5;
     const canCreateEstimate = isBusinessPlan || (estimates?.length || 0) < 3;
 
+    const handleKpiClick = (title: string, data: DocumentType[]) => {
+        setModalState({ isOpen: true, title, data });
+    };
 
     const handleCreateInvoice = () => {
         if (canCreateInvoice) {
@@ -616,6 +626,13 @@ export default function DashboardPage() {
 
     return (
         <>
+            <KpiDetailsModal 
+                isOpen={modalState.isOpen}
+                onClose={() => setModalState(prev => ({...prev, isOpen: false}))}
+                title={modalState.title}
+                documents={modalState.data}
+                currencySymbol={currencySymbols[filteredDocuments[0]?.currency] || '$'}
+            />
             <div className="container mx-auto p-4 md:p-8">
                 <FilterSheet
                     open={isFilterSheetOpen}
@@ -702,7 +719,7 @@ export default function DashboardPage() {
                         <TabsContent value="invoices">
                              <Card className="bg-card/50 backdrop-blur-sm shadow-lg hover:shadow-primary/20 transition-shadow duration-300">
                                 <CardContent className="pt-6">
-                                    <DashboardStatsGrid documents={filteredInvoices} docType="invoice" />
+                                    <DashboardStatsGrid documents={filteredInvoices} docType="invoice" onKpiClick={handleKpiClick} />
                                     {renderTable(filteredInvoices, 'invoice')}
                                 </CardContent>
                              </Card>
@@ -710,7 +727,7 @@ export default function DashboardPage() {
                         <TabsContent value="estimates">
                              <Card className="bg-card/50 backdrop-blur-sm shadow-lg hover:shadow-primary/20 transition-shadow duration-300">
                                 <CardContent className="pt-6">
-                                     <DashboardStatsGrid documents={filteredEstimates} docType="estimate" />
+                                     <DashboardStatsGrid documents={filteredEstimates} docType="estimate" onKpiClick={handleKpiClick} />
                                      {renderTable(filteredEstimates, 'estimate')}
                                 </CardContent>
                              </Card>
@@ -718,7 +735,7 @@ export default function DashboardPage() {
                         <TabsContent value="quotes">
                              <Card className="bg-card/50 backdrop-blur-sm shadow-lg hover:shadow-primary/20 transition-shadow duration-300">
                                 <CardContent className="pt-6">
-                                     <DashboardStatsGrid documents={filteredQuotes} docType="quote" />
+                                     <DashboardStatsGrid documents={filteredQuotes} docType="quote" onKpiClick={handleKpiClick} />
                                      {renderTable(filteredQuotes, 'quote')}
                                 </CardContent>
                              </Card>
