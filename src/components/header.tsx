@@ -121,7 +121,7 @@ export function Header() {
                 </nav>
 
                 <div className="flex flex-1 items-center justify-end gap-2">
-                     <Button variant="outline" className="relative h-9 w-full justify-start rounded-full text-sm text-muted-foreground sm:pr-12 md:w-40 lg:w-64" onClick={() => setOpen(true)}>
+                     <Button variant="outline" className="relative h-9 w-full justify-start rounded-md text-sm text-muted-foreground sm:pr-12 md:w-40 lg:w-64" onClick={() => setOpen(true)}>
                         <Search className="h-4 w-4 mr-2" />
                         <span className="hidden lg:inline-flex">Search...</span>
                         <span className="inline-flex lg:hidden">Search...</span>
