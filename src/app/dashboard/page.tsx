@@ -27,7 +27,7 @@ import {
 import { FilePlus2, Edit, Trash2, Filter, X, MoreHorizontal, FileText, Share2, DollarSign, Clock, FileWarning, Files, CheckCircle, FileQuestion, Users, Percent, AreaChart, Package, History } from "lucide-react";
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { format, isWithinInterval, isValid } from 'date-fns';
+import { format, isValid } from 'date-fns';
 import { FilterSheet, type DashboardFilters } from '@/components/dashboard/filter-sheet';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
@@ -399,10 +399,10 @@ export default function DashboardPage() {
         }));
     };
 
-    const filteredDocuments = useMemo(() => {
+    const allDocuments = useMemo(() => {
         const allDocs: DocumentType[] = [...(invoices || []), ...(estimates || []), ...(quotes || [])];
         
-        const safeParsedDocs = allDocs.map(doc => {
+        return allDocs.map(doc => {
             const newDoc: any = { ...doc };
             
             const dateFields: (keyof Invoice | keyof Estimate | keyof Quote)[] = [
@@ -420,42 +420,58 @@ export default function DashboardPage() {
             }
 
             return newDoc as DocumentType;
+        }).sort((a, b) => {
+            const dateA = a.updatedAt || a.createdAt;
+            const dateB = b.updatedAt || b.createdAt;
+            if (!dateA || !isValid(dateA)) return 1;
+            if (!dateB || !isValid(dateB)) return -1;
+            return dateB.getTime() - dateA.getTime();
         });
+    }, [invoices, estimates, quotes]);
 
-        return safeParsedDocs.filter(doc => {
-                const total = calculateTotal(doc);
-                let date: Date | null = null;
-                let clientName = '';
-                if (doc.documentType === 'invoice') {
-                  date = (doc as Invoice).invoiceDate;
-                  clientName = (doc as Invoice).client.name;
-                } else if (doc.documentType === 'estimate' || doc.documentType === 'quote') {
-                  date = (doc as Estimate | Quote).estimateDate;
-                  clientName = (doc as Estimate | Quote).client.name;
+    const filteredDocuments = useMemo(() => {
+        return allDocuments.filter(doc => {
+            const total = calculateTotal(doc);
+            let date: Date | null = null;
+            let clientName = '';
+            if (doc.documentType === 'invoice') {
+              date = (doc as Invoice).invoiceDate;
+              clientName = (doc as Invoice).client.name;
+            } else if (doc.documentType === 'estimate' || doc.documentType === 'quote') {
+              date = (doc as Estimate | Quote).estimateDate;
+              clientName = (doc as Estimate | Quote).client.name;
+            }
+            
+            if (!date || !isValid(date)) return true;
+
+            const clientNameMatch = filters.clientName ? (clientName || '').toLowerCase().includes(filters.clientName.toLowerCase()) : true;
+            const statusMatch = filters.status ? doc.status === filters.status : true;
+            const amountMinMatch = filters.amountMin !== null ? total >= filters.amountMin : true;
+            const amountMaxMatch = filters.amountMax !== null ? total <= filters.amountMax : true;
+            const dateFrom = filters.dateFrom ? new Date(filters.dateFrom.setHours(0, 0, 0, 0)) : null;
+            const dateTo = filters.dateTo ? new Date(filters.dateTo.setHours(23, 59, 59, 999)) : null;
+            const dateMatch = (dateFrom && dateTo) ? isWithinInterval(date, { start: dateFrom, end: dateTo })
+                            : dateFrom ? date >= dateFrom
+                            : dateTo ? date <= dateTo
+                            : true;
+            return clientNameMatch && statusMatch && amountMinMatch && amountMaxMatch && dateMatch;
+        });
+    }, [allDocuments, filters, calculateTotal]);
+
+    const uniqueClients = useMemo(() => {
+        const clientMap = new Map<string, { client: DocumentType['client'], docCount: number }>();
+        allDocuments.forEach(doc => {
+            const clientEmail = doc.client.email?.toLowerCase();
+            if (clientEmail) {
+                if (clientMap.has(clientEmail)) {
+                    clientMap.get(clientEmail)!.docCount++;
+                } else {
+                    clientMap.set(clientEmail, { client: doc.client, docCount: 1 });
                 }
-                
-                if (!date || !isValid(date)) return true;
-
-                const clientNameMatch = filters.clientName ? (clientName || '').toLowerCase().includes(filters.clientName.toLowerCase()) : true;
-                const statusMatch = filters.status ? doc.status === filters.status : true;
-                const amountMinMatch = filters.amountMin !== null ? total >= filters.amountMin : true;
-                const amountMaxMatch = filters.amountMax !== null ? total <= filters.amountMax : true;
-                const dateFrom = filters.dateFrom ? new Date(filters.dateFrom.setHours(0, 0, 0, 0)) : null;
-                const dateTo = filters.dateTo ? new Date(filters.dateTo.setHours(23, 59, 59, 999)) : null;
-                const dateMatch = (dateFrom && dateTo) ? isWithinInterval(date, { start: dateFrom, end: dateTo })
-                                : dateFrom ? date >= dateFrom
-                                : dateTo ? date <= dateTo
-                                : true;
-                return clientNameMatch && statusMatch && amountMinMatch && amountMaxMatch && dateMatch;
-            })
-            .sort((a, b) => {
-                const dateA = a.updatedAt || a.createdAt;
-                const dateB = b.updatedAt || b.createdAt;
-                if (!dateA || !isValid(dateA)) return 1;
-                if (!dateB || !isValid(dateB)) return -1;
-                return dateB.getTime() - dateA.getTime();
-            });
-    }, [invoices, estimates, quotes, filters, calculateTotal]);
+            }
+        });
+        return Array.from(clientMap.values());
+    }, [allDocuments]);
 
 
     const filteredInvoices = useMemo(() => filteredDocuments.filter(d => d.documentType === 'invoice'), [filteredDocuments]);
@@ -705,8 +721,14 @@ export default function DashboardPage() {
                             <p className="text-muted-foreground">An overview of your financial documents and activities.</p>
                         </motion.div>
                         <motion.div className="flex gap-2" variants={pageVariants}>
+                             <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.98 }}>
+                                <Button onClick={() => router.push('/create-estimate')} className="rounded-full">
+                                    <Users className="mr-2 h-4 w-4" />
+                                    New Client
+                                </Button>
+                            </motion.div>
                             <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.98 }}>
-                                <Button onClick={handleCreateInvoice} className="rounded-full">
+                                <Button onClick={handleCreateInvoice} variant="outline" className="rounded-full">
                                     <FilePlus2 className="mr-2 h-4 w-4" />
                                     New Invoice
                                 </Button>
@@ -717,12 +739,7 @@ export default function DashboardPage() {
                                     New Estimate
                                 </Button>
                             </motion.div>
-                            <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.98 }}>
-                                <Button onClick={handleCreateQuote} variant="outline" className="rounded-full">
-                                    <FilePlus2 className="mr-2 h-4 w-4" />
-                                    New Quote
-                                </Button>
-                            </motion.div>
+                            
                         </motion.div>
                     </div>
                 </motion.div>
@@ -734,6 +751,7 @@ export default function DashboardPage() {
                                 <TabsTrigger value="invoices">Invoices</TabsTrigger>
                                 <TabsTrigger value="estimates">Estimates</TabsTrigger>
                                 <TabsTrigger value="quotes">Quotes</TabsTrigger>
+                                <TabsTrigger value="clients">Clients</TabsTrigger>
                             </TabsList>
                              <div className="flex items-center gap-2">
                                 <Button variant="outline" className='rounded-full' onClick={() => setIsFilterSheetOpen(true)}>
@@ -775,9 +793,44 @@ export default function DashboardPage() {
                                 </CardContent>
                              </Card>
                         </TabsContent>
+                         <TabsContent value="clients">
+                             <Card className="bg-card/50 backdrop-blur-sm shadow-lg hover:shadow-primary/20 transition-shadow duration-300">
+                                <CardHeader>
+                                    <CardTitle>Clients</CardTitle>
+                                    <CardDescription>A list of all your clients. Click a client to filter your documents.</CardDescription>
+                                </CardHeader>
+                                <CardContent>
+                                    <Table>
+                                        <TableHeader>
+                                            <TableRow>
+                                                <TableHead>Name</TableHead>
+                                                <TableHead>Company</TableHead>
+                                                <TableHead>Email</TableHead>
+                                                <TableHead className="text-right">Documents</TableHead>
+                                            </TableRow>
+                                        </TableHeader>
+                                        <TableBody>
+                                            {uniqueClients.map(({client, docCount}) => (
+                                                <TableRow 
+                                                    key={client.email} 
+                                                    className="cursor-pointer"
+                                                    onClick={() => setFilters(f => ({...initialFilters, clientName: client.name}))}
+                                                >
+                                                    <TableCell className="font-medium">{client.name}</TableCell>
+                                                    <TableCell>{client.companyName}</TableCell>
+                                                    <TableCell>{client.email}</TableCell>
+                                                    <TableCell className="text-right">{docCount}</TableCell>
+                                                </TableRow>
+                                            ))}
+                                        </TableBody>
+                                    </Table>
+                                </CardContent>
+                             </Card>
+                        </TabsContent>
                     </Tabs>
                 </motion.div>
             </div>
         </>
     );
 }
+
