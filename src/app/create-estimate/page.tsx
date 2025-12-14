@@ -365,9 +365,9 @@ export default function CreateEstimatePage() {
     const isUpdate = !isNew;
     const currentVersion = document.auditLog?.length || 0;
 
-    const newAuditLogEntry: AuditLogEntry = {
+    const newAuditLogEntry: Omit<AuditLogEntry, 'timestamp'> & { timestamp: Date } = {
         action: isUpdate ? 'updated' : 'created',
-        timestamp: serverTimestamp(),
+        timestamp: new Date(),
         user: user.email || 'Unknown',
         version: currentVersion + 1,
     };
@@ -423,7 +423,7 @@ export default function CreateEstimatePage() {
     });
 
     if (isNew) {
-      setDocument(prev => prev ? { ...prev, id: newId, auditLog: [newAuditLogEntry] } : null);
+      setDocument(prev => prev ? { ...prev, id: newId, auditLog: [...(prev.auditLog || []), newAuditLogEntry] } : null);
       router.push(`/create-estimate?draftId=${newId}`, { scroll: false });
     } else {
         setDocument(prev => prev ? { ...prev, auditLog: [...(prev.auditLog || []), newAuditLogEntry] } : null);
@@ -607,7 +607,3 @@ export default function CreateEstimatePage() {
     </>
   );
 }
-
-
-
-

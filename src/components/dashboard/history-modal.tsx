@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import {
@@ -10,7 +11,7 @@ import {
 } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import type { AuditLogEntry } from '@/lib/types';
-import { format } from 'date-fns';
+import { format, isValid } from 'date-fns';
 import { Badge } from "../ui/badge";
 
 interface HistoryModalProps {
@@ -21,12 +22,12 @@ interface HistoryModalProps {
 
 const safeFormat = (date: any, formatString: string) => {
     if (!date) return 'N/A';
-    try {
-        const d = date.toDate ? date.toDate() : new Date(date);
-        return format(d, formatString);
-    } catch (e) {
+    // It could be a Firestore Timestamp (toDate) or a regular Date object
+    const d = date.toDate ? date.toDate() : new Date(date);
+    if (!isValid(d)) {
         return "Invalid Date";
     }
+    return format(d, formatString);
 }
 
 const getActionVariant = (action: AuditLogEntry['action']) => {

@@ -437,9 +437,9 @@ export default function CreateInvoicePage() {
     const isUpdate = !isNew;
     const currentVersion = invoice.auditLog?.length || 0;
 
-    const newAuditLogEntry: AuditLogEntry = {
+    const newAuditLogEntry: Omit<AuditLogEntry, 'timestamp'> & { timestamp: Date } = {
         action: isUpdate ? 'updated' : 'created',
-        timestamp: serverTimestamp(),
+        timestamp: new Date(),
         user: user.email || 'Unknown',
         version: currentVersion + 1,
     };
@@ -499,7 +499,7 @@ export default function CreateInvoicePage() {
     });
 
     if (isNew) {
-      setInvoice(prev => prev ? { ...prev, id: newId, auditLog: [newAuditLogEntry] } : null);
+      setInvoice(prev => prev ? { ...prev, id: newId, auditLog: [...(prev.auditLog || []), newAuditLogEntry] } : null);
       router.push(`/create-invoice?draftId=${newId}`, { scroll: false });
     } else {
        setInvoice(prev => prev ? { ...prev, auditLog: [...(prev.auditLog || []), newAuditLogEntry] } : null);
@@ -646,6 +646,3 @@ export default function CreateInvoicePage() {
     
 
     
-
-
-
