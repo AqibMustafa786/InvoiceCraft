@@ -213,12 +213,15 @@ export const ConsultingTemplate2: React.FC<PageProps> = (props) => {
             <p className="whitespace-pre-line">{client.address}</p>
             <p>{client.email}</p>
             <p>{client.phone}</p>
+            {client.shippingAddress && <p className="mt-2"><span className="font-bold">Ship To:</span><br/>{client.shippingAddress}</p>}
+            {client.projectLocation && <p className="mt-2"><span className="font-bold">Project Location:</span><br/>{client.projectLocation}</p>}
           </div>
           <div className="text-right">
             <p className="font-bold">Date:</p>
             <p>{safeFormat(invoice.invoiceDate, 'MMM d, yyyy')}</p>
             <p className="font-bold mt-2">Due Date:</p>
             <p>{safeFormat(invoice.dueDate, 'MMM d, yyyy')}</p>
+            {invoice.poNumber && <p className="mt-2 font-bold">PO #: {invoice.poNumber}</p>}
           </div>
         </section>
 
@@ -252,6 +255,8 @@ export const ConsultingTemplate2: React.FC<PageProps> = (props) => {
                   <span>Subtotal:</span>
                   <span>{currencySymbol}{subtotal.toFixed(2)}</span>
                 </p>
+                 {discountAmount > 0 && <p className="flex justify-between text-red-600"><span>Discount:</span><span>-{currencySymbol}{discountAmount.toFixed(2)}</span></p>}
+                {invoice.summary.shippingCost > 0 && <p className="flex justify-between"><span>Shipping:</span><span>{currencySymbol}{invoice.summary.shippingCost.toFixed(2)}</span></p>}
                 <p className="flex justify-between">
                   <span>Tax:</span>
                   <span>{currencySymbol}{taxAmount.toFixed(2)}</span>
@@ -260,12 +265,18 @@ export const ConsultingTemplate2: React.FC<PageProps> = (props) => {
                   <span>Total:</span>
                   <span>{currencySymbol}{total.toFixed(2)}</span>
                 </p>
+                 {(invoice.amountPaid || 0) > 0 && <p className="flex justify-between text-green-600"><span>Amount Paid:</span><span>-{currencySymbol}{(invoice.amountPaid || 0).toFixed(2)}</span></p>}
                 <p className="flex justify-between font-bold mt-2 pt-2 border-t">
                   <span>Balance Due:</span>
                   <span>{currencySymbol}{balanceDue.toFixed(2)}</span>
                 </p>
               </div>
             </div>
+            {business.ownerSignature && (
+                <div className="mt-8">
+                    <SignatureDisplay signature={business.ownerSignature} label="Authorized Signature" />
+                </div>
+            )}
           </footer>
         )}
       </div>
