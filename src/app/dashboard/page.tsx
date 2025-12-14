@@ -23,21 +23,20 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { FilePlus2, Edit, Trash2, Filter, X, MoreHorizontal, FileText, Share2, DollarSign, Clock, FileWarning, Files } from "lucide-react";
+import { FilePlus2, Edit, Trash2, Filter, X, MoreHorizontal, FileText, Share2, DollarSign, Clock, FileWarning, Files, CheckCircle, FileQuestion } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from 'next/navigation';
-import { format, isWithinInterval, isValid, startOfMonth } from 'date-fns';
+import { format, isWithinInterval, isValid } from 'date-fns';
 import { FilterSheet, type DashboardFilters } from '@/components/dashboard/filter-sheet';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
 import { useFirebase, useMemoFirebase } from '@/firebase/provider';
 import { useCollection } from '@/firebase/firestore/use-collection';
 import { useAuth } from '@/context/auth-provider';
-import { collection, doc, setDoc, query, Timestamp, where } from 'firebase/firestore';
+import { collection, doc, setDoc, query, Timestamp } from 'firebase/firestore';
 import { deleteDocumentNonBlocking, updateDocumentNonBlocking } from '@/firebase';
 import { Skeleton } from '@/components/ui/skeleton';
 import { motion } from 'framer-motion';
-import { BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
 const INVOICES_COLLECTION = 'invoices';
 const ESTIMATES_COLLECTION = 'estimates';
@@ -79,6 +78,65 @@ const tableRowVariants = {
     visible: { opacity: 1, y: 0, transition: { duration: 0.3, ease: 'easeOut' } },
 };
 
+interface DashboardStatsGridProps {
+    documents: DocumentType[];
+    docType: 'invoice' | 'estimate' | 'quote';
+}
+
+const DashboardStatsGrid: React.FC<DashboardStatsGridProps> = ({ documents, docType }) => {
+    const stats = useMemo(() => {
+        if (docType === 'invoice') {
+            return documents.reduce((acc, doc) => {
+                const invoice = doc as Invoice;
+                const total = invoice.summary?.grandTotal || 0;
+                if (invoice.status === 'paid') acc.totalRevenue += total;
+                if (invoice.status === 'sent') acc.outstanding += total;
+                if (invoice.status === 'overdue') acc.overdue += total;
+                if (invoice.status === 'draft') acc.drafts += 1;
+                return acc;
+            }, { totalRevenue: 0, outstanding: 0, overdue: 0, drafts: 0 });
+        } else {
+            return documents.reduce((acc, doc) => {
+                const estimate = doc as Estimate | Quote;
+                const total = estimate.summary?.grandTotal || 0;
+                acc.totalValue += total;
+                if (estimate.status === 'accepted') acc.accepted += 1;
+                if (estimate.status === 'sent') acc.pending += 1;
+                if (estimate.status === 'draft') acc.drafts += 1;
+                return acc;
+            }, { totalValue: 0, accepted: 0, pending: 0, drafts: 0 });
+        }
+    }, [documents, docType]);
+
+    const formatCurrency = (amount: number) => {
+        const currency = documents[0]?.currency || 'USD';
+        return `${currencySymbols[currency] || '$'}${amount.toFixed(2)}`;
+    };
+
+    if (docType === 'invoice') {
+        const invoiceStats = stats as { totalRevenue: number; outstanding: number; overdue: number; drafts: number };
+        return (
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-8">
+                <Card className="bg-card/50 backdrop-blur-sm"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Total Revenue</CardTitle><DollarSign className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent><div className="text-2xl font-bold">{formatCurrency(invoiceStats.totalRevenue)}</div></CardContent></Card>
+                <Card className="bg-card/50 backdrop-blur-sm"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Outstanding</CardTitle><Clock className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent><div className="text-2xl font-bold">{formatCurrency(invoiceStats.outstanding)}</div></CardContent></Card>
+                <Card className="bg-card/50 backdrop-blur-sm"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Overdue</CardTitle><FileWarning className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent><div className="text-2xl font-bold">{formatCurrency(invoiceStats.overdue)}</div></CardContent></Card>
+                <Card className="bg-card/50 backdrop-blur-sm"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Drafts</CardTitle><FileText className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent><div className="text-2xl font-bold">{invoiceStats.drafts}</div></CardContent></Card>
+            </div>
+        );
+    } else {
+        const estimateStats = stats as { totalValue: number; accepted: number; pending: number; drafts: number };
+        return (
+             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-8">
+                <Card className="bg-card/50 backdrop-blur-sm"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Total Quoted Value</CardTitle><DollarSign className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent><div className="text-2xl font-bold">{formatCurrency(estimateStats.totalValue)}</div></CardContent></Card>
+                <Card className="bg-card/50 backdrop-blur-sm"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Accepted</CardTitle><CheckCircle className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent><div className="text-2xl font-bold">{estimateStats.accepted}</div></CardContent></Card>
+                <Card className="bg-card/50 backdrop-blur-sm"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Pending</CardTitle><FileQuestion className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent><div className="text-2xl font-bold">{estimateStats.pending}</div></CardContent></Card>
+                <Card className="bg-card/50 backdrop-blur-sm"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Drafts</CardTitle><FileText className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent><div className="text-2xl font-bold">{estimateStats.drafts}</div></CardContent></Card>
+            </div>
+        );
+    }
+}
+
+
 export default function DashboardPage() {
     const [deleteCandidate, setDeleteCandidate] = useState<{ id: string; collection: string } | null>(null);
     const [filters, setFilters] = useState<DashboardFilters>(initialFilters);
@@ -108,9 +166,9 @@ export default function DashboardPage() {
     }, [firestore, companyId]);
 
 
-    const { data: invoices, isLoading: isLoadingInvoices, error: invoicesError } = useCollection<Invoice>(invoicesQuery);
-    const { data: estimates, isLoading: isLoadingEstimates, error: estimatesError } = useCollection<Estimate>(estimatesQuery);
-    const { data: quotes, isLoading: isLoadingQuotes, error: quotesError } = useCollection<Quote>(quotesQuery);
+    const { data: invoices, isLoading: isLoadingInvoices } = useCollection<Invoice>(invoicesQuery);
+    const { data: estimates, isLoading: isLoadingEstimates } = useCollection<Estimate>(estimatesQuery);
+    const { data: quotes, isLoading: isLoadingQuotes } = useCollection<Quote>(quotesQuery);
     
     const canCreateInvoice = isBusinessPlan || (invoices?.length || 0) < 5;
     const canCreateEstimate = isBusinessPlan || (estimates?.length || 0) < 3;
@@ -195,7 +253,7 @@ export default function DashboardPage() {
             return;
         }
         
-        const { business, client, lineItems, summary, projectTitle, currency, language, estimateNumber, referenceNumber } = estimate;
+        const { business, client, lineItems, summary, projectTitle, currency, language, estimateNumber } = estimate;
 
         const newInvoiceData: Omit<Invoice, 'id'| 'createdAt' | 'updatedAt'> = {
             userId: user.uid,
@@ -275,8 +333,7 @@ export default function DashboardPage() {
         return isValid(d) ? d : null;
     };
 
-    const combinedDocuments = useMemo(() => {
-        if (!user) return [];
+    const filteredDocuments = useMemo(() => {
         const allDocs: DocumentType[] = [...(invoices || []), ...(estimates || []), ...(quotes || [])];
         
         const safeParsedDocs = allDocs.map(doc => {
@@ -294,8 +351,7 @@ export default function DashboardPage() {
             return newDoc;
         });
 
-        return safeParsedDocs
-            .filter(doc => {
+        return safeParsedDocs.filter(doc => {
                 const total = calculateTotal(doc);
                 let date: Date | null = null;
                 let clientName = '';
@@ -328,59 +384,12 @@ export default function DashboardPage() {
                 if (!dateB || !isValid(dateB)) return -1;
                 return dateB.getTime() - dateA.getTime();
             });
-    }, [invoices, estimates, quotes, filters, calculateTotal, user]);
-
-    const chartData = useMemo(() => {
-        const statusCounts: { [key in DocumentStatus]?: number } = {};
-        const monthlyRevenue: { [key: string]: number } = {};
-
-        combinedDocuments.forEach(doc => {
-            statusCounts[doc.status] = (statusCounts[doc.status] || 0) + 1;
-
-            if (doc.documentType === 'invoice' && doc.status === 'paid' && doc.invoiceDate) {
-                const month = format(startOfMonth(doc.invoiceDate), 'MMM yyyy');
-                monthlyRevenue[month] = (monthlyRevenue[month] || 0) + (doc.summary?.grandTotal || 0);
-            }
-        });
-
-        const statusChartData = Object.entries(statusCounts).map(([name, value]) => ({ name, value }));
-        const revenueChartData = Object.entries(monthlyRevenue).map(([name, value]) => ({ name, revenue: value }));
-
-        return { statusChartData, revenueChartData };
-    }, [combinedDocuments]);
-
-    const PIE_CHART_COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8', '#ff4d4d'];
+    }, [invoices, estimates, quotes, filters, calculateTotal]);
 
 
-    const filteredDocs = (docType: 'invoice' | 'estimate' | 'quote') => {
-        return combinedDocuments.filter(doc => doc.documentType === docType);
-    };
-
-    const dashboardStats = useMemo(() => {
-        const stats = {
-            totalRevenue: 0,
-            outstanding: 0,
-            overdue: 0,
-            drafts: 0,
-        };
-        if (invoices) {
-            invoices.forEach(inv => {
-                const grandTotal = inv.summary?.grandTotal || 0;
-                if (inv.status === 'paid') stats.totalRevenue += grandTotal;
-                if (inv.status === 'sent') stats.outstanding += grandTotal;
-                if (inv.status === 'overdue') stats.overdue += grandTotal;
-            });
-        }
-        if (estimates) {
-            stats.drafts += estimates.filter(est => est.status === 'draft').length;
-        }
-        if (quotes) {
-             stats.drafts += quotes.filter(q => q.status === 'draft').length;
-        }
-        return stats;
-
-    }, [invoices, estimates, quotes]);
-
+    const filteredInvoices = useMemo(() => filteredDocuments.filter(d => d.documentType === 'invoice'), [filteredDocuments]);
+    const filteredEstimates = useMemo(() => filteredDocuments.filter(d => d.documentType === 'estimate'), [filteredDocuments]);
+    const filteredQuotes = useMemo(() => filteredDocuments.filter(d => d.documentType === 'quote'), [filteredDocuments]);
 
     const activeFilterCount = useMemo(() => {
         let count = 0;
@@ -468,8 +477,8 @@ export default function DashboardPage() {
                             <TableCell>
                                 <DropdownMenu>
                                     <DropdownMenuTrigger asChild>
-                                        <Button variant="outline" className="capitalize w-28 justify-start">
-                                            <Badge variant={getStatusVariant(doc.status)} className="w-full justify-center">{doc.status}</Badge>
+                                        <Button variant="outline" className="capitalize w-28 justify-start rounded-full">
+                                            <Badge variant={getStatusVariant(doc.status)} className="w-full justify-center rounded-full">{doc.status}</Badge>
                                         </Button>
                                     </DropdownMenuTrigger>
                                     <DropdownMenuContent align="start">
@@ -491,7 +500,7 @@ export default function DashboardPage() {
                             <TableCell className="text-right">
                                 <DropdownMenu>
                                     <DropdownMenuTrigger asChild>
-                                        <Button variant="ghost" size="icon">
+                                        <Button variant="ghost" size="icon" className="rounded-full">
                                             <MoreHorizontal className="h-4 w-4" />
                                             <span className="sr-only">More actions</span>
                                         </Button>
@@ -629,104 +638,58 @@ export default function DashboardPage() {
                         </motion.div>
                     </motion.div>
                 </motion.div>
-                 <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-8">
-                    <Card className="bg-card/50 backdrop-blur-sm"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Total Revenue</CardTitle><DollarSign className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent><div className="text-2xl font-bold">${dashboardStats.totalRevenue.toFixed(2)}</div></CardContent></Card>
-                    <Card className="bg-card/50 backdrop-blur-sm"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Outstanding</CardTitle><Clock className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent><div className="text-2xl font-bold">${dashboardStats.outstanding.toFixed(2)}</div></CardContent></Card>
-                    <Card className="bg-card/50 backdrop-blur-sm"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Overdue</CardTitle><FileWarning className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent><div className="text-2xl font-bold">${dashboardStats.overdue.toFixed(2)}</div></CardContent></Card>
-                    <Card className="bg-card/50 backdrop-blur-sm"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Drafts</CardTitle><FileText className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent><div className="text-2xl font-bold">{dashboardStats.drafts}</div></CardContent></Card>
-                </div>
-                
-                 <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3 mb-8">
-                    <Card className="lg:col-span-2 bg-card/50 backdrop-blur-sm shadow-lg hover:shadow-primary/20 transition-shadow">
-                        <CardHeader>
-                            <CardTitle>Monthly Revenue</CardTitle>
-                            <CardDescription>Revenue from paid invoices over the last few months.</CardDescription>
-                        </CardHeader>
-                        <CardContent>
-                            <ResponsiveContainer width="100%" height={300}>
-                                <BarChart data={chartData.revenueChartData}>
-                                    <CartesianGrid strokeDasharray="3 3" />
-                                    <XAxis dataKey="name" />
-                                    <YAxis />
-                                    <Tooltip />
-                                    <Legend />
-                                    <Bar dataKey="revenue" fill="hsl(var(--primary))" />
-                                </BarChart>
-                            </ResponsiveContainer>
-                        </CardContent>
-                    </Card>
-                     <Card className="bg-card/50 backdrop-blur-sm shadow-lg hover:shadow-primary/20 transition-shadow">
-                        <CardHeader>
-                            <CardTitle>Document Status</CardTitle>
-                            <CardDescription>Distribution of all your documents.</CardDescription>
-                        </CardHeader>
-                        <CardContent>
-                            <ResponsiveContainer width="100%" height={300}>
-                                <PieChart>
-                                    <Pie data={chartData.statusChartData} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={100} label>
-                                        {chartData.statusChartData.map((entry, index) => (
-                                            <Cell key={`cell-${index}`} fill={PIE_CHART_COLORS[index % PIE_CHART_COLORS.length]} />
-                                        ))}
-                                    </Pie>
-                                    <Tooltip />
-                                    <Legend />
-                                </PieChart>
-                            </ResponsiveContainer>
-                        </CardContent>
-                    </Card>
-                </div>
 
                 <motion.div initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.3, delay: 0.1 }}>
-                    <Card className="bg-card/50 backdrop-blur-sm shadow-lg hover:shadow-primary/20 transition-shadow duration-300">
-                        <Tabs defaultValue="invoices">
-                            <CardHeader>
-                                <div className="flex justify-between items-end">
-                                    <div>
-                                        <CardTitle>My Documents</CardTitle>
-                                        <CardDescription>A list of your saved documents from Firestore.</CardDescription>
-                                    </div>
-                                     <TabsList>
-                                        <TabsTrigger value="invoices">Invoices</TabsTrigger>
-                                        <TabsTrigger value="estimates">Estimates</TabsTrigger>
-                                        <TabsTrigger value="quotes">Quotes</TabsTrigger>
-                                    </TabsList>
-                                </div>
-                            </CardHeader>
-                            <CardContent>
-                                <div className="flex justify-between items-center mb-4 gap-2 flex-wrap">
-                                    <Button variant="outline" onClick={() => setIsFilterSheetOpen(true)}>
-                                    <Filter className="mr-2 h-4 w-4" />
-                                    Filter
-                                    {activeFilterCount > 0 && (
-                                        <Badge variant="secondary" className="ml-2 rounded-full h-5 w-5 p-0 flex items-center justify-center">{activeFilterCount}</Badge>
-                                    )}
+                    <Tabs defaultValue="invoices">
+                        <div className="flex justify-between items-end mb-4">
+                            <TabsList>
+                                <TabsTrigger value="invoices">Invoices</TabsTrigger>
+                                <TabsTrigger value="estimates">Estimates</TabsTrigger>
+                                <TabsTrigger value="quotes">Quotes</TabsTrigger>
+                            </TabsList>
+                             <div className="flex items-center gap-2">
+                                <Button variant="outline" className='rounded-full' onClick={() => setIsFilterSheetOpen(true)}>
+                                <Filter className="mr-2 h-4 w-4" />
+                                Filter
+                                {activeFilterCount > 0 && (
+                                    <Badge variant="secondary" className="ml-2 rounded-full h-5 w-5 p-0 flex items-center justify-center">{activeFilterCount}</Badge>
+                                )}
+                                </Button>
+                                {activeFilterCount > 0 && (
+                                    <Button variant="ghost" size="sm" className="rounded-full" onClick={resetFilters}>
+                                        <X className="h-4 w-4 mr-1" /> Clear
                                     </Button>
-                                    {activeFilterCount > 0 && (
-                                        <div className="flex items-center gap-2 flex-wrap">
-                                            <span className="text-sm font-medium">Active filters:</span>
-                                            {filters.clientName && <Badge variant="outline">Client: {filters.clientName}</Badge>}
-                                            {filters.status && <Badge variant="outline">Status: {filters.status}</Badge>}
-                                            {filters.amountMin !== null && <Badge variant="outline">Min: ${filters.amountMin}</Badge>}
-                                            {filters.amountMax !== null && <Badge variant="outline">Max: ${filters.amountMax}</Badge>}
-                                            {filters.dateFrom && <Badge variant="outline">From: {format(filters.dateFrom, 'MMM d, yy')}</Badge>}
-                                            {filters.dateTo && <Badge variant="outline">To: {format(filters.dateTo, 'MMM d, yy')}</Badge>}
-                                            <Button variant="ghost" size="icon" className="h-6 w-6" onClick={resetFilters}>
-                                                <X className="h-4 w-4" />
-                                                <span className="sr-only">Clear filters</span>
-                                            </Button>
-                                        </div>
-                                    )}
-                                </div>
-                                <TabsContent value="invoices">{renderTable(filteredDocs('invoice'), 'invoice')}</TabsContent>
-                                <TabsContent value="estimates">{renderTable(filteredDocs('estimate'), 'estimate')}</TabsContent>
-                                <TabsContent value="quotes">{renderTable(filteredDocs('quote'), 'quote')}</TabsContent>
-                            </CardContent>
-                        </Tabs>
-                    </Card>
+                                )}
+                            </div>
+                        </div>
+
+                        <TabsContent value="invoices">
+                             <Card className="bg-card/50 backdrop-blur-sm shadow-lg hover:shadow-primary/20 transition-shadow duration-300">
+                                <CardContent className="pt-6">
+                                    <DashboardStatsGrid documents={filteredInvoices} docType="invoice" />
+                                    {renderTable(filteredInvoices, 'invoice')}
+                                </CardContent>
+                             </Card>
+                        </TabsContent>
+                        <TabsContent value="estimates">
+                             <Card className="bg-card/50 backdrop-blur-sm shadow-lg hover:shadow-primary/20 transition-shadow duration-300">
+                                <CardContent className="pt-6">
+                                     <DashboardStatsGrid documents={filteredEstimates} docType="estimate" />
+                                     {renderTable(filteredEstimates, 'estimate')}
+                                </CardContent>
+                             </Card>
+                        </TabsContent>
+                        <TabsContent value="quotes">
+                             <Card className="bg-card/50 backdrop-blur-sm shadow-lg hover:shadow-primary/20 transition-shadow duration-300">
+                                <CardContent className="pt-6">
+                                     <DashboardStatsGrid documents={filteredQuotes} docType="quote" />
+                                     {renderTable(filteredQuotes, 'quote')}
+                                </CardContent>
+                             </Card>
+                        </TabsContent>
+                    </Tabs>
                 </motion.div>
             </div>
         </>
     );
 }
-
-    
