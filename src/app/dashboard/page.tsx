@@ -7,8 +7,6 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Bar, BarChart, CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
-import { ChartContainer, ChartTooltipContent } from '@/components/ui/chart';
 import {
     AlertDialog,
     AlertDialogAction,
@@ -28,7 +26,7 @@ import {
 import { FilePlus2, Edit, Trash2, Filter, X, MoreHorizontal, FileText, Share2, DollarSign, Clock, FileWarning, Files } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from 'next/navigation';
-import { format, isWithinInterval, isValid, startOfMonth } from 'date-fns';
+import { format, isWithinInterval, isValid } from 'date-fns';
 import { FilterSheet, type DashboardFilters } from '@/components/dashboard/filter-sheet';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
@@ -341,57 +339,25 @@ export default function DashboardPage() {
             totalRevenue: 0,
             outstanding: 0,
             overdue: 0,
-            totalDocuments: (invoices?.length || 0) + (estimates?.length || 0) + (quotes?.length || 0),
-            monthlyRevenue: {} as Record<string, number>,
-            statusCounts: {} as Record<DocumentStatus, number>,
+            drafts: 0,
         };
-
-        STATUS_OPTIONS.forEach(s => stats.statusCounts[s] = 0);
-
         if (invoices) {
             invoices.forEach(inv => {
                 const grandTotal = inv.summary?.grandTotal || 0;
-                 if (inv.status) {
-                    stats.statusCounts[inv.status] = (stats.statusCounts[inv.status] || 0) + 1;
-                }
-
-                if (inv.status === 'paid') {
-                    stats.totalRevenue += grandTotal;
-                    const month = format(toDateSafe(inv.invoiceDate) || new Date(), 'yyyy-MM');
-                    stats.monthlyRevenue[month] = (stats.monthlyRevenue[month] || 0) + grandTotal;
-                }
-                if (inv.status === 'sent' || inv.status === 'overdue') {
-                    stats.outstanding += grandTotal;
-                }
-                if (inv.status === 'overdue') {
-                    stats.overdue += grandTotal;
-                }
+                if (inv.status === 'paid') stats.totalRevenue += grandTotal;
+                if (inv.status === 'sent') stats.outstanding += grandTotal;
+                if (inv.status === 'overdue') stats.overdue += grandTotal;
             });
+        }
+        if (estimates) {
+            stats.drafts += estimates.filter(est => est.status === 'draft').length;
+        }
+        if (quotes) {
+             stats.drafts += quotes.filter(q => q.status === 'draft').length;
         }
         return stats;
 
     }, [invoices, estimates, quotes]);
-    
-    const chartData = useMemo(() => {
-        const data = Object.entries(dashboardStats.monthlyRevenue)
-            .map(([month, revenue]) => ({ month, revenue }))
-            .sort((a, b) => new Date(a.month).getTime() - new Date(b.month).getTime());
-        return data;
-    }, [dashboardStats.monthlyRevenue]);
-
-    const barChartData = useMemo(() => {
-        return Object.entries(dashboardStats.statusCounts)
-        .filter(([status, count]) => count > 0)
-        .map(([status, count]) => ({ status, count }));
-    }, [dashboardStats.statusCounts]);
-
-    const chartConfig = {
-      revenue: { label: "Revenue", color: "hsl(var(--primary))" },
-    };
-    
-     const barChartConfig = {
-      count: { label: "Count", color: "hsl(var(--primary))" },
-    };
 
 
     const activeFilterCount = useMemo(() => {
@@ -568,7 +534,7 @@ export default function DashboardPage() {
                     <Skeleton className="h-28 w-full" />
                     <Skeleton className="h-28 w-full" />
                 </div>
-                <Card className="bg-card/50 backdrop-blur-sm">
+                <Card>
                     <CardHeader>
                         <Skeleton className="h-10 w-full max-w-sm" />
                     </CardHeader>
@@ -641,25 +607,15 @@ export default function DashboardPage() {
                         </motion.div>
                     </motion.div>
                 </motion.div>
-                 <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4 mb-8">
-                    <Card className="bg-card/50 backdrop-blur-sm"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Total Revenue</CardTitle><DollarSign className="h-5 w-5 text-green-400" /></CardHeader><CardContent><div className="text-3xl font-bold text-green-400">${dashboardStats.totalRevenue.toFixed(2)}</div><p className="text-xs text-muted-foreground">Sum of all paid invoices.</p></CardContent></Card>
-                    <Card className="bg-card/50 backdrop-blur-sm"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Outstanding</CardTitle><Clock className="h-5 w-5 text-blue-400" /></CardHeader><CardContent><div className="text-3xl font-bold text-blue-400">${dashboardStats.outstanding.toFixed(2)}</div><p className="text-xs text-muted-foreground">Sum of sent & overdue invoices.</p></CardContent></Card>
-                    <Card className="bg-card/50 backdrop-blur-sm"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Overdue</CardTitle><FileWarning className="h-5 w-5 text-red-400" /></CardHeader><CardContent><div className="text-3xl font-bold text-red-400">${dashboardStats.overdue.toFixed(2)}</div><p className="text-xs text-muted-foreground">Sum of all unpaid, overdue invoices.</p></CardContent></Card>
-                    <Card className="bg-card/50 backdrop-blur-sm"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Total Documents</CardTitle><Files className="h-5 w-5 text-yellow-400" /></CardHeader><CardContent><div className="text-3xl font-bold text-yellow-400">{dashboardStats.totalDocuments}</div><p className="text-xs text-muted-foreground">All invoices, estimates, and quotes.</p></CardContent></Card>
-                </div>
-                 <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 mb-8">
-                    <Card className="lg:col-span-2 bg-card/50 backdrop-blur-sm">
-                        <CardHeader><CardTitle>Monthly Revenue Trend</CardTitle></CardHeader>
-                        <CardContent><ChartContainer config={chartConfig} className="min-h-[200px] w-full"><LineChart data={chartData} margin={{left: 12, right: 12}}><CartesianGrid vertical={false} /><XAxis dataKey="month" tickLine={false} axisLine={false} tickMargin={8} tickFormatter={(value) => value.slice(-2)} /><Tooltip cursor={false} content={<ChartTooltipContent />} /><Line dataKey="revenue" type="monotone" stroke="hsl(var(--primary))" strokeWidth={2} dot={false} /></LineChart></ChartContainer></CardContent>
-                    </Card>
-                    <Card className="bg-card/50 backdrop-blur-sm">
-                        <CardHeader><CardTitle>Documents by Status</CardTitle></CardHeader>
-                        <CardContent><ChartContainer config={barChartConfig} className="min-h-[200px] w-full"><BarChart data={barChartData} layout="vertical" margin={{left: 10}}><XAxis type="number" hide /><YAxis dataKey="status" type="category" tickLine={false} tickMargin={10} axisLine={false} tickFormatter={(value) => value.charAt(0).toUpperCase() + value.slice(1)} /><Tooltip cursor={false} content={<ChartTooltipContent />} /><Bar dataKey="count" layout="vertical" fill="hsl(var(--primary))" radius={4} /></BarChart></ChartContainer></CardContent>
-                    </Card>
+                 <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-8">
+                    <Card><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Total Revenue</CardTitle><DollarSign className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent><div className="text-2xl font-bold">${dashboardStats.totalRevenue.toFixed(2)}</div></CardContent></Card>
+                    <Card><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Outstanding</CardTitle><Clock className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent><div className="text-2xl font-bold">${dashboardStats.outstanding.toFixed(2)}</div></CardContent></Card>
+                    <Card><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Overdue</CardTitle><FileWarning className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent><div className="text-2xl font-bold">${dashboardStats.overdue.toFixed(2)}</div></CardContent></Card>
+                    <Card><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Drafts</CardTitle><FileText className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent><div className="text-2xl font-bold">{dashboardStats.drafts}</div></CardContent></Card>
                 </div>
                 
                 <motion.div initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.3, delay: 0.1 }}>
-                    <Card className="bg-card/50 backdrop-blur-sm">
+                    <Card>
                         <Tabs defaultValue="invoices">
                             <CardHeader>
                                 <div className="flex justify-between items-end">
@@ -710,3 +666,5 @@ export default function DashboardPage() {
         </>
     );
 }
+
+    
