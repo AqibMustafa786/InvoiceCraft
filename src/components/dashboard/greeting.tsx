@@ -3,6 +3,7 @@
 
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/context/auth-provider';
+import { motion } from 'framer-motion';
 
 export function Greeting() {
   const { user, userProfile } = useAuth();
@@ -32,8 +33,13 @@ export function Greeting() {
   }
 
   return (
-    <div className="mb-4 text-3xl font-semibold text-muted-foreground text-center">
+    <motion.div
+      initial={{ opacity: 0, y: -20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5, ease: 'easeOut' }}
+      className="mb-4 text-3xl font-semibold text-center text-foreground"
+    >
       {greeting}
-    </div>
+    </motion.div>
   );
 }
