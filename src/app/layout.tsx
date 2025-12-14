@@ -41,9 +41,13 @@ export default function RootLayout({
                 disableTransitionOnChange
               >
               <SplashScreenProvider>
-                <div className="app-main-container relative flex min-h-screen flex-col">
+                <div className="app-main-container relative flex min-h-dvh flex-col">
                   <Header />
-                  <main className="flex-1">{children}</main>
+                  <main className="flex-1">
+                    <div className="container relative">
+                      {children}
+                    </div>
+                  </main>
                   <Footer />
                 </div>
                 <Toaster />
