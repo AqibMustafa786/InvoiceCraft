@@ -2,7 +2,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { ShieldCheck } from 'lucide-react';
+import { FileText } from 'lucide-react';
 
 export function SplashScreen() {
   return (
@@ -34,7 +34,7 @@ export function SplashScreen() {
           }}
           className="flex items-center justify-center gap-3"
         >
-          <ShieldCheck className="h-12 w-12 text-primary" />
+          <FileText className="h-12 w-12 text-primary" />
           <span className="text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent">
             InvoiceCraft
           </span>
