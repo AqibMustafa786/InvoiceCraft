@@ -1,5 +1,4 @@
 
-
 'use client';
 
 import React from 'react';
@@ -325,6 +324,7 @@ export const ConsultingTemplate4: React.FC<PageProps> = (props) => {
                     <div className="flex justify-end text-sm">
                         <div className="w-1/3">
                             <p className="flex justify-between py-1"><span>Total:</span><span>{currencySymbol}{total.toFixed(2)}</span></p>
+                            {(invoice.amountPaid || 0) > 0 && <p className="flex justify-between py-1 text-green-600"><span>Paid:</span><span>-{currencySymbol}{(invoice.amountPaid || 0).toFixed(2)}</span></p>}
                             <p className="flex justify-between font-bold text-lg mt-2"><span>Balance Due:</span><span>{currencySymbol}{balanceDue.toFixed(2)}</span></p>
                         </div>
                     </div>
@@ -380,3 +380,5 @@ export const ConsultingTemplate5: React.FC<PageProps> = (props) => {
         </div>
     );
 };
+
+    
