@@ -31,6 +31,16 @@ const safeFormat = (date: Date | string | number | null | undefined, formatStrin
     return format(d, formatString);
 }
 
+const SignatureDisplay = ({ signature, label }: { signature: any, label: string }) => {
+    if (!signature?.image) return null;
+    return (
+        <div className="mt-8">
+            <Image src={signature.image} alt={label} width={150} height={75} className="border-b border-gray-400" />
+            <p className="text-xs text-gray-500 pt-1 border-t-2 border-gray-700 w-[150px]">{label}</p>
+        </div>
+    )
+}
+
 const CleaningDetails: React.FC<{ invoice: Invoice, t: any }> = ({ invoice, t }) => {
     if (!invoice.cleaning) return null;
     const { cleaning } = invoice;
@@ -50,7 +60,7 @@ const CleaningDetails: React.FC<{ invoice: Invoice, t: any }> = ({ invoice, t })
 
 // Template 1: Sparkle
 export const CleaningTemplate1: React.FC<PageProps> = (props) => {
-    const { invoice, pageItems, pageIndex, totalPages, subtotal, t, currencySymbol, accentColor, balanceDue } = props;
+    const { invoice, pageItems, pageIndex, totalPages, subtotal, taxAmount, discountAmount, total, balanceDue, t, currencySymbol, accentColor } = props;
     const { business, client } = invoice;
     
     return (
@@ -68,6 +78,7 @@ export const CleaningTemplate1: React.FC<PageProps> = (props) => {
                     </div>
                     <div className="text-right">
                         <h2 className="text-2xl font-bold">{(t.invoice || 'INVOICE').toUpperCase()}</h2>
+                        <p className="text-sm">#{invoice.invoiceNumber}</p>
                     </div>
                 </header>
 
@@ -78,6 +89,9 @@ export const CleaningTemplate1: React.FC<PageProps> = (props) => {
                         <p><span className="font-bold w-24 inline-block">{(t.address || 'Address')}:</span> <span className="whitespace-pre-line">{business.address}</span></p>
                         <p><span className="font-bold w-24 inline-block">{(t.phone || 'Phone')}:</span> {business.phone}</p>
                         <p><span className="font-bold w-24 inline-block">{(t.email || 'Email')}:</span> {business.email}</p>
+                        {business.website && <p><span className="font-bold w-24 inline-block">{(t.website || 'Website')}:</span> {business.website}</p>}
+                        {business.licenseNumber && <p><span className="font-bold w-24 inline-block">{(t.license || 'License #')}:</span> {business.licenseNumber}</p>}
+                        {business.taxId && <p><span className="font-bold w-24 inline-block">{(t.taxId || 'Tax ID')}:</span> {business.taxId}</p>}
                     </div>
                     <div>
                         <p className="font-bold text-base mb-2">{(t.customerInformation || 'Customer Information')}</p>
@@ -85,7 +99,15 @@ export const CleaningTemplate1: React.FC<PageProps> = (props) => {
                         <p><span className="font-bold w-24 inline-block">{(t.address || 'Address')}:</span> <span className="whitespace-pre-line">{client.address}</span></p>
                         <p><span className="font-bold w-24 inline-block">{(t.phone || 'Phone')}:</span> {client.phone}</p>
                         <p><span className="font-bold w-24 inline-block">{(t.email || 'Email')}:</span> {client.email}</p>
+                        {client.shippingAddress && <p className="mt-2"><span className="font-bold">Ship To:</span><br/>{client.shippingAddress}</p>}
+                        {client.projectLocation && <p className="mt-2"><span className="font-bold">Project Location:</span><br/>{client.projectLocation}</p>}
                     </div>
+                </section>
+
+                <section className="text-xs mb-4">
+                    <p><span className="font-bold">Date:</span> {safeFormat(invoice.invoiceDate, 'MMMM d, yyyy')}</p>
+                    <p><span className="font-bold">Due Date:</span> {safeFormat(invoice.dueDate, 'MMMM d, yyyy')}</p>
+                    {invoice.poNumber && <p><span className="font-bold">PO #:</span> {invoice.poNumber}</p>}
                 </section>
                 
                  <CleaningDetails invoice={invoice} t={t} />
@@ -118,18 +140,27 @@ export const CleaningTemplate1: React.FC<PageProps> = (props) => {
                 {pageIndex === totalPages - 1 && (
                     <footer className="mt-auto pt-8">
                         <div className="flex justify-end mb-8">
-                             <table className="w-1/3 text-sm">
+                             <table className="w-2/5 text-sm">
                                 <tbody>
-                                    <tr className="border-t-2"><td className="p-2 text-right font-bold">{(t.total || 'Total')}</td><td className="p-2 text-right font-bold" style={{backgroundColor: accentColor, color: 'white'}}>{currencySymbol}{balanceDue.toFixed(2)}</td></tr>
+                                    <tr><td className="p-2 text-right">{(t.subtotal || 'Subtotal')}</td><td className="p-2 text-right">{currencySymbol}{subtotal.toFixed(2)}</td></tr>
+                                    {discountAmount > 0 && <tr><td className="p-2 text-right text-red-500">{(t.discount || 'Discount')}</td><td className="p-2 text-right text-red-500">-{currencySymbol}{discountAmount.toFixed(2)}</td></tr>}
+                                    {invoice.summary.shippingCost > 0 && <tr><td className="p-2 text-right">{(t.shipping || 'Shipping')}</td><td className="p-2 text-right">{currencySymbol}{invoice.summary.shippingCost.toFixed(2)}</td></tr>}
+                                    <tr><td className="p-2 text-right">{(t.tax || 'Tax')} ({invoice.summary.taxPercentage}%)</td><td className="p-2 text-right">{currencySymbol}{taxAmount.toFixed(2)}</td></tr>
+                                    <tr className="border-t-2 font-bold"><td className="p-2 text-right">{(t.total || 'Total')}</td><td className="p-2 text-right">{currencySymbol}{total.toFixed(2)}</td></tr>
+                                    {(invoice.amountPaid || 0) > 0 && <tr className="text-green-600 font-bold"><td className="p-2 text-right">{(t.amountPaid || 'Amount Paid')}</td><td className="p-2 text-right">-{currencySymbol}{(invoice.amountPaid || 0).toFixed(2)}</td></tr>}
+                                    <tr style={{backgroundColor: accentColor, color: 'white'}} className="font-bold"><td className="p-2 text-right">{(t.balanceDue || 'Balance Due')}</td><td className="p-2 text-right">{currencySymbol}{balanceDue.toFixed(2)}</td></tr>
                                 </tbody>
                              </table>
                         </div>
-                         {business.ownerSignature && (
-                            <div className="mt-8">
-                                <p className="text-sm font-semibold text-gray-500">Authorized Signature</p>
-                                <Image src={business.ownerSignature.image} alt="Owner Signature" width={150} height={75} />
+                        <div className="grid grid-cols-2 gap-8 items-end text-xs">
+                             <div>
+                                <p className="font-bold text-base mb-2">{(t.termsAndConditions || 'Terms and Conditions')}:</p>
+                                <p className="whitespace-pre-line">{invoice.paymentInstructions}</p>
                             </div>
-                        )}
+                            <div className="text-center">
+                                 {business.ownerSignature && <SignatureDisplay signature={business.ownerSignature} label={"Authorized Signature"} />}
+                            </div>
+                        </div>
                     </footer>
                 )}
             </div>
@@ -139,7 +170,7 @@ export const CleaningTemplate1: React.FC<PageProps> = (props) => {
 
 // Template 2: Fresh
 export const CleaningTemplate2: React.FC<PageProps> = (props) => {
-    const { invoice, pageItems, pageIndex, totalPages, subtotal, taxAmount, balanceDue, t, currencySymbol, accentColor } = props;
+    const { invoice, pageItems, pageIndex, totalPages, subtotal, taxAmount, discountAmount, total, balanceDue, t, currencySymbol, accentColor } = props;
     const { business, client } = invoice;
 
     return (
@@ -148,10 +179,14 @@ export const CleaningTemplate2: React.FC<PageProps> = (props) => {
                 <div>
                     {business.logoUrl && <Image src={business.logoUrl} alt="Logo" width={100} height={50} className="object-contain mb-2"/>}
                     <h1 className="text-3xl font-bold" style={{ color: accentColor }}>{business.name}</h1>
-                    <p className="text-xs text-gray-500">{business.address}</p>
+                    <p className="text-xs text-gray-500 whitespace-pre-line">{business.address}</p>
+                    <p className="text-xs text-gray-500">{business.phone} | {business.email}</p>
+                    {business.website && <p className="text-xs text-gray-500">{business.website}</p>}
                 </div>
                 <div className="text-right">
                     <h2 className="text-2xl font-light text-gray-400">{(t.invoice || 'INVOICE').toUpperCase()}</h2>
+                    <p className="text-xs text-gray-500">{business.licenseNumber && `Lic#: ${business.licenseNumber}`}</p>
+                    <p className="text-xs text-gray-500">{business.taxId && `Tax ID: ${business.taxId}`}</p>
                 </div>
             </header>
 
@@ -160,14 +195,19 @@ export const CleaningTemplate2: React.FC<PageProps> = (props) => {
                     <p className="font-bold text-gray-500">{(t.client || 'Client')}:</p>
                     <p className="font-semibold">{client.name}</p>
                     <p>{client.address}</p>
+                    <p>{client.email}</p>
+                    <p>{client.phone}</p>
                 </div>
                 <div>
                      <p className="font-bold text-gray-500">{(t.project || 'Project')}:</p>
                      <p className="font-semibold">{invoice.poNumber || 'N/A'}</p>
+                     {client.shippingAddress && <p className="mt-2"><span className="font-bold">Ship To:</span><br/>{client.shippingAddress}</p>}
+                     {client.projectLocation && <p className="mt-2"><span className="font-bold">Project Location:</span><br/>{client.projectLocation}</p>}
                 </div>
                 <div className="text-right">
                     <p><span className="font-bold">{(t.invoiceNo || 'Invoice #')}:</span> {invoice.invoiceNumber}</p>
                     <p><span className="font-bold">{(t.date || 'Date')}:</span> {safeFormat(invoice.invoiceDate, 'MMM d, yyyy')}</p>
+                    <p><span className="font-bold">{(t.dueDate || 'Due Date')}:</span> {safeFormat(invoice.dueDate, 'MMM d, yyyy')}</p>
                 </div>
             </section>
             
@@ -201,8 +241,12 @@ export const CleaningTemplate2: React.FC<PageProps> = (props) => {
                      <div className="flex justify-end">
                         <div className="w-1/3 text-sm space-y-1">
                             <p className="flex justify-between"><span>{(t.subtotal || 'Subtotal')}:</span><span>{currencySymbol}{subtotal.toFixed(2)}</span></p>
+                            {discountAmount > 0 && <p className="flex justify-between">Discount: <span className="text-red-600">-{currencySymbol}{discountAmount.toFixed(2)}</span></p>}
+                            {invoice.summary.shippingCost > 0 && <p className="flex justify-between">Shipping: <span>{currencySymbol}{invoice.summary.shippingCost.toFixed(2)}</span></p>}
                             <p className="flex justify-between"><span>{(t.tax || 'Tax')}:</span><span>{currencySymbol}{taxAmount.toFixed(2)}</span></p>
-                            <p className="flex justify-between font-bold text-base mt-2 pt-2 border-t border-black"><span>{(t.total || 'Total')}:</span><span>{currencySymbol}{balanceDue.toFixed(2)}</span></p>
+                            <p className="flex justify-between font-bold"><span>{(t.total || 'Total')}:</span><span>{currencySymbol}{total.toFixed(2)}</span></p>
+                             {(invoice.amountPaid || 0) > 0 && <p className="flex justify-between text-green-600"><span>Paid:</span><span>-{currencySymbol}{(invoice.amountPaid || 0).toFixed(2)}</span></p>}
+                            <p className="flex justify-between font-bold text-base mt-2 pt-2 border-t border-black"><span>{(t.balanceDue || 'Balance Due')}:</span><span>{currencySymbol}{balanceDue.toFixed(2)}</span></p>
                         </div>
                     </div>
                      {business.ownerSignature && (
@@ -219,7 +263,7 @@ export const CleaningTemplate2: React.FC<PageProps> = (props) => {
 
 // Template 3: Pristine
 export const CleaningTemplate3: React.FC<PageProps> = (props) => {
-    const { invoice, pageItems, pageIndex, totalPages, subtotal, taxAmount, balanceDue, t, currencySymbol, accentColor } = props;
+    const { invoice, pageItems, pageIndex, totalPages, subtotal, taxAmount, discountAmount, total, balanceDue, t, currencySymbol, accentColor } = props;
     const { business, client } = invoice;
 
     return (
@@ -229,6 +273,7 @@ export const CleaningTemplate3: React.FC<PageProps> = (props) => {
                     <div>
                         {business.logoUrl && <Image src={business.logoUrl} alt="Logo" width={90} height={45} className="object-contain mb-2"/>}
                         <h1 className="text-2xl font-bold">{business.name}</h1>
+                        <p className="text-xs text-gray-500 whitespace-pre-line">{business.address}</p>
                     </div>
                     <div className="text-right">
                         <h2 className="text-3xl font-extrabold text-gray-400">{(t.invoice || 'INVOICE').toUpperCase()}</h2>
@@ -236,8 +281,17 @@ export const CleaningTemplate3: React.FC<PageProps> = (props) => {
                     </div>
                 </header>
                 <section className="grid grid-cols-2 gap-8 text-xs mb-8">
-                    <div><p className="font-bold text-gray-500 mb-1">{(t.billedTo || 'Billed To')}</p><p>{client.name}<br/>{client.address}</p></div>
-                    <div className="text-right"><p><span className="font-bold text-gray-500">{(t.date || 'Date')}: </span>{safeFormat(invoice.invoiceDate, 'dd/MM/yyyy')}</p></div>
+                    <div>
+                        <p className="font-bold text-gray-500 mb-1">{(t.billedTo || 'Billed To')}</p>
+                        <p>{client.name}<br/>{client.address}<br/>{client.email}<br/>{client.phone}</p>
+                        {client.shippingAddress && <p className="mt-2"><span className="font-bold">Ship To:</span><br/>{client.shippingAddress}</p>}
+                        {client.projectLocation && <p className="mt-2"><span className="font-bold">Project Location:</span><br/>{client.projectLocation}</p>}
+                    </div>
+                    <div className="text-right">
+                        <p><span className="font-bold text-gray-500">{(t.date || 'Date')}: </span>{safeFormat(invoice.invoiceDate, 'dd-MMM-yyyy')}</p>
+                        <p><span className="font-bold text-gray-500">{(t.dueDate || 'Due Date')}: </span>{safeFormat(invoice.dueDate, 'dd-MMM-yyyy')}</p>
+                        {invoice.poNumber && <p><span className="font-bold text-gray-500">PO #: </span>{invoice.poNumber}</p>}
+                    </div>
                 </section>
                 <CleaningDetails invoice={invoice} t={t} />
                 <main className="flex-grow mt-4">
@@ -251,8 +305,12 @@ export const CleaningTemplate3: React.FC<PageProps> = (props) => {
                     <div className="flex justify-end text-sm">
                         <div className="w-1/3 space-y-1">
                             <p className="flex justify-between"><span>{(t.subtotal || 'Subtotal')}:</span><span>{currencySymbol}{subtotal.toFixed(2)}</span></p>
+                            {discountAmount > 0 && <p className="flex justify-between text-red-500"><span>{(t.discount || 'Discount')}:</span><span>-{currencySymbol}{discountAmount.toFixed(2)}</span></p>}
+                            {invoice.summary.shippingCost > 0 && <p className="flex justify-between"><span>{(t.shipping || 'Other Fees')}:</span><span>{currencySymbol}{invoice.summary.shippingCost.toFixed(2)}</span></p>}
                             <p className="flex justify-between"><span>{(t.tax || 'Tax')}:</span><span>{currencySymbol}{taxAmount.toFixed(2)}</span></p>
-                            <p className="flex justify-between font-bold text-sm mt-2 pt-2 border-t border-gray-300"><span>{(t.total || 'Total')}:</span><span>{currencySymbol}{balanceDue.toFixed(2)}</span></p>
+                            <p className="flex justify-between font-bold"><span>{(t.total || 'Total')}:</span><span>{currencySymbol}{total.toFixed(2)}</span></p>
+                            {(invoice.amountPaid || 0) > 0 && <p className="flex justify-between text-green-600"><span>Paid:</span><span>-{currencySymbol}{(invoice.amountPaid || 0).toFixed(2)}</span></p>}
+                            <p className="flex justify-between font-bold text-sm mt-2 pt-2 border-t border-gray-300"><span>{(t.balanceDue || 'Balance Due')}:</span><span>{currencySymbol}{balanceDue.toFixed(2)}</span></p>
                         </div>
                     </div>
                     {business.ownerSignature && (
@@ -270,3 +328,5 @@ export const CleaningTemplate3: React.FC<PageProps> = (props) => {
 
 export const CleaningTemplate4: React.FC<PageProps> = (props) => <CleaningTemplate1 {...props} />;
 export const CleaningTemplate5: React.FC<PageProps> = (props) => <CleaningTemplate2 {...props} />;
+
+    
