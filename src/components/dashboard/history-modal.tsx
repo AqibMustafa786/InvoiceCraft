@@ -42,8 +42,11 @@ const getActionVariant = (action: AuditLogEntry['action']) => {
     }
 }
 
-export function HistoryModal({ isOpen, onClose, auditLog = [] }: HistoryModalProps) {
-  const sortedLog = [...auditLog].sort((a, b) => b.version - a.version);
+export function HistoryModal({ isOpen, onClose, auditLog }: HistoryModalProps) {
+  // Defensive check: Ensure auditLog is an array. Default to empty array if not.
+  const sortedLog = Array.isArray(auditLog)
+    ? [...auditLog].sort((a, b) => (b.version || 0) - (a.version || 0))
+    : [];
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>

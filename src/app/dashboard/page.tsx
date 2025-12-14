@@ -220,8 +220,8 @@ export default function DashboardPage() {
         setModalState({ isOpen: true, title, data });
     };
 
-    const handleHistoryClick = (auditLog: AuditLogEntry[] = []) => {
-        setHistoryModalState({ isOpen: true, auditLog });
+    const handleHistoryClick = (auditLog?: AuditLogEntry[]) => {
+        setHistoryModalState({ isOpen: true, auditLog: auditLog || [] });
     };
 
     const handleCreateInvoice = () => {
@@ -760,5 +760,3 @@ export default function DashboardPage() {
         </>
     );
 }
-
-    
