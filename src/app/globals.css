@@ -57,7 +57,7 @@
     --popover: 222.2 84% 4.9%;
     --popover-foreground: 210 40% 98%;
  
-    --primary: 260 85% 66%;
+    --primary: 210 90% 60%;
     --primary-foreground: 210 40% 98%;
  
     --secondary: 217.2 32.6% 17.5%;
@@ -66,7 +66,7 @@
     --muted: 217.2 32.6% 17.5%;
     --muted-foreground: 215 20.2% 65.1%;
  
-    --accent: 330 85% 58%;
+    --accent: 210 90% 50%;
     --accent-foreground: 210 40% 98%;
  
     --destructive: 0 62.8% 30.6%;
@@ -89,7 +89,7 @@
     @apply bg-background text-foreground font-body;
     min-height: 100vh;
     background-color: hsl(var(--background-hsl));
-    background-image: linear-gradient(to left, hsl(30 100% 90% / 0.4), hsl(0 100% 90% / 0.5) 80%, white);
+    background-image: linear-gradient(to left, hsl(30 100% 90% / 0.4) 30%, hsl(0 100% 90% / 0.5) 80%, white);
   }
 
   .dark body {
@@ -140,5 +140,6 @@
   size: letter;
   margin: 0;
 }
+
 
 
