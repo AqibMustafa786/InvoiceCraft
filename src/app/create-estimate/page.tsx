@@ -288,7 +288,7 @@ export default function CreateEstimatePage() {
     if (draftId && remoteDraft) {
        const baseEstimate = getInitialEstimate();
        const fromJSON = (key: string, value: any) => {
-           if (['estimateDate', 'validUntilDate', 'expectedStartDate', 'expectedCompletionDate', 'createdAt', 'updatedAt'].includes(key) && value) {
+           if (['estimateDate', 'validUntilDate', 'expectedStartDate', 'expectedCompletionDate', 'createdAt', 'updatedAt', 'timestamp'].includes(key) && value) {
                return value.toDate ? value.toDate() : (isValid(new Date(value)) ? new Date(value) : null);
            }
             if (key === 'auditLog' && value) {
@@ -325,7 +325,7 @@ export default function CreateEstimatePage() {
         const newDocId = firestore ? doc(collection(firestore, 'companies', 'temp', ESTIMATES_COLLECTION)).id : crypto.randomUUID();
         const newAuditLogEntry: AuditLogEntry = {
             action: 'created',
-            timestamp: new Date(),
+            timestamp: Timestamp.now(),
             user: user.email || 'Unknown',
             version: 1,
         };
@@ -363,7 +363,7 @@ export default function CreateEstimatePage() {
     window.print();
   };
   
-  const handleSaveDraft = () => {
+    const handleSaveDraft = () => {
     if (!document || !firestore || !user || !userProfile?.companyId) {
          toast({
           title: "Cannot Save Draft",
@@ -374,14 +374,6 @@ export default function CreateEstimatePage() {
     }
 
     const companyId = userProfile.companyId;
-
-    const normalizeDate = (val: any): Timestamp | null => {
-        if (!val) return null;
-        if (val instanceof Timestamp) return val;
-        const d = val.toDate ? val.toDate() : new Date(val);
-        return isValid(d) ? Timestamp.fromDate(d) : null;
-    };
-    
     const isNew = !searchParams.get('draftId');
     const newId = isNew ? generateNewId(document) : document.id;
 
@@ -390,12 +382,21 @@ export default function CreateEstimatePage() {
 
     const newAuditLogEntry: AuditLogEntry = {
         action: isNew ? 'created' : 'updated',
-        timestamp: new Date(),
+        timestamp: Timestamp.now(),
         user: user.email || 'Unknown',
         version: newVersion,
     };
     
     const updatedAuditLog = [...existingLog, newAuditLogEntry];
+
+    // Sanitize dates before saving
+    const safeTimestamp = (value: any) => {
+        if (value instanceof Timestamp) return value;
+        if (value instanceof Date && isValid(value)) return Timestamp.fromDate(value);
+        if (!value) return null;
+        const d = new Date(value);
+        return isValid(d) ? Timestamp.fromDate(d) : null;
+    };
 
     const draftToSave: any = {
       ...document,
@@ -403,40 +404,18 @@ export default function CreateEstimatePage() {
       userId: user.uid, 
       companyId: companyId,
       updatedAt: serverTimestamp(),
-      auditLog: updatedAuditLog,
+      auditLog: updatedAuditLog.map(log => ({ ...log, timestamp: safeTimestamp(log.timestamp) })),
+      estimateDate: safeTimestamp(document.estimateDate),
+      validUntilDate: safeTimestamp(document.validUntilDate),
+      createdAt: document.createdAt ? safeTimestamp(document.createdAt) : serverTimestamp(),
     };
-
-    if (!document.createdAt) {
-      draftToSave.createdAt = serverTimestamp();
-    }
-
-    const dateFields = ['estimateDate', 'validUntilDate'];
-    dateFields.forEach(field => {
-      const dateVal = (document as any)[field];
-      if (dateVal) {
-        const normalized = normalizeDate(dateVal);
-        if (normalized) draftToSave[field] = normalized;
-      }
-    });
 
     if (document.homeRemodeling) {
       draftToSave.homeRemodeling = { ...document.homeRemodeling };
-      const start = normalizeDate(document.homeRemodeling.expectedStartDate);
+      const start = safeTimestamp(document.homeRemodeling.expectedStartDate);
       if(start) draftToSave.homeRemodeling.expectedStartDate = start;
-      const end = normalizeDate(document.homeRemodeling.expectedCompletionDate);
+      const end = safeTimestamp(document.homeRemodeling.expectedCompletionDate);
       if(end) draftToSave.homeRemodeling.expectedCompletionDate = end;
-    }
-    
-    if (document.roofing) {
-        draftToSave.roofing = { ...document.roofing };
-    }
-    
-    if (document.hvac) {
-        draftToSave.hvac = { ...document.hvac };
-    }
-
-    if (document.plumbing) {
-        draftToSave.plumbing = { ...document.plumbing };
     }
     
     const finalDocRef = doc(firestore, 'companies', companyId, ESTIMATES_COLLECTION, newId);
@@ -447,26 +426,29 @@ export default function CreateEstimatePage() {
       description: "Your estimate draft has been saved online.",
     });
 
+    setDocument(prev => {
+        if (!prev) return null;
+        const updatedDoc = { ...prev, id: newId, auditLog: updatedAuditLog };
+        return JSON.parse(JSON.stringify(updatedDoc), (key, value) => {
+             if (['estimateDate', 'validUntilDate', 'expectedStartDate', 'expectedCompletionDate', 'createdAt', 'updatedAt', 'timestamp'].includes(key) && value) {
+               return value.toDate ? value.toDate() : (isValid(new Date(value)) ? new Date(value) : null);
+           }
+           return value;
+        });
+    });
+
     if (isNew) {
-      setDocument(prev => {
-        if (!prev) return null;
-        return { ...prev, id: newId, auditLog: updatedAuditLog };
-      });
       router.push(`/create-estimate?draftId=${newId}`, { scroll: false });
-    } else {
-       setDocument(prev => {
-        if (!prev) return null;
-        return { ...prev, auditLog: updatedAuditLog };
-      });
     }
   };
+
 
   const handleNew = () => {
     if(!user || !companyId) return;
     const newDocId = firestore ? doc(collection(firestore, 'companies', companyId, ESTIMATES_COLLECTION)).id : crypto.randomUUID();
     const newAuditLogEntry: AuditLogEntry = {
         action: 'created',
-        timestamp: new Date(),
+        timestamp: Timestamp.now(),
         user: user.email || 'Unknown',
         version: 1,
     };
@@ -651,5 +633,3 @@ export default function CreateEstimatePage() {
     </>
   );
 }
-
-

@@ -350,7 +350,7 @@ export default function CreateInvoicePage() {
     if (draftId && remoteDraft) {
        const baseInvoice = getInitialInvoice();
        const fromJSON = (key: string, value: any) => {
-           if (['invoiceDate', 'dueDate', 'createdAt', 'updatedAt', 'projectStartDate', 'projectEndDate', 'visitDate', 'shootDate', 'rentalStartDate', 'rentalEndDate'].includes(key) && value) {
+           if (['invoiceDate', 'dueDate', 'createdAt', 'updatedAt', 'projectStartDate', 'projectEndDate', 'visitDate', 'shootDate', 'rentalStartDate', 'rentalEndDate', 'timestamp'].includes(key) && value) {
                return value.toDate ? value.toDate() : (isValid(new Date(value)) ? new Date(value) : null);
            }
             if (key === 'auditLog' && value) {
@@ -396,7 +396,7 @@ export default function CreateInvoicePage() {
         const newDocId = firestore ? doc(collection(firestore, 'companies', 'temp', INVOICES_COLLECTION)).id : crypto.randomUUID();
         const newAuditLogEntry: AuditLogEntry = {
             action: 'created',
-            timestamp: new Date(),
+            timestamp: Timestamp.now(),
             user: user.email || 'Unknown',
             version: 1,
         };
@@ -437,28 +437,30 @@ export default function CreateInvoicePage() {
 
   const handleSaveDraft = () => {
     if (!invoice || !firestore || !user || !companyId) return;
-
-    const normalizeDate = (val: any): Timestamp | null => {
-        if (!val) return null;
-        if (val instanceof Timestamp) return val;
-        const d = val.toDate ? val.toDate() : new Date(val);
-        return isValid(d) ? Timestamp.fromDate(d) : null;
-    };
     
     const isNew = !searchParams.get('draftId');
     const newId = isNew ? generateNewId(invoice) : invoice.id;
-    
+
     const existingLog = normalizeAuditLog(invoice.auditLog);
     const newVersion = existingLog.length + 1;
 
     const newAuditLogEntry: AuditLogEntry = {
         action: isNew ? 'created' : 'updated',
-        timestamp: new Date(),
+        timestamp: Timestamp.now(),
         user: user.email || 'Unknown',
         version: newVersion,
     };
     
     const updatedAuditLog = [...existingLog, newAuditLogEntry];
+
+    // Sanitize dates before saving
+    const safeTimestamp = (value: any) => {
+        if (value instanceof Timestamp) return value;
+        if (value instanceof Date && isValid(value)) return Timestamp.fromDate(value);
+        if (!value) return null;
+        const d = new Date(value);
+        return isValid(d) ? Timestamp.fromDate(d) : null;
+    };
 
     const draftToSave: any = {
       ...invoice,
@@ -466,43 +468,34 @@ export default function CreateInvoicePage() {
       userId: user.uid,
       companyId: companyId,
       updatedAt: serverTimestamp(),
-      auditLog: updatedAuditLog,
+      auditLog: updatedAuditLog.map(log => ({ ...log, timestamp: safeTimestamp(log.timestamp.toDate ? log.timestamp.toDate() : log.timestamp) })),
+      invoiceDate: safeTimestamp(invoice.invoiceDate),
+      dueDate: safeTimestamp(invoice.dueDate),
+      createdAt: invoice.createdAt ? safeTimestamp(invoice.createdAt) : serverTimestamp(),
     };
-    
-    if (!invoice.createdAt) {
-      draftToSave.createdAt = serverTimestamp();
-    }
-    
-    const dateFields = ['invoiceDate', 'dueDate'];
-    dateFields.forEach(field => {
-        const dateVal = (invoice as any)[field];
-        if (dateVal) {
-            draftToSave[field] = normalizeDate(dateVal);
-        }
-    });
 
     if (invoice.construction) {
         draftToSave.construction = { ...invoice.construction };
-        const start = normalizeDate(invoice.construction.projectStartDate);
+        const start = safeTimestamp(invoice.construction.projectStartDate);
         if(start) draftToSave.construction.projectStartDate = start;
-        const end = normalizeDate(invoice.construction.projectEndDate);
+        const end = safeTimestamp(invoice.construction.projectEndDate);
         if(end) draftToSave.construction.projectEndDate = end;
     }
     if (invoice.medical) {
         draftToSave.medical = { ...invoice.medical };
-        const visitDate = normalizeDate(invoice.medical.visitDate);
+        const visitDate = safeTimestamp(invoice.medical.visitDate);
         if(visitDate) draftToSave.medical.visitDate = visitDate;
     }
      if (invoice.photography) {
         draftToSave.photography = { ...invoice.photography };
-        const shootDate = normalizeDate(invoice.photography.shootDate);
+        const shootDate = safeTimestamp(invoice.photography.shootDate);
         if(shootDate) draftToSave.photography.shootDate = shootDate;
     }
      if (invoice.rental) {
         draftToSave.rental = { ...invoice.rental };
-        const start = normalizeDate(invoice.rental.rentalStartDate);
+        const start = safeTimestamp(invoice.rental.rentalStartDate);
         if(start) draftToSave.rental.rentalStartDate = start;
-        const end = normalizeDate(invoice.rental.rentalEndDate);
+        const end = safeTimestamp(invoice.rental.rentalEndDate);
         if(end) draftToSave.rental.rentalEndDate = end;
     }
 
@@ -514,17 +507,19 @@ export default function CreateInvoicePage() {
       description: "Your invoice draft has been saved online.",
     });
 
+    setInvoice(prev => {
+        if (!prev) return null;
+        const updatedDoc = { ...prev, id: newId, auditLog: updatedAuditLog };
+        return JSON.parse(JSON.stringify(updatedDoc), (key, value) => {
+             if (['invoiceDate', 'dueDate', 'createdAt', 'updatedAt', 'projectStartDate', 'projectEndDate', 'visitDate', 'shootDate', 'rentalStartDate', 'rentalEndDate', 'timestamp'].includes(key) && value) {
+               return value.toDate ? value.toDate() : (isValid(new Date(value)) ? new Date(value) : null);
+           }
+           return value;
+        });
+    });
+
     if (isNew) {
-      setInvoice(prev => {
-        if (!prev) return null;
-        return { ...prev, id: newId, auditLog: updatedAuditLog };
-      });
       router.push(`/create-invoice?draftId=${newId}`, { scroll: false });
-    } else {
-       setInvoice(prev => {
-        if (!prev) return null;
-        return { ...prev, auditLog: updatedAuditLog };
-       });
     }
   };
   
@@ -533,7 +528,7 @@ export default function CreateInvoicePage() {
     const newDocId = firestore ? doc(collection(firestore, 'companies', companyId, INVOICES_COLLECTION)).id : crypto.randomUUID();
     const newAuditLogEntry: AuditLogEntry = {
         action: 'created',
-        timestamp: new Date(),
+        timestamp: Timestamp.now(),
         user: user.email || 'Unknown',
         version: 1,
     };
@@ -675,6 +670,7 @@ export default function CreateInvoicePage() {
     
 
     
+
 
 
 

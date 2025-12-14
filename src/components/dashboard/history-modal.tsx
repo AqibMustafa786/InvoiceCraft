@@ -22,7 +22,6 @@ interface HistoryModalProps {
 
 const safeFormat = (date: any, formatString: string) => {
     if (!date) return 'N/A';
-    // It could be a Firestore Timestamp (toDate) or a regular Date object
     const d = date.toDate ? date.toDate() : new Date(date);
     if (!isValid(d)) {
         return "Invalid Date";
@@ -88,4 +87,3 @@ export function HistoryModal({ isOpen, onClose, auditLog }: HistoryModalProps) {
     </Dialog>
   );
 }
-
