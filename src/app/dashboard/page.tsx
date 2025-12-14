@@ -1,8 +1,9 @@
 
+
 'use client';
 
 import { useState, useMemo, useCallback } from 'react';
-import type { Invoice, Estimate, DocumentStatus, Quote } from '@/lib/types';
+import type { Invoice, Estimate, DocumentStatus, Quote, AuditLogEntry } from '@/lib/types';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -23,7 +24,7 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { FilePlus2, Edit, Trash2, Filter, X, MoreHorizontal, FileText, Share2, DollarSign, Clock, FileWarning, Files, CheckCircle, FileQuestion, Users, Percent, AreaChart, Package } from "lucide-react";
+import { FilePlus2, Edit, Trash2, Filter, X, MoreHorizontal, FileText, Share2, DollarSign, Clock, FileWarning, Files, CheckCircle, FileQuestion, Users, Percent, AreaChart, Package, History } from "lucide-react";
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { format, isWithinInterval, isValid } from 'date-fns';
@@ -39,6 +40,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { motion } from 'framer-motion';
 import { Greeting } from '@/components/dashboard/greeting';
 import { KpiDetailsModal } from '@/components/dashboard/kpi-details-modal';
+import { HistoryModal } from '@/components/dashboard/history-modal';
 
 const INVOICES_COLLECTION = 'invoices';
 const ESTIMATES_COLLECTION = 'estimates';
@@ -181,6 +183,7 @@ export default function DashboardPage() {
     const [filters, setFilters] = useState<DashboardFilters>(initialFilters);
     const [isFilterSheetOpen, setIsFilterSheetOpen] = useState(false);
     const [modalState, setModalState] = useState<{ isOpen: boolean; title: string; data: DocumentType[] }>({ isOpen: false, title: '', data: [] });
+    const [historyModalState, setHistoryModalState] = useState<{ isOpen: boolean, auditLog: AuditLogEntry[]}>({isOpen: false, auditLog: []});
     const { toast } = useToast();
     const { firestore } = useFirebase();
     const { user, userProfile, isLoading: isAuthLoading } = useAuth();
@@ -215,6 +218,10 @@ export default function DashboardPage() {
 
     const handleKpiClick = (title: string, data: DocumentType[]) => {
         setModalState({ isOpen: true, title, data });
+    };
+
+    const handleHistoryClick = (auditLog: AuditLogEntry[] = []) => {
+        setHistoryModalState({ isOpen: true, auditLog });
     };
 
     const handleCreateInvoice = () => {
@@ -471,8 +478,7 @@ export default function DashboardPage() {
                         <TableHead>Client</TableHead>
                         <TableHead>Amount</TableHead>
                         <TableHead>Status</TableHead>
-                        <TableHead>Updated</TableHead>
-                        <TableHead>Created</TableHead>
+                        <TableHead className="text-center">History</TableHead>
                         <TableHead className="text-right">Actions</TableHead>
                     </TableRow>
                 </TableHeader>
@@ -484,7 +490,7 @@ export default function DashboardPage() {
                 >
                     {isLoading ? (
                         <TableRow>
-                            <TableCell colSpan={7} className="text-center h-24">
+                            <TableCell colSpan={6} className="text-center h-24">
                                 Loading documents...
                             </TableCell>
                         </TableRow>
@@ -538,8 +544,11 @@ export default function DashboardPage() {
                                     </DropdownMenuContent>
                                 </DropdownMenu>
                             </TableCell>
-                            <TableCell>{doc.updatedAt ? format(doc.updatedAt, 'yyyy-MM-dd HH:mm') : 'N/A'}</TableCell>
-                            <TableCell>{doc.createdAt ? format(doc.createdAt, 'yyyy-MM-dd HH:mm') : 'N/A'}</TableCell>
+                             <TableCell className="text-center">
+                                <Button variant="ghost" size="icon" className="rounded-full" onClick={() => handleHistoryClick(doc.auditLog)}>
+                                    <History className="h-4 w-4" />
+                                </Button>
+                            </TableCell>
                             <TableCell className="text-right">
                                 <DropdownMenu>
                                     <DropdownMenuTrigger asChild>
@@ -578,7 +587,7 @@ export default function DashboardPage() {
                         )
                     }) : (
                         <TableRow>
-                            <TableCell colSpan={7} className="text-center h-24">
+                            <TableCell colSpan={6} className="text-center h-24">
                                 No documents found.
                             </TableCell>
                         </TableRow>
@@ -632,6 +641,11 @@ export default function DashboardPage() {
                 title={modalState.title}
                 documents={modalState.data}
                 currencySymbol={currencySymbols[filteredDocuments[0]?.currency] || '$'}
+            />
+             <HistoryModal 
+                isOpen={historyModalState.isOpen}
+                onClose={() => setHistoryModalState({ isOpen: false, auditLog: [] })}
+                auditLog={historyModalState.auditLog}
             />
             <div className="container mx-auto p-4 md:p-8">
                 <FilterSheet

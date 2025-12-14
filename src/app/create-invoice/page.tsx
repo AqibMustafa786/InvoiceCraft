@@ -4,7 +4,7 @@
 
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { createPortal } from 'react-dom';
-import type { Invoice, LineItem } from '@/lib/types';
+import type { Invoice, LineItem, AuditLogEntry } from '@/lib/types';
 import { InvoiceForm } from '@/components/invoice-form';
 import { ClientInvoicePreview } from '@/components/invoice-preview';
 import { Button } from '@/components/ui/button';
@@ -14,7 +14,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { useFirebase, useMemoFirebase } from '@/firebase';
-import { doc, serverTimestamp, Timestamp, collection } from 'firebase/firestore';
+import { doc, serverTimestamp, Timestamp, collection, arrayUnion } from 'firebase/firestore';
 import { setDocumentNonBlocking } from '@/firebase/non-blocking-updates';
 import { useDoc } from '@/firebase/firestore/use-doc';
 import { DocumentTemplateSelector } from '@/components/document-template-selector';
@@ -82,6 +82,7 @@ const getInitialInvoice = (): Omit<Invoice, 'userId' | 'companyId'> => ({
   textColor: '#374151',
   amountPaid: 0,
   poNumber: '',
+  auditLog: [],
 
   construction: {
     jobSiteAddress: '',
@@ -339,6 +340,9 @@ export default function CreateInvoicePage() {
            if (['invoiceDate', 'dueDate', 'createdAt', 'updatedAt', 'projectStartDate', 'projectEndDate', 'visitDate', 'shootDate', 'rentalStartDate', 'rentalEndDate'].includes(key) && value) {
                return value.toDate ? value.toDate() : (isValid(new Date(value)) ? new Date(value) : null);
            }
+           if (key === 'auditLog' && Array.isArray(value)) {
+                return value.map(entry => ({ ...entry, timestamp: entry.timestamp?.toDate ? entry.timestamp.toDate() : new Date(entry.timestamp) }));
+            }
            return value;
        };
        const loadedDraft = JSON.parse(JSON.stringify(remoteDraft), fromJSON);
@@ -430,6 +434,15 @@ export default function CreateInvoicePage() {
     
     const isNew = !searchParams.get('draftId');
     const newId = isNew ? generateNewId(invoice) : invoice.id;
+    const isUpdate = !isNew;
+    const currentVersion = invoice.auditLog?.length || 0;
+
+    const newAuditLogEntry: AuditLogEntry = {
+        action: isUpdate ? 'updated' : 'created',
+        timestamp: serverTimestamp(),
+        user: user.email || 'Unknown',
+        version: currentVersion + 1,
+    };
 
     const draftToSave: any = {
       ...invoice,
@@ -437,8 +450,12 @@ export default function CreateInvoicePage() {
       userId: user.uid,
       companyId: companyId,
       updatedAt: serverTimestamp(),
-      createdAt: invoice.createdAt || serverTimestamp(), // Add createdAt if it doesn't exist
+      auditLog: arrayUnion(newAuditLogEntry)
     };
+    
+    if (!invoice.createdAt) {
+      draftToSave.createdAt = serverTimestamp();
+    }
     
     const dateFields = ['invoiceDate', 'dueDate'];
     dateFields.forEach(field => {
@@ -482,8 +499,10 @@ export default function CreateInvoicePage() {
     });
 
     if (isNew) {
-      setInvoice(prev => prev ? { ...prev, id: newId } : null);
+      setInvoice(prev => prev ? { ...prev, id: newId, auditLog: [newAuditLogEntry] } : null);
       router.push(`/create-invoice?draftId=${newId}`, { scroll: false });
+    } else {
+       setInvoice(prev => prev ? { ...prev, auditLog: [...(prev.auditLog || []), newAuditLogEntry] } : null);
     }
   };
   
@@ -627,5 +646,6 @@ export default function CreateInvoicePage() {
     
 
     
+
 
 

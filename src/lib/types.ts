@@ -265,6 +265,13 @@ export interface ITFreelanceInfo {
   milestoneDescription: string;
 }
 
+export interface AuditLogEntry {
+    action: 'created' | 'updated' | 'viewed' | 'signed' | 'declined' | 'sent';
+    timestamp: any; // Firestore Timestamp
+    user?: string; // email of the user
+    version: number;
+}
+
 export interface Invoice {
   id: string; 
   userId: string;
@@ -306,6 +313,7 @@ export interface Invoice {
   createdAt?: any;
   updatedAt?: any;
   amountPaid?: number;
+  auditLog?: AuditLogEntry[];
 
   // Category specific data
   construction?: ConstructionInfo;
@@ -334,13 +342,6 @@ export interface SignatureInfo {
     signedAt: any; // Firestore Timestamp
     signerName: string;
     signerIP?: string; // Optional, can be captured server-side
-}
-
-export interface AuditLogEntry {
-    action: 'created' | 'viewed' | 'signed' | 'declined' | 'sent';
-    timestamp: any; // Firestore Timestamp
-    actor?: 'user' | 'client';
-    details?: string;
 }
 
 export type EstimateCategory = 

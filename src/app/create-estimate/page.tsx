@@ -4,7 +4,7 @@
 
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { createPortal } from 'react-dom';
-import type { Estimate, LineItem, Quote } from '@/lib/types';
+import type { Estimate, LineItem, Quote, AuditLogEntry } from '@/lib/types';
 import { DocumentForm } from '@/components/document-form';
 import { ClientDocumentPreview } from '@/components/document-preview';
 import { Button } from '@/components/ui/button';
@@ -14,7 +14,7 @@ import { useToast } from '@/hooks/use-toast';
 import Link from 'next/link';
 import { useFirebase, useMemoFirebase } from '@/firebase';
 import { useAuth } from '@/context/auth-provider';
-import { doc, serverTimestamp, Timestamp, collection, addDoc, getDoc, setDoc, getDocs, query, where, CollectionReference } from 'firebase/firestore';
+import { doc, serverTimestamp, Timestamp, collection, addDoc, getDoc, setDoc, getDocs, query, where, CollectionReference, arrayUnion } from 'firebase/firestore';
 import { setDocumentNonBlocking } from '@/firebase/non-blocking-updates';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useDoc } from '@/firebase/firestore/use-doc';
@@ -86,6 +86,7 @@ const getInitialEstimate = (): Omit<Estimate, 'userId' | 'companyId'> => ({
   fontSize: 14,
   backgroundColor: '#FFFFFF',
   textColor: '#374151',
+  auditLog: [],
 
   homeRemodeling: {
     projectType: 'Kitchen Remodel',
@@ -277,6 +278,9 @@ export default function CreateEstimatePage() {
            if (['estimateDate', 'validUntilDate', 'expectedStartDate', 'expectedCompletionDate', 'createdAt', 'updatedAt'].includes(key) && value) {
                return value.toDate ? value.toDate() : (isValid(new Date(value)) ? new Date(value) : null);
            }
+            if (key === 'auditLog' && Array.isArray(value)) {
+                return value.map(entry => ({ ...entry, timestamp: entry.timestamp?.toDate ? entry.timestamp.toDate() : new Date(entry.timestamp) }));
+            }
            return value;
        };
        const loadedDraft = JSON.parse(JSON.stringify(remoteDraft), fromJSON);
@@ -356,9 +360,17 @@ export default function CreateEstimatePage() {
         return isValid(d) ? Timestamp.fromDate(d) : null;
     };
     
-    // Check if it's a new document (not yet saved to its final ID)
     const isNew = !searchParams.get('draftId');
     const newId = isNew ? generateNewId(document) : document.id;
+    const isUpdate = !isNew;
+    const currentVersion = document.auditLog?.length || 0;
+
+    const newAuditLogEntry: AuditLogEntry = {
+        action: isUpdate ? 'updated' : 'created',
+        timestamp: serverTimestamp(),
+        user: user.email || 'Unknown',
+        version: currentVersion + 1,
+    };
 
     const draftToSave: any = {
       ...document,
@@ -366,6 +378,7 @@ export default function CreateEstimatePage() {
       userId: user.uid, 
       companyId: companyId,
       updatedAt: serverTimestamp(),
+      auditLog: arrayUnion(newAuditLogEntry)
     };
 
     if (!document.createdAt) {
@@ -410,8 +423,10 @@ export default function CreateEstimatePage() {
     });
 
     if (isNew) {
-      setDocument(prev => prev ? { ...prev, id: newId } : null);
+      setDocument(prev => prev ? { ...prev, id: newId, auditLog: [newAuditLogEntry] } : null);
       router.push(`/create-estimate?draftId=${newId}`, { scroll: false });
+    } else {
+        setDocument(prev => prev ? { ...prev, auditLog: [...(prev.auditLog || []), newAuditLogEntry] } : null);
     }
   };
 
@@ -592,6 +607,7 @@ export default function CreateEstimatePage() {
     </>
   );
 }
+
 
 
 
