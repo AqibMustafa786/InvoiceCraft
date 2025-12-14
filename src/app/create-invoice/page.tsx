@@ -14,7 +14,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { useFirebase, useMemoFirebase } from '@/firebase';
-import { doc, serverTimestamp, Timestamp, collection, arrayUnion } from 'firebase/firestore';
+import { doc, serverTimestamp, Timestamp, collection } from 'firebase/firestore';
 import { setDocumentNonBlocking } from '@/firebase/non-blocking-updates';
 import { useDoc } from '@/firebase/firestore/use-doc';
 import { DocumentTemplateSelector } from '@/components/document-template-selector';
@@ -31,6 +31,15 @@ import { motion } from 'framer-motion';
 const INVOICES_COLLECTION = 'invoices';
 
 const getInitialLineItem = (): LineItem => ({ id: crypto.randomUUID(), name: '', quantity: 1, unitPrice: 0, taxable: false });
+
+const normalizeAuditLog = (auditLog: any): AuditLogEntry[] => {
+  if (Array.isArray(auditLog)) return auditLog;
+  if (auditLog && typeof auditLog === 'object') {
+    return Object.values(auditLog);
+  }
+  return [];
+};
+
 
 const getInitialInvoice = (): Omit<Invoice, 'userId' | 'companyId'> => ({
   id: '',
@@ -283,14 +292,6 @@ function PrintableInvoice({ doc, accentColor, backgroundColor, textColor }: { do
     );
 }
 
-const normalizeAuditLog = (auditLog: any): AuditLogEntry[] => {
-  if (Array.isArray(auditLog)) return auditLog;
-  if (auditLog && typeof auditLog === 'object') {
-    return Object.values(auditLog);
-  }
-  return [];
-};
-
 export default function CreateInvoicePage() {
   const [invoice, setInvoice] = useState<Invoice | null>(null);
   const [accentColor, setAccentColor] = useState<string>('hsl(var(--primary))');
@@ -456,6 +457,8 @@ export default function CreateInvoicePage() {
         user: user.email || 'Unknown',
         version: newVersion,
     };
+    
+    const updatedAuditLog = [...existingLog, newAuditLogEntry];
 
     const draftToSave: any = {
       ...invoice,
@@ -463,7 +466,7 @@ export default function CreateInvoicePage() {
       userId: user.uid,
       companyId: companyId,
       updatedAt: serverTimestamp(),
-      auditLog: arrayUnion(newAuditLogEntry)
+      auditLog: updatedAuditLog,
     };
     
     if (!invoice.createdAt) {
@@ -514,15 +517,13 @@ export default function CreateInvoicePage() {
     if (isNew) {
       setInvoice(prev => {
         if (!prev) return null;
-        const currentLog = normalizeAuditLog(prev.auditLog);
-        return { ...prev, id: newId, auditLog: [...currentLog, newAuditLogEntry] };
+        return { ...prev, id: newId, auditLog: updatedAuditLog };
       });
       router.push(`/create-invoice?draftId=${newId}`, { scroll: false });
     } else {
        setInvoice(prev => {
         if (!prev) return null;
-        const currentLog = normalizeAuditLog(prev.auditLog);
-        return { ...prev, auditLog: [...currentLog, newAuditLogEntry] };
+        return { ...prev, auditLog: updatedAuditLog };
        });
     }
   };
@@ -674,5 +675,6 @@ export default function CreateInvoicePage() {
     
 
     
+
 
 

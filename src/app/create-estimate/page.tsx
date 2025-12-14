@@ -14,7 +14,7 @@ import { useToast } from '@/hooks/use-toast';
 import Link from 'next/link';
 import { useFirebase, useMemoFirebase } from '@/firebase';
 import { useAuth } from '@/context/auth-provider';
-import { doc, serverTimestamp, Timestamp, collection, addDoc, getDoc, setDoc, getDocs, query, where, CollectionReference, arrayUnion } from 'firebase/firestore';
+import { doc, serverTimestamp, Timestamp, collection, addDoc, getDoc, setDoc, getDocs, query, where, CollectionReference } from 'firebase/firestore';
 import { setDocumentNonBlocking } from '@/firebase/non-blocking-updates';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useDoc } from '@/firebase/firestore/use-doc';
@@ -32,6 +32,14 @@ import { Skeleton } from '@/components/ui/skeleton';
 const ESTIMATES_COLLECTION = 'estimates';
 
 const getInitialLineItem = (): LineItem => ({ id: crypto.randomUUID(), name: '', quantity: 1, unitPrice: 0, taxable: false });
+
+const normalizeAuditLog = (auditLog: any): AuditLogEntry[] => {
+  if (Array.isArray(auditLog)) return auditLog;
+  if (auditLog && typeof auditLog === 'object') {
+    return Object.values(auditLog);
+  }
+  return [];
+};
 
 const getInitialEstimate = (): Omit<Estimate, 'userId' | 'companyId'> => ({
   id: '', 
@@ -219,15 +227,6 @@ function PrintableDocument({ doc, accentColor, backgroundColor, textColor }: { d
     );
 }
 
-const normalizeAuditLog = (auditLog: any): AuditLogEntry[] => {
-  if (Array.isArray(auditLog)) return auditLog;
-  if (auditLog && typeof auditLog === 'object') {
-    return Object.values(auditLog);
-  }
-  return [];
-};
-
-
 export default function CreateEstimatePage() {
   const { user, userProfile, isLoading: isAuthLoading } = useAuth();
   const [document, setDocument] = useState<Estimate | Quote | null>(null);
@@ -395,6 +394,8 @@ export default function CreateEstimatePage() {
         user: user.email || 'Unknown',
         version: newVersion,
     };
+    
+    const updatedAuditLog = [...existingLog, newAuditLogEntry];
 
     const draftToSave: any = {
       ...document,
@@ -402,7 +403,7 @@ export default function CreateEstimatePage() {
       userId: user.uid, 
       companyId: companyId,
       updatedAt: serverTimestamp(),
-      auditLog: arrayUnion(newAuditLogEntry)
+      auditLog: updatedAuditLog,
     };
 
     if (!document.createdAt) {
@@ -449,15 +450,13 @@ export default function CreateEstimatePage() {
     if (isNew) {
       setDocument(prev => {
         if (!prev) return null;
-        const currentLog = normalizeAuditLog(prev.auditLog);
-        return { ...prev, id: newId, auditLog: [...currentLog, newAuditLogEntry] };
+        return { ...prev, id: newId, auditLog: updatedAuditLog };
       });
       router.push(`/create-estimate?draftId=${newId}`, { scroll: false });
     } else {
        setDocument(prev => {
         if (!prev) return null;
-        const currentLog = normalizeAuditLog(prev.auditLog);
-        return { ...prev, auditLog: [...currentLog, newAuditLogEntry] };
+        return { ...prev, auditLog: updatedAuditLog };
       });
     }
   };
@@ -652,4 +651,5 @@ export default function CreateEstimatePage() {
     </>
   );
 }
+
 
