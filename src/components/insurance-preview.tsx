@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import { useState, useLayoutEffect, useRef, useEffect } from 'react';
@@ -317,7 +318,7 @@ export function InsurancePreview({ doc, logoUrl, accentColor, id = 'insurance-pr
 
   // Default live preview (single page)
   return (
-    <Card id={id} className="w-full shadow-lg rounded-xl overflow-hidden print-hide" style={previewStyle}>
+    <Card id={id} className="w-full shadow-lg rounded-xl overflow-hidden print-hide hover:shadow-primary/20 transition-shadow" style={previewStyle}>
       <CardContent className="p-0 bg-white text-gray-800 dark:bg-white dark:text-gray-800">
           <TemplateComponent
             {...commonProps}

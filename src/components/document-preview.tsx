@@ -332,7 +332,7 @@ const DocumentPreviewInternal: FC<DocumentPreviewProps> = ({ document, accentCol
   }
 
   return (
-    <Card id={id} className="w-full shadow-lg rounded-xl overflow-hidden print-hide" style={previewStyle}>
+    <Card id={id} className="w-full shadow-lg rounded-xl overflow-hidden print-hide hover:shadow-primary/20 transition-shadow" style={previewStyle}>
       <CardContent className="p-0" style={{backgroundColor: backgroundColor}}>
          <TemplateComponent
             {...commonProps}

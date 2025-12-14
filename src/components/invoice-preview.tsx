@@ -729,7 +729,7 @@ const InvoicePreviewInternal: FC<InvoicePreviewProps> = ({ invoice, accentColor,
 
   // Default live preview (single page)
   return (
-    <Card id={id} className="w-full shadow-lg rounded-xl overflow-hidden print-hide" style={{backgroundColor: backgroundColor}}>
+    <Card id={id} className="w-full shadow-lg rounded-xl overflow-hidden print-hide hover:shadow-primary/20 transition-shadow" style={{backgroundColor: backgroundColor}}>
       <CardContent className="p-0" style={{color: textColor}}>
           <TemplateComponent
             {...commonProps}

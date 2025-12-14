@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import type { Quote } from '@/lib/types';

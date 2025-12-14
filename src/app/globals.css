@@ -89,7 +89,7 @@
     @apply bg-background text-foreground font-body;
     min-height: 100vh;
     background-color: hsl(var(--background-hsl));
-    background-image: linear-gradient(to right, hsl(160 50% 90% / 0.3), transparent 70%);
+    background-image: linear-gradient(to right, hsl(160 50% 90% / 0.3) 80%, transparent);
   }
 
   .dark body {
@@ -140,3 +140,4 @@
   size: letter;
   margin: 0;
 }
+
