@@ -13,6 +13,9 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import type { AuditLogEntry } from '@/lib/types';
 import { format, isValid } from 'date-fns';
 import { Badge } from "../ui/badge";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "../ui/collapsible";
+import { Button } from "../ui/button";
+import { ChevronsUpDown } from "lucide-react";
 
 interface HistoryModalProps {
   isOpen: boolean;
@@ -42,7 +45,6 @@ const getActionVariant = (action: AuditLogEntry['action']) => {
 }
 
 export function HistoryModal({ isOpen, onClose, auditLog }: HistoryModalProps) {
-  // Defensive check: Ensure auditLog is an array. Default to empty array if not.
   const sortedLog = Array.isArray(auditLog)
     ? [...auditLog].sort((a, b) => (b.version || 0) - (a.version || 0))
     : [];
@@ -57,33 +59,46 @@ export function HistoryModal({ isOpen, onClose, auditLog }: HistoryModalProps) {
           </DialogDescription>
         </DialogHeader>
         <ScrollArea className="h-96 pr-4">
-          <div className="space-y-6">
+          <div className="relative space-y-6">
+            {/* Vertical timeline bar */}
+            <div className="absolute left-10 top-2 bottom-2 w-0.5 bg-border -translate-x-1/2"></div>
+            
             {sortedLog.length > 0 ? (
-                sortedLog.map((entry, index) => (
-                    <div key={index} className="flex gap-4">
-                       <div className="flex flex-col items-center">
-                            <Badge variant={getActionVariant(entry.action)} className="capitalize h-6 w-20 justify-center">
+                sortedLog.map((entry) => (
+                    <div key={entry.version} className="pl-20 relative">
+                       <div className="absolute left-10 top-1 w-4 h-4 rounded-full bg-primary -translate-x-1/2 border-4 border-background"></div>
+                       <div className="flex items-start justify-between">
+                            <div>
+                               <p className="font-semibold">Version {entry.version}</p>
+                               <p className="text-xs text-muted-foreground">
+                                   {safeFormat(entry.timestamp, "MMM d, yyyy 'at' h:mm a")} by {entry.user || 'Unknown'}
+                               </p>
+                            </div>
+                           <Badge variant={getActionVariant(entry.action)} className="capitalize h-6 justify-center">
                                 {entry.action}
                             </Badge>
-                            <div className="h-full w-px bg-border my-1"></div>
                        </div>
-                       <div className="pb-6">
-                           <p className="font-semibold">Version {entry.version}</p>
-                           <p className="text-xs text-muted-foreground">
-                                {safeFormat(entry.timestamp, "MMM d, yyyy 'at' h:mm a")}
-                           </p>
-                            {entry.user && <p className="text-xs text-muted-foreground">by {entry.user}</p>}
-                            {entry.changes && entry.changes.length > 0 && (
-                                <div className="mt-2 text-xs">
-                                    <p className="font-semibold">Changes:</p>
-                                    <ul className="list-disc pl-4 text-muted-foreground space-y-1">
-                                        {entry.changes.map((change, i) => (
-                                            <li key={i}>{change}</li>
-                                        ))}
-                                    </ul>
-                                </div>
-                            )}
-                       </div>
+                        
+                        {entry.changes && entry.changes.length > 0 && (
+                            <Collapsible className="mt-2">
+                                <CollapsibleTrigger asChild>
+                                    <Button variant="ghost" size="sm" className="text-xs h-7">
+                                        <ChevronsUpDown className="h-3 w-3 mr-1" />
+                                        View {entry.changes.length} change(s)
+                                    </Button>
+                                </CollapsibleTrigger>
+                                <CollapsibleContent>
+                                    <div className="mt-2 text-xs p-3 bg-muted/50 rounded-md border">
+                                        <p className="font-semibold mb-1">Changes:</p>
+                                        <ul className="list-disc pl-4 text-muted-foreground space-y-1">
+                                            {entry.changes.map((change, i) => (
+                                                <li key={i}>{change}</li>
+                                            ))}
+                                        </ul>
+                                    </div>
+                                </CollapsibleContent>
+                            </Collapsible>
+                        )}
                     </div>
                 ))
             ) : (
