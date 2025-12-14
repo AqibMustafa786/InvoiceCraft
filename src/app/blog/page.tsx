@@ -57,22 +57,23 @@ const blogPosts = [
 
 
 const containerVariants = {
-  hidden: { opacity: 1 },
+  hidden: { opacity: 0 },
   visible: {
     opacity: 1,
     transition: {
-      staggerChildren: 0.1
+      staggerChildren: 0.1,
+      delayChildren: 0.1,
     }
   }
 };
 
 const cardVariants = {
-  hidden: { opacity: 0, y: 30 },
+  hidden: { opacity: 0, y: 20 },
   visible: {
     opacity: 1,
     y: 0,
     transition: {
-        duration: 0.5,
+        duration: 0.4,
         ease: 'easeOut'
     }
   }
@@ -94,7 +95,7 @@ export default function BlogPage() {
         animate="visible"
       >
         {blogPosts.map((post) => (
-          <motion.div key={post.slug} variants={cardVariants} whileHover={{ y: -5, scale: 1.02 }} transition={{ duration: 0.2 }}>
+          <motion.div key={post.slug} variants={cardVariants} whileHover={{ y: -8, scale: 1.03, transition: { type: "spring", stiffness: 300 } }}>
             <Card className="flex flex-col overflow-hidden bg-card/50 backdrop-blur-sm shadow-lg hover:shadow-primary/20 transition-shadow duration-300 h-full">
               <div className="relative w-full h-48">
                  <Image 
