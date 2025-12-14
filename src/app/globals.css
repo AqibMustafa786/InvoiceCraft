@@ -89,8 +89,8 @@
     @apply bg-background text-foreground font-body;
     min-height: 100vh;
     background-color: hsl(var(--background-hsl));
-    background-image: radial-gradient(ellipse at top, hsl(var(--background-hsl) / 0.1), transparent),
-                      radial-gradient(ellipse at bottom, hsl(var(--primary) / 0.1), transparent);
+    background-image: radial-gradient(ellipse at top, hsl(var(--primary) / 0.1), transparent),
+                      radial-gradient(ellipse at bottom, hsl(var(--accent) / 0.1), transparent);
   }
 
   .dark body {
