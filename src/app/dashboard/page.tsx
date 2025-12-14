@@ -382,32 +382,44 @@ export default function DashboardPage() {
 
     const toDateSafe = (value: any): Date | null => {
         if (!value) return null;
-        if (value && typeof value.toDate === 'function') {
+        if (value instanceof Date) return value;
+        if (value.toDate && typeof value.toDate === 'function') {
             return value.toDate();
-        }
-        if (value instanceof Date) {
-            return isValid(value) ? value : null;
         }
         const d = new Date(value);
         return isValid(d) ? d : null;
+    };
+    
+    const normalizeAuditLog = (log: any): AuditLogEntry[] => {
+        if (!log) return [];
+        const entries = Array.isArray(log) ? log : Object.values(log);
+        return entries.map(entry => ({
+            ...entry,
+            timestamp: toDateSafe(entry.timestamp)
+        }));
     };
 
     const filteredDocuments = useMemo(() => {
         const allDocs: DocumentType[] = [...(invoices || []), ...(estimates || []), ...(quotes || [])];
         
         const safeParsedDocs = allDocs.map(doc => {
-            const newDoc = { ...doc };
+            const newDoc: any = { ...doc };
             
-            if (newDoc.documentType === 'invoice') {
-                newDoc.invoiceDate = toDateSafe((newDoc as Invoice).invoiceDate) as Date;
-                newDoc.dueDate = toDateSafe((newDoc as Invoice).dueDate) as Date;
-            } else if (newDoc.documentType === 'estimate' || newDoc.documentType === 'quote') {
-                (newDoc as Estimate | Quote).estimateDate = toDateSafe((newDoc as Estimate | Quote).estimateDate) as Date;
-                (newDoc as Estimate | Quote).validUntilDate = toDateSafe((newDoc as Estimate | Quote).validUntilDate) as Date;
+            const dateFields: (keyof Invoice | keyof Estimate | keyof Quote)[] = [
+                'invoiceDate', 'dueDate', 'estimateDate', 'validUntilDate', 'createdAt', 'updatedAt'
+            ];
+
+            dateFields.forEach(field => {
+                if (newDoc[field]) {
+                    newDoc[field] = toDateSafe(newDoc[field]);
+                }
+            });
+
+            if (newDoc.auditLog) {
+                newDoc.auditLog = normalizeAuditLog(newDoc.auditLog);
             }
-            newDoc.createdAt = toDateSafe(newDoc.createdAt);
-            newDoc.updatedAt = toDateSafe(newDoc.updatedAt);
-            return newDoc;
+
+            return newDoc as DocumentType;
         });
 
         return safeParsedDocs.filter(doc => {
@@ -769,4 +781,3 @@ export default function DashboardPage() {
         </>
     );
 }
-

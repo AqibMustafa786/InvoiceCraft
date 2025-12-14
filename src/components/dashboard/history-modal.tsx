@@ -25,7 +25,7 @@ interface HistoryModalProps {
 
 const safeFormat = (date: any, formatString: string) => {
     if (!date) return 'N/A';
-    const d = date.toDate ? date.toDate() : new Date(date);
+    const d = (date instanceof Date) ? date : date.toDate();
     if (!isValid(d)) {
         return "Invalid Date";
     }
@@ -112,4 +112,3 @@ export function HistoryModal({ isOpen, onClose, auditLog }: HistoryModalProps) {
     </Dialog>
   );
 }
-
