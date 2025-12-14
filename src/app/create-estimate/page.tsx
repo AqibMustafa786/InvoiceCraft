@@ -263,6 +263,11 @@ export default function CreateEstimatePage() {
     };
   }, []);
 
+  const processedDocument = useMemo(() => {
+    if (!document) return null;
+    return computeSummary(document);
+  }, [document, computeSummary]);
+
   useEffect(() => {
     if (isAuthLoading || (draftId && isDraftLoading)) return;
     if (!user) {
@@ -488,14 +493,20 @@ export default function CreateEstimatePage() {
     }
   };
 
-  useEffect(() => {
-    if (document) { 
-        const newDocument = computeSummary(document);
-         if (JSON.stringify(newDocument.summary) !== JSON.stringify(document.summary)) {
-            setDocument(newDocument);
-        }
-    }
-  }, [document, computeSummary]);
+  if (!processedDocument) {
+    return (
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
+            <div className="lg:col-span-3 space-y-4">
+            <Skeleton className="h-48 w-full" />
+            <Skeleton className="h-64 w-full" />
+            <Skeleton className="h-96 w-full" />
+            </div>
+            <div className="lg:col-span-2">
+                <Skeleton className="h-[800px] w-full" />
+            </div>
+        </div>
+    );
+  }
 
   return (
     <>
@@ -596,14 +607,14 @@ export default function CreateEstimatePage() {
                   </Sheet>
                   <div>
                     <h2 className="text-2xl font-bold font-headline mb-4">Live Preview</h2>
-                    <ClientDocumentPreview document={document} accentColor={accentColor} backgroundColor={backgroundColor} textColor={textColor} />
+                    <ClientDocumentPreview document={processedDocument} accentColor={accentColor} backgroundColor={backgroundColor} textColor={textColor} />
                   </div>
               </div>
             </div>
           </div>
         )}
       </div>
-      {document && <PrintableDocument doc={document} accentColor={accentColor} backgroundColor={backgroundColor} textColor={textColor} />}
+      {processedDocument && <PrintableDocument doc={processedDocument} accentColor={accentColor} backgroundColor={backgroundColor} textColor={textColor} />}
     </>
   );
 }

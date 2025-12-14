@@ -325,6 +325,11 @@ export default function CreateInvoicePage() {
     };
   }, []);
 
+  const processedInvoice = useMemo(() => {
+    if (!invoice) return null;
+    return computeSummary(invoice);
+  }, [invoice, computeSummary]);
+
   useEffect(() => {
     if (isAuthLoading || (draftId && isDraftLoading)) return;
     if (!user) {
@@ -399,15 +404,6 @@ export default function CreateInvoicePage() {
         }
     }
   }, [draftId, remoteDraft, isDraftLoading, user, isAuthLoading, companyId, router, firestore]);
-
-  useEffect(() => {
-    if (invoice) {
-        const newInvoice = computeSummary(invoice);
-         if (JSON.stringify(newInvoice.summary) !== JSON.stringify(invoice.summary)) {
-            setInvoice(newInvoice);
-        }
-    }
-  }, [invoice, computeSummary]);
   
   const serializedInvoice = useMemo(() => invoice ? JSON.stringify(invoice) : '', [invoice]);
 
@@ -530,7 +526,7 @@ export default function CreateInvoicePage() {
       });
   };
 
-  if (!invoice || (draftId && isDraftLoading) || isAuthLoading) {
+  if (!processedInvoice || (draftId && isDraftLoading) || isAuthLoading) {
     return (
         <div className="container mx-auto p-4 md:p-8">
             <h1 className="text-3xl font-bold font-headline">Loading...</h1>
@@ -632,17 +628,18 @@ export default function CreateInvoicePage() {
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ duration: 0.2 }}
                   >
-                    <ClientInvoicePreview invoice={invoice} accentColor={accentColor} backgroundColor={backgroundColor} textColor={textColor} />
+                    <ClientInvoicePreview invoice={processedInvoice} accentColor={accentColor} backgroundColor={backgroundColor} textColor={textColor} />
                   </motion.div>
                 </div>
             </div>
           </div>
         </div>
       </div>
-      {invoice && <PrintableInvoice doc={invoice} accentColor={accentColor} backgroundColor={backgroundColor} textColor={textColor} />}
+      {processedInvoice && <PrintableInvoice doc={processedInvoice} accentColor={accentColor} backgroundColor={backgroundColor} textColor={textColor} />}
     </>
   );
 }
     
 
     
+
