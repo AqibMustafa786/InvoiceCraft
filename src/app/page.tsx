@@ -1,10 +1,10 @@
-
 'use client';
 
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import Marquee from '@/components/marquee';
 import { motion } from 'framer-motion';
+import { FileText } from 'lucide-react';
 
 export default function HomePage() {
   const containerVariants = {
@@ -50,13 +50,13 @@ export default function HomePage() {
                   Documents
                 </span>
                 <span> in Seconds </span>
-                <motion.span 
+                <motion.div 
                   className="inline-block"
                   animate={{ rotate: [0, 14, -8, 14, -4, 10, 0] }}
                   transition={{ duration: 2, repeat: Infinity, repeatType: "loop", ease: "linear" }}
                 >
-                  ⚡️
-                </motion.span>
+                  <FileText className="inline-block h-12 w-12 text-primary" />
+                </motion.div>
               </motion.h1>
               <motion.p 
                 className="mt-6 text-lg text-muted-foreground md:text-xl max-w-2xl mx-auto"
