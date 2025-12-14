@@ -93,7 +93,7 @@
   }
 
   .dark body {
-     background-image: linear-gradient(to top right, black 25%, #240750 35%, #32012F 40%, transparent 80%);
+     background-image: linear-gradient(to top right, #030637 30%, #2D3250 30%, #3E3232 40%, transparent 80%);
   }
 
   .dark .btn-gradient-hover::before {
@@ -158,6 +158,7 @@
   size: letter;
   margin: 0;
 }
+
 
 
 
