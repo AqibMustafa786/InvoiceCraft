@@ -35,6 +35,8 @@ import { useAuth } from '@/context/auth-provider';
 import { collection, doc, setDoc, query, Timestamp, where } from 'firebase/firestore';
 import { deleteDocumentNonBlocking, updateDocumentNonBlocking } from '@/firebase';
 import { Skeleton } from '@/components/ui/skeleton';
+import { motion } from 'framer-motion';
+
 
 const INVOICES_COLLECTION = 'invoices';
 const ESTIMATES_COLLECTION = 'estimates';
@@ -60,6 +62,21 @@ const currencySymbols: { [key: string]: string } = {
 };
 
 type DocumentType = Invoice | Estimate | Quote;
+
+const pageVariants = {
+    hidden: { opacity: 0, y: -10 },
+    visible: { opacity: 1, y: 0, transition: { staggerChildren: 0.1, duration: 0.2 } },
+};
+
+const tableContainerVariants = {
+    hidden: { opacity: 0 },
+    visible: { opacity: 1, transition: { staggerChildren: 0.04 } },
+};
+
+const tableRowVariants = {
+    hidden: { opacity: 0, y: 8 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.3, ease: 'easeOut' } },
+};
 
 export default function DashboardPage() {
     const [deleteCandidate, setDeleteCandidate] = useState<{ id: string; collection: string } | null>(null);
@@ -397,12 +414,17 @@ export default function DashboardPage() {
                     </AlertDialogContent>
                 </AlertDialog>
 
-                <div className="flex justify-between items-center mb-8 gap-4 flex-wrap">
-                    <div>
+                <motion.div 
+                    className="flex justify-between items-center mb-8 gap-4 flex-wrap"
+                    variants={pageVariants}
+                    initial="hidden"
+                    animate="visible"
+                >
+                    <motion.div variants={pageVariants}>
                         <h1 className="text-3xl font-bold font-headline">Dashboard</h1>
                         <p className="text-muted-foreground">Manage your invoices, estimates, and quotes here.</p>
-                    </div>
-                    <div className="flex gap-2">
+                    </motion.div>
+                    <motion.div className="flex gap-2" variants={pageVariants}>
                         <Button onClick={handleCreateInvoice}>
                             <FilePlus2 className="mr-2 h-4 w-4" />
                             New Invoice
@@ -415,170 +437,180 @@ export default function DashboardPage() {
                             <FilePlus2 className="mr-2 h-4 w-4" />
                             New Quote
                         </Button>
-                    </div>
-                </div>
+                    </motion.div>
+                </motion.div>
                 
-                <Card className="bg-card/50 backdrop-blur-sm">
-                    <CardHeader>
-                        <CardTitle>My Documents</CardTitle>
-                        <CardDescription>A list of your saved documents from Firestore.</CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                        <div className="flex justify-between items-center mb-4 gap-2 flex-wrap">
-                            <Button variant="outline" onClick={() => setIsFilterSheetOpen(true)}>
-                               <Filter className="mr-2 h-4 w-4" />
-                               Filter
-                               {activeFilterCount > 0 && (
-                                   <Badge variant="secondary" className="ml-2 rounded-full h-5 w-5 p-0 flex items-center justify-center">{activeFilterCount}</Badge>
-                               )}
-                            </Button>
-                        </div>
-
-                        {activeFilterCount > 0 && (
-                            <div className="flex items-center gap-2 mb-4 flex-wrap">
-                                <span className="text-sm font-medium">Active filters:</span>
-                                {filters.clientName && <Badge variant="outline">Client: {filters.clientName}</Badge>}
-                                {filters.status && <Badge variant="outline">Status: {filters.status}</Badge>}
-                                {filters.amountMin !== null && <Badge variant="outline">Min Amount: ${filters.amountMin}</Badge>}
-                                {filters.amountMax !== null && <Badge variant="outline">Max Amount: ${filters.amountMax}</Badge>}
-                                {filters.dateFrom && <Badge variant="outline">From: {format(filters.dateFrom, 'MMM d, yyyy')}</Badge>}
-                                {filters.dateTo && <Badge variant="outline">To: {format(filters.dateTo, 'MMM d, yyyy')}</Badge>}
-                                 <Button variant="ghost" size="icon" className="h-6 w-6" onClick={resetFilters}>
-                                    <X className="h-4 w-4" />
-                                    <span className="sr-only">Clear all filters</span>
+                <motion.div initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.3, delay: 0.1 }}>
+                    <Card className="bg-card/50 backdrop-blur-sm">
+                        <CardHeader>
+                            <CardTitle>My Documents</CardTitle>
+                            <CardDescription>A list of your saved documents from Firestore.</CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            <div className="flex justify-between items-center mb-4 gap-2 flex-wrap">
+                                <Button variant="outline" onClick={() => setIsFilterSheetOpen(true)}>
+                                <Filter className="mr-2 h-4 w-4" />
+                                Filter
+                                {activeFilterCount > 0 && (
+                                    <Badge variant="secondary" className="ml-2 rounded-full h-5 w-5 p-0 flex items-center justify-center">{activeFilterCount}</Badge>
+                                )}
                                 </Button>
                             </div>
-                        )}
 
-                        <div className="overflow-x-auto">
-                            <Table>
-                                <TableHeader>
-                                    <TableRow>
-                                        <TableHead>Type</TableHead>
-                                        <TableHead>Number</TableHead>
-                                        <TableHead>Client</TableHead>
-                                        <TableHead>Amount</TableHead>
-                                        <TableHead>Status</TableHead>
-                                        <TableHead>Updated</TableHead>
-                                        <TableHead>Created</TableHead>
-                                        <TableHead className="text-right">Actions</TableHead>
-                                    </TableRow>
-                                </TableHeader>
-                                <TableBody>
-                                    {isLoading ? (
+                            {activeFilterCount > 0 && (
+                                <div className="flex items-center gap-2 mb-4 flex-wrap">
+                                    <span className="text-sm font-medium">Active filters:</span>
+                                    {filters.clientName && <Badge variant="outline">Client: {filters.clientName}</Badge>}
+                                    {filters.status && <Badge variant="outline">Status: {filters.status}</Badge>}
+                                    {filters.amountMin !== null && <Badge variant="outline">Min Amount: ${filters.amountMin}</Badge>}
+                                    {filters.amountMax !== null && <Badge variant="outline">Max Amount: ${filters.amountMax}</Badge>}
+                                    {filters.dateFrom && <Badge variant="outline">From: {format(filters.dateFrom, 'MMM d, yyyy')}</Badge>}
+                                    {filters.dateTo && <Badge variant="outline">To: {format(filters.dateTo, 'MMM d, yyyy')}</Badge>}
+                                    <Button variant="ghost" size="icon" className="h-6 w-6" onClick={resetFilters}>
+                                        <X className="h-4 w-4" />
+                                        <span className="sr-only">Clear all filters</span>
+                                    </Button>
+                                </div>
+                            )}
+
+                            <div className="overflow-x-auto">
+                                <Table>
+                                    <TableHeader>
                                         <TableRow>
-                                            <TableCell colSpan={8} className="text-center h-24">
-                                                Loading documents...
-                                            </TableCell>
+                                            <TableHead>Type</TableHead>
+                                            <TableHead>Number</TableHead>
+                                            <TableHead>Client</TableHead>
+                                            <TableHead>Amount</TableHead>
+                                            <TableHead>Status</TableHead>
+                                            <TableHead>Updated</TableHead>
+                                            <TableHead>Created</TableHead>
+                                            <TableHead className="text-right">Actions</TableHead>
                                         </TableRow>
-                                    ) : (invoicesError || estimatesError || quotesError) ? (
-                                        <TableRow>
-                                            <TableCell colSpan={8} className="text-center h-24 text-destructive">
-                                               Error loading documents. Please check your connection and security rules.
-                                            </TableCell>
-                                        </TableRow>
-                                    ) : combinedDocuments.length > 0 ? combinedDocuments.map((doc) => {
-                                        const isInvoice = doc.documentType === 'invoice';
-                                        const isEstimate = doc.documentType === 'estimate';
-                                        const isQuote = doc.documentType === 'quote';
+                                    </TableHeader>
+                                    <motion.tbody
+                                        variants={tableContainerVariants}
+                                        initial="hidden"
+                                        animate="visible"
+                                        as={TableBody}
+                                    >
+                                        {isLoading ? (
+                                            <TableRow>
+                                                <TableCell colSpan={8} className="text-center h-24">
+                                                    Loading documents...
+                                                </TableCell>
+                                            </TableRow>
+                                        ) : (invoicesError || estimatesError || quotesError) ? (
+                                            <TableRow>
+                                                <TableCell colSpan={8} className="text-center h-24 text-destructive">
+                                                Error loading documents. Please check your connection and security rules.
+                                                </TableCell>
+                                            </TableRow>
+                                        ) : combinedDocuments.length > 0 ? combinedDocuments.map((doc) => {
+                                            const isInvoice = doc.documentType === 'invoice';
+                                            const isEstimate = doc.documentType === 'estimate';
+                                            const isQuote = doc.documentType === 'quote';
 
-                                        const docNumber = isInvoice ? (doc as Invoice).invoiceNumber : (doc as Estimate | Quote).estimateNumber;
-                                        const clientName = isInvoice ? (doc as Invoice).client.name : (doc as Estimate | Quote).client.name;
-                                        
-                                        let docCollection: string;
-                                        let editUrl: string;
-                                        
-                                        if(isInvoice) {
-                                            docCollection = INVOICES_COLLECTION;
-                                            editUrl = `/create-invoice?draftId=${doc.id}`;
-                                        } else if (isEstimate) {
-                                            docCollection = ESTIMATES_COLLECTION;
-                                            editUrl = `/create-estimate?draftId=${doc.id}`;
-                                        } else {
-                                            docCollection = QUOTES_COLLECTION;
-                                            editUrl = `/create-quote?draftId=${doc.id}`;
-                                        }
+                                            const docNumber = isInvoice ? (doc as Invoice).invoiceNumber : (doc as Estimate | Quote).estimateNumber;
+                                            const clientName = isInvoice ? (doc as Invoice).client.name : (doc as Estimate | Quote).client.name;
+                                            
+                                            let docCollection: string;
+                                            let editUrl: string;
+                                            
+                                            if(isInvoice) {
+                                                docCollection = INVOICES_COLLECTION;
+                                                editUrl = `/create-invoice?draftId=${doc.id}`;
+                                            } else if (isEstimate) {
+                                                docCollection = ESTIMATES_COLLECTION;
+                                                editUrl = `/create-estimate?draftId=${doc.id}`;
+                                            } else {
+                                                docCollection = QUOTES_COLLECTION;
+                                                editUrl = `/create-quote?draftId=${doc.id}`;
+                                            }
 
-                                        return (
-                                        <TableRow key={doc.id}>
-                                            <TableCell><Badge variant={isInvoice ? 'secondary' : (isEstimate ? 'default' : 'outline')}>{doc.documentType}</Badge></TableCell>
-                                            <TableCell className="font-medium">{docNumber}</TableCell>
-                                            <TableCell>{clientName}</TableCell>
-                                            <TableCell>{currencySymbols[doc.currency] || '$'}{calculateTotal(doc).toFixed(2)}</TableCell>
-                                            <TableCell>
-                                                 <DropdownMenu>
-                                                    <DropdownMenuTrigger asChild>
-                                                        <Button variant="outline" className="capitalize w-28 justify-start">
-                                                            <Badge variant={getStatusVariant(doc.status)} className="w-full justify-center">{doc.status}</Badge>
-                                                        </Button>
-                                                    </DropdownMenuTrigger>
-                                                    <DropdownMenuContent align="start">
-                                                        {STATUS_OPTIONS.map(status => (
-                                                            <DropdownMenuItem
-                                                                key={status}
-                                                                disabled={doc.status === status}
-                                                                onClick={() => handleStatusChange(doc.id, docCollection, status)}
-                                                                className="capitalize"
-                                                            >
-                                                                {status}
+                                            return (
+                                            <motion.tr
+                                                key={doc.id}
+                                                variants={tableRowVariants}
+                                                className="transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted"
+                                                as={TableRow}
+                                            >
+                                                <TableCell><Badge variant={isInvoice ? 'secondary' : (isEstimate ? 'default' : 'outline')}>{doc.documentType}</Badge></TableCell>
+                                                <TableCell className="font-medium">{docNumber}</TableCell>
+                                                <TableCell>{clientName}</TableCell>
+                                                <TableCell>{currencySymbols[doc.currency] || '$'}{calculateTotal(doc).toFixed(2)}</TableCell>
+                                                <TableCell>
+                                                    <DropdownMenu>
+                                                        <DropdownMenuTrigger asChild>
+                                                            <Button variant="outline" className="capitalize w-28 justify-start">
+                                                                <Badge variant={getStatusVariant(doc.status)} className="w-full justify-center">{doc.status}</Badge>
+                                                            </Button>
+                                                        </DropdownMenuTrigger>
+                                                        <DropdownMenuContent align="start">
+                                                            {STATUS_OPTIONS.map(status => (
+                                                                <DropdownMenuItem
+                                                                    key={status}
+                                                                    disabled={doc.status === status}
+                                                                    onClick={() => handleStatusChange(doc.id, docCollection, status)}
+                                                                    className="capitalize"
+                                                                >
+                                                                    {status}
+                                                                </DropdownMenuItem>
+                                                            ))}
+                                                        </DropdownMenuContent>
+                                                    </DropdownMenu>
+                                                </TableCell>
+                                                <TableCell>{doc.updatedAt ? format(doc.updatedAt, 'yyyy-MM-dd HH:mm') : 'N/A'}</TableCell>
+                                                <TableCell>{doc.createdAt ? format(doc.createdAt, 'yyyy-MM-dd') : 'N/A'}</TableCell>
+                                                <TableCell className="text-right">
+                                                    <DropdownMenu>
+                                                        <DropdownMenuTrigger asChild>
+                                                            <Button variant="ghost" size="icon">
+                                                                <MoreHorizontal className="h-4 w-4" />
+                                                                <span className="sr-only">More actions</span>
+                                                            </Button>
+                                                        </DropdownMenuTrigger>
+                                                        <DropdownMenuContent align="end">
+                                                            <DropdownMenuItem asChild>
+                                                                <Link href={editUrl} className="cursor-pointer">
+                                                                    <Edit className="mr-2 h-4 w-4" />
+                                                                    <span>Edit</span>
+                                                                </Link>
                                                             </DropdownMenuItem>
-                                                        ))}
-                                                    </DropdownMenuContent>
-                                                </DropdownMenu>
-                                            </TableCell>
-                                            <TableCell>{doc.updatedAt ? format(doc.updatedAt, 'yyyy-MM-dd HH:mm') : 'N/A'}</TableCell>
-                                            <TableCell>{doc.createdAt ? format(doc.createdAt, 'yyyy-MM-dd') : 'N/A'}</TableCell>
-                                            <TableCell className="text-right">
-                                                <DropdownMenu>
-                                                    <DropdownMenuTrigger asChild>
-                                                        <Button variant="ghost" size="icon">
-                                                            <MoreHorizontal className="h-4 w-4" />
-                                                            <span className="sr-only">More actions</span>
-                                                        </Button>
-                                                    </DropdownMenuTrigger>
-                                                    <DropdownMenuContent align="end">
-                                                         <DropdownMenuItem asChild>
-                                                            <Link href={editUrl} className="cursor-pointer">
-                                                                <Edit className="mr-2 h-4 w-4" />
-                                                                <span>Edit</span>
-                                                            </Link>
-                                                        </DropdownMenuItem>
-                                                        {(isEstimate || isQuote) && (
-                                                            <>
-                                                                <DropdownMenuItem onClick={() => handleShare(doc.id, doc.documentType as 'estimate' | 'quote')} className="cursor-pointer">
-                                                                    <Share2 className="mr-2 h-4 w-4" />
-                                                                    <span>Share Link</span>
-                                                                </DropdownMenuItem>
-                                                                <DropdownMenuItem onClick={() => handleConvertToInvoice(doc as Estimate | Quote)} className="cursor-pointer">
-                                                                    <FileText className="mr-2 h-4 w-4" />
-                                                                    <span>Convert to Invoice</span>
-                                                                </DropdownMenuItem>
-                                                            </>
-                                                        )}
-                                                        <DropdownMenuItem onClick={() => setDeleteCandidate({id: doc.id, collection: docCollection})} className="text-destructive cursor-pointer">
-                                                            <Trash2 className="mr-2 h-4 w-4" />
-                                                            <span>Delete</span>
-                                                        </DropdownMenuItem>
-                                                    </DropdownMenuContent>
-                                                </DropdownMenu>
-                                            </TableCell>
-                                        </TableRow>
-                                        )
-                                    }) : (
-                                        <TableRow>
-                                            <TableCell colSpan={8} className="text-center h-24">
-                                                No documents found. Create one!
-                                            </TableCell>
-                                        </TableRow>
-                                    )}
-                                </TableBody>
-                            </Table>
-                        </div>
-                    </CardContent>
-                </Card>
+                                                            {(isEstimate || isQuote) && (
+                                                                <>
+                                                                    <DropdownMenuItem onClick={() => handleShare(doc.id, doc.documentType as 'estimate' | 'quote')} className="cursor-pointer">
+                                                                        <Share2 className="mr-2 h-4 w-4" />
+                                                                        <span>Share Link</span>
+                                                                    </DropdownMenuItem>
+                                                                    <DropdownMenuItem onClick={() => handleConvertToInvoice(doc as Estimate | Quote)} className="cursor-pointer">
+                                                                        <FileText className="mr-2 h-4 w-4" />
+                                                                        <span>Convert to Invoice</span>
+                                                                    </DropdownMenuItem>
+                                                                </>
+                                                            )}
+                                                            <DropdownMenuItem onClick={() => setDeleteCandidate({id: doc.id, collection: docCollection})} className="text-destructive cursor-pointer">
+                                                                <Trash2 className="mr-2 h-4 w-4" />
+                                                                <span>Delete</span>
+                                                            </DropdownMenuItem>
+                                                        </DropdownMenuContent>
+                                                    </DropdownMenu>
+                                                </TableCell>
+                                            </motion.tr>
+                                            )
+                                        }) : (
+                                            <TableRow>
+                                                <TableCell colSpan={8} className="text-center h-24">
+                                                    No documents found. Create one!
+                                                </TableCell>
+                                            </TableRow>
+                                        )}
+                                    </motion.tbody>
+                                </Table>
+                            </div>
+                        </CardContent>
+                    </Card>
+                </motion.div>
             </div>
         </>
     );
 }
-
-    
