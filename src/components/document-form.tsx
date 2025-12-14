@@ -463,7 +463,7 @@ export function DocumentForm({ document, setDocument, accentColor, setAccentColo
   return (
     <>
       <fieldset disabled={isSigned} className="space-y-6 group">
-        <Card className="bg-card/50 backdrop-blur-sm group-disabled:opacity-70">
+        <Card className="bg-card/50 backdrop-blur-sm shadow-lg hover:shadow-primary/20 transition-shadow duration-300 group-disabled:opacity-70">
             <CardHeader>
             <CardTitle>Branding &amp; Customization</CardTitle>
             </CardHeader>
@@ -609,7 +609,7 @@ export function DocumentForm({ document, setDocument, accentColor, setAccentColo
             </CardContent>
         </Card>
         
-        <Card className="bg-card/50 backdrop-blur-sm group-disabled:opacity-70">
+        <Card className="bg-card/50 backdrop-blur-sm shadow-lg hover:shadow-primary/20 transition-shadow duration-300 group-disabled:opacity-70">
             <CardHeader>
             <CardTitle>Business Information</CardTitle>
             </CardHeader>
@@ -665,7 +665,7 @@ export function DocumentForm({ document, setDocument, accentColor, setAccentColo
             </CardContent>
         </Card>
 
-        <Card className="bg-card/50 backdrop-blur-sm group-disabled:opacity-70">
+        <Card className="bg-card/50 backdrop-blur-sm shadow-lg hover:shadow-primary/20 transition-shadow duration-300 group-disabled:opacity-70">
             <CardHeader>
             <CardTitle>Client Information</CardTitle>
             </CardHeader>
@@ -713,7 +713,7 @@ export function DocumentForm({ document, setDocument, accentColor, setAccentColo
             </CardContent>
         </Card>
         
-        <Card className="bg-card/50 backdrop-blur-sm group-disabled:opacity-70">
+        <Card className="bg-card/50 backdrop-blur-sm shadow-lg hover:shadow-primary/20 transition-shadow duration-300 group-disabled:opacity-70">
             <CardHeader>
             <CardTitle>{docName} Details</CardTitle>
             </CardHeader>
@@ -776,7 +776,7 @@ export function DocumentForm({ document, setDocument, accentColor, setAccentColo
         </Card>
 
         {document.category === "Home Remodeling / Renovation" && document.homeRemodeling && (
-            <Card className="bg-card/50 backdrop-blur-sm group-disabled:opacity-70">
+            <Card className="bg-card/50 backdrop-blur-sm shadow-lg hover:shadow-primary/20 transition-shadow duration-300 group-disabled:opacity-70">
                 <CardHeader>
                     <CardTitle>Home Remodeling Details</CardTitle>
                 </CardHeader>
@@ -858,7 +858,7 @@ export function DocumentForm({ document, setDocument, accentColor, setAccentColo
         )}
 
         {document.category === "Roofing Estimate" && document.roofing && (
-            <Card className="bg-card/50 backdrop-blur-sm group-disabled:opacity-70">
+            <Card className="bg-card/50 backdrop-blur-sm shadow-lg hover:shadow-primary/20 transition-shadow duration-300 group-disabled:opacity-70">
                 <CardHeader><CardTitle>Roofing Project Details</CardTitle></CardHeader>
                 <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-2"><Label>Roof Material</Label><CustomSelect name="roofMaterial" value={document.roofing.roofMaterial} onValueChange={(name, value) => handleCategorySelectChange('roofing', name, value)} options={roofMaterials} placeholder="Select material" /></div>
@@ -878,7 +878,7 @@ export function DocumentForm({ document, setDocument, accentColor, setAccentColo
         )}
 
         {document.category === "HVAC (Air Conditioning / Heating)" && document.hvac && (
-            <Card className="bg-card/50 backdrop-blur-sm group-disabled:opacity-70">
+            <Card className="bg-card/50 backdrop-blur-sm shadow-lg hover:shadow-primary/20 transition-shadow duration-300 group-disabled:opacity-70">
                 <CardHeader>
                     <CardTitle>HVAC Project Details</CardTitle>
                 </CardHeader>
@@ -937,7 +937,7 @@ export function DocumentForm({ document, setDocument, accentColor, setAccentColo
         )}
 
         {document.category === "Plumbing Estimate" && document.plumbing && (
-             <Card className="bg-card/50 backdrop-blur-sm group-disabled:opacity-70">
+             <Card className="bg-card/50 backdrop-blur-sm shadow-lg hover:shadow-primary/20 transition-shadow duration-300 group-disabled:opacity-70">
                 <CardHeader>
                     <CardTitle>Plumbing Project Details</CardTitle>
                 </CardHeader>
@@ -996,7 +996,7 @@ export function DocumentForm({ document, setDocument, accentColor, setAccentColo
         )}
 
         {document.category === "Electrical Estimate" && document.electrical && (
-            <Card className="bg-card/50 backdrop-blur-sm group-disabled:opacity-70">
+            <Card className="bg-card/50 backdrop-blur-sm shadow-lg hover:shadow-primary/20 transition-shadow duration-300 group-disabled:opacity-70">
                 <CardHeader><CardTitle>Electrical Project Details</CardTitle></CardHeader>
                 <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-2"><Label>Service Type</Label><Input name="serviceType" value={document.electrical.serviceType} onChange={(e) => handleCategoryDataChange('electrical', e)} placeholder="e.g. Install, Repair, Upgrade" /></div>
@@ -1012,7 +1012,7 @@ export function DocumentForm({ document, setDocument, accentColor, setAccentColo
         )}
 
         {document.category === "Landscaping Estimate" && document.landscaping && (
-            <Card className="bg-card/50 backdrop-blur-sm group-disabled:opacity-70">
+            <Card className="bg-card/50 backdrop-blur-sm shadow-lg hover:shadow-primary/20 transition-shadow duration-300 group-disabled:opacity-70">
                 <CardHeader><CardTitle>Landscaping Project Details</CardTitle></CardHeader>
                 <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-2 md:col-span-2"><Label htmlFor="serviceType-landscaping">Service Type</Label><Input id="serviceType-landscaping" name="serviceType" value={document.landscaping.serviceType} onChange={(e) => handleCategoryDataChange('landscaping', e)} placeholder="e.g., Lawn Mowing, Tree Trimming" /></div>
@@ -1026,7 +1026,7 @@ export function DocumentForm({ document, setDocument, accentColor, setAccentColo
         )}
 
         {document.category === "Cleaning Estimate" && document.cleaning && (
-            <Card className="bg-card/50 backdrop-blur-sm group-disabled:opacity-70">
+            <Card className="bg-card/50 backdrop-blur-sm shadow-lg hover:shadow-primary/20 transition-shadow duration-300 group-disabled:opacity-70">
                 <CardHeader><CardTitle>Cleaning Job Details</CardTitle></CardHeader>
                 <CardContent className="space-y-6">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -1048,7 +1048,7 @@ export function DocumentForm({ document, setDocument, accentColor, setAccentColo
         )}
 
         {document.category === "Auto Repair Estimate" && document.autoRepair && (
-            <Card className="bg-card/50 backdrop-blur-sm group-disabled:opacity-70">
+            <Card className="bg-card/50 backdrop-blur-sm shadow-lg hover:shadow-primary/20 transition-shadow duration-300 group-disabled:opacity-70">
                 <CardHeader><CardTitle>Auto Repair Details</CardTitle></CardHeader>
                 <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-2"><Label htmlFor="vehicleMake">Vehicle Make</Label><Input id="vehicleMake" name="vehicleMake" value={document.autoRepair.vehicleMake} onChange={(e) => handleCategoryDataChange('autoRepair', e)} /></div>
@@ -1064,7 +1064,7 @@ export function DocumentForm({ document, setDocument, accentColor, setAccentColo
         )}
 
         {document.category === 'Construction Estimate' && document.construction && (
-            <Card className="bg-card/50 backdrop-blur-sm group-disabled:opacity-70">
+            <Card className="bg-card/50 backdrop-blur-sm shadow-lg hover:shadow-primary/20 transition-shadow duration-300 group-disabled:opacity-70">
                 <CardHeader><CardTitle>Construction Project Details</CardTitle></CardHeader>
                 <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-2"><Label htmlFor="constructionProjectType">Project Type</Label><Input id="constructionProjectType" name="projectType" value={document.construction.projectType} onChange={(e) => handleCategoryDataChange('construction', e)} placeholder="New Home, Addition..." /></div>
@@ -1081,7 +1081,7 @@ export function DocumentForm({ document, setDocument, accentColor, setAccentColo
         )}
 
         {document.category === 'IT / Freelance Estimate' && document.itFreelance && (
-            <Card className="bg-card/50 backdrop-blur-sm group-disabled:opacity-70">
+            <Card className="bg-card/50 backdrop-blur-sm shadow-lg hover:shadow-primary/20 transition-shadow duration-300 group-disabled:opacity-70">
                 <CardHeader><CardTitle>IT/Freelance Project Details</CardTitle></CardHeader>
                 <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-2"><Label htmlFor="itProjectType">Project Type</Label><Input id="itProjectType" name="projectType" value={document.itFreelance.projectType} onChange={(e) => handleCategoryDataChange('itFreelance', e)} placeholder="Website, App, Branding..." /></div>
@@ -1096,7 +1096,7 @@ export function DocumentForm({ document, setDocument, accentColor, setAccentColo
             </Card>
         )}
 
-        <Card className="bg-card/50 backdrop-blur-sm group-disabled:opacity-70">
+        <Card className="bg-card/50 backdrop-blur-sm shadow-lg hover:shadow-primary/20 transition-shadow duration-300 group-disabled:opacity-70">
             <CardHeader>
             <CardTitle>Line Items (Services / Products)</CardTitle>
             </CardHeader>
@@ -1240,7 +1240,7 @@ export function DocumentForm({ document, setDocument, accentColor, setAccentColo
             </CardContent>
         </Card>
 
-        <Card className="bg-card/50 backdrop-blur-sm group-disabled:opacity-70">
+        <Card className="bg-card/50 backdrop-blur-sm shadow-lg hover:shadow-primary/20 transition-shadow duration-300 group-disabled:opacity-70">
             <CardHeader>
             <CardTitle>Pricing Summary &amp; Terms</CardTitle>
             </CardHeader>

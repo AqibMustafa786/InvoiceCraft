@@ -1,5 +1,4 @@
 
-
 'use client';
 
 import { ChangeEvent, Dispatch, SetStateAction, useState, useEffect } from 'react';
@@ -364,7 +363,7 @@ export function InvoiceForm({ invoice, setInvoice, accentColor, setAccentColor, 
 
   return (
     <div className="space-y-6">
-      <Card className="bg-card/50 backdrop-blur-sm">
+      <Card className="bg-card/50 backdrop-blur-sm shadow-lg hover:shadow-primary/20 transition-shadow duration-300">
         <CardHeader>
           <CardTitle>Branding &amp; Customization</CardTitle>
         </CardHeader>
@@ -480,7 +479,7 @@ export function InvoiceForm({ invoice, setInvoice, accentColor, setAccentColor, 
         </CardContent>
       </Card>
       
-      <Card className="bg-card/50 backdrop-blur-sm">
+      <Card className="bg-card/50 backdrop-blur-sm shadow-lg hover:shadow-primary/20 transition-shadow duration-300">
         <CardHeader>
           <CardTitle>Bill From</CardTitle>
         </CardHeader>
@@ -536,7 +535,7 @@ export function InvoiceForm({ invoice, setInvoice, accentColor, setAccentColor, 
         </CardContent>
       </Card>
 
-      <Card className="bg-card/50 backdrop-blur-sm">
+      <Card className="bg-card/50 backdrop-blur-sm shadow-lg hover:shadow-primary/20 transition-shadow duration-300">
         <CardHeader>
           <CardTitle>Bill To</CardTitle>
         </CardHeader>
@@ -577,7 +576,7 @@ export function InvoiceForm({ invoice, setInvoice, accentColor, setAccentColor, 
         </CardContent>
       </Card>
       
-      <Card className="bg-card/50 backdrop-blur-sm">
+      <Card className="bg-card/50 backdrop-blur-sm shadow-lg hover:shadow-primary/20 transition-shadow duration-300">
         <CardHeader>
           <CardTitle>Invoice Details</CardTitle>
         </CardHeader>
@@ -648,7 +647,7 @@ export function InvoiceForm({ invoice, setInvoice, accentColor, setAccentColor, 
       </Card>
 
         {invoice.category === "Construction" && invoice.construction && (
-            <Card className="bg-card/50 backdrop-blur-sm">
+            <Card className="bg-card/50 backdrop-blur-sm shadow-lg hover:shadow-primary/20 transition-shadow duration-300">
                 <CardHeader><CardTitle>Construction Details</CardTitle></CardHeader>
                 <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-2 md:col-span-2"><Label>Job Site Address</Label><Input name="jobSiteAddress" value={invoice.construction.jobSiteAddress || ''} onChange={(e) => handleCategoryDataChange('construction', e)}/></div>
@@ -663,7 +662,7 @@ export function InvoiceForm({ invoice, setInvoice, accentColor, setAccentColor, 
         )}
         
         {invoice.category === "Roofing" && invoice.roofing && (
-            <Card className="bg-card/50 backdrop-blur-sm">
+            <Card className="bg-card/50 backdrop-blur-sm shadow-lg hover:shadow-primary/20 transition-shadow duration-300">
                 <CardHeader><CardTitle>Roofing Job Details</CardTitle></CardHeader>
                 <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-2"><Label>Roof Type</Label><CustomSelect name="roofType" value={invoice.roofing.roofType || ''} onValueChange={(name, value) => handleCategorySelectChange('roofing', name, value)} options={roofMaterials} placeholder="Select roof type"/></div>
@@ -677,7 +676,7 @@ export function InvoiceForm({ invoice, setInvoice, accentColor, setAccentColor, 
         )}
 
         {invoice.category === "Plumbing" && invoice.plumbing && (
-            <Card className="bg-card/50 backdrop-blur-sm">
+            <Card className="bg-card/50 backdrop-blur-sm shadow-lg hover:shadow-primary/20 transition-shadow duration-300">
                 <CardHeader><CardTitle>Plumbing Job Details</CardTitle></CardHeader>
                 <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-2"><Label>Service Type</Label><CustomSelect name="serviceType" value={invoice.plumbing.serviceType || ''} onValueChange={(name, value) => handleCategorySelectChange('plumbing', name, value)} options={plumbingServiceTypes} placeholder="Select service type"/></div>
@@ -689,7 +688,7 @@ export function InvoiceForm({ invoice, setInvoice, accentColor, setAccentColor, 
         )}
 
         {invoice.category === "Electrical Services" && invoice.electrical && (
-            <Card className="bg-card/50 backdrop-blur-sm">
+            <Card className="bg-card/50 backdrop-blur-sm shadow-lg hover:shadow-primary/20 transition-shadow duration-300">
                 <CardHeader><CardTitle>Electrical Job Details</CardTitle></CardHeader>
                 <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-2"><Label>Service Type</Label><Input name="serviceType" value={invoice.electrical.serviceType || ''} onChange={(e) => handleCategoryDataChange('electrical', e)} placeholder="e.g., Wiring, Panel Upgrade"/></div>
@@ -701,7 +700,7 @@ export function InvoiceForm({ invoice, setInvoice, accentColor, setAccentColor, 
         )}
 
         {invoice.category === "HVAC Services" && invoice.hvac && (
-            <Card className="bg-card/50 backdrop-blur-sm">
+            <Card className="bg-card/50 backdrop-blur-sm shadow-lg hover:shadow-primary/20 transition-shadow duration-300">
                 <CardHeader><CardTitle>HVAC Service Details</CardTitle></CardHeader>
                 <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-2"><Label>Unit Type</Label><CustomSelect name="unitType" value={invoice.hvac.unitType || ''} onValueChange={(name, value) => handleCategorySelectChange('hvac', name, value)} options={hvacServiceTypes} placeholder="Select unit type"/></div>
@@ -713,7 +712,7 @@ export function InvoiceForm({ invoice, setInvoice, accentColor, setAccentColor, 
         )}
 
         {invoice.category === "Landscaping & Lawn Care" && invoice.landscaping && (
-            <Card className="bg-card/50 backdrop-blur-sm">
+            <Card className="bg-card/50 backdrop-blur-sm shadow-lg hover:shadow-primary/20 transition-shadow duration-300">
                 <CardHeader><CardTitle>Landscaping Service Details</CardTitle></CardHeader>
                 <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-2"><Label>Lawn Square Footage</Label><Input name="lawnSquareFootage" type="number" value={invoice.landscaping.lawnSquareFootage || ''} onChange={(e) => handleCategoryDataChange('landscaping', e)}/></div>
@@ -725,7 +724,7 @@ export function InvoiceForm({ invoice, setInvoice, accentColor, setAccentColor, 
         )}
 
         {invoice.category === "Cleaning Services" && invoice.cleaning && (
-            <Card className="bg-card/50 backdrop-blur-sm">
+            <Card className="bg-card/50 backdrop-blur-sm shadow-lg hover:shadow-primary/20 transition-shadow duration-300">
                 <CardHeader><CardTitle>Cleaning Service Details</CardTitle></CardHeader>
                 <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-2"><Label>Cleaning Type</Label><Input name="cleaningType" value={invoice.cleaning.cleaningType || ''} onChange={(e) => handleCategoryDataChange('cleaning', e)} placeholder="e.g., Home, Office"/></div>
@@ -738,7 +737,7 @@ export function InvoiceForm({ invoice, setInvoice, accentColor, setAccentColor, 
         )}
 
         {invoice.category === "Freelance / Agency" && invoice.freelance && (
-            <Card className="bg-card/50 backdrop-blur-sm">
+            <Card className="bg-card/50 backdrop-blur-sm shadow-lg hover:shadow-primary/20 transition-shadow duration-300">
                 <CardHeader><CardTitle>Freelance Project Details</CardTitle></CardHeader>
                 <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-2"><Label>Project Name</Label><Input name="projectName" value={invoice.freelance.projectName || ''} onChange={(e) => handleCategoryDataChange('freelance', e)}/></div>
@@ -751,7 +750,7 @@ export function InvoiceForm({ invoice, setInvoice, accentColor, setAccentColor, 
         )}
 
         {invoice.category === "Consulting" && invoice.consulting && (
-            <Card className="bg-card/50 backdrop-blur-sm">
+            <Card className="bg-card/50 backdrop-blur-sm shadow-lg hover:shadow-primary/20 transition-shadow duration-300">
                 <CardHeader><CardTitle>Consulting Details</CardTitle></CardHeader>
                 <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-2"><Label>Consultation Type</Label><Input name="consultationType" value={invoice.consulting.consultationType || ''} onChange={(e) => handleCategoryDataChange('consulting', e)}/></div>
@@ -762,7 +761,7 @@ export function InvoiceForm({ invoice, setInvoice, accentColor, setAccentColor, 
         )}
 
         {invoice.category === 'Legal Services' && invoice.legal && (
-            <Card className="bg-card/50 backdrop-blur-sm"><CardHeader><CardTitle>Legal Service Details</CardTitle></CardHeader>
+            <Card className="bg-card/50 backdrop-blur-sm shadow-lg hover:shadow-primary/20 transition-shadow duration-300"><CardHeader><CardTitle>Legal Service Details</CardTitle></CardHeader>
                 <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-2"><Label>Case Name</Label><Input name="caseName" value={invoice.legal.caseName || ''} onChange={(e) => handleCategoryDataChange('legal', e)} /></div>
                     <div className="space-y-2"><Label>Case Number</Label><Input name="caseNumber" value={invoice.legal.caseNumber || ''} onChange={(e) => handleCategoryDataChange('legal', e)} /></div>
@@ -778,7 +777,7 @@ export function InvoiceForm({ invoice, setInvoice, accentColor, setAccentColor, 
         )}
 
         {invoice.category === 'Medical / Healthcare' && invoice.medical && (
-            <Card className="bg-card/50 backdrop-blur-sm"><CardHeader><CardTitle>Medical Billing Details</CardTitle></CardHeader>
+            <Card className="bg-card/50 backdrop-blur-sm shadow-lg hover:shadow-primary/20 transition-shadow duration-300"><CardHeader><CardTitle>Medical Billing Details</CardTitle></CardHeader>
                 <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-2"><Label>Patient Name</Label><Input name="patientName" value={invoice.medical.patientName || ''} onChange={(e) => handleCategoryDataChange('medical', e)} /></div>
                     <div className="space-y-2"><Label>Patient ID / Chart #</Label><Input name="patientId" value={invoice.medical.patientId || ''} onChange={(e) => handleCategoryDataChange('medical', e)} /></div>
@@ -795,7 +794,7 @@ export function InvoiceForm({ invoice, setInvoice, accentColor, setAccentColor, 
         )}
 
         {invoice.category === "Auto Repair" && invoice.autoRepair && (
-            <Card className="bg-card/50 backdrop-blur-sm">
+            <Card className="bg-card/50 backdrop-blur-sm shadow-lg hover:shadow-primary/20 transition-shadow duration-300">
                 <CardHeader><CardTitle>Auto Repair Details</CardTitle></CardHeader>
                 <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-2"><Label>Vehicle Make</Label><Input name="vehicleMake" value={invoice.autoRepair.vehicleMake || ''} onChange={(e) => handleCategoryDataChange('autoRepair', e)}/></div>
@@ -814,7 +813,7 @@ export function InvoiceForm({ invoice, setInvoice, accentColor, setAccentColor, 
         )}
 
         {invoice.category === 'E-commerce / Online Store' && invoice.ecommerce && (
-            <Card className="bg-card/50 backdrop-blur-sm"><CardHeader><CardTitle>E-commerce Order Details</CardTitle></CardHeader>
+            <Card className="bg-card/50 backdrop-blur-sm shadow-lg hover:shadow-primary/20 transition-shadow duration-300"><CardHeader><CardTitle>E-commerce Order Details</CardTitle></CardHeader>
                 <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-2"><Label>Order Number</Label><Input name="orderNumber" value={invoice.ecommerce.orderNumber || ''} onChange={(e) => handleCategoryDataChange('ecommerce', e)} /></div>
                     <div className="space-y-2"><Label>SKU</Label><Input name="sku" value={invoice.ecommerce.sku || ''} onChange={(e) => handleCategoryDataChange('ecommerce', e)} /></div>
@@ -828,7 +827,7 @@ export function InvoiceForm({ invoice, setInvoice, accentColor, setAccentColor, 
         )}
 
         {invoice.category === 'Retail / Wholesale' && invoice.retail && (
-            <Card className="bg-card/50 backdrop-blur-sm"><CardHeader><CardTitle>Retail/Wholesale Details</CardTitle></CardHeader>
+            <Card className="bg-card/50 backdrop-blur-sm shadow-lg hover:shadow-primary/20 transition-shadow duration-300"><CardHeader><CardTitle>Retail/Wholesale Details</CardTitle></CardHeader>
                 <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-2"><Label>SKU</Label><Input name="sku" value={invoice.retail.sku || ''} onChange={(e) => handleCategoryDataChange('retail', e)} /></div>
                     <div className="space-y-2"><Label>Product Category</Label><Input name="productCategory" value={invoice.retail.productCategory || ''} onChange={(e) => handleCategoryDataChange('retail', e)} /></div>
@@ -842,7 +841,7 @@ export function InvoiceForm({ invoice, setInvoice, accentColor, setAccentColor, 
         )}
 
         {invoice.category === 'Photography' && invoice.photography && (
-            <Card className="bg-card/50 backdrop-blur-sm"><CardHeader><CardTitle>Photography Service Details</CardTitle></CardHeader>
+            <Card className="bg-card/50 backdrop-blur-sm shadow-lg hover:shadow-primary/20 transition-shadow duration-300"><CardHeader><CardTitle>Photography Service Details</CardTitle></CardHeader>
                 <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-2"><Label>Event Type</Label><Input name="eventType" value={invoice.photography.eventType || ''} onChange={(e) => handleCategoryDataChange('photography', e)} /></div>
                     <div className="space-y-2"><Label>Shoot Date</Label><DatePicker date={invoice.photography.shootDate} setDate={(date) => handleDateChange('photography', 'shootDate', date)} /></div>
@@ -857,7 +856,7 @@ export function InvoiceForm({ invoice, setInvoice, accentColor, setAccentColor, 
         )}
 
         {invoice.category === 'Real Estate / Property Management' && invoice.realEstate && (
-            <Card className="bg-card/50 backdrop-blur-sm"><CardHeader><CardTitle>Real Estate Details</CardTitle></CardHeader>
+            <Card className="bg-card/50 backdrop-blur-sm shadow-lg hover:shadow-primary/20 transition-shadow duration-300"><CardHeader><CardTitle>Real Estate Details</CardTitle></CardHeader>
                 <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="md:col-span-2 space-y-2"><Label>Property Address</Label><Input name="propertyAddress" value={invoice.realEstate.propertyAddress || ''} onChange={(e) => handleCategoryDataChange('realEstate', e)} /></div>
                     <div className="space-y-2"><Label>Unit Number</Label><Input name="unitNumber" value={invoice.realEstate.unitNumber || ''} onChange={(e) => handleCategoryDataChange('realEstate', e)} /></div>
@@ -874,7 +873,7 @@ export function InvoiceForm({ invoice, setInvoice, accentColor, setAccentColor, 
         )}
 
         {invoice.category === 'Transportation / Trucking' && invoice.transportation && (
-            <Card className="bg-card/50 backdrop-blur-sm"><CardHeader><CardTitle>Transportation Details</CardTitle></CardHeader>
+            <Card className="bg-card/50 backdrop-blur-sm shadow-lg hover:shadow-primary/20 transition-shadow duration-300"><CardHeader><CardTitle>Transportation Details</CardTitle></CardHeader>
                 <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-2"><Label>Pickup Location</Label><Input name="pickupLocation" value={invoice.transportation.pickupLocation || ''} onChange={(e) => handleCategoryDataChange('transportation', e)} /></div>
                     <div className="space-y-2"><Label>Drop-off Location</Label><Input name="dropoffLocation" value={invoice.transportation.dropoffLocation || ''} onChange={(e) => handleCategoryDataChange('transportation', e)} /></div>
@@ -890,7 +889,7 @@ export function InvoiceForm({ invoice, setInvoice, accentColor, setAccentColor, 
         )}
 
         {invoice.category === 'IT Services / Tech Support' && invoice.itServices && (
-            <Card className="bg-card/50 backdrop-blur-sm"><CardHeader><CardTitle>IT Service Details</CardTitle></CardHeader>
+            <Card className="bg-card/50 backdrop-blur-sm shadow-lg hover:shadow-primary/20 transition-shadow duration-300"><CardHeader><CardTitle>IT Service Details</CardTitle></CardHeader>
                 <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-2"><Label>Service Type</Label><Input name="serviceType" value={invoice.itServices.serviceType || ''} onChange={(e) => handleCategoryDataChange('itServices', e)} /></div>
                     <div className="space-y-2"><Label>Hourly Rate</Label><Input type="number" name="hourlyRate" value={invoice.itServices.hourlyRate ?? ''} onChange={(e) => handleCategoryDataChange('itServices', e)} /></div>
@@ -904,7 +903,7 @@ export function InvoiceForm({ invoice, setInvoice, accentColor, setAccentColor, 
         )}
 
         {invoice.category === 'Rental / Property' && invoice.rental && (
-            <Card className="bg-card/50 backdrop-blur-sm"><CardHeader><CardTitle>Rental Details</CardTitle></CardHeader>
+            <Card className="bg-card/50 backdrop-blur-sm shadow-lg hover:shadow-primary/20 transition-shadow duration-300"><CardHeader><CardTitle>Rental Details</CardTitle></CardHeader>
                 <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="md:col-span-2 space-y-2"><Label>Rental Item Name</Label><Input name="rentalItemName" value={invoice.rental.rentalItemName || ''} onChange={(e) => handleCategoryDataChange('rental', e)} /></div>
                     <div className="space-y-2"><Label>Rental Start Date</Label><DatePicker date={invoice.rental.rentalStartDate} setDate={(date) => handleDateChange('rental', 'rentalStartDate', date)} /></div>
@@ -922,7 +921,7 @@ export function InvoiceForm({ invoice, setInvoice, accentColor, setAccentColor, 
         )}
       
       
-      <Card className="bg-card/50 backdrop-blur-sm">
+      <Card className="bg-card/50 backdrop-blur-sm shadow-lg hover:shadow-primary/20 transition-shadow duration-300">
         <CardHeader>
           <CardTitle>Items</CardTitle>
         </CardHeader>
@@ -984,7 +983,7 @@ export function InvoiceForm({ invoice, setInvoice, accentColor, setAccentColor, 
         </CardContent>
       </Card>
 
-      <Card className="bg-card/50 backdrop-blur-sm">
+      <Card className="bg-card/50 backdrop-blur-sm shadow-lg hover:shadow-primary/20 transition-shadow duration-300">
         <CardHeader>
           <CardTitle>Totals &amp; Notes</CardTitle>
         </CardHeader>
@@ -1055,4 +1054,5 @@ export function InvoiceForm({ invoice, setInvoice, accentColor, setAccentColor, 
     </div>
   );
 }
+
 
