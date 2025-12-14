@@ -566,7 +566,7 @@ export default function DashboardPage() {
                                                     </DropdownMenu>
                                                 </TableCell>
                                                 <TableCell>{doc.updatedAt ? format(doc.updatedAt, 'yyyy-MM-dd HH:mm') : 'N/A'}</TableCell>
-                                                <TableCell>{doc.createdAt ? format(doc.createdAt, 'yyyy-MM-dd') : 'N/A'}</TableCell>
+                                                <TableCell>{doc.createdAt ? format(doc.createdAt, 'yyyy-MM-dd HH:mm') : 'N/A'}</TableCell>
                                                 <TableCell className="text-right">
                                                     <DropdownMenu>
                                                         <DropdownMenuTrigger asChild>
