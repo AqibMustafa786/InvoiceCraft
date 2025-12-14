@@ -30,6 +30,17 @@ const safeFormat = (date: Date | string | number | null | undefined, formatStrin
     return format(d, formatString);
 }
 
+const SignatureDisplay = ({ signature, label }: { signature: any, label: string }) => {
+    if (!signature?.image) return null;
+    return (
+        <div className="mt-8">
+            <Image src={signature.image} alt={label} width={150} height={75} className="border-b border-gray-400" />
+            <p className="text-xs text-gray-500 pt-1 border-t-2 border-gray-700 w-[150px]">{label}</p>
+        </div>
+    )
+}
+
+
 const EcommerceDetails: React.FC<{ invoice: Invoice, t: any }> = ({ invoice, t }) => {
     if (!invoice.ecommerce) return null;
     const { ecommerce } = invoice;
@@ -46,59 +57,63 @@ const EcommerceDetails: React.FC<{ invoice: Invoice, t: any }> = ({ invoice, t }
 };
 
 export const EcommerceTemplate1: React.FC<PageProps> = (props) => {
-    const { invoice, pageItems, pageIndex, totalPages, subtotal, taxAmount, balanceDue, currencySymbol, t } = props;
+    const { invoice, pageItems, pageIndex, totalPages, subtotal, taxAmount, discountAmount, total, balanceDue, currencySymbol, t, accentColor, textColor } = props;
     const { business, client } = invoice;
-    // The primary color from the image is orange. Let's use it as the accent.
-    const accentColor = '#F97316'; 
+    const docTitle = (t.invoice || 'INVOICE').toUpperCase();
 
     return (
-        <div className={`p-0 font-sans text-gray-800 ${pageIndex < totalPages - 1 ? 'page-break-after' : ''}`} style={{ minHeight: '1056px', backgroundColor: '#FFFFFF', color: '#374151' }}>
-            {/* Header Section */}
+        <div className={`p-0 font-sans text-gray-800 ${pageIndex < totalPages - 1 ? 'page-break-after' : ''}`} style={{ minHeight: '1056px', backgroundColor: props.backgroundColor, color: textColor }}>
             <header className="relative text-white" style={{ backgroundColor: accentColor }}>
                 <div className="flex justify-between items-center p-10">
                     <div className="w-1/2">
-                        <h1 className="text-4xl font-extrabold tracking-tight">CREATE YOUR</h1>
-                        <h1 className="text-4xl font-extrabold tracking-tight">OWN STYLE</h1>
-                        <p className="text-lg font-light tracking-[0.2em] mt-2">NEW COLLECTION</p>
+                        <h1 className="text-4xl font-extrabold tracking-tight">{business.name}</h1>
+                        <p className="text-xs text-white/80 whitespace-pre-line">{business.address}</p>
+                        <p className="text-xs text-white/80">{business.phone} | {business.email}</p>
+                        {business.website && <p className="text-xs text-white/80">{business.website}</p>}
                     </div>
                     <div className="w-1/2 h-40 relative">
-                        <Image src="https://picsum.photos/seed/ecom-fashion/400/200" layout="fill" objectFit="cover" alt="Fashion models" className="rounded-md" data-ai-hint="fashion models" />
+                        {business.logoUrl ? (
+                             <Image src={business.logoUrl} layout="fill" objectFit="contain" alt="Company Logo" className="rounded-md" />
+                        ) : (
+                             <Image src="https://picsum.photos/seed/ecom-fashion/400/200" layout="fill" objectFit="cover" alt="Fashion models" className="rounded-md" data-ai-hint="fashion models" />
+                        )}
                     </div>
                 </div>
             </header>
 
             <div className="p-10">
-                {/* Client and Invoice Details */}
                 <section className="grid grid-cols-2 gap-8 text-sm mb-8">
                     <div>
                         <p className="font-bold text-lg mb-2">Invoice to: {client.name}</p>
-                        <p className="text-xs text-gray-600 whitespace-pre-line">{client.address}</p>
-                         {/* This section can be populated with bank details if needed */}
-                         <p className="text-xs text-gray-600 mt-2">
-                           <span className="font-bold">Bank Details:</span> Add your details here
-                        </p>
+                        <div className="text-xs text-gray-600">
+                            <p className="whitespace-pre-line">{client.address}</p>
+                            <p>{client.phone}</p>
+                            <p>{client.email}</p>
+                            {client.shippingAddress && <p className="mt-2"><span className="font-bold">Ship To:</span><br/>{client.shippingAddress}</p>}
+                        </div>
                     </div>
                     <div className="text-right">
                         <div className="flex justify-end items-center gap-2 mb-2">
                              <div className="w-8 h-8 bg-black rounded-full flex items-center justify-center">
                                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="white"><path d="M8 5v14l11-7z"/></svg>
                              </div>
-                             <p className="text-xl font-bold">NEW SALE</p>
+                             <p className="text-xl font-bold">{docTitle}</p>
                         </div>
                         <p className="text-xs"><span className="font-bold">Invoice#:</span> {invoice.invoiceNumber}</p>
                         <p className="text-xs"><span className="font-bold">Date:</span> {safeFormat(invoice.invoiceDate, 'MM/dd/yyyy')}</p>
+                        <p className="text-xs"><span className="font-bold">Due Date:</span> {safeFormat(invoice.dueDate, 'MM/dd/yyyy')}</p>
+                        {invoice.poNumber && <p className="text-xs"><span className="font-bold">PO #:</span> {invoice.poNumber}</p>}
                     </div>
                 </section>
                 
                 <EcommerceDetails invoice={invoice} t={t} />
 
-                {/* Items Table */}
                 <main className="flex-grow">
                     <table className="w-full text-left text-xs">
                         <thead>
                             <tr style={{ backgroundColor: accentColor, color: 'white' }}>
                                 <th className="p-2 font-bold w-[5%]">SL.</th>
-                                <th className="p-2 font-bold w-[55%]">PLANT DESCRIPTION</th>
+                                <th className="p-2 font-bold w-[55%]">PRODUCT DESCRIPTION</th>
                                 <th className="p-2 font-bold text-right">PRICE</th>
                                 <th className="p-2 font-bold text-center">QTY.</th>
                                 <th className="p-2 font-bold text-right">TOTAL</th>
@@ -120,21 +135,24 @@ export const EcommerceTemplate1: React.FC<PageProps> = (props) => {
 
                 {pageIndex === totalPages - 1 && (
                 <footer className="mt-8 pt-8 border-t">
-                    <div className="flex justify-between items-end">
-                        <div className="text-xs">
+                    <div className="flex justify-between items-start">
+                        <div className="text-xs w-1/2">
                             <p className="font-bold text-lg mb-2">Thank you for your purchase</p>
-                            <p className="font-semibold">Payment Info:</p>
-                            <p>Account#: 1234567890</p>
-                            <p>A/C Name: {business.name}</p>
-                            <p>Bank Details: Add your details</p>
+                            <p className="font-semibold">Payment Instructions:</p>
+                            <p className="whitespace-pre-line">{invoice.paymentInstructions}</p>
+                            {business.ownerSignature && <SignatureDisplay signature={business.ownerSignature} label="Authorized Signature" />}
                         </div>
                          <div className="w-1/3 text-xs space-y-2">
                             <p className="flex justify-between"><span>SUBTOTAL:</span> <span>{currencySymbol}{subtotal.toFixed(2)}</span></p>
+                            {discountAmount > 0 && <p className="flex justify-between text-red-500"><span>DISCOUNT:</span><span>-{currencySymbol}{discountAmount.toFixed(2)}</span></p>}
+                            {invoice.summary.shippingCost > 0 && <p className="flex justify-between"><span>SHIPPING:</span><span>{currencySymbol}{invoice.summary.shippingCost.toFixed(2)}</span></p>}
                             <p className="flex justify-between"><span>TAX:</span> <span>{currencySymbol}{taxAmount.toFixed(2)}</span></p>
-                            <div className="p-3 rounded-md text-white font-bold flex justify-between text-base" style={{backgroundColor: accentColor}}>
+                             <div className="p-3 rounded-md text-white font-bold flex justify-between text-base" style={{backgroundColor: accentColor}}>
                                 <span>TOTAL:</span>
-                                <span>{currencySymbol}{balanceDue.toFixed(2)}</span>
+                                <span>{currencySymbol}{total.toFixed(2)}</span>
                             </div>
+                            {(invoice.amountPaid || 0) > 0 && <p className="flex justify-between font-bold text-green-600"><span>PAID:</span><span>-{currencySymbol}{(invoice.amountPaid || 0).toFixed(2)}</span></p>}
+                            <p className="flex justify-between font-bold text-base mt-1"><span>BALANCE DUE:</span><span>{currencySymbol}{balanceDue.toFixed(2)}</span></p>
                         </div>
                     </div>
                 </footer>
