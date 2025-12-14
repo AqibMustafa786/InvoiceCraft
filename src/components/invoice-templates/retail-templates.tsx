@@ -1,5 +1,4 @@
 
-
 'use client';
 
 import React from 'react';
@@ -31,6 +30,16 @@ const safeFormat = (date: Date | string | number | null | undefined, formatStrin
     return format(d, formatString);
 }
 
+const SignatureDisplay = ({ signature, label }: { signature: any, label: string }) => {
+    if (!signature?.image) return null;
+    return (
+        <div className="mt-8">
+            <Image src={signature.image} alt={label} width={150} height={75} className="border-b border-gray-400" />
+            <p className="text-xs text-gray-500 pt-1 border-t-2 border-gray-700 w-[150px]">{label}</p>
+        </div>
+    )
+}
+
 const RetailDetails: React.FC<{ invoice: Invoice, t: any }> = ({ invoice, t }) => {
     if (!invoice.retail) return null;
     const { retail } = invoice;
@@ -51,8 +60,9 @@ const RetailDetails: React.FC<{ invoice: Invoice, t: any }> = ({ invoice, t }) =
 };
 
 export const RetailTemplate1: React.FC<PageProps> = (props) => {
-    const { invoice, pageItems, pageIndex, totalPages, subtotal, taxAmount, total, balanceDue, currencySymbol, t, accentColor, textColor } = props;
+    const { invoice, pageItems, pageIndex, totalPages, subtotal, taxAmount, discountAmount, total, balanceDue, currencySymbol, t, accentColor, textColor } = props;
     const { business, client } = invoice;
+    const docTitle = (t.invoice || 'INVOICE').toUpperCase();
 
     return (
         <div className={`font-sans flex ${pageIndex < totalPages - 1 ? 'page-break-after' : ''}`} style={{ minHeight: '1056px', backgroundColor: props.backgroundColor, color: textColor }}>
@@ -62,11 +72,14 @@ export const RetailTemplate1: React.FC<PageProps> = (props) => {
                     <div>
                         {business.logoUrl && <Image src={business.logoUrl} alt="Logo" width={100} height={50} className="object-contain mb-2"/>}
                         <h1 className="text-xl font-bold">{business.name}</h1>
-                        <p className="text-xs">{business.address}</p>
-                        <p className="text-xs">{business.phone} | {business.website}</p>
+                        <p className="text-xs whitespace-pre-line">{business.address}</p>
+                        <p className="text-xs">{business.phone} | {business.email}</p>
+                        {business.website && <p className="text-xs">{business.website}</p>}
+                        {business.licenseNumber && <p className="text-xs">Lic #: {business.licenseNumber}</p>}
+                        {business.taxId && <p className="text-xs">Tax ID: {business.taxId}</p>}
                     </div>
                     <div className="text-right">
-                        <h2 className="text-3xl font-bold text-gray-700">INVOICE</h2>
+                        <h2 className="text-3xl font-bold text-gray-700">{docTitle}</h2>
                         <p className="text-xs mt-1"><span className="font-semibold">DATE:</span> {safeFormat(invoice.invoiceDate, 'yyyy-MM-dd')}</p>
                         <p className="text-xs"><span className="font-semibold">INVOICE #:</span> {invoice.invoiceNumber}</p>
                     </div>
@@ -76,12 +89,14 @@ export const RetailTemplate1: React.FC<PageProps> = (props) => {
                     <div>
                         <p className="font-bold">Bill To:</p>
                         <p>{client.name}</p>
-                        <p>{client.address}</p>
+                        <p className="whitespace-pre-line">{client.address}</p>
+                        <p>{client.phone}</p>
+                        <p>{client.email}</p>
                     </div>
                      <div>
                         <p className="font-bold">Ship To:</p>
-                        <p>{client.shippingAddress || client.name}</p>
-                        <p>{client.shippingAddress ? '' : client.address}</p>
+                        <p>{client.shippingAddress ? client.name : ''}</p>
+                        <p className="whitespace-pre-line">{client.shippingAddress || client.address}</p>
                     </div>
                 </section>
                 <section className="text-xs mb-4">
@@ -108,6 +123,7 @@ export const RetailTemplate1: React.FC<PageProps> = (props) => {
                         </tbody>
                      </table>
                 </section>
+                <RetailDetails invoice={invoice} t={t} />
                 <main className="flex-grow">
                     <table className="w-full text-left text-xs border-collapse">
                         <thead>
@@ -139,22 +155,20 @@ export const RetailTemplate1: React.FC<PageProps> = (props) => {
                 <footer className="mt-4 pt-4">
                     <div className="flex justify-between items-start">
                         <div>
-                            {business.ownerSignature && (
-                                <div>
-                                    <p className="font-bold text-xs">SIGNATURE:</p>
-                                    <Image src={business.ownerSignature.image} alt="Signature" width={120} height={40} className="mt-1" />
-                                </div>
-                            )}
+                             <p className="font-bold text-xs mb-2">Notes / Payment Instructions:</p>
+                             <p className="text-xs whitespace-pre-line">{invoice.paymentInstructions}</p>
+                             {business.ownerSignature && <SignatureDisplay signature={business.ownerSignature} label={"Authorized Signature"} />}
                         </div>
                         <div className="w-1/3 text-xs">
                              <table className="w-full">
                                 <tbody>
                                     <tr><td className="text-right pr-4">SUBTOTAL</td><td className="text-right p-1 border">{currencySymbol}{subtotal.toFixed(2)}</td></tr>
+                                    {discountAmount > 0 && <tr><td className="text-right pr-4 text-red-600">DISCOUNT</td><td className="text-right p-1 border text-red-600">-{currencySymbol}{discountAmount.toFixed(2)}</td></tr>}
+                                    {invoice.summary.shippingCost > 0 && <tr><td className="text-right pr-4">SHIPPING</td><td className="text-right p-1 border">{currencySymbol}{invoice.summary.shippingCost.toFixed(2)}</td></tr>}
                                     <tr><td className="text-right pr-4">TAX ({invoice.summary.taxPercentage}%)</td><td className="text-right p-1 border">{currencySymbol}{taxAmount.toFixed(2)}</td></tr>
-                                    <tr><td className="text-right pr-4">Delivery</td><td className="text-right p-1 border">{invoice.summary.shippingCost > 0 ? currencySymbol + invoice.summary.shippingCost.toFixed(2) : '-'}</td></tr>
                                     <tr className="font-bold"><td className="text-right pr-4">TOTAL</td><td className="text-right p-1 border">{currencySymbol}{total.toFixed(2)}</td></tr>
-                                    <tr><td className="text-right pr-4">PAID</td><td className="text-right p-1 border">{invoice.amountPaid ? currencySymbol + invoice.amountPaid.toFixed(2) : '-'}</td></tr>
-                                    <tr className="font-bold"><td className="text-right pr-4">TOTAL DUE</td><td className="text-right p-1 border">{currencySymbol}{balanceDue.toFixed(2)}</td></tr>
+                                    {(invoice.amountPaid || 0) > 0 && <tr className="font-bold text-green-600"><td className="text-right pr-4">PAID</td><td className="text-right p-1 border">-{currencySymbol}{(invoice.amountPaid || 0).toFixed(2)}</td></tr>}
+                                    <tr className="font-bold"><td className="text-right pr-4">BALANCE DUE</td><td className="text-right p-1 border">{currencySymbol}{balanceDue.toFixed(2)}</td></tr>
                                 </tbody>
                              </table>
                         </div>
@@ -166,3 +180,5 @@ export const RetailTemplate1: React.FC<PageProps> = (props) => {
         </div>
     );
 };
+
+    
