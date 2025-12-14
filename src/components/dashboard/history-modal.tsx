@@ -73,6 +73,16 @@ export function HistoryModal({ isOpen, onClose, auditLog }: HistoryModalProps) {
                                 {safeFormat(entry.timestamp, "MMM d, yyyy 'at' h:mm a")}
                            </p>
                             {entry.user && <p className="text-xs text-muted-foreground">by {entry.user}</p>}
+                            {entry.changes && entry.changes.length > 0 && (
+                                <div className="mt-2 text-xs">
+                                    <p className="font-semibold">Changes:</p>
+                                    <ul className="list-disc pl-4 text-muted-foreground space-y-1">
+                                        {entry.changes.map((change, i) => (
+                                            <li key={i}>{change}</li>
+                                        ))}
+                                    </ul>
+                                </div>
+                            )}
                        </div>
                     </div>
                 ))

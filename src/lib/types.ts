@@ -270,6 +270,7 @@ export interface AuditLogEntry {
     timestamp: any; // Firestore Timestamp
     user?: string; // email of the user
     version: number;
+    changes?: string[];
 }
 
 export interface Invoice {
