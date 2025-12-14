@@ -37,7 +37,7 @@
     --input: 214.3 31.8% 91.4%;
     --ring: 222.2 84% 4.9%;
  
-    --radius: 0.75rem;
+    --radius: 9999px;
 
     --chart-1: 220 80% 60%;
     --chart-2: 160 70% 50%;
@@ -88,12 +88,33 @@
   body {
     @apply bg-background text-foreground font-body;
     min-height: 100vh;
+  }
+
+  .light body {
     background-color: hsl(var(--background-hsl));
-    background-image: linear-gradient(to left, hsl(30 100% 90% / 0.4) 30%, hsl(0 100% 90% / 0.5) 80%, white);
+    background-image: linear-gradient(to left, hsl(24 95% 53% / 0.3) 30%, hsl(3 90% 55% / 0.4) 50%, white 80%);
   }
 
   .dark body {
      background-image: radial-gradient(ellipse 50% 80% at 50% -20%, hsl(var(--primary) / 0.2), transparent);
+  }
+
+  .dark .btn-gradient-hover::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 9999px;
+    padding: 2px;
+    background: linear-gradient(45deg, hsl(var(--primary)), hsl(var(--accent)));
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
+  }
+
+  .dark .btn-gradient-hover:hover::before {
+    opacity: 1;
   }
 }
 
@@ -140,6 +161,8 @@
   size: letter;
   margin: 0;
 }
+
+
 
 
 
