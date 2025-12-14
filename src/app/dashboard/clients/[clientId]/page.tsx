@@ -13,8 +13,8 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import { Skeleton } from '@/components/ui/skeleton';
-import { ArrowLeft, Save, Globe, Hash, Pencil, Trash2 } from 'lucide-react';
-import type { Client, Invoice, Estimate, Quote } from '@/lib/types';
+import { ArrowLeft, Save, Globe, Hash, Pencil } from 'lucide-react';
+import type { Client, Invoice, Estimate } from '@/lib/types';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from '@/components/ui/badge';
@@ -49,8 +49,8 @@ export default function ClientProfilePage() {
 
   const { data: existingClient, isLoading: isLoadingClient } = useDoc<Client>(docRef);
   
-  const invoicesQuery = useMemoFirebase(() => (firestore && userProfile?.companyId && clientData.name ? query(collection(firestore, 'companies', userProfile.companyId, 'invoices'), where('client.name', '==', clientData.name)) : null), [firestore, userProfile?.companyId, clientData.name]);
-  const estimatesQuery = useMemoFirebase(() => (firestore && userProfile?.companyId && clientData.name ? query(collection(firestore, 'companies', userProfile.companyId, 'estimates'), where('client.name', '==', clientData.name)) : null), [firestore, userProfile?.companyId, clientData.name]);
+  const invoicesQuery = useMemoFirebase(() => (firestore && userProfile?.companyId && !isNewClient ? query(collection(firestore, 'companies', userProfile.companyId, 'invoices'), where('clientId', '==', clientId)) : null), [firestore, userProfile?.companyId, clientId, isNewClient]);
+  const estimatesQuery = useMemoFirebase(() => (firestore && userProfile?.companyId && !isNewClient ? query(collection(firestore, 'companies', userProfile.companyId, 'estimates'), where('clientId', '==', clientId)) : null), [firestore, userProfile?.companyId, clientId, isNewClient]);
 
   const { data: invoices } = useCollection<Invoice>(invoicesQuery);
   const { data: estimates } = useCollection<Estimate>(estimatesQuery);

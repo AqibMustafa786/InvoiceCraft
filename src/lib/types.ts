@@ -52,6 +52,7 @@ export interface BusinessInfo {
 }
 
 export interface ClientInfo {
+  clientId?: string; // Unique identifier for the client
   name: string;
   companyName?: string;
   address: string;
@@ -285,10 +286,7 @@ export interface AuditLogEntry {
   id: string;
   action: 'created' | 'updated' | 'viewed' | 'signed' | 'declined' | 'sent';
   timestamp: any;
-  user: {
-    name: string | null;
-    email: string | null;
-  };
+  user: any;
   version: number;
   changes?: string[];
 }
@@ -297,6 +295,7 @@ export interface Invoice {
   id: string; 
   userId: string;
   companyId: string;
+  clientId?: string;
   // Deprecated fields - will be removed in a future step
   companyName: string;
   companyAddress: string;
@@ -395,6 +394,7 @@ export interface Estimate {
   id: string;
   userId: string;
   companyId: string;
+  clientId?: string;
   estimateNumber: string;
   estimateDate: Date;
   validUntilDate: Date;
