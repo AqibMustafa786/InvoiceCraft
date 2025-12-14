@@ -65,10 +65,14 @@ export interface Client {
   id: string;
   companyId: string;
   name: string;
-  companyName: string;
+  companyName?: string;
   email: string;
-  phone: string;
+  phone?: string;
   address: string;
+  shippingAddress?: string;
+  website?: string;
+  taxId?: string;
+  notes?: string;
   createdAt: any;
   updatedAt: any;
 }

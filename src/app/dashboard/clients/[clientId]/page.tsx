@@ -13,7 +13,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import { Skeleton } from '@/components/ui/skeleton';
-import { ArrowLeft, Save } from 'lucide-react';
+import { ArrowLeft, Save, Globe, Hash, Pencil, Trash2 } from 'lucide-react';
 import type { Client, Invoice, Estimate, Quote } from '@/lib/types';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -36,6 +36,10 @@ export default function ClientProfilePage() {
     email: '',
     phone: '',
     address: '',
+    shippingAddress: '',
+    website: '',
+    taxId: '',
+    notes: ''
   });
 
   const docRef = useMemoFirebase(() => {
@@ -76,10 +80,18 @@ export default function ClientProfilePage() {
     try {
       let idToSave = isNewClient ? doc(collection(firestore, 'companies', userProfile.companyId, CLIENTS_COLLECTION)).id : (clientId as string);
       
-      const dataToSave = {
-        ...clientData,
+      const dataToSave: Client = {
         id: idToSave,
         companyId: userProfile.companyId,
+        name: clientData.name,
+        email: clientData.email,
+        companyName: clientData.companyName || '',
+        phone: clientData.phone || '',
+        address: clientData.address || '',
+        shippingAddress: clientData.shippingAddress || '',
+        website: clientData.website || '',
+        taxId: clientData.taxId || '',
+        notes: clientData.notes || '',
         updatedAt: serverTimestamp(),
         createdAt: isNewClient ? serverTimestamp() : existingClient?.createdAt,
       };
@@ -115,7 +127,7 @@ export default function ClientProfilePage() {
           <CardTitle>Client Information</CardTitle>
           <CardDescription>Manage the contact and address details for this client.</CardDescription>
         </CardHeader>
-        <CardContent className="space-y-4">
+        <CardContent className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-2">
               <Label htmlFor="name">Full Name</Label>
@@ -133,11 +145,40 @@ export default function ClientProfilePage() {
               <Label htmlFor="phone">Phone</Label>
               <Input id="phone" name="phone" value={clientData.phone} onChange={handleInputChange} />
             </div>
-            <div className="space-y-2 md:col-span-2">
-              <Label htmlFor="address">Address</Label>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-2">
+              <Label htmlFor="address">Billing Address</Label>
               <Textarea id="address" name="address" value={clientData.address} onChange={handleInputChange} />
             </div>
+             <div className="space-y-2">
+              <Label htmlFor="shippingAddress">Shipping Address</Label>
+              <Textarea id="shippingAddress" name="shippingAddress" value={clientData.shippingAddress} onChange={handleInputChange} />
+            </div>
           </div>
+           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+             <div className="space-y-2">
+                <Label htmlFor="website">Website</Label>
+                <div className="relative flex items-center">
+                    <Globe className="absolute left-3 h-5 w-5 text-muted-foreground" />
+                    <Input id="website" name="website" value={clientData.website} onChange={handleInputChange} className="pl-10" />
+                </div>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="taxId">Tax ID / VAT Number</Label>
+                 <div className="relative flex items-center">
+                    <Hash className="absolute left-3 h-5 w-5 text-muted-foreground" />
+                    <Input id="taxId" name="taxId" value={clientData.taxId} onChange={handleInputChange} className="pl-10" />
+                </div>
+              </div>
+           </div>
+            <div className="space-y-2">
+                <Label htmlFor="notes">Internal Notes</Label>
+                 <div className="relative flex items-center">
+                    <Pencil className="absolute left-3 top-3 h-5 w-5 text-muted-foreground" />
+                    <Textarea id="notes" name="notes" value={clientData.notes} onChange={handleInputChange} className="pl-10"/>
+                 </div>
+            </div>
           <div className="flex justify-end pt-4">
             <Button onClick={handleSave}><Save className="mr-2 h-4 w-4" /> Save Client</Button>
           </div>
@@ -203,4 +244,3 @@ export default function ClientProfilePage() {
     </div>
   );
 }
-
