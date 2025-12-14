@@ -1,6 +1,5 @@
 
 'use client';
-export const dynamic = 'force-dynamic';
 
 import { useState, useMemo, useCallback } from 'react';
 import type { Invoice, Estimate, DocumentStatus, Quote } from '@/lib/types';

@@ -2,6 +2,19 @@
 import type {NextConfig} from 'next';
 
 const nextConfig: NextConfig = {
+  async headers() {
+    return [
+      {
+        source: '/:path*',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'no-store, max-age=0',
+          },
+        ],
+      },
+    ];
+  },
   /* config options here */
   typescript: {
     ignoreBuildErrors: true,

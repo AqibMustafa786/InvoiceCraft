@@ -1,6 +1,5 @@
 
 'use client';
-export const dynamic = 'force-dynamic';
 
 import { useEffect, useState } from 'react';
 import { doc, updateDoc, arrayUnion, serverTimestamp, getDocs, collectionGroup, query, where, Firestore } from 'firebase/firestore';
@@ -206,4 +205,5 @@ export default function PublicEstimatePage({ params }: { params: { estimateId: s
         </div>
     );
 }
+
 
