@@ -437,6 +437,7 @@ export default function CreateInvoicePage() {
       userId: user.uid,
       companyId: companyId,
       updatedAt: serverTimestamp(),
+      createdAt: invoice.createdAt || serverTimestamp(), // Add createdAt if it doesn't exist
     };
     
     const dateFields = ['invoiceDate', 'dueDate'];
@@ -472,11 +473,6 @@ export default function CreateInvoicePage() {
         if(end) draftToSave.rental.rentalEndDate = end;
     }
 
-
-    if (!invoice.createdAt) {
-      draftToSave.createdAt = serverTimestamp();
-    }
-    
     const docRef = doc(firestore, 'companies', companyId, INVOICES_COLLECTION, newId);
     setDocumentNonBlocking(docRef, draftToSave, { merge: true });
 
@@ -631,4 +627,5 @@ export default function CreateInvoicePage() {
     
 
     
+
 

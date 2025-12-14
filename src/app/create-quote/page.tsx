@@ -186,6 +186,7 @@ export default function CreateQuotePage() {
       ...document,
       userId: user.uid,
       updatedAt: serverTimestamp(),
+      createdAt: document.createdAt || serverTimestamp(), // Add createdAt if it doesn't exist
     };
 
     const estimateDate = normalizeDate(document.estimateDate);
@@ -193,10 +194,6 @@ export default function CreateQuotePage() {
     
     const validUntilDate = normalizeDate(document.validUntilDate);
     if (validUntilDate) draftToSave.validUntilDate = validUntilDate;
-
-    if (!document.createdAt) {
-      draftToSave.createdAt = serverTimestamp();
-    }
     
     const docRef = doc(firestore, QUOTES_COLLECTION, document.id);
     setDocumentNonBlocking(docRef, draftToSave, { merge: true });
@@ -366,3 +363,4 @@ export default function CreateQuotePage() {
     
 
     
+

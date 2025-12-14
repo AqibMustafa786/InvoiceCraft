@@ -366,6 +366,7 @@ export default function CreateEstimatePage() {
       userId: user.uid, 
       companyId: companyId,
       updatedAt: serverTimestamp(),
+      createdAt: document.createdAt || serverTimestamp(), // Add createdAt if it doesn't exist
     };
 
     const dateFields = ['estimateDate', 'validUntilDate'];
@@ -395,10 +396,6 @@ export default function CreateEstimatePage() {
 
     if (document.plumbing) {
         draftToSave.plumbing = { ...document.plumbing };
-    }
-
-    if (!document.createdAt) {
-      draftToSave.createdAt = serverTimestamp();
     }
     
     const finalDocRef = doc(firestore, 'companies', companyId, ESTIMATES_COLLECTION, newId);
