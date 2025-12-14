@@ -2,7 +2,7 @@
 
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { createPortal } from 'react-dom';
 import type { Invoice, LineItem } from '@/lib/types';
 import { InvoiceForm } from '@/components/invoice-form';
@@ -26,6 +26,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { useAuth } from '@/context/auth-provider';
+import { motion } from 'framer-motion';
 
 const INVOICES_COLLECTION = 'invoices';
 
@@ -403,6 +404,9 @@ export default function CreateInvoicePage() {
         }
     }
   }, [invoice, computeSummary]);
+  
+  const serializedInvoice = useMemo(() => invoice ? JSON.stringify(invoice) : '', [invoice]);
+
 
   const generateNewId = (doc: Invoice): string => {
     const clientName = doc.client.name.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase();
@@ -528,17 +532,23 @@ export default function CreateInvoicePage() {
             <p className="text-muted-foreground">Select a template, then fill out the form to generate your invoice.</p>
           </div>
           <div className="flex w-full md:w-auto items-center gap-2">
-            <Button onClick={handleSaveDraft} className="w-full md:w-auto">
-                <Edit className="mr-2 h-4 w-4" /> Save Draft
-            </Button>
-            <Button onClick={handlePrint} variant="outline" className="w-full md:w-auto">
-                <Printer className="mr-2 h-4 w-4" /> Save as PDF
-            </Button>
+            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.98 }}>
+              <Button onClick={handleSaveDraft} className="w-full md:w-auto">
+                  <Edit className="mr-2 h-4 w-4" /> Save Draft
+              </Button>
+            </motion.div>
+            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.98 }}>
+              <Button onClick={handlePrint} variant="outline" className="w-full md:w-auto">
+                  <Printer className="mr-2 h-4 w-4" /> Save as PDF
+              </Button>
+            </motion.div>
             <DropdownMenu>
                 <DropdownMenuTrigger asChild>
+                   <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.95 }}>
                     <Button variant="outline" size="icon" className="shrink-0">
                         <MoreVertical className="h-4 w-4" />
                     </Button>
+                   </motion.div>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
                     <DropdownMenuItem onClick={handleNew}>
@@ -555,7 +565,12 @@ export default function CreateInvoicePage() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 xl:gap-12">
-          <div className="lg:col-span-3">
+          <motion.div 
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5 }}
+            className="lg:col-span-3"
+          >
              <div className="space-y-6">
                 <h2 className="text-2xl font-bold font-headline mb-4 text-center lg:text-left">Fill in Details</h2>
                 <InvoiceForm 
@@ -570,7 +585,7 @@ export default function CreateInvoicePage() {
                   toast={toast}
                 />
               </div>
-          </div>
+          </motion.div>
           <div className="lg:col-span-2">
              <div className="sticky top-24 space-y-4">
                 <Sheet>
@@ -596,7 +611,14 @@ export default function CreateInvoicePage() {
                 </Sheet>
                 <div>
                   <h2 className="text-2xl font-bold font-headline mb-4">Live Preview</h2>
-                  <ClientInvoicePreview invoice={invoice} accentColor={accentColor} backgroundColor={backgroundColor} textColor={textColor} />
+                  <motion.div
+                    key={serializedInvoice}
+                    initial={{ opacity: 0.8, scale: 0.995 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    <ClientInvoicePreview invoice={invoice} accentColor={accentColor} backgroundColor={backgroundColor} textColor={textColor} />
+                  </motion.div>
                 </div>
             </div>
           </div>
@@ -609,3 +631,4 @@ export default function CreateInvoicePage() {
     
 
     
+
