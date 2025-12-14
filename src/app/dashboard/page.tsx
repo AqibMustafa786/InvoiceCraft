@@ -23,7 +23,7 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { FilePlus2, Edit, Trash2, Filter, X, MoreHorizontal, FileText, Share2, DollarSign, Clock, FileWarning } from "lucide-react";
+import { FilePlus2, Edit, Trash2, Filter, X, MoreHorizontal, FileText, Share2, DollarSign, Clock, FileWarning, Files } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from 'next/navigation';
 import { format, isWithinInterval, isValid } from 'date-fns';
@@ -342,7 +342,7 @@ export default function DashboardPage() {
             totalRevenue: 0,
             outstanding: 0,
             overdue: 0,
-            drafts: 0,
+            totalDocuments: (invoices?.length || 0) + (estimates?.length || 0) + (quotes?.length || 0),
         };
 
         if (invoices) {
@@ -359,12 +359,6 @@ export default function DashboardPage() {
                 }
             });
         }
-
-        const draftEstimates = estimates ? estimates.filter(e => e.status === 'draft').length : 0;
-        const draftQuotes = quotes ? quotes.filter(q => q.status === 'draft').length : 0;
-        const draftInvoices = invoices ? invoices.filter(i => i.status === 'draft').length : 0;
-        stats.drafts = draftEstimates + draftQuotes + draftInvoices;
-
         return stats;
 
     }, [invoices, estimates, quotes]);
@@ -656,12 +650,12 @@ export default function DashboardPage() {
                     </Card>
                     <Card className="bg-card/70 backdrop-blur-sm">
                         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                            <CardTitle className="text-sm font-medium">Drafts</CardTitle>
-                            <FileText className="h-5 w-5 text-yellow-500" />
+                            <CardTitle className="text-sm font-medium">Total Documents</CardTitle>
+                            <Files className="h-5 w-5 text-yellow-500" />
                         </CardHeader>
                         <CardContent>
-                            <div className="text-3xl font-bold text-yellow-500">{dashboardStats.drafts}</div>
-                             <p className="text-xs text-muted-foreground">Documents pending completion.</p>
+                            <div className="text-3xl font-bold text-yellow-500">{dashboardStats.totalDocuments}</div>
+                             <p className="text-xs text-muted-foreground">All invoices, estimates, and quotes.</p>
                         </CardContent>
                     </Card>
                 </motion.div>
