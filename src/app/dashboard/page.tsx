@@ -23,7 +23,7 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { FilePlus2, Edit, Trash2, Filter, X, MoreHorizontal, FileText, Share2, DollarSign, Clock, FileWarning, Files, CheckCircle, FileQuestion } from "lucide-react";
+import { FilePlus2, Edit, Trash2, Filter, X, MoreHorizontal, FileText, Share2, DollarSign, Clock, FileWarning, Files, CheckCircle, FileQuestion, Users, Percent, AreaChart } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from 'next/navigation';
 import { format, isWithinInterval, isValid } from 'date-fns';
@@ -85,26 +85,40 @@ interface DashboardStatsGridProps {
 
 const DashboardStatsGrid: React.FC<DashboardStatsGridProps> = ({ documents, docType }) => {
     const stats = useMemo(() => {
+        const uniqueClients = new Set(documents.map(d => d.client.name)).size;
+        
         if (docType === 'invoice') {
-            return documents.reduce((acc, doc) => {
-                const invoice = doc as Invoice;
-                const total = invoice.summary?.grandTotal || 0;
-                if (invoice.status === 'paid') acc.totalRevenue += total;
-                if (invoice.status === 'sent') acc.outstanding += total;
-                if (invoice.status === 'overdue') acc.overdue += total;
-                if (invoice.status === 'draft') acc.drafts += 1;
-                return acc;
-            }, { totalRevenue: 0, outstanding: 0, overdue: 0, drafts: 0 });
+            const paidInvoices = documents.filter(d => d.status === 'paid') as Invoice[];
+            const outstandingInvoices = documents.filter(d => d.status === 'sent') as Invoice[];
+            const overdueInvoices = documents.filter(d => d.status === 'overdue') as Invoice[];
+            const nonDraftInvoices = documents.filter(d => d.status !== 'draft') as Invoice[];
+
+            const totalRevenue = paidInvoices.reduce((acc, doc) => acc + (doc.summary?.grandTotal || 0), 0);
+            const outstanding = outstandingInvoices.reduce((acc, doc) => acc + (doc.summary?.grandTotal || 0), 0);
+            const overdue = overdueInvoices.reduce((acc, doc) => acc + (doc.summary?.grandTotal || 0), 0);
+            const totalInvoiced = nonDraftInvoices.reduce((acc, doc) => acc + (doc.summary?.grandTotal || 0), 0);
+            const avgInvoiceValue = nonDraftInvoices.length > 0 ? totalInvoiced / nonDraftInvoices.length : 0;
+            
+            return {
+                totalRevenue, outstanding, overdue, totalInvoiced, avgInvoiceValue, uniqueClients,
+                drafts: documents.filter(d => d.status === 'draft').length,
+                paidCount: paidInvoices.length,
+            };
         } else {
-            return documents.reduce((acc, doc) => {
-                const estimate = doc as Estimate | Quote;
-                const total = estimate.summary?.grandTotal || 0;
-                acc.totalValue += total;
-                if (estimate.status === 'accepted') acc.accepted += 1;
-                if (estimate.status === 'sent') acc.pending += 1;
-                if (estimate.status === 'draft') acc.drafts += 1;
-                return acc;
-            }, { totalValue: 0, accepted: 0, pending: 0, drafts: 0 });
+            const acceptedDocs = documents.filter(d => d.status === 'accepted');
+            const totalValue = documents.reduce((acc, doc) => acc + (doc.summary?.grandTotal || 0), 0);
+            const acceptedValue = acceptedDocs.reduce((acc, doc) => acc + (doc.summary?.grandTotal || 0), 0);
+            const nonDraftDocs = documents.filter(d => d.status !== 'draft');
+            const conversionRateValue = totalValue > 0 ? (acceptedValue / totalValue) * 100 : 0;
+            const conversionRateCount = nonDraftDocs.length > 0 ? (acceptedDocs.length / nonDraftDocs.length) * 100 : 0;
+            const avgValue = nonDraftDocs.length > 0 ? totalValue / nonDraftDocs.length : 0;
+
+            return {
+                totalValue, acceptedValue, conversionRateValue, conversionRateCount, avgValue, uniqueClients,
+                acceptedCount: acceptedDocs.length,
+                pendingCount: documents.filter(d => d.status === 'sent').length,
+                draftCount: documents.filter(d => d.status === 'draft').length,
+            };
         }
     }, [documents, docType]);
 
@@ -114,23 +128,31 @@ const DashboardStatsGrid: React.FC<DashboardStatsGridProps> = ({ documents, docT
     };
 
     if (docType === 'invoice') {
-        const invoiceStats = stats as { totalRevenue: number; outstanding: number; overdue: number; drafts: number };
+        const s = stats as any;
         return (
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-8">
-                <Card className="bg-card/50 backdrop-blur-sm"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Total Revenue</CardTitle><DollarSign className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent><div className="text-2xl font-bold">{formatCurrency(invoiceStats.totalRevenue)}</div></CardContent></Card>
-                <Card className="bg-card/50 backdrop-blur-sm"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Outstanding</CardTitle><Clock className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent><div className="text-2xl font-bold">{formatCurrency(invoiceStats.outstanding)}</div></CardContent></Card>
-                <Card className="bg-card/50 backdrop-blur-sm"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Overdue</CardTitle><FileWarning className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent><div className="text-2xl font-bold">{formatCurrency(invoiceStats.overdue)}</div></CardContent></Card>
-                <Card className="bg-card/50 backdrop-blur-sm"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Drafts</CardTitle><FileText className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent><div className="text-2xl font-bold">{invoiceStats.drafts}</div></CardContent></Card>
+                <Card className="bg-card/50 backdrop-blur-sm"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Total Revenue</CardTitle><DollarSign className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent><div className="text-2xl font-bold">{formatCurrency(s.totalRevenue)}</div><p className="text-xs text-muted-foreground">{s.paidCount} paid invoices</p></CardContent></Card>
+                <Card className="bg-card/50 backdrop-blur-sm"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Outstanding</CardTitle><Clock className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent><div className="text-2xl font-bold">{formatCurrency(s.outstanding)}</div></CardContent></Card>
+                <Card className="bg-card/50 backdrop-blur-sm"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Overdue</CardTitle><FileWarning className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent><div className="text-2xl font-bold">{formatCurrency(s.overdue)}</div></CardContent></Card>
+                <Card className="bg-card/50 backdrop-blur-sm"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Total Invoiced</CardTitle><Files className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent><div className="text-2xl font-bold">{formatCurrency(s.totalInvoiced)}</div></CardContent></Card>
+                <Card className="bg-card/50 backdrop-blur-sm"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Avg. Invoice Value</CardTitle><AreaChart className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent><div className="text-2xl font-bold">{formatCurrency(s.avgInvoiceValue)}</div></CardContent></Card>
+                <Card className="bg-card/50 backdrop-blur-sm"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Unique Clients</CardTitle><Users className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent><div className="text-2xl font-bold">{s.uniqueClients}</div></CardContent></Card>
+                <Card className="bg-card/50 backdrop-blur-sm col-span-2 lg:col-span-1"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Paid Invoices</CardTitle><CheckCircle className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent><div className="text-2xl font-bold">{s.paidCount}</div></CardContent></Card>
+                <Card className="bg-card/50 backdrop-blur-sm col-span-2 lg:col-span-1"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Drafts</CardTitle><FileText className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent><div className="text-2xl font-bold">{s.drafts}</div></CardContent></Card>
             </div>
         );
     } else {
-        const estimateStats = stats as { totalValue: number; accepted: number; pending: number; drafts: number };
+        const s = stats as any;
         return (
              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-8">
-                <Card className="bg-card/50 backdrop-blur-sm"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Total Quoted Value</CardTitle><DollarSign className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent><div className="text-2xl font-bold">{formatCurrency(estimateStats.totalValue)}</div></CardContent></Card>
-                <Card className="bg-card/50 backdrop-blur-sm"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Accepted</CardTitle><CheckCircle className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent><div className="text-2xl font-bold">{estimateStats.accepted}</div></CardContent></Card>
-                <Card className="bg-card/50 backdrop-blur-sm"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Pending</CardTitle><FileQuestion className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent><div className="text-2xl font-bold">{estimateStats.pending}</div></CardContent></Card>
-                <Card className="bg-card/50 backdrop-blur-sm"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Drafts</CardTitle><FileText className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent><div className="text-2xl font-bold">{estimateStats.drafts}</div></CardContent></Card>
+                <Card className="bg-card/50 backdrop-blur-sm"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Total Quoted Value</CardTitle><DollarSign className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent><div className="text-2xl font-bold">{formatCurrency(s.totalValue)}</div></CardContent></Card>
+                <Card className="bg-card/50 backdrop-blur-sm"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Accepted Value</CardTitle><CheckCircle className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent><div className="text-2xl font-bold">{formatCurrency(s.acceptedValue)}</div></CardContent></Card>
+                <Card className="bg-card/50 backdrop-blur-sm"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Conversion Rate (Value)</CardTitle><Percent className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent><div className="text-2xl font-bold">{s.conversionRateValue.toFixed(1)}%</div></CardContent></Card>
+                <Card className="bg-card/50 backdrop-blur-sm"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Avg. {docType} Value</CardTitle><AreaChart className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent><div className="text-2xl font-bold">{formatCurrency(s.avgValue)}</div></CardContent></Card>
+                <Card className="bg-card/50 backdrop-blur-sm"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Conversion Rate (Count)</CardTitle><Percent className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent><div className="text-2xl font-bold">{s.conversionRateCount.toFixed(1)}%</div></CardContent></Card>
+                <Card className="bg-card/50 backdrop-blur-sm"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Accepted</CardTitle><CheckCircle className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent><div className="text-2xl font-bold">{s.acceptedCount}</div></CardContent></Card>
+                <Card className="bg-card/50 backdrop-blur-sm"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Pending</CardTitle><FileQuestion className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent><div className="text-2xl font-bold">{s.pendingCount}</div></CardContent></Card>
+                <Card className="bg-card/50 backdrop-blur-sm"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Drafts</CardTitle><FileText className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent><div className="text-2xl font-bold">{s.draftCount}</div></CardContent></Card>
             </div>
         );
     }
