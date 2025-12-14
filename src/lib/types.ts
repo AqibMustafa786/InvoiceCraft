@@ -61,6 +61,19 @@ export interface ClientInfo {
   shippingAddress?: string;
 }
 
+export interface Client {
+  id: string;
+  companyId: string;
+  name: string;
+  companyName: string;
+  email: string;
+  phone: string;
+  address: string;
+  createdAt: any;
+  updatedAt: any;
+}
+
+
 export interface EstimateSummary {
     subtotal: number;
     taxPercentage: number;
@@ -265,12 +278,15 @@ export interface ITFreelanceInfo {
 }
 
 export interface AuditLogEntry {
-    id: string;
-    action: 'created' | 'updated' | 'viewed' | 'signed' | 'declined' | 'sent';
-    timestamp: any; // Firestore Timestamp
-    user: string; // email of the user
-    version: number;
-    changes?: string[];
+  id: string;
+  action: 'created' | 'updated' | 'viewed' | 'signed' | 'declined' | 'sent';
+  timestamp: any;
+  user: {
+    name: string | null;
+    email: string | null;
+  };
+  version: number;
+  changes?: string[];
 }
 
 export interface Invoice {

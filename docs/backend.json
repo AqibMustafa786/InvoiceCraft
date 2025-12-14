@@ -112,6 +112,23 @@
         "ownerId"
       ]
     },
+    "Client": {
+      "title": "Client",
+      "type": "object",
+      "description": "Represents a client of a company.",
+      "properties": {
+        "id": { "type": "string" },
+        "companyId": { "type": "string" },
+        "name": { "type": "string" },
+        "companyName": { "type": "string" },
+        "email": { "type": "string", "format": "email" },
+        "phone": { "type": "string" },
+        "address": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "companyId", "name", "email"]
+    },
     "Invoice": {
       "title": "Invoice",
       "type": "object",
@@ -246,6 +263,11 @@
         "path": "/companies/{companyId}/users/{userId}",
         "schema": { "$ref": "#/entities/User" },
         "description": "Stores user profiles belonging to a specific company."
+      },
+      {
+        "path": "/companies/{companyId}/clients/{clientId}",
+        "schema": { "$ref": "#/entities/Client" },
+        "description": "Stores client profiles belonging to a specific company."
       },
       {
         "path": "/companies/{companyId}/roles/{roleId}",

@@ -72,6 +72,11 @@ service cloud.firestore {
         allow update: if hasCompanyRole(companyId, ['admin']) || (isOwner(userId) && belongsToCompany(companyId));
         allow delete: if hasCompanyRole(companyId, ['admin']);
       }
+      
+      // Client Management
+      match /clients/{clientId} {
+        allow read, list, create, update, delete: if belongsToCompany(companyId);
+      }
 
       // General fallback for other collections
        match /{collection}/{docId} {

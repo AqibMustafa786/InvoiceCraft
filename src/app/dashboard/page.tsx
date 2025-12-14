@@ -3,7 +3,7 @@
 'use client';
 
 import { useState, useMemo, useCallback } from 'react';
-import type { Invoice, Estimate, DocumentStatus, Quote, AuditLogEntry } from '@/lib/types';
+import type { Invoice, Estimate, DocumentStatus, Quote, AuditLogEntry, Client } from '@/lib/types';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -34,7 +34,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useFirebase, useMemoFirebase } from '@/firebase/provider';
 import { useCollection } from '@/firebase/firestore/use-collection';
 import { useAuth } from '@/context/auth-provider';
-import { collection, doc, setDoc, query, Timestamp } from 'firebase/firestore';
+import { collection, doc, setDoc, query, Timestamp, where } from 'firebase/firestore';
 import { deleteDocumentNonBlocking, updateDocumentNonBlocking } from '@/firebase';
 import { Skeleton } from '@/components/ui/skeleton';
 import { motion } from 'framer-motion';
@@ -45,6 +45,7 @@ import { HistoryModal } from '@/components/dashboard/history-modal';
 const INVOICES_COLLECTION = 'invoices';
 const ESTIMATES_COLLECTION = 'estimates';
 const QUOTES_COLLECTION = 'quotes';
+const CLIENTS_COLLECTION = 'clients';
 
 const initialFilters: DashboardFilters = {
     clientName: '',
@@ -193,22 +194,40 @@ export default function DashboardPage() {
     const companyId = userProfile?.companyId;
     const isBusinessPlan = userPlan === 'business';
 
+    const clientsQuery = useMemoFirebase(() => {
+        if (!firestore || !companyId) return null;
+        return query(collection(firestore, 'companies', companyId, CLIENTS_COLLECTION));
+    }, [firestore, companyId]);
+
     const invoicesQuery = useMemoFirebase(() => {
         if (!firestore || !companyId) return null;
-        return query(collection(firestore, 'companies', companyId, INVOICES_COLLECTION));
-    }, [firestore, companyId]);
+        let q = query(collection(firestore, 'companies', companyId, INVOICES_COLLECTION));
+        if (filters.clientName) {
+            q = query(q, where('client.name', '==', filters.clientName));
+        }
+        return q;
+    }, [firestore, companyId, filters.clientName]);
 
     const estimatesQuery = useMemoFirebase(() => {
         if (!firestore || !companyId) return null;
-        return query(collection(firestore, 'companies', companyId, ESTIMATES_COLLECTION));
-    }, [firestore, companyId]);
+        let q = query(collection(firestore, 'companies', companyId, ESTIMATES_COLLECTION));
+        if (filters.clientName) {
+            q = query(q, where('client.name', '==', filters.clientName));
+        }
+        return q;
+    }, [firestore, companyId, filters.clientName]);
 
     const quotesQuery = useMemoFirebase(() => {
         if (!firestore || !companyId) return null;
-        return query(collection(firestore, 'companies', companyId, QUOTES_COLLECTION));
-    }, [firestore, companyId]);
+        let q = query(collection(firestore, 'companies', companyId, QUOTES_COLLECTION));
+         if (filters.clientName) {
+            q = query(q, where('client.name', '==', filters.clientName));
+        }
+        return q;
+    }, [firestore, companyId, filters.clientName]);
 
 
+    const { data: clients, isLoading: isLoadingClients } = useCollection<Client>(clientsQuery);
     const { data: invoices, isLoading: isLoadingInvoices } = useCollection<Invoice>(invoicesQuery);
     const { data: estimates, isLoading: isLoadingEstimates } = useCollection<Estimate>(estimatesQuery);
     const { data: quotes, isLoading: isLoadingQuotes } = useCollection<Quote>(quotesQuery);
@@ -308,8 +327,8 @@ export default function DashboardPage() {
         const newAuditLogEntry: AuditLogEntry = {
             id: crypto.randomUUID(),
             action: 'created',
-            timestamp: new Date(),
-            user: user.email || 'Unknown',
+            timestamp: Timestamp.now(),
+            user: { name: user.displayName, email: user.email },
             version: 1,
         };
 
@@ -457,21 +476,6 @@ export default function DashboardPage() {
             return clientNameMatch && statusMatch && amountMinMatch && amountMaxMatch && dateMatch;
         });
     }, [allDocuments, filters, calculateTotal]);
-
-    const uniqueClients = useMemo(() => {
-        const clientMap = new Map<string, { client: DocumentType['client'], docCount: number }>();
-        allDocuments.forEach(doc => {
-            const clientEmail = doc.client.email?.toLowerCase();
-            if (clientEmail) {
-                if (clientMap.has(clientEmail)) {
-                    clientMap.get(clientEmail)!.docCount++;
-                } else {
-                    clientMap.set(clientEmail, { client: doc.client, docCount: 1 });
-                }
-            }
-        });
-        return Array.from(clientMap.values());
-    }, [allDocuments]);
 
 
     const filteredInvoices = useMemo(() => filteredDocuments.filter(d => d.documentType === 'invoice'), [filteredDocuments]);
@@ -645,7 +649,6 @@ export default function DashboardPage() {
                     <div className="flex gap-2">
                         <Skeleton className="h-10 w-36 rounded-full" />
                         <Skeleton className="h-10 w-36 rounded-full" />
-                        <Skeleton className="h-10 w-36 rounded-full" />
                     </div>
                 </div>
                  <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-8">
@@ -721,8 +724,8 @@ export default function DashboardPage() {
                             <p className="text-muted-foreground">An overview of your financial documents and activities.</p>
                         </motion.div>
                         <motion.div className="flex gap-2" variants={pageVariants}>
-                             <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.98 }}>
-                                <Button onClick={() => router.push('/create-estimate')} className="rounded-full">
+                            <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.98 }}>
+                                <Button onClick={() => router.push('/dashboard/clients/new')} className="rounded-full">
                                     <Users className="mr-2 h-4 w-4" />
                                     New Client
                                 </Button>
@@ -733,13 +736,6 @@ export default function DashboardPage() {
                                     New Invoice
                                 </Button>
                             </motion.div>
-                            <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.98 }}>
-                                <Button onClick={handleCreateEstimate} variant="outline" className="rounded-full">
-                                    <FilePlus2 className="mr-2 h-4 w-4" />
-                                    New Estimate
-                                </Button>
-                            </motion.div>
-                            
                         </motion.div>
                     </div>
                 </motion.div>
@@ -797,7 +793,7 @@ export default function DashboardPage() {
                              <Card className="bg-card/50 backdrop-blur-sm shadow-lg hover:shadow-primary/20 transition-shadow duration-300">
                                 <CardHeader>
                                     <CardTitle>Clients</CardTitle>
-                                    <CardDescription>A list of all your clients. Click a client to filter your documents.</CardDescription>
+                                    <CardDescription>A list of all your clients. Click a client to view their profile and documents.</CardDescription>
                                 </CardHeader>
                                 <CardContent>
                                     <Table>
@@ -806,22 +802,26 @@ export default function DashboardPage() {
                                                 <TableHead>Name</TableHead>
                                                 <TableHead>Company</TableHead>
                                                 <TableHead>Email</TableHead>
-                                                <TableHead className="text-right">Documents</TableHead>
+                                                <TableHead className="text-right">Actions</TableHead>
                                             </TableRow>
                                         </TableHeader>
                                         <TableBody>
-                                            {uniqueClients.map(({client, docCount}) => (
+                                            {clients ? clients.map((client) => (
                                                 <TableRow 
-                                                    key={client.email} 
+                                                    key={client.id} 
                                                     className="cursor-pointer"
-                                                    onClick={() => setFilters(f => ({...initialFilters, clientName: client.name}))}
+                                                    onClick={() => router.push(`/dashboard/clients/${client.id}`)}
                                                 >
                                                     <TableCell className="font-medium">{client.name}</TableCell>
                                                     <TableCell>{client.companyName}</TableCell>
                                                     <TableCell>{client.email}</TableCell>
-                                                    <TableCell className="text-right">{docCount}</TableCell>
+                                                    <TableCell className="text-right">
+                                                         <Button variant="ghost" size="sm">View</Button>
+                                                    </TableCell>
                                                 </TableRow>
-                                            ))}
+                                            )) : (
+                                                <TableRow><TableCell colSpan={4} className="text-center h-24">No clients found.</TableCell></TableRow>
+                                            )}
                                         </TableBody>
                                     </Table>
                                 </CardContent>
