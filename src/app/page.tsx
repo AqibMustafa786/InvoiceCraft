@@ -8,10 +8,9 @@ import { motion } from 'framer-motion';
 
 export default function HomePage() {
   const containerVariants = {
-    hidden: { opacity: 0, y: 20 },
+    hidden: { opacity: 0 },
     visible: {
       opacity: 1,
-      y: 0,
       transition: {
         staggerChildren: 0.2,
         delayChildren: 0.1,
@@ -21,7 +20,14 @@ export default function HomePage() {
 
   const itemVariants = {
     hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.5 } },
+    visible: { 
+      opacity: 1, 
+      y: 0, 
+      transition: { 
+        duration: 0.5,
+        ease: "easeOut"
+      } 
+    },
   };
 
   return (
@@ -44,7 +50,13 @@ export default function HomePage() {
                   Documents
                 </span>
                 <span> in Seconds </span>
-                <span className="inline-block origin-bottom-right animate-wave">⚡️</span>
+                <motion.span 
+                  className="inline-block"
+                  animate={{ rotate: [0, 14, -8, 14, -4, 10, 0] }}
+                  transition={{ duration: 2, repeat: Infinity, repeatType: "loop", ease: "linear" }}
+                >
+                  ⚡️
+                </motion.span>
               </motion.h1>
               <motion.p 
                 className="mt-6 text-lg text-muted-foreground md:text-xl max-w-2xl mx-auto"
