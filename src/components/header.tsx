@@ -80,7 +80,7 @@ export function Header() {
 
     return (
         <header className="sticky top-0 z-50 w-full">
-            <div className="container my-4 flex h-16 items-center rounded-2xl border border-border/40 bg-background/80 shadow-lg backdrop-blur-sm supports-[backdrop-filter]:bg-background/60">
+            <div className="container my-4 flex h-16 items-center rounded-full border border-border/40 bg-background/80 shadow-lg backdrop-blur-sm supports-[backdrop-filter]:bg-background/60">
                 <div className="flex items-center justify-start">
                     <Link href="/" className="flex items-center gap-2">
                         <span className="text-lg font-bold text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent">InvoiceCraft</span>
@@ -121,7 +121,7 @@ export function Header() {
                 </nav>
 
                 <div className="flex flex-1 items-center justify-end gap-2">
-                     <Button variant="outline" className="relative h-9 w-full justify-start rounded-[0.5rem] text-sm text-muted-foreground sm:pr-12 md:w-40 lg:w-64" onClick={() => setOpen(true)}>
+                     <Button variant="outline" className="relative h-9 w-full justify-start rounded-full text-sm text-muted-foreground sm:pr-12 md:w-40 lg:w-64" onClick={() => setOpen(true)}>
                         <Search className="h-4 w-4 mr-2" />
                         <span className="hidden lg:inline-flex">Search...</span>
                         <span className="inline-flex lg:hidden">Search...</span>
