@@ -1,5 +1,4 @@
 
-
 'use client';
 
 import { useState, useMemo, useCallback } from 'react';
@@ -24,7 +23,7 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { FilePlus2, Edit, Trash2, Filter, X, MoreHorizontal, FileText, Share2, DollarSign, Clock, FileWarning, Files, CheckCircle, FileQuestion, Users, Percent, AreaChart } from "lucide-react";
+import { FilePlus2, Edit, Trash2, Filter, X, MoreHorizontal, FileText, Share2, DollarSign, Clock, FileWarning, Files, CheckCircle, FileQuestion, Users, Percent, AreaChart, Package } from "lucide-react";
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { format, isWithinInterval, isValid } from 'date-fns';
@@ -89,6 +88,16 @@ const DashboardStatsGrid: React.FC<DashboardStatsGridProps> = ({ documents, docT
     const stats = useMemo(() => {
         const uniqueClients = new Set(documents.map(d => d.client.name)).size;
         
+        const categoryCounts = documents.reduce((acc, doc) => {
+            if (doc.category) {
+                acc[doc.category] = (acc[doc.category] || 0) + 1;
+            }
+            return acc;
+        }, {} as Record<string, number>);
+
+        const mostUsedCategory = Object.entries(categoryCounts).reduce((a, b) => b[1] > a[1] ? b : a, ['', 0])[0];
+
+
         if (docType === 'invoice') {
             const paidInvoices = documents.filter(d => d.status === 'paid') as Invoice[];
             const outstandingInvoices = documents.filter(d => d.status === 'sent') as Invoice[];
@@ -102,7 +111,7 @@ const DashboardStatsGrid: React.FC<DashboardStatsGridProps> = ({ documents, docT
             const avgInvoiceValue = nonDraftInvoices.length > 0 ? totalInvoiced / nonDraftInvoices.length : 0;
             
             return {
-                totalRevenue, outstanding, overdue, totalInvoiced, avgInvoiceValue, uniqueClients,
+                totalRevenue, outstanding, overdue, totalInvoiced, avgInvoiceValue, uniqueClients, mostUsedCategory,
                 drafts: documents.filter(d => d.status === 'draft').length,
                 paidCount: paidInvoices.length,
             };
@@ -116,7 +125,7 @@ const DashboardStatsGrid: React.FC<DashboardStatsGridProps> = ({ documents, docT
             const avgValue = nonDraftDocs.length > 0 ? totalValue / nonDraftDocs.length : 0;
 
             return {
-                totalValue, acceptedValue, conversionRateValue, conversionRateCount, avgValue, uniqueClients,
+                totalValue, acceptedValue, conversionRateValue, conversionRateCount, avgValue, uniqueClients, mostUsedCategory,
                 acceptedCount: acceptedDocs.length,
                 pendingCount: documents.filter(d => d.status === 'sent').length,
                 draftCount: documents.filter(d => d.status === 'draft').length,
@@ -139,7 +148,7 @@ const DashboardStatsGrid: React.FC<DashboardStatsGridProps> = ({ documents, docT
                 <Card className="bg-card/50 backdrop-blur-sm shadow-lg transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-1"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Total Invoiced</CardTitle><Files className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent><div className="text-2xl font-bold">{formatCurrency(s.totalInvoiced)}</div></CardContent></Card>
                 <Card className="bg-card/50 backdrop-blur-sm shadow-lg transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-1"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Avg. Invoice Value</CardTitle><AreaChart className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent><div className="text-2xl font-bold">{formatCurrency(s.avgInvoiceValue)}</div></CardContent></Card>
                 <Card className="bg-card/50 backdrop-blur-sm shadow-lg transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-1"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Unique Clients</CardTitle><Users className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent><div className="text-2xl font-bold">{s.uniqueClients}</div></CardContent></Card>
-                <Card className="bg-card/50 backdrop-blur-sm shadow-lg transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-1"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Paid Invoices</CardTitle><CheckCircle className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent><div className="text-2xl font-bold">{s.paidCount}</div></CardContent></Card>
+                <Card className="bg-card/50 backdrop-blur-sm shadow-lg transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-1"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Most Used Category</CardTitle><Package className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent><div className="text-lg font-bold">{s.mostUsedCategory || 'N/A'}</div></CardContent></Card>
                 <Card className="bg-card/50 backdrop-blur-sm shadow-lg transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-1"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Drafts</CardTitle><FileText className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent><div className="text-2xl font-bold">{s.drafts}</div></CardContent></Card>
             </div>
         );
@@ -153,7 +162,7 @@ const DashboardStatsGrid: React.FC<DashboardStatsGridProps> = ({ documents, docT
                 <Card className="bg-card/50 backdrop-blur-sm shadow-lg transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-1"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Avg. {docType} Value</CardTitle><AreaChart className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent><div className="text-2xl font-bold">{formatCurrency(s.avgValue)}</div></CardContent></Card>
                 <Card className="bg-card/50 backdrop-blur-sm shadow-lg transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-1"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Conversion Rate (Count)</CardTitle><Percent className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent><div className="text-2xl font-bold">{s.conversionRateCount.toFixed(1)}%</div></CardContent></Card>
                 <Card className="bg-card/50 backdrop-blur-sm shadow-lg transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-1"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Accepted</CardTitle><CheckCircle className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent><div className="text-2xl font-bold">{s.acceptedCount}</div></CardContent></Card>
-                <Card className="bg-card/50 backdrop-blur-sm shadow-lg transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-1"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Pending</CardTitle><FileQuestion className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent><div className="text-2xl font-bold">{s.pendingCount}</div></CardContent></Card>
+                <Card className="bg-card/50 backdrop-blur-sm shadow-lg transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-1"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Most Used Category</CardTitle><Package className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent><div className="text-lg font-bold">{s.mostUsedCategory || 'N/A'}</div></CardContent></Card>
                 <Card className="bg-card/50 backdrop-blur-sm shadow-lg transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-1"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Drafts</CardTitle><FileText className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent><div className="text-2xl font-bold">{s.draftCount}</div></CardContent></Card>
             </div>
         );
@@ -721,5 +730,4 @@ export default function DashboardPage() {
     );
 }
 
-    
     
