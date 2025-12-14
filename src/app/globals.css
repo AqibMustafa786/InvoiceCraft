@@ -89,11 +89,11 @@
     @apply bg-background text-foreground font-body;
     min-height: 100vh;
     background-color: hsl(var(--background-hsl));
-    background-image: linear-gradient(to left, hsl(24 95% 53% / 0.3) 30%, hsl(3 90% 55% / 0.4) 50%, white 80%);
+    background-image: linear-gradient(to left, hsl(30 100% 90% / 0.4) 30%, hsl(0 100% 90% / 0.5) 80%, white);
   }
 
   .dark body {
-     background-image: radial-gradient(ellipse 50% 80% at 50% -20%, hsl(var(--primary) / 0.2), transparent);
+     background-image: linear-gradient(to top right, hsl(240 50% 20% / 0.2) 20%, hsl(210 90% 60% / 0.2) 35%, hsl(210 90% 50% / 0.1) 45%, transparent 80%);
   }
 
   .dark .btn-gradient-hover::before {
