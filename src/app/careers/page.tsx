@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { PageHeader, PageHeaderDescription, PageHeaderHeading } from "@/components/page-header";
@@ -36,7 +37,7 @@ export default function CareersPage() {
         {jobOpenings.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {jobOpenings.map((job) => (
-              <Card key={job.title} className="bg-card/50 backdrop-blur-sm shadow-lg">
+              <Card key={job.title} className="bg-card/50 backdrop-blur-sm shadow-lg hover:shadow-primary/20 transition-shadow">
                 <CardHeader>
                   <CardTitle>{job.title}</CardTitle>
                   <CardDescription>{job.department} &middot; {job.location}</CardDescription>

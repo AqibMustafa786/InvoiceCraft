@@ -1,5 +1,4 @@
 
-
 'use client';
 
 import { ChangeEvent, Dispatch, SetStateAction, useState, useEffect } from 'react';
@@ -1307,4 +1306,3 @@ export function DocumentForm({ document, setDocument, accentColor, setAccentColo
     </>
   );
 }
-
