@@ -88,9 +88,6 @@
   body {
     @apply bg-background text-foreground font-body;
     min-height: 100vh;
-  }
-
-  .light body {
     background-color: hsl(var(--background-hsl));
     background-image: linear-gradient(to left, hsl(24 95% 53% / 0.3) 30%, hsl(3 90% 55% / 0.4) 50%, white 80%);
   }
