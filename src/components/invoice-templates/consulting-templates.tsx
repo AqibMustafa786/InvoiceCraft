@@ -165,7 +165,7 @@ export const ConsultingTemplate2: React.FC<PageProps> = (props) => {
     const { invoice, pageItems, pageIndex, totalPages, subtotal, taxAmount, discountAmount, total, balanceDue, currencySymbol, t, accentColor } = props;
     const { business, client } = invoice;
     return (
-      <div className={\`font-sans \${pageIndex < totalPages - 1 ? 'page-break-after' : ''}\`} style={{ minHeight: '1056px', backgroundColor: props.backgroundColor, color: props.textColor }}>
+      <div className={`font-sans ${pageIndex < totalPages - 1 ? 'page-break-after' : ''}`} style={{ minHeight: '1056px', backgroundColor: props.backgroundColor, color: props.textColor }}>
           <div style={{ backgroundColor: accentColor, color: 'white' }} className="p-8 rounded-t-lg">
               <header className="flex justify-between items-center">
                   <div>
@@ -214,11 +214,9 @@ export const ConsultingTemplate2: React.FC<PageProps> = (props) => {
                               <p className="flex justify-between font-bold text-xl mt-2 pt-2 border-t"><span>Balance Due:</span><span>{currencySymbol}{balanceDue.toFixed(2)}</span></p>
                          </div>
                       </div>
-                      {business.ownerSignature && (
-                          <div className="mt-8">
-                              <SignatureDisplay signature={business.ownerSignature} label="Authorized Signature" />
-                          </div>
-                      )}
+                      <div className="flex justify-between mt-8">
+                            <SignatureDisplay signature={business.ownerSignature} label="Authorized Signature" />
+                        </div>
                   </footer>
               )}
           </div>
@@ -276,11 +274,9 @@ export const ConsultingTemplate3: React.FC<PageProps> = (props) => {
                             <p className="flex justify-between font-bold text-sm mt-2 pt-2 border-t border-gray-300"><span>Balance Due:</span><span>{currencySymbol}{balanceDue.toFixed(2)}</span></p>
                         </div>
                     </div>
-                    {business.ownerSignature && (
-                        <div className="mt-8">
-                            <SignatureDisplay signature={business.ownerSignature} label="Authorized Signature" />
-                        </div>
-                    )}
+                    <div className="flex justify-between mt-8">
+                      <SignatureDisplay signature={business.ownerSignature} label="Authorized Signature" />
+                    </div>
                 </footer>
                 )}
             </div>
