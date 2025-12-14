@@ -425,7 +425,7 @@ export default function DashboardPage() {
                         <p className="text-muted-foreground">Manage your invoices, estimates, and quotes here.</p>
                     </motion.div>
                     <motion.div className="flex gap-2" variants={pageVariants}>
-                        <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.98 }}>
+                         <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.98 }}>
                             <Button onClick={handleCreateInvoice}>
                                 <FilePlus2 className="mr-2 h-4 w-4" />
                                 New Invoice
