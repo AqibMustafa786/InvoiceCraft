@@ -239,7 +239,7 @@ export const ITTemplate2: React.FC<PageProps> = (props) => {
 
 // Template 3: Minimalist Grid
 export const ITTemplate3: React.FC<PageProps> = (props) => {
-    const { invoice, pageItems, pageIndex, totalPages, subtotal, taxAmount, discountAmount, balanceDue, currencySymbol, t } = props;
+    const { invoice, pageItems, pageIndex, totalPages, subtotal, taxAmount, discountAmount, total, balanceDue, currencySymbol, t } = props;
     const { business, client } = invoice;
     const docTitle = (t.invoice || 'INVOICE').toUpperCase();
 
@@ -253,8 +253,6 @@ export const ITTemplate3: React.FC<PageProps> = (props) => {
                 </div>
                  <div className="text-right">
                     <h2 className="text-2xl font-extrabold tracking-tighter">{docTitle}</h2>
-                    <p className="text-xs text-gray-500">{business.licenseNumber && `Lic#: ${business.licenseNumber}`}</p>
-                    <p className="text-xs text-gray-500">{business.taxId && `Tax ID: ${business.taxId}`}</p>
                 </div>
             </header>
 
@@ -321,7 +319,7 @@ export const ITTemplate3: React.FC<PageProps> = (props) => {
 
 // Template 4: Creative Blue
 export const ITTemplate4: React.FC<PageProps> = (props) => {
-    const { invoice, pageItems, pageIndex, totalPages, subtotal, balanceDue, currencySymbol, t, accentColor } = props;
+    const { invoice, pageItems, pageIndex, totalPages, balanceDue, currencySymbol, t, accentColor } = props;
     const { business, client } = invoice;
     const docTitle = (t.invoice || 'INVOICE').toUpperCase();
 
@@ -455,5 +453,3 @@ export const ITTemplate5: React.FC<PageProps> = (props) => {
         </div>
     );
 };
-
-```
