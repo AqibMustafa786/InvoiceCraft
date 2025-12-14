@@ -88,3 +88,4 @@ export function HistoryModal({ isOpen, onClose, auditLog }: HistoryModalProps) {
     </Dialog>
   );
 }
+

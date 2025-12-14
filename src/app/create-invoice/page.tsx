@@ -283,6 +283,13 @@ function PrintableInvoice({ doc, accentColor, backgroundColor, textColor }: { do
     );
 }
 
+const normalizeAuditLog = (auditLog: any): AuditLogEntry[] => {
+  if (Array.isArray(auditLog)) return auditLog;
+  if (auditLog && typeof auditLog === 'object') {
+    return Object.values(auditLog);
+  }
+  return [];
+};
 
 export default function CreateInvoicePage() {
   const [invoice, setInvoice] = useState<Invoice | null>(null);
@@ -332,11 +339,11 @@ export default function CreateInvoicePage() {
 
   useEffect(() => {
     if (isAuthLoading || (draftId && isDraftLoading)) return;
-    if (!user) {
+    if (!user || !userProfile) {
         router.push('/login');
         return;
     }
-
+    const companyId = userProfile.companyId;
     let initialInvoice: Invoice;
 
     if (draftId && remoteDraft) {
@@ -345,8 +352,10 @@ export default function CreateInvoicePage() {
            if (['invoiceDate', 'dueDate', 'createdAt', 'updatedAt', 'projectStartDate', 'projectEndDate', 'visitDate', 'shootDate', 'rentalStartDate', 'rentalEndDate'].includes(key) && value) {
                return value.toDate ? value.toDate() : (isValid(new Date(value)) ? new Date(value) : null);
            }
-           if (key === 'auditLog' && Array.isArray(value)) {
-                return value.map(entry => ({ ...entry, timestamp: entry.timestamp?.toDate ? entry.timestamp.toDate() : new Date(entry.timestamp) }));
+            if (key === 'auditLog' && value) {
+                // Normalize auditLog right after loading
+                const normalizedLog = normalizeAuditLog(value);
+                return normalizedLog.map(entry => ({ ...entry, timestamp: entry.timestamp?.toDate ? entry.timestamp.toDate() : new Date(entry.timestamp) }));
             }
            return value;
        };
@@ -384,12 +393,19 @@ export default function CreateInvoicePage() {
 
     } else {
         const newDocId = firestore ? doc(collection(firestore, 'companies', 'temp', INVOICES_COLLECTION)).id : crypto.randomUUID();
+        const newAuditLogEntry: AuditLogEntry = {
+            action: 'created',
+            timestamp: new Date(),
+            user: user.email || 'Unknown',
+            version: 1,
+        };
         initialInvoice = {
             ...getInitialInvoice(),
             id: newDocId,
             invoiceNumber: `INV-${new Date().getFullYear()}-${String(Math.floor(Math.random() * 1000)).padStart(3, '0')}`,
             userId: user.uid, 
-            companyId: companyId || ''
+            companyId: companyId || '',
+            auditLog: [newAuditLogEntry]
         };
     }
     
@@ -403,7 +419,7 @@ export default function CreateInvoicePage() {
            setAccentColor(`hsl(${computedColor})`);
         }
     }
-  }, [draftId, remoteDraft, isDraftLoading, user, isAuthLoading, companyId, router, firestore]);
+  }, [draftId, remoteDraft, isDraftLoading, user, userProfile, isAuthLoading, companyId, router, firestore]);
   
   const serializedInvoice = useMemo(() => invoice ? JSON.stringify(invoice) : '', [invoice]);
 
@@ -430,14 +446,15 @@ export default function CreateInvoicePage() {
     
     const isNew = !searchParams.get('draftId');
     const newId = isNew ? generateNewId(invoice) : invoice.id;
-    const isUpdate = !isNew;
-    const currentVersion = invoice.auditLog?.length || 0;
+    
+    const existingLog = normalizeAuditLog(invoice.auditLog);
+    const newVersion = existingLog.length + 1;
 
-    const newAuditLogEntry: Omit<AuditLogEntry, 'timestamp'> & { timestamp: Date } = {
-        action: isUpdate ? 'updated' : 'created',
+    const newAuditLogEntry: AuditLogEntry = {
+        action: isNew ? 'created' : 'updated',
         timestamp: new Date(),
         user: user.email || 'Unknown',
-        version: currentVersion + 1,
+        version: newVersion,
     };
 
     const draftToSave: any = {
@@ -495,22 +512,37 @@ export default function CreateInvoicePage() {
     });
 
     if (isNew) {
-      setInvoice(prev => prev ? { ...prev, id: newId, auditLog: [...(prev.auditLog || []), newAuditLogEntry] } : null);
+      setInvoice(prev => {
+        if (!prev) return null;
+        const currentLog = normalizeAuditLog(prev.auditLog);
+        return { ...prev, id: newId, auditLog: [...currentLog, newAuditLogEntry] };
+      });
       router.push(`/create-invoice?draftId=${newId}`, { scroll: false });
     } else {
-       setInvoice(prev => prev ? { ...prev, auditLog: [...(prev.auditLog || []), newAuditLogEntry] } : null);
+       setInvoice(prev => {
+        if (!prev) return null;
+        const currentLog = normalizeAuditLog(prev.auditLog);
+        return { ...prev, auditLog: [...currentLog, newAuditLogEntry] };
+       });
     }
   };
   
   const handleNew = () => {
     if(!user || !companyId) return;
     const newDocId = firestore ? doc(collection(firestore, 'companies', companyId, INVOICES_COLLECTION)).id : crypto.randomUUID();
+    const newAuditLogEntry: AuditLogEntry = {
+        action: 'created',
+        timestamp: new Date(),
+        user: user.email || 'Unknown',
+        version: 1,
+    };
     const newInvoice: Invoice = {
       ...getInitialInvoice(), 
       id: newDocId,
       invoiceNumber: `INV-${new Date().getFullYear()}-${String(Math.floor(Math.random() * 1000)).padStart(3, '0')}`,
       userId: user.uid, 
-      companyId: companyId
+      companyId: companyId,
+      auditLog: [newAuditLogEntry]
     };
     setInvoice(newInvoice);
     if (typeof window !== 'undefined' && window.document) {
@@ -642,4 +674,5 @@ export default function CreateInvoicePage() {
     
 
     
+
 

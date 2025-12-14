@@ -219,6 +219,14 @@ function PrintableDocument({ doc, accentColor, backgroundColor, textColor }: { d
     );
 }
 
+const normalizeAuditLog = (auditLog: any): AuditLogEntry[] => {
+  if (Array.isArray(auditLog)) return auditLog;
+  if (auditLog && typeof auditLog === 'object') {
+    return Object.values(auditLog);
+  }
+  return [];
+};
+
 
 export default function CreateEstimatePage() {
   const { user, userProfile, isLoading: isAuthLoading } = useAuth();
@@ -270,12 +278,13 @@ export default function CreateEstimatePage() {
 
   useEffect(() => {
     if (isAuthLoading || (draftId && isDraftLoading)) return;
-    if (!user) {
+    if (!user || !userProfile) {
         router.push('/login');
         return;
     }
 
     let initialDocument: Estimate;
+    const companyId = userProfile.companyId;
 
     if (draftId && remoteDraft) {
        const baseEstimate = getInitialEstimate();
@@ -283,8 +292,10 @@ export default function CreateEstimatePage() {
            if (['estimateDate', 'validUntilDate', 'expectedStartDate', 'expectedCompletionDate', 'createdAt', 'updatedAt'].includes(key) && value) {
                return value.toDate ? value.toDate() : (isValid(new Date(value)) ? new Date(value) : null);
            }
-            if (key === 'auditLog' && Array.isArray(value)) {
-                return value.map(entry => ({ ...entry, timestamp: entry.timestamp?.toDate ? entry.timestamp.toDate() : new Date(entry.timestamp) }));
+            if (key === 'auditLog' && value) {
+                // Normalize auditLog right after loading
+                const normalizedLog = normalizeAuditLog(value);
+                return normalizedLog.map(entry => ({ ...entry, timestamp: entry.timestamp?.toDate ? entry.timestamp.toDate() : new Date(entry.timestamp) }));
             }
            return value;
        };
@@ -313,18 +324,25 @@ export default function CreateEstimatePage() {
 
     } else {
         const newDocId = firestore ? doc(collection(firestore, 'companies', 'temp', ESTIMATES_COLLECTION)).id : crypto.randomUUID();
+        const newAuditLogEntry: AuditLogEntry = {
+            action: 'created',
+            timestamp: new Date(),
+            user: user.email || 'Unknown',
+            version: 1,
+        };
         initialDocument = {
             ...getInitialEstimate(),
             id: newDocId, // temporary random ID
             estimateNumber: `EST-${new Date().getFullYear()}-${String(Math.floor(Math.random() * 1000)).padStart(3, '0')}`,
             userId: user.uid,
             companyId: companyId || '',
+            auditLog: [newAuditLogEntry]
         };
     }
     
     setDocument(initialDocument);
 
-  }, [draftId, remoteDraft, isDraftLoading, user, isAuthLoading, companyId, firestore, router]);
+  }, [draftId, remoteDraft, isDraftLoading, user, userProfile, isAuthLoading, companyId, firestore, router]);
 
 
   useEffect(() => {
@@ -367,14 +385,15 @@ export default function CreateEstimatePage() {
     
     const isNew = !searchParams.get('draftId');
     const newId = isNew ? generateNewId(document) : document.id;
-    const isUpdate = !isNew;
-    const currentVersion = document.auditLog?.length || 0;
 
-    const newAuditLogEntry: Omit<AuditLogEntry, 'timestamp'> & { timestamp: Date } = {
-        action: isUpdate ? 'updated' : 'created',
+    const existingLog = normalizeAuditLog(document.auditLog);
+    const newVersion = (existingLog.length || 0) + 1;
+
+    const newAuditLogEntry: AuditLogEntry = {
+        action: isNew ? 'created' : 'updated',
         timestamp: new Date(),
         user: user.email || 'Unknown',
-        version: currentVersion + 1,
+        version: newVersion,
     };
 
     const draftToSave: any = {
@@ -428,22 +447,37 @@ export default function CreateEstimatePage() {
     });
 
     if (isNew) {
-      setDocument(prev => prev ? { ...prev, id: newId, auditLog: [...(prev.auditLog || []), newAuditLogEntry] } : null);
+      setDocument(prev => {
+        if (!prev) return null;
+        const currentLog = normalizeAuditLog(prev.auditLog);
+        return { ...prev, id: newId, auditLog: [...currentLog, newAuditLogEntry] };
+      });
       router.push(`/create-estimate?draftId=${newId}`, { scroll: false });
     } else {
-        setDocument(prev => prev ? { ...prev, auditLog: [...(prev.auditLog || []), newAuditLogEntry] } : null);
+       setDocument(prev => {
+        if (!prev) return null;
+        const currentLog = normalizeAuditLog(prev.auditLog);
+        return { ...prev, auditLog: [...currentLog, newAuditLogEntry] };
+      });
     }
   };
 
   const handleNew = () => {
     if(!user || !companyId) return;
     const newDocId = firestore ? doc(collection(firestore, 'companies', companyId, ESTIMATES_COLLECTION)).id : crypto.randomUUID();
+    const newAuditLogEntry: AuditLogEntry = {
+        action: 'created',
+        timestamp: new Date(),
+        user: user.email || 'Unknown',
+        version: 1,
+    };
     const newDoc: Estimate = { 
         ...getInitialEstimate(), 
         id: newDocId, 
         estimateNumber: `EST-${new Date().getFullYear()}-${String(Math.floor(Math.random() * 1000)).padStart(3, '0')}`,
         userId: user.uid, 
         companyId: companyId,
+        auditLog: [newAuditLogEntry]
     };
     setDocument(newDoc);
     router.push('/create-estimate', { scroll: false });
@@ -618,3 +652,4 @@ export default function CreateEstimatePage() {
     </>
   );
 }
+

@@ -303,7 +303,14 @@ export default function DashboardPage() {
             return;
         }
         
-        const { business, client, lineItems, summary, projectTitle, currency, language, estimateNumber } = estimate;
+        const { business, client, lineItems, summary, projectTitle, currency, language, estimateNumber, auditLog } = estimate;
+
+        const newAuditLogEntry: AuditLogEntry = {
+            action: 'created',
+            timestamp: new Date(),
+            user: user.email || 'Unknown',
+            version: 1,
+        };
 
         const newInvoiceData: Omit<Invoice, 'id'| 'createdAt' | 'updatedAt'> = {
             userId: user.uid,
@@ -323,6 +330,7 @@ export default function DashboardPage() {
             template: 'default',
             amountPaid: 0,
             paymentInstructions: 'Thank you for your business. Please make payment to the details provided below.',
+            auditLog: [newAuditLogEntry],
         };
         
         try {
@@ -760,3 +768,4 @@ export default function DashboardPage() {
         </>
     );
 }
+
