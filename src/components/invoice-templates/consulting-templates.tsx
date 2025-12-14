@@ -165,64 +165,64 @@ export const ConsultingTemplate2: React.FC<PageProps> = (props) => {
     const { invoice, pageItems, pageIndex, totalPages, subtotal, taxAmount, discountAmount, total, balanceDue, currencySymbol, t, accentColor } = props;
     const { business, client } = invoice;
     return (
-        <div className={`font-sans ${pageIndex < totalPages - 1 ? 'page-break-after' : ''}`} style={{ minHeight: '1056px', backgroundColor: props.backgroundColor, color: props.textColor }}>
-            <div style={{ backgroundColor: accentColor, color: 'white' }} className="p-8 rounded-t-lg">
-                <header className="flex justify-between items-center">
-                    <div>
-                        <h1 className="text-3xl font-bold">{business.name}</h1>
-                         <p className="text-xs opacity-80 whitespace-pre-line">{business.address}</p>
-                    </div>
-                    <div className="text-right">
-                        <h2 className="text-2xl font-bold">INVOICE</h2>
-                        <p>#{invoice.invoiceNumber}</p>
-                    </div>
-                </header>
-            </div>
-            <div className="p-8 bg-white shadow-lg rounded-b-lg border">
-                <section className="grid grid-cols-2 gap-8 text-xs mb-8">
-                     <div>
-                        <p className="font-bold mb-1">Bill To:</p>
-                        <p>{client.name}<br/>{client.address}</p>
-                        <p>{client.email}</p>
-                        <p>{client.phone}</p>
-                        {client.shippingAddress && <p className="mt-2"><span className="font-bold">Ship To:</span><br/>{client.shippingAddress}</p>}
-                        {client.projectLocation && <p className="mt-2"><span className="font-bold">Project Location:</span><br/>{client.projectLocation}</p>}
-                     </div>
-                     <div className="text-right">
-                        <p className="font-bold">Date:</p><p>{safeFormat(invoice.invoiceDate, 'MMM d, yyyy')}</p>
-                        <p className="font-bold mt-2">Due Date:</p><p>{safeFormat(invoice.dueDate, 'MMM d, yyyy')}</p>
-                        {invoice.poNumber && <p className="font-bold mt-2">PO #:</p><p>{invoice.poNumber}</p>}
-                    </div>
-                </section>
-                <ConsultingDetails invoice={invoice} t={t} />
-                <main className="flex-grow mt-4">
-                    <table className="w-full text-left text-xs">
-                        <thead><tr className="border-b"><th className="pb-2 font-semibold w-3/5">Service</th><th className="pb-2 font-semibold text-right">Amount</th></tr></thead>
-                        <tbody>{pageItems.map(item => (<tr key={item.id} className="border-b"><td className="py-2">{item.name}</td><td className="py-2 text-right">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</td></tr>))}</tbody>
-                    </table>
-                </main>
-                 {pageIndex === totalPages - 1 && (
-                    <footer className="mt-8 pt-8 border-t">
-                        <div className="flex justify-end text-sm">
-                           <div className="w-1/2">
-                                <p className="flex justify-between py-1"><span>Subtotal:</span><span>{currencySymbol}{subtotal.toFixed(2)}</span></p>
-                                {discountAmount > 0 && <p className="flex justify-between py-1 text-red-600"><span>Discount:</span><span>-{currencySymbol}{discountAmount.toFixed(2)}</span></p>}
-                                {invoice.summary.shippingCost > 0 && <p className="flex justify-between py-1"><span>Other Fees:</span><span>{currencySymbol}{invoice.summary.shippingCost.toFixed(2)}</span></p>}
-                                <p className="flex justify-between py-1"><span>Tax:</span><span>{currencySymbol}{taxAmount.toFixed(2)}</span></p>
-                                <p className="flex justify-between font-bold text-xl mt-4"><span>Total:</span><span>{currencySymbol}{total.toFixed(2)}</span></p>
-                                {(invoice.amountPaid || 0) > 0 && <p className="flex justify-between text-green-600"><span>Paid:</span><span>-{currencySymbol}{(invoice.amountPaid || 0).toFixed(2)}</span></p>}
-                                <p className="flex justify-between font-bold text-xl mt-2 pt-2 border-t"><span>Balance Due:</span><span>{currencySymbol}{balanceDue.toFixed(2)}</span></p>
-                           </div>
-                        </div>
-                        {business.ownerSignature && (
-                            <div className="mt-8">
-                                <SignatureDisplay signature={business.ownerSignature} label="Authorized Signature" />
-                            </div>
-                        )}
-                    </footer>
-                )}
-            </div>
-        </div>
+      <div className={\`font-sans \${pageIndex < totalPages - 1 ? 'page-break-after' : ''}\`} style={{ minHeight: '1056px', backgroundColor: props.backgroundColor, color: props.textColor }}>
+          <div style={{ backgroundColor: accentColor, color: 'white' }} className="p-8 rounded-t-lg">
+              <header className="flex justify-between items-center">
+                  <div>
+                      <h1 className="text-3xl font-bold">{business.name}</h1>
+                       <p className="text-xs opacity-80 whitespace-pre-line">{business.address}</p>
+                  </div>
+                  <div className="text-right">
+                      <h2 className="text-2xl font-bold">INVOICE</h2>
+                      <p>#{invoice.invoiceNumber}</p>
+                  </div>
+              </header>
+          </div>
+          <div className="p-8 bg-white shadow-lg rounded-b-lg border">
+              <section className="grid grid-cols-2 gap-8 text-xs mb-8">
+                   <div>
+                      <p className="font-bold mb-1">Bill To:</p>
+                      <p>{client.name}<br/>{client.address}</p>
+                      <p>{client.email}</p>
+                      <p>{client.phone}</p>
+                      {client.shippingAddress && <p className="mt-2"><span className="font-bold">Ship To:</span><br/>{client.shippingAddress}</p>}
+                      {client.projectLocation && <p className="mt-2"><span className="font-bold">Project Location:</span><br/>{client.projectLocation}</p>}
+                   </div>
+                   <div className="text-right">
+                      <p className="font-bold">Date:</p><p>{safeFormat(invoice.invoiceDate, 'MMM d, yyyy')}</p>
+                      <p className="font-bold mt-2">Due Date:</p><p>{safeFormat(invoice.dueDate, 'MMM d, yyyy')}</p>
+                      {invoice.poNumber && <p className="font-bold mt-2">PO #:</p><p>{invoice.poNumber}</p>}
+                  </div>
+              </section>
+              <ConsultingDetails invoice={invoice} t={t} />
+              <main className="flex-grow mt-4">
+                  <table className="w-full text-left text-xs">
+                      <thead><tr className="border-b"><th className="pb-2 font-semibold w-3/5">Service</th><th className="pb-2 font-semibold text-right">Amount</th></tr></thead>
+                      <tbody>{pageItems.map(item => (<tr key={item.id} className="border-b"><td className="py-2">{item.name}</td><td className="py-2 text-right">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</td></tr>))}</tbody>
+                  </table>
+              </main>
+               {pageIndex === totalPages - 1 && (
+                  <footer className="mt-8 pt-8 border-t">
+                      <div className="flex justify-end text-sm">
+                         <div className="w-1/2">
+                              <p className="flex justify-between py-1"><span>Subtotal:</span><span>{currencySymbol}{subtotal.toFixed(2)}</span></p>
+                              {discountAmount > 0 && <p className="flex justify-between py-1 text-red-600"><span>Discount:</span><span>-{currencySymbol}{discountAmount.toFixed(2)}</span></p>}
+                              {invoice.summary.shippingCost > 0 && <p className="flex justify-between py-1"><span>Other Fees:</span><span>{currencySymbol}{invoice.summary.shippingCost.toFixed(2)}</span></p>}
+                              <p className="flex justify-between py-1"><span>Tax:</span><span>{currencySymbol}{taxAmount.toFixed(2)}</span></p>
+                              <p className="flex justify-between font-bold text-xl mt-4"><span>Total:</span><span>{currencySymbol}{total.toFixed(2)}</span></p>
+                              {(invoice.amountPaid || 0) > 0 && <p className="flex justify-between text-green-600"><span>Paid:</span><span>-{currencySymbol}{(invoice.amountPaid || 0).toFixed(2)}</span></p>}
+                              <p className="flex justify-between font-bold text-xl mt-2 pt-2 border-t"><span>Balance Due:</span><span>{currencySymbol}{balanceDue.toFixed(2)}</span></p>
+                         </div>
+                      </div>
+                      {business.ownerSignature && (
+                          <div className="mt-8">
+                              <SignatureDisplay signature={business.ownerSignature} label="Authorized Signature" />
+                          </div>
+                      )}
+                  </footer>
+              )}
+          </div>
+      </div>
     );
 };
 // Template 3: Advisory
@@ -380,5 +380,3 @@ export const ConsultingTemplate5: React.FC<PageProps> = (props) => {
         </div>
     );
 };
-
-    
