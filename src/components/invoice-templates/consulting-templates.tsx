@@ -336,6 +336,7 @@ export const ConsultingTemplate3: React.FC<PageProps> = (props) => {
                     </div>
                     <div className="flex justify-between mt-8">
                       <SignatureDisplay signature={business.ownerSignature} label="Authorized Signature" />
+                      <SignatureDisplay signature={invoice.clientSignature} label="Client Signature" />
                     </div>
                 </footer>
                 )}
