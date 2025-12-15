@@ -28,7 +28,7 @@ const CLIENTS_COLLECTION = 'clients';
 const clientSchema = z.object({
   name: z.string().min(1, { message: "Full name is required." }),
   companyName: z.string().optional(),
-  email: z.string().email({ message: "Invalid email format." }).refine(val => val.endsWith('@gmail.com'), { message: "Please enter a valid Gmail address." }),
+  email: z.string().email({ message: "Invalid email format." }),
   phone: z.string().optional(),
   address: z.string().optional(),
   shippingAddress: z.string().optional(),
@@ -56,8 +56,26 @@ export default function ClientProfilePage() {
 
   const { data: existingClient, isLoading: isLoadingClient } = useDoc<Client>(docRef);
   
-  const invoicesQuery = useMemoFirebase(() => (firestore && userProfile?.companyId && !isNewClient ? query(collection(firestore, 'companies', userProfile.companyId, 'invoices'), where('clientId', '==', clientId)) : null), [firestore, userProfile?.companyId, clientId, isNewClient]);
-  const estimatesQuery = useMemoFirebase(() => (firestore && userProfile?.companyId && !isNewClient ? query(collection(firestore, 'companies', userProfile.companyId, 'estimates'), where('clientId', '==', clientId)) : null), [firestore, userProfile?.companyId, clientId, isNewClient]);
+  const invoicesQuery = useMemoFirebase(() => {
+    if (firestore && userProfile?.companyId && existingClient?.companyName && !isNewClient) {
+      return query(
+        collection(firestore, 'companies', userProfile.companyId, 'invoices'), 
+        where('client.companyName', '==', existingClient.companyName)
+      );
+    }
+    return null;
+  }, [firestore, userProfile?.companyId, existingClient, isNewClient]);
+
+  const estimatesQuery = useMemoFirebase(() => {
+    if (firestore && userProfile?.companyId && existingClient?.companyName && !isNewClient) {
+      return query(
+        collection(firestore, 'companies', userProfile.companyId, 'estimates'), 
+        where('client.companyName', '==', existingClient.companyName)
+      );
+    }
+    return null;
+  }, [firestore, userProfile?.companyId, existingClient, isNewClient]);
+
 
   const { data: invoices } = useCollection<Invoice>(invoicesQuery);
   const { data: estimates } = useCollection<Estimate>(estimatesQuery);
@@ -258,5 +276,6 @@ export default function ClientProfilePage() {
     </div>
   );
 }
+    
 
     
