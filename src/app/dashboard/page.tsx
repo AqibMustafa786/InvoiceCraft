@@ -27,7 +27,7 @@ import {
 import { FilePlus2, Edit, Trash2, Filter, X, MoreHorizontal, FileText, Share2, DollarSign, Clock, FileWarning, Files, CheckCircle, FileQuestion, Users, Percent, AreaChart, Package, History, Shield } from "lucide-react";
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { format, isValid } from 'date-fns';
+import { format, isValid, isWithinInterval } from 'date-fns';
 import { FilterSheet, type DashboardFilters } from '@/components/dashboard/filter-sheet';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
@@ -469,10 +469,16 @@ export default function DashboardPage() {
             const amountMaxMatch = filters.amountMax !== null ? total <= filters.amountMax : true;
             const dateFrom = filters.dateFrom ? new Date(filters.dateFrom.setHours(0, 0, 0, 0)) : null;
             const dateTo = filters.dateTo ? new Date(filters.dateTo.setHours(23, 59, 59, 999)) : null;
-            const dateMatch = (dateFrom && dateTo) ? isWithinInterval(date, { start: dateFrom, end: dateTo })
-                            : dateFrom ? date >= dateFrom
-                            : dateTo ? date <= dateTo
-                            : true;
+            
+            let dateMatch = true;
+            if (dateFrom && dateTo) {
+              dateMatch = isWithinInterval(date, { start: dateFrom, end: dateTo });
+            } else if (dateFrom) {
+              dateMatch = date >= dateFrom;
+            } else if (dateTo) {
+              dateMatch = date <= dateTo;
+            }
+
             return clientNameMatch && statusMatch && amountMinMatch && amountMaxMatch && dateMatch;
         });
     }, [allDocuments, filters, calculateTotal]);
@@ -865,4 +871,5 @@ export default function DashboardPage() {
         </>
     );
 }
+
 
