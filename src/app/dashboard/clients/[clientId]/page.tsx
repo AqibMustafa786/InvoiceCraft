@@ -138,7 +138,7 @@ export default function ClientProfilePage() {
         <h1 className="text-3xl font-bold font-headline">{isNewClient ? 'Create New Client' : form.getValues('name')}</h1>
       </div>
 
-      <Card>
+      <Card className="bg-card/50 backdrop-blur-sm shadow-lg transition-shadow hover:shadow-primary/20">
         <CardHeader>
           <CardTitle>Client Information</CardTitle>
           <CardDescription>Manage the contact and address details for this client.</CardDescription>
