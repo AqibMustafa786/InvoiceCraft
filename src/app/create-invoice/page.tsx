@@ -395,19 +395,20 @@ export default function CreateInvoicePage() {
     const companyId = userProfile.companyId;
     let initialInvoice: Invoice;
 
+    const fromJSON = (key: string, value: any) => {
+        const dateKeys = ['invoiceDate', 'dueDate', 'createdAt', 'updatedAt', 'projectStartDate', 'projectEndDate', 'visitDate', 'shootDate', 'rentalStartDate', 'rentalEndDate', 'timestamp'];
+        if (dateKeys.includes(key) && value) {
+            return value.toDate ? value.toDate() : (isValid(new Date(value)) ? new Date(value) : null);
+        }
+        if (key === 'auditLog' && value) {
+            const normalizedLog = normalizeAuditLog(value);
+            return normalizedLog.map(entry => ({ ...entry, timestamp: entry.timestamp?.toDate ? entry.timestamp.toDate() : new Date(entry.timestamp) }));
+        }
+        return value;
+    };
+
     if (draftId && remoteDraft) {
        const baseInvoice = getInitialInvoice();
-       const fromJSON = (key: string, value: any) => {
-           if (['invoiceDate', 'dueDate', 'createdAt', 'updatedAt', 'projectStartDate', 'projectEndDate', 'visitDate', 'shootDate', 'rentalStartDate', 'rentalEndDate', 'timestamp'].includes(key) && value) {
-               return value.toDate ? value.toDate() : (isValid(new Date(value)) ? new Date(value) : null);
-           }
-            if (key === 'auditLog' && value) {
-                // Normalize auditLog right after loading
-                const normalizedLog = normalizeAuditLog(value);
-                return normalizedLog.map(entry => ({ ...entry, timestamp: entry.timestamp?.toDate ? entry.timestamp.toDate() : new Date(entry.timestamp) }));
-            }
-           return value;
-       };
        const loadedDraft = JSON.parse(JSON.stringify(remoteDraft), fromJSON);
        
         initialInvoice = {
@@ -736,3 +737,6 @@ export default function CreateInvoicePage() {
 
 
 
+
+
+    

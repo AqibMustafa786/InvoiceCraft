@@ -317,19 +317,20 @@ export default function CreateEstimatePage() {
     let initialDocument: Estimate;
     const companyId = userProfile.companyId;
 
+    const fromJSON = (key: string, value: any) => {
+        const dateKeys = ['estimateDate', 'validUntilDate', 'expectedStartDate', 'expectedCompletionDate', 'createdAt', 'updatedAt', 'timestamp'];
+        if (dateKeys.includes(key) && value) {
+            return value.toDate ? value.toDate() : (isValid(new Date(value)) ? new Date(value) : null);
+        }
+        if (key === 'auditLog' && value) {
+            const normalizedLog = normalizeAuditLog(value);
+            return normalizedLog.map(entry => ({ ...entry, timestamp: entry.timestamp?.toDate ? entry.timestamp.toDate() : new Date(entry.timestamp) }));
+        }
+        return value;
+    };
+
     if (draftId && remoteDraft) {
        const baseEstimate = getInitialEstimate();
-       const fromJSON = (key: string, value: any) => {
-           if (['estimateDate', 'validUntilDate', 'expectedStartDate', 'expectedCompletionDate', 'createdAt', 'updatedAt', 'timestamp'].includes(key) && value) {
-               return value.toDate ? value.toDate() : (isValid(new Date(value)) ? new Date(value) : null);
-           }
-            if (key === 'auditLog' && value) {
-                // Normalize auditLog right after loading
-                const normalizedLog = normalizeAuditLog(value);
-                return normalizedLog.map(entry => ({ ...entry, timestamp: entry.timestamp?.toDate ? entry.timestamp.toDate() : new Date(entry.timestamp) }));
-            }
-           return value;
-       };
        const loadedDraft = JSON.parse(JSON.stringify(remoteDraft), fromJSON);
        
         initialDocument = {
@@ -667,3 +668,5 @@ export default function CreateEstimatePage() {
     </>
   );
 }
+
+    
