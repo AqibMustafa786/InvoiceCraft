@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import { useState, useEffect, useCallback, useMemo } from 'react';
@@ -56,17 +57,25 @@ const diff = (original: any, updated: any): string[] => {
     if (!original || !updated) return changes;
 
     const allKeys = new Set([...Object.keys(original), ...Object.keys(updated)]);
-
     const formatKey = (key: string) => key.replace(/([A-Z])/g, ' $1').replace(/^./, (str) => str.toUpperCase());
+    
+    const isDate = (value: any) => value instanceof Date || (value && typeof value.toDate === 'function');
 
     allKeys.forEach(key => {
         if (key === 'auditLog' || key === 'updatedAt' || key === 'createdAt') return;
 
-        const originalValue = original[key];
-        const updatedValue = updated[key];
+        let originalValue = original[key];
+        let updatedValue = updated[key];
 
-        if (JSON.stringify(originalValue) !== JSON.stringify(updatedValue)) {
-            if (typeof updatedValue === 'object' && updatedValue !== null && !Array.isArray(updatedValue)) {
+        // Convert Firestore Timestamps to JS Dates for comparison
+        if (isDate(originalValue)) originalValue = toDateSafe(originalValue);
+        if (isDate(updatedValue)) updatedValue = toDateSafe(updatedValue);
+        
+        let originalComp = (originalValue instanceof Date) ? originalValue.toISOString() : JSON.stringify(originalValue);
+        let updatedComp = (updatedValue instanceof Date) ? updatedValue.toISOString() : JSON.stringify(updatedValue);
+        
+        if (originalComp !== updatedComp) {
+            if (typeof updatedValue === 'object' && updatedValue !== null && !Array.isArray(updatedValue) && !(updatedValue instanceof Date)) {
                  Object.keys(updatedValue).forEach(subKey => {
                     const subOriginal = originalValue?.[subKey] ?? 'nothing';
                     const subUpdated = updatedValue[subKey];
@@ -75,7 +84,7 @@ const diff = (original: any, updated: any): string[] => {
                     }
                  });
             } else {
-                 changes.push(`Changed ${formatKey(key)} from '${originalValue}' to '${updatedValue}'`);
+                 changes.push(`Changed ${formatKey(key)} from '${originalValue instanceof Date ? originalValue.toLocaleDateString() : originalValue}' to '${updatedValue instanceof Date ? updatedValue.toLocaleDateString() : updatedValue}'`);
             }
         }
     });
@@ -395,21 +404,27 @@ export default function CreateInvoicePage() {
     const companyId = userProfile.companyId;
     let initialInvoice: Invoice;
 
-    const fromJSON = (key: string, value: any) => {
-        const dateKeys = ['invoiceDate', 'dueDate', 'createdAt', 'updatedAt', 'projectStartDate', 'projectEndDate', 'visitDate', 'shootDate', 'rentalStartDate', 'rentalEndDate', 'timestamp'];
-        if (dateKeys.includes(key) && value) {
-            return value.toDate ? value.toDate() : (isValid(new Date(value)) ? new Date(value) : null);
+    const processData = (data: any): any => {
+        const processed: any = {};
+        for (const key in data) {
+            if (Object.prototype.hasOwnProperty.call(data, key)) {
+                const value = data[key];
+                if (value && typeof value === 'object' && value.toDate) { // Firestore Timestamp check
+                    processed[key] = value.toDate();
+                } else if (value && typeof value === 'object' && !Array.isArray(value)) {
+                    processed[key] = processData(value); // Recurse for nested objects
+                } else {
+                    processed[key] = value;
+                }
+            }
         }
-        if (key === 'auditLog' && value) {
-            const normalizedLog = normalizeAuditLog(value);
-            return normalizedLog.map(entry => ({ ...entry, timestamp: entry.timestamp?.toDate ? entry.timestamp.toDate() : new Date(entry.timestamp) }));
-        }
-        return value;
+        return processed;
     };
+
 
     if (draftId && remoteDraft) {
        const baseInvoice = getInitialInvoice();
-       const loadedDraft = JSON.parse(JSON.stringify(remoteDraft), fromJSON);
+       const loadedDraft = processData(remoteDraft);
        
         initialInvoice = {
          ...baseInvoice,
