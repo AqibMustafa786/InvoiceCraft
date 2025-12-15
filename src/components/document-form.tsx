@@ -682,7 +682,7 @@ export function DocumentForm({ document, setDocument, accentColor, setAccentColo
                 <Label htmlFor="clientCompanyName">Client Company Name (optional)</Label>
                 <div className="relative flex items-center">
                     <Building className="absolute left-3 h-5 w-5 text-muted-foreground" />
-                    <Input id="clientCompanyName" name="companyName" value={document.client.companyName} onChange={(e) => handleNestedChange('client', e)} className="pl-10" />
+                    <Input id="clientCompanyName" name="companyName" value={document.client.companyName || ''} onChange={(e) => handleNestedChange('client', e)} className="pl-10" />
                     </div>
                 </div>
             </div>

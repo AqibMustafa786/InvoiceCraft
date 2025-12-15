@@ -608,11 +608,20 @@ export function InvoiceForm({ invoice, setInvoice, accentColor, setAccentColor, 
           <CardTitle>Bill To</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="clientName">Client Name</Label>
-             <div className="relative flex items-center">
-                <User className="absolute left-3 h-5 w-5 text-muted-foreground" />
-                <Input id="clientName" name="name" value={invoice.client.name} onChange={(e) => handleNestedChange('client', e)} className="pl-10" />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="clientName">Client Name</Label>
+              <div className="relative flex items-center">
+                  <User className="absolute left-3 h-5 w-5 text-muted-foreground" />
+                  <Input id="clientName" name="name" value={invoice.client.name} onChange={(e) => handleNestedChange('client', e)} className="pl-10" />
+              </div>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="clientCompanyName">Client Company Name (optional)</Label>
+              <div className="relative flex items-center">
+                  <Building className="absolute left-3 h-5 w-5 text-muted-foreground" />
+                  <Input id="clientCompanyName" name="companyName" value={invoice.client.companyName || ''} onChange={(e) => handleNestedChange('client', e)} className="pl-10" />
+              </div>
             </div>
           </div>
            <div className="space-y-2">
@@ -1194,6 +1203,7 @@ export function InvoiceForm({ invoice, setInvoice, accentColor, setAccentColor, 
     </div>
   );
 }
+
 
 
 
