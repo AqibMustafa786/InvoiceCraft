@@ -38,7 +38,7 @@ interface FilterSheetProps {
     onReset: () => void;
 }
 
-const STATUS_OPTIONS: DocumentStatus[] = ['draft', 'sent', 'paid', 'overdue', 'accepted', 'rejected'];
+const STATUS_OPTIONS: DocumentStatus[] = ['draft', 'sent', 'paid', 'overdue', 'accepted', 'rejected', 'expired'];
 
 
 export function FilterSheet({ open, onOpenChange, filters, onFiltersChange, onReset }: FilterSheetProps) {
@@ -136,3 +136,5 @@ export function FilterSheet({ open, onOpenChange, filters, onFiltersChange, onRe
         </Sheet>
     )
 }
+
+    

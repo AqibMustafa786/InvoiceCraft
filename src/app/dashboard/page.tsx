@@ -202,29 +202,20 @@ export default function DashboardPage() {
     const invoicesQuery = useMemoFirebase(() => {
         if (!firestore || !companyId) return null;
         let q = query(collection(firestore, 'companies', companyId, INVOICES_COLLECTION));
-        if (filters.clientName) {
-            q = query(q, where('client.name', '==', filters.clientName));
-        }
         return q;
-    }, [firestore, companyId, filters.clientName]);
+    }, [firestore, companyId]);
 
     const estimatesQuery = useMemoFirebase(() => {
         if (!firestore || !companyId) return null;
         let q = query(collection(firestore, 'companies', companyId, ESTIMATES_COLLECTION));
-        if (filters.clientName) {
-            q = query(q, where('client.name', '==', filters.clientName));
-        }
         return q;
-    }, [firestore, companyId, filters.clientName]);
+    }, [firestore, companyId]);
 
     const quotesQuery = useMemoFirebase(() => {
         if (!firestore || !companyId) return null;
         let q = query(collection(firestore, 'companies', companyId, QUOTES_COLLECTION));
-         if (filters.clientName) {
-            q = query(q, where('client.name', '==', filters.clientName));
-        }
         return q;
-    }, [firestore, companyId, filters.clientName]);
+    }, [firestore, companyId]);
 
 
     const { data: clients, isLoading: isLoadingClients } = useCollection<Client>(clientsQuery);
@@ -240,7 +231,8 @@ export default function DashboardPage() {
     };
 
     const handleHistoryClick = (auditLog?: AuditLogEntry[]) => {
-        setHistoryModalState({ isOpen: true, auditLog: auditLog || [] });
+        const sortedLog = (auditLog || []).sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+        setHistoryModalState({ isOpen: true, auditLog: sortedLog });
     };
 
     const handleCreateInvoice = () => {
@@ -451,32 +443,37 @@ export default function DashboardPage() {
     const filteredDocuments = useMemo(() => {
         return allDocuments.filter(doc => {
             const total = calculateTotal(doc);
-            let date: Date | null = null;
-            let clientName = '';
-            if (doc.documentType === 'invoice') {
-              date = (doc as Invoice).invoiceDate;
-              clientName = (doc as Invoice).client.name;
-            } else if (doc.documentType === 'estimate' || doc.documentType === 'quote') {
-              date = (doc as Estimate | Quote).estimateDate;
-              clientName = (doc as Estimate | Quote).client.name;
-            }
             
-            if (!date || !isValid(date)) return true;
+            let docDate: Date | null = null;
+            let clientName = '';
 
-            const clientNameMatch = filters.clientName ? (clientName || '').toLowerCase().includes(filters.clientName.toLowerCase()) : true;
+            if (doc.documentType === 'invoice') {
+              const invoiceDoc = doc as Invoice;
+              docDate = toDateSafe(invoiceDoc.invoiceDate);
+              clientName = invoiceDoc.client.name;
+            } else if (doc.documentType === 'estimate' || doc.documentType === 'quote') {
+              const estimateDoc = doc as Estimate | Quote;
+              docDate = toDateSafe(estimateDoc.estimateDate);
+              clientName = estimateDoc.client.name;
+            }
+
+            const clientNameMatch = filters.clientName ? clientName.toLowerCase().includes(filters.clientName.toLowerCase()) : true;
             const statusMatch = filters.status ? doc.status === filters.status : true;
-            const amountMinMatch = filters.amountMin !== null ? total >= filters.amountMin : true;
-            const amountMaxMatch = filters.amountMax !== null ? total <= filters.amountMax : true;
-            const dateFrom = filters.dateFrom ? new Date(filters.dateFrom.setHours(0, 0, 0, 0)) : null;
-            const dateTo = filters.dateTo ? new Date(filters.dateTo.setHours(23, 59, 59, 999)) : null;
+            const amountMinMatch = filters.amountMin != null ? total >= filters.amountMin : true;
+            const amountMaxMatch = filters.amountMax != null ? total <= filters.amountMax : true;
             
             let dateMatch = true;
-            if (dateFrom && dateTo) {
-              dateMatch = isWithinInterval(date, { start: dateFrom, end: dateTo });
-            } else if (dateFrom) {
-              dateMatch = date >= dateFrom;
-            } else if (dateTo) {
-              dateMatch = date <= dateTo;
+            if (docDate) {
+              const dateFrom = filters.dateFrom ? new Date(filters.dateFrom.setHours(0,0,0,0)) : null;
+              const dateTo = filters.dateTo ? new Date(filters.dateTo.setHours(23,59,59,999)) : null;
+
+              if (dateFrom && dateTo) {
+                dateMatch = isWithinInterval(docDate, { start: dateFrom, end: dateTo });
+              } else if (dateFrom) {
+                dateMatch = docDate >= dateFrom;
+              } else if (dateTo) {
+                dateMatch = docDate <= dateTo;
+              }
             }
 
             return clientNameMatch && statusMatch && amountMinMatch && amountMaxMatch && dateMatch;
@@ -492,8 +489,8 @@ export default function DashboardPage() {
         let count = 0;
         if (filters.clientName) count++;
         if (filters.status) count++;
-        if (filters.amountMin !== null) count++;
-        if (filters.amountMax !== null) count++;
+        if (filters.amountMin != null) count++;
+        if (filters.amountMax != null) count++;
         if (filters.dateFrom) count++;
         if (filters.dateTo) count++;
         return count;
@@ -873,3 +870,6 @@ export default function DashboardPage() {
 }
 
 
+
+
+    
