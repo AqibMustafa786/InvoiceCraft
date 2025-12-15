@@ -25,7 +25,7 @@ interface HistoryModalProps {
 
 const safeFormat = (date: any, formatString: string) => {
     if (!date) return 'N/A';
-    const d = (date instanceof Date) ? date : date.toDate();
+    const d = (date instanceof Date) ? date : date.toDate ? date.toDate() : new Date(date);
     if (!isValid(d)) {
         return "Invalid Date";
     }
@@ -42,6 +42,15 @@ const getActionVariant = (action: AuditLogEntry['action']) => {
         case 'declined': return 'destructive';
         default: return 'outline';
     }
+}
+
+const getUserDisplay = (user: any) => {
+    if (!user) return 'Unknown';
+    if (typeof user === 'string') return user;
+    if (typeof user === 'object' && user !== null) {
+        return user.name || user.email || 'Unknown';
+    }
+    return 'Unknown';
 }
 
 export function HistoryModal({ isOpen, onClose, auditLog }: HistoryModalProps) {
@@ -71,7 +80,7 @@ export function HistoryModal({ isOpen, onClose, auditLog }: HistoryModalProps) {
                             <div>
                                <p className="font-semibold">Version {entry.version}</p>
                                <p className="text-xs text-muted-foreground">
-                                   {safeFormat(entry.timestamp, "MMM d, yyyy 'at' h:mm a")} by {entry.user || 'Unknown'}
+                                   {safeFormat(entry.timestamp, "MMM d, yyyy 'at' h:mm a")} by {getUserDisplay(entry.user)}
                                </p>
                             </div>
                            <Badge variant={getActionVariant(entry.action)} className="capitalize h-6 justify-center">

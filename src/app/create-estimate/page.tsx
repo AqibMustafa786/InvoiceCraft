@@ -359,7 +359,7 @@ export default function CreateEstimatePage() {
             id: crypto.randomUUID(),
             action: 'created',
             timestamp: new Date(),
-            user: user.email || 'Unknown',
+            user: { name: user.displayName || user.email, email: user.email },
             version: 1,
         };
         initialDocument = {
@@ -422,7 +422,7 @@ export default function CreateEstimatePage() {
             id: crypto.randomUUID(),
             action: 'updated',
             timestamp: new Date(),
-            user: user.email || 'Unknown',
+            user: { name: user.displayName || user.email, email: user.email },
             version: newVersion,
             changes: changes,
         };
@@ -482,7 +482,7 @@ export default function CreateEstimatePage() {
         id: crypto.randomUUID(),
         action: 'created',
         timestamp: new Date(),
-        user: user.email || 'Unknown',
+        user: { name: user.displayName || user.email, email: user.email },
         version: 1,
     };
     const newDoc: Estimate = { 
@@ -667,4 +667,3 @@ export default function CreateEstimatePage() {
     </>
   );
 }
-
