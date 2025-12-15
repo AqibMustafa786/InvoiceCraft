@@ -24,7 +24,7 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { FilePlus2, Edit, Trash2, Filter, X, MoreHorizontal, FileText, Share2, DollarSign, Clock, FileWarning, Files, CheckCircle, FileQuestion, Users, Percent, AreaChart, Package, History } from "lucide-react";
+import { FilePlus2, Edit, Trash2, Filter, X, MoreHorizontal, FileText, Share2, DollarSign, Clock, FileWarning, Files, CheckCircle, FileQuestion, Users, Percent, AreaChart, Package, History, Shield } from "lucide-react";
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { format, isValid } from 'date-fns';
@@ -723,21 +723,53 @@ export default function DashboardPage() {
                             <h1 className="text-3xl font-bold font-headline">Dashboard</h1>
                             <p className="text-muted-foreground">An overview of your financial documents and activities.</p>
                         </motion.div>
-                        <motion.div className="flex gap-2" variants={pageVariants}>
-                            <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.98 }}>
+                    </div>
+                </motion.div>
+
+                 <motion.div 
+                    className="mb-8"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.2 }}
+                 >
+                    <Card className="bg-card/50 backdrop-blur-sm shadow-lg">
+                        <CardHeader>
+                            <CardTitle>Quick Actions</CardTitle>
+                            <CardDescription>Start creating a new document or add a new client.</CardDescription>
+                        </CardHeader>
+                        <CardContent className="flex flex-wrap gap-4">
+                            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.98 }}>
                                 <Button onClick={() => router.push('/dashboard/clients/new')} className="rounded-full">
                                     <Users className="mr-2 h-4 w-4" />
                                     New Client
                                 </Button>
                             </motion.div>
-                            <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.98 }}>
+                            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.98 }}>
                                 <Button onClick={handleCreateInvoice} variant="outline" className="rounded-full">
                                     <FilePlus2 className="mr-2 h-4 w-4" />
                                     New Invoice
                                 </Button>
                             </motion.div>
-                        </motion.div>
-                    </div>
+                             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.98 }}>
+                                <Button onClick={handleCreateEstimate} variant="outline" className="rounded-full">
+                                    <FilePlus2 className="mr-2 h-4 w-4" />
+                                    New Estimate
+                                </Button>
+                            </motion.div>
+                             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.98 }}>
+                                <Button onClick={handleCreateQuote} variant="outline" className="rounded-full">
+                                    <FileText className="mr-2 h-4 w-4" />
+                                    New Quote
+                                </Button>
+                            </motion.div>
+                             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.98 }}>
+                                <Button onClick={() => router.push('/create-insurance')} variant="outline" className="rounded-full">
+                                    <Shield className="mr-2 h-4 w-4" />
+                                    New Insurance Doc
+                                </Button>
+                            </motion.div>
+                        </CardContent>
+                    </Card>
                 </motion.div>
 
                 <motion.div initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.3, delay: 0.1 }}>
