@@ -84,6 +84,7 @@ export const ConstructionTemplate1: React.FC<PageProps> = (props) => {
                 <div>
                     <p className="font-bold">{(t.client || 'Client')}</p>
                     <p>{client.name}</p>
+                    {client.companyName && <p>{client.companyName}</p>}
                     <p className="whitespace-pre-line">{client.address}</p>
                     <p>{client.phone}</p>
                     <p>{client.email}</p>
@@ -180,6 +181,7 @@ export const ConstructionTemplate2: React.FC<PageProps> = (props) => {
                     <div>
                         <p className="font-bold text-gray-500 mb-1" style={{color: textColor ? textColor : undefined}}>{(t.clientInformation || 'CLIENT INFORMATION')}</p>
                         <p className="font-bold">{client.name}</p>
+                        {client.companyName && <p>{client.companyName}</p>}
                         <p className="whitespace-pre-line">{client.address}</p>
                         <p>{client.phone}</p>
                         <p>{client.email}</p>
@@ -265,7 +267,7 @@ export const ConstructionTemplate3: React.FC<PageProps> = (props) => {
 
             <section className="mb-8 p-4 border rounded-md grid grid-cols-3 gap-4 text-xs">
                 <div><p className="font-bold">{(t.from || 'From')}:</p><p>{business.name}<br/>{business.address}</p></div>
-                <div><p className="font-bold">{(t.to || 'To')}:</p><p>{client.name}<br/>{client.address}<br/>{client.phone}<br/>{client.email}</p></div>
+                <div><p className="font-bold">{(t.to || 'To')}:</p><p>{client.name}<br/>{client.companyName && `${client.companyName}<br/>`}{client.address}<br/>{client.phone}<br/>{client.email}</p></div>
                 <div><p className="font-bold">{(t.details || 'Details')}:</p><p># {invoice.invoiceNumber}<br/>{(t.date || 'Date')}: {safeFormat(invoice.invoiceDate, 'MM-dd-yyyy')}<br/>Due: {safeFormat(invoice.dueDate, 'MM-dd-yyyy')}<br/>PO: {invoice.poNumber}</p></div>
             </section>
             
@@ -295,26 +297,26 @@ export const ConstructionTemplate3: React.FC<PageProps> = (props) => {
             </main>
             
             {pageIndex === totalPages - 1 && (
-                 <footer className="mt-auto pt-8">
-                     <div className="flex justify-end mb-8">
-                        <div className="w-1/3 text-sm">
-                            <div className="flex justify-between py-1"><span>{(t.subtotal || 'Subtotal')}</span><span className="font-medium">{currencySymbol}{subtotal.toFixed(2)}</span></div>
-                             {discountAmount > 0 && <div className="flex justify-between py-1 text-red-600"><span>{(t.discount || 'Discount')}</span><span className="font-medium">-{currencySymbol}{discountAmount.toFixed(2)}</span></div>}
-                            {invoice.summary.shippingCost > 0 && <div className="flex justify-between py-1"><span>{(t.shipping || 'Shipping/Extra')}</span><span className="font-medium">{currencySymbol}{invoice.summary.shippingCost.toFixed(2)}</span></div>}
-                            <div className="flex justify-between py-1"><span>{(t.tax || 'Tax')}</span><span className="font-medium">{currencySymbol}{taxAmount.toFixed(2)}</span></div>
-                            <div className="flex justify-between py-1 font-bold"><span>{(t.total || 'Total')}</span><span>{currencySymbol}{total.toFixed(2)}</span></div>
-                            {(invoice.amountPaid || 0) > 0 && <div className="flex justify-between py-1 text-green-600"><span>{(t.amountPaid || 'Amount Paid')}</span><span className="font-medium">-{currencySymbol}{(invoice.amountPaid || 0).toFixed(2)}</span></div>}
-                            <div className="flex justify-between py-2 mt-1 border-t-2 border-black font-bold"><span>{(t.balanceDue || 'Balance Due')}</span><span>{currencySymbol}{balanceDue.toFixed(2)}</span></div>
-                        </div>
-                    </div>
-                    <div className="text-xs">
-                        <p className="font-bold mb-1">{(t.notes || 'Notes')}</p>
-                        <p className="whitespace-pre-line">{invoice.paymentInstructions}</p>
-                    </div>
-                     <div className="flex justify-between mt-8">
-                        {business.ownerSignature && <SignatureDisplay signature={business.ownerSignature} label="Authorized Signature" />}
-                    </div>
-                </footer>
+                 <footer className="mt-auto pt-8 flex justify-between items-start">
+                     <div className="w-1/2 text-xs">
+                         <p className="font-bold mb-1">{(t.termsAndConditions || 'TERMS')}</p>
+                         <p className="whitespace-pre-line">{invoice.paymentInstructions}</p>
+                         {business.ownerSignature && (
+                            <div className="mt-8">
+                                <SignatureDisplay signature={business.ownerSignature} label="Authorized Signature" />
+                            </div>
+                        )}
+                     </div>
+                     <div className="w-1/3 text-right text-sm">
+                         <p className="py-1 flex justify-between"><span>{(t.subtotal || 'Subtotal')}:</span><span>{currencySymbol}{subtotal.toFixed(2)}</span></p>
+                         {discountAmount > 0 && <p className="py-1 flex justify-between text-red-500"><span>{(t.discount || 'Discount')}:</span><span>-{currencySymbol}{discountAmount.toFixed(2)}</span></p>}
+                         {invoice.summary.shippingCost > 0 && <p className="py-1 flex justify-between"><span>{(t.shipping || 'Shipping')}:</span><span>{currencySymbol}{invoice.summary.shippingCost.toFixed(2)}</span></p>}
+                         <p className="py-1 flex justify-between"><span>{(t.tax || 'Tax')}:</span><span>{currencySymbol}{taxAmount.toFixed(2)}</span></p>
+                         <p className="py-1 flex justify-between font-bold"><span>{(t.total || 'Total')}:</span><span>{currencySymbol}{total.toFixed(2)}</span></p>
+                         {(invoice.amountPaid || 0) > 0 && <p className="py-1 flex justify-between text-green-600"><span>Amount Paid:</span><span>-{currencySymbol}{(invoice.amountPaid || 0).toFixed(2)}</span></p>}
+                         <p className="py-2 mt-2 flex justify-between border-t-2 border-black font-bold text-base"><span>{(t.balanceDue || 'BALANCE DUE')}:</span><span>{currencySymbol}{balanceDue.toFixed(2)}</span></p>
+                     </div>
+                 </footer>
             )}
         </div>
     );
@@ -323,6 +325,8 @@ export const ConstructionTemplate3: React.FC<PageProps> = (props) => {
 export const ConstructionTemplate4: React.FC<PageProps> = (props) => <ConstructionTemplate1 {...props} />;
 export const ConstructionTemplate5: React.FC<PageProps> = (props) => <ConstructionTemplate2 {...props} />;
 export const ConstructionTemplate6: React.FC<PageProps> = (props) => <ConstructionTemplate3 {...props} />;
+    
+
     
 
     
