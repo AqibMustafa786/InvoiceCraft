@@ -217,7 +217,7 @@ const DefaultTemplatePage: FC<PageProps> = ({ pageItems, pageIndex, totalPages, 
                 <header className="flex justify-between items-start mb-10" data-element="header">
                     <div>
                         {business.logoUrl ? (
-                            <Image src={business.logoUrl} alt={`${business.name} Logo`} width={120} height={40} className="object-contain" data-ai-hint="logo" />
+                            <Image src={business.logoUrl} alt={`${business.name} Logo`} width={120} height={40} className="object-contain mb-2" data-ai-hint="logo" />
                         ) : (
                             <h1 className="text-3xl font-bold font-headline" style={{ color: accentColor }}>{business.name}</h1>
                         )}
@@ -240,6 +240,7 @@ const DefaultTemplatePage: FC<PageProps> = ({ pageItems, pageIndex, totalPages, 
                     <div className="space-y-1">
                         <p className="text-sm font-semibold text-gray-500">{((t.billTo as string) || 'BILL TO').toUpperCase()}</p>
                         <p className="font-bold">{client.name}</p>
+                        {client.companyName && <p>{client.companyName}</p>}
                         <p className="text-sm whitespace-pre-line">{client.address}</p>
                         {client.phone && <p className="text-sm">{client.phone}</p>}
                         {client.email && <p className="text-sm">{client.email}</p>}
@@ -289,6 +290,7 @@ const ModernTemplatePage: FC<PageProps> = ({ pageItems, pageIndex, totalPages, .
                 </div>
                 <div className="space-y-1 text-right">
                     <p className="font-bold">{client.name}</p>
+                    {client.companyName && <p>{client.companyName}</p>}
                     <p className="whitespace-pre-line">{client.address}</p>
                     <p>{client.phone}</p>
                     <p>{client.email}</p>
@@ -337,6 +339,7 @@ const MinimalistTemplatePage: FC<PageProps> = ({ pageItems, pageIndex, totalPage
                 <div className="space-y-1 col-span-2">
                     <p className="text-gray-500 uppercase tracking-widest">Billed To</p>
                     <p className="font-medium">{client.name}</p>
+                    {client.companyName && <p>{client.companyName}</p>}
                     <p>{client.address}</p>
                 </div>
                 <div className="space-y-1">
@@ -384,6 +387,7 @@ const CreativeTemplatePage: FC<PageProps> = ({ pageItems, pageIndex, totalPages,
             <section data-element="client-details" className="mb-10 text-sm">
                 <p className="text-gray-500">Billed to:</p>
                 <p className="font-bold text-lg">{client.name}</p>
+                {client.companyName && <p>{client.companyName}</p>}
                 <p className="whitespace-pre-line">{client.address}</p>
                 <p>{client.phone}</p>
                 <p>{client.email}</p>
@@ -411,6 +415,7 @@ const ElegantTemplatePage: FC<PageProps> = ({ pageItems, pageIndex, totalPages, 
             <section data-element="meta" className="flex justify-between items-center mb-10 text-sm">
                 <div>
                     <p className="font-bold">Billed to: {client.name}</p>
+                    {client.companyName && <p>{client.companyName}</p>}
                     <p>{client.address}</p>
                 </div>
                 <div className="text-right">
@@ -442,29 +447,21 @@ const UsaTemplatePage: FC<PageProps> = ({ pageItems, pageIndex, totalPages, ...c
                             <h1 className="text-3xl font-bold mb-1" style={{color: accentColor}}>{business.name}</h1>
                         )}
                         <p className="text-xs text-gray-600 whitespace-pre-line">{business.address}</p>
-                        <p className="text-xs text-gray-600">{business.phone}</p>
-                        <p className="text-xs text-gray-600">{business.email}</p>
-                        {business.website && <p className="text-xs text-gray-600">{business.website}</p>}
-                        {business.licenseNumber && <p className="text-xs text-gray-600">Lic #: {business.licenseNumber}</p>}
-                        {business.taxId && <p className="text-xs text-gray-600">Tax ID: {business.taxId}</p>}
                     </div>
                      <div className="text-right">
                         <h2 className="text-4xl font-bold">INVOICE</h2>
                         <div className="mt-4 text-xs space-y-1">
                             <p><span className="font-bold text-gray-500">Invoice #:</span> {invoice.invoiceNumber}</p>
                             <p><span className="font-bold text-gray-500">Date:</span> {safeFormat(new Date(invoice.invoiceDate || new Date()), 'M/d/yyyy')}</p>
-                            <p><span className="font-bold text-gray-500">PO Number:</span> {invoice.poNumber || 'N/A'}</p>
                         </div>
                     </div>
                 </header>
                  <section className="mb-6 text-xs" data-element="client-details">
                     <div className="grid grid-cols-[max-content_1fr] gap-x-4 gap-y-1 p-3 bg-gray-50 rounded-md">
                         <span className="font-bold text-gray-600">Billed To:</span><span className="font-medium">{client.name}</span>
+                        {client.companyName && <><span className="font-bold text-gray-600">Company:</span><span className="font-medium">{client.companyName}</span></>}
                         <span className="font-bold text-gray-600">Address:</span><span className="whitespace-pre-line font-medium">{client.address}</span>
-                        <span className="font-bold text-gray-600">Phone:</span><span className="font-medium">{client.phone}</span>
-                        <span className="font-bold text-gray-600">Email:</span><span className="font-medium">{client.email}</span>
-                        {client.shippingAddress && <><span className="font-bold text-gray-600">Ship To:</span><span className="font-medium whitespace-pre-line">{client.shippingAddress}</span></>}
-                        {client.projectLocation && <><span className="font-bold text-gray-600">Project Location:</span><span className="font-medium whitespace-pre-line">{client.projectLocation}</span></>}
+                        <span className="font-bold text-gray-600">PO Number:</span><span className="font-medium">{invoice.poNumber || 'N/A'}</span>
                     </div>
                 </section>
                 <main>
@@ -822,4 +819,3 @@ export const ClientInvoicePreview: FC<InvoicePreviewProps> = (props) => {
 
 
 export { InvoicePreviewInternal as InvoicePreview };
-
