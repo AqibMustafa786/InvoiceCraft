@@ -582,7 +582,7 @@ export function InvoiceForm({ invoice, setInvoice, accentColor, setAccentColor, 
                     <Label htmlFor="businessWebsite">Website (optional)</Label>
                     <div className="relative flex items-center">
                         <Globe className="absolute left-3 h-5 w-5 text-muted-foreground" />
-                        <Input id="businessWebsite" name="website" autoComplete="off" value={invoice.business.website} onChange={(e) => handleNestedChange('business', e)} className="pl-10" />
+                        <Input id="businessWebsite" name="website" autoComplete="off" value={invoice.business.website || ''} onChange={(e) => handleNestedChange('business', e)} className="pl-10" />
                     </div>
                 </div>
                  <div className="space-y-2">
@@ -1166,7 +1166,7 @@ export function InvoiceForm({ invoice, setInvoice, accentColor, setAccentColor, 
             <Textarea id="paymentInstructions" name="paymentInstructions" value={invoice.paymentInstructions} onChange={handleInputChange} />
           </div>
           <div className="space-y-2">
-            <Label>Owner Signature</Label>
+            <Label>Authorized Signature</Label>
             <div className="flex gap-2">
                 <Dialog open={isSignatureDialogOpen} onOpenChange={setIsSignatureDialogOpen}>
                     <DialogTrigger asChild>
@@ -1208,3 +1208,6 @@ export function InvoiceForm({ invoice, setInvoice, accentColor, setAccentColor, 
 
 
 
+
+
+    
