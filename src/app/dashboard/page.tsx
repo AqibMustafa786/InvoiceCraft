@@ -482,6 +482,15 @@ export default function DashboardPage() {
         });
     }, [allDocuments, filters, calculateTotal]);
 
+    const filteredClients = useMemo(() => {
+        if (!clients) return [];
+        return clients.filter(client => {
+            const nameMatch = filters.clientName ? client.name.toLowerCase().includes(filters.clientName.toLowerCase()) : true;
+            const companyMatch = filters.clientName && client.companyName ? client.companyName.toLowerCase().includes(filters.clientName.toLowerCase()) : false;
+            return nameMatch || companyMatch;
+        });
+    }, [clients, filters.clientName]);
+
 
     const filteredInvoices = useMemo(() => filteredDocuments.filter(d => d.documentType === 'invoice'), [filteredDocuments]);
     const filteredEstimates = useMemo(() => filteredDocuments.filter(d => d.documentType === 'estimate'), [filteredDocuments]);
@@ -843,7 +852,7 @@ export default function DashboardPage() {
                                             </TableRow>
                                         </TableHeader>
                                         <TableBody>
-                                            {clients ? clients.map((client) => (
+                                            {filteredClients ? filteredClients.map((client) => (
                                                 <TableRow 
                                                     key={client.id} 
                                                     className="cursor-pointer"
@@ -883,6 +892,8 @@ export default function DashboardPage() {
 
 
 
+
+    
 
     
 
