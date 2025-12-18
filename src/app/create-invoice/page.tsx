@@ -67,6 +67,13 @@ const diff = (original: any, updated: any): string[] => {
         let originalValue = original[key];
         let updatedValue = updated[key];
 
+        if (key === 'logoUrl') {
+            if (originalValue !== updatedValue) {
+                changes.push(originalValue ? 'Logo was updated' : 'Logo was added');
+            }
+            return;
+        }
+
         // Convert Firestore Timestamps to JS Dates for comparison
         if (isDate(originalValue)) originalValue = toDateSafe(originalValue);
         if (isDate(updatedValue)) updatedValue = toDateSafe(updatedValue);
@@ -753,5 +760,7 @@ export default function CreateInvoicePage() {
 
 
 
+
+    
 
     
