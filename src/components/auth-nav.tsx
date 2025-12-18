@@ -17,7 +17,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
-import { User as UserIcon, LogOut, LayoutDashboard } from 'lucide-react';
+import { User as UserIcon, LogOut, LayoutDashboard, CreditCard } from 'lucide-react';
 
 interface AuthNavProps {
     isMobile?: boolean;
@@ -25,7 +25,7 @@ interface AuthNavProps {
 
 export function AuthNav({ isMobile = false }: AuthNavProps) {
     const [isClient, setIsClient] = useState(false);
-    const { user } = useAuth();
+    const { user, userProfile } = useAuth();
     const { auth } = useFirebase();
     const router = useRouter();
 
@@ -55,6 +55,13 @@ export function AuthNav({ isMobile = false }: AuthNavProps) {
                            <LayoutDashboard className="h-4 w-4" /> Dashboard
                         </Link>
                     </Button>
+                    {userProfile?.plan === 'business' && (
+                        <Button asChild variant="outline" className="justify-start">
+                            <Link href="/billing" className="flex items-center gap-2">
+                               <CreditCard className="h-4 w-4" /> Billing
+                            </Link>
+                        </Button>
+                    )}
                     <Button onClick={handleLogout} variant="destructive" className="justify-start">
                         <LogOut className="h-4 w-4 mr-2" /> Logout
                     </Button>
@@ -92,6 +99,14 @@ export function AuthNav({ isMobile = false }: AuthNavProps) {
                                 <span>Dashboard</span>
                             </Link>
                         </DropdownMenuItem>
+                        {userProfile?.plan === 'business' && (
+                             <DropdownMenuItem asChild>
+                                <Link href="/billing">
+                                    <CreditCard className="mr-2 h-4 w-4" />
+                                    <span>Billing</span>
+                                </Link>
+                            </DropdownMenuItem>
+                        )}
                         <DropdownMenuSeparator />
                         <DropdownMenuItem onClick={handleLogout} className="text-destructive cursor-pointer">
                             <LogOut className="mr-2 h-4 w-4" />

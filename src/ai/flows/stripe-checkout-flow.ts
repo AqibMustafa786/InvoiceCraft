@@ -124,5 +124,3 @@ export async function createCustomerPortalSession({
     return { error: e.message };
   }
 }
-
-    

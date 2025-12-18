@@ -246,6 +246,7 @@ export default function DashboardPage() {
                 description: "Upgrade to the Business Plan to create unlimited invoices.",
                 variant: "destructive"
             });
+            router.push('/pricing');
         }
     };
     
@@ -258,6 +259,7 @@ export default function DashboardPage() {
                 description: "Upgrade to the Business Plan to create unlimited estimates.",
                 variant: "destructive"
             });
+             router.push('/pricing');
         }
     };
 
@@ -270,6 +272,7 @@ export default function DashboardPage() {
                 description: "Creating quotes is a Business Plan feature. Please upgrade your plan.",
                 variant: "destructive"
             });
+            router.push('/pricing');
         }
     };
 
@@ -313,6 +316,7 @@ export default function DashboardPage() {
                 description: "You have reached your invoice limit. Please upgrade to convert this document.",
                 variant: 'destructive'
             });
+            router.push('/pricing');
             return;
         }
         
@@ -484,11 +488,11 @@ export default function DashboardPage() {
 
     const filteredClients = useMemo(() => {
         if (!clients) return [];
-        return clients.filter(client => {
-            const nameMatch = filters.clientName ? client.name.toLowerCase().includes(filters.clientName.toLowerCase()) : true;
-            const companyMatch = filters.clientName && client.companyName ? client.companyName.toLowerCase().includes(filters.clientName.toLowerCase()) : false;
-            return nameMatch || companyMatch;
-        });
+        if (!filters.clientName) return clients;
+        return clients.filter(client => 
+            client.name.toLowerCase().includes(filters.clientName.toLowerCase()) || 
+            (client.companyName && client.companyName.toLowerCase().includes(filters.clientName.toLowerCase()))
+        );
     }, [clients, filters.clientName]);
 
 
@@ -552,7 +556,7 @@ export default function DashboardPage() {
                     ) : docs.length > 0 ? docs.map((doc) => {
                         const isInvoice = doc.documentType === 'invoice';
                         const docNumber = isInvoice ? (doc as Invoice).invoiceNumber : (doc as Estimate | Quote).estimateNumber;
-                        const clientName = isInvoice ? (doc as Invoice).client.name : (doc as Estimate | Quote).client.name;
+                        const clientName = doc.client.name;
                         
                         let docCollection: string;
                         let editUrl: string;
