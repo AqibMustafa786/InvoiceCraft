@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import {
@@ -100,3 +101,5 @@ export function KpiDetailsModal({ isOpen, onClose, title, documents, currencySym
     </Dialog>
   );
 }
+
+    
