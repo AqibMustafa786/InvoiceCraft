@@ -37,7 +37,7 @@
     --input: 214.3 31.8% 91.4%;
     --ring: hsl(var(--accent));
  
-    --radius: 9999px; /* Pill-shaped */
+    --radius: 0.5rem;
 
     --chart-1: 220 80% 60%;
     --chart-2: 160 70% 50%;
@@ -100,10 +100,6 @@
   @keyframes marquee {
     from { transform: translateX(0); }
     to { transform: translateX(-50%); }
-  }
-
-  .dark .btn-gradient-hover:hover {
-    background-image: linear-gradient(to right, hsl(var(--primary)), hsl(var(--accent)));
   }
 }
 

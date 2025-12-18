@@ -1,4 +1,5 @@
 
+
 import type { Dispatch, SetStateAction } from 'react';
 import type { DocumentStatus } from '@/lib/types';
 import { Button } from "@/components/ui/button";
@@ -58,8 +59,8 @@ export function FilterSheet({ open, onOpenChange, filters, onFiltersChange, onRe
                     </SheetDescription>
                 </SheetHeader>
                 <div className="grid gap-6 py-6 flex-1 overflow-y-auto pr-4">
-                    <div className="grid grid-cols-1 items-center gap-4">
-                        <Label htmlFor="filter-clientName" className="text-left">
+                    <div className="space-y-2">
+                        <Label htmlFor="filter-clientName">
                             Client Name
                         </Label>
                         <Input
@@ -67,19 +68,18 @@ export function FilterSheet({ open, onOpenChange, filters, onFiltersChange, onRe
                             value={filters.clientName}
                             onChange={(e) => onFiltersChange(f => ({ ...f, clientName: e.target.value }))}
                             placeholder="Search by client name..."
-                            className="col-span-3"
                         />
                     </div>
 
-                    <div className="grid grid-cols-1 items-center gap-4">
-                        <Label htmlFor="filter-status" className="text-left">
+                    <div className="space-y-2">
+                        <Label htmlFor="filter-status">
                             Status
                         </Label>
                         <Select
                             value={filters.status ?? 'all'}
                             onValueChange={(value) => onFiltersChange(f => ({ ...f, status: value === 'all' ? null : value as DocumentStatus }))}
                         >
-                            <SelectTrigger id="filter-status" className="col-span-3">
+                            <SelectTrigger id="filter-status">
                                 <SelectValue placeholder="Any Status" />
                             </SelectTrigger>
                             <SelectContent>
