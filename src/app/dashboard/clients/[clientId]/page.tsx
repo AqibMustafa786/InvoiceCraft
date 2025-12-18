@@ -156,7 +156,7 @@ export default function ClientProfilePage() {
         <h1 className="text-3xl font-bold font-headline">{isNewClient ? 'Create New Client' : form.getValues('name')}</h1>
       </div>
 
-      <Card className="bg-card/50 backdrop-blur-sm shadow-lg transition-shadow hover:shadow-primary/20">
+      <Card className="bg-card shadow-lg">
         <CardHeader>
           <CardTitle>Client Information</CardTitle>
           <CardDescription>Manage the contact and address details for this client.</CardDescription>
@@ -177,16 +177,12 @@ export default function ClientProfilePage() {
                 <FormField control={form.control} name="phone" render={({ field }) => (
                   <FormItem><FormLabel>Phone</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
                 )} />
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <FormField control={form.control} name="address" render={({ field }) => (
-                  <FormItem><FormLabel>Billing Address</FormLabel><FormControl><Textarea {...field} /></FormControl><FormMessage /></FormItem>
+                  <FormItem><FormLabel>Billing Address</FormLabel><FormControl><Textarea {...field} className="h-24" /></FormControl><FormMessage /></FormItem>
                 )} />
                 <FormField control={form.control} name="shippingAddress" render={({ field }) => (
-                  <FormItem><FormLabel>Shipping Address</FormLabel><FormControl><Textarea {...field} /></FormControl><FormMessage /></FormItem>
+                  <FormItem><FormLabel>Shipping Address</FormLabel><FormControl><Textarea {...field} className="h-24" /></FormControl><FormMessage /></FormItem>
                 )} />
-              </div>
-               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                  <FormField control={form.control} name="website" render={({ field }) => (
                   <FormItem>
                     <FormLabel>Website</FormLabel>
@@ -201,14 +197,16 @@ export default function ClientProfilePage() {
                       <FormMessage />
                     </FormItem>
                   )} />
-               </div>
-                <FormField control={form.control} name="notes" render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Internal Notes</FormLabel>
-                    <FormControl><div className="relative flex items-center"><Pencil className="absolute left-3 top-3 h-5 w-5 text-muted-foreground" /><Textarea className="pl-10" {...field} /></div></FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )} />
+                <div className="md:col-span-2">
+                    <FormField control={form.control} name="notes" render={({ field }) => (
+                    <FormItem>
+                        <FormLabel>Internal Notes</FormLabel>
+                        <FormControl><div className="relative flex items-center"><Pencil className="absolute left-3 top-3 h-5 w-5 text-muted-foreground" /><Textarea className="pl-10 h-24" {...field} /></div></FormControl>
+                        <FormMessage />
+                    </FormItem>
+                    )} />
+                </div>
+              </div>
               <div className="flex justify-end pt-4">
                 <Button type="submit" disabled={isSaving}><Save className="mr-2 h-4 w-4" /> {isSaving ? 'Saving...' : 'Save Client'}</Button>
               </div>
@@ -276,6 +274,8 @@ export default function ClientProfilePage() {
     </div>
   );
 }
+    
+
     
 
     
