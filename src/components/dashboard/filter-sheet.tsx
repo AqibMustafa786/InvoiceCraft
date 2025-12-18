@@ -22,6 +22,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { DatePicker } from "@/components/ui/datepicker";
+import { Search, X } from 'lucide-react';
 
 export interface DashboardFilters {
     clientName: string;
@@ -51,14 +52,20 @@ export function FilterSheet({ open, onOpenChange, filters, onFiltersChange, onRe
     
     return (
         <Sheet open={open} onOpenChange={onOpenChange}>
-            <SheetContent className="flex flex-col">
-                <SheetHeader>
+            <SheetContent className="flex flex-col w-full max-w-md bg-card/95 backdrop-blur-sm">
+                 <SheetHeader className="pr-12">
                     <SheetTitle>Filter Documents</SheetTitle>
                     <SheetDescription>
                         Refine the list of invoices and quotes using multiple criteria.
                     </SheetDescription>
                 </SheetHeader>
-                <div className="grid gap-6 py-6 flex-1 overflow-y-auto pr-4">
+
+                <div className="relative mt-6">
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                    <Input placeholder="Search..." className="pl-10 text-base" />
+                </div>
+                
+                <div className="grid gap-6 py-6 flex-1 overflow-y-auto pr-4 -mr-4">
                     <div className="space-y-2">
                         <Label htmlFor="filter-clientName">
                             Client Name
@@ -132,7 +139,7 @@ export function FilterSheet({ open, onOpenChange, filters, onFiltersChange, onRe
                     </div>
 
                 </div>
-                <SheetFooter className="mt-auto pt-4 border-t">
+                <SheetFooter className="mt-auto pt-4 border-t gap-2">
                     <Button variant="outline" onClick={handleReset} className="w-full sm:w-auto">Reset Filters</Button>
                     <SheetClose asChild>
                         <Button className="w-full sm:w-auto">Apply</Button>
@@ -142,3 +149,5 @@ export function FilterSheet({ open, onOpenChange, filters, onFiltersChange, onRe
         </Sheet>
     )
 }
+
+    
