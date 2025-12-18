@@ -69,7 +69,7 @@ const diff = (original: any, updated: any): string[] => {
 
         if (key === 'logoUrl') {
             if (originalValue !== updatedValue) {
-                changes.push(originalValue ? 'Logo was updated' : 'Logo was added');
+                changes.push(originalValue ? 'Business logo was updated' : 'Business logo was added');
             }
             return;
         }

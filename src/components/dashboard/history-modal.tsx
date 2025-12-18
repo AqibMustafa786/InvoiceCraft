@@ -1,5 +1,4 @@
 
-
 'use client';
 
 import {
@@ -13,9 +12,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import type { AuditLogEntry } from '@/lib/types';
 import { format, isValid } from 'date-fns';
 import { Badge } from "../ui/badge";
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "../ui/collapsible";
-import { Button } from "../ui/button";
-import { ChevronsUpDown } from "lucide-react";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "../ui/accordion";
 
 interface HistoryModalProps {
   isOpen: boolean;
@@ -30,18 +27,6 @@ const safeFormat = (date: any, formatString: string) => {
         return "Invalid Date";
     }
     return format(d, formatString);
-}
-
-const getActionVariant = (action: AuditLogEntry['action']) => {
-    switch (action) {
-        case 'created': return 'success';
-        case 'updated': return 'secondary';
-        case 'sent': return 'default';
-        case 'viewed': return 'outline';
-        case 'signed': return 'success';
-        case 'declined': return 'destructive';
-        default: return 'outline';
-    }
 }
 
 const getUserDisplay = (user: any) => {
@@ -68,50 +53,44 @@ export function HistoryModal({ isOpen, onClose, auditLog }: HistoryModalProps) {
           </DialogDescription>
         </DialogHeader>
         <ScrollArea className="h-96 pr-4">
-          <div className="relative space-y-6">
+          <div className="relative space-y-4">
             {/* Vertical timeline bar */}
-            <div className="absolute left-10 top-2 bottom-2 w-0.5 bg-border -translate-x-1/2"></div>
+            <div className="absolute left-5 top-0 bottom-0 w-0.5 bg-border -translate-x-1/2"></div>
             
             {sortedLog.length > 0 ? (
                 sortedLog.map((entry, index) => (
-                    <div key={entry.id || `${entry.version}-${index}`} className="pl-20 relative">
-                       <div className="absolute left-10 top-[11px] w-4 h-4 rounded-full bg-primary -translate-x-1/2 border-4 border-background"></div>
-                       <div className="flex items-start justify-between min-w-0 gap-4">
-                            <div className="flex-1 min-w-0">
-                               <p className="font-semibold">Version {entry.version}</p>
-                               <p className="text-xs text-muted-foreground truncate">
-                                   {safeFormat(entry.timestamp, "MMM d, yyyy 'at' h:mm a")} by {getUserDisplay(entry.user)}
-                               </p>
-                            </div>
-                           <Badge variant={getActionVariant(entry.action)} className="capitalize h-6 justify-center shrink-0">
-                                {entry.action}
-                            </Badge>
-                       </div>
-                        
+                    <div key={entry.id || `${entry.version}-${index}`} className="pl-12 relative">
+                       <div className="absolute left-5 top-2 w-4 h-4 rounded-full bg-primary -translate-x-1/2 border-4 border-background"></div>
+                       <div className="rounded-lg border bg-card p-4">
+                         <div className="flex items-center justify-between">
+                            <h4 className="font-semibold">Version {entry.version}</h4>
+                            {index === 0 && <Badge variant="secondary">Latest</Badge>}
+                         </div>
+                         <p className="mt-1 text-xs text-muted-foreground">
+                            {safeFormat(entry.timestamp, "MMM d, yyyy '•' h:mm a")} by {getUserDisplay(entry.user)}
+                         </p>
+
                         {entry.changes && entry.changes.length > 0 && (
-                            <Collapsible className="mt-2">
-                                <CollapsibleTrigger asChild>
-                                    <Button variant="ghost" size="sm" className="text-xs h-7">
-                                        <ChevronsUpDown className="h-3 w-3 mr-1" />
-                                        View {entry.changes.length} change(s)
-                                    </Button>
-                                </CollapsibleTrigger>
-                                <CollapsibleContent>
-                                    <div className="mt-2 text-xs p-3 bg-muted/50 rounded-md border max-w-full">
-                                        <p className="font-semibold mb-1">Changes:</p>
-                                        <ul className="list-disc pl-4 text-muted-foreground space-y-1">
-                                            {entry.changes.map((change, i) => (
-                                                <li key={i} className="break-all">{change}</li>
-                                            ))}
-                                        </ul>
-                                    </div>
-                                </CollapsibleContent>
-                            </Collapsible>
+                            <Accordion type="single" collapsible className="w-full mt-2">
+                                <AccordionItem value="item-1" className="border-b-0">
+                                    <AccordionTrigger className="text-sm py-1 hover:no-underline">View {entry.changes.length} change(s)</AccordionTrigger>
+                                    <AccordionContent>
+                                        <div className="mt-2 text-xs p-3 bg-muted/50 rounded-md border max-w-full overflow-hidden">
+                                            <ul className="list-disc pl-4 text-muted-foreground space-y-1">
+                                                {entry.changes.map((change, i) => (
+                                                    <li key={i} className="break-words">{change}</li>
+                                                ))}
+                                            </ul>
+                                        </div>
+                                    </AccordionContent>
+                                </AccordionItem>
+                            </Accordion>
                         )}
+                       </div>
                     </div>
                 ))
             ) : (
-                <div className="text-center text-muted-foreground py-10">
+                <div className="text-center text-muted-foreground py-10 pl-12">
                     No history recorded for this document yet.
                 </div>
             )}
