@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import {
@@ -53,17 +54,17 @@ export function HistoryModal({ isOpen, onClose, auditLog }: HistoryModalProps) {
           </DialogDescription>
         </DialogHeader>
         <ScrollArea className="h-96 pr-4">
-          <div className="relative space-y-4">
+          <div className="relative space-y-6">
             {/* Vertical timeline bar */}
             <div className="absolute left-5 top-0 bottom-0 w-0.5 bg-border -translate-x-1/2"></div>
             
             {sortedLog.length > 0 ? (
                 sortedLog.map((entry, index) => (
                     <div key={entry.id || `${entry.version}-${index}`} className="pl-12 relative">
-                       <div className="absolute left-5 top-2 w-4 h-4 rounded-full bg-primary -translate-x-1/2 border-4 border-background"></div>
-                       <div className="rounded-lg border bg-card p-4">
-                         <div className="flex items-center justify-between">
-                            <h4 className="font-semibold">Version {entry.version}</h4>
+                       <div className="absolute left-5 top-1 w-4 h-4 rounded-full bg-primary -translate-x-1/2 border-4 border-background"></div>
+                       <div className="min-w-0">
+                         <div className="flex items-center gap-2">
+                            <h4 className="font-semibold text-base">Version {entry.version}</h4>
                             {index === 0 && <Badge variant="secondary">Latest</Badge>}
                          </div>
                          <p className="mt-1 text-xs text-muted-foreground">
@@ -71,14 +72,16 @@ export function HistoryModal({ isOpen, onClose, auditLog }: HistoryModalProps) {
                          </p>
 
                         {entry.changes && entry.changes.length > 0 && (
-                            <Accordion type="single" collapsible className="w-full mt-2">
+                             <Accordion type="single" collapsible className="w-full mt-2">
                                 <AccordionItem value="item-1" className="border-b-0">
-                                    <AccordionTrigger className="text-sm py-1 hover:no-underline">View {entry.changes.length} change(s)</AccordionTrigger>
+                                    <AccordionTrigger className="text-sm py-1 hover:no-underline">
+                                        View {entry.changes.length} change(s)
+                                    </AccordionTrigger>
                                     <AccordionContent>
                                         <div className="mt-2 text-xs p-3 bg-muted/50 rounded-md border max-w-full overflow-hidden">
                                             <ul className="list-disc pl-4 text-muted-foreground space-y-1">
                                                 {entry.changes.map((change, i) => (
-                                                    <li key={i} className="break-words">{change}</li>
+                                                    <li key={i} className="break-all">{change}</li>
                                                 ))}
                                             </ul>
                                         </div>

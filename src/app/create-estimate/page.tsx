@@ -57,23 +57,21 @@ const diff = (original: any, updated: any): string[] => {
 
     const allKeys = new Set([...Object.keys(original), ...Object.keys(updated)]);
     const formatKey = (key: string) => key.replace(/([A-Z])/g, ' $1').replace(/^./, (str) => str.toUpperCase());
-
     const isDate = (value: any) => value instanceof Date || (value && typeof value.toDate === 'function');
 
     allKeys.forEach(key => {
-        if (key === 'auditLog' || key === 'updatedAt' || key === 'createdAt') return;
+        if (key === 'auditLog' || key === 'updatedAt' || key === 'createdAt' || key === 'lineItems') return;
 
         let originalValue = original[key];
         let updatedValue = updated[key];
-        
+
         if (key === 'logoUrl') {
             if (originalValue !== updatedValue) {
-                changes.push(originalValue ? 'Business logo was updated' : 'Business logo was added');
+                changes.push(updatedValue ? 'Business logo was updated' : 'Business logo was removed');
             }
             return;
         }
 
-        // Convert Firestore Timestamps to JS Dates for comparison
         if (isDate(originalValue)) originalValue = toDateSafe(originalValue);
         if (isDate(updatedValue)) updatedValue = toDateSafe(updatedValue);
         
@@ -82,18 +80,20 @@ const diff = (original: any, updated: any): string[] => {
 
         if (originalComp !== updatedComp) {
             if (typeof updatedValue === 'object' && updatedValue !== null && !Array.isArray(updatedValue) && !(updatedValue instanceof Date)) {
-                 Object.keys(updatedValue).forEach(subKey => {
-                    const subOriginal = originalValue?.[subKey] ?? 'nothing';
-                    const subUpdated = updatedValue[subKey];
-                    if(JSON.stringify(subOriginal) !== JSON.stringify(subUpdated)){
-                        changes.push(`Updated ${formatKey(key)}: Changed ${formatKey(subKey)} from '${subOriginal}' to '${subUpdated}'`);
-                    }
-                 });
+                 changes.push(`Updated ${formatKey(key)}`);
             } else {
-                 changes.push(`Changed ${formatKey(key)} from '${originalValue instanceof Date ? originalValue.toLocaleDateString() : originalValue}' to '${updatedValue instanceof Date ? updatedValue.toLocaleDateString() : updatedValue}'`);
+                 changes.push(`${formatKey(key)} was changed`);
             }
         }
     });
+
+     // Line item changes
+    const originalItems = original.lineItems || [];
+    const updatedItems = updated.lineItems || [];
+    if(JSON.stringify(originalItems) !== JSON.stringify(updatedItems)) {
+        changes.push('Line items were updated');
+    }
+
     return changes;
 };
 
@@ -703,3 +703,4 @@ export default function CreateEstimatePage() {
     
 
     
+
