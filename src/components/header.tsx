@@ -80,7 +80,7 @@ export function Header() {
 
     return (
         <header className="sticky top-0 z-50 w-full">
-            <div className="container my-4 flex h-14 items-center rounded-full border border-border/40 bg-background/80 px-4 shadow-lg backdrop-blur-sm supports-[backdrop-filter]:bg-background/60 md:h-16 md:px-6">
+            <div className="container my-4 flex h-14 items-center rounded-full border border-border/40 bg-background/80 px-4 shadow-lg backdrop-blur-sm sm:h-16 sm:px-6">
                 <div className="flex items-center justify-start">
                     <Link href="/" className="flex items-center gap-2">
                         <span className="text-lg font-bold text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent">InvoiceCraft</span>
