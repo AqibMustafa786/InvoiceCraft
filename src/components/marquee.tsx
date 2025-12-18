@@ -24,16 +24,14 @@ const Marquee = () => {
             {slogan}
           </span>
         ))}
-      </div>
-
-       <div className="absolute top-0 py-4 animate-marquee-cont whitespace-nowrap flex">
-        {repeatedSlogans.map((slogan, index) => (
+         {repeatedSlogans.map((slogan, index) => (
           <span
-            key={index}
+            key={`cont-${index}`}
             className={cn(
               'mx-4 text-xl font-semibold',
               index % 2 === 0 ? 'text-muted-foreground' : 'text-foreground'
             )}
+            aria-hidden="true"
           >
             {slogan}
           </span>
