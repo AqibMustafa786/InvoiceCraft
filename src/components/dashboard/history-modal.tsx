@@ -76,14 +76,14 @@ export function HistoryModal({ isOpen, onClose, auditLog }: HistoryModalProps) {
                 sortedLog.map((entry, index) => (
                     <div key={entry.id || `${entry.version}-${index}`} className="pl-20 relative">
                        <div className="absolute left-10 top-1 w-4 h-4 rounded-full bg-primary -translate-x-1/2 border-4 border-background"></div>
-                       <div className="flex items-start justify-between">
-                            <div>
+                       <div className="flex items-start justify-between min-w-0">
+                            <div className="min-w-0">
                                <p className="font-semibold">Version {entry.version}</p>
-                               <p className="text-xs text-muted-foreground">
+                               <p className="text-xs text-muted-foreground truncate">
                                    {safeFormat(entry.timestamp, "MMM d, yyyy 'at' h:mm a")} by {getUserDisplay(entry.user)}
                                </p>
                             </div>
-                           <Badge variant={getActionVariant(entry.action)} className="capitalize h-6 justify-center">
+                           <Badge variant={getActionVariant(entry.action)} className="capitalize h-6 justify-center shrink-0">
                                 {entry.action}
                             </Badge>
                        </div>
@@ -101,7 +101,7 @@ export function HistoryModal({ isOpen, onClose, auditLog }: HistoryModalProps) {
                                         <p className="font-semibold mb-1">Changes:</p>
                                         <ul className="list-disc pl-4 text-muted-foreground space-y-1">
                                             {entry.changes.map((change, i) => (
-                                                <li key={i} style={{ overflowWrap: 'break-word' }}>{change}</li>
+                                                <li key={i} className="break-words">{change}</li>
                                             ))}
                                         </ul>
                                     </div>
