@@ -1,3 +1,4 @@
+
 import type { Dispatch, SetStateAction } from 'react';
 import type { DocumentStatus } from '@/lib/types';
 import { Button } from "@/components/ui/button";
@@ -49,31 +50,36 @@ export function FilterSheet({ open, onOpenChange, filters, onFiltersChange, onRe
     
     return (
         <Sheet open={open} onOpenChange={onOpenChange}>
-            <SheetContent>
+            <SheetContent className="flex flex-col">
                 <SheetHeader>
                     <SheetTitle>Filter Documents</SheetTitle>
                     <SheetDescription>
                         Refine the list of invoices and quotes using multiple criteria.
                     </SheetDescription>
                 </SheetHeader>
-                <div className="grid gap-6 py-6">
-                    <div className="space-y-2">
-                        <Label htmlFor="filter-clientName">Client Name</Label>
+                <div className="grid gap-6 py-6 flex-1 overflow-y-auto pr-4">
+                    <div className="grid grid-cols-1 items-center gap-4">
+                        <Label htmlFor="filter-clientName" className="text-left">
+                            Client Name
+                        </Label>
                         <Input
                             id="filter-clientName"
                             value={filters.clientName}
                             onChange={(e) => onFiltersChange(f => ({ ...f, clientName: e.target.value }))}
                             placeholder="Search by client name..."
+                            className="col-span-3"
                         />
                     </div>
 
-                    <div className="space-y-2">
-                        <Label htmlFor="filter-status">Status</Label>
+                    <div className="grid grid-cols-1 items-center gap-4">
+                        <Label htmlFor="filter-status" className="text-left">
+                            Status
+                        </Label>
                         <Select
                             value={filters.status ?? 'all'}
                             onValueChange={(value) => onFiltersChange(f => ({ ...f, status: value === 'all' ? null : value as DocumentStatus }))}
                         >
-                            <SelectTrigger id="filter-status">
+                            <SelectTrigger id="filter-status" className="col-span-3">
                                 <SelectValue placeholder="Any Status" />
                             </SelectTrigger>
                             <SelectContent>
@@ -126,15 +132,13 @@ export function FilterSheet({ open, onOpenChange, filters, onFiltersChange, onRe
                     </div>
 
                 </div>
-                <SheetFooter className="mt-auto">
-                    <Button variant="outline" onClick={handleReset}>Reset Filters</Button>
+                <SheetFooter className="mt-auto pt-4 border-t">
+                    <Button variant="outline" onClick={handleReset} className="w-full sm:w-auto">Reset Filters</Button>
                     <SheetClose asChild>
-                        <Button>Apply</Button>
+                        <Button className="w-full sm:w-auto">Apply</Button>
                     </SheetClose>
                 </SheetFooter>
             </SheetContent>
         </Sheet>
     )
 }
-
-    
