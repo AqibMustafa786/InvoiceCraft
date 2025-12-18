@@ -738,7 +738,7 @@ export default function DashboardPage() {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.2 }}
                  >
-                    <Card className="bg-card/50 backdrop-blur-sm shadow-lg">
+                    <Card>
                         <CardHeader>
                             <CardTitle>Quick Actions</CardTitle>
                             <CardDescription>Start creating a new document or add a new client.</CardDescription>
@@ -804,7 +804,7 @@ export default function DashboardPage() {
                         </div>
 
                         <TabsContent value="invoices">
-                             <Card className="bg-card/50 backdrop-blur-sm shadow-lg hover:shadow-primary/20 transition-shadow duration-300">
+                             <Card>
                                 <CardContent className="pt-6">
                                     <DashboardStatsGrid documents={filteredInvoices} docType="invoice" onKpiClick={handleKpiClick} />
                                     {renderTable(filteredInvoices, 'invoice')}
@@ -812,7 +812,7 @@ export default function DashboardPage() {
                              </Card>
                         </TabsContent>
                         <TabsContent value="estimates">
-                             <Card className="bg-card/50 backdrop-blur-sm shadow-lg hover:shadow-primary/20 transition-shadow duration-300">
+                             <Card>
                                 <CardContent className="pt-6">
                                      <DashboardStatsGrid documents={filteredEstimates} docType="estimate" onKpiClick={handleKpiClick} />
                                      {renderTable(filteredEstimates, 'estimate')}
@@ -820,7 +820,7 @@ export default function DashboardPage() {
                              </Card>
                         </TabsContent>
                         <TabsContent value="quotes">
-                             <Card className="bg-card/50 backdrop-blur-sm shadow-lg hover:shadow-primary/20 transition-shadow duration-300">
+                             <Card>
                                 <CardContent className="pt-6">
                                      <DashboardStatsGrid documents={filteredQuotes} docType="quote" onKpiClick={handleKpiClick} />
                                      {renderTable(filteredQuotes, 'quote')}
@@ -828,7 +828,7 @@ export default function DashboardPage() {
                              </Card>
                         </TabsContent>
                          <TabsContent value="clients">
-                             <Card className="bg-card/50 backdrop-blur-sm shadow-lg hover:shadow-primary/20 transition-shadow duration-300">
+                             <Card>
                                 <CardHeader>
                                     <CardTitle>Clients</CardTitle>
                                     <CardDescription>A list of all your clients. Click a client to view their profile and documents.</CardDescription>
@@ -881,3 +881,4 @@ export default function DashboardPage() {
     
 
     
+
