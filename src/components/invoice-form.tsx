@@ -9,7 +9,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { DatePicker } from '@/components/ui/datepicker';
-import { ImageUp, Plus, Trash2, Palette, X, Mail, Truck, Hash, Wallet, Phone, Globe, Briefcase, Award, User, FileText, Building, Pencil, Type, Package, Hammer, Ruler, ListTree, CheckSquare, Sparkles, Calendar, TextQuote, Wind, Thermometer, Wrench, Zap, Trees, Droplets, Car, Code, DraftingCompass, PaintBucket, Paintbrush, Receipt, Scale, Hospital, HeartPulse, HardHat, Save } from 'lucide-react';
+import { ImageUp, Plus, Trash2, Palette, X, Mail, Truck, Hash, Wallet, Phone, Globe, Briefcase, Award, User, FileText, Building, Pencil, Type, Package, Hammer, Ruler, ListTree, CheckSquare, Sparkles, Calendar, TextQuote, Wind, Thermometer, Wrench, Zap, Trees, Droplets, Car, Code, DraftingCompass, PaintBucket, Paintbrush, Receipt, Scale, Hospital, HeartPulse, HardHat, Save, Loader2 } from 'lucide-react';
 import Image from 'next/image';
 import {
   Select,
@@ -169,7 +169,7 @@ export function InvoiceForm({ invoice, setInvoice, accentColor, setAccentColor, 
   const [accentColorInput, setAccentColorInput] = useState(accentColor);
   const [bgColorInput, setBgColorInput] = useState(backgroundColor);
   const [textColorInput, setTextColorInput] = useState(textColor);
-  const [logoUrl, setLogoUrl] = useState<string | null>(invoice.business.logoUrl || null);
+  const [isUploading, setIsUploading] = useState(false);
   const [isSignatureDialogOpen, setIsSignatureDialogOpen] = useState(false);
   const [presets, setPresets] = useState<Preset[]>([]);
   const [selectedPreset, setSelectedPreset] = useState<string>('');
@@ -199,18 +199,6 @@ export function InvoiceForm({ invoice, setInvoice, accentColor, setAccentColor, 
   useEffect(() => {
     setTextColorInput(textColor);
   }, [textColor]);
-
-  useEffect(() => {
-    if (logoUrl !== invoice.business.logoUrl) {
-      setInvoice(prev => ({
-          ...prev,
-          business: {
-              ...prev.business,
-              logoUrl: logoUrl || '',
-          }
-      }))
-    }
-  }, [logoUrl, setInvoice, invoice.business.logoUrl]);
 
   useEffect(() => {
      setInvoice(prev => ({ ...prev, backgroundColor: backgroundColor }));
@@ -347,23 +335,65 @@ export function InvoiceForm({ invoice, setInvoice, accentColor, setAccentColor, 
     setInvoice(prev => ({ ...prev, lineItems: newItems }));
   };
 
-  const handleLogoUpload = (e: ChangeEvent<HTMLInputElement>) => {
+  const handleLogoUpload = async (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
-       if (file.size > 2 * 1024 * 1024) { // 2MB limit
+      if (file.size > 4 * 1024 * 1024) { // 4MB limit
         toast({
           title: "Image too large",
-          description: "Please upload an image smaller than 2MB.",
+          description: "Please upload an image smaller than 4MB.",
           variant: "destructive",
         });
         return;
       }
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setLogoUrl(reader.result as string);
-      };
-      reader.readAsDataURL(file);
+
+      setIsUploading(true);
+      const formData = new FormData();
+      formData.append('file', file);
+
+      try {
+        const response = await fetch('/api/upload', {
+          method: 'POST',
+          body: formData,
+        });
+
+        if (!response.ok) {
+          throw new Error('Upload failed');
+        }
+
+        const { url } = await response.json();
+        setInvoice(prev => ({
+            ...prev,
+            business: {
+                ...prev.business,
+                logoUrl: url
+            }
+        }));
+        toast({
+          title: "Logo Uploaded",
+          description: "Your logo has been successfully uploaded.",
+        });
+      } catch (error) {
+        console.error("Upload error:", error);
+        toast({
+          title: "Upload Failed",
+          description: "Could not upload the logo. Please try again.",
+          variant: "destructive",
+        });
+      } finally {
+        setIsUploading(false);
+      }
     }
+  };
+
+  const handleRemoveLogo = () => {
+    setInvoice(prev => ({
+        ...prev,
+        business: {
+            ...prev.business,
+            logoUrl: ''
+        }
+    }));
   };
   
   const handleOwnerSignatureSave = (image: string, signerName: string) => {
@@ -439,26 +469,27 @@ export function InvoiceForm({ invoice, setInvoice, accentColor, setAccentColor, 
            <div className="space-y-2">
               <Label>Company Logo</Label>
                <div className="flex items-center gap-4">
-                {logoUrl ? (
+                {invoice.business.logoUrl ? (
                     <div className="flex items-center gap-4">
-                        <Image src={logoUrl} alt="Company Logo" width={80} height={40} className="rounded-md object-contain bg-muted p-1" />
+                        <Image src={invoice.business.logoUrl} alt="Company Logo" width={80} height={40} className="rounded-md object-contain bg-muted p-1" />
                         <div className="flex items-center gap-2">
-                            <Button asChild variant="outline" size="sm">
+                            <Button asChild variant="outline" size="sm" disabled={isUploading}>
                                 <label htmlFor="logo-upload" className="cursor-pointer">Change</label>
                             </Button>
-                            <Button variant="destructive" size="sm" onClick={() => setLogoUrl(null)}>
+                            <Button variant="destructive" size="sm" onClick={handleRemoveLogo} disabled={isUploading}>
                                <X className="h-4 w-4 mr-1" /> Remove
                             </Button>
                         </div>
                     </div>
                 ) : (
-                    <Button asChild variant="outline" className="w-full">
+                    <Button asChild variant="outline" className="w-full" disabled={isUploading}>
                         <label htmlFor="logo-upload" className="cursor-pointer flex items-center justify-center gap-2">
-                            <ImageUp className="h-4 w-4" /> Upload Logo
+                           {isUploading ? <Loader2 className="h-4 w-4 animate-spin" /> : <ImageUp className="h-4 w-4" />}
+                           {isUploading ? 'Uploading...' : 'Upload Logo'}
                         </label>
                     </Button>
                 )}
-                 <Input id="logo-upload" type="file" className="sr-only" onChange={handleLogoUpload} accept="image/png, image/jpeg, image/gif" />
+                 <Input id="logo-upload" type="file" className="sr-only" onChange={handleLogoUpload} accept="image/png, image/jpeg, image/gif" disabled={isUploading}/>
                 </div>
             </div>
             <div className="space-y-2">
