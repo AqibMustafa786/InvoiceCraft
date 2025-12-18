@@ -101,7 +101,7 @@ export function HistoryModal({ isOpen, onClose, auditLog }: HistoryModalProps) {
                                         <p className="font-semibold mb-1">Changes:</p>
                                         <ul className="list-disc pl-4 text-muted-foreground space-y-1">
                                             {entry.changes.map((change, i) => (
-                                                <li key={i} className="break-words">{change}</li>
+                                                <li key={i} style={{ overflowWrap: 'break-word' }}>{change}</li>
                                             ))}
                                         </ul>
                                     </div>
