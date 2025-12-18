@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import React from 'react';
@@ -79,13 +80,12 @@ export const TransportationTemplate1: React.FC<PageProps> = (props) => {
                 <div className="p-2 bg-gray-100">
                     <p className="font-bold">{t.to || 'To'}:</p>
                     <p>{client.name}</p>
-                    <p>{client.address}</p>
-                    <p>{client.email}</p>
-                    <p>{client.phone}</p>
+                    {client.companyName && <p>{client.companyName}</p>}
+                    <p className="whitespace-pre-line">{client.address}</p>
                 </div>
                 <div className="p-2 bg-gray-100">
                     <p className="font-bold">{t.shipTo || 'Ship To'}:</p>
-                    <p>{client.shippingAddress || client.address}</p>
+                    <p className="whitespace-pre-line">{client.shippingAddress || client.address}</p>
                 </div>
                 <div className="p-2 bg-gray-100 text-right">
                     <p><strong>#:</strong> {invoice.invoiceNumber}</p>
@@ -137,21 +137,21 @@ export const TransportationTemplate2: React.FC<PageProps> = (props) => {
       <div className={`p-10 bg-gray-50 font-sans ${pageIndex < totalPages - 1 ? 'page-break-after' : ''}`} style={{ minHeight: '1056px', backgroundColor: props.backgroundColor, color: props.textColor }}>
         <header className="flex justify-between items-center mb-8 pb-4 border-b-2">
             <div>
-                 <h1 className="text-2xl font-bold">{business.name}</h1>
-                 <p className="text-xs whitespace-pre-line">{business.address}</p>
-                 <p className="text-xs">{business.phone} | {business.email}</p>
+                <h1 className="text-2xl font-bold">{business.name}</h1>
+                <p className="text-xs whitespace-pre-line">{business.address}</p>
             </div>
             <h2 className="text-2xl font-light text-gray-500">{docTitle}</h2>
         </header>
         <section className="grid grid-cols-2 gap-8 text-sm mb-8">
             <div>
                 <p><strong>{t.to || 'To'}:</strong> {client.name}</p>
-                <p className="whitespace-pre-line">{client.address}</p>
+                {client.companyName && <p><strong>Company:</strong> {client.companyName}</p>}
+                <p>{client.address}</p>
             </div>
             <div className="text-right">
                 <p><strong>#:</strong> {invoice.invoiceNumber}</p>
                 <p><strong>{t.date || 'Date'}:</strong> {safeFormat(invoice.invoiceDate, 'MMM dd, yyyy')}</p>
-                <p><strong>{t.dueDate || 'Due Date'}:</strong> {safeFormat(invoice.dueDate, 'MMM dd, yyyy')}</p>
+                <p><strong>{t.dueDate || 'Due'}:</strong> {safeFormat(invoice.dueDate, 'MMM dd, yyyy')}</p>
             </div>
         </section>
         <TransportationDetails invoice={invoice} t={t} />
@@ -174,11 +174,9 @@ export const TransportationTemplate2: React.FC<PageProps> = (props) => {
                     <p className="flex justify-between font-bold mt-2 pt-2 border-t"><span>Balance Due</span><span>{currencySymbol}{balanceDue.toFixed(2)}</span></p>
                 </div>
             </div>
-             {business.ownerSignature && (
-                <div className="mt-8">
-                    <SignatureDisplay signature={business.ownerSignature} label="Authorized Signature" />
-                </div>
-            )}
+             <div className="flex justify-between mt-8">
+                {business.ownerSignature && <SignatureDisplay signature={business.ownerSignature} label={t.authorizedSignature || 'Authorized Signature'} />}
+            </div>
         </footer>
         )}
       </div>
@@ -201,7 +199,7 @@ export const TransportationTemplate3: React.FC<PageProps> = (props) => {
                 </header>
                 <section className="grid grid-cols-3 gap-4 text-xs mb-8">
                     <div><p className="font-bold text-gray-500">{t.from || 'From'}:</p><p className="whitespace-pre-line">{business.address}</p></div>
-                    <div><p className="font-bold text-gray-500">{t.to || 'To'}:</p><p>{client.name}, {client.address}</p></div>
+                    <div><p className="font-bold text-gray-500">{t.to || 'To'}:</p><p>{client.name}, {client.address}</p>{client.companyName && <p>{client.companyName}</p>}</div>
                     <div className="text-right"><p className="font-bold text-gray-500">{t.date || 'Date'}:</p><p>{safeFormat(invoice.invoiceDate, 'yyyy-MM-dd')}</p></div>
                 </section>
                 <TransportationDetails invoice={invoice} t={t} />
@@ -244,11 +242,15 @@ export const TransportationTemplate4: React.FC<PageProps> = (props) => {
         <div className={`p-10 font-sans text-white ${pageIndex < totalPages - 1 ? 'page-break-after' : ''}`} style={{ minHeight: '1056px', backgroundColor: '#333' }}>
             <header className="flex justify-between items-center mb-8">
                 <h1 className="text-3xl font-bold">{business.name}</h1>
-                <div className="text-right"><p className="text-lg">#{invoice.invoiceNumber}</p><p className="text-xs">{safeFormat(invoice.invoiceDate, 'MMM dd, yyyy')}</p></div>
+                <div className="text-right">
+                    <p className="text-lg">#{invoice.invoiceNumber}</p>
+                    <p className="text-xs">{safeFormat(invoice.invoiceDate, 'MMM dd, yyyy')}</p>
+                </div>
             </header>
             <section className="mb-8">
                 <h2 className="text-2xl font-semibold mb-2" style={{color: accentColor}}>{docTitle}</h2>
-                <p className="text-sm">For: {client.name}</p>
+                <p className="text-sm">{t.for || 'For'}: {client.name}</p>
+                {client.companyName && <p className="text-sm">{client.companyName}</p>}
             </section>
             <TransportationDetails invoice={invoice} t={t} />
             <main className="flex-grow mt-4">
@@ -281,7 +283,7 @@ export const TransportationTemplate4: React.FC<PageProps> = (props) => {
     );
 };
 export const TransportationTemplate5: React.FC<PageProps> = (props) => {
-    const { invoice, pageItems, pageIndex, totalPages, subtotal, taxAmount, discountAmount, balanceDue, currencySymbol, t } = props;
+    const { invoice, pageItems, pageIndex, totalPages, subtotal, taxAmount, balanceDue, currencySymbol, t } = props;
     const { business, client } = invoice;
     const docTitle = (t.invoice || 'INVOICE').toUpperCase();
 
@@ -294,6 +296,7 @@ export const TransportationTemplate5: React.FC<PageProps> = (props) => {
             <h2 className="text-2xl font-bold text-center mb-8">{docTitle}</h2>
             <section className="text-xs mb-8">
                 <p><strong>To:</strong> {client.name}</p>
+                {client.companyName && <p><strong>Company:</strong> {client.companyName}</p>}
                 <p><strong>Invoice No:</strong> {invoice.invoiceNumber}</p>
                 <p><strong>Date:</strong> {safeFormat(invoice.invoiceDate, 'MM/dd/yyyy')}</p>
             </section>

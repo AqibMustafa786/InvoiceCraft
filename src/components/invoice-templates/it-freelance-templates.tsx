@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import React from 'react';
@@ -75,8 +76,8 @@ export const ITTemplate1: React.FC<PageProps> = (props) => {
                     }
                     <div>
                         <h1 className="text-3xl font-bold">{business.name}</h1>
-                        <p className="text-xs text-gray-500 whitespace-pre-line">{business.address}</p>
-                        <p className="text-xs text-gray-500">{business.phone} • {business.email}</p>
+                        <p className="text-xs text-gray-500 whitespace-pre-line">{business.address} • {business.phone}</p>
+                        <p className="text-xs text-blue-600">{business.email}</p>
                         {business.website && <p className="text-xs text-blue-600">{business.website}</p>}
                         {business.licenseNumber && <p className="text-xs text-gray-500">Lic #: {business.licenseNumber}</p>}
                         {business.taxId && <p className="text-xs text-gray-500">Tax ID: {business.taxId}</p>}
@@ -137,6 +138,7 @@ export const ITTemplate1: React.FC<PageProps> = (props) => {
                          <div>
                              <p className="font-bold text-gray-400 tracking-widest mb-2">{(t.clientInformation || 'CLIENT INFORMATION').toUpperCase()}</p>
                             <p><span className="text-gray-600 w-20 inline-block">{t.client || 'CLIENT'}:</span> <span className="font-semibold">{client.name}</span></p>
+                            {client.companyName && <p><span className="text-gray-600 w-20 inline-block">{t.company || 'Company'}:</span> <span className="font-semibold">{client.companyName}</span></p>}
                             <p><span className="text-gray-600 w-20 inline-block">{t.address || 'ADDRESS'}:</span> <span className="font-semibold whitespace-pre-line">{client.address}</span></p>
                             <p><span className="text-gray-600 w-20 inline-block">{t.contact || 'CONTACT'}:</span> <span className="font-semibold">{client.phone}</span></p>
                             <p><span className="text-gray-600 w-20 inline-block">{t.email || 'EMAIL'}:</span> <span className="font-semibold">{client.email}</span></p>
@@ -172,8 +174,8 @@ export const ITTemplate2: React.FC<PageProps> = (props) => {
                 </div>
                 <div className="text-right">
                     <h2 className="text-3xl font-light text-gray-400">{docTitle}</h2>
-                    <p className="text-xs text-gray-500">{business.licenseNumber && `Lic#: ${business.licenseNumber}`}</p>
-                    <p className="text-xs text-gray-500">{business.taxId && `Tax ID: ${business.taxId}`}</p>
+                    <p className="text-xs text-gray-500">{invoice.licenseNumber && `Lic#: ${invoice.licenseNumber}`}</p>
+                    <p className="text-xs text-gray-500">{invoice.business.taxId && `Tax ID: ${invoice.business.taxId}`}</p>
                 </div>
             </header>
 
@@ -181,6 +183,7 @@ export const ITTemplate2: React.FC<PageProps> = (props) => {
                 <div>
                     <p className="font-bold text-gray-500 mb-1">{(t.projectFor || 'PROJECT FOR').toUpperCase()}:</p>
                     <p className="font-medium">{client.name}</p>
+                    {client.companyName && <p className="font-medium">{client.companyName}</p>}
                     <p className="text-gray-400 whitespace-pre-line">{client.address}</p>
                     <p className="text-gray-400">{client.email}</p>
                     <p className="text-gray-400">{client.phone}</p>
@@ -255,8 +258,8 @@ export const ITTemplate3: React.FC<PageProps> = (props) => {
                 </div>
                  <div className="text-right">
                     <h2 className="text-2xl font-extrabold tracking-tighter">{docTitle}</h2>
-                    <p className="text-xs">{business.licenseNumber && `Lic#: ${business.licenseNumber}`}</p>
-                    <p className="text-xs">{business.taxId && `Tax ID: ${business.taxId}`}</p>
+                    <p className="text-xs text-gray-500">{business.licenseNumber && `Lic#: ${business.licenseNumber}`}</p>
+                    <p className="text-xs text-gray-500">{business.taxId && `Tax ID: ${business.taxId}`}</p>
                 </div>
             </header>
 
@@ -264,13 +267,14 @@ export const ITTemplate3: React.FC<PageProps> = (props) => {
                 <div>
                     <p className="font-bold text-gray-500 mb-1">{(t.to || 'To')}</p>
                     <p>{client.name}</p>
-                    <p>{client.address}</p>
+                    {client.companyName && <p>{client.companyName}</p>}
+                    <p className="whitespace-pre-line">{client.address}</p>
                     <p>{client.email}</p>
                     <p>{client.phone}</p>
                 </div>
                 <div><p className="font-bold text-gray-500 mb-1">{(t.invoiceNo || 'Invoice #')}</p><p>{invoice.invoiceNumber}</p></div>
                 <div><p className="font-bold text-gray-500 mb-1">{(t.date || 'Date')}</p><p>{safeFormat(invoice.invoiceDate, 'yyyy-MM-dd')}</p></div>
-                <div><p className="font-bold text-gray-500 mb-1">{(t.project || 'Project')}</p><p>{invoice.poNumber || 'N/A'}</p></div>
+                <div><p className="font-bold text-gray-500 mb-1">{(t.project || 'Project')}</p><p>{invoice.freelance?.projectName || 'N/A'}</p></div>
             </section>
             
             <ITServiceDetails invoice={invoice} t={t}/>
@@ -336,7 +340,8 @@ export const ITTemplate4: React.FC<PageProps> = (props) => {
                     <div>
                         <p className="font-bold opacity-80 mb-1">{(t.client || 'CLIENT').toUpperCase()}</p>
                         <p className="font-bold text-lg">{client.name}</p>
-                        <p className="whitespace-pre-line">{client.address}</p>
+                        {client.companyName && <p>{client.companyName}</p>}
+                        <p>{client.address}</p>
                     </div>
                     <div>
                         <p className="font-bold opacity-80 mb-1">{(t.reference || 'REFERENCE').toUpperCase()}</p>
@@ -408,6 +413,7 @@ export const ITTemplate5: React.FC<PageProps> = (props) => {
                 <div>
                     <p className="text-gray-500">{(t.to || 'To')}:</p>
                     <p className="font-bold">{client.name}</p>
+                    {client.companyName && <p className="font-bold">{client.companyName}</p>}
                     <p className="text-gray-600 whitespace-pre-line">{client.address}</p>
                     <p className="text-gray-600">{client.email} | {client.phone}</p>
                 </div>

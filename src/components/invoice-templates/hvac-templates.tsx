@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import React from 'react';
@@ -63,7 +64,7 @@ export const HVACTemplate1: React.FC<PageProps> = (props) => {
     const docTitle = (t.invoice || 'INVOICE').toUpperCase();
     
     return (
-        <div className={`p-8 font-sans ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: 'Arial, sans-serif', fontSize: `9pt`, minHeight: '1056px', backgroundColor: props.backgroundColor, color: props.textColor }}>
+        <div className={`p-8 bg-white font-sans text-gray-800 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: 'Arial, sans-serif', fontSize: `9pt`, minHeight: '1056px', color: props.textColor, backgroundColor: props.backgroundColor }}>
             <header className="flex justify-between items-start pb-4 border-b-2" style={{ borderColor: accentColor }}>
                 <div className="flex items-center gap-4">
                      {business.logoUrl && <Image src={business.logoUrl} alt="Logo" width={50} height={50} className="object-contain" />}
@@ -90,7 +91,6 @@ export const HVACTemplate1: React.FC<PageProps> = (props) => {
                     <p className="whitespace-pre-line">{client.address}</p>
                     <p>{client.email}</p>
                     <p>{client.phone}</p>
-                     {client.shippingAddress && <p className="mt-2"><span className="font-bold text-gray-500">Ship To:</span><br/>{client.shippingAddress}</p>}
                 </div>
                  <div className="p-4 bg-gray-50 rounded-md">
                     <p className="font-bold text-gray-500 mb-1">{(t.invoiceDetails || 'INVOICE DETAILS')}</p>
@@ -100,7 +100,7 @@ export const HVACTemplate1: React.FC<PageProps> = (props) => {
                      {client.projectLocation && (
                         <>
                          <p className="font-bold text-gray-500 mt-2 mb-1">{(t.projectLocation || 'PROJECT LOCATION')}</p>
-                         <p>{client.projectLocation}</p>
+                         <p className="whitespace-pre-line">{client.projectLocation}</p>
                         </>
                      )}
                 </div>
@@ -161,7 +161,7 @@ export const HVACTemplate1: React.FC<PageProps> = (props) => {
 
 // Template 2: Coolant
 export const HVACTemplate2: React.FC<PageProps> = (props) => {
-    const { invoice, pageItems, pageIndex, totalPages, subtotal, taxAmount, discountAmount, balanceDue, currencySymbol, t, accentColor } = props;
+    const { invoice, pageItems, pageIndex, totalPages, subtotal, taxAmount, discountAmount, total, balanceDue, t, currencySymbol, accentColor } = props;
     const { business, client } = invoice;
     const docTitle = (t.invoice || 'INVOICE').toUpperCase();
 
@@ -173,7 +173,6 @@ export const HVACTemplate2: React.FC<PageProps> = (props) => {
                     <p className="text-xs whitespace-pre-line">{business.address}</p>
                     <p className="text-xs">{business.website}</p>
                     <p className="text-xs">{business.licenseNumber && `Lic#: ${business.licenseNumber}`}</p>
-                    <p className="text-xs">{business.taxId && `Tax ID: ${business.taxId}`}</p>
                 </div>
                 <div className="text-right">
                     <h2 className="text-3xl font-bold">{docTitle}</h2>
@@ -190,10 +189,10 @@ export const HVACTemplate2: React.FC<PageProps> = (props) => {
                 </div>
                 <div className="space-y-1">
                     <p className="font-bold tracking-wider">{(t.projectLocation || 'PROJECT LOCATION')}</p>
-                    <p>{invoice.poNumber || 'N/A'}</p>
-                    <p>{client.shippingAddress || client.projectLocation || client.address}</p>
+                    <p className="whitespace-pre-line">{client.projectLocation || client.address}</p>
                     <p className="mt-2"><span className="font-bold">{(t.dateIssued || 'Date Issued')}:</span> {safeFormat(invoice.invoiceDate, 'MMM d, yyyy')}</p>
                     <p><span className="font-bold">{(t.dueDate || 'Due Date')}:</span> {safeFormat(invoice.dueDate, 'MMM d, yyyy')}</p>
+                    {invoice.poNumber && <p><span className="font-bold">PO #:</span> {invoice.poNumber}</p>}
                 </div>
             </section>
             
@@ -228,8 +227,9 @@ export const HVACTemplate2: React.FC<PageProps> = (props) => {
                         <div className="w-1/3 text-sm space-y-1">
                              <div className="flex justify-between p-1"><span>{(t.subtotal || 'Subtotal')}:</span><span className="">{currencySymbol}{subtotal.toFixed(2)}</span></div>
                             {discountAmount > 0 && <div className="flex justify-between p-1 text-red-500"><span>{(t.discount || 'Discount')}:</span><span>-{currencySymbol}{discountAmount.toFixed(2)}</span></div>}
-                             <div className="flex justify-between p-1"><span>{(t.tax || 'Tax')}:</span><span className="">{currencySymbol}{taxAmount.toFixed(2)}</span></div>
-                             <div className="flex justify-between font-bold text-base mt-2 pt-2 border-t-2" style={{ borderColor: accentColor }}><span style={{ color: accentColor }}>Total:</span><span>{currencySymbol}{props.total.toFixed(2)}</span></div>
+                             {invoice.summary.shippingCost > 0 && <div className="flex justify-between p-1"><span>{(t.shipping || 'Shipping')}:</span><span>{currencySymbol}{invoice.summary.shippingCost.toFixed(2)}</span></div>}
+                            <div className="flex justify-between p-1"><span>{(t.tax || 'Tax')}:</span><span className="">{currencySymbol}{taxAmount.toFixed(2)}</span></div>
+                            <div className="flex justify-between font-bold text-base mt-2 pt-2 border-t-2" style={{ borderColor: accentColor }}><span style={{ color: accentColor }}>Total:</span><span>{currencySymbol}{props.total.toFixed(2)}</span></div>
                              {(invoice.amountPaid || 0) > 0 && <div className="flex justify-between p-1 text-green-600"><span>Amount Paid:</span><span>-{currencySymbol}{(invoice.amountPaid || 0).toFixed(2)}</span></div>}
                              <div className="flex justify-between font-bold text-lg mt-1 pt-1 border-t-2" style={{ borderColor: accentColor }}><span style={{ color: accentColor }}>Balance Due:</span><span>{currencySymbol}{balanceDue.toFixed(2)}</span></div>
                         </div>
@@ -249,7 +249,7 @@ export const HVACTemplate2: React.FC<PageProps> = (props) => {
 
 // Template 3: Clean & Grid-based
 export const HVACTemplate3: React.FC<PageProps> = (props) => {
-    const { invoice, pageItems, pageIndex, totalPages, subtotal, taxAmount, discountAmount, balanceDue, currencySymbol, t, accentColor, textColor } = props;
+    const { invoice, pageItems, pageIndex, totalPages, subtotal, taxAmount, discountAmount, total, balanceDue, t, currencySymbol, accentColor, textColor } = props;
     const { business, client } = invoice;
     const docTitle = (t.invoice || 'Invoice');
 
@@ -268,12 +268,28 @@ export const HVACTemplate3: React.FC<PageProps> = (props) => {
             </header>
 
             <section className="mb-8 p-4 border rounded-md grid grid-cols-3 gap-4 text-xs">
-                <div><p className="font-bold">{(t.from || 'From')}:</p><p>{business.name}<br/>{business.address}</p></div>
-                <div><p className="font-bold">{(t.to || 'To')}:</p><p>{client.name}<br/>{client.address}<br/>{client.email}</p></div>
-                <div><p className="font-bold">{(t.details || 'Details')}:</p><p>{(t.date || 'Date')}: {safeFormat(invoice.invoiceDate, 'MM-dd-yyyy')}<br/>Due: {safeFormat(invoice.dueDate, 'MM-dd-yyyy')}<br/>PO: {invoice.poNumber}</p></div>
+                <div>
+                    <p className="font-bold">{(t.from || 'From')}:</p>
+                    <p>{business.name}</p>
+                    <p className="whitespace-pre-line">{business.address}</p>
+                    <p>{business.phone}</p>
+                    <p>{business.email}</p>
+                </div>
+                <div>
+                    <p className="font-bold">{(t.to || 'To')}:</p>
+                    <p>{client.name}</p>
+                    {client.companyName && <p>{client.companyName}</p>}
+                    <p className="whitespace-pre-line">{client.address}</p>
+                </div>
+                <div>
+                    <p className="font-bold">{(t.details || 'Details')}:</p>
+                    <p>{(t.date || 'Date')}: {safeFormat(invoice.invoiceDate, 'MM-dd-yyyy')}</p>
+                    <p>Due: {safeFormat(invoice.dueDate, 'MM-dd-yyyy')}</p>
+                    <p>PO: {invoice.poNumber}</p>
+                </div>
             </section>
             
-             <HvacDetails invoice={invoice} t={t}/>
+             <HvacDetails invoice={invoice} t={t} />
 
             <main className="flex-grow">
                 <table className="w-full text-left text-xs">
@@ -314,6 +330,7 @@ export const HVACTemplate3: React.FC<PageProps> = (props) => {
                          {discountAmount > 0 && <p className="py-1 flex justify-between text-red-500"><span>{(t.discount || 'Discount')}:</span><span>-{currencySymbol}{discountAmount.toFixed(2)}</span></p>}
                          {invoice.summary.shippingCost > 0 && <p className="py-1 flex justify-between"><span>{(t.shipping || 'Shipping')}:</span><span>{currencySymbol}{invoice.summary.shippingCost.toFixed(2)}</span></p>}
                          <p className="py-1 flex justify-between"><span>{(t.tax || 'Tax')}:</span><span>{currencySymbol}{taxAmount.toFixed(2)}</span></p>
+                         <p className="py-1 flex justify-between font-bold"><span>{(t.total || 'Total')}:</span><span>{currencySymbol}{total.toFixed(2)}</span></p>
                          {(invoice.amountPaid || 0) > 0 && <p className="py-1 flex justify-between text-green-600"><span>Amount Paid:</span><span>-{currencySymbol}{(invoice.amountPaid || 0).toFixed(2)}</span></p>}
                          <p className="py-2 mt-2 flex justify-between border-t-2 border-black font-bold text-base"><span>{(t.balanceDue || 'BALANCE DUE')}:</span><span>{currencySymbol}{balanceDue.toFixed(2)}</span></p>
                      </div>
@@ -326,5 +343,3 @@ export const HVACTemplate3: React.FC<PageProps> = (props) => {
 export const HVACTemplate4: React.FC<PageProps> = (props) => <HVACTemplate1 {...props} />;
 export const HVACTemplate5: React.FC<PageProps> = (props) => <HVACTemplate2 {...props} />;
 export const HVACTemplate6: React.FC<PageProps> = (props) => <HVACTemplate3 {...props} />;
-
-    

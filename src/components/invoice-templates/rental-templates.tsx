@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import React from 'react';
@@ -73,11 +74,10 @@ export const RentalTemplate1: React.FC<PageProps> = (props) => {
             <header className="flex justify-between items-start mb-8">
                 <div>
                   {business.logoUrl ? <Image src={business.logoUrl} alt="Logo" width={100} height={100} className="object-contain" /> : <h1 className="text-3xl font-bold">{business.name}</h1>}
-                   <div className="text-xs mt-2">
+                  <div className="text-xs mt-2">
                         <p className="whitespace-pre-line">{business.address}</p>
                         <p>{business.phone} | {business.email}</p>
-                        {business.website && <p>{business.website}</p>}
-                    </div>
+                  </div>
                 </div>
                 <div className="text-right">
                     <h2 className="text-4xl font-bold" style={{color: accentColor}}>{docTitle}</h2>
@@ -88,6 +88,7 @@ export const RentalTemplate1: React.FC<PageProps> = (props) => {
                 <div>
                     <p className="font-bold text-gray-500">{(t.renter || 'Renter').toUpperCase()}</p>
                     <p>{client.name}</p>
+                    {client.companyName && <p>{client.companyName}</p>}
                     <p className="whitespace-pre-line">{client.address}</p>
                     <p>{client.phone}</p>
                     <p>{client.email}</p>
@@ -95,7 +96,6 @@ export const RentalTemplate1: React.FC<PageProps> = (props) => {
                 <div className="text-right">
                     <p><span className="font-bold text-gray-500">{(t.date || 'Date').toUpperCase()}:</span> {safeFormat(invoice.invoiceDate, 'MMMM d, yyyy')}</p>
                     <p><span className="font-bold text-gray-500">{(t.dueDate || 'Due Date').toUpperCase()}:</span> {safeFormat(invoice.dueDate, 'MMMM d, yyyy')}</p>
-                    {invoice.poNumber && <p><span className="font-bold text-gray-500">PO #:</span> {invoice.poNumber}</p>}
                 </div>
             </section>
             <RentalDetails invoice={invoice} t={t} />
@@ -122,12 +122,9 @@ export const RentalTemplate1: React.FC<PageProps> = (props) => {
                         <p className="flex justify-between font-bold text-2xl mt-2 pt-2 border-t-2"><span>{(t.balanceDue || 'Balance Due').toUpperCase()}:</span><span>{currencySymbol}{balanceDue.toFixed(2)}</span></p>
                     </div>
                 </div>
-                 <div className="mt-8 text-xs">
-                    <p className="font-bold">{t.termsAndConditions || 'Terms & Conditions'}</p>
-                    <p className="whitespace-pre-line text-gray-600">{invoice.paymentInstructions}</p>
-                 </div>
                  <div className="flex justify-between mt-8">
-                    {business.ownerSignature && <SignatureDisplay signature={business.ownerSignature} label={t.authorizedSignature || 'Authorized Signature'} />}
+                    <SignatureDisplay signature={business.ownerSignature} label={t.authorizedSignature || 'Authorized Signature'} />
+                    <SignatureDisplay signature={invoice.clientSignature} label={t.clientSignature || 'Client Signature'} />
                 </div>
             </footer>
             )}
@@ -142,23 +139,19 @@ export const RentalTemplate2: React.FC<PageProps> = (props) => {
     return (
       <div className={`p-10 bg-gray-50 font-sans ${pageIndex < totalPages - 1 ? 'page-break-after' : ''}`} style={{ minHeight: '1056px', backgroundColor: props.backgroundColor, color: props.textColor }}>
         <header className="flex justify-between items-center mb-8 pb-4 border-b-2">
-            <div>
-                <h1 className="text-2xl font-bold">{business.name}</h1>
-                <p className="text-xs whitespace-pre-line">{business.address}</p>
-            </div>
+            <h1 className="text-2xl font-bold">{business.name}</h1>
             <h2 className="text-2xl font-light text-gray-500">{docTitle}</h2>
         </header>
         <section className="grid grid-cols-2 gap-8 text-sm mb-8">
             <div>
                 <p><strong>{t.to || 'To'}:</strong> {client.name}</p>
+                {client.companyName && <p>{client.companyName}</p>}
                 <p className="whitespace-pre-line">{client.address}</p>
-                <p>{client.phone}</p>
-                <p>{client.email}</p>
             </div>
             <div className="text-right">
                 <p><strong>#:</strong> {invoice.invoiceNumber}</p>
                 <p><strong>{t.date || 'Date'}:</strong> {safeFormat(invoice.invoiceDate, 'MMM dd, yyyy')}</p>
-                <p><strong>{t.dueDate || 'Due Date'}:</strong> {safeFormat(invoice.dueDate, 'MMM dd, yyyy')}</p>
+                <p><strong>{t.dueDate || 'Due'}:</strong> {safeFormat(invoice.dueDate, 'MMM dd, yyyy')}</p>
             </div>
         </section>
         <RentalDetails invoice={invoice} t={t} />
@@ -190,7 +183,7 @@ export const RentalTemplate2: React.FC<PageProps> = (props) => {
     );
 };
 export const RentalTemplate3: React.FC<PageProps> = (props) => {
-    const { invoice, pageItems, pageIndex, totalPages, subtotal, taxAmount, discountAmount, total, balanceDue, currencySymbol, t, accentColor } = props;
+    const { invoice, pageItems, pageIndex, totalPages, total, balanceDue, currencySymbol, t, accentColor } = props;
     const { business, client } = invoice;
     const docTitle = (t.invoice || 'Invoice');
     return (
@@ -203,9 +196,7 @@ export const RentalTemplate3: React.FC<PageProps> = (props) => {
         <section className="grid grid-cols-2 gap-8 mb-8 text-sm">
             <div>
                 <p><strong>Billed For:</strong> {client.name}</p>
-                <p className="whitespace-pre-line">{client.address}</p>
-                <p>{client.phone}</p>
-                <p>{client.email}</p>
+                {client.companyName && <p>{client.companyName}</p>}
             </div>
             <div className="text-right">
                 <p><strong>{docTitle} #:</strong> {invoice.invoiceNumber}</p>
@@ -230,7 +221,7 @@ export const RentalTemplate3: React.FC<PageProps> = (props) => {
                 </div>
             </div>
             {business.ownerSignature && (
-                <div className="mt-8">
+                <div className="mt-8 flex justify-end">
                     <SignatureDisplay signature={business.ownerSignature} label="Authorized Signature" />
                 </div>
             )}
@@ -255,7 +246,11 @@ export const RentalTemplate4: React.FC<PageProps> = (props) => {
             </div>
             <div className="w-3/4 p-10">
                 <header className="text-right mb-10"><h2 className="text-2xl font-bold">{business.name}</h2><p className="text-xs whitespace-pre-line">{business.address}</p></header>
-                <section className="mb-10 text-sm"><p><strong>To:</strong> {client.name}</p><p className="whitespace-pre-line">{client.address}</p></section>
+                <section className="mb-10 text-sm">
+                    <p><strong>To:</strong> {client.name}</p>
+                    {client.companyName && <p><strong>Company:</strong> {client.companyName}</p>}
+                    <p className="whitespace-pre-line">{client.address}</p>
+                </section>
                 <RentalDetails invoice={invoice} t={t} />
                 <main className="flex-grow mt-4">
                     <table className="w-full text-left text-sm">
@@ -291,6 +286,7 @@ export const RentalTemplate5: React.FC<PageProps> = (props) => {
             <h2 className="text-center text-xl mb-8">RENTAL {docTitle}</h2>
             <section className="text-xs mb-8">
                 <p><strong>To:</strong> {client.name}</p>
+                {client.companyName && <p><strong>Company:</strong> {client.companyName}</p>}
                 <p><strong>Invoice No:</strong> {invoice.invoiceNumber}</p>
                 <p><strong>Date:</strong> {safeFormat(invoice.invoiceDate, 'MM/dd/yyyy')}</p>
             </section>

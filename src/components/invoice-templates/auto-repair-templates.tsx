@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import React from 'react';
@@ -97,6 +98,7 @@ export const AutoRepairTemplate1: React.FC<PageProps> = (props) => {
                         <p className="font-bold mb-1">Billed To:</p>
                         <ul>
                             <li><span className="font-semibold">Customer:</span> {client.name}</li>
+                            {client.companyName && <li><span className="font-semibold">Company:</span> {client.companyName}</li>}
                             <li className="whitespace-pre-line"><span className="font-semibold">Address:</span> {client.address}</li>
                             <li><span className="font-semibold">Phone:</span> {client.phone}</li>
                             <li><span className="font-semibold">Email:</span> {client.email}</li>
@@ -158,6 +160,7 @@ export const AutoRepairTemplate2: React.FC<PageProps> = (props) => {
                 <div>
                   <p className="font-bold text-gray-400">BILLED TO</p>
                   <p>{client.name}</p>
+                  {client.companyName && <p>{client.companyName}</p>}
                   <p className="whitespace-pre-line">{client.address}</p>
                 </div>
                 <div className="text-right">
@@ -213,7 +216,9 @@ export const AutoRepairTemplate3: React.FC<PageProps> = (props) => {
             <section className="grid grid-cols-2 gap-8 text-xs mb-8">
                 <div>
                   <p className="font-bold">Customer</p>
-                  <p>{client.name}<br/>{client.address}</p>
+                  <p>{client.name}</p>
+                  {client.companyName && <p>{client.companyName}</p>}
+                  <p>{client.address}</p>
                   <p>{client.email}</p>
                   <p>{client.phone}</p>
                 </div>
@@ -277,7 +282,9 @@ export const AutoRepairTemplate4: React.FC<PageProps> = (props) => {
                 <section className="grid grid-cols-2 gap-4 text-xs mb-8">
                     <div>
                       <p className="font-bold">Billed To</p>
-                      <p>{client.name}<br/>{client.address}</p>
+                      <p>{client.name}</p>
+                      {client.companyName && <p>{client.companyName}</p>}
+                      <p>{client.address}</p>
                       <p>{client.email}</p>
                       <p>{client.phone}</p>
                     </div>
@@ -310,7 +317,7 @@ export const AutoRepairTemplate4: React.FC<PageProps> = (props) => {
 
 // Template 5: Gridline
 export const AutoRepairTemplate5: React.FC<PageProps> = (props) => {
-    const { invoice, pageItems, pageIndex, totalPages, subtotal, taxAmount, discountAmount, balanceDue, currencySymbol, t } = props;
+    const { invoice, pageItems, pageIndex, totalPages, subtotal, taxAmount, discountAmount, balanceDue, currencySymbol, t, accentColor } = props;
     const { business, client } = invoice;
     return (
         <div className={`p-10 font-sans ${pageIndex < totalPages - 1 ? 'page-break-after' : ''}`} style={{ minHeight: '1056px', backgroundColor: '#F9FAFB', color: '#374151' }}>
@@ -321,6 +328,7 @@ export const AutoRepairTemplate5: React.FC<PageProps> = (props) => {
             <section className="grid grid-cols-2 gap-4 text-xs p-4 border rounded mb-8">
                 <div>
                   <p><strong>Billed To:</strong> {client.name}</p>
+                  {client.companyName && <p><strong>Company:</strong> {client.companyName}</p>}
                   <p><strong>Address:</strong> {client.address}</p>
                 </div>
                 <div className="text-right">
@@ -359,5 +367,3 @@ export const AutoRepairTemplate5: React.FC<PageProps> = (props) => {
 };
 
 export const AutoRepairTemplate6: React.FC<PageProps> = (props) => <AutoRepairTemplate1 {...props} />;
-
-    

@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import React from 'react';
@@ -88,6 +89,7 @@ export const ConsultingTemplate1: React.FC<PageProps> = (props) => {
                 <div>
                     <p className="font-bold text-gray-500 mb-1">BILL TO</p>
                     <p>{client.name}</p>
+                    {client.companyName && <p>{client.companyName}</p>}
                     <p className="whitespace-pre-line">{client.address}</p>
                     <p>{client.email}</p>
                     <p>{client.phone}</p>
@@ -210,6 +212,7 @@ export const ConsultingTemplate2: React.FC<PageProps> = (props) => {
           <div>
             <p className="font-bold mb-1">Bill To:</p>
             <p>{client.name}</p>
+            {client.companyName && <p>{client.companyName}</p>}
             <p className="whitespace-pre-line">{client.address}</p>
             <p>{client.email}</p>
             <p>{client.phone}</p>
@@ -228,48 +231,21 @@ export const ConsultingTemplate2: React.FC<PageProps> = (props) => {
         <ConsultingDetails invoice={invoice} t={t} />
 
         <table className="w-full text-left text-xs mt-4">
-          <thead>
-            <tr className="border-b">
-              <th className="pb-2 font-semibold w-3/5">Service</th>
-              <th className="pb-2 font-semibold text-right">Amount</th>
-            </tr>
-          </thead>
-          <tbody>
-            {pageItems.map((item) => (
-              <tr key={item.id} className="border-b">
-                <td className="py-2">{item.name}</td>
-                <td className="py-2 text-right">
-                  {currencySymbol}
-                  {(item.quantity * item.unitPrice).toFixed(2)}
-                </td>
-              </tr>
-            ))}
-          </tbody>
+          <thead><tr className="border-b"><th className="pb-2 font-semibold w-3/5">Service</th><th className="pb-2 font-semibold text-right">Amount</th></tr></thead>
+          <tbody>{pageItems.map(item => (<tr key={item.id} className="border-b"><td className="py-2">{item.name}</td><td className="py-2 text-right">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</td></tr>))}</tbody>
         </table>
 
         {pageIndex === totalPages - 1 && (
           <footer className="mt-8 pt-8 border-t">
             <div className="flex justify-end text-sm">
               <div className="w-1/2">
-                <p className="flex justify-between">
-                  <span>Subtotal:</span>
-                  <span>{currencySymbol}{subtotal.toFixed(2)}</span>
-                </p>
-                 {discountAmount > 0 && <p className="flex justify-between text-red-600"><span>Discount:</span><span>-{currencySymbol}{discountAmount.toFixed(2)}</span></p>}
-                {invoice.summary.shippingCost > 0 && <p className="flex justify-between"><span>Shipping:</span><span>{currencySymbol}{invoice.summary.shippingCost.toFixed(2)}</span></p>}
-                <p className="flex justify-between">
-                  <span>Tax:</span>
-                  <span>{currencySymbol}{taxAmount.toFixed(2)}</span>
-                </p>
-                <p className="flex justify-between font-bold text-lg mt-4">
-                  <span>Total:</span>
-                  <span>{currencySymbol}{total.toFixed(2)}</span>
-                </p>
+                <p className="flex justify-between py-1"><span>Subtotal:</span><span>{currencySymbol}{subtotal.toFixed(2)}</span></p>
+                 {discountAmount > 0 && <p className="flex justify-between py-1 text-red-600"><span>Discount:</span><span>-{currencySymbol}{discountAmount.toFixed(2)}</span></p>}
+                {invoice.summary.shippingCost > 0 && <p className="flex justify-between py-1"><span>Shipping:</span><span>{currencySymbol}{invoice.summary.shippingCost.toFixed(2)}</span></p>}
+                <p className="flex justify-between py-1"><span>Tax:</span><span>{currencySymbol}{taxAmount.toFixed(2)}</span></p>
+                <p className="flex justify-between font-bold text-lg mt-4"><span>Total:</span><span>{currencySymbol}{total.toFixed(2)}</span></p>
                  {(invoice.amountPaid || 0) > 0 && <p className="flex justify-between text-green-600"><span>Amount Paid:</span><span>-{currencySymbol}{(invoice.amountPaid || 0).toFixed(2)}</span></p>}
-                <p className="flex justify-between font-bold mt-2 pt-2 border-t">
-                  <span>Balance Due:</span>
-                  <span>{currencySymbol}{balanceDue.toFixed(2)}</span>
-                </p>
+                <p className="flex justify-between font-bold mt-2 pt-2 border-t"><span>Balance Due:</span><span>{currencySymbol}{balanceDue.toFixed(2)}</span></p>
               </div>
             </div>
             {business.ownerSignature && (
@@ -304,14 +280,15 @@ export const ConsultingTemplate3: React.FC<PageProps> = (props) => {
                 <section className="grid grid-cols-2 gap-8 text-xs mb-8">
                     <div>
                         <p className="font-bold text-gray-500 mb-1">Billed To</p>
-                        <p>{client.name}<br/>{client.address}<br/>{client.email}<br/>{client.phone}</p>
-                        {client.shippingAddress && <p className="mt-2"><span className="font-bold">Ship To:</span><br/>{client.shippingAddress}</p>}
-                        {client.projectLocation && <p className="mt-2"><span className="font-bold">Project Location:</span><br/>{client.projectLocation}</p>}
+                        <p>{client.name}</p>
+                        {client.companyName && <p>{client.companyName}</p>}
+                        <p>{client.address}</p>
+                        <p>{client.email}</p>
+                        <p>{client.phone}</p>
                     </div>
                     <div className="text-right">
                         <p><span className="font-bold text-gray-500">Date: </span>{safeFormat(invoice.invoiceDate, 'dd-MMM-yyyy')}</p>
                         <p><span className="font-bold text-gray-500">Due Date: </span>{safeFormat(invoice.dueDate, 'dd-MMM-yyyy')}</p>
-                        {invoice.poNumber && <p><span className="font-bold text-gray-500">PO #: </span>{invoice.poNumber}</p>}
                     </div>
                 </section>
                 <ConsultingDetails invoice={invoice} t={t} />
@@ -330,7 +307,7 @@ export const ConsultingTemplate3: React.FC<PageProps> = (props) => {
                             {invoice.summary.shippingCost > 0 && <p className="flex justify-between"><span>Other Fees:</span><span>{currencySymbol}{invoice.summary.shippingCost.toFixed(2)}</span></p>}
                             <p className="flex justify-between"><span>Tax:</span><span>{currencySymbol}{taxAmount.toFixed(2)}</span></p>
                             <p className="flex justify-between font-bold"><span>Total:</span><span>{currencySymbol}{total.toFixed(2)}</span></p>
-                            {(invoice.amountPaid || 0) > 0 && <p className="flex justify-between text-green-600"><span>Paid:</span><span>-{currencySymbol}{(invoice.amountPaid || 0).toFixed(2)}</span></p>}
+                             {(invoice.amountPaid || 0) > 0 && <p className="flex justify-between text-green-600"><span>Paid:</span><span>-{currencySymbol}{(invoice.amountPaid || 0).toFixed(2)}</span></p>}
                             <p className="flex justify-between font-bold text-sm mt-2 pt-2 border-t border-gray-300"><span>Balance Due:</span><span>{currencySymbol}{balanceDue.toFixed(2)}</span></p>
                         </div>
                     </div>
@@ -359,6 +336,7 @@ export const ConsultingTemplate4: React.FC<PageProps> = (props) => {
                     <div>
                         <p className="font-bold mb-1">Billed To</p>
                         <p>{client.name}</p>
+                        {client.companyName && <p>{client.companyName}</p>}
                         <p>{client.address}</p>
                         <p>{client.email}</p>
                         <p>{client.phone}</p>
@@ -408,6 +386,7 @@ export const ConsultingTemplate5: React.FC<PageProps> = (props) => {
             </header>
             <section className="mb-10">
                 <p>To: {client.name}</p>
+                {client.companyName && <p>{client.companyName}</p>}
                 <p>Date: {safeFormat(invoice.invoiceDate, 'yyyy-MM-dd')}</p>
                 <p>Ref: {invoice.invoiceNumber}</p>
             </section>
