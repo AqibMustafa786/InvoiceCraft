@@ -274,7 +274,7 @@ export default function HomePage() {
                     <p className="mt-4 text-muted-foreground">InvoiceCraft is packed with powerful, intuitive features designed to save you time, make you look professional, and help you get paid faster.</p>
                 </div>
                  <motion.div 
-                    className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto"
+                    className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-6xl mx-auto"
                     variants={containerVariants}
                     initial="hidden"
                     whileInView="visible"
@@ -283,7 +283,7 @@ export default function HomePage() {
                     {homePageFeatures.map((feature, index) => (
                         <motion.div key={index} variants={itemVariants} className={feature.className}>
                              <motion.div whileHover={{ y: -8, scale: 1.02 }} transition={{ type: "spring", stiffness: 300 }} className="h-full">
-                                <Card className="bg-card/90 backdrop-blur-sm shadow-lg hover:shadow-primary/20 transition-all duration-300 h-full p-8 flex flex-col items-center text-center">
+                                <Card className="border bg-card shadow-lg hover:shadow-primary/20 transition-all duration-300 h-full p-6 flex flex-col items-center text-center">
                                     {feature.icon}
                                     <h3 className="text-xl font-semibold mt-4 mb-2">{feature.name}</h3>
                                     <p className="text-muted-foreground text-sm flex-1">{feature.description}</p>
