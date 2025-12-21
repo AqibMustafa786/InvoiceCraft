@@ -1,7 +1,7 @@
 
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
@@ -13,7 +13,6 @@ import { motion } from 'framer-motion';
 import { AuthNav } from './auth-nav'; 
 import { CommandDialog, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from './ui/command';
 import { DialogTitle } from './ui/dialog';
-import { useEffect, useState } from 'react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -73,7 +72,7 @@ export function Header() {
         return () => document.removeEventListener("keydown", down)
     }, [])
 
-    const runCommand = React.useCallback((command: () => unknown) => {
+    const runCommand = useCallback((command: () => unknown) => {
         setOpen(false)
         command()
     }, []);
