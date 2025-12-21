@@ -73,7 +73,7 @@ export default function HomePage() {
                   variants={itemVariants}
                 >
                   <span>Create Professional </span>
-                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent">
+                  <span className="text-primary">
                     Documents
                   </span>
                   <span> in Seconds</span>

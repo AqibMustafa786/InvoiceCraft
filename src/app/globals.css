@@ -5,7 +5,7 @@
 
 @layer base {
   :root {
-    --background-hsl: 220 25% 97%;
+    --background-hsl: 224 71% 97%; /* Light gray background */
     --background: hsl(var(--background-hsl));
     --foreground: 222.2 84% 4.9%;
 
@@ -15,7 +15,7 @@
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
  
-    --primary: 175 55% 45%;
+    --primary: 175 55% 45%; /* Soft Teal */
     --primary-foreground: 210 40% 98%;
  
     --secondary: 210 40% 96.1%;
@@ -24,7 +24,7 @@
     --muted: 210 40% 96.1%;
     --muted-foreground: 215.4 16.3% 46.9%;
  
-    --accent: 35 92% 50%;
+    --accent: 175 55% 45%; /* Using primary color instead of orange */
     --accent-foreground: 210 40% 98%;
  
     --destructive: 0 84.2% 60.2%;
@@ -47,17 +47,17 @@
   }
  
   .dark {
-    --background-hsl: 240 10% 3.9%;
+    --background-hsl: 222.2 84% 4.9%;
     --background: hsl(var(--background-hsl));
     --foreground: 210 40% 98%;
  
-    --card: 222.2 84% 8%;
+    --card: 222.2 84% 8%; /* Slightly lighter than background */
     --card-foreground: 210 40% 98%;
  
     --popover: 222.2 84% 4.9%;
     --popover-foreground: 210 40% 98%;
  
-    --primary: 217 91% 60%;
+    --primary: 210 90% 60%; /* Lighter blue for dark mode */
     --primary-foreground: 210 40% 98%;
  
     --secondary: 217.2 32.6% 17.5%;
@@ -66,7 +66,7 @@
     --muted: 217.2 32.6% 17.5%;
     --muted-foreground: 215 20.2% 65.1%;
  
-    --accent: 260 95% 65%;
+    --accent: 210 90% 60%; /* Using primary color instead of orange */
     --accent-foreground: 210 40% 98%;
  
     --destructive: 0 62.8% 30.6%;
