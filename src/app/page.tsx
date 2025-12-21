@@ -8,7 +8,7 @@ import { motion } from 'framer-motion';
 import Image from 'next/image';
 import {
   FileText, FilePlus, Shield, HardHat, Code, Store, Car, Camera, Building, Scale, HeartPulse,
-  BarChart, BookUser, Bot, Brush, CheckCircle, Cloud, Edit, FileDown, Filter, Palette, Send, Share2, ShieldCheck, Smartphone, Users, Wrench
+  BarChart, BookUser, Bot, Brush, CheckCircle, Cloud, Edit, FileDown, Filter, Palette, Send, Share2, ShieldCheck, Smartphone, Users, Wrench, ArrowRight
 } from 'lucide-react';
 import React from 'react';
 import { Carousel, CarouselContent, CarouselItem } from '@/components/ui/carousel';
@@ -317,6 +317,13 @@ export default function HomePage() {
                         </motion.div>
                     ))}
                 </motion.div>
+                <div className="text-center mt-12">
+                    <Button asChild size="lg">
+                        <Link href="/features">
+                            Explore More Features <ArrowRight className="ml-2 h-5 w-5" />
+                        </Link>
+                    </Button>
+                </div>
             </div>
         </section>
 
