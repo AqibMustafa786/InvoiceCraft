@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -32,13 +33,13 @@ export function Greeting() {
     visible: {
       opacity: 1,
       transition: {
-        staggerChildren: 0.1,
+        staggerChildren: 0.05,
       },
     },
   };
 
   const wordVariants = {
-    hidden: { opacity: 0, y: 20 },
+    hidden: { opacity: 0, y: 10 },
     visible: {
       opacity: 1,
       y: 0,
@@ -59,7 +60,7 @@ export function Greeting() {
       variants={containerVariants}
       initial="hidden"
       animate="visible"
-      className="my-8 text-3xl font-semibold text-center text-foreground flex justify-center gap-2"
+      className="px-4 py-2 mb-4 text-sm text-center text-muted-foreground flex justify-center flex-wrap gap-1"
     >
       {greeting.split(' ').map((word, index) => (
         <motion.span

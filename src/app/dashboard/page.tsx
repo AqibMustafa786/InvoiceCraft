@@ -6,7 +6,6 @@ import type { Invoice, Estimate, DocumentStatus, Quote, AuditLogEntry, Client } 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
     AlertDialog,
     AlertDialogAction,
@@ -37,7 +36,6 @@ import { collection, doc, setDoc, query, Timestamp, where } from 'firebase/fires
 import { deleteDocumentNonBlocking, updateDocumentNonBlocking } from '@/firebase';
 import { Skeleton } from '@/components/ui/skeleton';
 import { motion } from 'framer-motion';
-import { Greeting } from '@/components/dashboard/greeting';
 import { KpiDetailsModal } from '@/components/dashboard/kpi-details-modal';
 import { HistoryModal } from '@/components/dashboard/history-modal';
 
@@ -737,7 +735,7 @@ export default function DashboardPage() {
                     initial="hidden"
                     animate="visible"
                 >
-                    <Greeting />
+                    
                     <div className="flex justify-between items-center gap-4 flex-wrap">
                         <motion.div variants={pageVariants}>
                             <h1 className="text-3xl font-bold font-headline">Dashboard</h1>
