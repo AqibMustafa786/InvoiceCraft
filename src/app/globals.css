@@ -47,7 +47,7 @@
   }
  
   .dark {
-    --background-hsl: 220 10% 10%;
+    --background-hsl: 220 20% 6%; /* Darker background */
     --background: hsl(var(--background-hsl));
     --foreground: 210 20% 95%;
  
@@ -57,7 +57,7 @@
     --popover: 220 10% 10%;
     --popover-foreground: 210 20% 95%;
  
-    --primary: 40 15% 70%; 
+    --primary: 175 55% 45%; /* Soft Teal */
     --primary-foreground: 220 10% 10%;
  
     --secondary: 220 10% 15%;
@@ -66,7 +66,7 @@
     --muted: 220 10% 15%;
     --muted-foreground: 215 20.2% 65.1%;
  
-    --accent: 40 15% 70%;
+    --accent: 175 55% 55%; /* Lighter Teal for accent */
     --accent-foreground: 220 10% 10%;
  
     --destructive: 0 62.8% 30.6%;
@@ -90,7 +90,7 @@
     min-height: 100vh;
   }
   .dark body {
-     background-image: radial-gradient(ellipse 50% 80% at 50% -20%, hsl(var(--primary) / 0.1), transparent);
+     background-image: none;
   }
 }
 
