@@ -73,8 +73,8 @@ export function Header() {
     }, [])
 
     const runCommand = useCallback((command: () => unknown) => {
-        setOpen(false)
-        command()
+        setOpen(false);
+        command();
     }, []);
 
     return (
@@ -150,6 +150,7 @@ export function Header() {
                                 <LayoutDashboard className="mr-2 h-4 w-4" />
                                 <span>Dashboard</span>
                             </CommandItem>
+                        </CommandGroup>
                         </CommandList>
                     </CommandDialog>
                 </div>
@@ -194,5 +195,3 @@ export function Header() {
         </header>
     );
 }
-
-    
