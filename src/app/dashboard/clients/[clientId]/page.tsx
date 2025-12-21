@@ -57,20 +57,20 @@ export default function ClientProfilePage() {
   const { data: existingClient, isLoading: isLoadingClient } = useDoc<Client>(docRef);
   
   const invoicesQuery = useMemoFirebase(() => {
-    if (firestore && userProfile?.companyId && existingClient?.companyName && !isNewClient) {
+    if (firestore && userProfile?.companyId && existingClient?.name && !isNewClient) {
       return query(
         collection(firestore, 'companies', userProfile.companyId, 'invoices'), 
-        where('client.companyName', '==', existingClient.companyName)
+        where('client.name', '==', existingClient.name)
       );
     }
     return null;
   }, [firestore, userProfile?.companyId, existingClient, isNewClient]);
 
   const estimatesQuery = useMemoFirebase(() => {
-    if (firestore && userProfile?.companyId && existingClient?.companyName && !isNewClient) {
+    if (firestore && userProfile?.companyId && existingClient?.name && !isNewClient) {
       return query(
         collection(firestore, 'companies', userProfile.companyId, 'estimates'), 
-        where('client.companyName', '==', existingClient.companyName)
+        where('client.name', '==', existingClient.name)
       );
     }
     return null;
@@ -237,13 +237,17 @@ export default function ClientProfilePage() {
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            {invoices && invoices.map(inv => (
+                            {invoices && invoices.length > 0 ? invoices.map(inv => (
                                 <TableRow key={inv.id}>
                                     <TableCell>{inv.invoiceNumber}</TableCell>
                                     <TableCell><Badge>{inv.status}</Badge></TableCell>
                                     <TableCell className="text-right">${inv.summary.grandTotal.toFixed(2)}</TableCell>
                                 </TableRow>
-                            ))}
+                            )) : (
+                                <TableRow>
+                                    <TableCell colSpan={3} className="text-center h-24">No invoices found for this client.</TableCell>
+                                </TableRow>
+                            )}
                         </TableBody>
                     </Table>
                 </TabsContent>
@@ -257,13 +261,17 @@ export default function ClientProfilePage() {
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            {estimates && estimates.map(est => (
+                            {estimates && estimates.length > 0 ? estimates.map(est => (
                                 <TableRow key={est.id}>
                                     <TableCell>{est.estimateNumber}</TableCell>
                                     <TableCell><Badge>{est.status}</Badge></TableCell>
                                     <TableCell className="text-right">${est.summary.grandTotal.toFixed(2)}</TableCell>
                                 </TableRow>
-                            ))}
+                            )) : (
+                                 <TableRow>
+                                    <TableCell colSpan={3} className="text-center h-24">No estimates found for this client.</TableCell>
+                                </TableRow>
+                            )}
                         </TableBody>
                     </Table>
                 </TabsContent>
@@ -274,10 +282,5 @@ export default function ClientProfilePage() {
     </div>
   );
 }
-    
-
-    
-
-    
 
     
