@@ -76,7 +76,7 @@ export default function HomePage() {
                   <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent">
                     Documents
                   </span>
-                  <span> in Seconds </span>
+                  <span> in Seconds</span>
                 </motion.h1>
                 <motion.p 
                   className="mt-6 text-lg text-muted-foreground md:text-xl"
