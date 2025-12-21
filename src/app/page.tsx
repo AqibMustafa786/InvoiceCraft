@@ -134,9 +134,36 @@ export default function HomePage() {
   return (
     <div className="flex flex-col min-h-[calc(100vh-8rem)]">
       <main className="flex-1">
-        <section className="relative w-full py-20 overflow-hidden md:py-32 lg:py-40">
+        <section className="relative w-full py-20 overflow-hidden md:py-24 lg:py-32">
+           <div
+            aria-hidden="true"
+            className="absolute inset-0 z-0"
+          >
+            <svg
+              className="absolute -top-40 left-0 w-[150%] h-[150%] sm:w-full sm:h-full"
+              viewBox="0 0 1440 892"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+              preserveAspectRatio="xMidYMid slice"
+            >
+              <path
+                d="M1440 892V0H0V892H1440Z"
+                className="fill-background"
+              />
+              <path
+                d="M-225 829C-225 829 119.5 1013 364.5 829C609.5 645 525 214.5 790.5 214.5C1056 214.5 1121 481 1332.5 481C1544 481 1618.5 233 1618.5 233"
+                className="stroke-primary/10"
+                strokeWidth="2"
+              />
+              <path
+                d="M-225 754C-225 754 119.5 938 364.5 754C609.5 570 575.033 167.319 809.5 162.5C1043.97 157.681 1121 481 1332.5 481C1544 481 1618.5 233 1618.5 233"
+                className="stroke-primary/20"
+                strokeWidth="2"
+              />
+            </svg>
+          </div>
           <div className="container px-4 mx-auto md:px-6 relative z-10">
-            <div className="grid gap-12 lg:grid-cols-2 lg:gap-24 items-center">
+            <div className="grid gap-12 lg:grid-cols-2 lg:gap-16 items-center">
               <motion.div 
                 className="max-w-xl text-center lg:text-left"
                 variants={containerVariants}
@@ -147,57 +174,60 @@ export default function HomePage() {
                   className="mb-2 text-sm font-bold tracking-wider uppercase text-primary"
                   variants={itemVariants}
                 >
-                  PROFESSIONAL DOCUMENT GENERATOR
+                  Welcome to InvoiceCraft
                 </motion.p>
                 <motion.h1 
-                  className="text-5xl font-bold tracking-tight md:text-6xl lg:text-7xl font-headline"
+                  className="text-4xl font-bold tracking-tight md:text-5xl lg:text-6xl font-headline"
                   variants={itemVariants}
                 >
-                  <span>Create Professional </span>
-                  <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-                    Documents
+                  Let's Control Your Business With{' '}
+                  <span className="relative inline-block">
+                    InvoiceCraft
+                     <svg className="absolute -bottom-1.5 left-0 w-full" viewBox="0 0 240 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M2 8C52.0019 3.66667 157.005 -2.00001 238 4" stroke="hsl(var(--primary))" strokeWidth="4" strokeLinecap="round"/>
+                    </svg>
                   </span>
-                  <span> in Seconds</span>
                 </motion.h1>
                 <motion.p 
-                  className="mt-6 text-lg text-muted-foreground md:text-xl"
+                  className="mt-6 text-base text-muted-foreground md:text-lg"
                   variants={itemVariants}
                 >
-                  Generate invoices, estimates, quotes, and insurance documents. Download as PDF and track them online. The ultimate tool for freelancers and small businesses.
+                  We develop beautiful and functional documents for desktop, tablet, and mobile.
                 </motion.p>
                 <motion.div 
                   className="flex flex-col items-center justify-center gap-4 mt-8 sm:flex-row lg:justify-start"
                   variants={itemVariants}
                 >
-                   <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.98 }}>
-                      <Button asChild size="lg" className="w-full text-lg sm:w-auto">
-                          <Link href="/dashboard">Get Started Free</Link>
+                   <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.98 }}>
+                      <Button asChild size="lg" className="w-full sm:w-auto">
+                          <Link href="/dashboard">Get Started</Link>
                       </Button>
                    </motion.div>
-                   <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.98 }}>
-                      <Button asChild variant="outline" size="lg" className="w-full text-lg sm:w-auto">
-                          <Link href="/features">
-                              Learn More
-                          </Link>
-                      </Button>
-                  </motion.div>
                 </motion.div>
               </motion.div>
               <motion.div 
-                className="relative w-full h-96 lg:h-auto lg:aspect-[4/5]"
-                initial={{ opacity: 0, scale: 0.8 }}
+                className="relative w-full h-80 lg:h-auto lg:aspect-[5/4]"
+                initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.7, ease: 'easeOut' }}
+                transition={{ duration: 0.5, ease: 'easeOut' }}
               >
-                 <motion.div
-                  className="relative w-full h-full animate-flip"
+                <motion.div
+                  className="relative w-full h-full"
+                  animate={{
+                    y: [0, -10, 0],
+                  }}
+                  transition={{
+                    duration: 4,
+                    repeat: Infinity,
+                    ease: "easeInOut",
+                  }}
                 >
                   <Image 
-                    src="https://picsum.photos/seed/phone-mockup/600/750" 
-                    alt="Phone mockup showing an application interface"
+                    src="https://picsum.photos/seed/workspace-illustration/600/480" 
+                    alt="Illustration of a person working on a laptop"
                     fill
                     className="object-contain"
-                    data-ai-hint="phone mockup"
+                    data-ai-hint="workspace illustration"
                   />
                 </motion.div>
               </motion.div>
