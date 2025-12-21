@@ -8,6 +8,7 @@ import { motion } from 'framer-motion';
 import Image from 'next/image';
 import { FileText, FilePlus, Shield, Receipt, Hammer, PenTool, Store } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
+import React from 'react';
 
 const tools = [
   {
