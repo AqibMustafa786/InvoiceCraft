@@ -182,6 +182,7 @@ const DashboardStatsGrid: React.FC<DashboardStatsGridProps> = ({ documents, docT
 
 
 export default function DashboardPage() {
+    const [activeTab, setActiveTab] = useState('invoices');
     const [deleteCandidate, setDeleteCandidate] = useState<{ id: string; collection: string } | null>(null);
     const [filters, setFilters] = useState<DashboardFilters>(initialFilters);
     const [isFilterSheetOpen, setIsFilterSheetOpen] = useState(false);
@@ -789,118 +790,92 @@ export default function DashboardPage() {
                         </CardContent>
                     </Card>
                 </motion.div>
-
+                
                 <motion.div initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.3, delay: 0.1 }}>
-                    <Tabs defaultValue="invoices">
-                        <div className="flex justify-between items-end mb-4">
-                            <TabsList>
-                                <TabsTrigger value="invoices">Invoices</TabsTrigger>
-                                <TabsTrigger value="estimates">Estimates</TabsTrigger>
-                                <TabsTrigger value="quotes">Quotes</TabsTrigger>
-                                <TabsTrigger value="clients">Clients</TabsTrigger>
-                            </TabsList>
-                             <div className="flex items-center gap-2">
-                                <Button variant="outline" className='rounded-full' onClick={() => setIsFilterSheetOpen(true)}>
-                                <Filter className="mr-2 h-4 w-4" />
-                                Filter
-                                {activeFilterCount > 0 && (
-                                    <Badge variant="secondary" className="ml-2 rounded-full h-5 w-5 p-0 flex items-center justify-center">{activeFilterCount}</Badge>
-                                )}
-                                </Button>
-                                {activeFilterCount > 0 && (
-                                    <Button variant="ghost" size="sm" className="rounded-full" onClick={resetFilters}>
-                                        <X className="h-4 w-4 mr-1" /> Clear
-                                    </Button>
-                                )}
-                            </div>
-                        </div>
+                  <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+                      <div className="flex justify-between items-end mb-4">
+                          <div className="flex items-center gap-2">
+                              <Button variant="outline" className='rounded-full' onClick={() => setIsFilterSheetOpen(true)}>
+                              <Filter className="mr-2 h-4 w-4" />
+                              Filter
+                              {activeFilterCount > 0 && (
+                                  <Badge variant="secondary" className="ml-2 rounded-full h-5 w-5 p-0 flex items-center justify-center">{activeFilterCount}</Badge>
+                              )}
+                              </Button>
+                              {activeFilterCount > 0 && (
+                                  <Button variant="ghost" size="sm" className="rounded-full" onClick={resetFilters}>
+                                      <X className="h-4 w-4 mr-1" /> Clear
+                                  </Button>
+                              )}
+                          </div>
+                      </div>
 
-                        <TabsContent value="invoices">
-                             <Card className='bg-card/50 backdrop-blur-sm'>
-                                <CardContent className="pt-6">
-                                    <DashboardStatsGrid documents={filteredInvoices} docType="invoice" onKpiClick={handleKpiClick} />
-                                    {renderTable(filteredInvoices, 'invoice')}
-                                </CardContent>
-                             </Card>
-                        </TabsContent>
-                        <TabsContent value="estimates">
-                             <Card className='bg-card/50 backdrop-blur-sm'>
-                                <CardContent className="pt-6">
-                                     <DashboardStatsGrid documents={filteredEstimates} docType="estimate" onKpiClick={handleKpiClick} />
-                                     {renderTable(filteredEstimates, 'estimate')}
-                                </CardContent>
-                             </Card>
-                        </TabsContent>
-                        <TabsContent value="quotes">
-                             <Card className='bg-card/50 backdrop-blur-sm'>
-                                <CardContent className="pt-6">
-                                     <DashboardStatsGrid documents={filteredQuotes} docType="quote" onKpiClick={handleKpiClick} />
-                                     {renderTable(filteredQuotes, 'quote')}
-                                </CardContent>
-                             </Card>
-                        </TabsContent>
-                         <TabsContent value="clients">
-                             <Card className='bg-card/50 backdrop-blur-sm'>
-                                <CardHeader>
-                                    <CardTitle>Clients</CardTitle>
-                                    <CardDescription>A list of all your clients. Click a client to view their profile and documents.</CardDescription>
-                                </CardHeader>
-                                <CardContent>
-                                    <Table>
-                                        <TableHeader>
-                                            <TableRow>
-                                                <TableHead>Name</TableHead>
-                                                <TableHead>Company</TableHead>
-                                                <TableHead>Email</TableHead>
-                                                <TableHead className="text-right">Actions</TableHead>
-                                            </TableRow>
-                                        </TableHeader>
-                                        <TableBody>
-                                            {filteredClients ? filteredClients.map((client) => (
-                                                <TableRow 
-                                                    key={client.id} 
-                                                    className="cursor-pointer"
-                                                    onClick={() => router.push(`/dashboard/clients/${client.id}`)}
-                                                >
-                                                    <TableCell className="font-medium">{client.name}</TableCell>
-                                                    <TableCell>{client.companyName}</TableCell>
-                                                    <TableCell>{client.email}</TableCell>
-                                                    <TableCell className="text-right">
-                                                         <Button variant="ghost" size="sm">View</Button>
-                                                    </TableCell>
-                                                </TableRow>
-                                            )) : (
-                                                <TableRow><TableCell colSpan={4} className="text-center h-24">No clients found.</TableCell></TableRow>
-                                            )}
-                                        </TableBody>
-                                    </Table>
-                                </CardContent>
-                             </Card>
-                        </TabsContent>
-                    </Tabs>
+                      <TabsContent value="invoices">
+                           <Card className='bg-card/50 backdrop-blur-sm'>
+                              <CardContent className="pt-6">
+                                  <DashboardStatsGrid documents={filteredInvoices} docType="invoice" onKpiClick={handleKpiClick} />
+                                  {renderTable(filteredInvoices, 'invoice')}
+                              </CardContent>
+                           </Card>
+                      </TabsContent>
+                      <TabsContent value="estimates">
+                           <Card className='bg-card/50 backdrop-blur-sm'>
+                              <CardContent className="pt-6">
+                                   <DashboardStatsGrid documents={filteredEstimates} docType="estimate" onKpiClick={handleKpiClick} />
+                                   {renderTable(filteredEstimates, 'estimate')}
+                              </CardContent>
+                           </Card>
+                      </TabsContent>
+                      <TabsContent value="quotes">
+                           <Card className='bg-card/50 backdrop-blur-sm'>
+                              <CardContent className="pt-6">
+                                   <DashboardStatsGrid documents={filteredQuotes} docType="quote" onKpiClick={handleKpiClick} />
+                                   {renderTable(filteredQuotes, 'quote')}
+                              </CardContent>
+                           </Card>
+                      </TabsContent>
+                       <TabsContent value="clients">
+                           <Card className='bg-card/50 backdrop-blur-sm'>
+                              <CardHeader>
+                                  <CardTitle>Clients</CardTitle>
+                                  <CardDescription>A list of all your clients. Click a client to view their profile and documents.</CardDescription>
+                              </CardHeader>
+                              <CardContent>
+                                  <Table>
+                                      <TableHeader>
+                                          <TableRow>
+                                              <TableHead>Name</TableHead>
+                                              <TableHead>Company</TableHead>
+                                              <TableHead>Email</TableHead>
+                                              <TableHead className="text-right">Actions</TableHead>
+                                          </TableRow>
+                                      </TableHeader>
+                                      <TableBody>
+                                          {filteredClients ? filteredClients.map((client) => (
+                                              <TableRow 
+                                                  key={client.id} 
+                                                  className="cursor-pointer"
+                                                  onClick={() => router.push(`/dashboard/clients/${client.id}`)}
+                                              >
+                                                  <TableCell className="font-medium">{client.name}</TableCell>
+                                                  <TableCell>{client.companyName}</TableCell>
+                                                  <TableCell>{client.email}</TableCell>
+                                                  <TableCell className="text-right">
+                                                       <Button variant="ghost" size="sm">View</Button>
+                                                  </TableCell>
+                                              </TableRow>
+                                          )) : (
+                                              <TableRow><TableCell colSpan={4} className="text-center h-24">No clients found.</TableCell></TableRow>
+                                          )}
+                                      </TableBody>
+                                  </Table>
+                              </CardContent>
+                           </Card>
+                      </TabsContent>
+                  </Tabs>
                 </motion.div>
             </div>
         </>
     );
 }
 
-
-
-
-    
-
-
-    
-
-    
-
-
-
-
-    
-
-    
-
-    
-
-    
