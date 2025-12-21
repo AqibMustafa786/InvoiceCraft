@@ -6,7 +6,31 @@ import { Button } from '@/components/ui/button';
 import Marquee from '@/components/marquee';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
-import { FileText } from 'lucide-react';
+import { FileText, FilePlus, Shield, Receipt } from 'lucide-react';
+import { Card, CardContent } from '@/components/ui/card';
+
+const tools = [
+  {
+    href: '/create-invoice',
+    label: 'Invoice',
+    icon: <Receipt className="h-10 w-10 text-primary" />,
+  },
+  {
+    href: '/create-estimate',
+    label: 'Estimate',
+    icon: <FilePlus className="h-10 w-10 text-primary" />,
+  },
+  {
+    href: '/create-quote',
+    label: 'Quote',
+    icon: <FileText className="h-10 w-10 text-primary" />,
+  },
+  {
+    href: '/create-insurance',
+    label: 'Insurance',
+    icon: <Shield className="h-10 w-10 text-primary" />,
+  },
+];
 
 export default function HomePage() {
   const containerVariants = {
@@ -95,6 +119,30 @@ export default function HomePage() {
             </div>
           </div>
         </section>
+
+        <section className="py-20 md:py-28">
+            <div className="container px-4 mx-auto md:px-6">
+                <div className="text-center max-w-2xl mx-auto mb-12">
+                    <h2 className="text-4xl md:text-5xl font-bold font-headline">A Tool for Every Need</h2>
+                    <p className="mt-4 text-muted-foreground">Whether you're billing a client, estimating a project, or quoting a price, we have you covered.</p>
+                </div>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+                    {tools.map((tool) => (
+                        <Link href={tool.href} key={tool.href}>
+                            <motion.div whileHover={{ y: -8, scale: 1.05 }} transition={{ type: "spring", stiffness: 300 }}>
+                                <Card className="bg-card/50 backdrop-blur-sm shadow-lg hover:shadow-primary/20 transition-all duration-300">
+                                    <CardContent className="flex flex-col items-center justify-center p-6 text-center gap-4">
+                                        {tool.icon}
+                                        <p className="font-semibold text-lg">{tool.label}</p>
+                                    </CardContent>
+                                </Card>
+                            </motion.div>
+                        </Link>
+                    ))}
+                </div>
+            </div>
+        </section>
+
         <section className="py-12 md:py-20">
           <Marquee />
         </section>
