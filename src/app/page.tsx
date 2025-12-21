@@ -135,23 +135,6 @@ export default function HomePage() {
     <div className="flex flex-col min-h-[calc(100vh-8rem)]">
       <main className="flex-1">
         <section className="relative w-full py-20 overflow-hidden md:py-32 lg:py-40">
-           <div className="absolute inset-0 z-0 opacity-20">
-              <svg className="w-full h-full" viewBox="0 0 1440 800" preserveAspectRatio="none">
-                <path fill="url(#wave-gradient)" d="M0,256L48,266.7C96,277,192,299,288,288C384,277,480,235,576,213.3C672,192,768,192,864,208C960,224,1056,256,1152,261.3C1248,267,1344,245,1392,234.7L1440,224L1440,0L1392,0C1344,0,1248,0,1152,0C1056,0,960,0,864,0C768,0,672,0,576,0C480,0,384,0,288,0C192,0,96,0,48,0L0,0Z"></path>
-                <defs>
-                  <linearGradient id="wave-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                    <stop offset="0%" style={{stopColor: 'hsl(var(--primary))'}} />
-                    <stop offset="100%" style={{stopColor: 'hsl(var(--accent))'}} />
-                  </linearGradient>
-                </defs>
-              </svg>
-            </div>
-
-            <div className="absolute inset-0 z-0 opacity-10">
-               <svg className="w-full h-full" viewBox="0 0 1440 800" preserveAspectRatio="none">
-                  <path fill="hsl(var(--primary))" d="M0,192L60,186.7C120,181,240,171,360,181.3C480,192,600,224,720,245.3C840,267,960,277,1080,261.3C1200,245,1320,203,1380,181.3L1440,160L1440,0L1380,0C1320,0,1200,0,1080,0C960,0,840,0,720,0C600,0,480,0,360,0C240,0,120,0,60,0L0,0Z"></path>
-              </svg>
-            </div>
           <div className="container px-4 mx-auto md:px-6 relative z-10">
             <div className="grid gap-12 lg:grid-cols-2 lg:gap-24 items-center">
               <motion.div 
@@ -207,9 +190,7 @@ export default function HomePage() {
                 transition={{ duration: 0.7, ease: 'easeOut' }}
               >
                  <motion.div
-                  className="relative w-full h-full"
-                  animate={{ y: [0, -10, 0] }}
-                  transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut' }}
+                  className="relative w-full h-full animate-flip"
                 >
                   <Image 
                     src="https://picsum.photos/seed/phone-mockup/600/750" 
