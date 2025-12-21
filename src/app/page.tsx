@@ -194,7 +194,7 @@ export default function HomePage() {
                   Welcome to InvoiceCraft
                 </motion.p>
                 <motion.h1 
-                  className="text-4xl font-bold tracking-tight md:text-5xl lg:text-6xl font-headline"
+                  className="text-3xl font-bold tracking-tight md:text-4xl lg:text-5xl font-headline"
                   variants={itemVariants}
                 >
                   Let's Control Your Business With{' '}
@@ -223,7 +223,7 @@ export default function HomePage() {
                 </motion.div>
               </motion.div>
               <motion.div 
-                className="relative w-full h-80 lg:h-auto lg:aspect-[5/4]"
+                className="relative w-full h-80 lg:h-auto lg:aspect-[4/3]"
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.5, ease: 'easeOut' }}
