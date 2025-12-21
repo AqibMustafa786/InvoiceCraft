@@ -1,17 +1,28 @@
 
+'use client';
+
 import { SidebarNav } from "@/components/dashboard/sidebar-nav";
+import { usePathname } from "next/navigation";
 
 export default function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const pathname = usePathname();
+  // Don't apply this layout to nested client pages like /dashboard/clients/[clientId]
+  if (pathname.startsWith('/dashboard/clients/')) {
+    return <main>{children}</main>
+  }
+  
   return (
-    <div className="grid grid-cols-1 md:grid-cols-[240px_1fr] gap-8">
-      <aside>
-        <SidebarNav />
-      </aside>
-      <main>{children}</main>
+    <div className="container mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-[240px_1fr] gap-x-8 gap-y-4">
+            <aside className="md:sticky md:top-24 h-full">
+                <SidebarNav />
+            </aside>
+            <main>{children}</main>
+        </div>
     </div>
   );
 }

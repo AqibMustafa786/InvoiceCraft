@@ -77,6 +77,11 @@ export function Header() {
         command();
     }, []);
 
+    // Do not render the header on dashboard pages
+    if (pathname.startsWith('/dashboard')) {
+        return null;
+    }
+
     return (
         <header className="sticky top-4 z-50 my-4 mx-4 border rounded-full border-border bg-background/95 backdrop-blur-sm px-4">
             <div className="container flex h-14 items-center">
