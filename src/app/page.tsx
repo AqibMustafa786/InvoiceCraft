@@ -6,12 +6,14 @@ import { Button } from '@/components/ui/button';
 import Marquee from '@/components/marquee';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
-import { FileText, FilePlus, Shield, HardHat, Code, Store, Car, Camera, Building, Scale, HeartPulse } from 'lucide-react';
+import {
+  FileText, FilePlus, Shield, HardHat, Code, Store, Car, Camera, Building, Scale, HeartPulse,
+  BarChart, BookUser, Bot, Brush, CheckCircle, Cloud, Edit, FileDown, Filter, Palette, Send, Share2, ShieldCheck, Smartphone, Users, Wrench
+} from 'lucide-react';
 import React from 'react';
 import { Carousel, CarouselContent, CarouselItem } from '@/components/ui/carousel';
 import Autoplay from "embla-carousel-autoplay";
 import { Card, CardContent } from '@/components/ui/card';
-
 
 const tools = [
   {
@@ -95,6 +97,39 @@ const featuredTemplates = [
   }
 ];
 
+const homePageFeatures = [
+    {
+        icon: <Brush className="h-8 w-8 text-primary" />,
+        name: 'Multiple Document Types',
+        description: 'Generate invoices, estimates, quotes, and insurance documents tailored to your needs.',
+        className: 'md:col-span-2',
+    },
+    {
+        icon: <Cloud className="h-8 w-8 text-primary" />,
+        name: 'Cloud-Powered Dashboard',
+        description: 'Securely access and manage all your documents from anywhere with our Firestore-backed dashboard.',
+        className: '',
+    },
+    {
+        icon: <Share2 className="h-8 w-8 text-primary" />,
+        name: 'Share & Collaborate',
+        description: 'Email documents directly to clients or share public links for online viewing and acceptance.',
+        className: '',
+    },
+    {
+        icon: <Palette className="h-8 w-8 text-primary" />,
+        name: 'Deep Customization',
+        description: 'Personalize documents with your logo, brand colors, and professional templates.',
+        className: '',
+    },
+    {
+        icon: <Bot className="h-8 w-8 text-primary" />,
+        name: 'AI-Powered Workflow',
+        description: 'Leverage Genkit AI for intelligent features like automated PDF generation for emails.',
+        className: 'md:col-span-2',
+    }
+];
+
 export default function HomePage() {
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -119,7 +154,7 @@ export default function HomePage() {
     },
   };
   
-    const cardHoverVariants = {
+  const cardHoverVariants = {
     hover: {
       y: -8,
       scale: 1.05,
@@ -129,7 +164,6 @@ export default function HomePage() {
       },
     },
   };
-
 
   return (
     <div className="flex flex-col min-h-[calc(100vh-8rem)]">
@@ -255,6 +289,34 @@ export default function HomePage() {
                         </Link>
                     ))}
                 </div>
+            </div>
+        </section>
+        
+        <section className="py-20 md:py-28">
+             <div className="container px-4 mx-auto md:px-6">
+                <div className="text-center max-w-2xl mx-auto mb-12">
+                    <h2 className="text-4xl md:text-5xl font-bold font-headline">Features That Power Your Business</h2>
+                    <p className="mt-4 text-muted-foreground">InvoiceCraft is packed with powerful, intuitive features designed to save you time, make you look professional, and help you get paid faster.</p>
+                </div>
+                 <motion.div 
+                    className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl mx-auto"
+                    variants={containerVariants}
+                    initial="hidden"
+                    whileInView="visible"
+                    viewport={{ once: true, amount: 0.2 }}
+                  >
+                    {homePageFeatures.map((feature, index) => (
+                        <motion.div key={index} variants={itemVariants} className={feature.className}>
+                             <motion.div whileHover={{ y: -8, scale: 1.02 }} transition={{ type: "spring", stiffness: 300 }} className="h-full">
+                                <Card className="bg-card/50 backdrop-blur-sm shadow-lg hover:shadow-primary/20 transition-all duration-300 h-full p-6 flex flex-col items-center text-center">
+                                    {feature.icon}
+                                    <h3 className="text-xl font-semibold mt-4 mb-2">{feature.name}</h3>
+                                    <p className="text-muted-foreground text-sm flex-1">{feature.description}</p>
+                                </Card>
+                            </motion.div>
+                        </motion.div>
+                    ))}
+                </motion.div>
             </div>
         </section>
 
