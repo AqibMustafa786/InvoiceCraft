@@ -10,6 +10,7 @@ import { FileText, FilePlus, Shield, HardHat, Code, Store, Car, Camera, Building
 import React from 'react';
 import { Carousel, CarouselContent, CarouselItem } from '@/components/ui/carousel';
 import Autoplay from "embla-carousel-autoplay";
+import { Card, CardContent } from '@/components/ui/card';
 
 
 const tools = [
