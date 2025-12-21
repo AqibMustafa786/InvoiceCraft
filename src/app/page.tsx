@@ -6,9 +6,12 @@ import { Button } from '@/components/ui/button';
 import Marquee from '@/components/marquee';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
-import { FileText, FilePlus, Shield, Receipt, Hammer, PenTool, Store } from 'lucide-react';
+import { FileText, FilePlus, Shield, Receipt, Hammer, PenTool, Store, Car, Wrench, Code, Building, HardHat, HeartPulse, Scale, Camera } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import React from 'react';
+import { Carousel, CarouselContent, CarouselItem } from '@/components/ui/carousel';
+import Autoplay from "embla-carousel-autoplay";
+
 
 const tools = [
   {
@@ -39,14 +42,14 @@ const featuredTemplates = [
     count: 6,
     imageUrl: "https://picsum.photos/seed/construction-template/600/800",
     imageHint: "construction site",
-    icon: <Hammer />,
+    icon: <HardHat />,
   },
   {
-    name: "Freelance",
+    name: "IT & Freelance",
     count: 5,
     imageUrl: "https://picsum.photos/seed/freelance-desk/600/800",
     imageHint: "creative desk",
-    icon: <PenTool />,
+    icon: <Code />,
   },
   {
     name: "Retail",
@@ -54,6 +57,41 @@ const featuredTemplates = [
     imageUrl: "https://picsum.photos/seed/retail-store/600/800",
     imageHint: "retail store",
     icon: <Store />,
+  },
+  {
+    name: "Auto Repair",
+    count: 6,
+    imageUrl: "https://picsum.photos/seed/auto-repair/600/800",
+    imageHint: "car engine",
+    icon: <Car />,
+  },
+  {
+    name: "Photography",
+    count: 5,
+    imageUrl: "https://picsum.photos/seed/photography-gear/600/800",
+    imageHint: "camera gear",
+    icon: <Camera />,
+  },
+  {
+    name: "Real Estate",
+    count: 5,
+    imageUrl: "https://picsum.photos/seed/modern-house/600/800",
+    imageHint: "modern house",
+    icon: <Building />,
+  },
+  {
+    name: "Legal Services",
+    count: 5,
+    imageUrl: "https://picsum.photos/seed/law-books/600/800",
+    imageHint: "law books",
+    icon: <Scale />,
+  },
+  {
+    name: "Medical",
+    count: 5,
+    imageUrl: "https://picsum.photos/seed/medical-tools/600/800",
+    imageHint: "medical tools",
+    icon: <HeartPulse />,
   }
 ];
 
@@ -147,8 +185,8 @@ export default function HomePage() {
               >
                  <motion.div
                   className="relative w-full h-full"
-                  animate={{ rotateY: 360 }}
-                  transition={{ duration: 20, repeat: Infinity, ease: 'linear' }}
+                  animate={{ y: [0, -10, 0] }}
+                  transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut' }}
                 >
                   <Image 
                     src="https://picsum.photos/seed/app-interface/800/800" 
@@ -193,40 +231,56 @@ export default function HomePage() {
               <p className="mt-4 text-muted-foreground">Professionally designed templates for any industry. Customizable to fit your brand.</p>
             </div>
              <motion.div 
-              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8"
               variants={containerVariants}
               initial="hidden"
               whileInView="visible"
               viewport={{ once: true, amount: 0.2 }}
             >
-              {featuredTemplates.map((template) => (
-                <motion.div
-                  key={template.name}
-                  className="relative overflow-hidden rounded-xl shadow-lg group"
-                  variants={itemVariants}
-                  whileHover="hover"
+              <Carousel
+                  opts={{
+                    align: "start",
+                    loop: true,
+                    slidesToScroll: 1,
+                  }}
+                  plugins={[
+                    Autoplay({
+                      delay: 3000,
+                      stopOnInteraction: true,
+                    }),
+                  ]}
+                  className="w-full"
                 >
-                  <Image 
-                    src={template.imageUrl}
-                    alt={`${template.name} template`}
-                    width={600}
-                    height={800}
-                    className="w-full h-full object-cover transition-transform duration-500 ease-in-out group-hover:scale-110"
-                    data-ai-hint={template.imageHint}
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"></div>
-                  <motion.div 
-                    className="absolute bottom-0 left-0 p-6 text-white"
-                    variants={cardHoverVariants}
-                  >
-                     <div className="flex items-center gap-3 mb-2 opacity-80">
-                      {React.cloneElement(template.icon, { className: "h-5 w-5" })}
-                      <span className="text-sm font-medium tracking-wider uppercase">{template.count} Templates</span>
-                    </div>
-                    <h3 className="text-3xl font-bold font-headline">{template.name}</h3>
-                  </motion.div>
-                </motion.div>
-              ))}
+                <CarouselContent>
+                  {featuredTemplates.map((template, index) => (
+                    <CarouselItem key={index} className="sm:basis-1/2 md:basis-1/3 lg:basis-1/4">
+                       <motion.div
+                          className="relative overflow-hidden rounded-xl shadow-lg group h-96"
+                          variants={itemVariants}
+                          whileHover="hover"
+                        >
+                          <Image 
+                            src={template.imageUrl}
+                            alt={`${template.name} template`}
+                            fill
+                            className="w-full h-full object-cover transition-transform duration-500 ease-in-out group-hover:scale-110"
+                            data-ai-hint={template.imageHint}
+                          />
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"></div>
+                          <motion.div 
+                            className="absolute bottom-0 left-0 p-6 text-white"
+                            variants={cardHoverVariants}
+                          >
+                            <div className="flex items-center gap-3 mb-2 opacity-80">
+                              {React.cloneElement(template.icon, { className: "h-5 w-5" })}
+                              <span className="text-sm font-medium tracking-wider uppercase">{template.count} Templates</span>
+                            </div>
+                            <h3 className="text-3xl font-bold font-headline">{template.name}</h3>
+                          </motion.div>
+                        </motion.div>
+                    </CarouselItem>
+                  ))}
+                </CarouselContent>
+              </Carousel>
             </motion.div>
           </div>
         </section>
