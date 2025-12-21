@@ -8,7 +8,7 @@ import { motion } from 'framer-motion';
 import Image from 'next/image';
 import {
   FileText, FilePlus, Shield, HardHat, Code, Store, Car, Camera, Building, Scale, HeartPulse,
-  BarChart, BookUser, Bot, Brush, CheckCircle, Cloud, Edit, FileDown, Filter, Palette, Send, Share2, ShieldCheck, Smartphone, Users, Wrench, ArrowRight
+  LayoutDashboard, Edit, Bot, Brush, Cloud, Share2, Palette, ArrowRight
 } from 'lucide-react';
 import React from 'react';
 import { Carousel, CarouselContent, CarouselItem } from '@/components/ui/carousel';
@@ -99,13 +99,13 @@ const featuredTemplates = [
 
 const homePageFeatures = [
     {
-        icon: <Brush className="h-8 w-8 text-primary" />,
-        name: 'Multiple Document Types',
-        description: 'Generate invoices, estimates, quotes, and insurance documents tailored to your needs.',
+        icon: <Edit className="h-8 w-8 text-primary" />,
+        name: 'Live Preview',
+        description: 'See your changes in real-time as you build your document, ensuring a perfect result.',
         className: 'md:col-span-2',
     },
     {
-        icon: <Cloud className="h-8 w-8 text-primary" />,
+        icon: <LayoutDashboard className="h-8 w-8 text-primary" />,
         name: 'Cloud-Powered Dashboard',
         description: 'Securely access and manage all your documents from anywhere with our Firestore-backed dashboard.',
         className: '',
