@@ -73,7 +73,7 @@ export default function HomePage() {
                   variants={itemVariants}
                 >
                   <span>Create Professional </span>
-                  <span className="text-primary">
+                  <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
                     Documents
                   </span>
                   <span> in Seconds</span>
@@ -103,7 +103,7 @@ export default function HomePage() {
                 </motion.div>
               </motion.div>
               <motion.div 
-                className="relative w-full h-64 lg:h-auto lg:aspect-square"
+                className="relative w-full h-64 lg:h-auto lg:aspect-square animate-rotate-360"
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.7, ease: 'easeOut' }}
