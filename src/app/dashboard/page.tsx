@@ -759,7 +759,7 @@ export default function DashboardPage() {
                             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.98 }}>
                                 <Button onClick={() => router.push('/dashboard/clients/new')} className="rounded-full">
                                     <Users className="mr-2 h-4 w-4" />
-                                    New Client
+                                    Add Client
                                 </Button>
                             </motion.div>
                             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.98 }}>
