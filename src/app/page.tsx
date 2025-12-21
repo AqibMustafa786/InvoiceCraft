@@ -187,6 +187,40 @@ export default function HomePage() {
                 initial="hidden"
                 animate="visible"
               >
+                <motion.p 
+                  className="mb-2 text-sm font-bold tracking-wider uppercase text-primary"
+                  variants={itemVariants}
+                >
+                  Welcome to InvoiceCraft
+                </motion.p>
+                <motion.h1 
+                  className="text-4xl font-bold tracking-tight md:text-5xl lg:text-6xl font-headline"
+                  variants={itemVariants}
+                >
+                  Let's Control Your Business With{' '}
+                  <span className="relative inline-block">
+                    InvoiceCraft
+                     <svg className="absolute -bottom-1.5 left-0 w-full" viewBox="0 0 240 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M2 8C52.0019 3.66667 157.005 -2.00001 238 4" stroke="hsl(var(--primary))" strokeWidth="4" strokeLinecap="round"/>
+                    </svg>
+                  </span>
+                </motion.h1>
+                <motion.p 
+                  className="mt-6 text-base text-muted-foreground md:text-lg"
+                  variants={itemVariants}
+                >
+                  We develop beautiful and functional documents for desktop, tablet, and mobile.
+                </motion.p>
+                <motion.div 
+                  className="flex flex-col items-center justify-center gap-4 mt-8 sm:flex-row lg:justify-start"
+                  variants={itemVariants}
+                >
+                   <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.98 }}>
+                      <Button asChild size="lg" className="w-full sm:w-auto">
+                          <Link href="/dashboard">Get Started</Link>
+                      </Button>
+                   </motion.div>
+                </motion.div>
               </motion.div>
               <motion.div 
                 className="relative w-full h-80 lg:h-auto lg:aspect-[5/4]"
@@ -195,18 +229,7 @@ export default function HomePage() {
                 transition={{ duration: 0.5, ease: 'easeOut' }}
               >
                 <motion.div
-                  className="relative w-full h-full"
-                  animate={{
-                    transform: [
-                      "rotateY(0deg)",
-                      "rotateY(360deg)",
-                    ],
-                  }}
-                  transition={{
-                    duration: 10,
-                    repeat: Infinity,
-                    ease: "linear",
-                  }}
+                  className="relative w-full h-full animate-flip"
                 >
                   <Image 
                     src="https://picsum.photos/seed/workspace-illustration/600/480" 
@@ -231,7 +254,7 @@ export default function HomePage() {
                     {tools.map((tool) => (
                         <Link href={tool.href} key={tool.href}>
                             <motion.div whileHover={{ y: -8, scale: 1.05 }} transition={{ type: "spring", stiffness: 300 }}>
-                                <Card className="shadow-lg hover:shadow-primary/20 transition-all duration-300">
+                                <Card className="bg-card/50 backdrop-blur-sm shadow-lg hover:shadow-primary/20 transition-all duration-300">
                                     <CardContent className="flex flex-col items-center justify-center p-6 text-center gap-4">
                                         {tool.icon}
                                         <p className="font-semibold text-lg">{tool.label}</p>
@@ -260,7 +283,7 @@ export default function HomePage() {
                     {homePageFeatures.map((feature, index) => (
                         <motion.div key={index} variants={itemVariants} className={feature.className}>
                              <motion.div whileHover={{ y: -8, scale: 1.02 }} transition={{ type: "spring", stiffness: 300 }} className="h-full">
-                                <Card className="shadow-lg hover:shadow-primary/20 transition-all duration-300 h-full p-8 flex flex-col items-center text-center">
+                                <Card className="bg-card/90 backdrop-blur-sm shadow-lg hover:shadow-primary/20 transition-all duration-300 h-full p-8 flex flex-col items-center text-center">
                                     {feature.icon}
                                     <h3 className="text-xl font-semibold mt-4 mb-2">{feature.name}</h3>
                                     <p className="text-muted-foreground text-sm flex-1">{feature.description}</p>
@@ -348,4 +371,3 @@ export default function HomePage() {
   );
 }
 
-    
