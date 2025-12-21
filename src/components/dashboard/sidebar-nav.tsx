@@ -54,19 +54,22 @@ export function SidebarNav() {
                              Dashboard
                          </h2>
                          <div className="space-y-1">
-                            {dashboardNavItems.map((item) => (
-                               <Button 
-                                  key={item.href + item.tab}
-                                  asChild
-                                  variant={(pathname === item.href && activeTab === item.tab) ? "secondary" : "ghost"} 
-                                  className="w-full justify-start"
-                                >
-                                  <Link href={`${item.href}?tab=${item.tab}`}>
-                                     <item.icon className="mr-2 h-4 w-4" />
-                                     {item.label}
-                                  </Link>
-                               </Button>
-                            ))}
+                            {dashboardNavItems.map((item) => {
+                                const isActive = pathname === item.href && activeTab === item.tab;
+                                return (
+                                   <Button 
+                                      key={item.href + item.tab}
+                                      asChild
+                                      variant={isActive ? "secondary" : "ghost"} 
+                                      className={cn("w-full justify-start", isActive && "text-primary")}
+                                    >
+                                      <Link href={`${item.href}?tab=${item.tab}`}>
+                                         <item.icon className="mr-2 h-4 w-4" />
+                                         {item.label}
+                                      </Link>
+                                   </Button>
+                                )
+                            })}
                          </div>
                     </div>
                      <div className="px-3 py-2">
@@ -74,19 +77,22 @@ export function SidebarNav() {
                              Pages
                          </h2>
                          <div className="space-y-1">
-                            {mainNavLinks.map((item) => (
-                               <Button 
-                                  key={item.href}
-                                  asChild
-                                  variant="ghost" 
-                                  className="w-full justify-start"
-                                >
-                                  <Link href={item.href}>
-                                     <item.icon className="mr-2 h-4 w-4" />
-                                     {item.label}
-                                  </Link>
-                               </Button>
-                            ))}
+                            {mainNavLinks.map((item) => {
+                                const isActive = pathname === item.href;
+                                return (
+                                   <Button 
+                                      key={item.href}
+                                      asChild
+                                      variant={isActive ? "secondary" : "ghost"} 
+                                      className={cn("w-full justify-start", isActive && "text-primary")}
+                                    >
+                                      <Link href={item.href}>
+                                         <item.icon className="mr-2 h-4 w-4" />
+                                         {item.label}
+                                      </Link>
+                                   </Button>
+                                )
+                            })}
                          </div>
                     </div>
                 </div>
