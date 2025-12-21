@@ -156,7 +156,7 @@ export default function ClientProfilePage() {
         <h1 className="text-3xl font-bold font-headline">{isNewClient ? 'Create New Client' : form.getValues('name')}</h1>
       </div>
 
-      <Card className="bg-card/50 backdrop-blur-sm">
+      <Card>
         <CardHeader>
           <CardTitle>Client Information</CardTitle>
           <CardDescription>Manage the contact and address details for this client.</CardDescription>
@@ -216,7 +216,7 @@ export default function ClientProfilePage() {
       </Card>
 
       {!isNewClient && (
-        <Card className="bg-card/50 backdrop-blur-sm">
+        <Card>
           <CardHeader>
             <CardTitle>Associated Documents</CardTitle>
             <CardDescription>All invoices and estimates related to {form.getValues('name')}.</CardDescription>
@@ -282,5 +282,3 @@ export default function ClientProfilePage() {
     </div>
   );
 }
-
-    

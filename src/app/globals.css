@@ -51,14 +51,14 @@
     --background: hsl(var(--background-hsl));
     --foreground: 210 40% 98%;
  
-    --card: 280 40% 12%;
+    --card: 222.2 84% 8%; /* Slightly lighter than background */
     --card-foreground: 210 40% 98%;
  
-    --popover: var(--card);
+    --popover: 222.2 84% 4.9%;
     --popover-foreground: 210 40% 98%;
  
-    --primary: 280 90% 70%;
-    --primary-foreground: 280 90% 98%;
+    --primary: 210 90% 60%; /* Lighter blue for dark mode */
+    --primary-foreground: 210 40% 98%;
  
     --secondary: 217.2 32.6% 17.5%;
     --secondary-foreground: 210 40% 98%;
@@ -66,7 +66,7 @@
     --muted: 217.2 32.6% 17.5%;
     --muted-foreground: 215 20.2% 65.1%;
  
-    --accent: 280 90% 60%;
+    --accent: 40 95% 55%; /* Brighter Orange */
     --accent-foreground: 210 40% 98%;
  
     --destructive: 0 62.8% 30.6%;
@@ -75,9 +75,9 @@
     --success: 142.1 76.2% 36.3%;
     --success-foreground: 142.1 76.2% 96.3%;
 
-    --border: 280 40% 30%;
-    --input: 280 40% 20%;
-    --ring: hsl(var(--primary));
+    --border: 217.2 32.6% 25.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: hsl(var(--accent));
   }
 }
  
