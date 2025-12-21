@@ -173,27 +173,10 @@ export default function HomePage() {
             aria-hidden="true"
             className="absolute inset-0 z-0"
           >
-            <svg
-              className="absolute -top-40 left-0 w-[150%] h-[150%] sm:w-full sm:h-full"
-              viewBox="0 0 1440 892"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-              preserveAspectRatio="xMidYMid slice"
-            >
-              <path
-                d="M1440 892V0H0V892H1440Z"
-                className="fill-background"
-              />
-              <path
-                d="M-225 829C-225 829 119.5 1013 364.5 829C609.5 645 525 214.5 790.5 214.5C1056 214.5 1121 481 1332.5 481C1544 481 1618.5 233 1618.5 233"
-                className="stroke-primary/10"
-                strokeWidth="2"
-              />
-              <path
-                d="M-225 754C-225 754 119.5 938 364.5 754C609.5 570 575.033 167.319 809.5 162.5C1043.97 157.681 1121 481 1332.5 481C1544 481 1618.5 233 1618.5 233"
-                className="stroke-primary/20"
-                strokeWidth="2"
-              />
+           <svg className="absolute -right-40 top-0 w-[150%] h-[150%] sm:w-full sm:h-full" viewBox="0 0 1440 892" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+              <path d="M1440 892V0H0V892H1440Z" className="fill-background"></path>
+              <path d="M1665 829C1665 829 1320.5 1013 1075.5 829C830.5 645 915 214.5 649.5 214.5C384 214.5 319 481 107.5 481C-104 481 -178.5 233 -178.5 233" className="stroke-primary/10" strokeWidth="2"></path>
+              <path d="M1665 754C1665 754 1320.5 938 1075.5 754C830.5 570 864.967 167.319 630.5 162.5C396.033 157.681 319 481 107.5 481C-104 481 -178.5 233 -178.5 233" className="stroke-primary/20" strokeWidth="2"></path>
             </svg>
           </div>
           <div className="container px-4 mx-auto md:px-6 relative z-10">
@@ -204,40 +187,6 @@ export default function HomePage() {
                 initial="hidden"
                 animate="visible"
               >
-                 <motion.p 
-                  className="mb-2 text-sm font-bold tracking-wider uppercase text-primary"
-                  variants={itemVariants}
-                >
-                  Welcome to InvoiceCraft
-                </motion.p>
-                <motion.h1 
-                  className="text-4xl font-bold tracking-tight md:text-5xl lg:text-6xl font-headline"
-                  variants={itemVariants}
-                >
-                  Let's Control Your Business With{' '}
-                  <span className="relative inline-block">
-                    InvoiceCraft
-                     <svg className="absolute -bottom-1.5 left-0 w-full" viewBox="0 0 240 10" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M2 8C52.0019 3.66667 157.005 -2.00001 238 4" stroke="hsl(var(--primary))" strokeWidth="4" strokeLinecap="round"/>
-                    </svg>
-                  </span>
-                </motion.h1>
-                <motion.p 
-                  className="mt-6 text-base text-muted-foreground md:text-lg"
-                  variants={itemVariants}
-                >
-                  We develop beautiful and functional documents for desktop, tablet, and mobile.
-                </motion.p>
-                <motion.div 
-                  className="flex flex-col items-center justify-center gap-4 mt-8 sm:flex-row lg:justify-start"
-                  variants={itemVariants}
-                >
-                   <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.98 }}>
-                      <Button asChild size="lg" className="w-full sm:w-auto">
-                          <Link href="/dashboard">Get Started</Link>
-                      </Button>
-                   </motion.div>
-                </motion.div>
               </motion.div>
               <motion.div 
                 className="relative w-full h-80 lg:h-auto lg:aspect-[5/4]"
@@ -248,12 +197,15 @@ export default function HomePage() {
                 <motion.div
                   className="relative w-full h-full"
                   animate={{
-                    y: [0, -10, 0],
+                    transform: [
+                      "rotateY(0deg)",
+                      "rotateY(360deg)",
+                    ],
                   }}
                   transition={{
-                    duration: 4,
+                    duration: 10,
                     repeat: Infinity,
-                    ease: "easeInOut",
+                    ease: "linear",
                   }}
                 >
                   <Image 
@@ -279,7 +231,7 @@ export default function HomePage() {
                     {tools.map((tool) => (
                         <Link href={tool.href} key={tool.href}>
                             <motion.div whileHover={{ y: -8, scale: 1.05 }} transition={{ type: "spring", stiffness: 300 }}>
-                                <Card className="bg-card/50 backdrop-blur-sm shadow-lg hover:shadow-primary/20 transition-all duration-300">
+                                <Card className="shadow-lg hover:shadow-primary/20 transition-all duration-300">
                                     <CardContent className="flex flex-col items-center justify-center p-6 text-center gap-4">
                                         {tool.icon}
                                         <p className="font-semibold text-lg">{tool.label}</p>
@@ -299,7 +251,7 @@ export default function HomePage() {
                     <p className="mt-4 text-muted-foreground">InvoiceCraft is packed with powerful, intuitive features designed to save you time, make you look professional, and help you get paid faster.</p>
                 </div>
                  <motion.div 
-                    className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl mx-auto"
+                    className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto"
                     variants={containerVariants}
                     initial="hidden"
                     whileInView="visible"
@@ -308,7 +260,7 @@ export default function HomePage() {
                     {homePageFeatures.map((feature, index) => (
                         <motion.div key={index} variants={itemVariants} className={feature.className}>
                              <motion.div whileHover={{ y: -8, scale: 1.02 }} transition={{ type: "spring", stiffness: 300 }} className="h-full">
-                                <Card className="bg-card/50 backdrop-blur-sm shadow-lg hover:shadow-primary/20 transition-all duration-300 h-full p-6 flex flex-col items-center text-center">
+                                <Card className="shadow-lg hover:shadow-primary/20 transition-all duration-300 h-full p-8 flex flex-col items-center text-center">
                                     {feature.icon}
                                     <h3 className="text-xl font-semibold mt-4 mb-2">{feature.name}</h3>
                                     <p className="text-muted-foreground text-sm flex-1">{feature.description}</p>
@@ -395,3 +347,5 @@ export default function HomePage() {
     </div>
   );
 }
+
+    
