@@ -1,10 +1,9 @@
 
-
 'use client';
 
 import { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import type { InsuranceDocument } from '@/lib/types';
+import type { InsuranceDocument, LineItem } from '@/lib/types';
 import { InsuranceForm } from '@/components/insurance-form';
 import { InsurancePreview } from '@/components/insurance-preview';
 import { Button } from '@/components/ui/button';
@@ -26,31 +25,39 @@ const getInitialLineItem = () => ({ id: crypto.randomUUID(), name: '', quantity:
 const getInitialInsuranceDoc = (): InsuranceDocument => ({
   id: crypto.randomUUID(),
   logoUrl: '',
-  companyName: 'Your Company',
-  companyPhone: '+1 (123) 456-7890',
-  companyAddress: '123 Main St, Anytown, USA',
-  companyEmail: 'contact@yourcompany.com',
-  companyWebsite: 'www.yourcompany.com',
-  licenseNumber: 'LIC-12345',
-  taxId: 'XX-XXXXXXX',
+  business: {
+    name: 'Your Company',
+    address: '123 Main St, Anytown, USA',
+    phone: '+1 (123) 456-7890',
+    email: 'contact@yourcompany.com',
+    website: 'www.yourcompany.com',
+    licenseNumber: 'LIC-12345',
+    taxId: 'XX-XXXXXXX',
+  },
   
-  insuredName: 'John Doe',
+  policyHolder: {
+    name: 'John Doe',
+    companyName: 'Doe Industries',
+    address: '456 Oak Ave, Someplace, USA',
+    phone: '555-555-5555',
+    email: 'john.doe@example.com',
+    identificationNumber: 'ID-98765'
+  },
+  
   policyId: 'POL-12345',
-  insuredAddress: '456 Oak Ave, Someplace, USA',
-  insuredPhone: '',
-  insuredEmail: '',
-
   claimNumber: 'CLM-67890',
   dateOfLoss: new Date().toISOString().split('T')[0],
   typeOfClaim: 'Property Damage',
   incidentDescription: 'Brief description of the incident.',
   
-  insuranceCompanyName: 'Example Insurance Co.',
-  insuranceCompanyAddress: '789 Insurance Plaza, Big City, USA',
-  insuranceCompanyPhone: '555-0101',
-  insuranceCompanyEmail: 'claims@exampleinsurance.com',
-  agentName: 'Jane Smith',
-  agentLicenseNumber: 'AGENT-54321',
+  insuranceCompany: {
+    name: 'Example Insurance Co.',
+    address: '789 Insurance Plaza, Big City, USA',
+    phone: '555-0101',
+    email: 'claims@exampleinsurance.com',
+    agentName: 'Jane Smith',
+    agentLicenseNumber: 'AGENT-54321',
+  },
 
   documentNumber: 'DOC-001',
   documentDate: new Date(),
@@ -178,7 +185,7 @@ export default function CreateInsurancePage() {
             <h2 className="text-2xl font-bold font-headline mb-4 text-center lg:text-left">Fill in Details</h2>
             <InsuranceForm 
               document={doc} 
-              setDocument={setDoc as React.Dispatch<React.SetStateAction<InsuranceDocument>>} 
+              setDocument={setDoc} 
               accentColor={accentColor}
               setAccentColor={setAccentColor}
               toast={toast}

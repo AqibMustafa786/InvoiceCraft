@@ -1,5 +1,4 @@
 
-
 'use client';
 
 import { useState, useLayoutEffect, useRef, useEffect } from 'react';
@@ -60,11 +59,11 @@ const UsaClaimDefaultTemplatePage = ({ pageItems, pageIndex, totalPages, ...comm
                 <header className="grid grid-cols-2 gap-10 mb-8" data-element="header">
                      <div>
                         {doc.logoUrl ? (
-                            <Image src={doc.logoUrl} alt={`${doc.companyName} Logo`} width={160} height={80} className="object-contain mb-2" data-ai-hint="logo" />
+                            <Image src={doc.logoUrl} alt={`${doc.business.name} Logo`} width={160} height={80} className="object-contain mb-2" data-ai-hint="logo" />
                         ) : (
-                            <h1 className="text-3xl font-bold mb-1" style={{color: accentColor}}>{doc.companyName}</h1>
+                            <h1 className="text-3xl font-bold mb-1" style={{color: accentColor}}>{doc.business.name}</h1>
                         )}
-                        <p className="text-xs text-gray-600 whitespace-pre-line">{doc.companyAddress}</p>
+                        <p className="text-xs text-gray-600 whitespace-pre-line">{doc.business.address}</p>
                     </div>
                      <div className="text-right">
                         <h2 className="text-4xl font-bold">INVOICE</h2>
@@ -77,9 +76,9 @@ const UsaClaimDefaultTemplatePage = ({ pageItems, pageIndex, totalPages, ...comm
                  <section className="mb-6 text-xs" data-element="insurance-details">
                     <div className="grid grid-cols-2 gap-x-8 gap-y-2 p-3 bg-gray-50 rounded-md">
                         <div>
-                            <p className="font-bold text-gray-600 border-b mb-1">Insured Details</p>
-                            <p><span className="font-bold">Name:</span> {doc.insuredName}</p>
-                            <p><span className="font-bold">Address:</span> {doc.insuredAddress}</p>
+                            <p className="font-bold text-gray-600 border-b mb-1">Policy Holder</p>
+                            <p><span className="font-bold">Name:</span> {doc.policyHolder.name}</p>
+                            <p><span className="font-bold">Address:</span> {doc.policyHolder.address}</p>
                             <p><span className="font-bold">Policy ID:</span> {doc.policyId}</p>
                         </div>
                          <div>
@@ -90,9 +89,9 @@ const UsaClaimDefaultTemplatePage = ({ pageItems, pageIndex, totalPages, ...comm
                         </div>
                         <div className="col-span-2">
                              <p className="font-bold text-gray-600 border-b mb-1">Provider Information</p>
-                             <p><span className="font-bold">Company:</span> {doc.insuranceCompanyName}</p>
-                             <p><span className="font-bold">Agent:</span> {doc.agentName} {doc.agentLicenseNumber && `(Lic: ${doc.agentLicenseNumber})`}</p>
-                             <p><span className="font-bold">Contact:</span> {doc.insuranceCompanyPhone} | {doc.insuranceCompanyEmail}</p>
+                             <p><span className="font-bold">Company:</span> {doc.insuranceCompany.name}</p>
+                             <p><span className="font-bold">Agent:</span> {doc.insuranceCompany.agentName} {doc.insuranceCompany.agentLicenseNumber && `(Lic: ${doc.insuranceCompany.agentLicenseNumber})`}</p>
+                             <p><span className="font-bold">Contact:</span> {doc.insuranceCompany.phone} | {doc.insuranceCompany.email}</p>
                         </div>
                     </div>
                 </section>

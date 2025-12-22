@@ -445,34 +445,37 @@ export interface Estimate {
 export type Quote = Estimate & { documentType: 'quote' };
 
 
+export interface PolicyHolderInfo {
+  clientId?: string;
+  name: string;
+  companyName?: string;
+  address: string;
+  phone: string;
+  email: string;
+  identificationNumber?: string; // CNIC, Passport, etc.
+}
+
 export interface InsuranceDocument {
   id: string;
   logoUrl?: string;
-  companyName: string;
-  companyPhone: string;
-  companyAddress: string;
-  companyEmail: string;
-  companyWebsite: string;
-  licenseNumber: string;
-  taxId: string;
-
-  insuredName: string;
+  business: BusinessInfo;
+  
+  policyHolder: PolicyHolderInfo;
+  
   policyId: string;
-  insuredAddress: string;
-  insuredPhone: string;
-  insuredEmail: string;
-
   claimNumber: string;
   dateOfLoss: string;
   typeOfClaim: string;
   incidentDescription: string;
   
-  insuranceCompanyName: string;
-  insuranceCompanyAddress: string;
-  insuranceCompanyPhone: string;
-  insuranceCompanyEmail: string;
-  agentName: string;
-  agentLicenseNumber: string;
+  insuranceCompany: {
+    name: string;
+    address: string;
+    phone: string;
+    email: string;
+    agentName: string;
+    agentLicenseNumber: string;
+  }
 
   documentNumber: string;
   documentDate: Date;

@@ -1,5 +1,4 @@
 
-
 'use client';
 
 import { ChangeEvent, Dispatch, SetStateAction, useState, useEffect } from 'react';
@@ -10,7 +9,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { DatePicker } from '@/components/ui/datepicker';
-import { ImageUp, Plus, Trash2, Palette, X, Mail, Phone, Hash, ShieldCheck, User, FolderArchive, FileText, Calendar, AlertTriangle, Building, UserCircle, Loader2, Globe, Award } from 'lucide-react';
+import { ImageUp, Plus, Trash2, Palette, X, Mail, Phone, Hash, ShieldCheck, User, FolderArchive, FileText, Calendar, AlertTriangle, Building, UserCircle, Loader2, Globe, Award, Key } from 'lucide-react';
 import Image from 'next/image';
 import {
   Select,
@@ -56,6 +55,17 @@ export function InsuranceForm({ document: doc, setDocument: setDoc, accentColor,
   useEffect(() => {
     setColorInputValue(accentColor);
   }, [accentColor]);
+
+  const handleNestedChange = (section: 'business' | 'insuranceCompany' | 'policyHolder', e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setDoc(prev => ({
+      ...prev,
+      [section]: {
+        ...prev[section],
+        [name]: value
+      }
+    }));
+  };
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -187,46 +197,46 @@ export function InsuranceForm({ document: doc, setDocument: setDoc, accentColor,
             </div>
           <div className="space-y-2">
             <Label htmlFor="companyName">Company Name</Label>
-            <Input id="companyName" name="companyName" value={doc.companyName} onChange={handleInputChange} />
+            <Input id="companyName" name="name" value={doc.business.name} onChange={(e) => handleNestedChange('business', e)} />
           </div>
           <div className="space-y-2">
             <Label htmlFor="companyAddress">Company Address</Label>
-            <Textarea id="companyAddress" name="companyAddress" value={doc.companyAddress} onChange={handleInputChange} />
+            <Textarea id="companyAddress" name="address" value={doc.business.address} onChange={(e) => handleNestedChange('business', e)} />
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
              <div className="space-y-2">
               <Label htmlFor="companyPhone">Phone #</Label>
               <div className="relative flex items-center">
                   <Phone className="absolute left-3 h-5 w-5 text-muted-foreground" />
-                  <Input id="companyPhone" name="companyPhone" value={doc.companyPhone} onChange={handleInputChange} className="pl-10" />
+                  <Input id="companyPhone" name="phone" value={doc.business.phone} onChange={(e) => handleNestedChange('business', e)} className="pl-10" />
               </div>
             </div>
              <div className="space-y-2">
                 <Label htmlFor="companyEmail">Email</Label>
                 <div className="relative flex items-center">
                     <Mail className="absolute left-3 h-5 w-5 text-muted-foreground" />
-                    <Input id="companyEmail" name="companyEmail" value={doc.companyEmail} onChange={handleInputChange} className="pl-10" />
+                    <Input id="companyEmail" name="email" value={doc.business.email} onChange={(e) => handleNestedChange('business', e)} className="pl-10" />
                 </div>
               </div>
                <div className="space-y-2">
                 <Label htmlFor="companyWebsite">Website</Label>
                 <div className="relative flex items-center">
                     <Globe className="absolute left-3 h-5 w-5 text-muted-foreground" />
-                    <Input id="companyWebsite" name="companyWebsite" value={doc.companyWebsite} onChange={handleInputChange} className="pl-10" />
+                    <Input id="companyWebsite" name="website" value={doc.business.website} onChange={(e) => handleNestedChange('business', e)} className="pl-10" />
                 </div>
               </div>
                <div className="space-y-2">
                 <Label htmlFor="licenseNumber">License / Reg. No.</Label>
                 <div className="relative flex items-center">
                     <Award className="absolute left-3 h-5 w-5 text-muted-foreground" />
-                    <Input id="licenseNumber" name="licenseNumber" value={doc.licenseNumber} onChange={handleInputChange} className="pl-10" />
+                    <Input id="licenseNumber" name="licenseNumber" value={doc.business.licenseNumber} onChange={(e) => handleNestedChange('business', e)} className="pl-10" />
                 </div>
               </div>
               <div className="space-y-2 md:col-span-2">
                 <Label htmlFor="taxId">Tax ID / VAT No.</Label>
                 <div className="relative flex items-center">
                     <Hash className="absolute left-3 h-5 w-5 text-muted-foreground" />
-                    <Input id="taxId" name="taxId" value={doc.taxId} onChange={handleInputChange} className="pl-10" />
+                    <Input id="taxId" name="taxId" value={doc.business.taxId} onChange={(e) => handleNestedChange('business', e)} className="pl-10" />
                 </div>
               </div>
           </div>
@@ -239,42 +249,87 @@ export function InsuranceForm({ document: doc, setDocument: setDoc, accentColor,
         <CardContent className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="insuranceCompanyName">Insurance Company Name</Label>
-            <Input id="insuranceCompanyName" name="insuranceCompanyName" value={doc.insuranceCompanyName} onChange={handleInputChange} />
+            <Input id="insuranceCompanyName" name="name" value={doc.insuranceCompany.name} onChange={(e) => handleNestedChange('insuranceCompany', e)} />
           </div>
           <div className="space-y-2">
             <Label htmlFor="insuranceCompanyAddress">Company Address</Label>
-            <Textarea id="insuranceCompanyAddress" name="insuranceCompanyAddress" value={doc.insuranceCompanyAddress} onChange={handleInputChange} />
+            <Textarea id="insuranceCompanyAddress" name="address" value={doc.insuranceCompany.address} onChange={(e) => handleNestedChange('insuranceCompany', e)} />
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
              <div className="space-y-2">
               <Label htmlFor="insuranceCompanyPhone">Company Phone #</Label>
               <div className="relative flex items-center">
                   <Phone className="absolute left-3 h-5 w-5 text-muted-foreground" />
-                  <Input id="insuranceCompanyPhone" name="insuranceCompanyPhone" value={doc.insuranceCompanyPhone} onChange={handleInputChange} className="pl-10" />
+                  <Input id="insuranceCompanyPhone" name="phone" value={doc.insuranceCompany.phone} onChange={(e) => handleNestedChange('insuranceCompany', e)} className="pl-10" />
               </div>
             </div>
              <div className="space-y-2">
                 <Label htmlFor="insuranceCompanyEmail">Company Email</Label>
                 <div className="relative flex items-center">
                     <Mail className="absolute left-3 h-5 w-5 text-muted-foreground" />
-                    <Input id="insuranceCompanyEmail" name="insuranceCompanyEmail" value={doc.insuranceCompanyEmail} onChange={handleInputChange} className="pl-10" />
+                    <Input id="insuranceCompanyEmail" name="email" value={doc.insuranceCompany.email} onChange={(e) => handleNestedChange('insuranceCompany', e)} className="pl-10" />
                 </div>
               </div>
                <div className="space-y-2">
                 <Label htmlFor="agentName">Agent Name</Label>
                 <div className="relative flex items-center">
                     <UserCircle className="absolute left-3 h-5 w-5 text-muted-foreground" />
-                    <Input id="agentName" name="agentName" value={doc.agentName} onChange={handleInputChange} className="pl-10" />
+                    <Input id="agentName" name="agentName" value={doc.insuranceCompany.agentName} onChange={(e) => handleNestedChange('insuranceCompany', e)} className="pl-10" />
                 </div>
               </div>
                <div className="space-y-2">
                 <Label htmlFor="agentLicenseNumber">Agent License No.</Label>
                 <div className="relative flex items-center">
                     <Award className="absolute left-3 h-5 w-5 text-muted-foreground" />
-                    <Input id="agentLicenseNumber" name="agentLicenseNumber" value={doc.agentLicenseNumber} onChange={handleInputChange} className="pl-10" />
+                    <Input id="agentLicenseNumber" name="agentLicenseNumber" value={doc.insuranceCompany.agentLicenseNumber} onChange={(e) => handleNestedChange('insuranceCompany', e)} className="pl-10" />
                 </div>
               </div>
           </div>
+        </CardContent>
+      </Card>
+      <Card className="bg-card/50 backdrop-blur-sm shadow-lg hover:shadow-primary/20 transition-shadow duration-300">
+        <CardHeader>
+          <CardTitle>Policy Holder Information</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+                <Label htmlFor="policyHolderName">Client Name</Label>
+                <Input id="policyHolderName" name="name" value={doc.policyHolder.name} onChange={(e) => handleNestedChange('policyHolder', e)} />
+            </div>
+             <div className="space-y-2">
+                <Label htmlFor="policyHolderCompanyName">Company Name (optional)</Label>
+                <Input id="policyHolderCompanyName" name="companyName" value={doc.policyHolder.companyName || ''} onChange={(e) => handleNestedChange('policyHolder', e)} />
+            </div>
+          </div>
+           <div className="space-y-2">
+                <Label htmlFor="policyHolderAddress">Address</Label>
+                <Textarea id="policyHolderAddress" name="address" value={doc.policyHolder.address} onChange={(e) => handleNestedChange('policyHolder', e)} />
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                    <Label htmlFor="policyHolderEmail">Email</Label>
+                    <Input id="policyHolderEmail" name="email" type="email" value={doc.policyHolder.email} onChange={(e) => handleNestedChange('policyHolder', e)} />
+                </div>
+                <div className="space-y-2">
+                    <Label htmlFor="policyHolderPhone">Phone</Label>
+                    <Input id="policyHolderPhone" name="phone" value={doc.policyHolder.phone} onChange={(e) => handleNestedChange('policyHolder', e)} />
+                </div>
+                 <div className="space-y-2">
+                    <Label htmlFor="policyId">Policy ID</Label>
+                    <div className="relative flex items-center">
+                        <Key className="absolute left-3 h-5 w-5 text-muted-foreground" />
+                        <Input id="policyId" name="policyId" value={doc.policyId} onChange={handleInputChange} className="pl-10" />
+                    </div>
+                </div>
+                 <div className="space-y-2">
+                    <Label htmlFor="identificationNumber">Identification Number (CNIC, etc.)</Label>
+                     <div className="relative flex items-center">
+                        <UserCircle className="absolute left-3 h-5 w-5 text-muted-foreground" />
+                        <Input id="identificationNumber" name="identificationNumber" value={doc.policyHolder.identificationNumber || ''} onChange={(e) => handleNestedChange('policyHolder', e)} className="pl-10" />
+                    </div>
+                </div>
+            </div>
         </CardContent>
       </Card>
     </div>
