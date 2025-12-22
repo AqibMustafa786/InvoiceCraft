@@ -8,7 +8,7 @@ import type { InsuranceDocument, LineItem, AuditLogEntry } from '@/lib/types';
 import { InsuranceForm } from '@/components/insurance-form';
 import { InsurancePreview } from '@/components/insurance-preview';
 import { Button } from '@/components/ui/button';
-import { Printer, FilePlus, LayoutDashboard, Brush, MoreVertical, Edit, History, Loader2 } from 'lucide-react';
+import { Printer, FilePlus, LayoutDashboard, Brush, MoreVertical, Edit, History, Loader2, Copy, Archive, ShieldCheck } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { InsuranceTemplateSelector } from '@/components/insurance-template-selector';
 import Link from 'next/link';
@@ -19,13 +19,14 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
+  DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu"
 import { addDays, isValid } from 'date-fns';
 import { useFirebase, useMemoFirebase } from '@/firebase';
 import { useAuth } from '@/context/auth-provider';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useDoc } from '@/firebase/firestore/use-doc';
-import { setDocumentNonBlocking } from '@/firebase/non-blocking-updates';
+import { setDocumentNonBlocking, updateDocumentNonBlocking } from '@/firebase/non-blocking-updates';
 import { Skeleton } from '@/components/ui/skeleton';
 import { HistoryModal } from '@/components/dashboard/history-modal';
 
@@ -407,6 +408,37 @@ export default function CreateInsurancePage() {
     setOriginalDocument(JSON.parse(JSON.stringify(newDoc)));
     router.push('/create-insurance', { scroll: false });
   };
+  
+  const handleDuplicate = () => {
+    if (!doc || !user || !companyId) return;
+    const newDocId = firestore ? doc(collection(firestore, 'companies', companyId, INSURANCE_COLLECTION)).id : crypto.randomUUID();
+    const newAuditLogEntry: AuditLogEntry = {
+        id: crypto.randomUUID(),
+        action: 'created',
+        timestamp: new Date(),
+        user: { name: user.displayName || user.email, email: user.email },
+        version: 1,
+    };
+    const duplicatedDoc: InsuranceDocument = {
+        ...doc,
+        id: newDocId,
+        policyNumber: `${doc.policyNumber}-COPY`,
+        auditLog: [newAuditLogEntry],
+    };
+    setDoc(duplicatedDoc);
+    setOriginalDocument(JSON.parse(JSON.stringify(duplicatedDoc)));
+    router.push(`/create-insurance?draftId=${newDocId}`, { scroll: false });
+    toast({ title: "Document Duplicated", description: "A new draft has been created from the original." });
+  };
+
+  const handleStatusChange = (status: 'active' | 'cancelled') => {
+    if (!doc || !firestore || !companyId) return;
+    const docRef = doc(firestore, 'companies', companyId, INSURANCE_COLLECTION, doc.id);
+    updateDocumentNonBlocking(docRef, { status: status });
+    setDoc(prev => prev ? ({ ...prev, status }) : null);
+    toast({ title: "Status Updated", description: `Document status changed to "${status}".` });
+  };
+
 
   if (!doc || (draftId && isDraftLoading)) {
     return (
@@ -448,11 +480,22 @@ export default function CreateInsurancePage() {
                     <DropdownMenuItem onClick={handleNew}>
                         <FilePlus className="mr-2 h-4 w-4" /> New
                     </DropdownMenuItem>
+                    <DropdownMenuItem onClick={handleDuplicate}>
+                      <Copy className="mr-2 h-4 w-4" /> Duplicate
+                    </DropdownMenuItem>
                     <DropdownMenuItem asChild>
                         <Link href="/dashboard">
                             <LayoutDashboard className="mr-2 h-4 w-4" /> Dashboard
                         </Link>
                     </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem onClick={() => handleStatusChange('active')}>
+                        <ShieldCheck className="mr-2 h-4 w-4" /> Activate Policy
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => handleStatusChange('cancelled')} className="text-destructive">
+                        <Archive className="mr-2 h-4 w-4" /> Archive (Cancel)
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
                     <DropdownMenuItem onClick={() => handleHistoryClick(doc.auditLog)}>
                         <History className="mr-2 h-4 w-4" /> History
                     </DropdownMenuItem>
@@ -507,3 +550,4 @@ export default function CreateInsurancePage() {
     </>
   );
 }
+
