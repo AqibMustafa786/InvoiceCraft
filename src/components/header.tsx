@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
-import { Menu, Search, ChevronDown, FileText, BarChart, Tag, Book, LayoutDashboard, FilePlus, Shield, Gem, Home } from 'lucide-react';
+import { Menu, Search, ChevronDown, FileText, Gem, Home, Shield, FilePlus, Tag } from 'lucide-react';
 import { ModeToggle } from '@/components/mode-toggle';
 import { cn } from '@/lib/utils';
 import { motion } from 'framer-motion';
@@ -23,6 +23,7 @@ import { ScrollArea } from './ui/scroll-area';
 
 const mainNavLinks = [
     { href: "/", label: "Home", icon: <Home /> },
+    { href: "/features", label: "Features", icon: <Gem /> },
     { href: "/pricing", label: "Pricing", icon: <Tag /> },
 ]
 
@@ -71,10 +72,10 @@ export function Header() {
         return () => document.removeEventListener("keydown", down)
     }, [])
 
-    const runCommand = React.useCallback((command: () => unknown) => {
-        setOpen(false)
-        command()
-    }, [])
+    const runCommand = useCallback((command: () => unknown) => {
+        setOpen(false);
+        command();
+    }, []);
 
     // Do not render the header on dashboard pages
     if (pathname.startsWith('/dashboard')) {
@@ -94,9 +95,6 @@ export function Header() {
                     {mainNavLinks.map(link => (
                         <NavLink key={link.href} href={link.href} label={link.label} isActive={pathname === link.href} />
                     ))}
-                    <Link href="/features" className="relative block px-3 py-2 transition text-foreground hover:text-primary">
-                        Features
-                    </Link>
                     <DropdownMenu open={isToolsMenuOpen} onOpenChange={setIsToolsMenuOpen}>
                       <DropdownMenuTrigger asChild>
                         <Button 
@@ -147,34 +145,22 @@ export function Header() {
                                 <CommandItem
                                 key={link.href}
                                 value={link.label}
-                                onSelect={() => {
-                                    runCommand(() => router.push(link.href))
-                                }}
+                                onSelect={() => runCommand(() => router.push(link.href))}
                                 >
                                 {React.cloneElement(link.icon, {className: 'mr-2 h-4 w-4'})}
                                 <span>{link.label}</span>
                                 </CommandItem>
                             ))}
-                            <CommandItem onSelect={() => runCommand(() => router.push('/features'))}>
-                                <Gem className="mr-2 h-4 w-4" />
-                                <span>Features</span>
-                            </CommandItem>
                             {generalToolsLinks.map((link) => (
                                 <CommandItem
                                 key={link.href}
                                 value={link.label}
-                                onSelect={() => {
-                                    runCommand(() => router.push(link.href))
-                                }}
+                                onSelect={() => runCommand(() => router.push(link.href))}
                                 >
                                 {React.cloneElement(link.icon, {className: 'mr-2 h-4 w-4'})}
                                 <span>{link.label}</span>
                                 </CommandItem>
                             ))}
-                             <CommandItem onSelect={() => runCommand(() => router.push('/dashboard'))}>
-                                <LayoutDashboard className="mr-2 h-4 w-4" />
-                                <span>Dashboard</span>
-                            </CommandItem>
                         </CommandGroup>
                         </CommandList>
                     </CommandDialog>
@@ -197,12 +183,6 @@ export function Header() {
                         </SheetHeader>
                         <ScrollArea className="flex-grow my-4 px-6">
                             <nav className="grid gap-4 text-lg font-medium">
-                                <Link
-                                    href="/features"
-                                    className="block py-2 transition text-muted-foreground hover:text-primary"
-                                >
-                                    Features
-                                </Link>
                                 {[...mainNavLinks, ...generalToolsLinks].map(link => (
                                     <Link
                                         key={link.href}

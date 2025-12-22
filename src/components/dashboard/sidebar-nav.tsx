@@ -6,7 +6,7 @@ import { usePathname, useSearchParams } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { FileText, Users, FileQuestion, FilePlus, Home, Tag, Gem, Book, CreditCard, LogOut } from "lucide-react";
+import { FileText, Users, FileQuestion, FilePlus, Home, Tag, Gem, CreditCard, LogOut } from "lucide-react";
 import { useAuth } from "@/context/auth-provider";
 import { useRouter } from "next/navigation";
 import { signOut } from "firebase/auth";
@@ -25,7 +25,6 @@ const mainNavLinks = [
     { href: "/", label: "Home", icon: Home },
     { href: "/features", label: "Features", icon: Gem },
     { href: "/pricing", label: "Pricing", icon: Tag },
-    { href: "/blog", label: "Blog", icon: Book },
 ];
 
 export function SidebarNav() {
