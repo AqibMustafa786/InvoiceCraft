@@ -267,21 +267,17 @@ export default function HomePage() {
             </div>
         </section>
         
-        <section id="features" className="py-20 md:py-28">
+        <section className="py-20 md:py-28">
              <div className="container px-4 mx-auto md:px-6">
                 <div className="text-center max-w-2xl mx-auto mb-12">
                     <h2 className="text-4xl md:text-5xl font-bold font-headline">Features That Power Your Business</h2>
                     <p className="mt-4 text-muted-foreground">InvoiceCraft is packed with powerful, intuitive features designed to save you time, make you look professional, and help you get paid faster.</p>
                 </div>
-                 <motion.div 
+                 <div 
                     className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-6xl mx-auto"
-                    variants={containerVariants}
-                    initial="hidden"
-                    whileInView="visible"
-                    viewport={{ once: true, amount: 0.2 }}
                   >
                     {homePageFeatures.map((feature, index) => (
-                        <motion.div key={index} variants={itemVariants} className={feature.className}>
+                        <div key={index} className={feature.className}>
                              <motion.div whileHover={{ y: -8, scale: 1.02 }} transition={{ type: "spring", stiffness: 300 }} className="h-full">
                                 <Card className="border bg-card shadow-lg hover:shadow-primary/20 transition-all duration-300 h-full p-6 flex flex-col items-center text-center">
                                     {feature.icon}
@@ -289,9 +285,9 @@ export default function HomePage() {
                                     <p className="text-muted-foreground text-sm flex-1">{feature.description}</p>
                                 </Card>
                             </motion.div>
-                        </motion.div>
+                        </div>
                     ))}
-                </motion.div>
+                </div>
                 <div className="text-center mt-12">
                     <Button asChild size="lg">
                         <Link href="/features">
