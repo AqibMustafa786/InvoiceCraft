@@ -29,6 +29,10 @@ interface InsuranceFormProps {
   setDocument: Dispatch<SetStateAction<InsuranceDocument>>;
   accentColor: string;
   setAccentColor: Dispatch<SetStateAction<string>>;
+  backgroundColor: string;
+  setBackgroundColor: Dispatch<SetStateAction<string>>;
+  textColor: string;
+  setTextColor: Dispatch<SetStateAction<string>>;
   toast: (options: { title: string; description: string; variant?: "default" | "destructive" }) => void;
 }
 
@@ -53,6 +57,14 @@ const languages = [
     { value: 'zh', label: 'Chinese' },
 ];
 
+const fonts = [
+    { value: 'Inter', label: 'Inter' },
+    { value: 'Roboto', label: 'Roboto' },
+    { value: 'Lato', label: 'Lato' },
+    { value: 'Merriweather', label: 'Merriweather' },
+    { value: 'system-ui', label: 'System Default' },
+]
+
 const insuranceCategories: InsuranceCategory[] = ['Vehicle', 'Health', 'Property', 'Life', 'Business', 'Travel', 'Other'];
 const policyTypes = ['Comprehensive', 'Third-Party', 'Basic', 'Premium'];
 const policyStatuses: DocumentStatus[] = ['draft', 'active', 'expired', 'cancelled'];
@@ -60,15 +72,26 @@ const paymentFrequencies: InsuranceDocument['paymentFrequency'][] = ['Monthly', 
 const paymentMethods: InsuranceDocument['paymentMethod'][] = ['Cash', 'Bank Transfer', 'Online'];
 const paymentStatuses: InsuranceDocument['paymentStatus'][] = ['Unpaid', 'Partially Paid', 'Paid'];
 
-export function InsuranceForm({ document: doc, setDocument: setDoc, accentColor, setAccentColor, toast }: InsuranceFormProps) {
-  const [colorInputValue, setColorInputValue] = useState(accentColor);
+export function InsuranceForm({ document: doc, setDocument: setDoc, accentColor, setAccentColor, backgroundColor, setBackgroundColor, textColor, setTextColor, toast }: InsuranceFormProps) {
+  const [accentColorInputValue, setAccentColorInputValue] = useState(accentColor);
+  const [bgColorInputValue, setBgColorInputValue] = useState(backgroundColor);
+  const [textColorInputValue, setTextColorInputValue] = useState(textColor);
   const [isUploading, setIsUploading] = useState(false);
   const [isUploadingAttachment, setIsUploadingAttachment] = useState<Record<string, boolean>>({});
   const [isSignatureDialogOpen, setIsSignatureDialogOpen] = useState(false);
 
   useEffect(() => {
-    setColorInputValue(accentColor);
+    setAccentColorInputValue(accentColor);
   }, [accentColor]);
+
+  useEffect(() => {
+    setBgColorInputValue(backgroundColor);
+  }, [backgroundColor]);
+  
+  useEffect(() => {
+    setTextColorInputValue(textColor);
+  }, [textColor]);
+
 
   const handleNestedChange = (section: 'business' | 'insuranceCompany' | 'policyHolder' | 'vehicle' | 'property' | 'health', e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -235,6 +258,32 @@ export function InsuranceForm({ document: doc, setDocument: setDoc, accentColor,
           <CardTitle>Branding &amp; Customization</CardTitle>
         </CardHeader>
         <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6">
+           <div className="space-y-2">
+              <Label>Company Logo</Label>
+               <div className="flex items-center gap-4">
+                {doc.logoUrl ? (
+                    <div className="flex items-center gap-4">
+                        <Image src={doc.logoUrl} alt="Company Logo" width={80} height={40} className="rounded-md object-contain bg-muted p-1" />
+                         <div className="flex items-center gap-2">
+                            <Button asChild variant="outline" size="sm" disabled={isUploading}>
+                                <label htmlFor="logo-upload" className="cursor-pointer">Change</label>
+                            </Button>
+                            <Button variant="destructive" size="sm" onClick={removeLogo} disabled={isUploading}>
+                               <X className="h-4 w-4 mr-1" /> Remove
+                            </Button>
+                        </div>
+                    </div>
+                ) : (
+                    <Button asChild variant="outline" className="w-full" disabled={isUploading}>
+                        <label htmlFor="logo-upload" className="cursor-pointer flex items-center justify-center gap-2">
+                           {isUploading ? <Loader2 className="h-4 w-4 animate-spin" /> : <ImageUp className="h-4 w-4" />}
+                           {isUploading ? 'Uploading...' : 'Upload Logo'}
+                        </label>
+                    </Button>
+                )}
+                 <Input id="logo-upload" type="file" className="sr-only" onChange={handleLogoUpload} accept="image/png, image/jpeg, image/gif" disabled={isUploading}/>
+                </div>
+            </div>
             <div className="space-y-2">
               <Label htmlFor="accentColor">Accent Color</Label>
               <div className="relative flex items-center">
@@ -242,8 +291,8 @@ export function InsuranceForm({ document: doc, setDocument: setDoc, accentColor,
                   <Input 
                       id="accentColor"
                       type="text" 
-                      value={colorInputValue} 
-                      onChange={(e) => setColorInputValue(e.target.value)}
+                      value={accentColorInputValue} 
+                      onChange={(e) => setAccentColorInputValue(e.target.value)}
                       onBlur={(e) => setAccentColor(e.target.value)}
                       className="pl-10"
                       placeholder="hsl(260 85% 66%)"
@@ -253,12 +302,71 @@ export function InsuranceForm({ document: doc, setDocument: setDoc, accentColor,
                       value={accentColor.startsWith('hsl') ? '#000000' : accentColor}
                       onChange={(e) => {
                           setAccentColor(e.target.value);
-                          setColorInputValue(e.target.value);
+                          setAccentColorInputValue(e.target.value);
                       }}
                       className="absolute right-1 top-1/2 -translate-y-1/2 h-8 w-8 p-1 rounded-md cursor-pointer bg-transparent border-none appearance-none"
                   />
               </div>
-          </div>
+            </div>
+             <div className="space-y-2">
+                <Label htmlFor="backgroundColor">Background Color</Label>
+                <div className="relative flex items-center">
+                    <PaintBucket className="absolute left-3 h-5 w-5 text-muted-foreground" />
+                    <Input 
+                        id="backgroundColor"
+                        type="text" 
+                        value={bgColorInputValue} 
+                        onChange={(e) => setBgColorInputValue(e.target.value)}
+                        onBlur={(e) => setBackgroundColor(e.target.value)}
+                        className="pl-10"
+                        placeholder="#FFFFFF"
+                    />
+                    <input 
+                        type="color" 
+                        value={backgroundColor}
+                        onChange={(e) => {
+                            setBackgroundColor(e.target.value);
+                            setBgColorInputValue(e.target.value);
+                        }}
+                        className="absolute right-1 top-1/2 -translate-y-1/2 h-8 w-8 p-1 rounded-md cursor-pointer bg-transparent border-none appearance-none"
+                    />
+                </div>
+            </div>
+             <div className="space-y-2">
+                <Label htmlFor="textColor">Text Color</Label>
+                <div className="relative flex items-center">
+                    <Paintbrush className="absolute left-3 h-5 w-5 text-muted-foreground" />
+                    <Input 
+                        id="textColor"
+                        type="text" 
+                        value={textColorInputValue} 
+                        onChange={(e) => setTextColorInputValue(e.target.value)}
+                        onBlur={(e) => setTextColor(e.target.value)}
+                        className="pl-10"
+                        placeholder="#374151"
+                    />
+                    <input 
+                        type="color" 
+                        value={textColor}
+                        onChange={(e) => {
+                            setTextColor(e.target.value);
+                            setTextColorInputValue(e.target.value);
+                        }}
+                        className="absolute right-1 top-1/2 -translate-y-1/2 h-8 w-8 p-1 rounded-md cursor-pointer bg-transparent border-none appearance-none"
+                    />
+                </div>
+            </div>
+             <div className="space-y-2">
+                <Label htmlFor="fontFamily">Font Family</Label>
+                <Select value={doc.fontFamily} onValueChange={(value) => setDoc(p => ({...p, fontFamily: value}))}>
+                    <SelectTrigger id="fontFamily">
+                        <SelectValue placeholder="Select font" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        {fonts.map(font => <SelectItem key={font.value} value={font.value}>{font.label}</SelectItem>)}
+                    </SelectContent>
+                </Select>
+            </div>
            <div className="space-y-2">
             <Label htmlFor="language">Language</Label>
             <Select value={doc.language} onValueChange={handleLanguageChange}>
@@ -279,32 +387,6 @@ export function InsuranceForm({ document: doc, setDocument: setDoc, accentColor,
           <CardTitle>Your Details (Issuer)</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-            <div className="space-y-2">
-                <Label>Company Logo</Label>
-                <div className="flex items-center gap-4">
-                    {doc.logoUrl ? (
-                        <div className="flex items-center gap-4">
-                            <Image src={doc.logoUrl} alt="Company Logo" width={80} height={40} className="rounded-md object-contain bg-muted p-1" />
-                             <div className="flex items-center gap-2">
-                                <Button asChild variant="outline" size="sm" disabled={isUploading}>
-                                    <label htmlFor="logo-upload" className="cursor-pointer">Change</label>
-                                </Button>
-                                <Button variant="destructive" size="sm" onClick={removeLogo} disabled={isUploading}>
-                                <X className="h-4 w-4 mr-1" /> Remove
-                                </Button>
-                            </div>
-                        </div>
-                    ) : (
-                        <Button asChild variant="outline" className="w-full" disabled={isUploading}>
-                            <label htmlFor="logo-upload" className="cursor-pointer flex items-center justify-center gap-2">
-                            {isUploading ? <Loader2 className="h-4 w-4 animate-spin" /> : <ImageUp className="h-4 w-4" />}
-                            {isUploading ? 'Uploading...' : 'Upload Logo'}
-                            </label>
-                        </Button>
-                    )}
-                    <Input id="logo-upload" type="file" className="sr-only" onChange={handleLogoUpload} accept="image/png, image/jpeg, image/gif" disabled={isUploading}/>
-                </div>
-            </div>
           <div className="space-y-2">
             <Label htmlFor="companyName">Company Name</Label>
             <Input id="companyName" name="name" value={doc.business.name} onChange={(e) => handleNestedChange('business', e)} />

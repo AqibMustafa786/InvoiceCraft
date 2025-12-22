@@ -14,6 +14,8 @@ import locales from '@/lib/locales';
 interface InsurancePreviewProps {
   doc: InsuranceDocument;
   accentColor: string;
+  backgroundColor: string;
+  textColor: string;
   id?: string;
   isPrint?: boolean;
 }
@@ -21,6 +23,8 @@ interface InsurancePreviewProps {
 interface CommonTemplateProps {
   doc: InsuranceDocument;
   accentColor: string;
+  backgroundColor: string;
+  textColor: string;
   t: any;
   currencySymbol: string;
 }
@@ -78,7 +82,7 @@ const UsaClaimDefaultTemplatePage = ({ pageItems, pageIndex, totalPages, ...comm
     const { doc, accentColor, total, subtotal, currencySymbol } = commonProps;
 
     return (
-        <div className={`invoice-page font-sans text-gray-800 ${pageIndex < totalPages - 1 ? "page-break" : ""}`}>
+        <div className={`invoice-page font-sans text-gray-800 ${pageIndex < totalPages - 1 ? "page-break" : ""}`} style={{ fontFamily: doc.fontFamily }}>
             <div className="p-8 m-4 border-2" style={{ borderColor: accentColor }}>
                 <header className="grid grid-cols-2 gap-10 mb-8" data-element="header">
                      <div>
@@ -206,7 +210,7 @@ const AVAILABLE_HEIGHT = PAGE_HEIGHT - PAGE_PADDING;
 
 
 // --- MAIN PREVIEW COMPONENT ---
-export function InsurancePreview({ doc, accentColor, id = 'insurance-preview', isPrint = false }: InsurancePreviewProps) {
+export function InsurancePreview({ doc, accentColor, backgroundColor, textColor, id = 'insurance-preview', isPrint = false }: InsurancePreviewProps) {
   const [paginatedItems, setPaginatedItems] = useState<LineItem[][]>([]);
   const [needsRemeasure, setNeedsRemeasure] = useState(true);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -235,7 +239,8 @@ export function InsurancePreview({ doc, accentColor, id = 'insurance-preview', i
 
   const previewStyle = {
       '--primary-hsl': accentColor,
-      '--primary': accentColor
+      '--primary': accentColor,
+      fontFamily: doc.fontFamily,
   } as React.CSSProperties;
 
   const TemplateComponent = templates[doc.template as keyof typeof templates] || templates['usa-claim-default'];
@@ -327,6 +332,8 @@ export function InsurancePreview({ doc, accentColor, id = 'insurance-preview', i
   const commonProps: Omit<PageProps, 'pageItems' | 'pageIndex' | 'totalPages'> = {
     doc,
     accentColor,
+    backgroundColor,
+    textColor,
     t,
     currencySymbol,
     subtotal,
@@ -366,8 +373,8 @@ export function InsurancePreview({ doc, accentColor, id = 'insurance-preview', i
 
   // Default live preview (single page)
   return (
-    <Card id={id} className="w-full shadow-lg rounded-xl overflow-hidden print-hide hover:shadow-primary/20 transition-shadow" style={previewStyle}>
-      <CardContent className="p-0 bg-white text-gray-800 dark:bg-white dark:text-gray-800">
+    <Card id={id} className="w-full shadow-lg rounded-xl overflow-hidden print-hide hover:shadow-primary/20 transition-shadow" style={{ ...previewStyle, backgroundColor: doc.backgroundColor, color: doc.textColor }}>
+      <CardContent className="p-0">
           <TemplateComponent
             {...commonProps}
             pageItems={doc.items}

@@ -152,6 +152,7 @@ const getInitialInsuranceDoc = (): Omit<InsuranceDocument, 'userId' | 'companyId
   updatedAt: serverTimestamp(),
   textColor: '#374151',
   backgroundColor: '#FFFFFF',
+  fontFamily: 'Inter',
 
   // Insured Entity Details
   insuranceCategory: 'Vehicle',
@@ -195,13 +196,12 @@ const getInitialInsuranceDoc = (): Omit<InsuranceDocument, 'userId' | 'companyId
 });
 
 
-function PrintableInsuranceDoc({ doc, accentColor }: { doc: InsuranceDocument, accentColor: string }) {
+function PrintableInsuranceDoc({ doc, accentColor, backgroundColor, textColor }: { doc: InsuranceDocument, accentColor: string, backgroundColor: string, textColor: string }) {
     const [container, setContainer] = useState<HTMLElement | null>(null);
 
     useEffect(() => {
         // This code runs only on the client, after the component has mounted.
-        const printContainer = document.getElementById('print-container');
-        setContainer(printContainer);
+        setContainer(document.getElementById('print-container'));
     }, []);
 
     if (!container) {
@@ -209,7 +209,7 @@ function PrintableInsuranceDoc({ doc, accentColor }: { doc: InsuranceDocument, a
     }
 
     return createPortal(
-        <InsurancePreview doc={doc} accentColor={accentColor} id="insurance-preview-print" isPrint={true} />,
+        <InsurancePreview doc={doc} accentColor={accentColor} backgroundColor={backgroundColor} textColor={textColor} id="insurance-preview-print" isPrint={true} />,
         container
     );
 }
@@ -220,6 +220,8 @@ export default function CreateInsurancePage() {
   const [document, setDocument] = useState<InsuranceDocument | null>(null);
   const [originalDocument, setOriginalDocument] = useState<InsuranceDocument | null>(null);
   const [accentColor, setAccentColor] = useState<string>('hsl(var(--primary))');
+  const [backgroundColor, setBackgroundColor] = useState<string>('#FFFFFF');
+  const [textColor, setTextColor] = useState<string>('#374151');
   const { toast } = useToast();
   const { firestore } = useFirebase();
   const router = useRouter();
@@ -510,6 +512,10 @@ export default function CreateInsurancePage() {
                   setDocument={setDocument} 
                   accentColor={accentColor}
                   setAccentColor={setAccentColor}
+                  backgroundColor={backgroundColor}
+                  setBackgroundColor={setBackgroundColor}
+                  textColor={textColor}
+                  setTextColor={setTextColor}
                   toast={toast}
                 />
               </div>
@@ -537,13 +543,13 @@ export default function CreateInsurancePage() {
                 </Sheet>
                 <div>
                   <h2 className="text-2xl font-bold font-headline mb-4">Live Preview</h2>
-                  <InsurancePreview doc={document} accentColor={accentColor} />
+                  <InsurancePreview doc={document} accentColor={accentColor} backgroundColor={backgroundColor} textColor={textColor} />
                 </div>
             </div>
           </div>
         </div>
       </div>
-      <PrintableInsuranceDoc doc={document} accentColor={accentColor} />
+      <PrintableInsuranceDoc doc={document} accentColor={accentColor} backgroundColor={backgroundColor} textColor={textColor} />
     </>
   );
 }

@@ -525,6 +525,7 @@ export interface InsuranceDocument {
   updatedAt: any;
   textColor: string;
   backgroundColor: string;
+  fontFamily: string;
 
   // Insured Entity Details
   insuranceCategory: InsuranceCategory;
