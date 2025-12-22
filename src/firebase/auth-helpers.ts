@@ -8,7 +8,8 @@ import {
   GithubAuthProvider,
   FacebookAuthProvider,
   UserCredential,
-  User
+  User,
+  FirebaseError
 } from 'firebase/auth';
 import { getFirestore, doc, setDoc, getDoc, serverTimestamp } from 'firebase/firestore';
 import { initializeApp } from 'firebase/app';
@@ -87,6 +88,17 @@ const socialLogin = async (provider: GoogleAuthProvider | GithubAuthProvider | F
         return userCredential;
     } catch (error) {
         console.error("Social login error:", error);
+        if (error instanceof FirebaseError) {
+            if (error.code === 'auth/popup-closed-by-user') {
+                throw new Error("The sign-in popup was closed before completion. Please try again.");
+            }
+            if (error.code === 'auth/account-exists-with-different-credential') {
+                throw new Error("An account already exists with the same email address but different sign-in credentials.");
+            }
+             if (error.code === 'auth/auth-domain-config-required' || error.code === 'auth/operation-not-allowed') {
+                throw new Error("Social login is not configured correctly in your Firebase project. Please enable this provider in the Firebase console.");
+            }
+        }
         throw error;
     }
 };
