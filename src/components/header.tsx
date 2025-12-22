@@ -72,10 +72,10 @@ export function Header() {
         return () => document.removeEventListener("keydown", down)
     }, [])
 
-    const runCommand = useCallback((command: () => unknown) => {
-        setOpen(false);
-        command();
-    }, []);
+    const runCommand = React.useCallback((command: () => unknown) => {
+        setOpen(false)
+        command()
+    }, [])
 
     // Do not render the header on dashboard pages
     if (pathname.startsWith('/dashboard')) {
@@ -148,7 +148,9 @@ export function Header() {
                                 <CommandItem
                                 key={link.href}
                                 value={link.label}
-                                onSelect={() => runCommand(() => router.push(link.href))}
+                                onSelect={() => {
+                                    runCommand(() => router.push(link.href))
+                                }}
                                 >
                                 {React.cloneElement(link.icon, {className: 'mr-2 h-4 w-4'})}
                                 <span>{link.label}</span>
@@ -162,7 +164,9 @@ export function Header() {
                                 <CommandItem
                                 key={link.href}
                                 value={link.label}
-                                onSelect={() => runCommand(() => router.push(link.href))}
+                                onSelect={() => {
+                                    runCommand(() => router.push(link.href))
+                                }}
                                 >
                                 {React.cloneElement(link.icon, {className: 'mr-2 h-4 w-4'})}
                                 <span>{link.label}</span>
