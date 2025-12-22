@@ -44,8 +44,13 @@ const getInitialInsuranceDoc = (): InsuranceDocument => ({
   dateOfLoss: new Date().toISOString().split('T')[0],
   typeOfClaim: 'Property Damage',
   incidentDescription: 'Brief description of the incident.',
-  insuranceCompany: 'Example Insurance Co.',
-  adjusterInfo: 'Adjuster: Jane Smith\nPhone: 555-123-4567',
+  
+  insuranceCompanyName: 'Example Insurance Co.',
+  insuranceCompanyAddress: '789 Insurance Plaza, Big City, USA',
+  insuranceCompanyPhone: '555-0101',
+  insuranceCompanyEmail: 'claims@exampleinsurance.com',
+  agentName: 'Jane Smith',
+  agentLicenseNumber: 'AGENT-54321',
 
   documentNumber: 'DOC-001',
   documentDate: new Date(),
@@ -188,7 +193,7 @@ export default function CreateInsurancePage() {
                               Change Template
                           </Button>
                       </SheetTrigger>
-                      <SheetContent className="w-full sm:max-w-xl overflow-y-auto">
+                      <SheetContent className="w-full sm:max-w-sm overflow-y-auto">
                           <SheetHeader>
                               <SheetTitle>Select a Template</SheetTitle>
                           </SheetHeader>
@@ -212,6 +217,3 @@ export default function CreateInsurancePage() {
     </>
   );
 }
-
-    
-

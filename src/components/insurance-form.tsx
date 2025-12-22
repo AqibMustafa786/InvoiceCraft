@@ -156,7 +156,7 @@ export function InsuranceForm({ document: doc, setDocument: setDoc, accentColor,
     <div className="space-y-6">
       <Card className="bg-card/50 backdrop-blur-sm shadow-lg hover:shadow-primary/20 transition-shadow duration-300">
         <CardHeader>
-          <CardTitle>Your Details (Provider/Company)</CardTitle>
+          <CardTitle>Your Details (Issuer)</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
             <div className="space-y-2">
@@ -227,6 +227,51 @@ export function InsuranceForm({ document: doc, setDocument: setDoc, accentColor,
                 <div className="relative flex items-center">
                     <Hash className="absolute left-3 h-5 w-5 text-muted-foreground" />
                     <Input id="taxId" name="taxId" value={doc.taxId} onChange={handleInputChange} className="pl-10" />
+                </div>
+              </div>
+          </div>
+        </CardContent>
+      </Card>
+      <Card className="bg-card/50 backdrop-blur-sm shadow-lg hover:shadow-primary/20 transition-shadow duration-300">
+        <CardHeader>
+          <CardTitle>Insurance Provider Details</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="insuranceCompanyName">Insurance Company Name</Label>
+            <Input id="insuranceCompanyName" name="insuranceCompanyName" value={doc.insuranceCompanyName} onChange={handleInputChange} />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="insuranceCompanyAddress">Company Address</Label>
+            <Textarea id="insuranceCompanyAddress" name="insuranceCompanyAddress" value={doc.insuranceCompanyAddress} onChange={handleInputChange} />
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+             <div className="space-y-2">
+              <Label htmlFor="insuranceCompanyPhone">Company Phone #</Label>
+              <div className="relative flex items-center">
+                  <Phone className="absolute left-3 h-5 w-5 text-muted-foreground" />
+                  <Input id="insuranceCompanyPhone" name="insuranceCompanyPhone" value={doc.insuranceCompanyPhone} onChange={handleInputChange} className="pl-10" />
+              </div>
+            </div>
+             <div className="space-y-2">
+                <Label htmlFor="insuranceCompanyEmail">Company Email</Label>
+                <div className="relative flex items-center">
+                    <Mail className="absolute left-3 h-5 w-5 text-muted-foreground" />
+                    <Input id="insuranceCompanyEmail" name="insuranceCompanyEmail" value={doc.insuranceCompanyEmail} onChange={handleInputChange} className="pl-10" />
+                </div>
+              </div>
+               <div className="space-y-2">
+                <Label htmlFor="agentName">Agent Name</Label>
+                <div className="relative flex items-center">
+                    <UserCircle className="absolute left-3 h-5 w-5 text-muted-foreground" />
+                    <Input id="agentName" name="agentName" value={doc.agentName} onChange={handleInputChange} className="pl-10" />
+                </div>
+              </div>
+               <div className="space-y-2">
+                <Label htmlFor="agentLicenseNumber">Agent License No.</Label>
+                <div className="relative flex items-center">
+                    <Award className="absolute left-3 h-5 w-5 text-muted-foreground" />
+                    <Input id="agentLicenseNumber" name="agentLicenseNumber" value={doc.agentLicenseNumber} onChange={handleInputChange} className="pl-10" />
                 </div>
               </div>
           </div>

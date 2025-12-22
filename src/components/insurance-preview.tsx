@@ -75,15 +75,25 @@ const UsaClaimDefaultTemplatePage = ({ pageItems, pageIndex, totalPages, ...comm
                     </div>
                 </header>
                  <section className="mb-6 text-xs" data-element="insurance-details">
-                    <div className="grid grid-cols-[max-content_1fr] gap-x-4 gap-y-1 p-3 bg-gray-50 rounded-md">
-                        <span className="font-bold text-gray-600">Insured:</span><span className="font-medium">{doc.insuredName}</span>
-                        <span className="font-bold text-gray-600">Address:</span><span className="whitespace-pre-line font-medium">{doc.insuredAddress}</span>
-                        <span className="font-bold text-gray-600">Claim #:</span><span className="font-medium">{doc.claimNumber}</span>
-                        <span className="font-bold text-gray-600">Policy ID:</span><span className="font-medium">{doc.policyId}</span>
-                        <span className="font-bold text-gray-600">Date of Loss:</span><span className="font-medium">{doc.dateOfLoss}</span>
-                        <span className="font-bold text-gray-600">Claim Type:</span><span className="font-medium">{doc.typeOfClaim}</span>
-                        <span className="font-bold text-gray-600">Insurance Co:</span><span className="font-medium">{doc.insuranceCompany}</span>
-                         <span className="font-bold text-gray-600">Adjuster:</span><span className="whitespace-pre-line font-medium">{doc.adjusterInfo}</span>
+                    <div className="grid grid-cols-2 gap-x-8 gap-y-2 p-3 bg-gray-50 rounded-md">
+                        <div>
+                            <p className="font-bold text-gray-600 border-b mb-1">Insured Details</p>
+                            <p><span className="font-bold">Name:</span> {doc.insuredName}</p>
+                            <p><span className="font-bold">Address:</span> {doc.insuredAddress}</p>
+                            <p><span className="font-bold">Policy ID:</span> {doc.policyId}</p>
+                        </div>
+                         <div>
+                            <p className="font-bold text-gray-600 border-b mb-1">Claim Details</p>
+                            <p><span className="font-bold">Claim #:</span> {doc.claimNumber}</p>
+                            <p><span className="font-bold">Date of Loss:</span> {doc.dateOfLoss}</p>
+                            <p><span className="font-bold">Claim Type:</span> {doc.typeOfClaim}</p>
+                        </div>
+                        <div className="col-span-2">
+                             <p className="font-bold text-gray-600 border-b mb-1">Provider Information</p>
+                             <p><span className="font-bold">Company:</span> {doc.insuranceCompanyName}</p>
+                             <p><span className="font-bold">Agent:</span> {doc.agentName} {doc.agentLicenseNumber && `(Lic: ${doc.agentLicenseNumber})`}</p>
+                             <p><span className="font-bold">Contact:</span> {doc.insuranceCompanyPhone} | {doc.insuranceCompanyEmail}</p>
+                        </div>
                     </div>
                 </section>
                 <main>

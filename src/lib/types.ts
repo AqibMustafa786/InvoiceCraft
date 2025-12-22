@@ -466,8 +466,13 @@ export interface InsuranceDocument {
   dateOfLoss: string;
   typeOfClaim: string;
   incidentDescription: string;
-  insuranceCompany: string;
-  adjusterInfo: string;
+  
+  insuranceCompanyName: string;
+  insuranceCompanyAddress: string;
+  insuranceCompanyPhone: string;
+  insuranceCompanyEmail: string;
+  agentName: string;
+  agentLicenseNumber: string;
 
   documentNumber: string;
   documentDate: Date;
@@ -504,5 +509,3 @@ export const StripeCheckoutOutputSchema = z.object({
   error: z.string().optional(),
 });
 export type StripeCheckoutOutput = z.infer<typeof StripeCheckoutOutputSchema>;
-
-    
