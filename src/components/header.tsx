@@ -22,7 +22,6 @@ import {
 import { ScrollArea } from './ui/scroll-area';
 
 const mainNavLinks = [
-    { href: "/#features", label: "Features", icon: <Gem /> },
     { href: "/pricing", label: "Pricing", icon: <Tag /> },
     { href: "/blog", label: "Blog", icon: <Book /> },
 ]
@@ -92,6 +91,9 @@ export function Header() {
                 </div>
 
                 <nav className="hidden md:flex flex-1 items-center justify-center space-x-1 text-sm font-medium">
+                     <Link href="/#features" className="relative block px-3 py-2 transition text-foreground hover:text-primary">
+                      Features
+                    </Link>
                     {mainNavLinks.map(link => (
                         <NavLink key={link.href} href={link.href} label={link.label} isActive={pathname === link.href} />
                     ))}
@@ -141,6 +143,10 @@ export function Header() {
                         <CommandList>
                         <CommandEmpty>No results found.</CommandEmpty>
                          <CommandGroup heading="Links">
+                             <CommandItem onSelect={() => runCommand(() => router.push('/#features'))}>
+                                <Gem className="mr-2 h-4 w-4" />
+                                <span>Features</span>
+                            </CommandItem>
                             {mainNavLinks.map((link) => (
                                 <CommandItem
                                 key={link.href}
@@ -187,6 +193,12 @@ export function Header() {
                         </SheetHeader>
                         <ScrollArea className="flex-grow my-4 px-6">
                             <nav className="grid gap-4 text-lg font-medium">
+                                <Link
+                                    href="/#features"
+                                    className="block py-2 transition text-muted-foreground hover:text-primary"
+                                >
+                                    Features
+                                </Link>
                                 {[...mainNavLinks, ...generalToolsLinks].map(link => (
                                     <Link
                                         key={link.href}
