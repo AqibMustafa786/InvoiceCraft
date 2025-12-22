@@ -251,6 +251,8 @@ export default function HomePage() {
                     src="https://picsum.photos/seed/workspace-illustration/600/480" 
                     alt="Illustration of a person working on a laptop"
                     fill
+                    sizes="(max-width: 1024px) 100vw, 50vw"
+                    priority
                     className="object-contain"
                     data-ai-hint="workspace illustration"
                   />
