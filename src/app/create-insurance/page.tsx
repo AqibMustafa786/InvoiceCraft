@@ -2,17 +2,17 @@
 
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { createPortal } from 'react-dom';
-import type { InsuranceDocument, LineItem } from '@/lib/types';
+import type { InsuranceDocument, LineItem, AuditLogEntry } from '@/lib/types';
 import { InsuranceForm } from '@/components/insurance-form';
 import { InsurancePreview } from '@/components/insurance-preview';
 import { Button } from '@/components/ui/button';
-import { Printer, FilePlus, LayoutDashboard, Brush, MoreVertical } from 'lucide-react';
+import { Printer, FilePlus, LayoutDashboard, Brush, MoreVertical, Edit, History, Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { InsuranceTemplateSelector } from '@/components/insurance-template-selector';
 import Link from 'next/link';
-import { serverTimestamp } from 'firebase/firestore';
+import { serverTimestamp, doc, collection, Timestamp } from 'firebase/firestore';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import {
   DropdownMenu,
@@ -20,12 +20,85 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { addDays } from 'date-fns';
+import { addDays, isValid } from 'date-fns';
+import { useFirebase, useMemoFirebase } from '@/firebase';
+import { useAuth } from '@/context/auth-provider';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { useDoc } from '@/firebase/firestore/use-doc';
+import { setDocumentNonBlocking } from '@/firebase/non-blocking-updates';
+import { Skeleton } from '@/components/ui/skeleton';
+import { HistoryModal } from '@/components/dashboard/history-modal';
 
-const getInitialLineItem = () => ({ id: crypto.randomUUID(), name: 'Premium', quantity: 1, rate: 1200, unitPrice: 1200 });
+const INSURANCE_COLLECTION = 'insurance';
 
-const getInitialInsuranceDoc = (): InsuranceDocument => ({
-  id: crypto.randomUUID(),
+const getInitialLineItem = (): LineItem => ({ id: crypto.randomUUID(), name: 'Premium', quantity: 1, rate: 1200, unitPrice: 1200 });
+
+const normalizeAuditLog = (auditLog: any): AuditLogEntry[] => {
+  if (Array.isArray(auditLog)) return auditLog;
+  if (auditLog && typeof auditLog === 'object') {
+    return Object.values(auditLog);
+  }
+  return [];
+};
+
+const toDateSafe = (value: any): Date | null => {
+    if (!value) return null;
+    if (value instanceof Date) return value;
+    if (value.toDate && typeof value.toDate === 'function') {
+        return value.toDate();
+    }
+    const d = new Date(value);
+    return isValid(d) ? d : null;
+};
+
+const diff = (original: any, updated: any): string[] => {
+    const changes: string[] = [];
+    if (!original || !updated) return changes;
+
+    const allKeys = new Set([...Object.keys(original), ...Object.keys(updated)]);
+    const formatKey = (key: string) => key.replace(/([A-Z])/g, ' $1').replace(/^./, (str) => str.toUpperCase());
+    const isDate = (value: any) => value instanceof Date || (value && typeof value.toDate === 'function');
+
+    allKeys.forEach(key => {
+        if (key === 'auditLog' || key === 'updatedAt' || key === 'createdAt' || key === 'items') return;
+
+        let originalValue = original[key];
+        let updatedValue = updated[key];
+        
+        if(key === 'logoUrl'){
+             if (originalValue !== updatedValue) {
+                changes.push(updatedValue ? 'Business logo was updated' : 'Business logo was removed');
+            }
+            return;
+        }
+
+        if (isDate(originalValue)) originalValue = toDateSafe(originalValue);
+        if (isDate(updatedValue)) updatedValue = toDateSafe(updatedValue);
+        
+        let originalComp = (originalValue instanceof Date) ? originalValue.toISOString() : JSON.stringify(originalValue);
+        let updatedComp = (updatedValue instanceof Date) ? updatedValue.toISOString() : JSON.stringify(updatedValue);
+
+        if (originalComp !== updatedComp) {
+            if (typeof updatedValue === 'object' && updatedValue !== null && !Array.isArray(updatedValue) && !(updatedValue instanceof Date)) {
+                 changes.push(`Updated ${formatKey(key)}`);
+            } else {
+                 changes.push(`${formatKey(key)} was changed`);
+            }
+        }
+    });
+
+     // Line item changes
+    const originalItems = original.items || [];
+    const updatedItems = updated.items || [];
+    if(JSON.stringify(originalItems) !== JSON.stringify(updatedItems)) {
+        changes.push('Line items were updated');
+    }
+
+    return changes;
+};
+
+const getInitialInsuranceDoc = (): Omit<InsuranceDocument, 'userId' | 'companyId'> => ({
+  id: '',
   logoUrl: '',
   business: {
     name: 'Your Company',
@@ -117,6 +190,7 @@ const getInitialInsuranceDoc = (): InsuranceDocument => ({
   paymentMethod: 'Online',
   paymentStatus: 'Unpaid',
   attachments: [],
+  auditLog: [],
 });
 
 
@@ -144,13 +218,81 @@ function PrintableInsuranceDoc({ doc, accentColor }: { doc: InsuranceDocument, a
 
 
 export default function CreateInsurancePage() {
+  const { user, userProfile, isLoading: isAuthLoading } = useAuth();
   const [doc, setDoc] = useState<InsuranceDocument | null>(null);
+  const [originalDocument, setOriginalDocument] = useState<InsuranceDocument | null>(null);
   const [accentColor, setAccentColor] = useState<string>('hsl(var(--primary))');
   const { toast } = useToast();
+  const { firestore } = useFirebase();
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const [historyModalState, setHistoryModalState] = useState<{ isOpen: boolean, auditLog: AuditLogEntry[]}>({isOpen: false, auditLog: []});
+
+  const draftId = searchParams.get('draftId');
+  const companyId = userProfile?.companyId;
+
+  const docRef = useMemoFirebase(() => {
+    if (!draftId || !firestore || !companyId) return null;
+    return doc(firestore, 'companies', companyId, INSURANCE_COLLECTION, draftId);
+  }, [draftId, firestore, companyId]);
+
+  const { data: remoteDraft, isLoading: isDraftLoading } = useDoc<InsuranceDocument>(docRef);
 
   useEffect(() => {
-    // Initialize state on the client to avoid hydration mismatch
-    setDoc(getInitialInsuranceDoc());
+    if (isAuthLoading || (draftId && isDraftLoading)) return;
+    if (!user || !userProfile) {
+        router.push('/login');
+        return;
+    }
+    let initialDocument: InsuranceDocument;
+
+     const processData = (data: any): any => {
+        const processed: any = {};
+        for (const key in data) {
+            if (Object.prototype.hasOwnProperty.call(data, key)) {
+                const value = data[key];
+                if (value && typeof value === 'object' && value.toDate) { // Firestore Timestamp check
+                    processed[key] = value.toDate();
+                } else if (value && typeof value === 'object' && !Array.isArray(value)) {
+                    processed[key] = processData(value); // Recurse for nested objects
+                } else {
+                    processed[key] = value;
+                }
+            }
+        }
+        return processed;
+    };
+
+    if (draftId && remoteDraft) {
+        const baseDoc = getInitialInsuranceDoc();
+        const loadedDraft = processData(remoteDraft);
+        initialDocument = {
+            ...baseDoc,
+            ...loadedDraft,
+            id: draftId,
+            userId: user.uid,
+            companyId: userProfile.companyId,
+        };
+    } else {
+         const newDocId = firestore ? doc(collection(firestore, 'companies', 'temp', INSURANCE_COLLECTION)).id : crypto.randomUUID();
+         const newAuditLogEntry: AuditLogEntry = {
+            id: crypto.randomUUID(),
+            action: 'created',
+            timestamp: new Date(),
+            user: { name: user.displayName || user.email, email: user.email },
+            version: 1,
+        };
+        initialDocument = {
+            ...getInitialInsuranceDoc(),
+            id: newDocId,
+            userId: user.uid,
+            companyId: userProfile.companyId,
+            auditLog: [newAuditLogEntry]
+        };
+    }
+    
+    setDoc(initialDocument);
+    setOriginalDocument(JSON.parse(JSON.stringify(initialDocument)));
 
     if (typeof window !== 'undefined' && window.document) {
         const computedColor = getComputedStyle(window.document.documentElement).getPropertyValue('--primary').trim();
@@ -158,38 +300,130 @@ export default function CreateInsurancePage() {
            setAccentColor(`hsl(${computedColor})`);
         }
     }
-  }, []);
+  }, [draftId, remoteDraft, isDraftLoading, user, userProfile, isAuthLoading, firestore, router]);
+  
+  const handleHistoryClick = (auditLog?: AuditLogEntry[]) => {
+      const sortedLog = (auditLog || []).sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+      setHistoryModalState({ isOpen: true, auditLog: sortedLog });
+  };
+
+  const generateNewId = (doc: InsuranceDocument): string => {
+    const clientName = doc.policyHolder.name.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase();
+    const policyNumber = doc.policyNumber || 'new';
+    return `${clientName}-${policyNumber}`;
+  }
 
   const handlePrint = () => {
     window.print();
   };
   
-  const handleNew = () => {
-    const newDoc = getInitialInsuranceDoc();
-    newDoc.policyNumber = `DOC-${String(Math.floor(Math.random() * 1000)).padStart(3, '0')}`;
-    setDoc(newDoc);
-    if (typeof window !== 'undefined' && window.document) {
-        const computedColor = getComputedStyle(window.document.documentElement).getPropertyValue('--primary').trim();
-        if (computedColor) {
-            setAccentColor(`hsl(${computedColor})`);
-        }
+    const handleSaveDraft = () => {
+    if (!doc || !firestore || !user || !userProfile?.companyId || !originalDocument) {
+         toast({
+          title: "Cannot Save Draft",
+          description: "You must be logged in to save a draft.",
+          variant: "destructive",
+        });
+        return;
     }
+
+    const companyId = userProfile.companyId;
+    const isNew = !searchParams.get('draftId');
+    const newId = isNew ? generateNewId(doc) : doc.id;
+
+    const changes = diff(originalDocument, doc);
+    const existingLog = normalizeAuditLog(doc.auditLog);
+    
+    let updatedAuditLog: AuditLogEntry[] = [...existingLog];
+
+    if (changes.length > 0) {
+        const newVersion = (existingLog[existingLog.length - 1]?.version || 0) + 1;
+        const newAuditLogEntry: AuditLogEntry = {
+            id: crypto.randomUUID(),
+            action: 'updated',
+            timestamp: new Date(),
+            user: { name: user.displayName || user.email, email: user.email },
+            version: newVersion,
+            changes: changes,
+        };
+        updatedAuditLog.push(newAuditLogEntry);
+    }
+    
+    const safeTimestamp = (value: any): Timestamp | null => {
+        if (!value) return null;
+        if (value instanceof Timestamp) return value;
+        const d = value.toDate ? value.toDate() : new Date(value);
+        return isValid(d) ? Timestamp.fromDate(d) : null;
+    };
+
+    const draftToSave: any = {
+      ...doc,
+      id: newId,
+      userId: user.uid, 
+      companyId: companyId,
+      updatedAt: Timestamp.now(),
+      auditLog: updatedAuditLog.map(log => ({ ...log, timestamp: safeTimestamp(log.timestamp) })),
+      documentDate: safeTimestamp(doc.documentDate),
+      policyStartDate: safeTimestamp(doc.policyStartDate),
+      policyEndDate: safeTimestamp(doc.policyEndDate),
+      createdAt: safeTimestamp(doc.createdAt) || Timestamp.now(),
+    };
+    
+    const finalDocRef = doc(firestore, 'companies', companyId, INSURANCE_COLLECTION, newId);
+    setDocumentNonBlocking(finalDocRef, draftToSave, { merge: true });
+
     toast({
-        title: "New Document",
-        description: "A new blank insurance document has been created.",
-      });
+      title: "Insurance Document Saved",
+      description: "Your document has been saved online.",
+    });
+
+    const updatedDocState = { ...doc, id: newId, auditLog: updatedAuditLog };
+    setDoc(updatedDocState);
+    setOriginalDocument(JSON.parse(JSON.stringify(updatedDocState)));
+
+    if (isNew) {
+      router.push(`/create-insurance?draftId=${newId}`, { scroll: false });
+    }
   };
 
-  if (!doc) {
+  const handleNew = () => {
+    if(!user || !companyId) return;
+    const newDocId = firestore ? doc(collection(firestore, 'companies', companyId, INSURANCE_COLLECTION)).id : crypto.randomUUID();
+     const newAuditLogEntry: AuditLogEntry = {
+        id: crypto.randomUUID(),
+        action: 'created',
+        timestamp: new Date(),
+        user: { name: user.displayName || user.email, email: user.email },
+        version: 1,
+    };
+    const newDoc: InsuranceDocument = { 
+        ...getInitialInsuranceDoc(), 
+        id: newDocId,
+        userId: user.uid, 
+        companyId: companyId,
+        auditLog: [newAuditLogEntry]
+    };
+    setDoc(newDoc);
+    setOriginalDocument(JSON.parse(JSON.stringify(newDoc)));
+    router.push('/create-insurance', { scroll: false });
+  };
+
+  if (!doc || (draftId && isDraftLoading)) {
     return (
-        <div className="container mx-auto p-4 md:p-8">
-            <h1 className="text-3xl font-bold font-headline">Loading...</h1>
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
+            <div className="lg:col-span-3 space-y-4"><Skeleton className="h-96 w-full" /><Skeleton className="h-64 w-full" /></div>
+            <div className="lg:col-span-2"><Skeleton className="h-[800px] w-full" /></div>
         </div>
     );
   }
 
   return (
     <>
+      <HistoryModal 
+        isOpen={historyModalState.isOpen}
+        onClose={() => setHistoryModalState({ isOpen: false, auditLog: [] })}
+        auditLog={historyModalState.auditLog}
+      />
       <div className="container mx-auto p-4 md:p-8">
         <div className="flex flex-col md:flex-row justify-between md:items-center gap-4 mb-8">
           <div>
@@ -197,6 +431,9 @@ export default function CreateInsurancePage() {
             <p className="text-muted-foreground">Select a template and fill out the form to generate your claim document.</p>
           </div>
           <div className="flex w-full md:w-auto items-center gap-2">
+              <Button onClick={handleSaveDraft} className="w-full md:w-auto">
+                  <Edit className="mr-2 h-4 w-4" /> Save Draft
+              </Button>
               <Button onClick={handlePrint} variant="outline" className="w-full md:w-auto">
                 <Printer className="mr-2 h-4 w-4" />
                 Save as PDF
@@ -215,6 +452,9 @@ export default function CreateInsurancePage() {
                         <Link href="/dashboard">
                             <LayoutDashboard className="mr-2 h-4 w-4" /> Dashboard
                         </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => handleHistoryClick(doc.auditLog)}>
+                        <History className="mr-2 h-4 w-4" /> History
                     </DropdownMenuItem>
                 </DropdownMenuContent>
             </DropdownMenu>

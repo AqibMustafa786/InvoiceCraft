@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import { z } from 'zod';
@@ -485,6 +486,8 @@ export interface Attachment {
 
 export interface InsuranceDocument {
   id: string;
+  userId: string;
+  companyId: string;
   logoUrl?: string;
   business: BusinessInfo;
   
@@ -550,6 +553,7 @@ export interface InsuranceDocument {
   paymentStatus: 'Unpaid' | 'Partially Paid' | 'Paid';
 
   attachments?: Attachment[];
+  auditLog: AuditLogEntry[];
 }
 
 
