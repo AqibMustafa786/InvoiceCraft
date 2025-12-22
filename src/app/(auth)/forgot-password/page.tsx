@@ -3,7 +3,6 @@
 
 import Link from 'next/link';
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -55,43 +54,42 @@ export default function ForgotPasswordPage() {
     };
 
     return (
-        <div className="flex min-h-[calc(100vh-4rem)] items-center justify-center p-4">
-            <Card className="w-full max-w-md bg-card/50 backdrop-blur-sm">
-                <CardHeader className="text-center">
-                    <CardTitle className="text-2xl font-headline">Forgot Password</CardTitle>
-                    <CardDescription>Enter your email to receive a password reset link.</CardDescription>
-                </CardHeader>
-                <Form {...form}>
-                    <form onSubmit={form.handleSubmit(onSubmit)}>
-                        <CardContent className="space-y-4">
-                            <FormField
-                                control={form.control}
-                                name="email"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>Email</FormLabel>
-                                        <FormControl>
-                                            <Input type="email" placeholder="name@example.com" {...field} />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-                        </CardContent>
-                        <CardFooter className="flex flex-col gap-4">
-                            <Button type="submit" className="w-full" disabled={isLoading}>
-                                {isLoading ? 'Sending...' : 'Send Reset Link'}
-                            </Button>
-                            <p className="text-center text-sm text-muted-foreground">
-                                Remember your password?{' '}
-                                <Link href="/login" className="font-semibold text-primary underline-offset-4 hover:underline">
-                                    Login
-                                </Link>
-                            </p>
-                        </CardFooter>
-                    </form>
-                </Form>
-            </Card>
-        </div>
+        <>
+            <div className="mb-8 text-left">
+                <h1 className="text-3xl font-bold font-headline">Forgot Password</h1>
+                <p className="text-muted-foreground mt-1">Enter your email to receive a password reset link.</p>
+            </div>
+            <Form {...form}>
+                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                    <FormField
+                        control={form.control}
+                        name="email"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Email</FormLabel>
+                                <FormControl>
+                                    <Input 
+                                        type="email" 
+                                        placeholder="name@example.com" 
+                                        {...field}
+                                        className="bg-background border-border h-12 rounded-lg"
+                                    />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                    <Button type="submit" className="w-full h-12 text-base" disabled={isLoading}>
+                        {isLoading ? 'Sending...' : 'Send Reset Link'}
+                    </Button>
+                </form>
+            </Form>
+            <p className="text-center text-sm text-muted-foreground mt-8">
+                Remember your password?{' '}
+                <Link href="/login" className="font-semibold text-primary underline-offset-4 hover:underline">
+                    Login
+                </Link>
+            </p>
+        </>
     );
 }
