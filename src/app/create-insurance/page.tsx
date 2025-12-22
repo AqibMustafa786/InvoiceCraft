@@ -195,7 +195,7 @@ const getInitialInsuranceDoc = (): Omit<InsuranceDocument, 'userId' | 'companyId
 });
 
 
-function PrintableInsuranceDoc({ doc, accentColor }: { doc: InsuranceDocument, accentColor: string }) {
+function PrintableInsuranceDoc({ doc: document, accentColor }: { doc: InsuranceDocument, accentColor: string }) {
     const [isMounted, setIsMounted] = useState(false);
 
     useEffect(() => {
@@ -212,7 +212,7 @@ function PrintableInsuranceDoc({ doc, accentColor }: { doc: InsuranceDocument, a
     }
 
     return createPortal(
-        <InsurancePreview doc={doc} accentColor={accentColor} id="insurance-preview-print" isPrint={true} />,
+        <InsurancePreview doc={document} accentColor={accentColor} id="insurance-preview-print" isPrint={true} />,
         printRoot
     );
 }
@@ -220,7 +220,7 @@ function PrintableInsuranceDoc({ doc, accentColor }: { doc: InsuranceDocument, a
 
 export default function CreateInsurancePage() {
   const { user, userProfile, isLoading: isAuthLoading } = useAuth();
-  const [doc, setDoc] = useState<InsuranceDocument | null>(null);
+  const [document, setDocument] = useState<InsuranceDocument | null>(null);
   const [originalDocument, setOriginalDocument] = useState<InsuranceDocument | null>(null);
   const [accentColor, setAccentColor] = useState<string>('hsl(var(--primary))');
   const { toast } = useToast();
@@ -292,7 +292,7 @@ export default function CreateInsurancePage() {
         };
     }
     
-    setDoc(initialDocument);
+    setDocument(initialDocument);
     setOriginalDocument(JSON.parse(JSON.stringify(initialDocument)));
 
     if (typeof window !== 'undefined' && window.document) {
@@ -319,7 +319,7 @@ export default function CreateInsurancePage() {
   };
   
     const handleSaveDraft = () => {
-    if (!doc || !firestore || !user || !userProfile?.companyId || !originalDocument) {
+    if (!document || !firestore || !user || !userProfile?.companyId || !originalDocument) {
          toast({
           title: "Cannot Save Draft",
           description: "You must be logged in to save a draft.",
@@ -330,10 +330,10 @@ export default function CreateInsurancePage() {
 
     const companyId = userProfile.companyId;
     const isNew = !searchParams.get('draftId');
-    const newId = isNew ? generateNewId(doc) : doc.id;
+    const newId = isNew ? generateNewId(document) : document.id;
 
-    const changes = diff(originalDocument, doc);
-    const existingLog = normalizeAuditLog(doc.auditLog);
+    const changes = diff(originalDocument, document);
+    const existingLog = normalizeAuditLog(document.auditLog);
     
     let updatedAuditLog: AuditLogEntry[] = [...existingLog];
 
@@ -358,16 +358,16 @@ export default function CreateInsurancePage() {
     };
 
     const draftToSave: any = {
-      ...doc,
+      ...document,
       id: newId,
       userId: user.uid, 
       companyId: companyId,
       updatedAt: Timestamp.now(),
       auditLog: updatedAuditLog.map(log => ({ ...log, timestamp: safeTimestamp(log.timestamp) })),
-      documentDate: safeTimestamp(doc.documentDate),
-      policyStartDate: safeTimestamp(doc.policyStartDate),
-      policyEndDate: safeTimestamp(doc.policyEndDate),
-      createdAt: safeTimestamp(doc.createdAt) || Timestamp.now(),
+      documentDate: safeTimestamp(document.documentDate),
+      policyStartDate: safeTimestamp(document.policyStartDate),
+      policyEndDate: safeTimestamp(document.policyEndDate),
+      createdAt: safeTimestamp(document.createdAt) || Timestamp.now(),
     };
     
     const finalDocRef = doc(firestore, 'companies', companyId, INSURANCE_COLLECTION, newId);
@@ -378,8 +378,8 @@ export default function CreateInsurancePage() {
       description: "Your document has been saved online.",
     });
 
-    const updatedDocState = { ...doc, id: newId, auditLog: updatedAuditLog };
-    setDoc(updatedDocState);
+    const updatedDocState = { ...document, id: newId, auditLog: updatedAuditLog };
+    setDocument(updatedDocState);
     setOriginalDocument(JSON.parse(JSON.stringify(updatedDocState)));
 
     if (isNew) {
@@ -404,13 +404,13 @@ export default function CreateInsurancePage() {
         companyId: companyId,
         auditLog: [newAuditLogEntry]
     };
-    setDoc(newDoc);
+    setDocument(newDoc);
     setOriginalDocument(JSON.parse(JSON.stringify(newDoc)));
     router.push('/create-insurance', { scroll: false });
   };
   
   const handleDuplicate = () => {
-    if (!doc || !user || !companyId) return;
+    if (!document || !user || !companyId) return;
     const newDocId = firestore ? doc(collection(firestore, 'companies', companyId, INSURANCE_COLLECTION)).id : crypto.randomUUID();
     const newAuditLogEntry: AuditLogEntry = {
         id: crypto.randomUUID(),
@@ -420,27 +420,27 @@ export default function CreateInsurancePage() {
         version: 1,
     };
     const duplicatedDoc: InsuranceDocument = {
-        ...doc,
+        ...document,
         id: newDocId,
-        policyNumber: `${doc.policyNumber}-COPY`,
+        policyNumber: `${document.policyNumber}-COPY`,
         auditLog: [newAuditLogEntry],
     };
-    setDoc(duplicatedDoc);
+    setDocument(duplicatedDoc);
     setOriginalDocument(JSON.parse(JSON.stringify(duplicatedDoc)));
     router.push(`/create-insurance?draftId=${newDocId}`, { scroll: false });
     toast({ title: "Document Duplicated", description: "A new draft has been created from the original." });
   };
 
   const handleStatusChange = (status: 'active' | 'cancelled') => {
-    if (!doc || !firestore || !companyId) return;
-    const docRef = doc(firestore, 'companies', companyId, INSURANCE_COLLECTION, doc.id);
+    if (!document || !firestore || !companyId) return;
+    const docRef = doc(firestore, 'companies', companyId, INSURANCE_COLLECTION, document.id);
     updateDocumentNonBlocking(docRef, { status: status });
-    setDoc(prev => prev ? ({ ...prev, status }) : null);
+    setDocument(prev => prev ? ({ ...prev, status }) : null);
     toast({ title: "Status Updated", description: `Document status changed to "${status}".` });
   };
 
 
-  if (!doc || (draftId && isDraftLoading)) {
+  if (!document || (draftId && isDraftLoading)) {
     return (
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
             <div className="lg:col-span-3 space-y-4"><Skeleton className="h-96 w-full" /><Skeleton className="h-64 w-full" /></div>
@@ -496,7 +496,7 @@ export default function CreateInsurancePage() {
                         <Archive className="mr-2 h-4 w-4" /> Archive (Cancel)
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem onClick={() => handleHistoryClick(doc.auditLog)}>
+                    <DropdownMenuItem onClick={() => handleHistoryClick(document.auditLog)}>
                         <History className="mr-2 h-4 w-4" /> History
                     </DropdownMenuItem>
                 </DropdownMenuContent>
@@ -509,8 +509,8 @@ export default function CreateInsurancePage() {
              <div className="space-y-6">
                 <h2 className="text-2xl font-bold font-headline mb-4 text-center lg:text-left">Fill in Details</h2>
                 <InsuranceForm 
-                  document={doc} 
-                  setDocument={setDoc} 
+                  document={document} 
+                  setDocument={setDocument} 
                   accentColor={accentColor}
                   setAccentColor={setAccentColor}
                   toast={toast}
@@ -532,22 +532,21 @@ export default function CreateInsurancePage() {
                           </SheetHeader>
                           <div className="py-4">
                               <InsuranceTemplateSelector 
-                                  selectedTemplate={doc.template}
-                                  onSelectTemplate={(template) => setDoc(prev => prev ? ({...prev, template}) : null)}
+                                  selectedTemplate={document.template}
+                                  onSelectTemplate={(template) => setDocument(prev => prev ? ({...prev, template}) : null)}
                               />
                           </div>
                       </SheetContent>
                 </Sheet>
                 <div>
                   <h2 className="text-2xl font-bold font-headline mb-4">Live Preview</h2>
-                  <InsurancePreview doc={doc} accentColor={accentColor} />
+                  <InsurancePreview doc={document} accentColor={accentColor} />
                 </div>
             </div>
           </div>
         </div>
       </div>
-      <PrintableInsuranceDoc doc={doc} accentColor={accentColor} />
+      <PrintableInsuranceDoc doc={document} accentColor={accentColor} />
     </>
   );
 }
-
