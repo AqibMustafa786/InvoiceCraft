@@ -176,10 +176,17 @@ const UsaClaimDefaultTemplatePage = ({ pageItems, pageIndex, totalPages, ...comm
                         </ul>
                     </section>
                  )}
-                {doc.notes && (
+                {doc.termsAndConditions && (
                     <footer className="mt-8 text-xs" data-element="footer">
                         <p className="font-bold">Terms &amp; Conditions:</p>
-                        <p className="text-gray-600 whitespace-pre-line">{doc.notes}</p>
+                        <p className="text-gray-600 whitespace-pre-line">{doc.termsAndConditions}</p>
+                        {doc.business.ownerSignature && (
+                          <div className="mt-8">
+                            <p className="font-bold">Authorized Signature:</p>
+                            <Image src={doc.business.ownerSignature.image} alt="Signature" width={150} height={75} />
+                            <p>({doc.business.ownerSignature.signerName})</p>
+                          </div>
+                        )}
                     </footer>
                 )}
             </div>

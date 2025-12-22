@@ -10,7 +10,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { DatePicker } from '@/components/ui/datepicker';
-import { ImageUp, Plus, Trash2, Palette, X, Mail, Phone, Hash, ShieldCheck, User, FolderArchive, FileText, Calendar, AlertTriangle, Building, UserCircle, Loader2, Globe, Award, Key, Heart, Car, Home, UploadCloud, File } from 'lucide-react';
+import { ImageUp, Plus, Trash2, Palette, X, Mail, Phone, Hash, ShieldCheck, User, FolderArchive, FileText, Calendar, AlertTriangle, Building, UserCircle, Loader2, Globe, Award, Key, Heart, Car, Home, UploadCloud, File, Pencil, MessageSquare } from 'lucide-react';
 import Image from 'next/image';
 import {
   Select,
@@ -21,6 +21,8 @@ import {
 } from "@/components/ui/select";
 import { RadioGroup, RadioGroupItem } from './ui/radio-group';
 import { Checkbox } from './ui/checkbox';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from './ui/dialog';
+import { SignaturePad } from './signature-pad';
 
 interface InsuranceFormProps {
   document: InsuranceDocument;
@@ -62,6 +64,7 @@ export function InsuranceForm({ document: doc, setDocument: setDoc, accentColor,
   const [colorInputValue, setColorInputValue] = useState(accentColor);
   const [isUploading, setIsUploading] = useState(false);
   const [isUploadingAttachment, setIsUploadingAttachment] = useState<Record<string, boolean>>({});
+  const [isSignatureDialogOpen, setIsSignatureDialogOpen] = useState(false);
 
   useEffect(() => {
     setColorInputValue(accentColor);
@@ -159,6 +162,31 @@ export function InsuranceForm({ document: doc, setDocument: setDoc, accentColor,
         setIsUploading(false);
       }
     }
+  };
+  
+    const handleOwnerSignatureSave = (image: string, signerName: string) => {
+    setDoc(prev => ({
+        ...prev,
+        business: {
+            ...prev.business,
+            ownerSignature: {
+                image,
+                signerName,
+                signedAt: new Date(),
+            }
+        }
+    }));
+    setIsSignatureDialogOpen(false);
+  };
+  
+  const handleDeleteSignature = () => {
+    const { ownerSignature, ...businessRest } = doc.business;
+    setDoc(prev => ({
+      ...prev,
+      business: {
+        ...businessRest
+      }
+    }));
   };
 
   const handleAttachmentUpload = async (e: ChangeEvent<HTMLInputElement>, type: Attachment['type']) => {
@@ -568,12 +596,66 @@ export function InsuranceForm({ document: doc, setDocument: setDoc, accentColor,
         </CardHeader>
         <CardContent>
           <Textarea 
-            name="notes"
-            value={doc.notes} 
+            name="termsAndConditions"
+            value={doc.termsAndConditions} 
             onChange={handleInputChange}
             placeholder="Enter policy terms, conditions, jurisdiction, etc."
             rows={6}
           />
+        </CardContent>
+      </Card>
+      <Card className="bg-card/50 backdrop-blur-sm shadow-lg hover:shadow-primary/20 transition-shadow duration-300">
+        <CardHeader>
+          <CardTitle>Notes &amp; Internal Remarks</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <Textarea 
+            name="internalNotes"
+            value={doc.internalNotes || ''} 
+            onChange={handleInputChange}
+            placeholder="Internal notes, not visible to client..."
+            rows={4}
+          />
+        </CardContent>
+      </Card>
+       <Card className="bg-card/50 backdrop-blur-sm shadow-lg hover:shadow-primary/20 transition-shadow duration-300">
+        <CardHeader>
+            <CardTitle>Signature &amp; Authorization</CardTitle>
+        </CardHeader>
+        <CardContent>
+            <div className="space-y-2">
+                <Label>Authorized Person Signature</Label>
+                <div className="flex gap-2">
+                    <Dialog open={isSignatureDialogOpen} onOpenChange={setIsSignatureDialogOpen}>
+                        <DialogTrigger asChild>
+                            <Button variant="outline" className="w-full">
+                                <Pencil className="mr-2 h-4 w-4" />
+                                {doc.business.ownerSignature ? 'Edit Signature' : 'Add Signature'}
+                            </Button>
+                        </DialogTrigger>
+                        <DialogContent>
+                            <DialogHeader>
+                                <DialogTitle>Authorized Signature</DialogTitle>
+                                <DialogDescription>
+                                    Draw your signature below. This will appear on the document.
+                                </DialogDescription>
+                            </DialogHeader>
+                            <SignaturePad onSave={handleOwnerSignatureSave} signerName={doc.business.name} />
+                        </DialogContent>
+                    </Dialog>
+                    {doc.business.ownerSignature && (
+                      <Button variant="destructive" onClick={handleDeleteSignature}>
+                          <Trash2 className="mr-2 h-4 w-4" />
+                          Delete
+                      </Button>
+                    )}
+                </div>
+                 {doc.business.ownerSignature && (
+                    <div className="p-4 border rounded-md bg-muted/50">
+                        <Image src={doc.business.ownerSignature.image} alt="Owner Signature" width={150} height={75} />
+                    </div>
+                )}
+            </div>
         </CardContent>
       </Card>
        <Card className="bg-card/50 backdrop-blur-sm shadow-lg hover:shadow-primary/20 transition-shadow duration-300">

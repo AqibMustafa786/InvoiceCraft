@@ -512,7 +512,8 @@ export interface InsuranceDocument {
   discount: number;
   shippingCost: number;
 
-  notes: string;
+  termsAndConditions: string;
+  internalNotes?: string;
 
   currency: string;
   language: string;
