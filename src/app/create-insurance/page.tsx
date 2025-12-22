@@ -8,11 +8,18 @@ import type { InsuranceDocument } from '@/lib/types';
 import { InsuranceForm } from '@/components/insurance-form';
 import { InsurancePreview } from '@/components/insurance-preview';
 import { Button } from '@/components/ui/button';
-import { Printer, FilePlus, LayoutDashboard } from 'lucide-react';
+import { Printer, FilePlus, LayoutDashboard, Brush, MoreVertical } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { InsuranceTemplateSelector } from '@/components/insurance-template-selector';
 import Link from 'next/link';
 import { serverTimestamp } from 'firebase/firestore';
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 
 const getInitialLineItem = () => ({ id: crypto.randomUUID(), name: '', quantity: 1, unitPrice: 0, rate: 0 });
 
@@ -50,7 +57,8 @@ const getInitialInsuranceDoc = (): InsuranceDocument => ({
   template: 'usa-claim-default',
   createdAt: serverTimestamp(),
   updatedAt: serverTimestamp(),
-  textColor: '',
+  textColor: '#374151',
+  backgroundColor: '#FFFFFF',
 });
 
 
@@ -133,33 +141,33 @@ export default function CreateInsurancePage() {
             <h1 className="text-3xl font-bold font-headline">Create Insurance Document</h1>
             <p className="text-muted-foreground">Select a template and fill out the form to generate your claim document.</p>
           </div>
-          <div className="flex flex-wrap gap-2">
-              <Button onClick={handleNew} variant="outline">
-                  <FilePlus className="mr-2 h-5 w-5" />
-                  New
-              </Button>
-              <Button asChild variant="outline">
-                <Link href="/dashboard">
-                  <LayoutDashboard className="mr-2 h-5 w-5" />
-                  Dashboard
-                </Link>
-              </Button>
-              <Button onClick={handlePrint}>
-                <Printer className="mr-2 h-5 w-5" />
+          <div className="flex w-full md:w-auto items-center gap-2">
+              <Button onClick={handlePrint} variant="outline" className="w-full md:w-auto">
+                <Printer className="mr-2 h-4 w-4" />
                 Save as PDF
               </Button>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                    <Button variant="outline" size="icon" className="shrink-0">
+                        <MoreVertical className="h-4 w-4" />
+                    </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                    <DropdownMenuItem onClick={handleNew}>
+                        <FilePlus className="mr-2 h-4 w-4" /> New
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                        <Link href="/dashboard">
+                            <LayoutDashboard className="mr-2 h-4 w-4" /> Dashboard
+                        </Link>
+                    </DropdownMenuItem>
+                </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 xl:gap-12">
           <div className="lg:col-span-3">
-             <div className="mb-12">
-                <h2 className="text-2xl font-bold font-headline mb-6 text-center">Select a Template</h2>
-                 <InsuranceTemplateSelector 
-                  selectedTemplate={doc.template}
-                  onSelectTemplate={(template) => setDoc(prev => prev ? ({...prev, template}) : null)}
-                />
-              </div>
             <h2 className="text-2xl font-bold font-headline mb-4 text-center lg:text-left">Fill in Details</h2>
             <InsuranceForm 
               document={doc} 
@@ -172,9 +180,30 @@ export default function CreateInsurancePage() {
             />
           </div>
           <div className="lg:col-span-2">
-             <div className="sticky top-24">
-                <h2 className="text-2xl font-bold font-headline mb-6">Live Preview</h2>
-                <InsurancePreview doc={doc} logoUrl={logoUrl} accentColor={accentColor} />
+             <div className="sticky top-24 space-y-4">
+                <Sheet>
+                      <SheetTrigger asChild>
+                          <Button variant="outline" className="w-full">
+                              <Brush className="mr-2 h-4 w-4" />
+                              Change Template
+                          </Button>
+                      </SheetTrigger>
+                      <SheetContent className="w-full sm:max-w-xl overflow-y-auto">
+                          <SheetHeader>
+                              <SheetTitle>Select a Template</SheetTitle>
+                          </SheetHeader>
+                          <div className="py-4">
+                              <InsuranceTemplateSelector 
+                                  selectedTemplate={doc.template}
+                                  onSelectTemplate={(template) => setDoc(prev => prev ? ({...prev, template}) : null)}
+                              />
+                          </div>
+                      </SheetContent>
+                </Sheet>
+                <div>
+                  <h2 className="text-2xl font-bold font-headline mb-4">Live Preview</h2>
+                  <InsurancePreview doc={doc} logoUrl={logoUrl} accentColor={accentColor} />
+                </div>
             </div>
           </div>
         </div>

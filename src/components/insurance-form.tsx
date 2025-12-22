@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import { ChangeEvent, Dispatch, SetStateAction, useState, useEffect } from 'react';
@@ -9,7 +10,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { DatePicker } from '@/components/ui/datepicker';
-import { ImageUp, Plus, Trash2, Palette, X, Mail, Phone, Hash, ShieldCheck, User, FolderArchive, FileText, Calendar, AlertTriangle, Building, UserCircle } from 'lucide-react';
+import { ImageUp, Plus, Trash2, Palette, X, Mail, Phone, Hash, ShieldCheck, User, FolderArchive, FileText, Calendar, AlertTriangle, Building, UserCircle, Loader2 } from 'lucide-react';
 import Image from 'next/image';
 import {
   Select,
@@ -52,6 +53,7 @@ const languages = [
 
 export function InsuranceForm({ document: doc, setDocument: setDoc, logoUrl, setLogoUrl, accentColor, setAccentColor, toast }: InsuranceFormProps) {
   const [colorInputValue, setColorInputValue] = useState(accentColor);
+  const [isUploading, setIsUploading] = useState(false);
 
   useEffect(() => {
     setColorInputValue(accentColor);
@@ -101,22 +103,48 @@ export function InsuranceForm({ document: doc, setDocument: setDoc, logoUrl, set
     setDoc(prev => ({ ...prev, items: newItems }));
   };
 
-  const handleLogoUpload = (e: ChangeEvent<HTMLInputElement>) => {
+  const handleLogoUpload = async (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
-       if (file.size > 2 * 1024 * 1024) { // 2MB limit
+      if (file.size > 4 * 1024 * 1024) { // 4MB limit
         toast({
           title: "Image too large",
-          description: "Please upload an image smaller than 2MB.",
+          description: "Please upload an image smaller than 4MB.",
           variant: "destructive",
         });
         return;
       }
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setLogoUrl(reader.result as string);
-      };
-      reader.readAsDataURL(file);
+
+      setIsUploading(true);
+      const formData = new FormData();
+      formData.append('file', file);
+
+      try {
+        const response = await fetch('/api/upload', {
+          method: 'POST',
+          body: formData,
+        });
+
+        if (!response.ok) {
+          throw new Error('Upload failed');
+        }
+
+        const { url } = await response.json();
+        setLogoUrl(url);
+        toast({
+          title: "Logo Uploaded",
+          description: "Your logo has been successfully uploaded.",
+        });
+      } catch (error) {
+        console.error("Upload error:", error);
+        toast({
+          title: "Upload Failed",
+          description: "Could not upload the logo. Please try again.",
+          variant: "destructive",
+        });
+      } finally {
+        setIsUploading(false);
+      }
     }
   };
   
@@ -136,17 +164,24 @@ export function InsuranceForm({ document: doc, setDocument: setDoc, logoUrl, set
                         {logoUrl ? (
                             <div className="flex items-center gap-4">
                                 <Image src={logoUrl} alt="Company Logo" width={80} height={40} className="rounded-md object-contain bg-muted p-1" />
-                                <Button asChild variant="outline" size="sm">
-                                    <label htmlFor="logo-upload" className="cursor-pointer">Change</label>
-                                </Button>
-                                <Button variant="destructive" size="sm" onClick={() => setLogoUrl(null)}><X className="h-4 w-4 mr-1" /> Remove</Button>
+                                 <div className="flex items-center gap-2">
+                                    <Button asChild variant="outline" size="sm" disabled={isUploading}>
+                                        <label htmlFor="logo-upload" className="cursor-pointer">Change</label>
+                                    </Button>
+                                    <Button variant="destructive" size="sm" onClick={() => setLogoUrl(null)} disabled={isUploading}>
+                                    <X className="h-4 w-4 mr-1" /> Remove
+                                    </Button>
+                                </div>
                             </div>
                         ) : (
-                            <Button asChild variant="outline" className="w-full">
-                                <label htmlFor="logo-upload" className="cursor-pointer flex items-center justify-center gap-2"><ImageUp className="h-4 w-4" /> Upload Logo</label>
+                            <Button asChild variant="outline" className="w-full" disabled={isUploading}>
+                                <label htmlFor="logo-upload" className="cursor-pointer flex items-center justify-center gap-2">
+                                {isUploading ? <Loader2 className="h-4 w-4 animate-spin" /> : <ImageUp className="h-4 w-4" />}
+                                {isUploading ? 'Uploading...' : 'Upload Logo'}
+                                </label>
                             </Button>
                         )}
-                        <Input id="logo-upload" type="file" className="sr-only" onChange={handleLogoUpload} accept="image/png, image/jpeg, image/gif" />
+                        <Input id="logo-upload" type="file" className="sr-only" onChange={handleLogoUpload} accept="image/png, image/jpeg, image/gif" disabled={isUploading}/>
                     </div>
                 </div>
                 <div className="space-y-2">
