@@ -100,14 +100,18 @@ export function Header() {
                         <Button 
                           variant="ghost" 
                           className="px-3 py-2 flex items-center gap-1 focus-visible:ring-0 data-[state=open]:bg-accent"
+                          onMouseEnter={() => setIsToolsMenuOpen(true)}
+                          onMouseLeave={() => setIsToolsMenuOpen(false)}
                         >
                           Tools
-                          <ChevronDown className="h-4 w-4 transition-transform duration-200 data-[state=open]:rotate-180" />
+                          <ChevronDown className={cn("h-4 w-4 transition-transform duration-200", isToolsMenuOpen && "rotate-180")} />
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent 
                         align="center"
                         className="w-80 p-4"
+                        onMouseEnter={() => setIsToolsMenuOpen(true)}
+                        onMouseLeave={() => setIsToolsMenuOpen(false)}
                       >
                         <div className="grid grid-cols-1 gap-2">
                           {generalToolsLinks.map(link => (
