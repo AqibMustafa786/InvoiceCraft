@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import { useState, useLayoutEffect, useRef, useEffect } from 'react';
@@ -169,7 +170,7 @@ const UsaClaimDefaultTemplatePage = ({ pageItems, pageIndex, totalPages, ...comm
                 </main>
                 {doc.notes && (
                     <footer className="mt-8 text-xs" data-element="footer">
-                        <p className="font-bold">Notes:</p>
+                        <p className="font-bold">Terms &amp; Conditions:</p>
                         <p className="text-gray-600 whitespace-pre-line">{doc.notes}</p>
                     </footer>
                 )}
@@ -209,7 +210,7 @@ export function InsurancePreview({ doc, accentColor, id = 'insurance-preview', i
   const discountAmount = (subtotal * doc.discount) / 100;
   const total = subtotal + taxAmount - discountAmount + (doc.shippingCost || 0);
   const currencySymbol = currencySymbols[doc.currency] || '$';
-  const t = locales[doc.language as keyof typeof locales] || locales.en;
+  const t = locales[doc.language as keyof locales] || locales.en;
 
   useEffect(() => {
     setNeedsRemeasure(true);

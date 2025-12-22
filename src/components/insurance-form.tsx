@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import { ChangeEvent, Dispatch, SetStateAction, useState, useEffect } from 'react';
@@ -525,6 +526,20 @@ export function InsuranceForm({ document: doc, setDocument: setDoc, accentColor,
               </Select>
             </div>
           </div>
+        </CardContent>
+      </Card>
+      <Card className="bg-card/50 backdrop-blur-sm shadow-lg hover:shadow-primary/20 transition-shadow duration-300">
+        <CardHeader>
+          <CardTitle>Terms &amp; Conditions</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <Textarea 
+            name="notes"
+            value={doc.notes} 
+            onChange={handleInputChange}
+            placeholder="Enter policy terms, conditions, jurisdiction, etc."
+            rows={6}
+          />
         </CardContent>
       </Card>
     </div>

@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
@@ -67,7 +68,7 @@ const getInitialInsuranceDoc = (): InsuranceDocument => ({
   discount: 0,
   shippingCost: 0,
   
-  notes: 'Thank you for your cooperation.',
+  notes: 'This policy is subject to the terms, conditions, and exclusions as specified in the full policy document. This document serves as a summary and does not override the master policy agreement. All claims are subject to verification and investigation. This policy is governed by the laws of the specified jurisdiction.',
   
   currency: 'USD',
   language: 'en',
