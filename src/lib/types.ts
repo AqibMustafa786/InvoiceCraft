@@ -1,4 +1,3 @@
-
 'use client';
 
 import { z } from 'zod';
@@ -13,7 +12,7 @@ export interface LineItem {
   taxable?: boolean;
 }
 
-export type DocumentStatus = 'draft' | 'sent' | 'paid' | 'overdue' | 'accepted' | 'rejected' | 'expired' | 'active' | 'cancelled';
+export type DocumentStatus = 'draft' | 'sent' | 'paid' | 'overdue' | 'accepted' | 'rejected' | 'expired' | 'active' | 'cancelled' | 'unpaid' | 'partially-paid';
 
 export type InvoiceCategory = 
   | "General Services"
@@ -536,6 +535,11 @@ export interface InsuranceDocument {
   policyEndDate: Date;
   renewalOption: boolean;
   status: DocumentStatus;
+
+  // Premium & Payment
+  paymentFrequency: 'Monthly' | 'Quarterly' | 'Yearly' | 'One-time';
+  paymentMethod: 'Cash' | 'Bank Transfer' | 'Online';
+  paymentStatus: 'Unpaid' | 'Partially Paid' | 'Paid';
 }
 
 

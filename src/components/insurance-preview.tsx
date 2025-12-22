@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useLayoutEffect, useRef, useEffect } from 'react';
@@ -134,13 +133,9 @@ const UsaClaimDefaultTemplatePage = ({ pageItems, pageIndex, totalPages, ...comm
                             </tr>
                         </thead>
                         <tbody>
-                            <tr data-element="table-row">
-                                <td className="border p-2 align-top h-8 whitespace-pre-line font-bold">{doc.insuredItemDescription}</td>
-                                <td className="border p-2 text-right align-top"></td>
-                            </tr>
                             {pageItems?.filter(Boolean).map((item) => (
                                 <tr key={item.id} data-element="table-row">
-                                    <td className="border p-2 align-top h-8 whitespace-pre-line pl-6">{item.name}</td>
+                                    <td className="border p-2 align-top h-8 whitespace-pre-line font-bold">{item.name}</td>
                                     <td className="border p-2 text-right align-top">{currencySymbol}{(item.quantity * item.rate).toFixed(2)}</td>
                                 </tr>
                             ))}

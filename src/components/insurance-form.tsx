@@ -1,4 +1,3 @@
-
 'use client';
 
 import { ChangeEvent, Dispatch, SetStateAction, useState, useEffect } from 'react';
@@ -53,7 +52,9 @@ const languages = [
 const insuranceCategories: InsuranceCategory[] = ['Vehicle', 'Health', 'Property', 'Life', 'Business', 'Travel', 'Other'];
 const policyTypes = ['Comprehensive', 'Third-Party', 'Basic', 'Premium'];
 const policyStatuses: DocumentStatus[] = ['draft', 'active', 'expired', 'cancelled'];
-
+const paymentFrequencies: InsuranceDocument['paymentFrequency'][] = ['Monthly', 'Quarterly', 'Yearly', 'One-time'];
+const paymentMethods: InsuranceDocument['paymentMethod'][] = ['Cash', 'Bank Transfer', 'Online'];
+const paymentStatuses: InsuranceDocument['paymentStatus'][] = ['Unpaid', 'Partially Paid', 'Paid'];
 
 export function InsuranceForm({ document: doc, setDocument: setDoc, accentColor, setAccentColor, toast }: InsuranceFormProps) {
   const [colorInputValue, setColorInputValue] = useState(accentColor);
@@ -109,26 +110,6 @@ export function InsuranceForm({ document: doc, setDocument: setDoc, accentColor,
   const handleItemChange = (index: number, field: keyof LineItem, value: string | number) => {
     const newItems = [...doc.items];
     (newItems[index] as any)[field] = value;
-    setDoc(prev => ({ ...prev, items: newItems }));
-  };
-
-  const addItem = () => {
-     if (doc.items.length >= 50) {
-       toast({
-        title: "Item Limit Reached",
-        description: "You cannot add more than 50 items.",
-        variant: "destructive",
-      });
-      return;
-    }
-    setDoc(prev => ({
-      ...prev,
-      items: [...prev.items, { id: crypto.randomUUID(), name: '', quantity: 1, rate: 0, unitPrice: 0 }],
-    }));
-  };
-
-  const removeItem = (index: number) => {
-    const newItems = doc.items.filter((_, i) => i !== index);
     setDoc(prev => ({ ...prev, items: newItems }));
   };
 
@@ -418,11 +399,6 @@ export function InsuranceForm({ document: doc, setDocument: setDoc, accentColor,
             <Textarea id="insuredItemDescription" name="insuredItemDescription" value={doc.insuredItemDescription} onChange={handleInputChange} />
           </div>
 
-           <div className="space-y-2">
-            <Label htmlFor="coveragePurpose">Coverage Purpose / Risk Description</Label>
-            <Textarea id="coveragePurpose" name="coveragePurpose" value={doc.coveragePurpose} onChange={handleInputChange} />
-          </div>
-
           {doc.insuranceCategory === 'Vehicle' && doc.vehicle && (
             <div className="p-4 border rounded-md space-y-4">
               <h4 className="font-semibold flex items-center gap-2"><Car className="h-5 w-5" /> Vehicle Details</h4>
@@ -497,6 +473,57 @@ export function InsuranceForm({ document: doc, setDocument: setDoc, accentColor,
                 <Label htmlFor="excludedRisks">Excluded Risks</Label>
                 <Textarea id="excludedRisks" name="excludedRisks" value={doc.excludedRisks} onChange={handleInputChange} placeholder="List what is NOT covered." />
             </div>
+        </CardContent>
+      </Card>
+      <Card className="bg-card/50 backdrop-blur-sm shadow-lg hover:shadow-primary/20 transition-shadow duration-300">
+        <CardHeader>
+          <CardTitle>Premium &amp; Payment Information</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="premiumAmount">Premium Amount</Label>
+            <div className="relative flex items-center">
+              <span className="absolute left-3 text-muted-foreground">{currencySymbol}</span>
+              <Input
+                id="premiumAmount"
+                type="number"
+                value={doc.items[0]?.unitPrice || 0}
+                onChange={(e) => handleItemChange(0, 'unitPrice', parseFloat(e.target.value) || 0)}
+                className="pl-8"
+              />
+            </div>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="tax">Tax (%)</Label>
+              <Input id="tax" name="tax" type="number" value={doc.tax} onChange={handleNumberChange} />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="discount">Discount (%)</Label>
+              <Input id="discount" name="discount" type="number" value={doc.discount} onChange={handleNumberChange} />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="paymentFrequency">Payment Frequency</Label>
+              <Select value={doc.paymentFrequency} onValueChange={(value: any) => setDoc(p => ({...p, paymentFrequency: value}))}>
+                <SelectTrigger id="paymentFrequency"><SelectValue /></SelectTrigger>
+                <SelectContent>{paymentFrequencies.map(f => <SelectItem key={f} value={f}>{f}</SelectItem>)}</SelectContent>
+              </Select>
+            </div>
+             <div className="space-y-2">
+              <Label htmlFor="paymentMethod">Payment Method</Label>
+              <Select value={doc.paymentMethod} onValueChange={(value: any) => setDoc(p => ({...p, paymentMethod: value}))}>
+                <SelectTrigger id="paymentMethod"><SelectValue /></SelectTrigger>
+                <SelectContent>{paymentMethods.map(m => <SelectItem key={m} value={m}>{m}</SelectItem>)}</SelectContent>
+              </Select>
+            </div>
+            <div className="md:col-span-2 space-y-2">
+              <Label htmlFor="paymentStatus">Payment Status</Label>
+              <Select value={doc.paymentStatus} onValueChange={(value: any) => setDoc(p => ({...p, paymentStatus: value}))}>
+                <SelectTrigger id="paymentStatus"><SelectValue /></SelectTrigger>
+                <SelectContent>{paymentStatuses.map(s => <SelectItem key={s} value={s} className="capitalize">{s}</SelectItem>)}</SelectContent>
+              </Select>
+            </div>
+          </div>
         </CardContent>
       </Card>
     </div>

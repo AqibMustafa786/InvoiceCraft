@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
@@ -21,7 +20,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { addDays } from 'date-fns';
 
-const getInitialLineItem = () => ({ id: crypto.randomUUID(), name: '', quantity: 1, rate: 0, unitPrice: 0 });
+const getInitialLineItem = () => ({ id: crypto.randomUUID(), name: 'Premium', quantity: 1, rate: 1200, unitPrice: 1200 });
 
 const getInitialInsuranceDoc = (): InsuranceDocument => ({
   id: crypto.randomUUID(),
@@ -62,8 +61,8 @@ const getInitialInsuranceDoc = (): InsuranceDocument => ({
   policyNumber: `DOC-${new Date().getFullYear()}-${String(Math.floor(Math.random() * 1000)).padStart(3, '0')}`,
   documentDate: new Date(),
   
-  items: [{ ...getInitialLineItem(), name: 'Sample Service', rate: 100 }],
-  tax: 0,
+  items: [getInitialLineItem()],
+  tax: 5,
   discount: 0,
   shippingCost: 0,
   
@@ -83,7 +82,7 @@ const getInitialInsuranceDoc = (): InsuranceDocument => ({
   coveragePurpose: 'Repair of damages as per policy terms.',
   coverageAmount: 10000,
   deductibleAmount: 500,
-  coverageScope: 'Covers accidental damage, theft, and third-party liability.',
+  coverageScope: '- Collision with other vehicles\n- Fire and theft\n- Natural disasters (flood, earthquake)',
   includedRisks: '- Collision with other vehicles\n- Fire and theft\n- Natural disasters (flood, earthquake)',
   excludedRisks: '- Wear and tear\n- Mechanical breakdown\n- Intentional damage',
 
@@ -111,6 +110,9 @@ const getInitialInsuranceDoc = (): InsuranceDocument => ({
   policyEndDate: addDays(new Date(), 365),
   renewalOption: true,
   status: 'draft',
+  paymentFrequency: 'Monthly',
+  paymentMethod: 'Online',
+  paymentStatus: 'Unpaid',
 });
 
 
