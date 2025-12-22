@@ -1,7 +1,7 @@
+
 'use client';
 
 import {
-  getAuth,
   signInWithPopup,
   GoogleAuthProvider,
   GithubAuthProvider,
@@ -12,10 +12,6 @@ import {
 import { getFirestore, doc, setDoc, getDoc, serverTimestamp } from 'firebase/firestore';
 import { getFirebase } from '@/firebase';
 
-// Use the singleton Firebase instance from the main initializer
-const { auth, firestore } = getFirebase();
-
-
 /**
  * Creates a user profile and company in Firestore if they don't already exist.
  * This is used for both social sign-ups and email/password sign-ups.
@@ -25,6 +21,8 @@ const { auth, firestore } = getFirebase();
 export const createProfileAndCompany = async (user: User, displayName?: string | null) => {
     if (!user) throw new Error("User object is null.");
     
+    // Get firestore instance inside the function
+    const { firestore } = getFirebase();
     const userRef = doc(firestore, "users", user.uid);
     const userSnap = await getDoc(userRef);
 
@@ -69,6 +67,8 @@ export const createProfileAndCompany = async (user: User, displayName?: string |
 
 
 const socialLogin = async (provider: GoogleAuthProvider | GithubAuthProvider | FacebookAuthProvider): Promise<UserCredential> => {
+    // Get auth and firestore instances inside the function to ensure they are fresh
+    const { auth, firestore } = getFirebase();
     try {
         const userCredential = await signInWithPopup(auth, provider);
         const user = userCredential.user;
