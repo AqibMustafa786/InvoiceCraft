@@ -13,7 +13,6 @@ import locales from '@/lib/locales';
 // --- PROPS ---
 interface InsurancePreviewProps {
   doc: InsuranceDocument;
-  logoUrl: string | null;
   accentColor: string;
   id?: string;
   isPrint?: boolean;
@@ -21,7 +20,6 @@ interface InsurancePreviewProps {
 
 interface CommonTemplateProps {
   doc: InsuranceDocument;
-  logoUrl: string | null;
   accentColor: string;
   t: any;
   currencySymbol: string;
@@ -54,15 +52,15 @@ const safeFormat = (date: Date | string | number, formatString: string) => {
 
 // --- TEMPLATE: USA Claim Default ---
 const UsaClaimDefaultTemplatePage = ({ pageItems, pageIndex, totalPages, ...commonProps }: PageProps) => {
-    const { doc, logoUrl, accentColor, total, subtotal, currencySymbol } = commonProps;
+    const { doc, accentColor, total, subtotal, currencySymbol } = commonProps;
 
     return (
         <div className={`invoice-page font-sans text-gray-800 ${pageIndex < totalPages - 1 ? "page-break" : ""}`}>
             <div className="p-8 m-4 border-2" style={{ borderColor: accentColor }}>
                 <header className="grid grid-cols-2 gap-10 mb-8" data-element="header">
                      <div>
-                        {logoUrl ? (
-                            <Image src={logoUrl} alt={`${doc.companyName} Logo`} width={160} height={80} className="object-contain mb-2" data-ai-hint="logo" />
+                        {doc.logoUrl ? (
+                            <Image src={doc.logoUrl} alt={`${doc.companyName} Logo`} width={160} height={80} className="object-contain mb-2" data-ai-hint="logo" />
                         ) : (
                             <h1 className="text-3xl font-bold mb-1" style={{color: accentColor}}>{doc.companyName}</h1>
                         )}
@@ -157,7 +155,7 @@ const AVAILABLE_HEIGHT = PAGE_HEIGHT - PAGE_PADDING;
 
 
 // --- MAIN PREVIEW COMPONENT ---
-export function InsurancePreview({ doc, logoUrl, accentColor, id = 'insurance-preview', isPrint = false }: InsurancePreviewProps) {
+export function InsurancePreview({ doc, accentColor, id = 'insurance-preview', isPrint = false }: InsurancePreviewProps) {
   const [paginatedItems, setPaginatedItems] = useState<LineItem[][]>([]);
   const [needsRemeasure, setNeedsRemeasure] = useState(true);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -181,7 +179,7 @@ export function InsurancePreview({ doc, logoUrl, accentColor, id = 'insurance-pr
   useEffect(() => {
     setNeedsRemeasure(true);
     setPaginatedItems(doc ? [doc.items] : [[]]);
-  }, [doc, logoUrl, accentColor, t]);
+  }, [doc, accentColor, t]);
 
 
   const previewStyle = {
@@ -277,7 +275,6 @@ export function InsurancePreview({ doc, logoUrl, accentColor, id = 'insurance-pr
 
   const commonProps: Omit<PageProps, 'pageItems' | 'pageIndex' | 'totalPages'> = {
     doc,
-    logoUrl,
     accentColor,
     t,
     currencySymbol,

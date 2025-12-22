@@ -1,4 +1,6 @@
 
+'use client';
+
 import { z } from 'zod';
 
 export interface LineItem {
@@ -445,9 +447,14 @@ export type Quote = Estimate & { documentType: 'quote' };
 
 export interface InsuranceDocument {
   id: string;
+  logoUrl?: string;
   companyName: string;
   companyPhone: string;
   companyAddress: string;
+  companyEmail: string;
+  companyWebsite: string;
+  licenseNumber: string;
+  taxId: string;
 
   insuredName: string;
   policyId: string;
@@ -478,6 +485,7 @@ export interface InsuranceDocument {
   createdAt: any;
   updatedAt: any;
   textColor: string;
+  backgroundColor: string;
 }
 
 

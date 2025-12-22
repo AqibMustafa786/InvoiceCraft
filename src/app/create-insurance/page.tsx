@@ -21,13 +21,18 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 
-const getInitialLineItem = () => ({ id: crypto.randomUUID(), name: '', quantity: 1, unitPrice: 0, rate: 0 });
+const getInitialLineItem = () => ({ id: crypto.randomUUID(), name: '', quantity: 1, rate: 0, unitPrice: 0 });
 
 const getInitialInsuranceDoc = (): InsuranceDocument => ({
   id: crypto.randomUUID(),
+  logoUrl: '',
   companyName: 'Your Company',
   companyPhone: '+1 (123) 456-7890',
   companyAddress: '123 Main St, Anytown, USA',
+  companyEmail: 'contact@yourcompany.com',
+  companyWebsite: 'www.yourcompany.com',
+  licenseNumber: 'LIC-12345',
+  taxId: 'XX-XXXXXXX',
   
   insuredName: 'John Doe',
   policyId: 'POL-12345',
@@ -62,7 +67,7 @@ const getInitialInsuranceDoc = (): InsuranceDocument => ({
 });
 
 
-function PrintableInsuranceDoc({ doc, logoUrl, accentColor }: { doc: InsuranceDocument, logoUrl: string | null, accentColor: string }) {
+function PrintableInsuranceDoc({ doc, accentColor }: { doc: InsuranceDocument, accentColor: string }) {
     const [isMounted, setIsMounted] = useState(false);
 
     useEffect(() => {
@@ -79,7 +84,7 @@ function PrintableInsuranceDoc({ doc, logoUrl, accentColor }: { doc: InsuranceDo
     }
 
     return createPortal(
-        <InsurancePreview doc={doc} logoUrl={logoUrl} accentColor={accentColor} id="insurance-preview-print" isPrint={true} />,
+        <InsurancePreview doc={doc} accentColor={accentColor} id="insurance-preview-print" isPrint={true} />,
         printRoot
     );
 }
@@ -87,14 +92,12 @@ function PrintableInsuranceDoc({ doc, logoUrl, accentColor }: { doc: InsuranceDo
 
 export default function CreateInsurancePage() {
   const [doc, setDoc] = useState<InsuranceDocument | null>(null);
-  const [logoUrl, setLogoUrl] = useState<string | null>(null);
   const [accentColor, setAccentColor] = useState<string>('hsl(var(--primary))');
   const { toast } = useToast();
 
   useEffect(() => {
     // Initialize state on the client to avoid hydration mismatch
     setDoc(getInitialInsuranceDoc());
-    setLogoUrl(null);
 
     if (typeof window !== 'undefined' && window.document) {
         const computedColor = getComputedStyle(window.document.documentElement).getPropertyValue('--primary').trim();
@@ -112,7 +115,6 @@ export default function CreateInsurancePage() {
     const newDoc = getInitialInsuranceDoc();
     newDoc.documentNumber = `DOC-${String(Math.floor(Math.random() * 1000)).padStart(3, '0')}`;
     setDoc(newDoc);
-    setLogoUrl(null);
     if (typeof window !== 'undefined' && window.document) {
         const computedColor = getComputedStyle(window.document.documentElement).getPropertyValue('--primary').trim();
         if (computedColor) {
@@ -172,8 +174,6 @@ export default function CreateInsurancePage() {
             <InsuranceForm 
               document={doc} 
               setDocument={setDoc as React.Dispatch<React.SetStateAction<InsuranceDocument>>} 
-              logoUrl={logoUrl}
-              setLogoUrl={setLogoUrl}
               accentColor={accentColor}
               setAccentColor={setAccentColor}
               toast={toast}
@@ -202,15 +202,16 @@ export default function CreateInsurancePage() {
                 </Sheet>
                 <div>
                   <h2 className="text-2xl font-bold font-headline mb-4">Live Preview</h2>
-                  <InsurancePreview doc={doc} logoUrl={logoUrl} accentColor={accentColor} />
+                  <InsurancePreview doc={doc} accentColor={accentColor} />
                 </div>
             </div>
           </div>
         </div>
       </div>
-      <PrintableInsuranceDoc doc={doc} logoUrl={logoUrl} accentColor={accentColor} />
+      <PrintableInsuranceDoc doc={doc} accentColor={accentColor} />
     </>
   );
 }
 
     
+
