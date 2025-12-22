@@ -8,12 +8,13 @@ import { motion } from 'framer-motion';
 import Image from 'next/image';
 import {
   FileText, FilePlus, Shield, HardHat, Code, Store, Car, Camera, Building, Scale, HeartPulse,
-  LayoutDashboard, Edit, Bot, Brush, Cloud, Share2, Palette, ArrowRight
+  LayoutDashboard, Edit, Bot, Brush, Cloud, Share2, Palette, ArrowRight, XCircle, Clock, AlertCircle, CheckCircle, Search, FileClock
 } from 'lucide-react';
 import React from 'react';
 import { Carousel, CarouselContent, CarouselItem } from '@/components/ui/carousel';
 import Autoplay from "embla-carousel-autoplay";
 import { Card, CardContent } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 
 const tools = [
   {
@@ -129,6 +130,21 @@ const homePageFeatures = [
         className: 'md:col-span-2',
     }
 ];
+
+const problems = [
+  { text: "Manual, repetitive invoicing takes hours", icon: <Clock className="h-5 w-5 text-destructive" /> },
+  { text: "Inconsistent and unprofessional document branding", icon: <AlertCircle className="h-5 w-5 text-destructive" /> },
+  { text: "No central place to track document history", icon: <Search className="h-5 w-5 text-destructive" /> },
+  { text: "Client confusion from unclear line items", icon: <XCircle className="h-5 w-5 text-destructive" /> },
+];
+
+const solutions = [
+  { text: "Automated creation with reusable templates", icon: <CheckCircle className="h-5 w-5 text-primary" /> },
+  { text: "Deep customization for professional branding", icon: <CheckCircle className="h-5 w-5 text-primary" /> },
+  { text: "A full, versioned audit trail for every document", icon: <FileClock className="h-5 w-5 text-primary" /> },
+  { text: "Clear, itemized billing for faster payments", icon: <CheckCircle className="h-5 w-5 text-primary" /> },
+];
+
 
 export default function HomePage() {
   const containerVariants = {
@@ -294,6 +310,65 @@ export default function HomePage() {
                             Explore More Features <ArrowRight className="ml-2 h-5 w-5" />
                         </Link>
                     </Button>
+                </div>
+            </div>
+        </section>
+
+        <section className="py-20 md:py-28">
+            <div className="container px-4 mx-auto md:px-6">
+                <div className="text-center max-w-3xl mx-auto mb-16">
+                    <h2 className="text-4xl md:text-5xl font-bold font-headline">Tired of Invoicing Headaches? We've Got the Solution.</h2>
+                </div>
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-5xl mx-auto">
+                    {/* Problems Card */}
+                    <motion.div
+                        initial={{ opacity: 0, x: -20 }}
+                        whileInView={{ opacity: 1, x: 0 }}
+                        viewport={{ once: true, amount: 0.5 }}
+                        transition={{ duration: 0.5, ease: "easeOut" }}
+                    >
+                        <Card className="h-full bg-destructive/5 border-destructive/20 border shadow-lg">
+                            <CardContent className="p-8">
+                                <h3 className="text-2xl font-bold font-headline mb-6 text-destructive-foreground">The Problems</h3>
+                                <ul className="space-y-4">
+                                    {problems.map((item, index) => (
+                                        <li key={index} className="flex items-start gap-3">
+                                            {item.icon}
+                                            <span className="text-muted-foreground pt-0.5">{item.text}</span>
+                                        </li>
+                                    ))}
+                                </ul>
+                                <div className="mt-6">
+                                    <Badge variant="destructive" className="bg-destructive/10 text-destructive-foreground hover:bg-destructive/20">Before InvoiceCraft</Badge>
+                                </div>
+                            </CardContent>
+                        </Card>
+                    </motion.div>
+
+                    {/* Solutions Card */}
+                    <motion.div
+                        initial={{ opacity: 0, x: 20 }}
+                        whileInView={{ opacity: 1, x: 0 }}
+                        viewport={{ once: true, amount: 0.5 }}
+                        transition={{ duration: 0.5, ease: "easeOut" }}
+                    >
+                        <Card className="h-full bg-primary/5 border-primary/20 border shadow-lg">
+                            <CardContent className="p-8">
+                                <h3 className="text-2xl font-bold font-headline mb-6 text-primary">The Solutions</h3>
+                                <ul className="space-y-4">
+                                    {solutions.map((item, index) => (
+                                        <li key={index} className="flex items-start gap-3">
+                                            {item.icon}
+                                            <span className="text-muted-foreground pt-0.5">{item.text}</span>
+                                        </li>
+                                    ))}
+                                </ul>
+                                <div className="mt-6">
+                                    <Badge variant="secondary" className="bg-primary/10 text-primary hover:bg-primary/20">With InvoiceCraft</Badge>
+                                </div>
+                            </CardContent>
+                        </Card>
+                    </motion.div>
                 </div>
             </div>
         </section>
