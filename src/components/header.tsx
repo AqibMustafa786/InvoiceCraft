@@ -145,7 +145,9 @@ export function Header() {
                                 <CommandItem
                                 key={link.href}
                                 value={link.label}
-                                onSelect={() => runCommand(() => router.push(link.href))}
+                                onSelect={() => {
+                                    runCommand(() => router.push(link.href))
+                                }}
                                 >
                                 {React.cloneElement(link.icon, {className: 'mr-2 h-4 w-4'})}
                                 <span>{link.label}</span>
@@ -155,7 +157,9 @@ export function Header() {
                                 <CommandItem
                                 key={link.href}
                                 value={link.label}
-                                onSelect={() => runCommand(() => router.push(link.href))}
+                                onSelect={() => {
+                                    runCommand(() => router.push(link.href))
+                                }}
                                 >
                                 {React.cloneElement(link.icon, {className: 'mr-2 h-4 w-4'})}
                                 <span>{link.label}</span>
