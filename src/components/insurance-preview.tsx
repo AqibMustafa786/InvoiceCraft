@@ -102,7 +102,7 @@ const UsaClaimDefaultTemplatePage = ({ pageItems, pageIndex, totalPages, ...comm
                      <div className="text-right">
                         <h2 className="text-4xl font-bold">INVOICE</h2>
                         <div className="mt-4 text-xs space-y-1">
-                            <p><span className="font-bold text-gray-500">Invoice #:</span> {doc.documentNumber}</p>
+                            <p><span className="font-bold text-gray-500">Invoice #:</span> {doc.policyNumber}</p>
                             <p><span className="font-bold text-gray-500">Date:</span> {safeFormat(new Date(doc.documentDate || new Date()), 'M/d/yyyy')}</p>
                         </div>
                     </div>
@@ -127,6 +127,12 @@ const UsaClaimDefaultTemplatePage = ({ pageItems, pageIndex, totalPages, ...comm
                              <p><span className="font-bold">Agent:</span> {doc.insuranceCompany.agentName} {doc.insuranceCompany.agentLicenseNumber && `(Lic: ${doc.insuranceCompany.agentLicenseNumber})`}</p>
                              <p><span className="font-bold">Contact:</span> {doc.insuranceCompany.phone} | {doc.insuranceCompany.email}</p>
                         </div>
+                         <div className="col-span-2">
+                             <p className="font-bold text-gray-600 border-b mb-1">Policy Information</p>
+                             <p><span className="font-bold">Policy Type:</span> {doc.policyType}</p>
+                             <p><span className="font-bold">Period:</span> {safeFormat(doc.policyStartDate, 'MM/dd/yyyy')} - {safeFormat(doc.policyEndDate, 'MM/dd/yyyy')}</p>
+                             <p><span className="font-bold">Status:</span> <span className="capitalize">{doc.status}</span></p>
+                        </div>
                     </div>
                 </section>
                 <InsuredEntityDetails doc={doc} t={commonProps.t} />
@@ -140,7 +146,7 @@ const UsaClaimDefaultTemplatePage = ({ pageItems, pageIndex, totalPages, ...comm
                         </thead>
                         <tbody>
                             <tr data-element="table-row">
-                                <td className="border p-2 align-top h-8 whitespace-pre-line font-bold">{doc.incidentDescription}</td>
+                                <td className="border p-2 align-top h-8 whitespace-pre-line font-bold">{doc.insuredItemDescription}</td>
                                 <td className="border p-2 text-right align-top"></td>
                             </tr>
                             {pageItems?.filter(Boolean).map((item) => (

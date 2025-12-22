@@ -13,7 +13,7 @@ export interface LineItem {
   taxable?: boolean;
 }
 
-export type DocumentStatus = 'draft' | 'sent' | 'paid' | 'overdue' | 'accepted' | 'rejected' | 'expired';
+export type DocumentStatus = 'draft' | 'sent' | 'paid' | 'overdue' | 'accepted' | 'rejected' | 'expired' | 'active' | 'cancelled';
 
 export type InvoiceCategory = 
   | "General Services"
@@ -498,7 +498,7 @@ export interface InsuranceDocument {
     agentLicenseNumber: string;
   }
 
-  documentNumber: string;
+  policyNumber: string;
   documentDate: Date;
   
   items: LineItem[];
@@ -524,6 +524,13 @@ export interface InsuranceDocument {
   health?: HealthInsuranceInfo;
   vehicle?: VehicleInsuranceInfo;
   property?: PropertyInsuranceInfo;
+
+  // New Policy Information
+  policyType: 'Comprehensive' | 'Third-Party' | 'Basic' | 'Premium';
+  policyStartDate: Date;
+  policyEndDate: Date;
+  renewalOption: boolean;
+  status: DocumentStatus;
 }
 
 

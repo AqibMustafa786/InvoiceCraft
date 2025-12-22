@@ -19,6 +19,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { addDays } from 'date-fns';
 
 const getInitialLineItem = () => ({ id: crypto.randomUUID(), name: '', quantity: 1, rate: 0, unitPrice: 0 });
 
@@ -44,7 +45,7 @@ const getInitialInsuranceDoc = (): InsuranceDocument => ({
     identificationNumber: 'ID-98765'
   },
   
-  policyId: 'POL-12345',
+  policyId: `POL-${new Date().getFullYear()}-${String(Math.floor(Math.random() * 10000)).padStart(4, '0')}`,
   claimNumber: 'CLM-67890',
   dateOfLoss: new Date().toISOString().split('T')[0],
   typeOfClaim: 'Property Damage',
@@ -58,7 +59,7 @@ const getInitialInsuranceDoc = (): InsuranceDocument => ({
     agentLicenseNumber: 'AGENT-54321',
   },
 
-  documentNumber: 'DOC-001',
+  policyNumber: `DOC-${new Date().getFullYear()}-${String(Math.floor(Math.random() * 1000)).padStart(3, '0')}`,
   documentDate: new Date(),
   
   items: [{ ...getInitialLineItem(), name: 'Sample Service', rate: 100 }],
@@ -97,7 +98,14 @@ const getInitialInsuranceDoc = (): InsuranceDocument => ({
     propertyAddress: '',
     propertyType: 'Residential',
     estimatedValue: null,
-  }
+  },
+
+  // New Policy Information
+  policyType: 'Comprehensive',
+  policyStartDate: new Date(),
+  policyEndDate: addDays(new Date(), 365),
+  renewalOption: true,
+  status: 'draft',
 });
 
 
@@ -147,7 +155,7 @@ export default function CreateInsurancePage() {
   
   const handleNew = () => {
     const newDoc = getInitialInsuranceDoc();
-    newDoc.documentNumber = `DOC-${String(Math.floor(Math.random() * 1000)).padStart(3, '0')}`;
+    newDoc.policyNumber = `DOC-${String(Math.floor(Math.random() * 1000)).padStart(3, '0')}`;
     setDoc(newDoc);
     if (typeof window !== 'undefined' && window.document) {
         const computedColor = getComputedStyle(window.document.documentElement).getPropertyValue('--primary').trim();
@@ -204,14 +212,16 @@ export default function CreateInsurancePage() {
 
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 xl:gap-12">
           <div className="lg:col-span-3">
-            <h2 className="text-2xl font-bold font-headline mb-4 text-center lg:text-left">Fill in Details</h2>
-            <InsuranceForm 
-              document={doc} 
-              setDocument={setDoc} 
-              accentColor={accentColor}
-              setAccentColor={setAccentColor}
-              toast={toast}
-            />
+             <div className="space-y-6">
+                <h2 className="text-2xl font-bold font-headline mb-4 text-center lg:text-left">Fill in Details</h2>
+                <InsuranceForm 
+                  document={doc} 
+                  setDocument={setDoc} 
+                  accentColor={accentColor}
+                  setAccentColor={setAccentColor}
+                  toast={toast}
+                />
+              </div>
           </div>
           <div className="lg:col-span-2">
              <div className="sticky top-24 space-y-4">

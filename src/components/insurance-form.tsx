@@ -2,7 +2,7 @@
 'use client';
 
 import { ChangeEvent, Dispatch, SetStateAction, useState, useEffect } from 'react';
-import type { InsuranceDocument, LineItem, InsuranceCategory } from '@/lib/types';
+import type { InsuranceDocument, LineItem, InsuranceCategory, DocumentStatus } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -50,6 +50,9 @@ const languages = [
 ];
 
 const insuranceCategories: InsuranceCategory[] = ['Vehicle', 'Health', 'Property', 'Life', 'Business', 'Travel', 'Other'];
+const policyTypes = ['Comprehensive', 'Third-Party', 'Basic', 'Premium'];
+const policyStatuses: DocumentStatus[] = ['draft', 'active', 'expired', 'cancelled'];
+
 
 export function InsuranceForm({ document: doc, setDocument: setDoc, accentColor, setAccentColor, toast }: InsuranceFormProps) {
   const [colorInputValue, setColorInputValue] = useState(accentColor);
@@ -70,7 +73,7 @@ export function InsuranceForm({ document: doc, setDocument: setDoc, accentColor,
     }));
   };
 
-  const handleCategoryDataChange = (category: 'vehicle' | 'property' | 'health', name: string, value: string | number | null | Date) => {
+  const handleCategoryDataChange = (category: 'vehicle' | 'property' | 'health', name: string, value: string | number | null | Date | boolean) => {
     setDoc(prev => ({
         ...prev,
         [category]: {
@@ -84,6 +87,10 @@ export function InsuranceForm({ document: doc, setDocument: setDoc, accentColor,
     const { name, value } = e.target;
     setDoc(prev => ({ ...prev, [name]: value }));
   };
+
+  const handleSwitchChange = (name: string, checked: boolean) => {
+      setDoc(prev => ({...prev, [name]: checked}))
+  }
   
   const handleCurrencyChange = (value: string) => {
     setDoc(prev => ({ ...prev, currency: value }));
@@ -249,7 +256,7 @@ export function InsuranceForm({ document: doc, setDocument: setDoc, accentColor,
                 <Label htmlFor="taxId">Tax ID / VAT No.</Label>
                 <div className="relative flex items-center">
                     <Hash className="absolute left-3 h-5 w-5 text-muted-foreground" />
-                    <Input id="taxId" name="taxId" value={doc.business.taxId} onChange={(e) => handleNestedChange('business', e)} className="pl-10" />
+                    <Input id="taxId" name="taxId" value={doc.business.taxId || ''} onChange={(e) => handleNestedChange('business', e)} className="pl-10" />
                 </div>
               </div>
           </div>
@@ -345,6 +352,51 @@ export function InsuranceForm({ document: doc, setDocument: setDoc, accentColor,
             </div>
         </CardContent>
       </Card>
+
+      <Card className="bg-card/50 backdrop-blur-sm shadow-lg hover:shadow-primary/20 transition-shadow duration-300">
+        <CardHeader>
+          <CardTitle>Policy Information</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+             <div className="space-y-2">
+              <Label htmlFor="policyNumber">Policy Number</Label>
+              <Input id="policyNumber" name="policyNumber" value={doc.policyNumber} onChange={handleInputChange} />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="policyType">Policy Type</Label>
+              <Select value={doc.policyType} onValueChange={(value: any) => setDoc(p => ({ ...p, policyType: value }))}>
+                <SelectTrigger id="policyType"><SelectValue placeholder="Select a type" /></SelectTrigger>
+                <SelectContent>
+                  {policyTypes.map(type => <SelectItem key={type} value={type}>{type}</SelectItem>)}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-2">
+              <Label>Policy Start Date</Label>
+              <DatePicker date={doc.policyStartDate} setDate={(date) => setDoc(p => ({ ...p, policyStartDate: date! }))} />
+            </div>
+            <div className="space-y-2">
+              <Label>Policy End Date</Label>
+              <DatePicker date={doc.policyEndDate} setDate={(date) => setDoc(p => ({ ...p, policyEndDate: date! }))} />
+            </div>
+             <div className="space-y-2">
+              <Label>Status</Label>
+              <Select value={doc.status} onValueChange={(value: any) => setDoc(p => ({ ...p, status: value }))}>
+                <SelectTrigger id="status"><SelectValue placeholder="Select a status" /></SelectTrigger>
+                <SelectContent>
+                  {policyStatuses.map(s => <SelectItem key={s} value={s} className="capitalize">{s}</SelectItem>)}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="flex items-center space-x-2 pt-6">
+                <Checkbox id="renewalOption" name="renewalOption" checked={doc.renewalOption} onCheckedChange={(checked) => handleSwitchChange('renewalOption', !!checked)} />
+                <Label htmlFor="renewalOption">Auto-Renewal</Label>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+      
       <Card className="bg-card/50 backdrop-blur-sm shadow-lg hover:shadow-primary/20 transition-shadow duration-300">
         <CardHeader>
           <CardTitle>Insured Entity Details</CardTitle>
@@ -403,7 +455,7 @@ export function InsuranceForm({ document: doc, setDocument: setDoc, accentColor,
               <h4 className="font-semibold flex items-center gap-2"><Heart className="h-5 w-5" /> Health Details</h4>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                  <div className="space-y-2"><Label>Insured Person's Name</Label><Input name="insuredPersonName" value={doc.health.insuredPersonName} onChange={e => handleNestedChange('health', e)} /></div>
-                <div className="space-y-2"><Label>Date of Birth</Label><DatePicker date={doc.health.dateOfBirth} setDate={(date) => handleCategoryDataChange('health', 'dateOfBirth', date)} /></div>
+                <div className="space-y-2"><Label>Date of Birth</Label><DatePicker date={doc.health.dateOfBirth} setDate={(date) => handleCategoryDataChange('health', 'dateOfBirth', date!)} /></div>
                 <div className="space-y-2"><Label>Gender</Label>
                   <RadioGroup name="gender" value={doc.health.gender} onValueChange={(value) => handleCategoryDataChange('health', 'gender', value)} className="flex gap-4">
                     <div className="flex items-center space-x-2"><RadioGroupItem value="Male" id="male" /><Label htmlFor="male">Male</Label></div>
