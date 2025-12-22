@@ -28,16 +28,11 @@ const templates: Template[] = [
     name: 'USA Service',
     thumbnailUrl: '/templates/Usa-service.png',
   },
-  {
-    id: 'usa-insurance',
-    name: 'USA Insurance',
-    thumbnailUrl: '/templates/Usa-insurance.png',
-  }
 ];
 
 export function InsuranceTemplateSelector({ selectedTemplate, onSelectTemplate }: InsuranceTemplateSelectorProps) {
   return (
-    <div className="grid grid-cols-2 lg:grid-cols-3 gap-6">
+    <div className="grid grid-cols-2 gap-6">
       {templates.map((template) => (
         <div
           key={template.id}
