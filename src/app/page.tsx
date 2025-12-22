@@ -248,7 +248,7 @@ export default function HomePage() {
                   className="relative w-full h-full animate-flip"
                 >
                   <Image 
-                    src="https://picsum.photos/seed/workspace-illustration/600/480" 
+                    src="/home/invoice.png" 
                     alt="Illustration of a person working on a laptop"
                     fill
                     sizes="(max-width: 1024px) 100vw, 50vw"
