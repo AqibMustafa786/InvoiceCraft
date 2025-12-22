@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
-import { Menu, Search, ChevronDown, FileText, BarChart, Tag, Book, LayoutDashboard, FilePlus, Shield, Gem } from 'lucide-react';
+import { Menu, Search, ChevronDown, FileText, BarChart, Tag, Book, LayoutDashboard, FilePlus, Shield, Gem, Home } from 'lucide-react';
 import { ModeToggle } from '@/components/mode-toggle';
 import { cn } from '@/lib/utils';
 import { motion } from 'framer-motion';
@@ -22,6 +22,7 @@ import {
 import { ScrollArea } from './ui/scroll-area';
 
 const mainNavLinks = [
+    { href: "/", label: "Home", icon: <Home /> },
     { href: "/pricing", label: "Pricing", icon: <Tag /> },
     { href: "/blog", label: "Blog", icon: <Book /> },
 ]
@@ -91,12 +92,12 @@ export function Header() {
                 </div>
 
                 <nav className="hidden md:flex flex-1 items-center justify-center space-x-1 text-sm font-medium">
-                     <Link href="/#features" className="relative block px-3 py-2 transition text-foreground hover:text-primary">
-                        Features
-                    </Link>
                     {mainNavLinks.map(link => (
                         <NavLink key={link.href} href={link.href} label={link.label} isActive={pathname === link.href} />
                     ))}
+                    <Link href="/features" className="relative block px-3 py-2 transition text-foreground hover:text-primary">
+                        Features
+                    </Link>
                     <DropdownMenu open={isToolsMenuOpen} onOpenChange={setIsToolsMenuOpen}>
                       <DropdownMenuTrigger asChild>
                         <Button 
@@ -143,10 +144,6 @@ export function Header() {
                         <CommandList>
                         <CommandEmpty>No results found.</CommandEmpty>
                          <CommandGroup heading="Links">
-                             <CommandItem onSelect={() => runCommand(() => router.push('/#features'))}>
-                                <Gem className="mr-2 h-4 w-4" />
-                                <span>Features</span>
-                            </CommandItem>
                             {mainNavLinks.map((link) => (
                                 <CommandItem
                                 key={link.href}
@@ -157,6 +154,10 @@ export function Header() {
                                 <span>{link.label}</span>
                                 </CommandItem>
                             ))}
+                            <CommandItem onSelect={() => runCommand(() => router.push('/features'))}>
+                                <Gem className="mr-2 h-4 w-4" />
+                                <span>Features</span>
+                            </CommandItem>
                             {generalToolsLinks.map((link) => (
                                 <CommandItem
                                 key={link.href}
@@ -194,7 +195,7 @@ export function Header() {
                         <ScrollArea className="flex-grow my-4 px-6">
                             <nav className="grid gap-4 text-lg font-medium">
                                 <Link
-                                    href="/#features"
+                                    href="/features"
                                     className="block py-2 transition text-muted-foreground hover:text-primary"
                                 >
                                     Features
