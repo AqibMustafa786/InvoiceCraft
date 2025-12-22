@@ -1,5 +1,4 @@
 
-
 'use client';
 
 import { useState, useEffect, useCallback, useMemo } from 'react';
@@ -8,7 +7,7 @@ import type { InsuranceDocument, LineItem, AuditLogEntry } from '@/lib/types';
 import { InsuranceForm } from '@/components/insurance-form';
 import { InsurancePreview } from '@/components/insurance-preview';
 import { Button } from '@/components/ui/button';
-import { Printer, FilePlus, LayoutDashboard, Brush, MoreVertical, Edit, History, Loader2, Copy, Archive, ShieldCheck } from 'lucide-react';
+import { Printer, FilePlus, LayoutDashboard, Brush, MoreVertical, Edit, History, Loader2, Copy, Archive, ShieldCheck, Share2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { InsuranceTemplateSelector } from '@/components/insurance-template-selector';
 import Link from 'next/link';
@@ -201,7 +200,10 @@ function PrintableInsuranceDoc({ doc, accentColor, backgroundColor, textColor }:
 
     useEffect(() => {
         // This code runs only on the client, after the component has mounted.
-        setContainer(document.getElementById('print-container'));
+        const el = document.getElementById('print-container');
+        if (el) {
+            setContainer(el);
+        }
     }, []);
 
     if (!container) {
@@ -430,6 +432,17 @@ export default function CreateInsurancePage() {
     toast({ title: "Document Duplicated", description: "A new draft has been created from the original." });
   };
 
+  const handleShare = () => {
+      if (!document?.id) return;
+      handleSaveDraft();
+      const url = `${window.location.origin}/insurance/${document.id}`;
+      navigator.clipboard.writeText(url);
+      toast({
+          title: "COI Link Copied!",
+          description: "The shareable Certificate of Insurance link has been copied.",
+      });
+  };
+
   const handleStatusChange = (status: 'active' | 'cancelled') => {
     if (!document || !firestore || !companyId) return;
     const docRef = doc(firestore, 'companies', companyId, INSURANCE_COLLECTION, document.id);
@@ -483,9 +496,12 @@ export default function CreateInsurancePage() {
                       <Copy className="mr-2 h-4 w-4" /> Duplicate
                     </DropdownMenuItem>
                     <DropdownMenuItem asChild>
-                        <Link href="/dashboard">
+                        <Link href="/dashboard?tab=insurance">
                             <LayoutDashboard className="mr-2 h-4 w-4" /> Dashboard
                         </Link>
+                    </DropdownMenuItem>
+                     <DropdownMenuItem onClick={handleShare}>
+                        <Share2 className="mr-2 h-4 w-4" /> Share COI
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem onClick={() => handleStatusChange('active')}>

@@ -6,7 +6,7 @@ import { usePathname, useSearchParams } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { FileText, Users, FileQuestion, FilePlus, Home, Tag, Gem, CreditCard, LogOut } from "lucide-react";
+import { FileText, Users, FileQuestion, FilePlus, Home, Tag, Gem, CreditCard, LogOut, Shield } from "lucide-react";
 import { useAuth } from "@/context/auth-provider";
 import { useRouter } from "next/navigation";
 import { signOut } from "firebase/auth";
@@ -18,6 +18,7 @@ const dashboardNavItems = [
     { href: "/dashboard", tab: "invoices", label: "Invoices", icon: FileText },
     { href: "/dashboard", tab: "estimates", label: "Estimates", icon: FileQuestion },
     { href: "/dashboard", tab: "quotes", label: "Quotes", icon: FilePlus },
+    { href: "/dashboard", tab: "insurance", label: "Insurance", icon: Shield },
     { href: "/dashboard", tab: "clients", label: "Clients", icon: Users },
 ];
 
