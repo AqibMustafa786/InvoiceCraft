@@ -9,13 +9,12 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { useFirebase } from '@/firebase';
-import { createUserWithEmailAndPassword } from 'firebase/auth';
-import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
+import { createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, GithubAuthProvider, FacebookAuthProvider } from 'firebase/auth';
 import { useRouter } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
 import { useState } from 'react';
 import { Github, Eye, EyeOff } from 'lucide-react';
-import { handleGoogleSignIn, handleGithubSignIn, handleFacebookSignIn, createProfileAndCompany } from '@/firebase/auth-helpers';
+import { createProfileAndCompany } from '@/firebase/auth-helpers';
 
 const signupSchema = z.object({
     name: z.string().min(2, { message: "Name must be at least 2 characters." }),
@@ -67,31 +66,37 @@ export default function SignupPage() {
         }
     };
 
-    const onSocialLogin = async (provider: 'google' | 'github' | 'facebook') => {
+    const onSocialLogin = async (providerName: 'google' | 'github' | 'facebook') => {
         setIsLoading(true);
         try {
-            let userCredential;
-            if (provider === 'google') {
-                userCredential = await handleGoogleSignIn();
-            } else if (provider === 'github') {
-                userCredential = await handleGithubSignIn();
-            } else {
-                userCredential = await handleFacebookSignIn();
+             if (!auth) {
+                throw new Error("Authentication service is not available.");
             }
             
-            if (userCredential?.user) {
-                // The helper function will create a profile if it's a new user
-                 toast({
-                    title: "Sign-in Successful",
-                    description: `Welcome, ${userCredential.user.displayName}!`,
-                });
-                router.push('/dashboard');
+            let provider;
+            if (providerName === 'google') {
+                provider = new GoogleAuthProvider();
+            } else if (providerName === 'github') {
+                provider = new GithubAuthProvider();
+            } else {
+                provider = new FacebookAuthProvider();
             }
+
+            const userCredential = await signInWithPopup(auth, provider);
+
+            await createProfileAndCompany(userCredential.user);
+            
+            toast({
+                title: "Sign-in Successful",
+                description: `Welcome, ${userCredential.user.displayName}!`,
+            });
+            router.push('/dashboard');
+            
         } catch (error: any) {
              toast({
                 variant: "destructive",
                 title: "Sign-in Failed",
-                description: error.message || `Failed to sign in with ${provider}.`,
+                description: error.message || `Failed to sign in with ${providerName}.`,
             });
         } finally {
             setIsLoading(false);

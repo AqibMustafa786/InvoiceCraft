@@ -9,12 +9,12 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { useFirebase } from '@/firebase';
-import { signInWithEmailAndPassword } from 'firebase/auth';
+import { signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, GithubAuthProvider, FacebookAuthProvider } from 'firebase/auth';
 import { useRouter } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
 import { useState } from 'react';
 import { Github, Eye, EyeOff } from 'lucide-react';
-import { handleGoogleSignIn, handleGithubSignIn, handleFacebookSignIn } from '@/firebase/auth-helpers';
+import { createProfileAndCompany } from '@/firebase/auth-helpers';
 
 const loginSchema = z.object({
     email: z.string().email({ message: "Invalid email address." }),
@@ -61,30 +61,38 @@ export default function LoginPage() {
         }
     };
     
-    const onSocialLogin = async (provider: 'google' | 'github' | 'facebook') => {
+    const onSocialLogin = async (providerName: 'google' | 'github' | 'facebook') => {
         setIsLoading(true);
         try {
-            let userCredential;
-            if (provider === 'google') {
-                userCredential = await handleGoogleSignIn();
-            } else if (provider === 'github') {
-                userCredential = await handleGithubSignIn();
-            } else {
-                userCredential = await handleFacebookSignIn();
+            if (!auth) {
+                throw new Error("Authentication service is not available.");
             }
             
-            if (userCredential?.user) {
-                 toast({
-                    title: "Login Successful",
-                    description: `Welcome, ${userCredential.user.displayName}!`,
-                });
-                router.push('/dashboard');
+            let provider;
+            if (providerName === 'google') {
+                provider = new GoogleAuthProvider();
+            } else if (providerName === 'github') {
+                provider = new GithubAuthProvider();
+            } else {
+                provider = new FacebookAuthProvider();
             }
+
+            const userCredential = await signInWithPopup(auth, provider);
+            
+            // This will handle new user profile creation if they don't exist
+            await createProfileAndCompany(userCredential.user);
+
+            toast({
+                title: "Login Successful",
+                description: `Welcome, ${userCredential.user.displayName}!`,
+            });
+            router.push('/dashboard');
+            
         } catch (error: any) {
              toast({
                 variant: "destructive",
                 title: "Login Failed",
-                description: error.message || `Failed to sign in with ${provider}.`,
+                description: error.message || `Failed to sign in with ${providerName}.`,
             });
         } finally {
             setIsLoading(false);
