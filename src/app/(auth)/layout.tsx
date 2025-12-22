@@ -1,3 +1,4 @@
+
 import { ArrowLeft, ArrowRight, Github } from 'lucide-react';
 import Link from 'next/link';
 
@@ -32,10 +33,10 @@ export default function AuthLayout({
                 <div className="relative space-y-6">
                     <h2 className="text-3xl font-bold font-headline">What our Users Say.</h2>
                     <blockquote className="space-y-4">
-                        <p className="text-lg leading-relaxed text-primary-foreground/80">"Search and find your dream job is now easier than ever. Just browse a job and apply if you need to."</p>
+                        <p className="text-lg leading-relaxed text-primary-foreground/80">"InvoiceCraft has revolutionized how I handle my billing. I'm saving hours every week and getting paid faster than ever."</p>
                         <footer>
-                            <p className="font-semibold">Mas Parjono</p>
-                            <p className="text-sm text-primary-foreground/70">UI Designer at Google</p>
+                            <p className="font-semibold">Jane Doe</p>
+                            <p className="text-sm text-primary-foreground/70">Freelance Designer</p>
                         </footer>
                     </blockquote>
                     <div className="flex gap-2">
@@ -50,8 +51,8 @@ export default function AuthLayout({
             </div>
              <div className="relative bg-background p-8 rounded-2xl shadow-2xl mt-8 flex gap-6 items-center">
                  <div className="flex-1">
-                    <h3 className="font-bold text-lg">Get your right job and right place apply now</h3>
-                    <p className="text-sm text-muted-foreground mt-1">Be among the first founders to experience the easiest way to start run a business.</p>
+                    <h3 className="font-bold text-lg">Focus on Your Work, Not Your Paperwork</h3>
+                    <p className="text-sm text-muted-foreground mt-1">Join thousands of freelancers and small businesses streamlining their billing.</p>
                 </div>
                 <div className="flex -space-x-2">
                     <div className="h-10 w-10 rounded-full bg-muted border-2 border-background"></div>
