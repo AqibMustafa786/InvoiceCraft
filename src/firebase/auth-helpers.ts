@@ -11,13 +11,10 @@ import {
   User
 } from 'firebase/auth';
 import { getFirestore, doc, setDoc, getDoc, serverTimestamp } from 'firebase/firestore';
-import { initializeApp } from 'firebase/app';
-import { firebaseConfig } from './config';
+import { initializeFirebase } from '@/firebase';
 
-// Initialize Firebase app if it hasn't been already
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const firestore = getFirestore(app);
+// Use the singleton Firebase instance from the main initializer
+const { auth, firestore } = initializeFirebase();
 
 
 /**
