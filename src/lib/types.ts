@@ -477,6 +477,12 @@ export interface PropertyInsuranceInfo {
   estimatedValue: number | null;
 }
 
+export interface Attachment {
+    name: string;
+    url: string;
+    type: 'id_proof' | 'property_doc' | 'medical_report' | 'other';
+}
+
 export interface InsuranceDocument {
   id: string;
   logoUrl?: string;
@@ -541,6 +547,8 @@ export interface InsuranceDocument {
   paymentFrequency: 'Monthly' | 'Quarterly' | 'Yearly' | 'One-time';
   paymentMethod: 'Cash' | 'Bank Transfer' | 'Online';
   paymentStatus: 'Unpaid' | 'Partially Paid' | 'Paid';
+
+  attachments?: Attachment[];
 }
 
 

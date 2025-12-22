@@ -115,6 +115,7 @@ const getInitialInsuranceDoc = (): InsuranceDocument => ({
   paymentFrequency: 'Monthly',
   paymentMethod: 'Online',
   paymentStatus: 'Unpaid',
+  attachments: [],
 });
 
 

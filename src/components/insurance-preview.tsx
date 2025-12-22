@@ -168,6 +168,14 @@ const UsaClaimDefaultTemplatePage = ({ pageItems, pageIndex, totalPages, ...comm
                         </tfoot>
                     </table>
                 </main>
+                 {doc.attachments && doc.attachments.length > 0 && (
+                     <section className="mt-6 text-xs" data-element="attachments">
+                        <p className="font-bold text-gray-600 border-b mb-1">Attached Documents</p>
+                        <ul className="list-disc pl-5">
+                            {doc.attachments.map((att, index) => <li key={index}>{att.name}</li>)}
+                        </ul>
+                    </section>
+                 )}
                 {doc.notes && (
                     <footer className="mt-8 text-xs" data-element="footer">
                         <p className="font-bold">Terms &amp; Conditions:</p>

@@ -3,14 +3,14 @@
 'use client';
 
 import { ChangeEvent, Dispatch, SetStateAction, useState, useEffect } from 'react';
-import type { InsuranceDocument, LineItem, InsuranceCategory, DocumentStatus } from '@/lib/types';
+import type { InsuranceDocument, LineItem, InsuranceCategory, DocumentStatus, Attachment } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { DatePicker } from '@/components/ui/datepicker';
-import { ImageUp, Plus, Trash2, Palette, X, Mail, Phone, Hash, ShieldCheck, User, FolderArchive, FileText, Calendar, AlertTriangle, Building, UserCircle, Loader2, Globe, Award, Key, Heart, Car, Home } from 'lucide-react';
+import { ImageUp, Plus, Trash2, Palette, X, Mail, Phone, Hash, ShieldCheck, User, FolderArchive, FileText, Calendar, AlertTriangle, Building, UserCircle, Loader2, Globe, Award, Key, Heart, Car, Home, UploadCloud, File } from 'lucide-react';
 import Image from 'next/image';
 import {
   Select,
@@ -61,6 +61,7 @@ const paymentStatuses: InsuranceDocument['paymentStatus'][] = ['Unpaid', 'Partia
 export function InsuranceForm({ document: doc, setDocument: setDoc, accentColor, setAccentColor, toast }: InsuranceFormProps) {
   const [colorInputValue, setColorInputValue] = useState(accentColor);
   const [isUploading, setIsUploading] = useState(false);
+  const [isUploadingAttachment, setIsUploadingAttachment] = useState<Record<string, boolean>>({});
 
   useEffect(() => {
     setColorInputValue(accentColor);
@@ -159,6 +160,39 @@ export function InsuranceForm({ document: doc, setDocument: setDoc, accentColor,
       }
     }
   };
+
+  const handleAttachmentUpload = async (e: ChangeEvent<HTMLInputElement>, type: Attachment['type']) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      const fieldName = e.target.name;
+
+      setIsUploadingAttachment(prev => ({ ...prev, [fieldName]: true }));
+      const formData = new FormData();
+      formData.append('file', file);
+
+      try {
+        const response = await fetch('/api/upload', {
+          method: 'POST',
+          body: formData,
+        });
+
+        if (!response.ok) throw new Error('Upload failed');
+
+        const { url } = await response.json();
+        const newAttachment: Attachment = { name: file.name, url, type };
+        setDoc(prev => ({ ...prev, attachments: [...(prev.attachments || []), newAttachment] }));
+        toast({ title: "Attachment Uploaded", description: `${file.name} has been uploaded.` });
+      } catch (error) {
+        toast({ title: "Upload Failed", description: "Could not upload the file.", variant: "destructive" });
+      } finally {
+        setIsUploadingAttachment(prev => ({ ...prev, [fieldName]: false }));
+      }
+    }
+  };
+
+  const removeAttachment = (url: string) => {
+      setDoc(prev => ({ ...prev, attachments: prev.attachments?.filter(att => att.url !== url)}));
+  }
 
   const removeLogo = () => {
       setDoc(prev => ({...prev, logoUrl: ''}));
@@ -540,6 +574,73 @@ export function InsuranceForm({ document: doc, setDocument: setDoc, accentColor,
             placeholder="Enter policy terms, conditions, jurisdiction, etc."
             rows={6}
           />
+        </CardContent>
+      </Card>
+       <Card className="bg-card/50 backdrop-blur-sm shadow-lg hover:shadow-primary/20 transition-shadow duration-300">
+        <CardHeader>
+            <CardTitle>Attachments &amp; Documents</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                    <Label htmlFor="id-proof-upload">ID Proof</Label>
+                    <Button asChild variant="outline" className="w-full">
+                        <label htmlFor="id-proof-upload" className="cursor-pointer flex items-center justify-center gap-2">
+                            {isUploadingAttachment['id_proof'] ? <Loader2 className="h-4 w-4 animate-spin" /> : <UploadCloud className="h-4 w-4" />}
+                            Upload ID
+                        </label>
+                    </Button>
+                    <Input id="id-proof-upload" name="id_proof" type="file" className="sr-only" onChange={(e) => handleAttachmentUpload(e, 'id_proof')} />
+                </div>
+                 <div className="space-y-2">
+                    <Label htmlFor="property-doc-upload">Property/Vehicle Documents</Label>
+                    <Button asChild variant="outline" className="w-full">
+                        <label htmlFor="property-doc-upload" className="cursor-pointer flex items-center justify-center gap-2">
+                           {isUploadingAttachment['property_doc'] ? <Loader2 className="h-4 w-4 animate-spin" /> : <UploadCloud className="h-4 w-4" />}
+                            Upload Documents
+                        </label>
+                    </Button>
+                     <Input id="property-doc-upload" name="property_doc" type="file" className="sr-only" onChange={(e) => handleAttachmentUpload(e, 'property_doc')} />
+                </div>
+                 <div className="space-y-2">
+                    <Label htmlFor="medical-report-upload">Medical Reports</Label>
+                     <Button asChild variant="outline" className="w-full">
+                        <label htmlFor="medical-report-upload" className="cursor-pointer flex items-center justify-center gap-2">
+                            {isUploadingAttachment['medical_report'] ? <Loader2 className="h-4 w-4 animate-spin" /> : <UploadCloud className="h-4 w-4" />}
+                            Upload Reports
+                        </label>
+                    </Button>
+                     <Input id="medical-report-upload" name="medical_report" type="file" className="sr-only" onChange={(e) => handleAttachmentUpload(e, 'medical_report')} />
+                </div>
+                <div className="space-y-2">
+                    <Label htmlFor="other-upload">Other Supporting Files</Label>
+                     <Button asChild variant="outline" className="w-full">
+                        <label htmlFor="other-upload" className="cursor-pointer flex items-center justify-center gap-2">
+                           {isUploadingAttachment['other'] ? <Loader2 className="h-4 w-4 animate-spin" /> : <UploadCloud className="h-4 w-4" />}
+                            Upload File
+                        </label>
+                    </Button>
+                     <Input id="other-upload" name="other" type="file" className="sr-only" onChange={(e) => handleAttachmentUpload(e, 'other')} />
+                </div>
+             </div>
+              {doc.attachments && doc.attachments.length > 0 && (
+                <div className="space-y-2 pt-4 border-t">
+                    <Label>Uploaded Files</Label>
+                    <ul className="space-y-2">
+                        {doc.attachments.map((att, index) => (
+                            <li key={index} className="flex items-center justify-between text-sm bg-muted/50 p-2 rounded-md">
+                                <a href={att.url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 hover:underline text-primary">
+                                    <File className="h-4 w-4"/>
+                                    <span className="truncate">{att.name}</span>
+                                </a>
+                                <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => removeAttachment(att.url)}>
+                                    <X className="h-4 w-4 text-destructive"/>
+                                </Button>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )}
         </CardContent>
       </Card>
     </div>
