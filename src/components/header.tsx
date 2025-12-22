@@ -92,7 +92,7 @@ export function Header() {
 
                 <nav className="hidden md:flex flex-1 items-center justify-center space-x-1 text-sm font-medium">
                      <Link href="/#features" className="relative block px-3 py-2 transition text-foreground hover:text-primary">
-                      Features
+                        Features
                     </Link>
                     {mainNavLinks.map(link => (
                         <NavLink key={link.href} href={link.href} label={link.label} isActive={pathname === link.href} />
