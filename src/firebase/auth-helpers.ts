@@ -1,4 +1,3 @@
-
 'use client';
 
 import {
@@ -11,10 +10,10 @@ import {
   User
 } from 'firebase/auth';
 import { getFirestore, doc, setDoc, getDoc, serverTimestamp } from 'firebase/firestore';
-import { initializeFirebase } from '@/firebase';
+import { getFirebase } from '@/firebase';
 
 // Use the singleton Firebase instance from the main initializer
-const { auth, firestore } = initializeFirebase();
+const { auth, firestore } = getFirebase();
 
 
 /**
