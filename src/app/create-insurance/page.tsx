@@ -195,25 +195,22 @@ const getInitialInsuranceDoc = (): Omit<InsuranceDocument, 'userId' | 'companyId
 });
 
 
-function PrintableInsuranceDoc({ doc: document, accentColor }: { doc: InsuranceDocument, accentColor: string }) {
-    const [isMounted, setIsMounted] = useState(false);
+function PrintableInsuranceDoc({ doc, accentColor }: { doc: InsuranceDocument, accentColor: string }) {
+    const [container, setContainer] = useState<HTMLElement | null>(null);
 
     useEffect(() => {
-        setIsMounted(true);
+        // This code runs only on the client, after the component has mounted.
+        const printContainer = document.getElementById('print-container');
+        setContainer(printContainer);
     }, []);
 
-    if (!isMounted) {
-        return null;
-    }
-    
-    const printRoot = document.getElementById('print-container');
-    if (!printRoot) {
+    if (!container) {
         return null;
     }
 
     return createPortal(
-        <InsurancePreview doc={document} accentColor={accentColor} id="insurance-preview-print" isPrint={true} />,
-        printRoot
+        <InsurancePreview doc={doc} accentColor={accentColor} id="insurance-preview-print" isPrint={true} />,
+        container
     );
 }
 
@@ -234,7 +231,7 @@ export default function CreateInsurancePage() {
 
   const docRef = useMemoFirebase(() => {
     if (!draftId || !firestore || !companyId) return null;
-    return doc(firestore, 'companies', companyId, INSURANCE_COLLECTION, draftId);
+    return doc(firestore, 'companies', companyId, INSURANCE_COLLECTION, draftId as string);
   }, [draftId, firestore, companyId]);
 
   const { data: remoteDraft, isLoading: isDraftLoading } = useDoc<InsuranceDocument>(docRef);
@@ -280,7 +277,7 @@ export default function CreateInsurancePage() {
             id: crypto.randomUUID(),
             action: 'created',
             timestamp: new Date(),
-            user: { name: user.displayName || user.email, email: user.email },
+            user: { name: user.displayName || user.email || '', email: user.email || '' },
             version: 1,
         };
         initialDocument = {
@@ -343,7 +340,7 @@ export default function CreateInsurancePage() {
             id: crypto.randomUUID(),
             action: 'updated',
             timestamp: new Date(),
-            user: { name: user.displayName || user.email, email: user.email },
+            user: { name: user.displayName || user.email || '', email: user.email || '' },
             version: newVersion,
             changes: changes,
         };
@@ -394,7 +391,7 @@ export default function CreateInsurancePage() {
         id: crypto.randomUUID(),
         action: 'created',
         timestamp: new Date(),
-        user: { name: user.displayName || user.email, email: user.email },
+        user: { name: user.displayName || user.email || '', email: user.email || '' },
         version: 1,
     };
     const newDoc: InsuranceDocument = { 
@@ -416,7 +413,7 @@ export default function CreateInsurancePage() {
         id: crypto.randomUUID(),
         action: 'created',
         timestamp: new Date(),
-        user: { name: user.displayName || user.email, email: user.email },
+        user: { name: user.displayName || user.email || '', email: user.email || '' },
         version: 1,
     };
     const duplicatedDoc: InsuranceDocument = {
