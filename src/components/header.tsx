@@ -28,10 +28,10 @@ const mainNavLinks = [
 ]
 
 const generalToolsLinks = [
-    { href: "/create-invoice", label: "Create Invoice", icon: <FilePlus /> },
-    { href: "/create-estimate", label: "Create Estimate", icon: <FilePlus /> },
-    { href: "/create-quote", label: "Create Quote", icon: <FilePlus /> },
-    { href: "/create-insurance", label: "Create Insurance", icon: <Shield /> },
+    { href: "/create-invoice", label: "Create Invoice", description: "Generate professional invoices for your clients.", icon: <FilePlus /> },
+    { href: "/create-estimate", label: "Create Estimate", description: "Provide detailed cost estimates for projects.", icon: <FilePlus /> },
+    { href: "/create-quote", label: "Create Quote", description: "Offer fixed-price quotations for your services.", icon: <FilePlus /> },
+    { href: "/create-insurance", label: "Create Insurance", description: "Generate insurance documents and certificates.", icon: <Shield /> },
 ]
 
 function NavLink({ href, label, isActive }: { href: string, label: string, isActive: boolean }) {
@@ -99,27 +99,31 @@ export function Header() {
                       <DropdownMenuTrigger asChild>
                         <Button 
                           variant="ghost" 
-                          className="px-3 py-2 flex items-center gap-1 focus-visible:ring-0"
-                          onMouseEnter={() => setIsToolsMenuOpen(true)}
-                          onMouseLeave={() => setIsToolsMenuOpen(false)}
+                          className="px-3 py-2 flex items-center gap-1 focus-visible:ring-0 data-[state=open]:bg-accent"
                         >
                           Tools
-                          <ChevronDown className="h-4 w-4" />
+                          <ChevronDown className="h-4 w-4 transition-transform duration-200 data-[state=open]:rotate-180" />
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent 
-                        onMouseEnter={() => setIsToolsMenuOpen(true)}
-                        onMouseLeave={() => setIsToolsMenuOpen(false)}
-                        className="w-48"
+                        align="center"
+                        className="w-80 p-4"
                       >
-                        {generalToolsLinks.map(link => (
-                          <DropdownMenuItem key={link.href} asChild>
-                            <Link href={link.href} className='flex items-center gap-2'>
-                              {React.cloneElement(link.icon, {className: 'h-4 w-4 text-muted-foreground'})}
-                              {link.label}
+                        <div className="grid grid-cols-1 gap-2">
+                          {generalToolsLinks.map(link => (
+                            <Link href={link.href} key={link.href}>
+                              <div className="flex items-start gap-4 p-3 rounded-lg transition-colors hover:bg-muted/50">
+                                <div className="p-2 bg-primary/10 text-primary rounded-md">
+                                  {React.cloneElement(link.icon, {className: 'h-6 w-6'})}
+                                </div>
+                                <div className="flex-1">
+                                  <p className="font-semibold text-foreground">{link.label}</p>
+                                  <p className="text-xs text-muted-foreground">{link.description}</p>
+                                </div>
+                              </div>
                             </Link>
-                          </DropdownMenuItem>
-                        ))}
+                          ))}
+                        </div>
                       </DropdownMenuContent>
                     </DropdownMenu>
                 </nav>
@@ -187,7 +191,7 @@ export function Header() {
                         </SheetHeader>
                         <ScrollArea className="flex-grow my-4 px-6">
                             <nav className="grid gap-4 text-lg font-medium">
-                                {[...mainNavLinks, ...generalToolsLinks].map(link => (
+                                {[...mainNavLinks, ...generalToolsLinks.map(l => ({href: l.href, label: l.label}))].map(link => (
                                     <Link
                                         key={link.href}
                                         href={link.href}
