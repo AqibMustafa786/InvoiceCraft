@@ -14,6 +14,7 @@ import { useRouter } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
 import { useState } from 'react';
 import { Github, Eye, EyeOff } from 'lucide-react';
+import { handleGoogleSignIn, handleGithubSignIn, handleFacebookSignIn } from '@/firebase/auth-helpers';
 
 const loginSchema = z.object({
     email: z.string().email({ message: "Invalid email address." }),
@@ -54,6 +55,36 @@ export default function LoginPage() {
                 variant: "destructive",
                 title: "Login Failed",
                 description: error.message || "An unexpected error occurred.",
+            });
+        } finally {
+            setIsLoading(false);
+        }
+    };
+    
+    const onSocialLogin = async (provider: 'google' | 'github' | 'facebook') => {
+        setIsLoading(true);
+        try {
+            let userCredential;
+            if (provider === 'google') {
+                userCredential = await handleGoogleSignIn();
+            } else if (provider === 'github') {
+                userCredential = await handleGithubSignIn();
+            } else {
+                userCredential = await handleFacebookSignIn();
+            }
+            
+            if (userCredential?.user) {
+                 toast({
+                    title: "Login Successful",
+                    description: `Welcome, ${userCredential.user.displayName}!`,
+                });
+                router.push('/dashboard');
+            }
+        } catch (error: any) {
+             toast({
+                variant: "destructive",
+                title: "Login Failed",
+                description: error.message || `Failed to sign in with ${provider}.`,
             });
         } finally {
             setIsLoading(false);
@@ -140,9 +171,9 @@ export default function LoginPage() {
             </div>
 
             <div className="grid grid-cols-3 gap-3">
-                <Button variant="outline" className="h-12"><Github className="h-5 w-5" /></Button>
-                <Button variant="outline" className="h-12"><svg className="h-5 w-5" viewBox="0 0 24 24"><path fill="currentColor" d="M21.35,11.1H12.18V13.83H18.69C18.36,17.64 15.19,19.27 12.19,19.27C8.36,19.27 5,16.25 5,12C5,7.75 8.36,4.73 12.19,4.73C15.28,4.73 17.04,6.84 17.04,6.84L19,4.88C19,4.88 16.7,3 12.19,3C6.42,3 2,7.42 2,12C2,16.58 6.42,21 12.19,21C18.1,21 22,16.25 22,11.53C22,11.31 21.68,11.1 21.35,11.1V11.1Z" /></svg></Button>
-                <Button variant="outline" className="h-12"><svg className="h-5 w-5" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2.04C6.5 2.04 2 6.53 2 12.06C2 17.06 5.66 21.21 10.44 21.96V14.96H7.9V12.06H10.44V9.85C10.44 7.34 11.93 5.96 14.22 5.96C15.31 5.96 16.45 6.15 16.45 6.15V8.62H15.19C13.95 8.62 13.56 9.39 13.56 10.18V12.06H16.34L15.89 14.96H13.56V21.96A10 10 0 0 0 22 12.06C22 6.53 17.5 2.04 12 2.04Z" /></svg></Button>
+                <Button variant="outline" className="h-12" onClick={() => onSocialLogin('github')} disabled={isLoading}><Github className="h-5 w-5" /></Button>
+                <Button variant="outline" className="h-12" onClick={() => onSocialLogin('google')} disabled={isLoading}><svg className="h-5 w-5" viewBox="0 0 24 24"><path fill="currentColor" d="M21.35,11.1H12.18V13.83H18.69C18.36,17.64 15.19,19.27 12.19,19.27C8.36,19.27 5,16.25 5,12C5,7.75 8.36,4.73 12.19,4.73C15.28,4.73 17.04,6.84 17.04,6.84L19,4.88C19,4.88 16.7,3 12.19,3C6.42,3 2,7.42 2,12C2,16.58 6.42,21 12.19,21C18.1,21 22,16.25 22,11.53C22,11.31 21.68,11.1 21.35,11.1V11.1Z" /></svg></Button>
+                <Button variant="outline" className="h-12" onClick={() => onSocialLogin('facebook')} disabled={isLoading}><svg className="h-5 w-5" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2.04C6.5 2.04 2 6.53 2 12.06C2 17.06 5.66 21.21 10.44 21.96V14.96H7.9V12.06H10.44V9.85C10.44 7.34 11.93 5.96 14.22 5.96C15.31 5.96 16.45 6.15 16.45 6.15V8.62H15.19C13.95 8.62 13.56 9.39 13.56 10.18V12.06H16.34L15.89 14.96H13.56V21.96A10 10 0 0 0 22 12.06C22 6.53 17.5 2.04 12 2.04Z" /></svg></Button>
             </div>
             <p className="text-center text-sm text-muted-foreground mt-8">
                 Don't have an account?{' '}
