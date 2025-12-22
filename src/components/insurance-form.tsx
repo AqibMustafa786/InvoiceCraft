@@ -2,14 +2,14 @@
 'use client';
 
 import { ChangeEvent, Dispatch, SetStateAction, useState, useEffect } from 'react';
-import type { InsuranceDocument, LineItem } from '@/lib/types';
+import type { InsuranceDocument, LineItem, InsuranceCategory } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { DatePicker } from '@/components/ui/datepicker';
-import { ImageUp, Plus, Trash2, Palette, X, Mail, Phone, Hash, ShieldCheck, User, FolderArchive, FileText, Calendar, AlertTriangle, Building, UserCircle, Loader2, Globe, Award, Key } from 'lucide-react';
+import { ImageUp, Plus, Trash2, Palette, X, Mail, Phone, Hash, ShieldCheck, User, FolderArchive, FileText, Calendar, AlertTriangle, Building, UserCircle, Loader2, Globe, Award, Key, Heart, Car, Home } from 'lucide-react';
 import Image from 'next/image';
 import {
   Select,
@@ -18,6 +18,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { RadioGroup, RadioGroupItem } from './ui/radio-group';
 
 interface InsuranceFormProps {
   document: InsuranceDocument;
@@ -48,6 +49,8 @@ const languages = [
     { value: 'zh', label: 'Chinese' },
 ];
 
+const insuranceCategories: InsuranceCategory[] = ['Vehicle', 'Health', 'Property', 'Life', 'Business', 'Travel', 'Other'];
+
 export function InsuranceForm({ document: doc, setDocument: setDoc, accentColor, setAccentColor, toast }: InsuranceFormProps) {
   const [colorInputValue, setColorInputValue] = useState(accentColor);
   const [isUploading, setIsUploading] = useState(false);
@@ -56,14 +59,24 @@ export function InsuranceForm({ document: doc, setDocument: setDoc, accentColor,
     setColorInputValue(accentColor);
   }, [accentColor]);
 
-  const handleNestedChange = (section: 'business' | 'insuranceCompany' | 'policyHolder', e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleNestedChange = (section: 'business' | 'insuranceCompany' | 'policyHolder' | 'vehicle' | 'property' | 'health', e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setDoc(prev => ({
       ...prev,
       [section]: {
-        ...prev[section],
+        ...(prev as any)[section],
         [name]: value
       }
+    }));
+  };
+
+  const handleCategoryDataChange = (category: 'vehicle' | 'property' | 'health', name: string, value: string | number | null | Date) => {
+    setDoc(prev => ({
+        ...prev,
+        [category]: {
+            ...(prev as any)[category],
+            [name]: value
+        }
     }));
   };
 
@@ -330,6 +343,78 @@ export function InsuranceForm({ document: doc, setDocument: setDoc, accentColor,
                     </div>
                 </div>
             </div>
+        </CardContent>
+      </Card>
+      <Card className="bg-card/50 backdrop-blur-sm shadow-lg hover:shadow-primary/20 transition-shadow duration-300">
+        <CardHeader>
+          <CardTitle>Insured Entity Details</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="insuranceCategory">Insurance Category</Label>
+            <Select value={doc.insuranceCategory} onValueChange={(value: InsuranceCategory) => setDoc(p => ({ ...p, insuranceCategory: value }))}>
+              <SelectTrigger id="insuranceCategory"><SelectValue placeholder="Select a category" /></SelectTrigger>
+              <SelectContent>
+                {insuranceCategories.map(cat => <SelectItem key={cat} value={cat}>{cat}</SelectItem>)}
+              </SelectContent>
+            </Select>
+          </div>
+          
+          <div className="space-y-2">
+            <Label htmlFor="insuredItemDescription">Description of Insured Item/Service</Label>
+            <Textarea id="insuredItemDescription" name="insuredItemDescription" value={doc.insuredItemDescription} onChange={handleInputChange} />
+          </div>
+
+           <div className="space-y-2">
+            <Label htmlFor="coveragePurpose">Coverage Purpose / Risk Description</Label>
+            <Textarea id="coveragePurpose" name="coveragePurpose" value={doc.coveragePurpose} onChange={handleInputChange} />
+          </div>
+
+          {doc.insuranceCategory === 'Vehicle' && doc.vehicle && (
+            <div className="p-4 border rounded-md space-y-4">
+              <h4 className="font-semibold flex items-center gap-2"><Car className="h-5 w-5" /> Vehicle Details</h4>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2"><Label>Make</Label><Input name="vehicleMake" value={doc.vehicle.vehicleMake} onChange={e => handleNestedChange('vehicle', e)} /></div>
+                <div className="space-y-2"><Label>Model</Label><Input name="model" value={doc.vehicle.model} onChange={e => handleNestedChange('vehicle', e)} /></div>
+                <div className="space-y-2"><Label>Registration Number</Label><Input name="registrationNumber" value={doc.vehicle.registrationNumber} onChange={e => handleNestedChange('vehicle', e)} /></div>
+                <div className="space-y-2"><Label>Engine / Chassis Number</Label><Input name="chassisNumber" value={doc.vehicle.chassisNumber} onChange={e => handleNestedChange('vehicle', e)} /></div>
+              </div>
+            </div>
+          )}
+
+          {doc.insuranceCategory === 'Property' && doc.property && (
+             <div className="p-4 border rounded-md space-y-4">
+              <h4 className="font-semibold flex items-center gap-2"><Home className="h-5 w-5" /> Property Details</h4>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="md:col-span-2 space-y-2"><Label>Property Address</Label><Input name="propertyAddress" value={doc.property.propertyAddress} onChange={e => handleNestedChange('property', e)} /></div>
+                <div className="space-y-2"><Label>Property Type</Label>
+                  <RadioGroup name="propertyType" value={doc.property.propertyType} onValueChange={(value) => handleCategoryDataChange('property', 'propertyType', value)} className="flex gap-4">
+                    <div className="flex items-center space-x-2"><RadioGroupItem value="Residential" id="res" /><Label htmlFor="res">Residential</Label></div>
+                    <div className="flex items-center space-x-2"><RadioGroupItem value="Commercial" id="com" /><Label htmlFor="com">Commercial</Label></div>
+                  </RadioGroup>
+                </div>
+                <div className="space-y-2"><Label>Estimated Value</Label><Input name="estimatedValue" type="number" value={doc.property.estimatedValue ?? ''} onChange={e => handleNestedChange('property', e)} /></div>
+              </div>
+            </div>
+          )}
+
+          {doc.insuranceCategory === 'Health' && doc.health && (
+            <div className="p-4 border rounded-md space-y-4">
+              <h4 className="font-semibold flex items-center gap-2"><Heart className="h-5 w-5" /> Health Details</h4>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                 <div className="space-y-2"><Label>Insured Person's Name</Label><Input name="insuredPersonName" value={doc.health.insuredPersonName} onChange={e => handleNestedChange('health', e)} /></div>
+                <div className="space-y-2"><Label>Date of Birth</Label><DatePicker date={doc.health.dateOfBirth} setDate={(date) => handleCategoryDataChange('health', 'dateOfBirth', date)} /></div>
+                <div className="space-y-2"><Label>Gender</Label>
+                  <RadioGroup name="gender" value={doc.health.gender} onValueChange={(value) => handleCategoryDataChange('health', 'gender', value)} className="flex gap-4">
+                    <div className="flex items-center space-x-2"><RadioGroupItem value="Male" id="male" /><Label htmlFor="male">Male</Label></div>
+                    <div className="flex items-center space-x-2"><RadioGroupItem value="Female" id="female" /><Label htmlFor="female">Female</Label></div>
+                    <div className="flex items-center space-x-2"><RadioGroupItem value="Other" id="other" /><Label htmlFor="other">Other</Label></div>
+                  </RadioGroup>
+                </div>
+              </div>
+            </div>
+          )}
+
         </CardContent>
       </Card>
     </div>

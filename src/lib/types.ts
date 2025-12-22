@@ -455,6 +455,28 @@ export interface PolicyHolderInfo {
   identificationNumber?: string; // CNIC, Passport, etc.
 }
 
+export type InsuranceCategory = 'Health' | 'Vehicle' | 'Property' | 'Life' | 'Business' | 'Travel' | 'Other';
+
+export interface HealthInsuranceInfo {
+  insuredPersonName: string;
+  dateOfBirth: Date | null;
+  gender: 'Male' | 'Female' | 'Other';
+}
+
+export interface VehicleInsuranceInfo {
+  vehicleMake: string;
+  model: string;
+  registrationNumber: string;
+  engineNumber: string;
+  chassisNumber: string;
+}
+
+export interface PropertyInsuranceInfo {
+  propertyAddress: string;
+  propertyType: 'Residential' | 'Commercial';
+  estimatedValue: number | null;
+}
+
 export interface InsuranceDocument {
   id: string;
   logoUrl?: string;
@@ -466,7 +488,6 @@ export interface InsuranceDocument {
   claimNumber: string;
   dateOfLoss: string;
   typeOfClaim: string;
-  incidentDescription: string;
   
   insuranceCompany: {
     name: string;
@@ -494,6 +515,15 @@ export interface InsuranceDocument {
   updatedAt: any;
   textColor: string;
   backgroundColor: string;
+
+  // Insured Entity Details
+  insuranceCategory: InsuranceCategory;
+  insuredItemDescription: string;
+  coveragePurpose: string;
+
+  health?: HealthInsuranceInfo;
+  vehicle?: VehicleInsuranceInfo;
+  property?: PropertyInsuranceInfo;
 }
 
 

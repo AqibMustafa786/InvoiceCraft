@@ -48,6 +48,40 @@ const safeFormat = (date: Date | string | number, formatString: string) => {
     return format(d, formatString);
 }
 
+const InsuredEntityDetails: React.FC<{ doc: InsuranceDocument; t: any; }> = ({ doc, t }) => {
+    return (
+        <section className="mb-6 text-xs" data-element="insured-entity-details">
+            <p className="font-bold text-gray-600 border-b mb-1">Insured Entity</p>
+            <p><span className="font-bold">Category:</span> {doc.insuranceCategory}</p>
+            <p><span className="font-bold">Description:</span> {doc.insuredItemDescription}</p>
+            <p><span className="font-bold">Coverage Purpose:</span> {doc.coveragePurpose}</p>
+            {doc.insuranceCategory === 'Vehicle' && doc.vehicle && (
+                 <div className="mt-2 pl-2 border-l-2">
+                    <p className="font-semibold">Vehicle Details:</p>
+                    <p>Make/Model: {doc.vehicle.vehicleMake} {doc.vehicle.model}</p>
+                    <p>Registration: {doc.vehicle.registrationNumber}</p>
+                    <p>Chassis: {doc.vehicle.chassisNumber}</p>
+                 </div>
+            )}
+             {doc.insuranceCategory === 'Property' && doc.property && (
+                 <div className="mt-2 pl-2 border-l-2">
+                    <p className="font-semibold">Property Details:</p>
+                    <p>Address: {doc.property.propertyAddress}</p>
+                    <p>Type: {doc.property.propertyType}</p>
+                    {doc.property.estimatedValue && <p>Value: {doc.property.estimatedValue}</p>}
+                 </div>
+            )}
+             {doc.insuranceCategory === 'Health' && doc.health && (
+                 <div className="mt-2 pl-2 border-l-2">
+                    <p className="font-semibold">Health Details:</p>
+                    <p>Name: {doc.health.insuredPersonName}</p>
+                    <p>DOB: {safeFormat(doc.health.dateOfBirth || '', 'MM/dd/yyyy')}</p>
+                    <p>Gender: {doc.health.gender}</p>
+                 </div>
+            )}
+        </section>
+    )
+}
 
 // --- TEMPLATE: USA Claim Default ---
 const UsaClaimDefaultTemplatePage = ({ pageItems, pageIndex, totalPages, ...commonProps }: PageProps) => {
@@ -95,6 +129,7 @@ const UsaClaimDefaultTemplatePage = ({ pageItems, pageIndex, totalPages, ...comm
                         </div>
                     </div>
                 </section>
+                <InsuredEntityDetails doc={doc} t={commonProps.t} />
                 <main>
                     <table className="w-full border-collapse border text-sm" data-element="items-table">
                         <thead data-element="table-header">

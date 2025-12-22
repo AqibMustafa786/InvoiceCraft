@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { createPortal } from 'react-dom';
 import type { InsuranceDocument, LineItem } from '@/lib/types';
 import { InsuranceForm } from '@/components/insurance-form';
@@ -48,7 +48,6 @@ const getInitialInsuranceDoc = (): InsuranceDocument => ({
   claimNumber: 'CLM-67890',
   dateOfLoss: new Date().toISOString().split('T')[0],
   typeOfClaim: 'Property Damage',
-  incidentDescription: 'Brief description of the incident.',
   
   insuranceCompany: {
     name: 'Example Insurance Co.',
@@ -76,6 +75,29 @@ const getInitialInsuranceDoc = (): InsuranceDocument => ({
   updatedAt: serverTimestamp(),
   textColor: '#374151',
   backgroundColor: '#FFFFFF',
+
+  // Insured Entity Details
+  insuranceCategory: 'Vehicle',
+  insuredItemDescription: 'A 2023 sedan involved in a minor collision.',
+  coveragePurpose: 'Repair of damages as per policy terms.',
+
+  health: {
+    insuredPersonName: '',
+    dateOfBirth: null,
+    gender: 'Other',
+  },
+  vehicle: {
+    vehicleMake: '',
+    model: '',
+    registrationNumber: '',
+    engineNumber: '',
+    chassisNumber: '',
+  },
+  property: {
+    propertyAddress: '',
+    propertyType: 'Residential',
+    estimatedValue: null,
+  }
 });
 
 
