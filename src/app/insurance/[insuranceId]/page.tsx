@@ -2,6 +2,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { doc, getDocs, collectionGroup, query, where, Firestore } from 'firebase/firestore';
 import { useFirebase } from '@/firebase';
 import type { InsuranceDocument } from '@/lib/types';
@@ -26,6 +27,26 @@ async function findInsuranceDoc(firestore: Firestore, insuranceId: string): Prom
     }
     
     return null;
+}
+
+function PrintableCOI({ doc }: { doc: InsuranceDocument }) {
+    const [container, setContainer] = useState<HTMLElement | null>(null);
+
+    useEffect(() => {
+        const el = document.getElementById('print-container');
+        if (el) {
+            setContainer(el);
+        }
+    }, []);
+
+    if (!container) {
+        return null;
+    }
+
+    return createPortal(
+        <CertificateOfInsurance document={doc} />,
+        container
+    );
 }
 
 
@@ -122,6 +143,7 @@ export default function PublicCOIPage({ params }: { params: { insuranceId: strin
                         <CertificateOfInsurance document={document} />
                     </CardContent>
                 </Card>
+                {document && <PrintableCOI doc={document} />}
             </div>
         </div>
     );
