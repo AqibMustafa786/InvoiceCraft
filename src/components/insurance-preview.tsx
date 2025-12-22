@@ -2,7 +2,7 @@
 
 'use client';
 
-import { useState, useLayoutEffect, useRef, useEffect } from 'react';
+import { useState, useLayoutEffect, useRef, useEffect, FC } from 'react';
 import type { InsuranceDocument, LineItem } from '@/lib/types';
 import { Card, CardContent } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
@@ -47,29 +47,77 @@ const currencySymbols: { [key: string]: string } = {
     PKR: '₨',
 };
 
-const safeFormat = (date: Date | string | number, formatString: string) => {
-    const d = new Date(date || new Date());
+const safeFormat = (date: Date | string | number | null | undefined, formatString: string) => {
+    if (!date) return "N/A";
+    const d = new Date(date);
     if (!isValid(d)) return "Invalid Date";
     return format(d, formatString);
 }
 
+const HealthDetails: React.FC<{ doc: InsuranceDocument; t: any; }> = ({ doc, t }) => {
+    if (!doc.health) return null;
+    return (
+        <>
+            <p><span className="font-bold">{t.insuredPerson || 'Insured Person'}:</span> {doc.health.insuredPersonName}</p>
+            <p><span className="font-bold">{t.dateOfBirth || 'Date of Birth'}:</span> {safeFormat(doc.health.dateOfBirth, 'MM/dd/yyyy')}</p>
+            <p><span className="font-bold">{t.gender || 'Gender'}:</span> {doc.health.gender}</p>
+        </>
+    );
+};
+
+const VehicleDetails: React.FC<{ doc: InsuranceDocument; t: any; }> = ({ doc, t }) => {
+    if (!doc.vehicle) return null;
+    return (
+        <>
+            <p><span className="font-bold">{t.vehicleMake || 'Make'}:</span> {doc.vehicle.vehicleMake}</p>
+            <p><span className="font-bold">{t.model || 'Model'}:</span> {doc.vehicle.model}</p>
+            <p><span className="font-bold">{t.registrationNo || 'Registration #'}:</span> {doc.vehicle.registrationNumber}</p>
+            <p><span className="font-bold">{t.chassisNo || 'Chassis #'}:</span> {doc.vehicle.chassisNumber}</p>
+        </>
+    );
+};
+
+const PropertyDetails: React.FC<{ doc: InsuranceDocument; t: any; }> = ({ doc, t }) => {
+    if (!doc.property) return null;
+    return (
+        <>
+            <p><span className="font-bold">{t.propertyAddress || 'Property Address'}:</span> {doc.property.propertyAddress}</p>
+            <p><span className="font-bold">{t.propertyType || 'Type'}:</span> {doc.property.propertyType}</p>
+            <p><span className="font-bold">{t.estimatedValue || 'Value'}:</span> {doc.property.estimatedValue}</p>
+        </>
+    );
+};
+
+
 const InsuredEntityDetails: React.FC<{ doc: InsuranceDocument; t: any; }> = ({ doc, t }) => {
+    const categoryComponents: Record<InsuranceDocument['insuranceCategory'], React.ReactNode> = {
+        Health: <HealthDetails doc={doc} t={t} />,
+        Vehicle: <VehicleDetails doc={doc} t={t} />,
+        Property: <PropertyDetails doc={doc} t={t} />,
+        Life: null,
+        Business: null,
+        Travel: null,
+        Other: null,
+    };
     return (
         <section className="mb-6 text-xs" data-element="insured-entity-details">
-            <p className="font-bold text-gray-600 border-b mb-1">Insured Entity</p>
-            <p><span className="font-bold">Category:</span> {doc.insuranceCategory}</p>
-            <p><span className="font-bold">Description:</span> {doc.insuredItemDescription}</p>
-            <p className="font-bold mt-2">Coverage Details:</p>
-            <p><span className="font-bold">Sum Insured:</span> {doc.coverageAmount}</p>
-            <p><span className="font-bold">Deductible:</span> {doc.deductibleAmount}</p>
+            <p className="font-bold text-gray-600 border-b mb-1">Insured Entity ({doc.insuranceCategory})</p>
+            <p className="mb-2">{doc.insuredItemDescription}</p>
+            <div className="grid grid-cols-2 gap-4">
+                {categoryComponents[doc.insuranceCategory]}
+            </div>
+            
+            <p className="font-bold mt-4">Coverage Details:</p>
+            <p><span className="font-bold">Sum Insured:</span> {doc.currency}{doc.coverageAmount.toLocaleString()}</p>
+            <p><span className="font-bold">Deductible:</span> {doc.currency}{doc.deductibleAmount.toLocaleString()}</p>
             <p className="mt-1"><span className="font-bold">Scope:</span> {doc.coverageScope}</p>
             <div className="grid grid-cols-2 gap-4 mt-2">
                 <div>
-                    <p className="font-semibold">Included:</p>
+                    <p className="font-semibold text-green-800">Included Risks:</p>
                     <p className="whitespace-pre-line text-green-700">{doc.includedRisks}</p>
                 </div>
                  <div>
-                    <p className="font-semibold">Excluded:</p>
+                    <p className="font-semibold text-red-800">Excluded Risks:</p>
                     <p className="whitespace-pre-line text-red-700">{doc.excludedRisks}</p>
                 </div>
             </div>
@@ -82,7 +130,7 @@ const UsaClaimDefaultTemplatePage = ({ pageItems, pageIndex, totalPages, ...comm
     const { doc, accentColor, total, subtotal, currencySymbol } = commonProps;
 
     return (
-        <div className={`invoice-page font-sans text-gray-800 ${pageIndex < totalPages - 1 ? "page-break" : ""}`} style={{ fontFamily: doc.fontFamily }}>
+        <div className={`invoice-page font-sans text-gray-800 ${pageIndex < totalPages - 1 ? "page-break" : ""}`} style={{ fontFamily: doc.fontFamily, fontSize: `${doc.fontFamily === 'Inter' ? 10 : 12}pt` }}>
             <div className="p-8 m-4 border-2" style={{ borderColor: accentColor }}>
                 <header className="grid grid-cols-2 gap-10 mb-8" data-element="header">
                      <div>
@@ -94,9 +142,9 @@ const UsaClaimDefaultTemplatePage = ({ pageItems, pageIndex, totalPages, ...comm
                         <p className="text-xs text-gray-600 whitespace-pre-line">{doc.business.address}</p>
                     </div>
                      <div className="text-right">
-                        <h2 className="text-4xl font-bold">INVOICE</h2>
+                        <h2 className="text-4xl font-bold">INSURANCE</h2>
                         <div className="mt-4 text-xs space-y-1">
-                            <p><span className="font-bold text-gray-500">Invoice #:</span> {doc.policyNumber}</p>
+                            <p><span className="font-bold text-gray-500">Policy #:</span> {doc.policyNumber}</p>
                             <p><span className="font-bold text-gray-500">Date:</span> {safeFormat(new Date(doc.documentDate || new Date()), 'M/d/yyyy')}</p>
                         </div>
                     </div>
@@ -142,7 +190,7 @@ const UsaClaimDefaultTemplatePage = ({ pageItems, pageIndex, totalPages, ...comm
                             {pageItems?.filter(Boolean).map((item) => (
                                 <tr key={item.id} data-element="table-row">
                                     <td className="border p-2 align-top h-8 whitespace-pre-line font-bold">{item.name}</td>
-                                    <td className="border p-2 text-right align-top">{currencySymbol}{(item.quantity * item.rate).toFixed(2)}</td>
+                                    <td className="border p-2 text-right align-top">{currencySymbol}{(item.quantity * (item.rate || 0)).toFixed(2)}</td>
                                 </tr>
                             ))}
                              {[...Array(Math.max(0, 8 - (pageItems?.length || 0)))].map((_, i) => (
@@ -224,10 +272,12 @@ export function InsurancePreview({ doc, accentColor, backgroundColor, textColor,
     return null;
   }
 
-  const subtotal = doc.items.reduce((acc, item) => acc + item.quantity * item.rate, 0);
-  const taxAmount = (subtotal * doc.tax) / 100;
+  const subtotal = doc.items.reduce((acc, item) => acc + (item.quantity || 1) * (item.rate || item.unitPrice), 0);
   const discountAmount = (subtotal * doc.discount) / 100;
-  const total = subtotal + taxAmount - discountAmount + (doc.shippingCost || 0);
+  const subtotalAfterDiscount = subtotal - discountAmount;
+  const taxAmount = (subtotalAfterDiscount * doc.tax) / 100;
+  const total = subtotalAfterDiscount + taxAmount + (doc.shippingCost || 0);
+
   const currencySymbol = currencySymbols[doc.currency] || '$';
   const t = locales[doc.language as keyof locales] || locales.en;
 
