@@ -1,215 +1,227 @@
-import { PageHeader, PageHeaderDescription, PageHeaderHeading } from "@/components/page-header";
-import Image from "next/image";
-import Link from "next/link";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
+'use client';
 
-const faqs = [
-  {
-    question: "Do I need a business license to send invoices?",
-    answer: "Not always, but check your local regulations. Freelancers can invoice under their personal name."
-  },
-  {
-    question: "Can I create invoices without accounting software?",
-    answer: "Yes! Free online invoice generators are designed for this exact purpose."
-  },
-  {
-    question: "How long should I give clients to pay?",
-    answer: "Industry standard is 14–30 days, but it depends on your agreement."
-  },
-  {
-    question: "Should I charge late fees?",
-    answer: "Yes, late fees encourage clients to pay on time. Just make sure you state this clearly in your terms."
-  },
-  {
-    question: "Can invoices be used for tax purposes?",
-    answer: "Absolutely. Keep copies of all your invoices for your tax records."
-  },
+import React, { useState, useEffect, useCallback } from 'react';
+import Link from 'next/link';
+import { usePathname, useRouter } from 'next/navigation';
+import { Button } from '@/components/ui/button';
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
+import { Menu, Search, ChevronDown, FileText, BarChart, Tag, Book, LayoutDashboard, FilePlus, Shield, Gem, Home } from 'lucide-react';
+import { ModeToggle } from '@/components/mode-toggle';
+import { cn } from '@/lib/utils';
+import { motion } from 'framer-motion';
+import { AuthNav } from './auth-nav'; 
+import { CommandDialog, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from './ui/command';
+import { DialogTitle } from './ui/dialog';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import { ScrollArea } from './ui/scroll-area';
+
+const mainNavLinks = [
+    { href: "/", label: "Home", icon: <Home /> },
+    { href: "/pricing", label: "Pricing", icon: <Tag /> },
 ]
 
-export default function CreatingInvoicePage() {
-  return (
-    <div className="container mx-auto p-4 md:p-8">
-      <PageHeader>
-        <PageHeaderHeading>How to Create Your First Invoice – Step-by-Step Guide for Beginners</PageHeaderHeading>
-        <PageHeaderDescription>Learn how to create your first invoice with our step-by-step guide. Perfect for freelancers & small businesses who want professional invoices and faster payments.</PageHeaderDescription>
-      </PageHeader>
+const generalToolsLinks = [
+    { href: "/create-invoice", label: "Create Invoice", icon: <FilePlus /> },
+    { href: "/create-estimate", label: "Create Estimate", icon: <FilePlus /> },
+    { href: "/create-quote", label: "Create Quote", icon: <FilePlus /> },
+    { href: "/create-insurance", label: "Create Insurance", icon: <Shield /> },
+]
 
-      <div className="max-w-4xl mx-auto bg-card shadow-lg rounded-lg p-8">
-        <div className="relative w-full h-64 md:h-96 mb-8 rounded-lg overflow-hidden">
-            <Image src="https://picsum.photos/seed/guide1/1200/600" alt="Creating an invoice guide" fill style={{objectFit: 'cover'}} data-ai-hint="desk paperwork" />
-        </div>
-        <article className="prose prose-lg max-w-none text-foreground prose-headings:text-foreground prose-headings:font-headline prose-a:text-primary prose-strong:text-foreground mx-auto space-y-6">
-            
-            <p>If you’re a freelancer or small business owner, creating invoices is one of the most important parts of running your business. An invoice is more than just a request for payment—it’s a professional document that builds trust with your clients, helps you get paid on time, and keeps your financial records organized.</p>
-            <p>But if you’ve never created one before, the process can feel overwhelming. What details should you include? How do you format it? What’s the right way to send it?</p>
-            <p>In this guide, we’ll walk you step by step through <strong>creating your very first invoice</strong> using a free online invoice generator. By the end, you’ll know exactly what information to include, how to present it professionally, and how to streamline the process so you get paid faster.</p>
+function NavLink({ href, label, isActive }: { href: string, label: string, isActive: boolean }) {
+    return (
+        <Link
+            href={href}
+            className={cn(
+                "relative block px-3 py-2 transition",
+                isActive ? "text-primary" : "text-foreground hover:text-primary"
+            )}
+        >
+            {label}
+            {isActive && (
+                <motion.span
+                    className="absolute inset-x-1 -bottom-0.5 h-0.5 bg-gradient-to-r from-primary to-accent"
+                    layoutId="underline"
+                />
+            )}
+        </Link>
+    );
+}
 
-            <h2 className="text-3xl font-bold">What is an Invoice and Why Does It Matter?</h2>
-            <p>An <strong>invoice</strong> is a formal document sent by a seller (you) to a buyer (your client) that lists the products or services provided, along with the amount due. It serves three key purposes:</p>
-            <ul className="list-disc pl-6 space-y-2">
-              <li><strong>Payment Request</strong> – It tells the client how much they owe and when payment is due.</li>
-              <li><strong>Legal Record</strong> – It acts as proof of the transaction for tax and compliance purposes.</li>
-              <li><strong>Professional Branding</strong> – A well-designed invoice makes you look credible and reliable.</li>
-            </ul>
-            <p>For freelancers, consultants, and small business owners, invoices are not optional—they are <strong>essential tools for managing cash flow</strong> and ensuring smooth client relationships.</p>
+export function Header() {
+    const pathname = usePathname();
+    const router = useRouter();
+    const [open, setOpen] = useState(false);
+    const [isToolsMenuOpen, setIsToolsMenuOpen] = useState(false);
 
-            <h2 className="text-3xl font-bold">Before You Start: What You Need</h2>
-            <p>Before creating your first invoice, make sure you have these details ready:</p>
-            <ul className="list-disc pl-6 space-y-2">
-                <li>Your business information: Name, logo, contact details, and address.</li>
-                <li>Client information: Name, company name (if applicable), email, and billing address.</li>
-                <li>Invoice details: Invoice number, issue date, and due date.</li>
-                <li>List of services/products: Descriptions, rates, and quantities.</li>
-                <li>Taxes and discounts: If applicable, include relevant charges.</li>
-                <li>Payment terms: How and when you expect to be paid.</li>
-            </ul>
 
-            <h2 className="text-3xl font-bold">Step 1: Add Your Business Details</h2>
-            <p>At the top of your invoice, include your business name or your personal name if you’re a freelancer. Adding a logo makes your invoice look more professional and helps with brand recognition.</p>
-            <div className="bg-card border rounded-lg p-4 my-4 not-prose">
-                <p className="font-bold">Aqib Mustafa – Freelance Web Developer</p>
-                <p>📍 Address: Larkana, Sindh, Pakistan</p>
-                <p>📧 Email: aqib@example.com</p>
-                <p>📞 Phone: +92-300-XXXXXXX</p>
-            </div>
+    useEffect(() => {
+        const down = (e: KeyboardEvent) => {
+            if (e.key === "k" && (e.metaKey || e.ctrlKey)) {
+                e.preventDefault()
+                setOpen((open) => !open)
+            }
+        }
+        document.addEventListener("keydown", down)
+        return () => document.removeEventListener("keydown", down)
+    }, [])
 
-            <h2 className="text-3xl font-bold">Step 2: Add Client Information</h2>
-            <p>Next, add your client’s details. This makes the invoice personalized and avoids confusion.</p>
-             <div className="bg-card border rounded-lg p-4 my-4 not-prose">
-                <p><span className="font-semibold">Client Name:</span> John Doe</p>
-                <p><span className="font-semibold">Company:</span> Bright Marketing Agency</p>
-                <p>📍 <span className="font-semibold">Address:</span> 123 Main Street, New York, USA</p>
-                <p>📧 <span className="font-semibold">Email:</span> john@brightmarketing.com</p>
-            </div>
+    const runCommand = React.useCallback((command: () => unknown) => {
+        setOpen(false)
+        command()
+    }, [])
 
-            <h2 className="text-3xl font-bold">Step 3: Define Invoice Details</h2>
-            <p>This section ensures the invoice is easy to track for both you and your client. Include:</p>
-            <ul className="list-disc pl-6 space-y-2">
-                <li><strong>Invoice Number</strong> (unique, e.g., INV-001)</li>
-                <li><strong>Invoice Date</strong> (the date you create it)</li>
-                <li><strong>Payment Due Date</strong> (e.g., 14 days after invoice date)</li>
-            </ul>
-            <p>Having unique invoice numbers helps you track payments and follow up if a client is late.</p>
+    // Do not render the header on dashboard pages
+    if (pathname.startsWith('/dashboard')) {
+        return null;
+    }
 
-            <h2 className="text-3xl font-bold">Step 4: List Services or Products</h2>
-            <p>This is the most important part of your invoice. Each service or product should be itemized clearly.</p>
-            <div className="overflow-x-auto my-4 not-prose">
-                <table className="w-full text-left border-collapse">
-                    <thead className="bg-card">
-                        <tr>
-                            <th className="p-3 border">Description</th>
-                            <th className="p-3 border text-center">Quantity</th>
-                            <th className="p-3 border text-right">Rate ($)</th>
-                            <th className="p-3 border text-right">Total ($)</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr className="border-b">
-                            <td className="p-3 border">Website Design (Homepage)</td>
-                            <td className="p-3 border text-center">1</td>
-                            <td className="p-3 border text-right">500.00</td>
-                            <td className="p-3 border text-right">500.00</td>
-                        </tr>
-                        <tr className="border-b">
-                            <td className="p-3 border">SEO Optimization</td>
-                            <td className="p-3 border text-center">10 hrs</td>
-                            <td className="p-3 border text-right">30.00</td>
-                            <td className="p-3 border text-right">300.00</td>
-                        </tr>
-                        <tr className="border-b">
-                            <td className="p-3 border">Hosting (1 Year)</td>
-                            <td className="p-3 border text-center">1</td>
-                            <td className="p-3 border text-right">100.00</td>
-                            <td className="p-3 border text-right">100.00</td>
-                        </tr>
-                    </tbody>
-                    <tfoot className="font-bold">
-                        <tr>
-                            <td colSpan={3} className="p-3 border text-right">Subtotal</td>
-                            <td className="p-3 border text-right">$900.00</td>
-                        </tr>
-                         <tr>
-                            <td colSpan={3} className="p-3 border text-right">Tax (5%)</td>
-                            <td className="p-3 border text-right">$45.00</td>
-                        </tr>
-                         <tr>
-                            <td colSpan={3} className="p-3 border text-right">Total Due</td>
-                            <td className="p-3 border text-right">$945.00</td>
-                        </tr>
-                    </tfoot>
-                </table>
-            </div>
+    return (
+        <header className="sticky top-4 z-50 my-4 mx-4 border rounded-full border-border bg-background/95 backdrop-blur-sm px-4">
+            <div className="container flex h-14 items-center">
+                <div className="mr-4 hidden md:flex">
+                    <Link href="/" className="flex items-center gap-2">
+                        <span className="text-lg font-bold text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent">InvoiceCraft</span>
+                    </Link>
+                </div>
 
-             <h2 className="text-3xl font-bold">Step 5: Add Taxes, Discounts & Extras</h2>
-            <p>Depending on your region, you may need to add sales tax or VAT. Some freelancers also apply discounts for loyal clients or bulk projects.</p>
-             <ul className="list-disc pl-6 space-y-2">
-                <li><strong>Tax Example:</strong> 10% VAT = $100</li>
-                <li><strong>Discount Example:</strong> 5% loyalty discount = -$50</li>
-            </ul>
-
-            <h2 className="text-3xl font-bold">Step 6: Customize Payment Terms</h2>
-            <p>Clear payment terms protect you from late payments. Examples include:</p>
-            <ul className="list-disc pl-6 space-y-2">
-                <li><strong>Payment Due:</strong> 14 days from invoice date</li>
-                <li><strong>Accepted Methods:</strong> Bank transfer, PayPal, Stripe</li>
-                <li><strong>Late Payment Penalty:</strong> 2% added after 7 days overdue</li>
-            </ul>
-            <p>Adding these terms upfront ensures there are no misunderstandings.</p>
-
-            <h2 className="text-3xl font-bold">Tips for Writing Effective Service Descriptions</h2>
-             <ul className="list-disc pl-6 space-y-2">
-                <li><strong>Be Detailed:</strong> Instead of “Web Design,” write “Responsive Web Design for Homepage & Contact Page.”</li>
-                <li><strong>Use Professional Language:</strong> Avoid slang. Keep it business-friendly.</li>
-                <li><strong>Highlight Deliverables:</strong> Clients should understand what they’re paying for. "Logo Design – Includes 3 concepts and 2 rounds of revisions." is a great example.</li>
-            </ul>
-
-            <h2 className="text-3xl font-bold">Sending Your Invoice</h2>
-            <p>Once your invoice is ready, it’s time to send it.</p>
-            <h3 className="text-2xl font-semibold">Best Practices:</h3>
-            <ol className="list-decimal pl-6 space-y-2">
-                <li><strong>Preview First</strong> – Check spelling, numbers, and formatting.</li>
-                <li><strong>Send by Email</strong> – Most clients prefer receiving invoices via email.</li>
-                <li><strong>Attach as PDF</strong> – Always send invoices in PDF to maintain formatting.</li>
-                <li><strong>Add a Personal Note</strong> – “Thanks for your business, looking forward to future projects.”</li>
-            </ol>
-
-            <h2 className="text-3xl font-bold">Common Mistakes to Avoid</h2>
-            <ol className="list-decimal pl-6 space-y-2">
-                <li>Forgetting to include due date</li>
-                <li>Using vague descriptions like “Work completed”</li>
-                <li>Not numbering invoices properly</li>
-                <li>Failing to add taxes or discounts</li>
-                <li>Sending invoices in editable formats like Word instead of PDF</li>
-            </ol>
-
-            <h2 className="text-3xl font-bold">FAQs</h2>
-             <div className="not-prose">
-                <Accordion type="single" collapsible className="w-full">
-                    {faqs.map((item, index) => (
-                        <AccordionItem value={`item-${index}`} key={item.question}>
-                        <AccordionTrigger className="text-left font-semibold text-lg hover:no-underline p-4 text-foreground">
-                            {item.question}
-                        </AccordionTrigger>
-                        <AccordionContent className="p-4 pt-0">
-                            <p className="text-muted-foreground">
-                            {item.answer}
-                            </p>
-                        </AccordionContent>
-                        </AccordionItem>
+                <nav className="hidden md:flex flex-1 items-center justify-center space-x-1 text-sm font-medium">
+                    {mainNavLinks.map(link => (
+                        <NavLink key={link.href} href={link.href} label={link.label} isActive={pathname === link.href} />
                     ))}
-                </Accordion>
-             </div>
+                    <Link href="/features" className="relative block px-3 py-2 transition text-foreground hover:text-primary">
+                        Features
+                    </Link>
+                    <DropdownMenu open={isToolsMenuOpen} onOpenChange={setIsToolsMenuOpen}>
+                      <DropdownMenuTrigger asChild>
+                        <Button 
+                          variant="ghost" 
+                          className="px-3 py-2 flex items-center gap-1 focus-visible:ring-0"
+                          onMouseEnter={() => setIsToolsMenuOpen(true)}
+                          onMouseLeave={() => setIsToolsMenuOpen(false)}
+                        >
+                          Tools
+                          <ChevronDown className="h-4 w-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent 
+                        onMouseEnter={() => setIsToolsMenuOpen(true)}
+                        onMouseLeave={() => setIsToolsMenuOpen(false)}
+                        className="w-48"
+                      >
+                        {generalToolsLinks.map(link => (
+                          <DropdownMenuItem key={link.href} asChild>
+                            <Link href={link.href} className='flex items-center gap-2'>
+                              {React.cloneElement(link.icon, {className: 'h-4 w-4 text-muted-foreground'})}
+                              {link.label}
+                            </Link>
+                          </DropdownMenuItem>
+                        ))}
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                </nav>
 
-            <h2 className="text-3xl font-bold">Conclusion</h2>
-            <p>Creating your first invoice doesn’t have to be complicated. With the right structure and tools, you can generate professional invoices in minutes. By including accurate details, clear descriptions, and proper payment terms, you’ll not only look professional but also <strong>get paid faster</strong>.</p>
-            <p>If you’re ready to simplify your invoicing, try our <Link href="/create"><strong>free online invoice generator</strong></Link> today.</p>
-        </article>
-      </div>
-    </div>
-  );
+                <div className="flex flex-1 items-center justify-end gap-2">
+                     <Button variant="outline" className="relative h-9 w-full justify-start rounded-md text-sm text-muted-foreground sm:pr-12 md:w-40 lg:w-64" onClick={() => setOpen(true)}>
+                        <Search className="h-4 w-4 mr-2" />
+                        <span className="hidden lg:inline-flex">Search...</span>
+                        <span className="inline-flex lg:hidden">Search...</span>
+                        <kbd className="pointer-events-none absolute right-[0.3rem] top-[0.3rem] hidden h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium opacity-100 sm:flex">
+                            <span className="text-xs">⌘</span>K
+                        </kbd>
+                    </Button>
+                    <ModeToggle />
+                    <AuthNav />
+                     <CommandDialog open={open} onOpenChange={setOpen}>
+                        <DialogTitle className="sr-only">Search</DialogTitle>
+                        <CommandInput placeholder="Type a command or search..." />
+                        <CommandList>
+                        <CommandEmpty>No results found.</CommandEmpty>
+                         <CommandGroup heading="Links">
+                            {mainNavLinks.map((link) => (
+                                <CommandItem
+                                key={link.href}
+                                value={link.label}
+                                onSelect={() => {
+                                    runCommand(() => router.push(link.href))
+                                }}
+                                >
+                                {React.cloneElement(link.icon, {className: 'mr-2 h-4 w-4'})}
+                                <span>{link.label}</span>
+                                </CommandItem>
+                            ))}
+                            <CommandItem onSelect={() => runCommand(() => router.push('/features'))}>
+                                <Gem className="mr-2 h-4 w-4" />
+                                <span>Features</span>
+                            </CommandItem>
+                            {generalToolsLinks.map((link) => (
+                                <CommandItem
+                                key={link.href}
+                                value={link.label}
+                                onSelect={() => {
+                                    runCommand(() => router.push(link.href))
+                                }}
+                                >
+                                {React.cloneElement(link.icon, {className: 'mr-2 h-4 w-4'})}
+                                <span>{link.label}</span>
+                                </CommandItem>
+                            ))}
+                             <CommandItem onSelect={() => runCommand(() => router.push('/dashboard'))}>
+                                <LayoutDashboard className="mr-2 h-4 w-4" />
+                                <span>Dashboard</span>
+                            </CommandItem>
+                        </CommandGroup>
+                        </CommandList>
+                    </CommandDialog>
+                </div>
+                
+                <Sheet>
+                    <SheetTrigger asChild>
+                        <Button variant="outline" size="icon" className="md:hidden ml-4">
+                        <Menu className="h-5 w-5" />
+                        <span className="sr-only">Toggle navigation menu</span>
+                        </Button>
+                    </SheetTrigger>
+                    <SheetContent side="left" className="flex w-full flex-col p-0 sm:max-w-sm">
+                        <SheetHeader className="p-6 pb-0">
+                            <SheetTitle>
+                                <Link href="/" className="flex items-center gap-2">
+                                    <span className="text-lg font-bold text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent">InvoiceCraft</span>
+                                </Link>
+                            </SheetTitle>
+                        </SheetHeader>
+                        <ScrollArea className="flex-grow my-4 px-6">
+                            <nav className="grid gap-4 text-lg font-medium">
+                                <Link
+                                    href="/features"
+                                    className="block py-2 transition text-muted-foreground hover:text-primary"
+                                >
+                                    Features
+                                </Link>
+                                {[...mainNavLinks, ...generalToolsLinks].map(link => (
+                                    <Link
+                                        key={link.href}
+                                        href={link.href}
+                                        className={cn(
+                                            "block py-2 transition",
+                                            pathname === link.href ? "text-primary font-semibold" : "text-muted-foreground hover:text-primary"
+                                        )}
+                                    >
+                                        {link.label}
+                                    </Link>
+                                ))}
+                            </nav>
+                        </ScrollArea>
+                         <div className='mt-auto border-t p-6'>
+                            <AuthNav isMobile={true} />
+                        </div>
+                    </SheetContent>
+                </Sheet>
+            </div>
+        </header>
+    );
 }

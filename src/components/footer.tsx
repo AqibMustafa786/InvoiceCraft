@@ -46,7 +46,6 @@ export function Footer() {
             <h3 className="font-semibold tracking-wider uppercase text-foreground">Company</h3>
             <nav className="flex flex-col space-y-3">
               <Link href="/about" className="transition-colors text-muted-foreground hover:text-primary">About Us</Link>
-              <Link href="/blog" className="transition-colors text-muted-foreground hover:text-primary">Blog</Link>
               <Link href="/careers" className="transition-colors text-muted-foreground hover:text-primary">Careers</Link>
               <Link href="/press" className="transition-colors text-muted-foreground hover:text-primary">Press</Link>
             </nav>

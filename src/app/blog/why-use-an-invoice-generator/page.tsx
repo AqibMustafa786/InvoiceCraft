@@ -1,104 +1,227 @@
-import { PageHeader, PageHeaderDescription, PageHeaderHeading } from "@/components/page-header";
-import Image from "next/image";
+'use client';
 
-export default function WhyUseGeneratorPage() {
-  return (
-    <div className="container mx-auto p-4 md:p-8">
-      <PageHeader>
-        <PageHeaderHeading>Why Use an Invoice Generator – Benefits, Features & Tips</PageHeaderHeading>
-        <PageHeaderDescription>Wondering why you should use an invoice generator? Discover key benefits, features, and best practices for freelancers & businesses.</PageHeaderDescription>
-      </PageHeader>
+import React, { useState, useEffect, useCallback } from 'react';
+import Link from 'next/link';
+import { usePathname, useRouter } from 'next/navigation';
+import { Button } from '@/components/ui/button';
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
+import { Menu, Search, ChevronDown, FileText, BarChart, Tag, Book, LayoutDashboard, FilePlus, Shield, Gem, Home } from 'lucide-react';
+import { ModeToggle } from '@/components/mode-toggle';
+import { cn } from '@/lib/utils';
+import { motion } from 'framer-motion';
+import { AuthNav } from './auth-nav'; 
+import { CommandDialog, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from './ui/command';
+import { DialogTitle } from './ui/dialog';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import { ScrollArea } from './ui/scroll-area';
 
-      <div className="max-w-4xl mx-auto bg-card shadow-lg rounded-lg p-8">
-         <div className="relative w-full h-64 md:h-96 mb-8 rounded-lg overflow-hidden">
-            <Image src="https://picsum.photos/seed/guide5/1200/600" alt="Business meeting" layout="fill" objectFit="cover" data-ai-hint="business meeting" />
-        </div>
-        <article className="prose prose-lg max-w-none text-foreground prose-headings:text-foreground prose-headings:font-headline prose-a:text-primary prose-strong:text-foreground mx-auto space-y-6">
-            <p>Invoicing is one of the most important yet time-consuming tasks for freelancers, small businesses, and agencies. Traditionally, people have relied on spreadsheets, Word templates, or even handwritten bills to manage their payments. But in today’s digital-first world, <strong>invoice generators</strong> have transformed the way businesses handle billing.</p>
-            <p>If you’ve ever wondered, <em>“Why should I use an invoice generator instead of creating invoices manually?”</em> — this blog is your complete guide. We’ll cover the <strong>benefits, use cases, features, and how invoice generators save time, reduce errors, and improve cash flow.</strong></p>
-            
-            <h2 className="text-3xl font-bold">What Is an Invoice Generator?</h2>
-            <p>An invoice generator is an <strong>online tool or SaaS application</strong> that allows you to create, customize, and send professional invoices in minutes. Instead of spending hours designing templates or formatting documents, you can:</p>
-            <ul className="list-disc pl-6 space-y-2">
-                <li>Fill in client details.</li>
-                <li>Add services or products.</li>
-                <li>Apply taxes, discounts, and totals.</li>
-                <li>Download as PDF or send directly via email.</li>
-            </ul>
-            <p>Modern invoice generators also include <strong>payment tracking, reminders, and automation</strong> features, making invoicing seamless from start to finish.</p>
+const mainNavLinks = [
+    { href: "/", label: "Home", icon: <Home /> },
+    { href: "/pricing", label: "Pricing", icon: <Tag /> },
+]
 
-            <h2 className="text-3xl font-bold">Why Not Just Use Word or Excel?</h2>
-            <p>Sure, you <em>can</em> make invoices in Word or Excel, but they come with problems:</p>
-            <ul className="list-disc pl-6 space-y-2">
-                <li><strong>Time-consuming:</strong> Formatting every invoice manually wastes time.</li>
-                <li><strong>Error-prone:</strong> Manual calculations often lead to mistakes.</li>
-                <li><strong>Unprofessional:</strong> Basic templates may not look polished.</li>
-                <li><strong>Difficult tracking:</strong> No built-in payment status or reminders.</li>
-            </ul>
-            <p>Invoice generators solve all of these problems with <strong>speed, accuracy, and professionalism.</strong></p>
+const generalToolsLinks = [
+    { href: "/create-invoice", label: "Create Invoice", icon: <FilePlus /> },
+    { href: "/create-estimate", label: "Create Estimate", icon: <FilePlus /> },
+    { href: "/create-quote", label: "Create Quote", icon: <FilePlus /> },
+    { href: "/create-insurance", label: "Create Insurance", icon: <Shield /> },
+]
 
-            <h2 className="text-3xl font-bold">Key Benefits of Using an Invoice Generator</h2>
-            <ul className="list-disc pl-6 space-y-2">
-                <li><strong>Save Time & Effort:</strong> Creating an invoice takes minutes instead of hours. Automation fills in recurring details, making billing faster.</li>
-                <li><strong>Professional Appearance:</strong> Invoices are often the last impression you leave with a client. A polished, branded invoice increases trust and credibility.</li>
-                <li><strong>Reduce Errors:</strong> Built-in calculators handle taxes, discounts, and totals automatically, preventing embarrassing mistakes.</li>
-                <li><strong>Track Payments Easily:</strong> Know which invoices are paid, unpaid, overdue, or partially paid — all in one dashboard.</li>
-                <li><strong>Faster Payments:</strong> Clients are more likely to pay quickly when invoices are clear, accurate, and include multiple payment options.</li>
-                <li><strong>Automation:</strong> Set up recurring invoices, automated reminders, and payment confirmations to reduce manual work.</li>
-                <li><strong>Cloud Storage & Security:</strong> Invoices are stored online, accessible anywhere, and backed up securely.</li>
-            </ul>
+function NavLink({ href, label, isActive }: { href: string, label: string, isActive: boolean }) {
+    return (
+        <Link
+            href={href}
+            className={cn(
+                "relative block px-3 py-2 transition",
+                isActive ? "text-primary" : "text-foreground hover:text-primary"
+            )}
+        >
+            {label}
+            {isActive && (
+                <motion.span
+                    className="absolute inset-x-1 -bottom-0.5 h-0.5 bg-gradient-to-r from-primary to-accent"
+                    layoutId="underline"
+                />
+            )}
+        </Link>
+    );
+}
 
-            <h2 className="text-3xl font-bold">Who Should Use an Invoice Generator?</h2>
-            <h3 className="text-2xl font-semibold">Freelancers</h3>
-            <p>Writers, designers, developers, consultants — anyone who works project-to-project.</p>
-            <ul className="list-disc pl-6 space-y-2">
-                <li>Saves time writing invoices.</li>
-                <li>Helps track multiple clients.</li>
-                <li>Ensures professional communication.</li>
-            </ul>
+export function Header() {
+    const pathname = usePathname();
+    const router = useRouter();
+    const [open, setOpen] = useState(false);
+    const [isToolsMenuOpen, setIsToolsMenuOpen] = useState(false);
 
-            <h3 className="text-2xl font-semibold">Small Businesses</h3>
-            <p>Shops, startups, agencies, or e-commerce stores.</p>
-            <ul className="list-disc pl-6 space-y-2">
-                <li>Manages bulk invoicing.</li>
-                <li>Tracks revenue and expenses.</li>
-                <li>Improves financial reporting.</li>
-            </ul>
 
-            <h3 className="text-2xl font-semibold">Agencies</h3>
-            <p>Marketing, IT, or design agencies managing multiple clients.</p>
-            <ul className="list-disc pl-6 space-y-2">
-                <li>Standardizes invoicing across teams.</li>
-                <li>Provides clients with branded, consistent invoices.</li>
-            </ul>
+    useEffect(() => {
+        const down = (e: KeyboardEvent) => {
+            if (e.key === "k" && (e.metaKey || e.ctrlKey)) {
+                e.preventDefault()
+                setOpen((open) => !open)
+            }
+        }
+        document.addEventListener("keydown", down)
+        return () => document.removeEventListener("keydown", down)
+    }, [])
 
-            <h2 className="text-3xl font-bold">Must-Have Features in a Good Invoice Generator</h2>
-            <p>When choosing an invoice generator, look for:</p>
-            <ul className="list-disc pl-6 space-y-2">
-                <li>Customizable templates (logo, colors, branding).</li>
-                <li>Multiple currencies and languages.</li>
-                <li>Payment integrations (PayPal, Stripe, Wise).</li>
-                <li>Automated reminders.</li>
-                <li>Partial payments tracking.</li>
-                <li>Recurring invoices.</li>
-                <li>Cloud-based storage.</li>
-                <li>Mobile-friendly access.</li>
-            </ul>
+    const runCommand = React.useCallback((command: () => unknown) => {
+        setOpen(false)
+        command()
+    }, [])
 
-            <h2 className="text-3xl font-bold">How Invoice Generators Improve Client Relationships</h2>
-            <p>Invoices aren’t just about money — they’re about <strong>communication</strong>. A clear, detailed invoice reduces misunderstandings and builds trust.</p>
-            <ul className="list-disc pl-6 space-y-2">
-                <li><strong>Transparency:</strong> Clients know exactly what they’re paying for.</li>
-                <li><strong>Professionalism:</strong> Branded invoices reflect well on your business.</li>
-                <li><strong>Convenience:</strong> Easy-to-pay invoices = happier clients.</li>
-            </ul>
+    // Do not render the header on dashboard pages
+    if (pathname.startsWith('/dashboard')) {
+        return null;
+    }
 
-            <h2 className="text-3xl font-bold">Final Thoughts</h2>
-            <p>So, <strong>why use an invoice generator?</strong> Because it saves time, reduces errors, ensures professionalism, and helps you get paid faster. Whether you’re a freelancer, small business owner, or enterprise, an invoice generator is no longer optional — it’s essential.</p>
-            <p>With automation, payment tracking, reminders, and professional templates, invoicing transforms from a stressful chore into a seamless process. If you’re still making invoices manually, it’s time to upgrade. Try a free invoice generator today and experience the difference.</p>
+    return (
+        <header className="sticky top-4 z-50 my-4 mx-4 border rounded-full border-border bg-background/95 backdrop-blur-sm px-4">
+            <div className="container flex h-14 items-center">
+                <div className="mr-4 hidden md:flex">
+                    <Link href="/" className="flex items-center gap-2">
+                        <span className="text-lg font-bold text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent">InvoiceCraft</span>
+                    </Link>
+                </div>
 
-        </article>
-      </div>
-    </div>
-  );
+                <nav className="hidden md:flex flex-1 items-center justify-center space-x-1 text-sm font-medium">
+                    {mainNavLinks.map(link => (
+                        <NavLink key={link.href} href={link.href} label={link.label} isActive={pathname === link.href} />
+                    ))}
+                    <Link href="/features" className="relative block px-3 py-2 transition text-foreground hover:text-primary">
+                        Features
+                    </Link>
+                    <DropdownMenu open={isToolsMenuOpen} onOpenChange={setIsToolsMenuOpen}>
+                      <DropdownMenuTrigger asChild>
+                        <Button 
+                          variant="ghost" 
+                          className="px-3 py-2 flex items-center gap-1 focus-visible:ring-0"
+                          onMouseEnter={() => setIsToolsMenuOpen(true)}
+                          onMouseLeave={() => setIsToolsMenuOpen(false)}
+                        >
+                          Tools
+                          <ChevronDown className="h-4 w-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent 
+                        onMouseEnter={() => setIsToolsMenuOpen(true)}
+                        onMouseLeave={() => setIsToolsMenuOpen(false)}
+                        className="w-48"
+                      >
+                        {generalToolsLinks.map(link => (
+                          <DropdownMenuItem key={link.href} asChild>
+                            <Link href={link.href} className='flex items-center gap-2'>
+                              {React.cloneElement(link.icon, {className: 'h-4 w-4 text-muted-foreground'})}
+                              {link.label}
+                            </Link>
+                          </DropdownMenuItem>
+                        ))}
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                </nav>
+
+                <div className="flex flex-1 items-center justify-end gap-2">
+                     <Button variant="outline" className="relative h-9 w-full justify-start rounded-md text-sm text-muted-foreground sm:pr-12 md:w-40 lg:w-64" onClick={() => setOpen(true)}>
+                        <Search className="h-4 w-4 mr-2" />
+                        <span className="hidden lg:inline-flex">Search...</span>
+                        <span className="inline-flex lg:hidden">Search...</span>
+                        <kbd className="pointer-events-none absolute right-[0.3rem] top-[0.3rem] hidden h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium opacity-100 sm:flex">
+                            <span className="text-xs">⌘</span>K
+                        </kbd>
+                    </Button>
+                    <ModeToggle />
+                    <AuthNav />
+                     <CommandDialog open={open} onOpenChange={setOpen}>
+                        <DialogTitle className="sr-only">Search</DialogTitle>
+                        <CommandInput placeholder="Type a command or search..." />
+                        <CommandList>
+                        <CommandEmpty>No results found.</CommandEmpty>
+                         <CommandGroup heading="Links">
+                            {mainNavLinks.map((link) => (
+                                <CommandItem
+                                key={link.href}
+                                value={link.label}
+                                onSelect={() => {
+                                    runCommand(() => router.push(link.href))
+                                }}
+                                >
+                                {React.cloneElement(link.icon, {className: 'mr-2 h-4 w-4'})}
+                                <span>{link.label}</span>
+                                </CommandItem>
+                            ))}
+                            <CommandItem onSelect={() => runCommand(() => router.push('/features'))}>
+                                <Gem className="mr-2 h-4 w-4" />
+                                <span>Features</span>
+                            </CommandItem>
+                            {generalToolsLinks.map((link) => (
+                                <CommandItem
+                                key={link.href}
+                                value={link.label}
+                                onSelect={() => {
+                                    runCommand(() => router.push(link.href))
+                                }}
+                                >
+                                {React.cloneElement(link.icon, {className: 'mr-2 h-4 w-4'})}
+                                <span>{link.label}</span>
+                                </CommandItem>
+                            ))}
+                             <CommandItem onSelect={() => runCommand(() => router.push('/dashboard'))}>
+                                <LayoutDashboard className="mr-2 h-4 w-4" />
+                                <span>Dashboard</span>
+                            </CommandItem>
+                        </CommandGroup>
+                        </CommandList>
+                    </CommandDialog>
+                </div>
+                
+                <Sheet>
+                    <SheetTrigger asChild>
+                        <Button variant="outline" size="icon" className="md:hidden ml-4">
+                        <Menu className="h-5 w-5" />
+                        <span className="sr-only">Toggle navigation menu</span>
+                        </Button>
+                    </SheetTrigger>
+                    <SheetContent side="left" className="flex w-full flex-col p-0 sm:max-w-sm">
+                        <SheetHeader className="p-6 pb-0">
+                            <SheetTitle>
+                                <Link href="/" className="flex items-center gap-2">
+                                    <span className="text-lg font-bold text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent">InvoiceCraft</span>
+                                </Link>
+                            </SheetTitle>
+                        </SheetHeader>
+                        <ScrollArea className="flex-grow my-4 px-6">
+                            <nav className="grid gap-4 text-lg font-medium">
+                                <Link
+                                    href="/features"
+                                    className="block py-2 transition text-muted-foreground hover:text-primary"
+                                >
+                                    Features
+                                </Link>
+                                {[...mainNavLinks, ...generalToolsLinks].map(link => (
+                                    <Link
+                                        key={link.href}
+                                        href={link.href}
+                                        className={cn(
+                                            "block py-2 transition",
+                                            pathname === link.href ? "text-primary font-semibold" : "text-muted-foreground hover:text-primary"
+                                        )}
+                                    >
+                                        {link.label}
+                                    </Link>
+                                ))}
+                            </nav>
+                        </ScrollArea>
+                         <div className='mt-auto border-t p-6'>
+                            <AuthNav isMobile={true} />
+                        </div>
+                    </SheetContent>
+                </Sheet>
+            </div>
+        </header>
+    );
 }

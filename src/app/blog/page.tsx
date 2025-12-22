@@ -1,129 +1,227 @@
-
 'use client';
-import Link from "next/link";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import Image from "next/image";
-import { ArrowRight } from "lucide-react";
-import { PageHeader, PageHeaderDescription, PageHeaderHeading } from "@/components/page-header";
+
+import React, { useState, useEffect, useCallback } from 'react';
+import Link from 'next/link';
+import { usePathname, useRouter } from 'next/navigation';
+import { Button } from '@/components/ui/button';
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
+import { Menu, Search, ChevronDown, FileText, BarChart, Tag, Book, LayoutDashboard, FilePlus, Shield, Gem, Home } from 'lucide-react';
+import { ModeToggle } from '@/components/mode-toggle';
+import { cn } from '@/lib/utils';
 import { motion } from 'framer-motion';
+import { AuthNav } from './auth-nav'; 
+import { CommandDialog, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from './ui/command';
+import { DialogTitle } from './ui/dialog';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import { ScrollArea } from './ui/scroll-area';
 
-const blogPosts = [
-  {
-    slug: "creating-your-first-invoice",
-    title: "How to Create Your First Invoice – Step-by-Step Guide for Beginners",
-    description: "Learn how to create your first invoice with our step-by-step guide. Perfect for freelancers & small businesses who want professional invoices and faster payments.",
-    author: "InvoiceCraft Team",
-    date: "2024-07-30",
-    imageUrl: "https://picsum.photos/seed/guide1/600/400",
-    imageHint: "desk invoice"
-  },
-  {
-    slug: "writing-effective-descriptions",
-    title: "Writing Effective Invoice Descriptions – Clear Communication Tips",
-    description: "Discover proven tips to write clear, effective invoice descriptions. Improve client communication, reduce disputes, and get paid faster with professional invoices.",
-    author: "InvoiceCraft Team",
-    date: "2024-07-29",
-    imageUrl: "https://picsum.photos/seed/guide2/600/400",
-    imageHint: "writing notes"
-  },
-  {
-    slug: "sending-invoices-best-practices",
-    title: "Best Practices for Sending Invoices – Get Paid Faster",
-    description: "Learn the best practices for sending invoices professionally. Discover tips to improve client trust, avoid delays, and ensure faster payments.",
-    author: "InvoiceCraft Team",
-    date: "2024-07-28",
-    imageUrl: "https://picsum.photos/seed/guide3/600/400",
-    imageHint: "email laptop"
-  },
-  {
-    slug: "managing-invoice-payments",
-    title: "Managing Invoice Payments – How to Track & Organize Payments",
-    description: "A complete guide on managing invoice payments. Learn how to track, organize, and automate payments to improve your cash flow.",
-    author: "InvoiceCraft Team",
-    date: "2024-07-27",
-    imageUrl: "https://picsum.photos/seed/guide4/600/400",
-    imageHint: "finance chart"
-  },
-  {
-    slug: "why-use-an-invoice-generator",
-    title: "Why Use an Invoice Generator – Benefits, Features & Tips",
-    description: "Wondering why you should use an invoice generator? Discover key benefits, features, and best practices for freelancers & businesses.",
-    author: "InvoiceCraft Team",
-    date: "2024-07-26",
-    imageUrl: "https://picsum.photos/seed/guide5/600/400",
-    imageHint: "business meeting"
-  },
-];
+const mainNavLinks = [
+    { href: "/", label: "Home", icon: <Home /> },
+    { href: "/pricing", label: "Pricing", icon: <Tag /> },
+]
 
+const generalToolsLinks = [
+    { href: "/create-invoice", label: "Create Invoice", icon: <FilePlus /> },
+    { href: "/create-estimate", label: "Create Estimate", icon: <FilePlus /> },
+    { href: "/create-quote", label: "Create Quote", icon: <FilePlus /> },
+    { href: "/create-insurance", label: "Create Insurance", icon: <Shield /> },
+]
 
-const containerVariants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.1,
-      delayChildren: 0.1,
-    }
-  }
-};
-
-const cardVariants = {
-  hidden: { opacity: 0, y: 20 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: {
-        duration: 0.4,
-        ease: 'easeOut'
-    }
-  }
-};
-
-
-export default function BlogPage() {
-  return (
-    <div className="container mx-auto p-4 md:p-8">
-      <PageHeader>
-        <PageHeaderHeading>From the InvoiceCraft Blog</PageHeaderHeading>
-        <PageHeaderDescription>Tips, tutorials, and insights on invoicing, finance, and freelance life.</PageHeaderDescription>
-      </PageHeader>
-
-      <motion.div
-        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
-        variants={containerVariants}
-        initial="hidden"
-        animate="visible"
-      >
-        {blogPosts.map((post) => (
-          <motion.div key={post.slug} variants={cardVariants} whileHover={{ y: -8, scale: 1.03, transition: { type: "spring", stiffness: 300 } }}>
-            <Card className="flex flex-col overflow-hidden bg-card/50 backdrop-blur-sm shadow-lg hover:shadow-primary/20 transition-shadow duration-300 h-full">
-              <div className="relative w-full h-48">
-                 <Image 
-                  src={post.imageUrl} 
-                  alt={post.title} 
-                  fill 
-                  className="object-cover" 
-                  data-ai-hint={post.imageHint}
+function NavLink({ href, label, isActive }: { href: string, label: string, isActive: boolean }) {
+    return (
+        <Link
+            href={href}
+            className={cn(
+                "relative block px-3 py-2 transition",
+                isActive ? "text-primary" : "text-foreground hover:text-primary"
+            )}
+        >
+            {label}
+            {isActive && (
+                <motion.span
+                    className="absolute inset-x-1 -bottom-0.5 h-0.5 bg-gradient-to-r from-primary to-accent"
+                    layoutId="underline"
                 />
-              </div>
-              <CardHeader>
-                <CardTitle className="text-xl">{post.title}</CardTitle>
-                <CardDescription>
-                  by {post.author} on {new Date(post.date).toLocaleDateString()}
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="flex-1">
-                <p className="text-muted-foreground">{post.description}</p>
-              </CardContent>
-              <CardFooter>
-                <Link href={`/blog/${post.slug}`} className="font-semibold text-primary hover:underline flex items-center gap-2">
-                  Read More <ArrowRight className="h-4 w-4" />
-                </Link>
-              </CardFooter>
-            </Card>
-          </motion.div>
-        ))}
-      </motion.div>
-    </div>
-  );
+            )}
+        </Link>
+    );
+}
+
+export function Header() {
+    const pathname = usePathname();
+    const router = useRouter();
+    const [open, setOpen] = useState(false);
+    const [isToolsMenuOpen, setIsToolsMenuOpen] = useState(false);
+
+
+    useEffect(() => {
+        const down = (e: KeyboardEvent) => {
+            if (e.key === "k" && (e.metaKey || e.ctrlKey)) {
+                e.preventDefault()
+                setOpen((open) => !open)
+            }
+        }
+        document.addEventListener("keydown", down)
+        return () => document.removeEventListener("keydown", down)
+    }, [])
+
+    const runCommand = React.useCallback((command: () => unknown) => {
+        setOpen(false)
+        command()
+    }, [])
+
+    // Do not render the header on dashboard pages
+    if (pathname.startsWith('/dashboard')) {
+        return null;
+    }
+
+    return (
+        <header className="sticky top-4 z-50 my-4 mx-4 border rounded-full border-border bg-background/95 backdrop-blur-sm px-4">
+            <div className="container flex h-14 items-center">
+                <div className="mr-4 hidden md:flex">
+                    <Link href="/" className="flex items-center gap-2">
+                        <span className="text-lg font-bold text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent">InvoiceCraft</span>
+                    </Link>
+                </div>
+
+                <nav className="hidden md:flex flex-1 items-center justify-center space-x-1 text-sm font-medium">
+                    {mainNavLinks.map(link => (
+                        <NavLink key={link.href} href={link.href} label={link.label} isActive={pathname === link.href} />
+                    ))}
+                    <Link href="/features" className="relative block px-3 py-2 transition text-foreground hover:text-primary">
+                        Features
+                    </Link>
+                    <DropdownMenu open={isToolsMenuOpen} onOpenChange={setIsToolsMenuOpen}>
+                      <DropdownMenuTrigger asChild>
+                        <Button 
+                          variant="ghost" 
+                          className="px-3 py-2 flex items-center gap-1 focus-visible:ring-0"
+                          onMouseEnter={() => setIsToolsMenuOpen(true)}
+                          onMouseLeave={() => setIsToolsMenuOpen(false)}
+                        >
+                          Tools
+                          <ChevronDown className="h-4 w-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent 
+                        onMouseEnter={() => setIsToolsMenuOpen(true)}
+                        onMouseLeave={() => setIsToolsMenuOpen(false)}
+                        className="w-48"
+                      >
+                        {generalToolsLinks.map(link => (
+                          <DropdownMenuItem key={link.href} asChild>
+                            <Link href={link.href} className='flex items-center gap-2'>
+                              {React.cloneElement(link.icon, {className: 'h-4 w-4 text-muted-foreground'})}
+                              {link.label}
+                            </Link>
+                          </DropdownMenuItem>
+                        ))}
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                </nav>
+
+                <div className="flex flex-1 items-center justify-end gap-2">
+                     <Button variant="outline" className="relative h-9 w-full justify-start rounded-md text-sm text-muted-foreground sm:pr-12 md:w-40 lg:w-64" onClick={() => setOpen(true)}>
+                        <Search className="h-4 w-4 mr-2" />
+                        <span className="hidden lg:inline-flex">Search...</span>
+                        <span className="inline-flex lg:hidden">Search...</span>
+                        <kbd className="pointer-events-none absolute right-[0.3rem] top-[0.3rem] hidden h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium opacity-100 sm:flex">
+                            <span className="text-xs">⌘</span>K
+                        </kbd>
+                    </Button>
+                    <ModeToggle />
+                    <AuthNav />
+                     <CommandDialog open={open} onOpenChange={setOpen}>
+                        <DialogTitle className="sr-only">Search</DialogTitle>
+                        <CommandInput placeholder="Type a command or search..." />
+                        <CommandList>
+                        <CommandEmpty>No results found.</CommandEmpty>
+                         <CommandGroup heading="Links">
+                            {mainNavLinks.map((link) => (
+                                <CommandItem
+                                key={link.href}
+                                value={link.label}
+                                onSelect={() => {
+                                    runCommand(() => router.push(link.href))
+                                }}
+                                >
+                                {React.cloneElement(link.icon, {className: 'mr-2 h-4 w-4'})}
+                                <span>{link.label}</span>
+                                </CommandItem>
+                            ))}
+                            <CommandItem onSelect={() => runCommand(() => router.push('/features'))}>
+                                <Gem className="mr-2 h-4 w-4" />
+                                <span>Features</span>
+                            </CommandItem>
+                            {generalToolsLinks.map((link) => (
+                                <CommandItem
+                                key={link.href}
+                                value={link.label}
+                                onSelect={() => {
+                                    runCommand(() => router.push(link.href))
+                                }}
+                                >
+                                {React.cloneElement(link.icon, {className: 'mr-2 h-4 w-4'})}
+                                <span>{link.label}</span>
+                                </CommandItem>
+                            ))}
+                             <CommandItem onSelect={() => runCommand(() => router.push('/dashboard'))}>
+                                <LayoutDashboard className="mr-2 h-4 w-4" />
+                                <span>Dashboard</span>
+                            </CommandItem>
+                        </CommandGroup>
+                        </CommandList>
+                    </CommandDialog>
+                </div>
+                
+                <Sheet>
+                    <SheetTrigger asChild>
+                        <Button variant="outline" size="icon" className="md:hidden ml-4">
+                        <Menu className="h-5 w-5" />
+                        <span className="sr-only">Toggle navigation menu</span>
+                        </Button>
+                    </SheetTrigger>
+                    <SheetContent side="left" className="flex w-full flex-col p-0 sm:max-w-sm">
+                        <SheetHeader className="p-6 pb-0">
+                            <SheetTitle>
+                                <Link href="/" className="flex items-center gap-2">
+                                    <span className="text-lg font-bold text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent">InvoiceCraft</span>
+                                </Link>
+                            </SheetTitle>
+                        </SheetHeader>
+                        <ScrollArea className="flex-grow my-4 px-6">
+                            <nav className="grid gap-4 text-lg font-medium">
+                                <Link
+                                    href="/features"
+                                    className="block py-2 transition text-muted-foreground hover:text-primary"
+                                >
+                                    Features
+                                </Link>
+                                {[...mainNavLinks, ...generalToolsLinks].map(link => (
+                                    <Link
+                                        key={link.href}
+                                        href={link.href}
+                                        className={cn(
+                                            "block py-2 transition",
+                                            pathname === link.href ? "text-primary font-semibold" : "text-muted-foreground hover:text-primary"
+                                        )}
+                                    >
+                                        {link.label}
+                                    </Link>
+                                ))}
+                            </nav>
+                        </ScrollArea>
+                         <div className='mt-auto border-t p-6'>
+                            <AuthNav isMobile={true} />
+                        </div>
+                    </SheetContent>
+                </Sheet>
+            </div>
+        </header>
+    );
 }

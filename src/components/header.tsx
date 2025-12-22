@@ -24,7 +24,6 @@ import { ScrollArea } from './ui/scroll-area';
 const mainNavLinks = [
     { href: "/", label: "Home", icon: <Home /> },
     { href: "/pricing", label: "Pricing", icon: <Tag /> },
-    { href: "/blog", label: "Blog", icon: <Book /> },
 ]
 
 const generalToolsLinks = [

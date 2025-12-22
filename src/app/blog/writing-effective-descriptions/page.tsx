@@ -1,114 +1,227 @@
-import { PageHeader, PageHeaderDescription, PageHeaderHeading } from "@/components/page-header";
-import Image from "next/image";
+'use client';
 
-export default function DescriptionsPage() {
-  return (
-    <div className="container mx-auto p-4 md:p-8">
-      <PageHeader>
-        <PageHeaderHeading>Writing Effective Invoice Descriptions – Clear Communication Tips</PageHeaderHeading>
-        <PageHeaderDescription>Discover proven tips to write clear, effective invoice descriptions. Improve client communication, reduce disputes, and get paid faster with professional invoices.</PageHeaderDescription>
-      </PageHeader>
+import React, { useState, useEffect, useCallback } from 'react';
+import Link from 'next/link';
+import { usePathname, useRouter } from 'next/navigation';
+import { Button } from '@/components/ui/button';
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
+import { Menu, Search, ChevronDown, FileText, BarChart, Tag, Book, LayoutDashboard, FilePlus, Shield, Gem, Home } from 'lucide-react';
+import { ModeToggle } from '@/components/mode-toggle';
+import { cn } from '@/lib/utils';
+import { motion } from 'framer-motion';
+import { AuthNav } from './auth-nav'; 
+import { CommandDialog, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from './ui/command';
+import { DialogTitle } from './ui/dialog';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import { ScrollArea } from './ui/scroll-area';
 
-       <div className="max-w-4xl mx-auto bg-card shadow-lg rounded-lg p-8">
-         <div className="relative w-full h-64 mb-8 rounded-lg overflow-hidden">
-            <Image src="https://picsum.photos/seed/guide2/800/400" alt="Writing notes" fill style={{objectFit: 'cover'}} data-ai-hint="writing notes" />
-        </div>
-        <article className="prose prose-lg max-w-none text-foreground prose-headings:text-foreground prose-a:text-primary prose-strong:text-foreground mx-auto space-y-6">
+const mainNavLinks = [
+    { href: "/", label: "Home", icon: <Home /> },
+    { href: "/pricing", label: "Pricing", icon: <Tag /> },
+]
 
-            <p>Invoicing isn’t just about numbers — it’s also about clarity. One of the most overlooked parts of an invoice is the <strong>description section</strong>, where you detail the services provided or products sold. Poorly written descriptions can confuse clients, cause disputes, and delay payments. On the other hand, <strong>clear and effective descriptions</strong> help clients understand what they are paying for, build trust, and improve your chances of getting paid on time.</p>
-            <p>In this blog, we’ll explore <strong>step-by-step strategies</strong> to write professional invoice descriptions, examples of good vs bad descriptions, and how you can use descriptions to <strong>optimize your invoices for professionalism and SEO (if published online).</strong></p>
+const generalToolsLinks = [
+    { href: "/create-invoice", label: "Create Invoice", icon: <FilePlus /> },
+    { href: "/create-estimate", label: "Create Estimate", icon: <FilePlus /> },
+    { href: "/create-quote", label: "Create Quote", icon: <FilePlus /> },
+    { href: "/create-insurance", label: "Create Insurance", icon: <Shield /> },
+]
 
-            <h2 className="text-3xl font-bold">Why Clear Descriptions Matter in Invoices</h2>
-            <ul className="list-disc pl-6 space-y-2">
-                <li><strong>Prevent Disputes:</strong> A vague description like “Work completed” can leave room for misunderstandings.</li>
-                <li><strong>Build Professionalism:</strong> Specific details reflect credibility and expertise.</li>
-                <li><strong>Faster Payments:</strong> When clients clearly understand charges, they’re less likely to delay payments.</li>
-                <li><strong>Record Keeping:</strong> Detailed descriptions create transparent records for tax, audits, or future references.</li>
-            </ul>
-            <p><strong>Example:</strong></p>
-            <ul className="list-none pl-0 space-y-2">
-                <li>❌ Bad: <em>Website work</em></li>
-                <li>✅ Good: <em>Developed 5 responsive landing pages for product campaign using WordPress, including contact form integration and SEO optimization.</em></li>
-            </ul>
+function NavLink({ href, label, isActive }: { href: string, label: string, isActive: boolean }) {
+    return (
+        <Link
+            href={href}
+            className={cn(
+                "relative block px-3 py-2 transition",
+                isActive ? "text-primary" : "text-foreground hover:text-primary"
+            )}
+        >
+            {label}
+            {isActive && (
+                <motion.span
+                    className="absolute inset-x-1 -bottom-0.5 h-0.5 bg-gradient-to-r from-primary to-accent"
+                    layoutId="underline"
+                />
+            )}
+        </Link>
+    );
+}
 
-            <h2 className="text-3xl font-bold">Step 1: Start with the Service or Product Title</h2>
-            <p>Your description should begin with a clear <strong>title</strong> that states what the service/product is. This sets the context immediately.</p>
-            <p><strong>Examples:</strong></p>
-            <ul className="list-disc pl-6 space-y-2">
-                <li><em>Logo Design Package – Premium</em></li>
-                <li><em>Monthly SEO Optimization (September 2025)</em></li>
-                <li><em>Custom Mobile App Development – iOS & Android</em></li>
-            </ul>
-            <p><strong>Pro Tip:</strong> Use keywords in your titles for better clarity and search visibility if invoices are shared online.</p>
+export function Header() {
+    const pathname = usePathname();
+    const router = useRouter();
+    const [open, setOpen] = useState(false);
+    const [isToolsMenuOpen, setIsToolsMenuOpen] = useState(false);
 
-            <h2 className="text-3xl font-bold">Step 2: Add Key Details (Who, What, When, How)</h2>
-            <p>Ask yourself: <em>If I was the client, what details would I want to see?</em></p>
-            <ul className="list-disc pl-6 space-y-2">
-                <li><strong>Who</strong> performed the work? (Optional if you’re solo, but useful in agencies)</li>
-                <li><strong>What</strong> was delivered? (Scope of services or product features)</li>
-                <li><strong>When</strong> was the work done? (Project timeline, delivery dates)</li>
-                <li><strong>How</strong> was it done? (Tools, platforms, methods, or effort level)</li>
-            </ul>
-            <p><strong>Example:</strong><br/><em>Provided social media management services for October 2025, including creating 20 Instagram posts, running 3 Facebook ad campaigns, and weekly engagement reports.</em></p>
 
-            <h2 className="text-3xl font-bold">Step 3: Use Client-Friendly Language</h2>
-            <p>Avoid jargon unless you’re sure your client understands it. Instead of technical terms, focus on <strong>results and outcomes</strong>.</p>
-            <p><strong>Example:</strong></p>
-            <ul className="list-none pl-0 space-y-2">
-                <li>❌ <em>Implemented CRUD operations with Laravel API endpoints.</em></li>
-                <li>✅ <em>Developed a backend system allowing clients to add, edit, and manage their inventory seamlessly through the dashboard.</em></li>
-            </ul>
-            <p>Clear communication builds trust and avoids back-and-forth clarifications.</p>
+    useEffect(() => {
+        const down = (e: KeyboardEvent) => {
+            if (e.key === "k" && (e.metaKey || e.ctrlKey)) {
+                e.preventDefault()
+                setOpen((open) => !open)
+            }
+        }
+        document.addEventListener("keydown", down)
+        return () => document.removeEventListener("keydown", down)
+    }, [])
 
-            <h2 className="text-3xl font-bold">Step 4: Quantify Your Work</h2>
-            <p>Numbers bring precision. Instead of writing <em>“Designed webpages”</em>, write:</p>
-            <blockquote><em>“Designed 6 responsive webpages with UI/UX optimization for desktop and mobile devices.”</em></blockquote>
-            <p><strong>Examples of quantifiable details:</strong></p>
-            <ul className="list-disc pl-6 space-y-2">
-                <li>Number of hours worked (e.g., 15 hours of development)</li>
-                <li>Number of units (e.g., 50 product packs supplied)</li>
-                <li>Project milestones (Phase 1: Wireframe design, Phase 2: Prototype delivery)</li>
-            </ul>
+    const runCommand = React.useCallback((command: () => unknown) => {
+        setOpen(false)
+        command()
+    }, [])
 
-            <h2 className="text-3xl font-bold">Step 5: Highlight Value, Not Just Effort</h2>
-            <p>Your invoice description is also a chance to remind the client of the <strong>value delivered</strong>. This subtly reinforces why your pricing is justified.</p>
-            <blockquote><em>Optimized website load speed from 8 seconds to under 2 seconds, improving user experience and boosting SEO ranking potential.</em></blockquote>
-            <p>This not only explains the task but also shows the outcome that benefits the client.</p>
+    // Do not render the header on dashboard pages
+    if (pathname.startsWith('/dashboard')) {
+        return null;
+    }
 
-            <h2 className="text-3xl font-bold">Examples of Effective Invoice Descriptions</h2>
-            <h3 className="text-2xl font-semibold">For Freelancers:</h3>
-            <p><em>Content Writing: 5 SEO-optimized blog posts (2000 words each) covering digital marketing strategies, delivered between Sept 1–15, 2025.</em></p>
-            <h3 className="text-2xl font-semibold">For Designers:</h3>
-            <p><em>UI/UX Design: Redesign of mobile application, including 10 wireframes, 5 high-fidelity prototypes, and design system guidelines.</em></p>
-            <h3 className="text-2xl font-semibold">For Developers:</h3>
-            <p><em>Full-stack Development: Completed e-commerce platform with payment integration, product management dashboard, and order tracking system.</em></p>
-            <h3 className="text-2xl font-semibold">For Product Sales:</h3>
-            <p><em>50 units of Custom Leather Wallet – Black, 100% genuine leather, packed and delivered on Sept 12, 2025.</em></p>
+    return (
+        <header className="sticky top-4 z-50 my-4 mx-4 border rounded-full border-border bg-background/95 backdrop-blur-sm px-4">
+            <div className="container flex h-14 items-center">
+                <div className="mr-4 hidden md:flex">
+                    <Link href="/" className="flex items-center gap-2">
+                        <span className="text-lg font-bold text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent">InvoiceCraft</span>
+                    </Link>
+                </div>
 
-            <h2 className="text-3xl font-bold">Common Mistakes to Avoid</h2>
-            <ul className="list-disc pl-6 space-y-2">
-                <li><strong>Too vague:</strong> “Work completed” or “Project done.”</li>
-                <li><strong>Too technical:</strong> Overuse of jargon confuses clients.</li>
-                <li><strong>Too long:</strong> Avoid writing an essay — stay concise but clear.</li>
-                <li><strong>Not itemized:</strong> Bundling everything into one vague description creates confusion.</li>
-            </ul>
+                <nav className="hidden md:flex flex-1 items-center justify-center space-x-1 text-sm font-medium">
+                    {mainNavLinks.map(link => (
+                        <NavLink key={link.href} href={link.href} label={link.label} isActive={pathname === link.href} />
+                    ))}
+                    <Link href="/features" className="relative block px-3 py-2 transition text-foreground hover:text-primary">
+                        Features
+                    </Link>
+                    <DropdownMenu open={isToolsMenuOpen} onOpenChange={setIsToolsMenuOpen}>
+                      <DropdownMenuTrigger asChild>
+                        <Button 
+                          variant="ghost" 
+                          className="px-3 py-2 flex items-center gap-1 focus-visible:ring-0"
+                          onMouseEnter={() => setIsToolsMenuOpen(true)}
+                          onMouseLeave={() => setIsToolsMenuOpen(false)}
+                        >
+                          Tools
+                          <ChevronDown className="h-4 w-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent 
+                        onMouseEnter={() => setIsToolsMenuOpen(true)}
+                        onMouseLeave={() => setIsToolsMenuOpen(false)}
+                        className="w-48"
+                      >
+                        {generalToolsLinks.map(link => (
+                          <DropdownMenuItem key={link.href} asChild>
+                            <Link href={link.href} className='flex items-center gap-2'>
+                              {React.cloneElement(link.icon, {className: 'h-4 w-4 text-muted-foreground'})}
+                              {link.label}
+                            </Link>
+                          </DropdownMenuItem>
+                        ))}
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                </nav>
 
-            <h2 className="text-3xl font-bold">Why This Matters for Your SaaS Invoice Generator</h2>
-            <p>If you’re building an invoice generator app, having well-structured <strong>default descriptions</strong> or templates can help users:</p>
-            <ul className="list-disc pl-6 space-y-2">
-                <li>Save time writing from scratch.</li>
-                <li>Maintain professionalism.</li>
-                <li>Ensure their invoices are client-friendly and dispute-free.</li>
-            </ul>
-            <p>Offering pre-written description templates also improves <strong>user experience</strong> and can become a unique selling point for your SaaS app.</p>
-
-            <h2 className="text-3xl font-bold">Final Thoughts</h2>
-            <p>Writing effective invoice descriptions is not just a formality — it’s a skill that improves communication, builds client trust, and ensures smooth payment processing. Whether you’re a freelancer, agency, or small business, clear and professional descriptions can make the difference between a satisfied client and a frustrated one.</p>
-            <p>Start by being <strong>specific, client-friendly, quantifiable, and value-focused.</strong></p>
-            <p>Remember: A good invoice gets you paid; a great invoice builds long-term relationships.</p>
-
-        </article>
-      </div>
-    </div>
-  );
+                <div className="flex flex-1 items-center justify-end gap-2">
+                     <Button variant="outline" className="relative h-9 w-full justify-start rounded-md text-sm text-muted-foreground sm:pr-12 md:w-40 lg:w-64" onClick={() => setOpen(true)}>
+                        <Search className="h-4 w-4 mr-2" />
+                        <span className="hidden lg:inline-flex">Search...</span>
+                        <span className="inline-flex lg:hidden">Search...</span>
+                        <kbd className="pointer-events-none absolute right-[0.3rem] top-[0.3rem] hidden h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium opacity-100 sm:flex">
+                            <span className="text-xs">⌘</span>K
+                        </kbd>
+                    </Button>
+                    <ModeToggle />
+                    <AuthNav />
+                     <CommandDialog open={open} onOpenChange={setOpen}>
+                        <DialogTitle className="sr-only">Search</DialogTitle>
+                        <CommandInput placeholder="Type a command or search..." />
+                        <CommandList>
+                        <CommandEmpty>No results found.</CommandEmpty>
+                         <CommandGroup heading="Links">
+                            {mainNavLinks.map((link) => (
+                                <CommandItem
+                                key={link.href}
+                                value={link.label}
+                                onSelect={() => {
+                                    runCommand(() => router.push(link.href))
+                                }}
+                                >
+                                {React.cloneElement(link.icon, {className: 'mr-2 h-4 w-4'})}
+                                <span>{link.label}</span>
+                                </CommandItem>
+                            ))}
+                            <CommandItem onSelect={() => runCommand(() => router.push('/features'))}>
+                                <Gem className="mr-2 h-4 w-4" />
+                                <span>Features</span>
+                            </CommandItem>
+                            {generalToolsLinks.map((link) => (
+                                <CommandItem
+                                key={link.href}
+                                value={link.label}
+                                onSelect={() => {
+                                    runCommand(() => router.push(link.href))
+                                }}
+                                >
+                                {React.cloneElement(link.icon, {className: 'mr-2 h-4 w-4'})}
+                                <span>{link.label}</span>
+                                </CommandItem>
+                            ))}
+                             <CommandItem onSelect={() => runCommand(() => router.push('/dashboard'))}>
+                                <LayoutDashboard className="mr-2 h-4 w-4" />
+                                <span>Dashboard</span>
+                            </CommandItem>
+                        </CommandGroup>
+                        </CommandList>
+                    </CommandDialog>
+                </div>
+                
+                <Sheet>
+                    <SheetTrigger asChild>
+                        <Button variant="outline" size="icon" className="md:hidden ml-4">
+                        <Menu className="h-5 w-5" />
+                        <span className="sr-only">Toggle navigation menu</span>
+                        </Button>
+                    </SheetTrigger>
+                    <SheetContent side="left" className="flex w-full flex-col p-0 sm:max-w-sm">
+                        <SheetHeader className="p-6 pb-0">
+                            <SheetTitle>
+                                <Link href="/" className="flex items-center gap-2">
+                                    <span className="text-lg font-bold text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent">InvoiceCraft</span>
+                                </Link>
+                            </SheetTitle>
+                        </SheetHeader>
+                        <ScrollArea className="flex-grow my-4 px-6">
+                            <nav className="grid gap-4 text-lg font-medium">
+                                <Link
+                                    href="/features"
+                                    className="block py-2 transition text-muted-foreground hover:text-primary"
+                                >
+                                    Features
+                                </Link>
+                                {[...mainNavLinks, ...generalToolsLinks].map(link => (
+                                    <Link
+                                        key={link.href}
+                                        href={link.href}
+                                        className={cn(
+                                            "block py-2 transition",
+                                            pathname === link.href ? "text-primary font-semibold" : "text-muted-foreground hover:text-primary"
+                                        )}
+                                    >
+                                        {link.label}
+                                    </Link>
+                                ))}
+                            </nav>
+                        </ScrollArea>
+                         <div className='mt-auto border-t p-6'>
+                            <AuthNav isMobile={true} />
+                        </div>
+                    </SheetContent>
+                </Sheet>
+            </div>
+        </header>
+    );
 }
