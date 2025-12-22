@@ -10,7 +10,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { DatePicker } from '@/components/ui/datepicker';
-import { ImageUp, Plus, Trash2, Palette, X, Mail, Phone, Hash, ShieldCheck, User, FolderArchive, FileText, Calendar, AlertTriangle, Building, UserCircle, Loader2, Globe, Award, Key, Heart, Car, Home, UploadCloud, File, Pencil, MessageSquare } from 'lucide-react';
+import { ImageUp, Plus, Trash2, Palette, X, Mail, Phone, Hash, ShieldCheck, User, FolderArchive, FileText, Calendar, AlertTriangle, Building, UserCircle, Loader2, Globe, Award, Key, Heart, Car, Home, UploadCloud, File, Pencil, MessageSquare, PaintBucket, Paintbrush } from 'lucide-react';
 import Image from 'next/image';
 import {
   Select,
@@ -230,6 +230,50 @@ export function InsuranceForm({ document: doc, setDocument: setDoc, accentColor,
 
   return (
     <div className="space-y-6">
+      <Card className="bg-card/50 backdrop-blur-sm shadow-lg hover:shadow-primary/20 transition-shadow duration-300">
+        <CardHeader>
+          <CardTitle>Branding &amp; Customization</CardTitle>
+        </CardHeader>
+        <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-2">
+              <Label htmlFor="accentColor">Accent Color</Label>
+              <div className="relative flex items-center">
+                  <Palette className="absolute left-3 h-5 w-5 text-muted-foreground" />
+                  <Input 
+                      id="accentColor"
+                      type="text" 
+                      value={colorInputValue} 
+                      onChange={(e) => setColorInputValue(e.target.value)}
+                      onBlur={(e) => setAccentColor(e.target.value)}
+                      className="pl-10"
+                      placeholder="hsl(260 85% 66%)"
+                  />
+                  <input 
+                      type="color" 
+                      value={accentColor.startsWith('hsl') ? '#000000' : accentColor}
+                      onChange={(e) => {
+                          setAccentColor(e.target.value);
+                          setColorInputValue(e.target.value);
+                      }}
+                      className="absolute right-1 top-1/2 -translate-y-1/2 h-8 w-8 p-1 rounded-md cursor-pointer bg-transparent border-none appearance-none"
+                  />
+              </div>
+          </div>
+           <div className="space-y-2">
+            <Label htmlFor="language">Language</Label>
+            <Select value={doc.language} onValueChange={handleLanguageChange}>
+                <SelectTrigger id="language">
+                    <SelectValue placeholder="Select language" />
+                </SelectTrigger>
+                <SelectContent>
+                    {languages.map(lang => (
+                        <SelectItem key={lang.value} value={lang.value}>{lang.label}</SelectItem>
+                    ))}
+                </SelectContent>
+            </Select>
+          </div>
+        </CardContent>
+      </Card>
       <Card className="bg-card/50 backdrop-blur-sm shadow-lg hover:shadow-primary/20 transition-shadow duration-300">
         <CardHeader>
           <CardTitle>Your Details (Issuer)</CardTitle>
