@@ -22,7 +22,7 @@ import {
 import { ScrollArea } from './ui/scroll-area';
 
 const mainNavLinks = [
-    { href: "/features", label: "Features", icon: <Gem /> },
+    { href: "/#features", label: "Features", icon: <Gem /> },
     { href: "/pricing", label: "Pricing", icon: <Tag /> },
     { href: "/blog", label: "Blog", icon: <Book /> },
 ]
@@ -141,7 +141,17 @@ export function Header() {
                         <CommandList>
                         <CommandEmpty>No results found.</CommandEmpty>
                          <CommandGroup heading="Links">
-                            {[...mainNavLinks, ...generalToolsLinks].map((link) => (
+                            {mainNavLinks.map((link) => (
+                                <CommandItem
+                                key={link.href}
+                                value={link.label}
+                                onSelect={() => runCommand(() => router.push(link.href))}
+                                >
+                                {React.cloneElement(link.icon, {className: 'mr-2 h-4 w-4'})}
+                                <span>{link.label}</span>
+                                </CommandItem>
+                            ))}
+                            {generalToolsLinks.map((link) => (
                                 <CommandItem
                                 key={link.href}
                                 value={link.label}

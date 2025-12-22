@@ -267,7 +267,7 @@ export default function HomePage() {
             </div>
         </section>
         
-        <section className="py-20 md:py-28">
+        <section id="features" className="py-20 md:py-28">
              <div className="container px-4 mx-auto md:px-6">
                 <div className="text-center max-w-2xl mx-auto mb-12">
                     <h2 className="text-4xl md:text-5xl font-bold font-headline">Features That Power Your Business</h2>
