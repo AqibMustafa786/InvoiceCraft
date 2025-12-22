@@ -520,6 +520,11 @@ export interface InsuranceDocument {
   insuranceCategory: InsuranceCategory;
   insuredItemDescription: string;
   coveragePurpose: string;
+  coverageAmount: number;
+  deductibleAmount: number;
+  coverageScope: string;
+  includedRisks: string;
+  excludedRisks: string;
 
   health?: HealthInsuranceInfo;
   vehicle?: VehicleInsuranceInfo;

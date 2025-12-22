@@ -84,8 +84,8 @@ export function InsuranceForm({ document: doc, setDocument: setDoc, accentColor,
   };
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    setDoc(prev => ({ ...prev, [name]: value }));
+    const { name, value, type } = e.target;
+     setDoc(prev => ({ ...prev, [name]: type === 'number' ? parseFloat(value) || 0 : value }));
   };
 
   const handleSwitchChange = (name: string, checked: boolean) => {
@@ -467,6 +467,35 @@ export function InsuranceForm({ document: doc, setDocument: setDoc, accentColor,
             </div>
           )}
 
+        </CardContent>
+      </Card>
+      <Card className="bg-card/50 backdrop-blur-sm shadow-lg hover:shadow-primary/20 transition-shadow duration-300">
+        <CardHeader>
+            <CardTitle>Coverage Details</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                    <Label htmlFor="coverageAmount">Coverage Amount / Sum Insured</Label>
+                    <Input id="coverageAmount" name="coverageAmount" type="number" value={doc.coverageAmount} onChange={handleInputChange} />
+                </div>
+                <div className="space-y-2">
+                    <Label htmlFor="deductibleAmount">Deductible / Excess Amount</Label>
+                    <Input id="deductibleAmount" name="deductibleAmount" type="number" value={doc.deductibleAmount} onChange={handleInputChange} />
+                </div>
+            </div>
+             <div className="space-y-2">
+                <Label htmlFor="coverageScope">Coverage Scope</Label>
+                <Textarea id="coverageScope" name="coverageScope" value={doc.coverageScope} onChange={handleInputChange} placeholder="Describe the overall scope of the coverage..." />
+            </div>
+             <div className="space-y-2">
+                <Label htmlFor="includedRisks">Included Risks</Label>
+                <Textarea id="includedRisks" name="includedRisks" value={doc.includedRisks} onChange={handleInputChange} placeholder="List what is covered, e.g., using bullet points." />
+            </div>
+             <div className="space-y-2">
+                <Label htmlFor="excludedRisks">Excluded Risks</Label>
+                <Textarea id="excludedRisks" name="excludedRisks" value={doc.excludedRisks} onChange={handleInputChange} placeholder="List what is NOT covered." />
+            </div>
         </CardContent>
       </Card>
     </div>

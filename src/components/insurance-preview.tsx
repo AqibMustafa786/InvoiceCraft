@@ -54,31 +54,20 @@ const InsuredEntityDetails: React.FC<{ doc: InsuranceDocument; t: any; }> = ({ d
             <p className="font-bold text-gray-600 border-b mb-1">Insured Entity</p>
             <p><span className="font-bold">Category:</span> {doc.insuranceCategory}</p>
             <p><span className="font-bold">Description:</span> {doc.insuredItemDescription}</p>
-            <p><span className="font-bold">Coverage Purpose:</span> {doc.coveragePurpose}</p>
-            {doc.insuranceCategory === 'Vehicle' && doc.vehicle && (
-                 <div className="mt-2 pl-2 border-l-2">
-                    <p className="font-semibold">Vehicle Details:</p>
-                    <p>Make/Model: {doc.vehicle.vehicleMake} {doc.vehicle.model}</p>
-                    <p>Registration: {doc.vehicle.registrationNumber}</p>
-                    <p>Chassis: {doc.vehicle.chassisNumber}</p>
-                 </div>
-            )}
-             {doc.insuranceCategory === 'Property' && doc.property && (
-                 <div className="mt-2 pl-2 border-l-2">
-                    <p className="font-semibold">Property Details:</p>
-                    <p>Address: {doc.property.propertyAddress}</p>
-                    <p>Type: {doc.property.propertyType}</p>
-                    {doc.property.estimatedValue && <p>Value: {doc.property.estimatedValue}</p>}
-                 </div>
-            )}
-             {doc.insuranceCategory === 'Health' && doc.health && (
-                 <div className="mt-2 pl-2 border-l-2">
-                    <p className="font-semibold">Health Details:</p>
-                    <p>Name: {doc.health.insuredPersonName}</p>
-                    <p>DOB: {safeFormat(doc.health.dateOfBirth || '', 'MM/dd/yyyy')}</p>
-                    <p>Gender: {doc.health.gender}</p>
-                 </div>
-            )}
+            <p className="font-bold mt-2">Coverage Details:</p>
+            <p><span className="font-bold">Sum Insured:</span> {doc.coverageAmount}</p>
+            <p><span className="font-bold">Deductible:</span> {doc.deductibleAmount}</p>
+            <p className="mt-1"><span className="font-bold">Scope:</span> {doc.coverageScope}</p>
+            <div className="grid grid-cols-2 gap-4 mt-2">
+                <div>
+                    <p className="font-semibold">Included:</p>
+                    <p className="whitespace-pre-line text-green-700">{doc.includedRisks}</p>
+                </div>
+                 <div>
+                    <p className="font-semibold">Excluded:</p>
+                    <p className="whitespace-pre-line text-red-700">{doc.excludedRisks}</p>
+                </div>
+            </div>
         </section>
     )
 }

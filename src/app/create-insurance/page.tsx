@@ -81,6 +81,11 @@ const getInitialInsuranceDoc = (): InsuranceDocument => ({
   insuranceCategory: 'Vehicle',
   insuredItemDescription: 'A 2023 sedan involved in a minor collision.',
   coveragePurpose: 'Repair of damages as per policy terms.',
+  coverageAmount: 10000,
+  deductibleAmount: 500,
+  coverageScope: 'Covers accidental damage, theft, and third-party liability.',
+  includedRisks: '- Collision with other vehicles\n- Fire and theft\n- Natural disasters (flood, earthquake)',
+  excludedRisks: '- Wear and tear\n- Mechanical breakdown\n- Intentional damage',
 
   health: {
     insuredPersonName: '',
