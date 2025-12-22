@@ -329,7 +329,7 @@ export default function HomePage() {
                     >
                         <Card className="h-full bg-destructive/5 border-destructive/20 border shadow-lg">
                             <CardContent className="p-8">
-                                <h3 className="text-2xl font-bold font-headline mb-6 text-destructive-foreground">The Problems</h3>
+                                <h3 className="text-2xl font-bold font-headline mb-6 text-destructive/30">The Problems</h3>
                                 <ul className="space-y-4">
                                     {problems.map((item, index) => (
                                         <li key={index} className="flex items-start gap-3">
@@ -441,3 +441,4 @@ export default function HomePage() {
     </div>
   );
 }
+
