@@ -6,7 +6,7 @@ import { usePathname, useSearchParams } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { FileText, Users, FileQuestion, FilePlus, Home, Tag, Gem, CreditCard, LogOut, Shield } from "lucide-react";
+import { FileText, Users, FileQuestion, FilePlus, Home, Tag, Gem, CreditCard, LogOut, Shield, AreaChart } from "lucide-react";
 import { useAuth } from "@/context/auth-provider";
 import { useRouter } from "next/navigation";
 import { signOut } from "firebase/auth";
@@ -19,6 +19,7 @@ const dashboardNavItems = [
     { href: "/dashboard", tab: "quotes", label: "Quotes", icon: FilePlus },
     { href: "/dashboard", tab: "insurance", label: "Insurance", icon: Shield },
     { href: "/dashboard", tab: "clients", label: "Clients", icon: Users },
+    { href: "/dashboard/analytics", tab: "analytics", label: "Analytics", icon: AreaChart },
 ];
 
 const mainNavLinks = [
@@ -71,7 +72,7 @@ export function SidebarNav({ isSidebarOpen }: SidebarNavProps) {
                          </AnimatePresence>
                          <div className="space-y-1">
                             {dashboardNavItems.map((item) => {
-                                const isActive = pathname === item.href && activeTab === item.tab;
+                                const isActive = (pathname === item.href && activeTab === item.tab) || pathname === item.href;
                                 return (
                                    <Button 
                                       key={item.href + item.tab}
@@ -79,7 +80,7 @@ export function SidebarNav({ isSidebarOpen }: SidebarNavProps) {
                                       variant={isActive ? "secondary" : "ghost"} 
                                       className={cn("w-full justify-start text-xs h-8", isActive && "text-primary", !isSidebarOpen && "justify-center")}
                                     >
-                                      <Link href={`${item.href}?tab=${item.tab}`} title={item.label}>
+                                      <Link href={item.tab ? `${item.href}?tab=${item.tab}`: item.href} title={item.label}>
                                          <item.icon className={cn("h-3.5 w-3.5", isSidebarOpen && "mr-2")} />
                                          <AnimatePresence>
                                             {isSidebarOpen && (

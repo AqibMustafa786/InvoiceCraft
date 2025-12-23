@@ -21,6 +21,9 @@ export default function DashboardLayout({
   if (pathname.startsWith('/dashboard/clients/')) {
     return <main className="px-4 md:px-8">{children}</main>
   }
+  if (pathname.startsWith('/dashboard/analytics')) {
+    return <main className="px-4 md:px-8">{children}</main>
+  }
   
   const sidebarVariants = {
     open: { width: '220px', transition: { type: 'spring', stiffness: 300, damping: 30 } },
