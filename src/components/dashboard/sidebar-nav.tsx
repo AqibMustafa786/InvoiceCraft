@@ -72,7 +72,9 @@ export function SidebarNav({ isSidebarOpen }: SidebarNavProps) {
                          </AnimatePresence>
                          <div className="space-y-1">
                             {dashboardNavItems.map((item) => {
-                                const isActive = (pathname === item.href && activeTab === item.tab) || pathname === item.href;
+                                const isActive = item.href === '/dashboard'
+                                    ? pathname === item.href && activeTab === item.tab
+                                    : pathname === item.href;
                                 return (
                                    <Button 
                                       key={item.href + item.tab}
