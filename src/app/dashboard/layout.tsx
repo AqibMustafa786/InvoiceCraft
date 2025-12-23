@@ -20,7 +20,7 @@ export default function DashboardLayout({
     <div className="px-4 md:px-8">
       <Greeting />
         <div className="grid grid-cols-1 md:grid-cols-[240px_1fr] gap-x-8 gap-y-4">
-            <aside className="md:sticky md:top-24 h-full">
+            <aside className="md:sticky md:top-8 h-full">
                 <SidebarNav />
             </aside>
             <main>{children}</main>

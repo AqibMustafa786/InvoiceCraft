@@ -751,7 +751,7 @@ export default function DashboardPage() {
                 onClose={() => setHistoryModalState({ isOpen: false, auditLog: [] })}
                 auditLog={historyModalState.auditLog}
             />
-            <div className="space-y-4">
+            <div className="space-y-6">
                 <FilterSheet
                     open={isFilterSheetOpen}
                     onOpenChange={setIsFilterSheetOpen}
@@ -774,20 +774,7 @@ export default function DashboardPage() {
                         </AlertDialogFooter>
                     </AlertDialogContent>
                 </AlertDialog>
-
-                <motion.div 
-                    variants={pageVariants}
-                    initial="hidden"
-                    animate="visible"
-                >
-                     <div className="flex justify-between items-center gap-4 flex-wrap">
-                        <motion.div variants={pageVariants}>
-                            <h1 className="text-xl font-bold font-headline">Dashboard</h1>
-                            <p className="text-xs text-muted-foreground">An overview of your financial documents and activities.</p>
-                        </motion.div>
-                    </div>
-                </motion.div>
-
+                
                  <motion.div 
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -795,43 +782,48 @@ export default function DashboardPage() {
                  >
                     <Card className='bg-card/50 backdrop-blur-sm'>
                         <CardHeader>
-                            <CardTitle className="text-base">Quick Actions</CardTitle>
+                            <div className="flex justify-between items-center gap-4 flex-wrap">
+                                <motion.div variants={pageVariants}>
+                                    <h1 className="text-xl font-bold font-headline">Dashboard</h1>
+                                    <p className="text-xs text-muted-foreground">An overview of your financial documents and activities.</p>
+                                </motion.div>
+                                 <div className="flex items-center gap-2">
+                                    <Button variant="outline" size="sm" className='rounded-full' onClick={() => setIsFilterSheetOpen(true)}>
+                                    <Filter className="mr-2 h-3.5 w-3.5" />
+                                    Filter
+                                    {activeFilterCount > 0 && (
+                                        <Badge variant="secondary" className="ml-2 rounded-full h-5 w-5 p-0 flex items-center justify-center">{activeFilterCount}</Badge>
+                                    )}
+                                    </Button>
+                                    {activeFilterCount > 0 && (
+                                        <Button variant="ghost" size="icon" className="rounded-full h-8 w-8" onClick={resetFilters}>
+                                            <X className="h-4 w-4" />
+                                        </Button>
+                                    )}
+                                </div>
+                            </div>
                         </CardHeader>
                         <CardContent className="flex flex-wrap items-center gap-2">
                              <Button size="sm" onClick={() => router.push('/dashboard/clients/new')} className="rounded-full">
-                                <Users className="mr-2 h-4 w-4" />
+                                <Users className="mr-2 h-3 w-3" />
                                 Add Client
                             </Button>
                             <Button size="sm" onClick={handleCreateInvoice} variant="outline" className="rounded-full">
-                                <FilePlus2 className="mr-2 h-4 w-4" />
+                                <FilePlus2 className="mr-2 h-3 w-3" />
                                 New Invoice
                             </Button>
                              <Button size="sm" onClick={handleCreateEstimate} variant="outline" className="rounded-full">
-                                <FilePlus2 className="mr-2 h-4 w-4" />
+                                <FilePlus2 className="mr-2 h-3 w-3" />
                                 New Estimate
                             </Button>
                              <Button size="sm" onClick={handleCreateQuote} variant="outline" className="rounded-full">
-                                <FileText className="mr-2 h-4 w-4" />
+                                <FileText className="mr-2 h-3 w-3" />
                                 New Quote
                             </Button>
                              <Button size="sm" onClick={() => router.push('/create-insurance')} variant="outline" className="rounded-full">
-                                <Shield className="mr-2 h-4 w-4" />
+                                <Shield className="mr-2 h-3 w-3" />
                                 New Insurance Doc
                             </Button>
-                            <div className="border-l ml-2 pl-4 flex items-center gap-2">
-                                <Button variant="outline" size="sm" className='rounded-full' onClick={() => setIsFilterSheetOpen(true)}>
-                                <Filter className="mr-2 h-4 w-4" />
-                                Filter
-                                {activeFilterCount > 0 && (
-                                    <Badge variant="secondary" className="ml-2 rounded-full h-5 w-5 p-0 flex items-center justify-center">{activeFilterCount}</Badge>
-                                )}
-                                </Button>
-                                {activeFilterCount > 0 && (
-                                    <Button variant="ghost" size="icon" className="rounded-full h-8 w-8" onClick={resetFilters}>
-                                        <X className="h-4 w-4" />
-                                    </Button>
-                                )}
-                            </div>
                         </CardContent>
                     </Card>
                 </motion.div>
