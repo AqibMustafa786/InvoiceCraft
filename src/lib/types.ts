@@ -225,8 +225,8 @@ export interface PhotographyInfo {
   packageSelected: string;
   editedPhotosCount: number | null;
   rawFilesCost: number | null;
-  travelFee: number | null;
-  equipmentRentalFee: number | null;
+  travelFee?: number;
+  equipmentRentalFee?: number;
 }
 
 export interface RealEstateInfo {
