@@ -13,14 +13,14 @@ export default function DashboardLayout({
   const pathname = usePathname();
   // Don't apply this layout to nested client pages like /dashboard/clients/[clientId]
   if (pathname.startsWith('/dashboard/clients/')) {
-    return <main className="py-8 px-4 md:px-8">{children}</main>
+    return <main className="px-4 md:px-8">{children}</main>
   }
   
   return (
     <div className="px-4 md:px-8">
       <Greeting />
-        <div className="grid grid-cols-1 md:grid-cols-[240px_1fr] gap-x-8 gap-y-4">
-            <aside className="md:sticky md:top-8 h-full">
+        <div className="grid grid-cols-1 md:grid-cols-[220px_1fr] gap-x-8 gap-y-4 mt-2">
+            <aside className="md:sticky md:top-4 h-full">
                 <SidebarNav />
             </aside>
             <main>{children}</main>

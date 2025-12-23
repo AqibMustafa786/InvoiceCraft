@@ -12,7 +12,6 @@ import { useAuth } from "@/context/auth-provider";
 import { useRouter } from "next/navigation";
 import { signOut } from "firebase/auth";
 import { useFirebase } from "@/firebase";
-import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 
 const dashboardNavItems = [
     { href: "/dashboard", tab: "invoices", label: "Invoices", icon: FileText },
@@ -96,34 +95,6 @@ export function SidebarNav() {
                     </div>
                 </div>
             </ScrollArea>
-             <div className="mt-auto border-t p-2 space-y-1">
-                 {user && (
-                    <div className="flex items-center gap-2 p-2">
-                        <Avatar className="h-7 w-7">
-                            <AvatarImage src={user.photoURL || undefined} alt={user.displayName || user.email || 'User'} />
-                            <AvatarFallback className="text-xs">
-                                {user.displayName?.charAt(0) || user.email?.charAt(0) || '?'}
-                            </AvatarFallback>
-                        </Avatar>
-                        <div className="text-xs">
-                            <p className="font-bold text-xs">{user.displayName || user.email}</p>
-                            <p className="text-muted-foreground text-[10px]">{userProfile?.plan === 'business' ? 'Business Plan' : 'Free Plan'}</p>
-                        </div>
-                    </div>
-                 )}
-                 {userProfile?.plan === 'business' && (
-                     <Button asChild variant="outline" size="sm" className="w-full justify-start h-8 text-xs">
-                        <Link href="/billing">
-                            <CreditCard className="mr-2 h-3.5 w-3.5" />
-                            Manage Billing
-                        </Link>
-                    </Button>
-                 )}
-                <Button onClick={handleLogout} variant="ghost" size="sm" className="w-full justify-start h-8 text-xs">
-                    <LogOut className="mr-2 h-3.5 w-3.5" />
-                    Logout
-                </Button>
-            </div>
         </div>
     )
 }

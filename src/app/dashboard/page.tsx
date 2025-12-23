@@ -751,7 +751,7 @@ export default function DashboardPage() {
                 onClose={() => setHistoryModalState({ isOpen: false, auditLog: [] })}
                 auditLog={historyModalState.auditLog}
             />
-            <div className="space-y-6">
+            <div className="space-y-4">
                 <FilterSheet
                     open={isFilterSheetOpen}
                     onOpenChange={setIsFilterSheetOpen}
