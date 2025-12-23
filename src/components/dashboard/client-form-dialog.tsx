@@ -16,6 +16,7 @@ import { useFirebase } from '@/firebase';
 import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
 import { Save, Globe, Hash } from 'lucide-react';
 import type { Client } from '@/lib/types';
+import { ScrollArea } from '../ui/scroll-area';
 
 const CLIENTS_COLLECTION = 'clients';
 
@@ -125,59 +126,61 @@ export function ClientFormDialog({ open, onOpenChange, client, onSave }: ClientF
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[425px] bg-card/95 backdrop-blur-sm">
+      <DialogContent className="sm:max-w-md bg-card/80 backdrop-blur-sm data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 flex flex-col h-full max-h-[90vh]">
         <DialogHeader>
           <DialogTitle>{isNewClient ? 'Create New Client' : 'Edit Client'}</DialogTitle>
           <DialogDescription>
             {isNewClient ? 'Add a new client to your records.' : `Editing ${client?.name}.`}
           </DialogDescription>
         </DialogHeader>
-
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3 py-4">
-              <FormField control={form.control} name="name" render={({ field }) => (
-                <FormItem><FormLabel className="text-xs">Full Name</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
-              )} />
-              <FormField control={form.control} name="companyName" render={({ field }) => (
-                <FormItem><FormLabel className="text-xs">Company Name</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
-              )} />
-              <FormField control={form.control} name="email" render={({ field }) => (
-                <FormItem><FormLabel className="text-xs">Email</FormLabel><FormControl><Input type="email" {...field} /></FormControl><FormMessage /></FormItem>
-              )} />
-              <FormField control={form.control} name="phone" render={({ field }) => (
-                <FormItem><FormLabel className="text-xs">Phone</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
-              )} />
-              <FormField control={form.control} name="address" render={({ field }) => (
-                <FormItem><FormLabel className="text-xs">Billing Address</FormLabel><FormControl><Textarea {...field} className="h-16" /></FormControl><FormMessage /></FormItem>
-              )} />
-              <FormField control={form.control} name="shippingAddress" render={({ field }) => (
-                <FormItem><FormLabel className="text-xs">Shipping Address</FormLabel><FormControl><Textarea {...field} className="h-16" /></FormControl><FormMessage /></FormItem>
-              )} />
-               <FormField control={form.control} name="website" render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-xs">Website</FormLabel>
-                  <FormControl><div className="relative flex items-center"><Globe className="absolute left-3 h-4 w-4 text-muted-foreground" /><Input className="pl-9 text-xs h-9" {...field} /></div></FormControl>
-                  <FormMessage />
-                </FormItem>
-               )} />
-                <FormField control={form.control} name="taxId" render={({ field }) => (
+        
+        <ScrollArea className="flex-grow pr-6 -mr-6">
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                <FormField control={form.control} name="name" render={({ field }) => (
+                  <FormItem><FormLabel className="text-xs">Full Name</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
+                )} />
+                <FormField control={form.control} name="companyName" render={({ field }) => (
+                  <FormItem><FormLabel className="text-xs">Company Name</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
+                )} />
+                <FormField control={form.control} name="email" render={({ field }) => (
+                  <FormItem><FormLabel className="text-xs">Email</FormLabel><FormControl><Input type="email" {...field} /></FormControl><FormMessage /></FormItem>
+                )} />
+                <FormField control={form.control} name="phone" render={({ field }) => (
+                  <FormItem><FormLabel className="text-xs">Phone</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
+                )} />
+                <FormField control={form.control} name="address" render={({ field }) => (
+                  <FormItem><FormLabel className="text-xs">Billing Address</FormLabel><FormControl><Textarea {...field} className="h-20" /></FormControl><FormMessage /></FormItem>
+                )} />
+                <FormField control={form.control} name="shippingAddress" render={({ field }) => (
+                  <FormItem><FormLabel className="text-xs">Shipping Address</FormLabel><FormControl><Textarea {...field} className="h-20" /></FormControl><FormMessage /></FormItem>
+                )} />
+                 <FormField control={form.control} name="website" render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-xs">Tax ID</FormLabel>
-                    <FormControl><div className="relative flex items-center"><Hash className="absolute left-3 h-4 w-4 text-muted-foreground" /><Input className="pl-9 text-xs h-9" {...field} /></div></FormControl>
+                    <FormLabel className="text-xs">Website</FormLabel>
+                    <FormControl><div className="relative flex items-center"><Globe className="absolute left-3 h-4 w-4 text-muted-foreground" /><Input className="pl-9" {...field} /></div></FormControl>
                     <FormMessage />
                   </FormItem>
+                 )} />
+                  <FormField control={form.control} name="taxId" render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-xs">Tax ID</FormLabel>
+                      <FormControl><div className="relative flex items-center"><Hash className="absolute left-3 h-4 w-4 text-muted-foreground" /><Input className="pl-9" {...field} /></div></FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )} />
+                <FormField control={form.control} name="notes" render={({ field }) => (
+                <FormItem>
+                    <FormLabel className="text-xs">Internal Notes</FormLabel>
+                    <FormControl><Textarea className="h-24" {...field} /></FormControl>
+                    <FormMessage />
+                </FormItem>
                 )} />
-              <FormField control={form.control} name="notes" render={({ field }) => (
-              <FormItem>
-                  <FormLabel className="text-xs">Internal Notes</FormLabel>
-                  <FormControl><Textarea className="h-16" {...field} /></FormControl>
-                  <FormMessage />
-              </FormItem>
-              )} />
-          </form>
-        </Form>
+            </form>
+          </Form>
+        </ScrollArea>
 
-        <DialogFooter className="mt-auto pt-4 gap-2">
+        <DialogFooter className="mt-auto pt-4 gap-2 border-t">
           <DialogClose asChild>
             <Button type="button" variant="outline">Cancel</Button>
           </DialogClose>
