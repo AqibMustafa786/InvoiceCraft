@@ -780,25 +780,9 @@ export default function DashboardPage() {
                     initial="hidden"
                     animate="visible"
                 >
-                     <div className="flex justify-between items-center gap-4 flex-wrap">
-                        <motion.div variants={pageVariants}>
-                            <h1 className="text-2xl font-bold font-headline">Dashboard</h1>
-                            <p className="text-muted-foreground text-sm">An overview of your financial documents and activities.</p>
-                        </motion.div>
-                         <div className="flex items-center gap-2">
-                            <Button variant="outline" size="sm" className='rounded-full' onClick={() => setIsFilterSheetOpen(true)}>
-                            <Filter className="mr-2 h-4 w-4" />
-                            Filter
-                            {activeFilterCount > 0 && (
-                                <Badge variant="secondary" className="ml-2 rounded-full h-5 w-5 p-0 flex items-center justify-center">{activeFilterCount}</Badge>
-                            )}
-                            </Button>
-                            {activeFilterCount > 0 && (
-                                <Button variant="ghost" size="sm" className="rounded-full" onClick={resetFilters}>
-                                    <X className="h-4 w-4 mr-1" /> Clear
-                                </Button>
-                            )}
-                        </div>
+                    <div>
+                        <h1 className="text-3xl font-bold font-headline">Dashboard</h1>
+                        <p className="text-muted-foreground">An overview of your financial documents and activities.</p>
                     </div>
                 </motion.div>
 
@@ -810,39 +794,53 @@ export default function DashboardPage() {
                  >
                      <Card className='bg-card/50 backdrop-blur-sm'>
                         <CardHeader>
-                            <CardTitle className="text-lg">Quick Actions</CardTitle>
+                            <CardTitle>Quick Actions</CardTitle>
                         </CardHeader>
-                        <CardContent className="flex flex-wrap gap-2">
+                        <CardContent className="flex flex-wrap items-center gap-2">
                             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.98 }}>
-                                <Button size="sm" onClick={() => router.push('/dashboard/clients/new')} className="rounded-full">
+                                <Button onClick={() => router.push('/dashboard/clients/new')} className="rounded-full">
                                     <Users className="mr-2 h-4 w-4" />
                                     Add Client
                                 </Button>
                             </motion.div>
                             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.98 }}>
-                                <Button size="sm" onClick={handleCreateInvoice} variant="outline" className="rounded-full">
+                                <Button onClick={handleCreateInvoice} variant="outline" className="rounded-full">
                                     <FilePlus2 className="mr-2 h-4 w-4" />
                                     New Invoice
                                 </Button>
                             </motion.div>
                              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.98 }}>
-                                <Button size="sm" onClick={handleCreateEstimate} variant="outline" className="rounded-full">
+                                <Button onClick={handleCreateEstimate} variant="outline" className="rounded-full">
                                     <FilePlus2 className="mr-2 h-4 w-4" />
                                     New Estimate
                                 </Button>
                             </motion.div>
                              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.98 }}>
-                                <Button size="sm" onClick={handleCreateQuote} variant="outline" className="rounded-full">
+                                <Button onClick={handleCreateQuote} variant="outline" className="rounded-full">
                                     <FileText className="mr-2 h-4 w-4" />
                                     New Quote
                                 </Button>
                             </motion.div>
                              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.98 }}>
-                                <Button size="sm" onClick={() => router.push('/create-insurance')} variant="outline" className="rounded-full">
+                                <Button onClick={() => router.push('/create-insurance')} variant="outline" className="rounded-full">
                                     <Shield className="mr-2 h-4 w-4" />
                                     New Insurance Doc
                                 </Button>
                             </motion.div>
+                            <div className="border-l ml-2 pl-4 flex items-center gap-2">
+                                <Button variant="outline" className='rounded-full' onClick={() => setIsFilterSheetOpen(true)}>
+                                <Filter className="mr-2 h-4 w-4" />
+                                Filter
+                                {activeFilterCount > 0 && (
+                                    <Badge variant="secondary" className="ml-2 rounded-full h-5 w-5 p-0 flex items-center justify-center">{activeFilterCount}</Badge>
+                                )}
+                                </Button>
+                                {activeFilterCount > 0 && (
+                                    <Button variant="ghost" size="icon" className="rounded-full" onClick={resetFilters}>
+                                        <X className="h-4 w-4" />
+                                    </Button>
+                                )}
+                            </div>
                         </CardContent>
                     </Card>
                 </motion.div>
@@ -923,3 +921,5 @@ export default function DashboardPage() {
         </>
     );
 }
+
+    
