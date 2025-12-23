@@ -144,16 +144,16 @@ export default function ClientProfilePage() {
   };
 
   if (isLoadingClient) {
-    return <div className="container mx-auto p-4 md:p-8"><Skeleton className="h-96 w-full" /></div>;
+    return <div className="container mx-auto p-4 md:p-6"><Skeleton className="h-96 w-full" /></div>;
   }
 
   return (
-    <div className="container mx-auto p-4 md:p-8 space-y-8">
+    <div className="container mx-auto p-4 md:p-6 space-y-6">
       <div className="flex items-center gap-4">
         <Button variant="outline" size="icon" onClick={() => router.push('/dashboard?tab=clients')}>
           <ArrowLeft className="h-4 w-4" />
         </Button>
-        <h1 className="text-3xl font-bold font-headline">{isNewClient ? 'Create New Client' : form.getValues('name')}</h1>
+        <h1 className="text-2xl font-bold font-headline">{isNewClient ? 'Create New Client' : form.getValues('name')}</h1>
       </div>
 
       <Card className='bg-card/50 backdrop-blur-sm'>
@@ -163,8 +163,8 @@ export default function ClientProfilePage() {
         </CardHeader>
         <CardContent>
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <FormField control={form.control} name="name" render={({ field }) => (
                   <FormItem><FormLabel>Full Name</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
                 )} />
@@ -178,10 +178,10 @@ export default function ClientProfilePage() {
                   <FormItem><FormLabel>Phone</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
                 )} />
                 <FormField control={form.control} name="address" render={({ field }) => (
-                  <FormItem><FormLabel>Billing Address</FormLabel><FormControl><Textarea {...field} className="h-24" /></FormControl><FormMessage /></FormItem>
+                  <FormItem><FormLabel>Billing Address</FormLabel><FormControl><Textarea {...field} className="h-20" /></FormControl><FormMessage /></FormItem>
                 )} />
                 <FormField control={form.control} name="shippingAddress" render={({ field }) => (
-                  <FormItem><FormLabel>Shipping Address</FormLabel><FormControl><Textarea {...field} className="h-24" /></FormControl><FormMessage /></FormItem>
+                  <FormItem><FormLabel>Shipping Address</FormLabel><FormControl><Textarea {...field} className="h-20" /></FormControl><FormMessage /></FormItem>
                 )} />
                  <FormField control={form.control} name="website" render={({ field }) => (
                   <FormItem>
@@ -201,7 +201,7 @@ export default function ClientProfilePage() {
                     <FormField control={form.control} name="notes" render={({ field }) => (
                     <FormItem>
                         <FormLabel>Internal Notes</FormLabel>
-                        <FormControl><div className="relative flex items-center"><Pencil className="absolute left-3 top-3 h-5 w-5 text-muted-foreground" /><Textarea className="pl-10 h-24" {...field} /></div></FormControl>
+                        <FormControl><div className="relative flex items-center"><Pencil className="absolute left-3 top-3 h-5 w-5 text-muted-foreground" /><Textarea className="pl-10 h-20" {...field} /></div></FormControl>
                         <FormMessage />
                     </FormItem>
                     )} />
