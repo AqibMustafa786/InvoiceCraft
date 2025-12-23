@@ -16,7 +16,7 @@ import { Mail, Phone, Edit, ArrowLeft, DollarSign, Clock, FileWarning, Files, XC
 import Link from 'next/link';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { format, subYears, eachMonthOfInterval, startOfMonth } from 'date-fns';
+import { format, subYears, eachMonthOfInterval, startOfMonth, isValid } from 'date-fns';
 import { Badge } from '@/components/ui/badge';
 import { ChartContainer, ChartTooltip, ChartTooltipContent, type ChartConfig, ChartLegend, ChartLegendContent } from '@/components/ui/chart';
 import { ClientFormDialog } from '@/components/dashboard/client-form-dialog';
@@ -498,7 +498,12 @@ export default function ClientPage() {
                                               <SheetDescription>{inv.invoiceNumber}</SheetDescription>
                                             </SheetHeader>
                                              <div className="py-4">
-                                                <ClientInvoicePreview invoice={inv} accentColor="hsl(var(--primary))" backgroundColor="hsl(var(--background))" textColor="hsl(var(--foreground))" />
+                                                <ClientInvoicePreview 
+                                                  invoice={inv} 
+                                                  accentColor={inv.accentColor || 'hsl(var(--primary))'}
+                                                  backgroundColor={inv.backgroundColor || 'hsl(var(--background))'}
+                                                  textColor={inv.textColor || 'hsl(var(--foreground))'}
+                                                />
                                              </div>
                                           </SheetContent>
                                         </Sheet>
@@ -546,6 +551,7 @@ export default function ClientPage() {
     </div>
   );
 }
+
 
 
 
