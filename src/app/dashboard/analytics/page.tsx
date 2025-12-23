@@ -16,6 +16,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
 import { useRouter } from 'next/navigation';
+import { motion } from 'framer-motion';
+
 
 const currencySymbols: { [key: string]: string } = {
   USD: '$', EUR: '€', GBP: '£', JPY: '¥', PKR: '₨',
@@ -161,26 +163,41 @@ export default function AnalyticsPage() {
         case 'draft': default: return 'outline';
     }
   };
+  
+  const pageVariants = {
+    hidden: { opacity: 0, y: -10 },
+    visible: { opacity: 1, y: 0, transition: { staggerChildren: 0.1, duration: 0.3 } },
+  };
+  
+  const itemVariants = {
+    hidden: { opacity: 0, y: 10 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.3, ease: 'easeOut' } },
+  };
 
   return (
-    <div className="space-y-6">
+    <motion.div 
+      className="space-y-6"
+      variants={pageVariants}
+      initial="hidden"
+      animate="visible"
+    >
       <div className="flex justify-between items-start">
          <Button variant="outline" onClick={() => router.push('/dashboard')}>
             <ArrowLeft className="mr-2 h-4 w-4" />
             Back to Dashboard
         </Button>
        </div>
-      <h1 className="text-3xl font-bold font-headline">Analytics</h1>
+      <motion.h1 variants={itemVariants} className="text-3xl font-bold font-headline">Analytics</motion.h1>
       
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <Card><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Total Revenue</CardTitle><DollarSign className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent><div className="text-2xl font-bold">{symbol}{analyticsData?.totalRevenue.toFixed(2)}</div><p className="text-xs text-muted-foreground">From {analyticsData?.paidInvoices.length} paid invoices</p></CardContent></Card>
-        <Card><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Outstanding Amount</CardTitle><Clock className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent><div className="text-2xl font-bold">{symbol}{analyticsData?.outstandingAmount.toFixed(2)}</div></CardContent></Card>
-        <Card><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Overdue Amount</CardTitle><AlertTriangle className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent><div className="text-2xl font-bold">{symbol}{analyticsData?.overdueAmount.toFixed(2)}</div></CardContent></Card>
-        <Card><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Total Clients</CardTitle><Users className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent><div className="text-2xl font-bold">{analyticsData?.totalClients}</div></CardContent></Card>
-      </div>
+      <motion.div variants={itemVariants} className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <Card className="bg-card/50 backdrop-blur-sm shadow-lg transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-1"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Total Revenue</CardTitle><DollarSign className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent><div className="text-2xl font-bold">{symbol}{analyticsData?.totalRevenue.toFixed(2)}</div><p className="text-xs text-muted-foreground">From {analyticsData?.paidInvoices.length} paid invoices</p></CardContent></Card>
+        <Card className="bg-card/50 backdrop-blur-sm shadow-lg transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-1"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Outstanding Amount</CardTitle><Clock className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent><div className="text-2xl font-bold">{symbol}{analyticsData?.outstandingAmount.toFixed(2)}</div></CardContent></Card>
+        <Card className="bg-card/50 backdrop-blur-sm shadow-lg transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-1"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Overdue Amount</CardTitle><AlertTriangle className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent><div className="text-2xl font-bold">{symbol}{analyticsData?.overdueAmount.toFixed(2)}</div></CardContent></Card>
+        <Card className="bg-card/50 backdrop-blur-sm shadow-lg transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-1"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Total Clients</CardTitle><Users className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent><div className="text-2xl font-bold">{analyticsData?.totalClients}</div></CardContent></Card>
+      </motion.div>
 
-      <div className="grid gap-4 md:grid-cols-2">
-        <Card>
+      <motion.div variants={itemVariants} className="grid gap-4 md:grid-cols-2">
+        <Card className="bg-card/50 backdrop-blur-sm shadow-lg transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-1">
           <CardHeader>
             <div className="flex justify-between items-center">
               <CardTitle>Revenue Overview</CardTitle>
@@ -205,7 +222,7 @@ export default function AnalyticsPage() {
             </ResponsiveContainer>
           </CardContent>
         </Card>
-        <Card>
+        <Card className="bg-card/50 backdrop-blur-sm shadow-lg transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-1">
           <CardHeader>
             <CardTitle>Top Clients by Revenue</CardTitle>
             <CardDescription>Your most valuable clients based on paid invoices.</CardDescription>
@@ -222,36 +239,38 @@ export default function AnalyticsPage() {
             </ResponsiveContainer>
           </CardContent>
         </Card>
-      </div>
+      </motion.div>
 
-       <Card>
-        <CardHeader>
-          <CardTitle>Recent Invoices</CardTitle>
-          <CardDescription>Your 5 most recently updated invoices.</CardDescription>
-        </CardHeader>
-        <CardContent>
-           <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Client</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Last Updated</TableHead>
-                <TableHead className="text-right">Amount</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {invoices?.slice(0, 5).map(invoice => (
-                <TableRow key={invoice.id}>
-                  <TableCell>{invoice.client.name}</TableCell>
-                  <TableCell><Badge variant={getStatusVariant(invoice.status)}>{invoice.status}</Badge></TableCell>
-                  <TableCell>{safeFormat(invoice.updatedAt, "MMM d, yyyy")}</TableCell>
-                  <TableCell className="text-right">{symbol}{invoice.summary.grandTotal.toFixed(2)}</TableCell>
+       <motion.div variants={itemVariants}>
+         <Card className="bg-card/50 backdrop-blur-sm shadow-lg">
+            <CardHeader>
+            <CardTitle>Recent Invoices</CardTitle>
+            <CardDescription>Your 5 most recently updated invoices.</CardDescription>
+            </CardHeader>
+            <CardContent>
+            <Table>
+                <TableHeader>
+                <TableRow>
+                    <TableHead>Client</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead>Last Updated</TableHead>
+                    <TableHead className="text-right">Amount</TableHead>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </CardContent>
-      </Card>
-    </div>
+                </TableHeader>
+                <TableBody>
+                {invoices?.slice(0, 5).map(invoice => (
+                    <TableRow key={invoice.id}>
+                    <TableCell>{invoice.client.name}</TableCell>
+                    <TableCell><Badge variant={getStatusVariant(invoice.status)}>{invoice.status}</Badge></TableCell>
+                    <TableCell>{safeFormat(invoice.updatedAt, "MMM d, yyyy")}</TableCell>
+                    <TableCell className="text-right">{symbol}{invoice.summary.grandTotal.toFixed(2)}</TableCell>
+                    </TableRow>
+                ))}
+                </TableBody>
+            </Table>
+            </CardContent>
+         </Card>
+       </motion.div>
+    </motion.div>
   );
 }
