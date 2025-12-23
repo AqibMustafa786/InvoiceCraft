@@ -16,7 +16,7 @@ import { useFirebase } from '@/firebase';
 import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
 import { Save, Loader2 } from 'lucide-react';
 import type { Client } from '@/lib/types';
-import { Label } from '@/components/ui/label';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 const CLIENTS_COLLECTION = 'clients';
 
@@ -126,49 +126,49 @@ export function ClientFormDialog({ open, onOpenChange, client, onSave }: ClientF
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-[480px]">
         <DialogHeader>
-          <DialogTitle>{isNewClient ? 'Create New Client' : 'Edit Client'}</DialogTitle>
-          <DialogDescription>
+          <DialogTitle className="text-xl">{isNewClient ? 'Create New Client' : 'Edit Client'}</DialogTitle>
+          <DialogDescription className="text-accent">
             {isNewClient ? 'Add a new client to your records.' : `Editing ${client?.name}.`}
           </DialogDescription>
         </DialogHeader>
         
-        <div className="max-h-[60vh] overflow-y-auto pr-6 -mr-6">
+        <ScrollArea className="max-h-[65vh] pr-6 -mr-6">
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            <form className="space-y-4 px-1">
                 <FormField control={form.control} name="name" render={({ field }) => (
-                  <FormItem><FormLabel>Full Name</FormLabel><FormControl><Input {...field} className="border-border" /></FormControl><FormMessage /></FormItem>
+                  <FormItem><FormLabel>Full Name</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
                 )} />
                 <FormField control={form.control} name="companyName" render={({ field }) => (
-                  <FormItem><FormLabel>Company Name</FormLabel><FormControl><Input {...field} className="border-border" /></FormControl><FormMessage /></FormItem>
+                  <FormItem><FormLabel>Company Name</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
                 )} />
                 <FormField control={form.control} name="email" render={({ field }) => (
-                  <FormItem><FormLabel>Email</FormLabel><FormControl><Input type="email" {...field} className="border-border" /></FormControl><FormMessage /></FormItem>
+                  <FormItem><FormLabel>Email</FormLabel><FormControl><Input type="email" {...field} /></FormControl><FormMessage /></FormItem>
                 )} />
                 <FormField control={form.control} name="phone" render={({ field }) => (
-                  <FormItem><FormLabel>Phone</FormLabel><FormControl><Input {...field} className="border-border" /></FormControl><FormMessage /></FormItem>
+                  <FormItem><FormLabel>Phone</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
                 )} />
                 <FormField control={form.control} name="address" render={({ field }) => (
-                  <FormItem><FormLabel>Billing Address</FormLabel><FormControl><Textarea {...field} className="h-20 border-border" /></FormControl><FormMessage /></FormItem>
+                  <FormItem><FormLabel>Billing Address</FormLabel><FormControl><Textarea {...field} className="h-20" /></FormControl><FormMessage /></FormItem>
                 )} />
                 <FormField control={form.control} name="shippingAddress" render={({ field }) => (
-                  <FormItem><FormLabel>Shipping Address</FormLabel><FormControl><Textarea {...field} className="h-20 border-border" /></FormControl><FormMessage /></FormItem>
+                  <FormItem><FormLabel>Shipping Address</FormLabel><FormControl><Textarea {...field} className="h-20" /></FormControl><FormMessage /></FormItem>
                 )} />
                  <FormField control={form.control} name="website" render={({ field }) => (
-                  <FormItem><FormLabel>Website</FormLabel><FormControl><Input {...field} className="border-border" /></FormControl><FormMessage /></FormItem>
+                  <FormItem><FormLabel>Website</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
                  )} />
                   <FormField control={form.control} name="taxId" render={({ field }) => (
-                    <FormItem><FormLabel>Tax ID</FormLabel><FormControl><Input {...field} className="border-border" /></FormControl><FormMessage /></FormItem>
+                    <FormItem><FormLabel>Tax ID</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
                   )} />
                 <FormField control={form.control} name="notes" render={({ field }) => (
-                <FormItem><FormLabel>Internal Notes</FormLabel><FormControl><Textarea className="h-24 border-border" {...field} /></FormControl><FormMessage /></FormItem>
+                <FormItem><FormLabel>Internal Notes</FormLabel><FormControl><Textarea className="h-24" {...field} /></FormControl><FormMessage /></FormItem>
                 )} />
             </form>
           </Form>
-        </div>
+        </ScrollArea>
 
-        <DialogFooter className="mt-auto pt-4 gap-2 border-t">
+        <DialogFooter className="mt-auto pt-4 gap-2">
           <DialogClose asChild>
             <Button type="button" variant="outline">Cancel</Button>
           </DialogClose>
