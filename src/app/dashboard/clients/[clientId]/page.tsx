@@ -4,7 +4,7 @@
 
 import { useMemo, useState } from 'react';
 import { useAuth } from '@/context/auth-provider';
-import { useCollection, useDoc, useFirebase } from '@/firebase';
+import { useCollection, useDoc, useFirebase, deleteDocumentNonBlocking } from '@/firebase';
 import { collection, query, where, doc } from 'firebase/firestore';
 import type { Client, Estimate, Invoice, Quote, InsuranceDocument } from '@/lib/types';
 import { useParams, useRouter } from 'next/navigation';
@@ -12,7 +12,7 @@ import { Bar, BarChart, CartesianGrid, Legend, Pie, PieChart, ResponsiveContaine
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Mail, Phone, Edit, ArrowLeft, DollarSign, Clock, FileWarning, Files, XCircle, FilePlus2, FileText, Shield } from 'lucide-react';
+import { Mail, Phone, Edit, ArrowLeft, DollarSign, Clock, FileWarning, Files, XCircle, FilePlus2, FileText, Shield, Trash2 } from 'lucide-react';
 import Link from 'next/link';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -21,6 +21,18 @@ import { Badge } from '@/components/ui/badge';
 import { ChartContainer, ChartTooltip, ChartTooltipContent, type ChartConfig, ChartLegend, ChartLegendContent } from '@/components/ui/chart';
 import { ClientFormDialog } from '@/components/dashboard/client-form-dialog';
 import { useToast } from '@/hooks/use-toast';
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+
 
 const currencySymbols: { [key: string]: string } = {
   USD: '$', EUR: '€', GBP: '£', JPY: '¥', PKR: '₨',
@@ -236,6 +248,16 @@ export default function ClientPage() {
     router.push(`/create-${docType}?${queryParams.toString()}`);
   }
 
+  const handleDeleteClient = () => {
+    if (!clientRef) return;
+    deleteDocumentNonBlocking(clientRef);
+    toast({
+        title: "Client Deleted",
+        description: `Client "${client.name}" has been permanently deleted.`,
+    });
+    router.push('/dashboard?tab=clients');
+  };
+
 
   if (isClientLoading || isInvoicesLoading || isEstimatesLoading) {
     return <div>Loading client data...</div>;
@@ -276,7 +298,23 @@ export default function ClientPage() {
             <div className="flex items-center gap-2"><Phone className="h-4 w-4 text-muted-foreground" /><span>{client.phone}</span></div>
             <div className="pt-4 flex gap-2">
                 <Button size="sm" className="w-full" onClick={() => setIsClientDialogOpen(true)}><Edit className="mr-2 h-4 w-4" /> Edit Client</Button>
-                <Button size="sm" variant="outline" className="w-full"><Mail className="mr-2 h-4 w-4"/> Email Client</Button>
+                <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                        <Button size="sm" variant="destructive" className="w-full"><Trash2 className="mr-2 h-4 w-4"/> Delete</Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                        <AlertDialogHeader>
+                            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                            <AlertDialogDescription>
+                                This will permanently delete the client and all associated documents. This action cannot be undone.
+                            </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                            <AlertDialogAction onClick={handleDeleteClient} className="bg-destructive hover:bg-destructive/90">Delete Client</AlertDialogAction>
+                        </AlertDialogFooter>
+                    </AlertDialogContent>
+                </AlertDialog>
             </div>
           </CardContent>
         </Card>
@@ -360,5 +398,6 @@ export default function ClientPage() {
     </div>
   );
 }
+
 
 
