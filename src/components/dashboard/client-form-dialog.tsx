@@ -14,9 +14,9 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/context/auth-provider';
 import { useFirebase } from '@/firebase';
-import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
+import { doc, setDoc, serverTimestamp, Timestamp } from 'firebase/firestore';
 import { Save, Loader2, UploadCloud } from 'lucide-react';
-import type { Client } from '@/lib/types';
+import type { Client, AuditLogEntry } from '@/lib/types';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { Label } from '@/components/ui/label';
@@ -45,8 +45,29 @@ interface ClientFormDialogProps {
   onSave: () => void;
 }
 
+const diffClients = (original: Partial<Client>, updated: Partial<Client>): string[] => {
+    const changes: string[] = [];
+    if (!original || !updated) return changes;
+
+    const allKeys = new Set([...Object.keys(original), ...Object.keys(updated)]);
+    const formatKey = (key: string) => key.replace(/([A-Z])/g, ' $1').replace(/^./, (str) => str.toUpperCase());
+    
+    allKeys.forEach(key => {
+        if (['id', 'companyId', 'createdAt', 'updatedAt', 'auditLog'].includes(key)) return;
+        
+        const originalValue = (original as any)[key];
+        const updatedValue = (updated as any)[key];
+        
+        if (JSON.stringify(originalValue) !== JSON.stringify(updatedValue)) {
+             changes.push(`${formatKey(key)} was changed.`);
+        }
+    });
+
+    return changes;
+};
+
 export function ClientFormDialog({ open, onOpenChange, client, onSave }: ClientFormDialogProps) {
-  const { userProfile } = useAuth();
+  const { user, userProfile } = useAuth();
   const { firestore } = useFirebase();
   const { toast } = useToast();
   const [isSaving, setIsSaving] = useState(false);
@@ -125,7 +146,7 @@ export function ClientFormDialog({ open, onOpenChange, client, onSave }: ClientF
 
   const onSubmit = async (data: ClientFormValues) => {
     setIsSaving(true);
-    if (!firestore || !userProfile?.companyId) {
+    if (!firestore || !userProfile?.companyId || !user) {
       toast({ title: "Error", description: "Cannot save client. User or company not identified.", variant: "destructive" });
       setIsSaving(false);
       return;
@@ -133,13 +154,33 @@ export function ClientFormDialog({ open, onOpenChange, client, onSave }: ClientF
 
     try {
       let idToSave: string;
+      let auditLog: AuditLogEntry[] = client?.auditLog || [];
+
       if (isNewClient) {
         const safeName = data.name.toLowerCase().replace(/[^a-z0-9]/g, '-');
         const safeCompany = (data.companyName || '').toLowerCase().replace(/[^a-z0-9]/g, '-');
         const baseId = safeCompany ? `${safeName}-${safeCompany}` : safeName;
         idToSave = `${baseId}-${Math.random().toString(36).substring(2, 7)}`;
+        auditLog.push({
+            id: crypto.randomUUID(),
+            action: 'created',
+            timestamp: Timestamp.now(),
+            user: { name: user.displayName || user.email, email: user.email },
+            version: 1,
+        });
       } else {
         idToSave = client!.id;
+        const changes = diffClients(client, data);
+        if (changes.length > 0) {
+            auditLog.push({
+                id: crypto.randomUUID(),
+                action: 'updated',
+                timestamp: Timestamp.now(),
+                user: { name: user.displayName || user.email, email: user.email },
+                version: (client.auditLog?.length || 0) + 1,
+                changes: changes
+            });
+        }
       }
       
       const dataToSave: Client = {
@@ -149,6 +190,7 @@ export function ClientFormDialog({ open, onOpenChange, client, onSave }: ClientF
         avatarUrl: avatarPreview || '',
         updatedAt: serverTimestamp(),
         createdAt: isNewClient ? serverTimestamp() : client?.createdAt,
+        auditLog: auditLog,
       };
 
       await setDoc(doc(firestore, 'companies', userProfile.companyId, CLIENTS_COLLECTION, idToSave), dataToSave, { merge: true });
@@ -238,5 +280,3 @@ export function ClientFormDialog({ open, onOpenChange, client, onSave }: ClientF
     </Dialog>
   );
 }
-
-

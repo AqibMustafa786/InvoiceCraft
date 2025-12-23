@@ -6,13 +6,13 @@ import { useMemo, useState } from 'react';
 import { useAuth } from '@/context/auth-provider';
 import { useCollection, useDoc, useFirebase, deleteDocumentNonBlocking } from '@/firebase';
 import { collection, query, where, doc } from 'firebase/firestore';
-import type { Client, Estimate, Invoice, Quote, InsuranceDocument } from '@/lib/types';
+import type { Client, Estimate, Invoice, Quote, InsuranceDocument, AuditLogEntry } from '@/lib/types';
 import { useParams, useRouter } from 'next/navigation';
 import { Bar, BarChart, CartesianGrid, Legend, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Mail, Phone, Edit, ArrowLeft, DollarSign, Clock, FileWarning, Files, XCircle, FilePlus2, FileText, Shield, Trash2 } from 'lucide-react';
+import { Mail, Phone, Edit, ArrowLeft, DollarSign, Clock, FileWarning, Files, XCircle, FilePlus2, FileText, Shield, Trash2, History } from 'lucide-react';
 import Link from 'next/link';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -32,6 +32,7 @@ import {
     AlertDialogTitle,
     AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { HistoryModal } from '@/components/dashboard/history-modal';
 
 
 const currencySymbols: { [key: string]: string } = {
@@ -185,12 +186,13 @@ const processData = (data: any): any => {
 
 export default function ClientPage() {
   const { firestore } = useFirebase();
-  const { userProfile } = useAuth();
+  const { user, userProfile } = useAuth();
   const params = useParams();
   const router = useRouter();
   const { toast } = useToast();
   const { clientId } = params;
   const [isClientDialogOpen, setIsClientDialogOpen] = useState(false);
+  const [historyModalState, setHistoryModalState] = useState<{ isOpen: boolean, auditLog: AuditLogEntry[]}>({isOpen: false, auditLog: []});
 
   const companyId = userProfile?.companyId;
 
@@ -257,6 +259,15 @@ export default function ClientPage() {
     });
     router.push('/dashboard?tab=clients');
   };
+  
+  const handleHistoryClick = (auditLog?: AuditLogEntry[]) => {
+    if (!auditLog || auditLog.length === 0) {
+      toast({ title: "No History", description: "No history has been recorded for this client yet." });
+      return;
+    }
+    const sortedLog = (auditLog || []).sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+    setHistoryModalState({ isOpen: true, auditLog: sortedLog });
+  };
 
 
   if (isClientLoading || isInvoicesLoading || isEstimatesLoading) {
@@ -274,6 +285,11 @@ export default function ClientPage() {
             onOpenChange={setIsClientDialogOpen}
             client={client}
             onSave={() => setIsClientDialogOpen(false)}
+        />
+        <HistoryModal 
+            isOpen={historyModalState.isOpen}
+            onClose={() => setHistoryModalState({ isOpen: false, auditLog: [] })}
+            auditLog={historyModalState.auditLog}
         />
        <div className="flex justify-between items-start">
          <Button variant="outline" onClick={() => router.push('/dashboard?tab=clients')}>
@@ -297,10 +313,11 @@ export default function ClientPage() {
             <div className="flex items-center gap-2"><Mail className="h-4 w-4 text-muted-foreground" /><a href={`mailto:${client.email}`} className="hover:underline">{client.email}</a></div>
             <div className="flex items-center gap-2"><Phone className="h-4 w-4 text-muted-foreground" /><span>{client.phone}</span></div>
             <div className="pt-4 flex gap-2">
-                <Button size="sm" className="w-full" onClick={() => setIsClientDialogOpen(true)}><Edit className="mr-2 h-4 w-4" /> Edit Client</Button>
+                <Button size="sm" className="flex-1" onClick={() => setIsClientDialogOpen(true)}><Edit className="mr-2 h-4 w-4" /> Edit Client</Button>
+                 <Button size="icon" variant="outline" onClick={() => handleHistoryClick(client.auditLog)}><History className="h-4 w-4" /></Button>
                 <AlertDialog>
                     <AlertDialogTrigger asChild>
-                        <Button size="sm" variant="destructive" className="w-full"><Trash2 className="mr-2 h-4 w-4"/> Delete</Button>
+                        <Button size="icon" variant="destructive"><Trash2 className="h-4 w-4"/></Button>
                     </AlertDialogTrigger>
                     <AlertDialogContent>
                         <AlertDialogHeader>
@@ -398,6 +415,5 @@ export default function ClientPage() {
     </div>
   );
 }
-
 
 

@@ -80,6 +80,7 @@ export interface Client {
   avatarUrl?: string;
   createdAt: any;
   updatedAt: any;
+  auditLog?: AuditLogEntry[];
 }
 
 
