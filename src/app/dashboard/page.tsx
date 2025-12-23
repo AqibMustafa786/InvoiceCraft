@@ -23,7 +23,7 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { FilePlus2, Edit, Trash2, Filter, X, MoreHorizontal, FileText, Share2, DollarSign, Clock, FileWarning, Files, CheckCircle, FileQuestion, Users, Percent, AreaChart, Package, History, Shield } from "lucide-react";
+import { FilePlus2, Edit, Trash2, Filter, X, MoreHorizontal, FileText, Share2, DollarSign, Clock, FileWarning, Files, CheckCircle, FileQuestion, Users, Percent, AreaChart, Package, History, Shield, XCircle } from "lucide-react";
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { format, isValid, isWithinInterval } from 'date-fns';
@@ -929,3 +929,4 @@ export default function DashboardPage() {
         </>
     );
 }
+
