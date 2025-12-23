@@ -12,13 +12,13 @@ import { Bar, BarChart, CartesianGrid, Legend, Pie, PieChart, ResponsiveContaine
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Mail, Phone, Edit, ArrowLeft } from 'lucide-react';
+import { Mail, Phone, Edit, ArrowLeft, DollarSign, Clock, FileWarning, Files } from 'lucide-react';
 import Link from 'next/link';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { format, subYears, eachMonthOfInterval, startOfMonth } from 'date-fns';
 import { Badge } from '@/components/ui/badge';
-import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
+import { ChartContainer, ChartTooltip, ChartTooltipContent, type ChartConfig, ChartLegendContent } from '@/components/ui/chart';
 import { ClientFormDialog } from '@/components/dashboard/client-form-dialog';
 
 const currencySymbols: { [key: string]: string } = {
@@ -88,13 +88,13 @@ function ClientCharts({ documents }: { documents: DocumentType[] }) {
   }, [invoiceData]);
 
   const statusBreakdown = useMemo(() => {
-    const statuses = { paid: 0, sent: 0, overdue: 0, draft: 0 };
+    const statuses: Record<string, number> = { paid: 0, sent: 0, overdue: 0, draft: 0 };
     invoiceData.forEach(invoice => {
       if (invoice.status in statuses) {
         statuses[invoice.status as keyof typeof statuses]++;
       }
     });
-    return Object.entries(statuses).map(([name, value]) => ({ name, value, fill: `var(--color-${name})` }));
+    return Object.entries(statuses).map(([name, value]) => ({ name: name.charAt(0).toUpperCase() + name.slice(1), value, fill: `var(--color-${name})` }));
   }, [invoiceData]);
 
   const chartConfig = {
@@ -139,6 +139,16 @@ function ClientCharts({ documents }: { documents: DocumentType[] }) {
       </Card>
     </div>
   );
+}
+
+const safeFormat = (date: any, formatString: string) => {
+    if (!date) return 'N/A';
+    try {
+        const d = date.toDate ? date.toDate() : new Date(date);
+        return format(d, formatString);
+    } catch (e) {
+        return "Invalid Date";
+    }
 }
 
 
