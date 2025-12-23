@@ -116,6 +116,7 @@ const getInitialEstimate = (): Omit<Estimate, 'userId' | 'companyId'> => ({
   },
 
   client: {
+    clientId: '',
     name: 'Client Name',
     companyName: 'Client Company',
     address: '456 Oak Ave, Someplace, USA 54321',
@@ -474,6 +475,10 @@ export default function CreateEstimatePage() {
       id: newId,
       userId: user.uid, 
       companyId: companyId,
+      client: {
+        ...document.client,
+        clientId: document.clientId, // Ensure clientId is saved
+      },
       updatedAt: Timestamp.now(),
       auditLog: updatedAuditLog.map(log => ({ ...log, timestamp: safeTimestamp(log.timestamp) })),
       estimateDate: safeTimestamp(document.estimateDate),
@@ -703,4 +708,5 @@ export default function CreateEstimatePage() {
     
 
     
+
 

@@ -117,6 +117,7 @@ const getInitialInvoice = (): Omit<Invoice, 'userId' | 'companyId'> => ({
   },
 
   client: {
+    clientId: '',
     name: 'Client Name',
     address: '456 Oak Ave, Someplace, USA 54321',
     phone: '+1 (987) 654-3210',
@@ -556,6 +557,10 @@ export default function CreateInvoicePage() {
       id: newId,
       userId: user.uid,
       companyId: companyId,
+      client: {
+        ...invoice.client,
+        clientId: invoice.clientId, // Ensure clientId is saved
+      },
       updatedAt: Timestamp.now(),
       auditLog: updatedAuditLog.map(log => ({ ...log, timestamp: safeTimestamp(log.timestamp) })),
       invoiceDate: safeTimestamp(invoice.invoiceDate),
@@ -764,4 +769,5 @@ export default function CreateInvoicePage() {
     
 
     
+
 

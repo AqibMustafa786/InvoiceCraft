@@ -1,7 +1,8 @@
 
+
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { useAuth } from '@/context/auth-provider';
 import { useFirebase, useDoc, useCollection, useMemoFirebase } from '@/firebase';
@@ -13,7 +14,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import { Skeleton } from '@/components/ui/skeleton';
-import { ArrowLeft, Save, Globe, Hash, Pencil } from 'lucide-react';
+import { ArrowLeft, Save, Globe, Hash, Pencil, Users, DollarSign, Clock, FileWarning, Files, CheckCircle, FileQuestion, Percent, AreaChart, Shield, FilePlus2 } from 'lucide-react';
 import type { Client, Invoice, Estimate } from '@/lib/types';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -39,6 +40,26 @@ const clientSchema = z.object({
 
 type ClientFormValues = z.infer<typeof clientSchema>;
 
+type KpiCardProps = {
+    title: string;
+    value: string | number;
+    description?: string;
+    icon: React.ReactNode;
+};
+
+const KpiCard: React.FC<KpiCardProps> = ({ title, value, description, icon }) => (
+    <Card className="bg-card/50 backdrop-blur-sm shadow-sm">
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">{title}</CardTitle>
+            {icon}
+        </CardHeader>
+        <CardContent>
+            <div className="text-2xl font-bold">{value}</div>
+            {description && <p className="text-xs text-muted-foreground">{description}</p>}
+        </CardContent>
+    </Card>
+);
+
 export default function ClientProfilePage() {
   const { clientId } = useParams();
   const router = useRouter();
@@ -57,28 +78,53 @@ export default function ClientProfilePage() {
   const { data: existingClient, isLoading: isLoadingClient } = useDoc<Client>(docRef);
   
   const invoicesQuery = useMemoFirebase(() => {
-    if (firestore && userProfile?.companyId && existingClient?.id && !isNewClient) {
+    if (firestore && userProfile?.companyId && !isNewClient) {
       return query(
         collection(firestore, 'companies', userProfile.companyId, 'invoices'), 
-        where('client.clientId', '==', existingClient.id)
+        where('client.clientId', '==', clientId)
       );
     }
     return null;
-  }, [firestore, userProfile?.companyId, existingClient, isNewClient]);
+  }, [firestore, userProfile?.companyId, clientId, isNewClient]);
 
   const estimatesQuery = useMemoFirebase(() => {
-    if (firestore && userProfile?.companyId && existingClient?.id && !isNewClient) {
+    if (firestore && userProfile?.companyId && !isNewClient) {
       return query(
         collection(firestore, 'companies', userProfile.companyId, 'estimates'), 
-        where('client.clientId', '==', existingClient.id)
+        where('client.clientId', '==', clientId)
       );
     }
     return null;
-  }, [firestore, userProfile?.companyId, existingClient, isNewClient]);
+  }, [firestore, userProfile?.companyId, clientId, isNewClient]);
 
 
   const { data: invoices } = useCollection<Invoice>(invoicesQuery);
   const { data: estimates } = useCollection<Estimate>(estimatesQuery);
+
+  const clientKPIs = useMemo(() => {
+    if (!invoices || !estimates) return null;
+    
+    const paidInvoices = invoices.filter(inv => inv.status === 'paid');
+    const pendingInvoices = invoices.filter(inv => inv.status === 'sent');
+    const overdueInvoices = invoices.filter(inv => inv.status === 'overdue');
+
+    const totalRevenue = paidInvoices.reduce((sum, inv) => sum + inv.summary.grandTotal, 0);
+    const pendingAmount = pendingInvoices.reduce((sum, inv) => sum + inv.summary.grandTotal, 0);
+    const overdueAmount = overdueInvoices.reduce((sum, inv) => sum + inv.summary.grandTotal, 0);
+
+    const acceptedEstimates = estimates.filter(est => est.status === 'accepted');
+    const totalEstimatedValue = estimates.reduce((sum, est) => sum + est.summary.grandTotal, 0);
+
+    return {
+        totalInvoices: invoices.length,
+        totalRevenue,
+        pendingAmount,
+        overdueAmount,
+        totalEstimates: estimates.length,
+        acceptedEstimates: acceptedEstimates.length,
+        totalEstimatedValue,
+    }
+  }, [invoices, estimates]);
 
   const form = useForm<ClientFormValues>({
     resolver: zodResolver(clientSchema),
@@ -143,6 +189,23 @@ export default function ClientProfilePage() {
     }
   };
 
+  const handleCreateInvoice = () => {
+    if (isNewClient) {
+      toast({ title: "Save Client First", description: "Please save the client before creating an invoice.", variant: "destructive"});
+      return;
+    }
+    router.push(`/create-invoice?clientId=${clientId}`);
+  }
+
+  const handleCreateEstimate = () => {
+    if (isNewClient) {
+      toast({ title: "Save Client First", description: "Please save the client before creating an estimate.", variant: "destructive"});
+      return;
+    }
+    router.push(`/create-estimate?clientId=${clientId}`);
+  }
+
+
   if (isLoadingClient) {
     return <div className="container mx-auto p-4 md:p-6"><Skeleton className="h-96 w-full" /></div>;
   }
@@ -156,64 +219,87 @@ export default function ClientProfilePage() {
         <h1 className="text-xl font-bold font-headline">{isNewClient ? 'Create New Client' : form.getValues('name')}</h1>
       </div>
 
-      <Card className='bg-card/50 backdrop-blur-sm'>
-        <CardHeader className="p-4">
-          <CardTitle className="text-lg">Client Information</CardTitle>
-          <CardDescription className="text-xs">Manage the contact and address details for this client.</CardDescription>
-        </CardHeader>
-        <CardContent className="p-4">
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                <FormField control={form.control} name="name" render={({ field }) => (
-                  <FormItem><FormLabel>Full Name</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
-                )} />
-                <FormField control={form.control} name="companyName" render={({ field }) => (
-                  <FormItem><FormLabel>Company Name</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
-                )} />
-                <FormField control={form.control} name="email" render={({ field }) => (
-                  <FormItem><FormLabel>Email</FormLabel><FormControl><Input type="email" {...field} /></FormControl><FormMessage /></FormItem>
-                )} />
-                <FormField control={form.control} name="phone" render={({ field }) => (
-                  <FormItem><FormLabel>Phone</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
-                )} />
-                <FormField control={form.control} name="address" render={({ field }) => (
-                  <FormItem><FormLabel>Billing Address</FormLabel><FormControl><Textarea {...field} className="h-16" /></FormControl><FormMessage /></FormItem>
-                )} />
-                <FormField control={form.control} name="shippingAddress" render={({ field }) => (
-                  <FormItem><FormLabel>Shipping Address</FormLabel><FormControl><Textarea {...field} className="h-16" /></FormControl><FormMessage /></FormItem>
-                )} />
-                 <FormField control={form.control} name="website" render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Website</FormLabel>
-                    <FormControl><div className="relative flex items-center"><Globe className="absolute left-3 h-5 w-5 text-muted-foreground" /><Input className="pl-10" {...field} /></div></FormControl>
-                    <FormMessage />
-                  </FormItem>
-                 )} />
-                  <FormField control={form.control} name="taxId" render={({ field }) => (
+       {!isNewClient && clientKPIs && (
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+            <KpiCard title="Total Revenue" value={`$${clientKPIs.totalRevenue.toFixed(2)}`} description={`${clientKPIs.totalInvoices} Invoices`} icon={<DollarSign className="h-4 w-4 text-muted-foreground" />} />
+            <KpiCard title="Pending Amount" value={`$${clientKPIs.pendingAmount.toFixed(2)}`} icon={<Clock className="h-4 w-4 text-muted-foreground" />} />
+            <KpiCard title="Overdue Amount" value={`$${clientKPIs.overdueAmount.toFixed(2)}`} icon={<FileWarning className="h-4 w-4 text-muted-foreground" />} />
+            <KpiCard title="Accepted Estimates" value={clientKPIs.acceptedEstimates} description={`${clientKPIs.totalEstimates} total estimates`} icon={<CheckCircle className="h-4 w-4 text-muted-foreground" />} />
+        </div>
+      )}
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+        <Card className='lg:col-span-2 bg-card/50 backdrop-blur-sm'>
+          <CardHeader className="p-4">
+            <CardTitle className="text-lg">Client Information</CardTitle>
+            <CardDescription className="text-xs">Manage the contact and address details for this client.</CardDescription>
+          </CardHeader>
+          <CardContent className="p-4">
+            <Form {...form}>
+              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  <FormField control={form.control} name="name" render={({ field }) => (
+                    <FormItem><FormLabel>Full Name</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
+                  )} />
+                  <FormField control={form.control} name="companyName" render={({ field }) => (
+                    <FormItem><FormLabel>Company Name</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
+                  )} />
+                  <FormField control={form.control} name="email" render={({ field }) => (
+                    <FormItem><FormLabel>Email</FormLabel><FormControl><Input type="email" {...field} /></FormControl><FormMessage /></FormItem>
+                  )} />
+                  <FormField control={form.control} name="phone" render={({ field }) => (
+                    <FormItem><FormLabel>Phone</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
+                  )} />
+                  <FormField control={form.control} name="address" render={({ field }) => (
+                    <FormItem><FormLabel>Billing Address</FormLabel><FormControl><Textarea {...field} className="h-16" /></FormControl><FormMessage /></FormItem>
+                  )} />
+                  <FormField control={form.control} name="shippingAddress" render={({ field }) => (
+                    <FormItem><FormLabel>Shipping Address</FormLabel><FormControl><Textarea {...field} className="h-16" /></FormControl><FormMessage /></FormItem>
+                  )} />
+                   <FormField control={form.control} name="website" render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Tax ID / VAT Number</FormLabel>
-                      <FormControl><div className="relative flex items-center"><Hash className="absolute left-3 h-5 w-5 text-muted-foreground" /><Input className="pl-10" {...field} /></div></FormControl>
+                      <FormLabel>Website</FormLabel>
+                      <FormControl><div className="relative flex items-center"><Globe className="absolute left-3 h-5 w-5 text-muted-foreground" /><Input className="pl-10" {...field} /></div></FormControl>
                       <FormMessage />
                     </FormItem>
-                  )} />
-                <div className="md:col-span-2">
-                    <FormField control={form.control} name="notes" render={({ field }) => (
-                    <FormItem>
-                        <FormLabel>Internal Notes</FormLabel>
-                        <FormControl><div className="relative flex items-center"><Pencil className="absolute left-3 top-3 h-5 w-5 text-muted-foreground" /><Textarea className="pl-10 h-16" {...field} /></div></FormControl>
+                   )} />
+                    <FormField control={form.control} name="taxId" render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Tax ID / VAT Number</FormLabel>
+                        <FormControl><div className="relative flex items-center"><Hash className="absolute left-3 h-5 w-5 text-muted-foreground" /><Input className="pl-10" {...field} /></div></FormControl>
                         <FormMessage />
-                    </FormItem>
+                      </FormItem>
                     )} />
+                  <div className="md:col-span-2">
+                      <FormField control={form.control} name="notes" render={({ field }) => (
+                      <FormItem>
+                          <FormLabel>Internal Notes</FormLabel>
+                          <FormControl><div className="relative flex items-center"><Pencil className="absolute left-3 top-3 h-5 w-5 text-muted-foreground" /><Textarea className="pl-10 h-16" {...field} /></div></FormControl>
+                          <FormMessage />
+                      </FormItem>
+                      )} />
+                  </div>
                 </div>
-              </div>
-              <div className="flex justify-end pt-4">
-                <Button type="submit" disabled={isSaving}><Save className="mr-2 h-4 w-4" /> {isSaving ? 'Saving...' : 'Save Client'}</Button>
-              </div>
-            </form>
-          </Form>
-        </CardContent>
-      </Card>
+                <div className="flex justify-end pt-4">
+                  <Button type="submit" disabled={isSaving}><Save className="mr-2 h-4 w-4" /> {isSaving ? 'Saving...' : 'Save Client'}</Button>
+                </div>
+              </form>
+            </Form>
+          </CardContent>
+        </Card>
+        
+        <div className="space-y-4">
+           <Card className='bg-card/50 backdrop-blur-sm'>
+              <CardHeader className="p-4">
+                <CardTitle className="text-lg">Quick Actions</CardTitle>
+              </CardHeader>
+              <CardContent className="p-4 flex flex-col space-y-2">
+                 <Button onClick={handleCreateInvoice}><FilePlus2 className="mr-2 h-4 w-4" /> Create Invoice</Button>
+                 <Button onClick={handleCreateEstimate} variant="secondary"><FilePlus2 className="mr-2 h-4 w-4" /> Create Estimate</Button>
+              </CardContent>
+            </Card>
+        </div>
+      </div>
 
       {!isNewClient && (
         <Card className='bg-card/50 backdrop-blur-sm'>
