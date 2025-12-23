@@ -4,7 +4,7 @@
 
 import { useMemo, useState } from 'react';
 import { useAuth } from '@/context/auth-provider';
-import { useCollection, useDoc, deleteDocumentNonBlocking, updateDocumentNonBlocking } from '@/firebase';
+import { useCollection, useDoc, deleteDocumentNonBlocking, updateDocumentNonBlocking, useFirebase } from '@/firebase';
 import { collection, query, where, doc } from 'firebase/firestore';
 import type { Client, Estimate, Invoice, Quote, InsuranceDocument, AuditLogEntry, DocumentStatus } from '@/lib/types';
 import { useParams, useRouter } from 'next/navigation';
@@ -546,6 +546,7 @@ export default function ClientPage() {
     </div>
   );
 }
+
 
 
 
