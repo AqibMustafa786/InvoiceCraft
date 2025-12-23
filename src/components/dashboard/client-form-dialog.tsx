@@ -146,7 +146,7 @@ export function ClientFormDialog({ open, onOpenChange, client, onSave }: ClientF
         id: idToSave,
         companyId: userProfile.companyId,
         ...data,
-        avatarUrl: avatarPreview,
+        avatarUrl: avatarPreview || '',
         updatedAt: serverTimestamp(),
         createdAt: isNewClient ? serverTimestamp() : client?.createdAt,
       };
@@ -179,7 +179,7 @@ export function ClientFormDialog({ open, onOpenChange, client, onSave }: ClientF
             <form className="space-y-4 px-1">
                 <div className="flex items-center gap-4">
                   <Avatar className="h-20 w-20">
-                    <AvatarImage src={avatarPreview} />
+                    <AvatarImage src={avatarPreview || ''} />
                     <AvatarFallback>{form.watch('name')?.charAt(0) || 'C'}</AvatarFallback>
                   </Avatar>
                   <div className="flex-1 space-y-2">
@@ -238,4 +238,5 @@ export function ClientFormDialog({ open, onOpenChange, client, onSave }: ClientF
     </Dialog>
   );
 }
+
 
