@@ -15,6 +15,7 @@ import { Carousel, CarouselContent, CarouselItem } from '@/components/ui/carouse
 import Autoplay from "embla-carousel-autoplay";
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { AIChatbot } from '@/components/ai-chatbot';
 
 const tools = [
   {
@@ -439,6 +440,8 @@ export default function HomePage() {
         <section className="py-12 md:py-20">
           <Marquee />
         </section>
+
+        <AIChatbot />
       </main>
     </div>
   );
