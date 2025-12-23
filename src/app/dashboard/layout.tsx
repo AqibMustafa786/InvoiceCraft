@@ -17,7 +17,7 @@ export default function DashboardLayout({
   }
   
   return (
-    <div className="px-4 md:px-8 py-8">
+    <div className="px-4 md:px-8">
       <Greeting />
         <div className="grid grid-cols-1 md:grid-cols-[240px_1fr] gap-x-8 gap-y-4">
             <aside className="md:sticky md:top-24 h-full">
