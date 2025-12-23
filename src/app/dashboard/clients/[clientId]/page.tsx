@@ -86,7 +86,7 @@ function ClientCharts({ documents }: { documents: DocumentType[] }) {
     const now = new Date();
 
     const paidInvoices = invoiceData.filter(invoice => {
-        const invoiceDate = invoice.invoiceDate ? ('toDate' in invoice.invoiceDate ? (invoice.invoiceDate as any).toDate() : new Date(invoice.invoiceDate)) : null;
+        const invoiceDate = invoice.invoiceDate ? new Date(invoice.invoiceDate) : null;
         return invoice.status === 'paid' && invoiceDate && isValid(invoiceDate);
     });
 
@@ -97,7 +97,7 @@ function ClientCharts({ documents }: { documents: DocumentType[] }) {
             const dataMap = new Map(months.map(d => [format(d, 'yyyy-MMM'), { name: format(d, 'MMM'), revenue: 0 }]));
 
             paidInvoices.forEach(invoice => {
-                const invoiceDate = (invoice.invoiceDate as any).toDate();
+                const invoiceDate = new Date(invoice.invoiceDate);
                 if (isAfter(invoiceDate, start)) {
                     const monthKey = format(invoiceDate, 'yyyy-MMM');
                     if (dataMap.has(monthKey)) {
@@ -114,7 +114,7 @@ function ClientCharts({ documents }: { documents: DocumentType[] }) {
             const dataMap = new Map(days.map(d => [format(d, 'yyyy-MM-dd'), { name: format(d, 'd MMM'), revenue: 0 }]));
 
             paidInvoices.forEach(invoice => {
-                const invoiceDate = (invoice.invoiceDate as any).toDate();
+                const invoiceDate = new Date(invoice.invoiceDate);
                 if (isAfter(invoiceDate, start)) {
                     const dayKey = format(invoiceDate, 'yyyy-MM-dd');
                     if (dataMap.has(dayKey)) {
@@ -131,7 +131,7 @@ function ClientCharts({ documents }: { documents: DocumentType[] }) {
             const dataMap = new Map(last12Months.map(d => [format(d, 'yyyy-MMM'), { name: format(d, 'MMM yy'), revenue: 0 }]));
 
             paidInvoices.forEach(invoice => {
-                const invoiceDate = (invoice.invoiceDate as any).toDate();
+                const invoiceDate = new Date(invoice.invoiceDate);
                 if (isAfter(invoiceDate, subYears(now, 1))) {
                   const monthKey = format(invoiceDate, 'yyyy-MMM');
                   if (dataMap.has(monthKey)) {
@@ -631,4 +631,5 @@ export default function ClientPage() {
     </motion.div>
   );
 }
+
 
