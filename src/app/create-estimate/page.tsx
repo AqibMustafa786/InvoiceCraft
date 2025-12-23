@@ -1,5 +1,4 @@
 
-
 'use client';
 
 import { useState, useEffect, useCallback, useMemo } from 'react';
@@ -477,7 +476,7 @@ export default function CreateEstimatePage() {
       companyId: companyId,
       client: {
         ...document.client,
-        clientId: document.clientId, // Ensure clientId is saved
+        clientId: document.client.clientId, // Ensure clientId is saved
       },
       updatedAt: Timestamp.now(),
       auditLog: updatedAuditLog.map(log => ({ ...log, timestamp: safeTimestamp(log.timestamp) })),
@@ -704,9 +703,6 @@ export default function CreateEstimatePage() {
     </>
   );
 }
-
     
 
     
-
-

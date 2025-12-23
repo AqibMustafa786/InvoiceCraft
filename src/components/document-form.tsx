@@ -1195,7 +1195,7 @@ export function DocumentForm({ document, setDocument, accentColor, setAccentColo
                           <DialogTitle>Save Line Item Preset</DialogTitle>
                           <DialogDescription>
                               Save the current set of line items for quick use in the future.
-                          </DialogDescription>
+                          </AlertDialogDescription>
                       </DialogHeader>
                       <div className="space-y-2">
                           <Label htmlFor="preset-name">Preset Name</Label>
@@ -1338,3 +1338,6 @@ export function DocumentForm({ document, setDocument, accentColor, setAccentColo
     </>
   );
 }
+    
+
+    

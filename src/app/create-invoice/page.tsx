@@ -1,5 +1,4 @@
 
-
 'use client';
 
 import { useState, useEffect, useCallback, useMemo } from 'react';
@@ -290,8 +289,6 @@ const getInitialInvoice = (): Omit<Invoice, 'userId' | 'companyId'> => ({
     packageSelected: '',
     editedPhotosCount: null,
     rawFilesCost: null,
-    travelFee: null,
-    equipmentRentalFee: null,
   },
   realEstate: {
     propertyAddress: '',
@@ -559,7 +556,7 @@ export default function CreateInvoicePage() {
       companyId: companyId,
       client: {
         ...invoice.client,
-        clientId: invoice.clientId, // Ensure clientId is saved
+        clientId: invoice.client.clientId, // Ensure clientId is saved
       },
       updatedAt: Timestamp.now(),
       auditLog: updatedAuditLog.map(log => ({ ...log, timestamp: safeTimestamp(log.timestamp) })),
@@ -757,17 +754,3 @@ export default function CreateInvoicePage() {
     
 
     
-
-
-
-
-
-
-
-
-
-    
-
-    
-
-
