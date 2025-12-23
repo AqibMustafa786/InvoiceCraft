@@ -1,5 +1,4 @@
 
-
 'use client';
 
 import Link from "next/link";
@@ -12,6 +11,7 @@ import { useAuth } from "@/context/auth-provider";
 import { useRouter } from "next/navigation";
 import { signOut } from "firebase/auth";
 import { useFirebase } from "@/firebase";
+import { motion, AnimatePresence } from 'framer-motion';
 
 const dashboardNavItems = [
     { href: "/dashboard", tab: "invoices", label: "Invoices", icon: FileText },
@@ -27,7 +27,11 @@ const mainNavLinks = [
     { href: "/pricing", label: "Pricing", icon: Tag },
 ];
 
-export function SidebarNav() {
+interface SidebarNavProps {
+    isSidebarOpen: boolean;
+}
+
+export function SidebarNav({ isSidebarOpen }: SidebarNavProps) {
     const pathname = usePathname();
     const searchParams = useSearchParams();
     const activeTab = searchParams.get('tab') || 'invoices';
@@ -43,14 +47,28 @@ export function SidebarNav() {
         router.push('/login');
     };
 
+    const linkVariants = {
+        open: { opacity: 1, x: 0 },
+        closed: { opacity: 0, x: -10 },
+    };
+
     return (
-        <div className="flex flex-col h-full bg-card rounded-lg border">
+        <div className="flex flex-col h-full bg-card rounded-lg border pb-16"> {/* Added padding-bottom */}
             <ScrollArea className="flex-grow">
                 <div className="space-y-1 py-4">
                     <div className="px-3 py-2">
-                         <h2 className="mb-2 px-4 text-xs font-semibold tracking-tight">
-                             Dashboard
-                         </h2>
+                         <AnimatePresence>
+                            {isSidebarOpen && (
+                                <motion.h2
+                                    initial={{ opacity: 0 }}
+                                    animate={{ opacity: 1 }}
+                                    exit={{ opacity: 0 }}
+                                    className="mb-2 px-4 text-xs font-semibold tracking-tight"
+                                >
+                                    Dashboard
+                                </motion.h2>
+                            )}
+                         </AnimatePresence>
                          <div className="space-y-1">
                             {dashboardNavItems.map((item) => {
                                 const isActive = pathname === item.href && activeTab === item.tab;
@@ -59,11 +77,17 @@ export function SidebarNav() {
                                       key={item.href + item.tab}
                                       asChild
                                       variant={isActive ? "secondary" : "ghost"} 
-                                      className={cn("w-full justify-start text-xs h-8", isActive && "text-primary")}
+                                      className={cn("w-full justify-start text-xs h-8", isActive && "text-primary", !isSidebarOpen && "justify-center")}
                                     >
-                                      <Link href={`${item.href}?tab=${item.tab}`}>
-                                         <item.icon className="mr-2 h-3.5 w-3.5" />
-                                         {item.label}
+                                      <Link href={`${item.href}?tab=${item.tab}`} title={item.label}>
+                                         <item.icon className={cn("h-3.5 w-3.5", isSidebarOpen && "mr-2")} />
+                                         <AnimatePresence>
+                                            {isSidebarOpen && (
+                                                <motion.span variants={linkVariants} initial="closed" animate="open" exit="closed">
+                                                    {item.label}
+                                                </motion.span>
+                                            )}
+                                         </AnimatePresence>
                                       </Link>
                                    </Button>
                                 )
@@ -71,9 +95,18 @@ export function SidebarNav() {
                          </div>
                     </div>
                      <div className="px-3 py-2">
-                         <h2 className="mb-2 px-4 text-xs font-semibold tracking-tight">
-                             Pages
-                         </h2>
+                         <AnimatePresence>
+                            {isSidebarOpen && (
+                                <motion.h2
+                                    initial={{ opacity: 0 }}
+                                    animate={{ opacity: 1 }}
+                                    exit={{ opacity: 0 }}
+                                    className="mb-2 px-4 text-xs font-semibold tracking-tight"
+                                >
+                                    Pages
+                                </motion.h2>
+                            )}
+                         </AnimatePresence>
                          <div className="space-y-1">
                             {mainNavLinks.map((item) => {
                                 const isActive = pathname === item.href;
@@ -82,11 +115,17 @@ export function SidebarNav() {
                                       key={item.href}
                                       asChild
                                       variant={isActive ? "secondary" : "ghost"} 
-                                      className={cn("w-full justify-start text-xs h-8", isActive && "text-primary")}
+                                      className={cn("w-full justify-start text-xs h-8", isActive && "text-primary", !isSidebarOpen && "justify-center")}
                                     >
-                                      <Link href={item.href}>
-                                         <item.icon className="mr-2 h-3.5 w-3.5" />
-                                         {item.label}
+                                      <Link href={item.href} title={item.label}>
+                                         <item.icon className={cn("h-3.5 w-3.5", isSidebarOpen && "mr-2")} />
+                                         <AnimatePresence>
+                                             {isSidebarOpen && (
+                                                <motion.span variants={linkVariants} initial="closed" animate="open" exit="closed">
+                                                    {item.label}
+                                                </motion.span>
+                                            )}
+                                         </AnimatePresence>
                                       </Link>
                                    </Button>
                                 )
