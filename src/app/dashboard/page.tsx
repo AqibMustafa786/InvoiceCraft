@@ -123,28 +123,45 @@ const DashboardStatsGrid: React.FC<DashboardStatsGridProps> = ({ documents, docT
             };
         } else if (docType === 'insurance') {
              const activePolicies = documents.filter(d => d.status === 'active');
+             const expiredPolicies = documents.filter(d => d.status === 'expired');
+             const draftPolicies = documents.filter(d => d.status === 'draft');
+             const policyTypes = documents.reduce((acc, doc) => {
+                const policyType = (doc as InsuranceDocument).policyType;
+                if (policyType) {
+                    acc[policyType] = (acc[policyType] || 0) + 1;
+                }
+                return acc;
+            }, {} as Record<string, number>);
+            const mostUsedPolicyType = Object.keys(policyTypes).length > 0 ? Object.entries(policyTypes).reduce((a, b) => b[1] > a[1] ? b : a)[0] : 'N/A';
+
              return {
                  totalPolicies: documents.length,
                  activePolicies: activePolicies.length,
+                 expiredPolicies: expiredPolicies.length,
+                 draftPolicies: draftPolicies.length,
+                 insuredClients: uniqueClients,
+                 mostUsedPolicyType,
              }
         }
         else {
-            const acceptedDocs = documents.filter(d => d.status === 'accepted');
-            const draftDocs = documents.filter(d => d.status === 'draft');
-            const nonDraftDocs = documents.filter(d => d.status !== 'draft');
+            const acceptedDocs = documents.filter(d => d.status === 'accepted') as (Estimate | Quote)[];
+            const rejectedDocs = documents.filter(d => d.status === 'rejected') as (Estimate | Quote)[];
+            const pendingDocs = documents.filter(d => d.status === 'sent') as (Estimate | Quote)[];
+            const draftDocs = documents.filter(d => d.status === 'draft') as (Estimate | Quote)[];
+            const nonDraftDocs = documents.filter(d => d.status !== 'draft') as (Estimate | Quote)[];
             
-            const totalValue = nonDraftDocs.reduce((acc, doc) => acc + ((doc as Estimate).summary?.grandTotal || 0), 0);
-            const acceptedValue = acceptedDocs.reduce((acc, doc) => acc + ((doc as Estimate).summary?.grandTotal || 0), 0);
+            const totalValue = nonDraftDocs.reduce((acc, doc) => acc + (doc.summary?.grandTotal || 0), 0);
+            const acceptedValue = acceptedDocs.reduce((acc, doc) => acc + (doc.summary?.grandTotal || 0), 0);
             
-            const conversionRateValue = totalValue > 0 ? (acceptedValue / totalValue) * 100 : 0;
-            const conversionRateCount = nonDraftDocs.length > 0 ? (acceptedDocs.length / nonDraftDocs.length) * 100 : 0;
+            const conversionRate = nonDraftDocs.length > 0 ? (acceptedDocs.length / nonDraftDocs.length) * 100 : 0;
             const avgValue = nonDraftDocs.length > 0 ? totalValue / nonDraftDocs.length : 0;
 
             return {
-                totalValue, acceptedValue, conversionRateValue, conversionRateCount, avgValue, uniqueClients, mostUsedCategory,
-                acceptedDocs, draftDocs,
+                totalValue, acceptedValue, conversionRate, avgValue, uniqueClients, mostUsedCategory,
+                totalCount: documents.length,
                 acceptedCount: acceptedDocs.length,
-                pendingCount: documents.filter(d => d.status === 'sent').length,
+                rejectedCount: rejectedDocs.length,
+                pendingCount: pendingDocs.length,
                 draftCount: draftDocs.length,
             };
         }
@@ -158,23 +175,27 @@ const DashboardStatsGrid: React.FC<DashboardStatsGridProps> = ({ documents, docT
     if (docType === 'invoice') {
         const s = stats as any;
         return (
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-8">
-                <Card as="button" onClick={() => onKpiClick('Total Revenue', s.paidInvoices)} className="text-left w-full bg-card/50 backdrop-blur-sm shadow-lg transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-1"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Total Revenue</CardTitle><DollarSign className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent><div className="text-2xl font-bold">{formatCurrency(s.totalRevenue)}</div><p className="text-xs text-muted-foreground">{s.paidCount} paid invoices</p></CardContent></Card>
-                <Card as="button" onClick={() => onKpiClick('Pending Invoices', s.outstandingInvoices)} className="text-left w-full bg-card/50 backdrop-blur-sm shadow-lg transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-1"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Pending</CardTitle><Clock className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent><div className="text-2xl font-bold">{formatCurrency(s.outstanding)}</div></CardContent></Card>
-                <Card as="button" onClick={() => onKpiClick('Overdue Invoices', s.overdueInvoices)} className="text-left w-full bg-card/50 backdrop-blur-sm shadow-lg transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-1"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Overdue</CardTitle><FileWarning className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent><div className="text-2xl font-bold">{formatCurrency(s.overdue)}</div></CardContent></Card>
-                <Card className="bg-card/50 backdrop-blur-sm shadow-lg transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-1"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Total Invoiced</CardTitle><Files className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent><div className="text-2xl font-bold">{formatCurrency(s.totalInvoiced)}</div></CardContent></Card>
-                <Card className="bg-card/50 backdrop-blur-sm shadow-lg transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-1"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Avg. Invoice Value</CardTitle><AreaChart className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent><div className="text-2xl font-bold">{formatCurrency(s.avgInvoiceValue)}</div></CardContent></Card>
-                <Card className="bg-card/50 backdrop-blur-sm shadow-lg transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-1"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Unique Clients</CardTitle><Users className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent><div className="text-2xl font-bold">{s.uniqueClients}</div></CardContent></Card>
-                <Card className="bg-card/50 backdrop-blur-sm shadow-lg transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-1"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Most Used Category</CardTitle><Package className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent><div className="text-lg font-bold">{s.mostUsedCategory || 'N/A'}</div></CardContent></Card>
-                <Card as="button" onClick={() => onKpiClick('Draft Invoices', s.draftInvoices)} className="text-left w-full bg-card/50 backdrop-blur-sm shadow-lg transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-1"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Drafts</CardTitle><FileText className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent><div className="text-2xl font-bold">{s.drafts}</div></CardContent></Card>
+            <div className="grid gap-2 md:grid-cols-2 lg:grid-cols-4 mb-4">
+                <Card as="button" onClick={() => onKpiClick('Total Revenue', s.paidInvoices)} className="text-left w-full bg-card/50 backdrop-blur-sm shadow-sm transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-0.5"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1"><CardTitle className="text-xs font-medium">Total Revenue</CardTitle><DollarSign className="h-3 w-3 text-muted-foreground" /></CardHeader><CardContent><div className="text-xl font-bold">{formatCurrency(s.totalRevenue)}</div><p className="text-xs text-muted-foreground">{s.paidCount} paid invoices</p></CardContent></Card>
+                <Card as="button" onClick={() => onKpiClick('Pending Invoices', s.outstandingInvoices)} className="text-left w-full bg-card/50 backdrop-blur-sm shadow-sm transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-0.5"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1"><CardTitle className="text-xs font-medium">Pending</CardTitle><Clock className="h-3 w-3 text-muted-foreground" /></CardHeader><CardContent><div className="text-xl font-bold">{formatCurrency(s.outstanding)}</div></CardContent></Card>
+                <Card as="button" onClick={() => onKpiClick('Overdue Invoices', s.overdueInvoices)} className="text-left w-full bg-card/50 backdrop-blur-sm shadow-sm transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-0.5"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1"><CardTitle className="text-xs font-medium">Overdue</CardTitle><FileWarning className="h-3 w-3 text-muted-foreground" /></CardHeader><CardContent><div className="text-xl font-bold">{formatCurrency(s.overdue)}</div></CardContent></Card>
+                <Card className="bg-card/50 backdrop-blur-sm shadow-sm transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-0.5"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1"><CardTitle className="text-xs font-medium">Total Invoiced</CardTitle><Files className="h-3 w-3 text-muted-foreground" /></CardHeader><CardContent><div className="text-xl font-bold">{formatCurrency(s.totalInvoiced)}</div></CardContent></Card>
+                <Card className="bg-card/50 backdrop-blur-sm shadow-sm transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-0.5"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1"><CardTitle className="text-xs font-medium">Avg. Invoice Value</CardTitle><AreaChart className="h-3 w-3 text-muted-foreground" /></CardHeader><CardContent><div className="text-xl font-bold">{formatCurrency(s.avgInvoiceValue)}</div></CardContent></Card>
+                <Card className="bg-card/50 backdrop-blur-sm shadow-sm transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-0.5"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1"><CardTitle className="text-xs font-medium">Unique Clients</CardTitle><Users className="h-3 w-3 text-muted-foreground" /></CardHeader><CardContent><div className="text-xl font-bold">{s.uniqueClients}</div></CardContent></Card>
+                <Card className="bg-card/50 backdrop-blur-sm shadow-sm transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-0.5"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1"><CardTitle className="text-xs font-medium">Most Used Category</CardTitle><Package className="h-3 w-3 text-muted-foreground" /></CardHeader><CardContent><div className="text-lg font-bold">{s.mostUsedCategory || 'N/A'}</div></CardContent></Card>
+                <Card as="button" onClick={() => onKpiClick('Draft Invoices', s.draftInvoices)} className="text-left w-full bg-card/50 backdrop-blur-sm shadow-sm transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-0.5"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1"><CardTitle className="text-xs font-medium">Drafts</CardTitle><FileText className="h-3 w-3 text-muted-foreground" /></CardHeader><CardContent><div className="text-xl font-bold">{s.drafts}</div></CardContent></Card>
             </div>
         );
     } else if (docType === 'insurance') {
         const s = stats as any;
         return (
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-8">
-                 <Card className="bg-card/50 backdrop-blur-sm shadow-lg transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-1"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Total Policies</CardTitle><Shield className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent><div className="text-2xl font-bold">{s.totalPolicies}</div></CardContent></Card>
-                 <Card className="bg-card/50 backdrop-blur-sm shadow-lg transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-1"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Active Policies</CardTitle><CheckCircle className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent><div className="text-2xl font-bold">{s.activePolicies}</div></CardContent></Card>
+            <div className="grid gap-2 md:grid-cols-2 lg:grid-cols-4 mb-4">
+                 <Card className="bg-card/50 backdrop-blur-sm shadow-sm transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-0.5"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1"><CardTitle className="text-xs font-medium">Total Policies</CardTitle><Shield className="h-3 w-3 text-muted-foreground" /></CardHeader><CardContent><div className="text-xl font-bold">{s.totalPolicies}</div></CardContent></Card>
+                 <Card className="bg-card/50 backdrop-blur-sm shadow-sm transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-0.5"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1"><CardTitle className="text-xs font-medium">Active Policies</CardTitle><CheckCircle className="h-3 w-3 text-muted-foreground" /></CardHeader><CardContent><div className="text-xl font-bold">{s.activePolicies}</div></CardContent></Card>
+                 <Card className="bg-card/50 backdrop-blur-sm shadow-sm transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-0.5"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1"><CardTitle className="text-xs font-medium">Expired Policies</CardTitle><FileWarning className="h-3 w-3 text-muted-foreground" /></CardHeader><CardContent><div className="text-xl font-bold">{s.expiredPolicies}</div></CardContent></Card>
+                 <Card className="bg-card/50 backdrop-blur-sm shadow-sm transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-0.5"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1"><CardTitle className="text-xs font-medium">Draft Policies</CardTitle><FileText className="h-3 w-3 text-muted-foreground" /></CardHeader><CardContent><div className="text-xl font-bold">{s.draftPolicies}</div></CardContent></Card>
+                 <Card className="bg-card/50 backdrop-blur-sm shadow-sm transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-0.5"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1"><CardTitle className="text-xs font-medium">Insured Clients</CardTitle><Users className="h-3 w-3 text-muted-foreground" /></CardHeader><CardContent><div className="text-xl font-bold">{s.insuredClients}</div></CardContent></Card>
+                 <Card className="bg-card/50 backdrop-blur-sm shadow-sm transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-0.5"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1"><CardTitle className="text-xs font-medium">Top Policy Type</CardTitle><Package className="h-3 w-3 text-muted-foreground" /></CardHeader><CardContent><div className="text-lg font-bold">{s.mostUsedPolicyType}</div></CardContent></Card>
             </div>
         )
     }
@@ -182,15 +203,15 @@ const DashboardStatsGrid: React.FC<DashboardStatsGridProps> = ({ documents, docT
         const s = stats as any;
         const docTypeCap = docType.charAt(0).toUpperCase() + docType.slice(1);
         return (
-             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-8">
-                <Card className="bg-card/50 backdrop-blur-sm shadow-lg transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-1"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Total {docTypeCap} Value</CardTitle><DollarSign className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent><div className="text-2xl font-bold">{formatCurrency(s.totalValue)}</div></CardContent></Card>
-                <Card as="button" onClick={() => onKpiClick(`Accepted ${docTypeCap}s`, s.acceptedDocs)} className="text-left w-full bg-card/50 backdrop-blur-sm shadow-lg transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-1"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Accepted Value</CardTitle><CheckCircle className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent><div className="text-2xl font-bold">{formatCurrency(s.acceptedValue)}</div></CardContent></Card>
-                <Card className="bg-card/50 backdrop-blur-sm shadow-lg transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-1"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Conversion Rate (Value)</CardTitle><Percent className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent><div className="text-2xl font-bold">{s.conversionRateValue.toFixed(1)}%</div></CardContent></Card>
-                <Card className="bg-card/50 backdrop-blur-sm shadow-lg transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-1"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Avg. {docTypeCap} Value</CardTitle><AreaChart className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent><div className="text-2xl font-bold">{formatCurrency(s.avgValue)}</div></CardContent></Card>
-                <Card className="bg-card/50 backdrop-blur-sm shadow-lg transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-1"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Conversion Rate (Count)</CardTitle><Percent className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent><div className="text-2xl font-bold">{s.conversionRateCount.toFixed(1)}%</div></CardContent></Card>
-                <Card as="button" onClick={() => onKpiClick(`Accepted ${docTypeCap}s`, s.acceptedDocs)} className="text-left w-full bg-card/50 backdrop-blur-sm shadow-lg transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-1"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Accepted</CardTitle><CheckCircle className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent><div className="text-2xl font-bold">{s.acceptedCount}</div></CardContent></Card>
-                <Card className="bg-card/50 backdrop-blur-sm shadow-lg transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-1"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Most Used Category</CardTitle><Package className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent><div className="text-lg font-bold">{s.mostUsedCategory || 'N/A'}</div></CardContent></Card>
-                <Card as="button" onClick={() => onKpiClick(`Draft ${docTypeCap}s`, s.draftDocs)} className="text-left w-full bg-card/50 backdrop-blur-sm shadow-lg transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-1"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Drafts</CardTitle><FileText className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent><div className="text-2xl font-bold">{s.draftCount}</div></CardContent></Card>
+             <div className="grid gap-2 md:grid-cols-2 lg:grid-cols-4 mb-4">
+                <Card className="bg-card/50 backdrop-blur-sm shadow-sm transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-0.5"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1"><CardTitle className="text-xs font-medium">Total {docTypeCap}s</CardTitle><Files className="h-3 w-3 text-muted-foreground" /></CardHeader><CardContent><div className="text-xl font-bold">{s.totalCount}</div></CardContent></Card>
+                <Card className="bg-card/50 backdrop-blur-sm shadow-sm transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-0.5"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1"><CardTitle className="text-xs font-medium">Accepted</CardTitle><CheckCircle className="h-3 w-3 text-muted-foreground" /></CardHeader><CardContent><div className="text-xl font-bold">{s.acceptedCount}</div></CardContent></Card>
+                <Card className="bg-card/50 backdrop-blur-sm shadow-sm transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-0.5"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1"><CardTitle className="text-xs font-medium">Rejected</CardTitle><XCircle className="h-3 w-3 text-muted-foreground" /></CardHeader><CardContent><div className="text-xl font-bold">{s.rejectedCount}</div></CardContent></Card>
+                <Card className="bg-card/50 backdrop-blur-sm shadow-sm transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-0.5"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1"><CardTitle className="text-xs font-medium">Pending Approval</CardTitle><Clock className="h-3 w-3 text-muted-foreground" /></CardHeader><CardContent><div className="text-xl font-bold">{s.pendingCount}</div></CardContent></Card>
+                <Card className="bg-card/50 backdrop-blur-sm shadow-sm transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-0.5"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1"><CardTitle className="text-xs font-medium">Total Estimated Value</CardTitle><DollarSign className="h-3 w-3 text-muted-foreground" /></CardHeader><CardContent><div className="text-xl font-bold">{formatCurrency(s.totalValue)}</div></CardContent></Card>
+                <Card className="bg-card/50 backdrop-blur-sm shadow-sm transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-0.5"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1"><CardTitle className="text-xs font-medium">Conversion Rate</CardTitle><Percent className="h-3 w-3 text-muted-foreground" /></CardHeader><CardContent><div className="text-xl font-bold">{s.conversionRate.toFixed(1)}%</div></CardContent></Card>
+                <Card className="bg-card/50 backdrop-blur-sm shadow-sm transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-0.5"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1"><CardTitle className="text-xs font-medium">Avg. {docTypeCap} Value</CardTitle><AreaChart className="h-3 w-3 text-muted-foreground" /></CardHeader><CardContent><div className="text-xl font-bold">{formatCurrency(s.avgValue)}</div></CardContent></Card>
+                <Card className="bg-card/50 backdrop-blur-sm shadow-sm transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-0.5"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1"><CardTitle className="text-xs font-medium">Drafts</CardTitle><FileText className="h-3 w-3 text-muted-foreground" /></CardHeader><CardContent><div className="text-xl font-bold">{s.draftCount}</div></CardContent></Card>
             </div>
         );
     }
@@ -781,7 +802,7 @@ export default function DashboardPage() {
                     transition={{ delay: 0.2 }}
                  >
                     <Card className='bg-card/50 backdrop-blur-sm'>
-                        <CardHeader>
+                        <CardHeader className='pb-4'>
                             <div className="flex justify-between items-center gap-4 flex-wrap">
                                 <motion.div variants={pageVariants}>
                                     <h1 className="text-xl font-bold font-headline">Dashboard</h1>
@@ -803,7 +824,7 @@ export default function DashboardPage() {
                                 </div>
                             </div>
                         </CardHeader>
-                        <CardContent className="flex flex-wrap items-center gap-2">
+                        <CardContent className="flex flex-wrap items-center gap-2 pt-0">
                              <Button size="sm" onClick={() => router.push('/dashboard/clients/new')} className="rounded-full">
                                 <Users className="mr-2 h-3 w-3" />
                                 Add Client
@@ -908,4 +929,3 @@ export default function DashboardPage() {
         </>
     );
 }
-
