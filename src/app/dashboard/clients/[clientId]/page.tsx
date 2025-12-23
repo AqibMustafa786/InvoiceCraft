@@ -494,8 +494,8 @@ export default function ClientPage() {
                                           </SheetTrigger>
                                           <SheetContent className="w-full sm:max-w-4xl overflow-y-auto">
                                             <SheetHeader>
-                                              <SheetTitle>Invoice Preview</SheetTitle>
-                                              <SheetDescription>{inv.invoiceNumber}</SheetDescription>
+                                              <SheetTitle className="text-white">Invoice Preview</SheetTitle>
+                                              <SheetDescription className="text-gray-300">{inv.invoiceNumber}</SheetDescription>
                                             </SheetHeader>
                                              <div className="py-4">
                                                 <ClientInvoicePreview 
@@ -551,6 +551,7 @@ export default function ClientPage() {
     </div>
   );
 }
+
 
 
 
