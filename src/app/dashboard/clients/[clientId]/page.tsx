@@ -151,6 +151,24 @@ const safeFormat = (date: any, formatString: string) => {
     }
 }
 
+const processData = (data: any): any => {
+    if (!data) return null;
+    const processed: any = {};
+    for (const key in data) {
+        if (Object.prototype.hasOwnProperty.call(data, key)) {
+            const value = data[key];
+            if (value && typeof value === 'object' && value.toDate) { // Firestore Timestamp check
+                processed[key] = value.toDate();
+            } else if (value && typeof value === 'object' && !Array.isArray(value)) {
+                processed[key] = processData(value); // Recurse for nested objects
+            } else {
+                processed[key] = value;
+            }
+        }
+    }
+    return processed;
+};
+
 
 export default function ClientPage() {
   const { firestore } = useFirebase();
@@ -177,9 +195,11 @@ export default function ClientPage() {
     return query(collection(firestore, 'companies', companyId, 'estimates'), where('client.clientId', '==', clientId));
   }, [firestore, companyId, clientId]);
   
-  const { data: client, isLoading: isClientLoading } = useDoc<Client>(clientRef);
+  const { data: rawClient, isLoading: isClientLoading } = useDoc<Client>(clientRef);
   const { data: invoices, isLoading: isInvoicesLoading } = useCollection<Invoice>(invoicesQuery);
   const { data: estimates, isLoading: isEstimatesLoading } = useCollection<Estimate>(estimatesQuery);
+
+  const client = useMemo(() => processData(rawClient), [rawClient]);
 
   const allDocuments: DocumentType[] = [...(invoices || []), ...(estimates || [])];
 
@@ -209,7 +229,7 @@ export default function ClientPage() {
         <Card className="lg:col-span-1">
           <CardHeader className="flex flex-row items-start gap-4 space-y-0">
              <Avatar className="h-20 w-20">
-                <AvatarImage src={client.avatarUrl || ''} />
+                <AvatarImage src={client.avatarUrl || ''} alt={client.name} />
                 <AvatarFallback>{client.name.charAt(0)}</AvatarFallback>
              </Avatar>
              <div className="flex-1">
