@@ -2,7 +2,7 @@
 'use client';
 
 import { useState, useMemo, useCallback } from 'react';
-import type { Invoice, Estimate, DocumentStatus, Quote, AuditLogEntry, Client } from '@/lib/types';
+import type { Invoice, Estimate, DocumentStatus, Quote, AuditLogEntry, Client, InsuranceDocument } from '@/lib/types';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -43,6 +43,7 @@ const INVOICES_COLLECTION = 'invoices';
 const ESTIMATES_COLLECTION = 'estimates';
 const QUOTES_COLLECTION = 'quotes';
 const CLIENTS_COLLECTION = 'clients';
+const INSURANCE_COLLECTION = 'insurance';
 
 const initialFilters: DashboardFilters = {
     clientName: '',
@@ -53,7 +54,7 @@ const initialFilters: DashboardFilters = {
     dateTo: null,
 };
 
-const STATUS_OPTIONS: DocumentStatus[] = ['draft', 'sent', 'paid', 'overdue', 'accepted', 'rejected', 'expired'];
+const STATUS_OPTIONS: DocumentStatus[] = ['draft', 'sent', 'paid', 'overdue', 'accepted', 'rejected', 'expired', 'active', 'cancelled'];
 
 const currencySymbols: { [key: string]: string } = {
     USD: '$',
@@ -63,7 +64,7 @@ const currencySymbols: { [key: string]: string } = {
     PKR: '₨',
 };
 
-type DocumentType = Invoice | Estimate | Quote;
+type DocumentType = Invoice | Estimate | Quote | InsuranceDocument;
 
 const pageVariants = {
     hidden: { opacity: 0, y: -10 },
@@ -82,17 +83,17 @@ const tableRowVariants = {
 
 interface DashboardStatsGridProps {
     documents: DocumentType[];
-    docType: 'invoice' | 'estimate' | 'quote';
+    docType: 'invoice' | 'estimate' | 'quote' | 'insurance';
     onKpiClick: (title: string, data: DocumentType[]) => void;
 }
 
 const DashboardStatsGrid: React.FC<DashboardStatsGridProps> = ({ documents, docType, onKpiClick }) => {
     const stats = useMemo(() => {
-        const uniqueClients = new Set(documents.map(d => d.client.name)).size;
+        const uniqueClients = new Set(documents.map(d => (d as any).client?.name || (d as any).policyHolder?.name)).size;
         
         const categoryCounts = documents.reduce((acc, doc) => {
-            if (doc.category) {
-                acc[doc.category] = (acc[doc.category] || 0) + 1;
+            if ((doc as any).category) {
+                acc[(doc as any).category] = (acc[(doc as any).category] || 0) + 1;
             }
             return acc;
         }, {} as Record<string, number>);
@@ -119,13 +120,20 @@ const DashboardStatsGrid: React.FC<DashboardStatsGridProps> = ({ documents, docT
                 drafts: draftInvoices.length,
                 paidCount: paidInvoices.length,
             };
-        } else {
+        } else if (docType === 'insurance') {
+             const activePolicies = documents.filter(d => d.status === 'active');
+             return {
+                 totalPolicies: documents.length,
+                 activePolicies: activePolicies.length,
+             }
+        }
+        else {
             const acceptedDocs = documents.filter(d => d.status === 'accepted');
             const draftDocs = documents.filter(d => d.status === 'draft');
             const nonDraftDocs = documents.filter(d => d.status !== 'draft');
             
-            const totalValue = nonDraftDocs.reduce((acc, doc) => acc + (doc.summary?.grandTotal || 0), 0);
-            const acceptedValue = acceptedDocs.reduce((acc, doc) => acc + (doc.summary?.grandTotal || 0), 0);
+            const totalValue = nonDraftDocs.reduce((acc, doc) => acc + ((doc as Estimate).summary?.grandTotal || 0), 0);
+            const acceptedValue = acceptedDocs.reduce((acc, doc) => acc + ((doc as Estimate).summary?.grandTotal || 0), 0);
             
             const conversionRateValue = totalValue > 0 ? (acceptedValue / totalValue) * 100 : 0;
             const conversionRateCount = nonDraftDocs.length > 0 ? (acceptedDocs.length / nonDraftDocs.length) * 100 : 0;
@@ -142,7 +150,7 @@ const DashboardStatsGrid: React.FC<DashboardStatsGridProps> = ({ documents, docT
     }, [documents, docType]);
 
     const formatCurrency = (amount: number) => {
-        const currency = documents[0]?.currency || 'USD';
+        const currency = (documents[0] as any)?.currency || 'USD';
         return `${currencySymbols[currency] || '$'}${amount.toFixed(2)}`;
     };
 
@@ -160,7 +168,16 @@ const DashboardStatsGrid: React.FC<DashboardStatsGridProps> = ({ documents, docT
                 <Card as="button" onClick={() => onKpiClick('Draft Invoices', s.draftInvoices)} className="text-left w-full bg-card/50 backdrop-blur-sm shadow-lg transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-1"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Drafts</CardTitle><FileText className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent><div className="text-2xl font-bold">{s.drafts}</div></CardContent></Card>
             </div>
         );
-    } else {
+    } else if (docType === 'insurance') {
+        const s = stats as any;
+        return (
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-8">
+                 <Card className="bg-card/50 backdrop-blur-sm shadow-lg transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-1"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Total Policies</CardTitle><Shield className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent><div className="text-2xl font-bold">{s.totalPolicies}</div></CardContent></Card>
+                 <Card className="bg-card/50 backdrop-blur-sm shadow-lg transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-1"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Active Policies</CardTitle><CheckCircle className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent><div className="text-2xl font-bold">{s.activePolicies}</div></CardContent></Card>
+            </div>
+        )
+    }
+    else {
         const s = stats as any;
         const docTypeCap = docType.charAt(0).toUpperCase() + docType.slice(1);
         return (
@@ -219,11 +236,17 @@ export default function DashboardPage() {
         return q;
     }, [firestore, companyId]);
 
+    const insuranceQuery = useMemoFirebase(() => {
+        if (!firestore || !companyId) return null;
+        return query(collection(firestore, 'companies', companyId, INSURANCE_COLLECTION));
+    }, [firestore, companyId]);
+
 
     const { data: clients, isLoading: isLoadingClients } = useCollection<Client>(clientsQuery);
     const { data: invoices, isLoading: isLoadingInvoices } = useCollection<Invoice>(invoicesQuery);
     const { data: estimates, isLoading: isLoadingEstimates } = useCollection<Estimate>(estimatesQuery);
     const { data: quotes, isLoading: isLoadingQuotes } = useCollection<Quote>(quotesQuery);
+    const { data: insuranceDocs, isLoading: isLoadingInsurance } = useCollection<InsuranceDocument>(insuranceQuery);
     
     const canCreateInvoice = isBusinessPlan || (invoices?.length || 0) < 5;
     const canCreateEstimate = isBusinessPlan || (estimates?.length || 0) < 3;
@@ -277,13 +300,15 @@ export default function DashboardPage() {
     };
 
     const calculateTotal = useCallback((doc: DocumentType): number => {
-        if (doc.documentType === 'invoice') {
-            const invoice = doc as Invoice;
-            return invoice.summary.grandTotal;
-        } else {
-            const estimate = doc as Estimate | Quote;
-            return estimate.summary.grandTotal;
+         if ('summary' in doc && doc.summary) {
+            return (doc as Invoice | Estimate | Quote).summary.grandTotal || 0;
         }
+        if ('items' in doc) {
+            const insuranceDoc = doc as InsuranceDocument;
+            const subtotal = insuranceDoc.items.reduce((acc, item) => acc + (item.quantity || 1) * (item.rate || 0), 0);
+            return subtotal;
+        }
+        return 0;
     }, []);
 
     const handleDelete = () => {
@@ -376,7 +401,7 @@ export default function DashboardPage() {
         }
     };
 
-    const handleShare = (docId: string, docType: 'estimate' | 'quote') => {
+    const handleShare = (docId: string, docType: 'estimate' | 'quote' | 'insurance') => {
         if (!isBusinessPlan) {
             toast({
                 title: "Upgrade to Share",
@@ -417,13 +442,13 @@ export default function DashboardPage() {
     };
 
     const allDocuments = useMemo(() => {
-        const allDocs: DocumentType[] = [...(invoices || []), ...(estimates || []), ...(quotes || [])];
+        const allDocs: DocumentType[] = [...(invoices || []), ...(estimates || []), ...(quotes || []), ...(insuranceDocs || [])];
         
         return allDocs.map(doc => {
             const newDoc: any = { ...doc };
             
-            const dateFields: (keyof Invoice | keyof Estimate | keyof Quote)[] = [
-                'invoiceDate', 'dueDate', 'estimateDate', 'validUntilDate', 'createdAt', 'updatedAt'
+            const dateFields = [
+                'invoiceDate', 'dueDate', 'estimateDate', 'validUntilDate', 'documentDate', 'createdAt', 'updatedAt'
             ];
 
             dateFields.forEach(field => {
@@ -435,16 +460,19 @@ export default function DashboardPage() {
             if (newDoc.auditLog) {
                 newDoc.auditLog = normalizeAuditLog(newDoc.auditLog);
             }
+             if(!newDoc.documentType && 'policyNumber' in newDoc) {
+                newDoc.documentType = 'insurance';
+            }
 
             return newDoc as DocumentType;
         }).sort((a, b) => {
-            const dateA = a.updatedAt || a.createdAt;
-            const dateB = b.updatedAt || b.createdAt;
+            const dateA = (a as any).updatedAt || (a as any).createdAt;
+            const dateB = (b as any).updatedAt || (b as any).createdAt;
             if (!dateA || !isValid(dateA)) return 1;
             if (!dateB || !isValid(dateB)) return -1;
             return dateB.getTime() - dateA.getTime();
         });
-    }, [invoices, estimates, quotes]);
+    }, [invoices, estimates, quotes, insuranceDocs]);
 
     const filteredDocuments = useMemo(() => {
         return allDocuments.filter(doc => {
@@ -453,14 +481,15 @@ export default function DashboardPage() {
             let docDate: Date | null = null;
             let clientName = '';
 
-            if (doc.documentType === 'invoice') {
-              const invoiceDoc = doc as Invoice;
-              docDate = toDateSafe(invoiceDoc.invoiceDate);
-              clientName = invoiceDoc.client.name;
-            } else if (doc.documentType === 'estimate' || doc.documentType === 'quote') {
-              const estimateDoc = doc as Estimate | Quote;
-              docDate = toDateSafe(estimateDoc.estimateDate);
-              clientName = estimateDoc.client.name;
+            if ('invoiceDate' in doc) {
+              docDate = toDateSafe((doc as Invoice).invoiceDate);
+              clientName = (doc as Invoice).client.name;
+            } else if ('estimateDate' in doc) {
+              docDate = toDateSafe((doc as Estimate).estimateDate);
+              clientName = (doc as Estimate).client.name;
+            } else if ('documentDate' in doc) {
+              docDate = toDateSafe((doc as InsuranceDocument).documentDate);
+              clientName = (doc as InsuranceDocument).policyHolder.name;
             }
 
             const clientNameMatch = filters.clientName ? clientName.toLowerCase().includes(filters.clientName.toLowerCase()) : true;
@@ -499,6 +528,8 @@ export default function DashboardPage() {
     const filteredInvoices = useMemo(() => filteredDocuments.filter(d => d.documentType === 'invoice'), [filteredDocuments]);
     const filteredEstimates = useMemo(() => filteredDocuments.filter(d => d.documentType === 'estimate'), [filteredDocuments]);
     const filteredQuotes = useMemo(() => filteredDocuments.filter(d => d.documentType === 'quote'), [filteredDocuments]);
+    const filteredInsurance = useMemo(() => filteredDocuments.filter(d => d.documentType === 'insurance'), [filteredDocuments]);
+
 
     const activeFilterCount = useMemo(() => {
         let count = 0;
@@ -515,20 +546,22 @@ export default function DashboardPage() {
         switch (status) {
             case 'paid':
             case 'accepted':
+            case 'active':
                  return 'success';
             case 'sent': return 'secondary';
             case 'overdue':
             case 'rejected':
             case 'expired':
+            case 'cancelled':
                 return 'destructive';
             case 'draft':
             default: return 'outline';
         }
     };
     
-    const isLoading = isAuthLoading || isLoadingInvoices || isLoadingEstimates || isLoadingQuotes;
+    const isLoading = isAuthLoading || isLoadingInvoices || isLoadingEstimates || isLoadingQuotes || isLoadingInsurance;
 
-    const renderTable = (docs: DocumentType[], docType: 'invoice' | 'estimate' | 'quote') => (
+    const renderTable = (docs: DocumentType[], docType: 'invoice' | 'estimate' | 'quote' | 'insurance') => (
         <div className="overflow-x-auto">
             <Table>
                 <TableHeader>
@@ -554,22 +587,28 @@ export default function DashboardPage() {
                             </TableCell>
                         </TableRow>
                     ) : docs.length > 0 ? docs.map((doc) => {
-                        const isInvoice = doc.documentType === 'invoice';
-                        const docNumber = isInvoice ? (doc as Invoice).invoiceNumber : (doc as Estimate | Quote).estimateNumber;
-                        const clientName = doc.client.name;
+                        let docNumber, clientName, docCollection, editUrl;
                         
-                        let docCollection: string;
-                        let editUrl: string;
-                        
-                        if(docType === 'invoice') {
+                        if (doc.documentType === 'invoice') {
+                            docNumber = (doc as Invoice).invoiceNumber;
+                            clientName = (doc as Invoice).client.name;
                             docCollection = INVOICES_COLLECTION;
                             editUrl = `/create-invoice?draftId=${doc.id}`;
-                        } else if (docType === 'estimate') {
+                        } else if (doc.documentType === 'estimate') {
+                            docNumber = (doc as Estimate).estimateNumber;
+                            clientName = (doc as Estimate).client.name;
                             docCollection = ESTIMATES_COLLECTION;
                             editUrl = `/create-estimate?draftId=${doc.id}`;
-                        } else {
-                            docCollection = QUOTES_COLLECTION;
-                            editUrl = `/create-quote?draftId=${doc.id}`;
+                        } else if (doc.documentType === 'quote') {
+                             docNumber = (doc as Quote).estimateNumber;
+                             clientName = (doc as Quote).client.name;
+                             docCollection = QUOTES_COLLECTION;
+                             editUrl = `/create-quote?draftId=${doc.id}`;
+                        } else { // Insurance
+                             docNumber = (doc as InsuranceDocument).policyNumber;
+                             clientName = (doc as InsuranceDocument).policyHolder.name;
+                             docCollection = INSURANCE_COLLECTION;
+                             editUrl = `/create-insurance?draftId=${doc.id}`;
                         }
 
                         return (
@@ -581,7 +620,7 @@ export default function DashboardPage() {
                         >
                             <TableCell className="font-medium">{docNumber}</TableCell>
                             <TableCell>{clientName}</TableCell>
-                            <TableCell>{currencySymbols[doc.currency] || '$'}{calculateTotal(doc).toFixed(2)}</TableCell>
+                            <TableCell>{currencySymbols[(doc as any).currency] || '$'}{calculateTotal(doc).toFixed(2)}</TableCell>
                             <TableCell>
                                 <DropdownMenu>
                                     <DropdownMenuTrigger asChild>
@@ -604,7 +643,7 @@ export default function DashboardPage() {
                                 </DropdownMenu>
                             </TableCell>
                              <TableCell className="text-center">
-                                <Button variant="ghost" size="icon" className="rounded-full" onClick={() => handleHistoryClick(doc.auditLog)}>
+                                <Button variant="ghost" size="icon" className="rounded-full" onClick={() => handleHistoryClick((doc as any).auditLog)}>
                                     <History className="h-4 w-4" />
                                 </Button>
                             </TableCell>
@@ -635,6 +674,12 @@ export default function DashboardPage() {
                                                 </DropdownMenuItem>
                                             </>
                                         )}
+                                         {docType === 'insurance' && (
+                                            <DropdownMenuItem onClick={() => handleShare(doc.id, 'insurance')} className="cursor-pointer">
+                                                <Share2 className="mr-2 h-4 w-4" />
+                                                <span>Share COI</span>
+                                            </DropdownMenuItem>
+                                         )}
                                         <DropdownMenuItem onClick={() => setDeleteCandidate({id: doc.id, collection: docCollection})} className="text-destructive cursor-pointer">
                                             <Trash2 className="mr-2 h-4 w-4" />
                                             <span>Delete</span>
@@ -698,14 +743,14 @@ export default function DashboardPage() {
                 onClose={() => setModalState(prev => ({...prev, isOpen: false}))}
                 title={modalState.title}
                 documents={modalState.data}
-                currencySymbol={currencySymbols[filteredDocuments[0]?.currency] || '$'}
+                currencySymbol={currencySymbols[(filteredDocuments[0] as any)?.currency] || '$'}
             />
              <HistoryModal 
                 isOpen={historyModalState.isOpen}
                 onClose={() => setHistoryModalState({ isOpen: false, auditLog: [] })}
                 auditLog={historyModalState.auditLog}
             />
-            <div className="space-y-6">
+            <div className="space-y-8">
                 <FilterSheet
                     open={isFilterSheetOpen}
                     onOpenChange={setIsFilterSheetOpen}
@@ -730,7 +775,7 @@ export default function DashboardPage() {
                 </AlertDialog>
 
                 <motion.div 
-                    className="mb-6"
+                    className="mb-8"
                     variants={pageVariants}
                     initial="hidden"
                     animate="visible"
@@ -741,10 +786,25 @@ export default function DashboardPage() {
                             <h1 className="text-2xl font-bold font-headline">Dashboard</h1>
                             <p className="text-muted-foreground text-sm">An overview of your financial documents and activities.</p>
                         </motion.div>
+                        <div className="flex items-center gap-2">
+                            <Button variant="outline" size="sm" className='rounded-full' onClick={() => setIsFilterSheetOpen(true)}>
+                            <Filter className="mr-2 h-4 w-4" />
+                            Filter
+                            {activeFilterCount > 0 && (
+                                <Badge variant="secondary" className="ml-2 rounded-full h-5 w-5 p-0 flex items-center justify-center">{activeFilterCount}</Badge>
+                            )}
+                            </Button>
+                            {activeFilterCount > 0 && (
+                                <Button variant="ghost" size="sm" className="rounded-full" onClick={resetFilters}>
+                                    <X className="h-4 w-4 mr-1" /> Clear
+                                </Button>
+                            )}
+                        </div>
                     </div>
                 </motion.div>
 
                  <motion.div 
+                    className="mb-8"
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.2 }}
@@ -789,23 +849,6 @@ export default function DashboardPage() {
                 </motion.div>
                 
                 <motion.div initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.3, delay: 0.1 }}>
-                    <div className="flex justify-between items-end mb-4">
-                        <div className="flex items-center gap-2">
-                            <Button variant="outline" size="sm" className='rounded-full' onClick={() => setIsFilterSheetOpen(true)}>
-                            <Filter className="mr-2 h-4 w-4" />
-                            Filter
-                            {activeFilterCount > 0 && (
-                                <Badge variant="secondary" className="ml-2 rounded-full h-5 w-5 p-0 flex items-center justify-center">{activeFilterCount}</Badge>
-                            )}
-                            </Button>
-                            {activeFilterCount > 0 && (
-                                <Button variant="ghost" size="sm" className="rounded-full" onClick={resetFilters}>
-                                    <X className="h-4 w-4 mr-1" /> Clear
-                                </Button>
-                            )}
-                        </div>
-                    </div>
-
                     {activeTab === 'invoices' && (
                         <Card className='bg-card/50 backdrop-blur-sm'>
                             <CardContent className="pt-6">
@@ -827,6 +870,14 @@ export default function DashboardPage() {
                             <CardContent className="pt-6">
                                 <DashboardStatsGrid documents={filteredQuotes} docType="quote" onKpiClick={handleKpiClick} />
                                 {renderTable(filteredQuotes, 'quote')}
+                            </CardContent>
+                        </Card>
+                    )}
+                     {activeTab === 'insurance' && (
+                        <Card className='bg-card/50 backdrop-blur-sm'>
+                            <CardContent className="pt-6">
+                                <DashboardStatsGrid documents={filteredInsurance} docType="insurance" onKpiClick={handleKpiClick} />
+                                {renderTable(filteredInsurance, 'insurance')}
                             </CardContent>
                         </Card>
                     )}
