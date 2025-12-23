@@ -338,7 +338,7 @@ export default function DashboardPage() {
         if (!canCreateInvoice) {
             toast({
                 title: "Free Plan Limit Reached",
-                description: "You have reached your invoice limit. Please upgrade to convert this document.",
+                description: "You have reached your invoice limit. Please convert this document.",
                 variant: 'destructive'
             });
             router.push('/pricing');
@@ -618,13 +618,13 @@ export default function DashboardPage() {
                             className="transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted"
                             as={TableRow}
                         >
-                            <TableCell className="font-medium">{docNumber}</TableCell>
-                            <TableCell>{clientName}</TableCell>
-                            <TableCell>{currencySymbols[(doc as any).currency] || '$'}{calculateTotal(doc).toFixed(2)}</TableCell>
+                            <TableCell className="font-medium text-xs">{docNumber}</TableCell>
+                            <TableCell className="text-xs">{clientName}</TableCell>
+                            <TableCell className="text-xs">{currencySymbols[(doc as any).currency] || '$'}{calculateTotal(doc).toFixed(2)}</TableCell>
                             <TableCell>
                                 <DropdownMenu>
                                     <DropdownMenuTrigger asChild>
-                                        <Button variant="outline" className="capitalize w-28 justify-start rounded-full">
+                                        <Button variant="outline" className="capitalize w-24 justify-start rounded-full h-7 text-xs">
                                             <Badge variant={getStatusVariant(doc.status)} className="w-full justify-center rounded-full">{doc.status}</Badge>
                                         </Button>
                                     </DropdownMenuTrigger>
@@ -634,7 +634,7 @@ export default function DashboardPage() {
                                                 key={status}
                                                 disabled={doc.status === status}
                                                 onClick={() => handleStatusChange(doc.id, docCollection, status)}
-                                                className="capitalize"
+                                                className="capitalize text-xs"
                                             >
                                                 {status}
                                             </DropdownMenuItem>
@@ -643,46 +643,46 @@ export default function DashboardPage() {
                                 </DropdownMenu>
                             </TableCell>
                              <TableCell className="text-center">
-                                <Button variant="ghost" size="icon" className="rounded-full" onClick={() => handleHistoryClick((doc as any).auditLog)}>
-                                    <History className="h-4 w-4" />
+                                <Button variant="ghost" size="icon" className="rounded-full h-7 w-7" onClick={() => handleHistoryClick((doc as any).auditLog)}>
+                                    <History className="h-3.5 w-3.5" />
                                 </Button>
                             </TableCell>
                             <TableCell className="text-right">
                                 <DropdownMenu>
                                     <DropdownMenuTrigger asChild>
-                                        <Button variant="ghost" size="icon" className="rounded-full">
-                                            <MoreHorizontal className="h-4 w-4" />
+                                        <Button variant="ghost" size="icon" className="rounded-full h-7 w-7">
+                                            <MoreHorizontal className="h-3.5 w-3.5" />
                                             <span className="sr-only">More actions</span>
                                         </Button>
                                     </DropdownMenuTrigger>
                                     <DropdownMenuContent align="end">
                                         <DropdownMenuItem asChild>
                                             <Link href={editUrl} className="cursor-pointer">
-                                                <Edit className="mr-2 h-4 w-4" />
-                                                <span>Edit</span>
+                                                <Edit className="mr-2 h-3.5 w-3.5" />
+                                                <span className="text-xs">Edit</span>
                                             </Link>
                                         </DropdownMenuItem>
                                         {(docType === 'estimate' || docType === 'quote') && (
                                             <>
                                                 <DropdownMenuItem onClick={() => handleShare(doc.id, doc.documentType as 'estimate' | 'quote')} className="cursor-pointer">
-                                                    <Share2 className="mr-2 h-4 w-4" />
-                                                    <span>Share Link</span>
+                                                    <Share2 className="mr-2 h-3.5 w-3.5" />
+                                                    <span className="text-xs">Share Link</span>
                                                 </DropdownMenuItem>
                                                 <DropdownMenuItem onClick={() => handleConvertToInvoice(doc as Estimate | Quote)} className="cursor-pointer">
-                                                    <FileText className="mr-2 h-4 w-4" />
-                                                    <span>Convert to Invoice</span>
+                                                    <FileText className="mr-2 h-3.5 w-3.5" />
+                                                    <span className="text-xs">Convert to Invoice</span>
                                                 </DropdownMenuItem>
                                             </>
                                         )}
                                          {docType === 'insurance' && (
                                             <DropdownMenuItem onClick={() => handleShare(doc.id, 'insurance')} className="cursor-pointer">
-                                                <Share2 className="mr-2 h-4 w-4" />
-                                                <span>Share COI</span>
+                                                <Share2 className="mr-2 h-3.5 w-3.5" />
+                                                <span className="text-xs">Share COI</span>
                                             </DropdownMenuItem>
                                          )}
                                         <DropdownMenuItem onClick={() => setDeleteCandidate({id: doc.id, collection: docCollection})} className="text-destructive cursor-pointer">
-                                            <Trash2 className="mr-2 h-4 w-4" />
-                                            <span>Delete</span>
+                                            <Trash2 className="mr-2 h-3.5 w-3.5" />
+                                            <span className="text-xs">Delete</span>
                                         </DropdownMenuItem>
                                     </DropdownMenuContent>
                                 </DropdownMenu>
@@ -750,7 +750,7 @@ export default function DashboardPage() {
                 onClose={() => setHistoryModalState({ isOpen: false, auditLog: [] })}
                 auditLog={historyModalState.auditLog}
             />
-            <div className="space-y-8">
+            <div className="space-y-6">
                 <FilterSheet
                     open={isFilterSheetOpen}
                     onOpenChange={setIsFilterSheetOpen}
@@ -775,84 +775,68 @@ export default function DashboardPage() {
                 </AlertDialog>
 
                 <motion.div 
-                    className="mb-8"
+                    className="mb-6"
                     variants={pageVariants}
                     initial="hidden"
                     animate="visible"
                 >
-                    
-                    <div className="flex justify-between items-center gap-4 flex-wrap">
+                     <div className="flex justify-between items-center gap-4 flex-wrap">
                         <motion.div variants={pageVariants}>
-                            <h1 className="text-3xl font-bold font-headline">Dashboard</h1>
-                            <p className="text-muted-foreground">An overview of your financial documents and activities.</p>
+                            <h1 className="text-xl font-bold font-headline">Dashboard</h1>
+                            <p className="text-xs text-muted-foreground">An overview of your financial documents and activities.</p>
                         </motion.div>
                     </div>
                 </motion.div>
 
                  <motion.div 
-                    className="mb-8"
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.2 }}
                  >
                     <Card className='bg-card/50 backdrop-blur-sm'>
                         <CardHeader>
-                            <CardTitle>Quick Actions</CardTitle>
-                            <CardDescription>Start creating a new document or add a new client.</CardDescription>
+                            <CardTitle className="text-base">Quick Actions</CardTitle>
                         </CardHeader>
-                        <CardContent className="flex flex-wrap gap-4">
-                            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.98 }}>
-                                <Button onClick={() => router.push('/dashboard/clients/new')} className="rounded-full">
-                                    <Users className="mr-2 h-4 w-4" />
-                                    Add Client
+                        <CardContent className="flex flex-wrap items-center gap-2">
+                             <Button size="sm" onClick={() => router.push('/dashboard/clients/new')} className="rounded-full">
+                                <Users className="mr-2 h-4 w-4" />
+                                Add Client
+                            </Button>
+                            <Button size="sm" onClick={handleCreateInvoice} variant="outline" className="rounded-full">
+                                <FilePlus2 className="mr-2 h-4 w-4" />
+                                New Invoice
+                            </Button>
+                             <Button size="sm" onClick={handleCreateEstimate} variant="outline" className="rounded-full">
+                                <FilePlus2 className="mr-2 h-4 w-4" />
+                                New Estimate
+                            </Button>
+                             <Button size="sm" onClick={handleCreateQuote} variant="outline" className="rounded-full">
+                                <FileText className="mr-2 h-4 w-4" />
+                                New Quote
+                            </Button>
+                             <Button size="sm" onClick={() => router.push('/create-insurance')} variant="outline" className="rounded-full">
+                                <Shield className="mr-2 h-4 w-4" />
+                                New Insurance Doc
+                            </Button>
+                            <div className="border-l ml-2 pl-4 flex items-center gap-2">
+                                <Button variant="outline" size="sm" className='rounded-full' onClick={() => setIsFilterSheetOpen(true)}>
+                                <Filter className="mr-2 h-4 w-4" />
+                                Filter
+                                {activeFilterCount > 0 && (
+                                    <Badge variant="secondary" className="ml-2 rounded-full h-5 w-5 p-0 flex items-center justify-center">{activeFilterCount}</Badge>
+                                )}
                                 </Button>
-                            </motion.div>
-                            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.98 }}>
-                                <Button onClick={handleCreateInvoice} variant="outline" className="rounded-full">
-                                    <FilePlus2 className="mr-2 h-4 w-4" />
-                                    New Invoice
-                                </Button>
-                            </motion.div>
-                             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.98 }}>
-                                <Button onClick={handleCreateEstimate} variant="outline" className="rounded-full">
-                                    <FilePlus2 className="mr-2 h-4 w-4" />
-                                    New Estimate
-                                </Button>
-                            </motion.div>
-                             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.98 }}>
-                                <Button onClick={handleCreateQuote} variant="outline" className="rounded-full">
-                                    <FileText className="mr-2 h-4 w-4" />
-                                    New Quote
-                                </Button>
-                            </motion.div>
-                             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.98 }}>
-                                <Button onClick={() => router.push('/create-insurance')} variant="outline" className="rounded-full">
-                                    <Shield className="mr-2 h-4 w-4" />
-                                    New Insurance Doc
-                                </Button>
-                            </motion.div>
+                                {activeFilterCount > 0 && (
+                                    <Button variant="ghost" size="icon" className="rounded-full h-8 w-8" onClick={resetFilters}>
+                                        <X className="h-4 w-4" />
+                                    </Button>
+                                )}
+                            </div>
                         </CardContent>
                     </Card>
                 </motion.div>
                 
                 <motion.div initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.3, delay: 0.1 }}>
-                    <div className="flex justify-between items-end mb-4">
-                        <div className="flex items-center gap-2">
-                            <Button variant="outline" className='rounded-full' onClick={() => setIsFilterSheetOpen(true)}>
-                            <Filter className="mr-2 h-4 w-4" />
-                            Filter
-                            {activeFilterCount > 0 && (
-                                <Badge variant="secondary" className="ml-2 rounded-full h-5 w-5 p-0 flex items-center justify-center">{activeFilterCount}</Badge>
-                            )}
-                            </Button>
-                            {activeFilterCount > 0 && (
-                                <Button variant="ghost" size="sm" className="rounded-full" onClick={resetFilters}>
-                                    <X className="h-4 w-4 mr-1" /> Clear
-                                </Button>
-                            )}
-                        </div>
-                    </div>
-
                     {activeTab === 'invoices' && (
                         <Card className='bg-card/50 backdrop-blur-sm'>
                             <CardContent className="pt-6">
@@ -888,7 +872,7 @@ export default function DashboardPage() {
                     {activeTab === 'clients' && (
                          <Card className='bg-card/50 backdrop-blur-sm'>
                             <CardHeader>
-                                <CardTitle>Clients</CardTitle>
+                                <CardTitle className="text-lg">Clients</CardTitle>
                                 <CardDescription>A list of all your clients. Click a client to view their profile and documents.</CardDescription>
                             </CardHeader>
                             <CardContent>
@@ -908,9 +892,9 @@ export default function DashboardPage() {
                                                 className="cursor-pointer"
                                                 onClick={() => router.push(`/dashboard/clients/${client.id}`)}
                                             >
-                                                <TableCell className="font-medium">{client.name}</TableCell>
-                                                <TableCell>{client.companyName}</TableCell>
-                                                <TableCell>{client.email}</TableCell>
+                                                <TableCell className="font-medium text-xs">{client.name}</TableCell>
+                                                <TableCell className="text-xs">{client.companyName}</TableCell>
+                                                <TableCell className="text-xs">{client.email}</TableCell>
                                                 <TableCell className="text-right">
                                                      <Button variant="ghost" size="sm">View</Button>
                                                 </TableCell>
