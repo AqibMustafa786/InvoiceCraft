@@ -753,9 +753,9 @@ export default function DashboardPage() {
                 <div className="flex justify-between items-center">
                     <div>
                         <CardTitle className="text-base">Clients</CardTitle>
-                        <CardDescription className="text-xs">A list of all your clients. Click a client to view their profile and documents.</CardDescription>
+                        <CardDescription className="text-xs">A list of all your clients.</CardDescription>
                     </div>
-                    <Button size="sm" className='rounded-full' onClick={handleAddClient}><Users className="mr-2 h-4 w-4"/>Add Client</Button>
+                     <Button size="sm" className='rounded-full' onClick={handleAddClient}><Users className="mr-2 h-4 w-4"/>Add Client</Button>
                 </div>
             </CardHeader>
             <CardContent>
@@ -777,7 +777,7 @@ export default function DashboardPage() {
                                 <TableCell className="text-xs">{client.companyName}</TableCell>
                                 <TableCell className="text-xs">{client.email}</TableCell>
                                 <TableCell className="text-right">
-                                     <Button asChild variant="ghost" size="sm">
+                                    <Button asChild variant="ghost" size="sm">
                                         <Link href={`/dashboard/clients/${client.id}`}>View</Link>
                                     </Button>
                                 </TableCell>
@@ -900,6 +900,10 @@ export default function DashboardPage() {
                         </CardHeader>
                         <CardContent className="flex flex-wrap items-center gap-2 pt-0">
                             
+                             <Button size="sm" onClick={handleAddClient} variant="outline" className="rounded-full">
+                                <Users className="mr-2 h-3 w-3" />
+                                Add Client
+                            </Button>
                             <Button size="sm" onClick={handleCreateInvoice} variant="outline" className="rounded-full">
                                 <FilePlus2 className="mr-2 h-3 w-3" />
                                 New Invoice
@@ -963,6 +967,7 @@ export default function DashboardPage() {
         </>
     );
 }
+
 
 
 

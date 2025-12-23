@@ -1,7 +1,8 @@
 
+
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, ChangeEvent } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -14,9 +15,10 @@ import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/context/auth-provider';
 import { useFirebase } from '@/firebase';
 import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
-import { Save, Loader2 } from 'lucide-react';
+import { Save, Loader2, UploadCloud } from 'lucide-react';
 import type { Client } from '@/lib/types';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 
 const CLIENTS_COLLECTION = 'clients';
 
@@ -30,6 +32,7 @@ const clientSchema = z.object({
   website: z.string().url({ message: "Please enter a valid URL." }).optional().or(z.literal('')),
   taxId: z.string().optional(),
   notes: z.string().optional(),
+  avatarUrl: z.string().optional(),
 });
 
 type ClientFormValues = z.infer<typeof clientSchema>;
@@ -46,6 +49,8 @@ export function ClientFormDialog({ open, onOpenChange, client, onSave }: ClientF
   const { firestore } = useFirebase();
   const { toast } = useToast();
   const [isSaving, setIsSaving] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
+  const [avatarPreview, setAvatarPreview] = useState<string | undefined>(client?.avatarUrl);
 
   const isNewClient = !client;
 
@@ -61,6 +66,7 @@ export function ClientFormDialog({ open, onOpenChange, client, onSave }: ClientF
       website: '',
       taxId: '',
       notes: '',
+      avatarUrl: ''
     }
   });
 
@@ -68,6 +74,7 @@ export function ClientFormDialog({ open, onOpenChange, client, onSave }: ClientF
     if (open) {
       if (client) {
         form.reset(client);
+        setAvatarPreview(client.avatarUrl);
       } else {
         form.reset({
           name: '',
@@ -79,10 +86,41 @@ export function ClientFormDialog({ open, onOpenChange, client, onSave }: ClientF
           website: '',
           taxId: '',
           notes: '',
+          avatarUrl: '',
         });
+        setAvatarPreview(undefined);
       }
     }
   }, [client, open, form]);
+
+  const handleAvatarUpload = async (e: ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      if (file.size > 4 * 1024 * 1024) { // 4MB limit
+        toast({ title: "Image too large", description: "Please upload an image smaller than 4MB.", variant: "destructive" });
+        return;
+      }
+
+      setIsUploading(true);
+      const formData = new FormData();
+      formData.append('file', file);
+
+      try {
+        const response = await fetch('/api/upload', { method: 'POST', body: formData });
+        if (!response.ok) throw new Error('Upload failed');
+        
+        const { url } = await response.json();
+        setAvatarPreview(url);
+        form.setValue('avatarUrl', url);
+        toast({ title: "Avatar Uploaded", description: "The new avatar has been set." });
+      } catch (error) {
+        console.error("Upload error:", error);
+        toast({ title: "Upload Failed", description: "Could not upload the image.", variant: "destructive" });
+      } finally {
+        setIsUploading(false);
+      }
+    }
+  };
 
   const onSubmit = async (data: ClientFormValues) => {
     setIsSaving(true);
@@ -107,6 +145,7 @@ export function ClientFormDialog({ open, onOpenChange, client, onSave }: ClientF
         id: idToSave,
         companyId: userProfile.companyId,
         ...data,
+        avatarUrl: avatarPreview,
         updatedAt: serverTimestamp(),
         createdAt: isNewClient ? serverTimestamp() : client?.createdAt,
       };
@@ -126,7 +165,7 @@ export function ClientFormDialog({ open, onOpenChange, client, onSave }: ClientF
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[480px] bg-card/95 backdrop-blur-sm">
+      <DialogContent className="sm:max-w-xl bg-card/95 backdrop-blur-sm">
         <DialogHeader>
           <DialogTitle className="text-xl">{isNewClient ? 'Create New Client' : 'Edit Client'}</DialogTitle>
           <DialogDescription>
@@ -137,6 +176,23 @@ export function ClientFormDialog({ open, onOpenChange, client, onSave }: ClientF
         <ScrollArea className="max-h-[65vh] pr-6 -mr-6">
           <Form {...form}>
             <form className="space-y-4 px-1">
+                <div className="flex items-center gap-4">
+                  <Avatar className="h-20 w-20">
+                    <AvatarImage src={avatarPreview} />
+                    <AvatarFallback>{form.watch('name')?.charAt(0) || 'C'}</AvatarFallback>
+                  </Avatar>
+                  <div className="flex-1 space-y-2">
+                    <Label>Profile Picture</Label>
+                    <Button asChild variant="outline" className="w-full">
+                       <label htmlFor="avatar-upload" className="cursor-pointer">
+                         {isUploading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <UploadCloud className="mr-2 h-4 w-4" />}
+                         {isUploading ? 'Uploading...' : 'Upload Picture'}
+                       </label>
+                    </Button>
+                    <Input id="avatar-upload" type="file" className="sr-only" onChange={handleAvatarUpload} accept="image/*" />
+                  </div>
+                </div>
+
                 <FormField control={form.control} name="name" render={({ field }) => (
                   <FormItem><FormLabel>Full Name</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
                 )} />

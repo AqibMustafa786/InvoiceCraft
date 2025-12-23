@@ -12,13 +12,13 @@ import { Bar, BarChart, CartesianGrid, Legend, Pie, PieChart, ResponsiveContaine
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Mail, Phone, Edit, ArrowLeft, DollarSign, Clock, FileWarning, Files } from 'lucide-react';
+import { Mail, Phone, Edit, ArrowLeft, DollarSign, Clock, FileWarning, Files, XCircle } from 'lucide-react';
 import Link from 'next/link';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { format, subYears, eachMonthOfInterval, startOfMonth } from 'date-fns';
 import { Badge } from '@/components/ui/badge';
-import { ChartContainer, ChartTooltip, ChartTooltipContent, type ChartConfig, ChartLegendContent } from '@/components/ui/chart';
+import { ChartContainer, ChartTooltip, ChartTooltipContent, type ChartConfig, ChartLegend, ChartLegendContent } from '@/components/ui/chart';
 import { ClientFormDialog } from '@/components/dashboard/client-form-dialog';
 
 const currencySymbols: { [key: string]: string } = {
@@ -132,7 +132,7 @@ function ClientCharts({ documents }: { documents: DocumentType[] }) {
             <PieChart>
               <Tooltip cursor={false} content={<ChartTooltipContent hideLabel />} />
               <Pie data={statusBreakdown} dataKey="value" nameKey="name" innerRadius={60} />
-              <Legend content={<ChartLegendContent />} />
+              <ChartLegend content={<ChartLegendContent />} />
             </PieChart>
           </ChartContainer>
         </CardContent>
