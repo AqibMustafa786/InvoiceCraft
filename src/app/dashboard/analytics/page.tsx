@@ -3,7 +3,7 @@
 
 import { useMemo, useState } from 'react';
 import { useAuth } from '@/context/auth-provider';
-import { useCollection, useFirebase } from '@/firebase';
+import { useCollection, useFirebase, useMemoFirebase } from '@/firebase';
 import { collection, query } from 'firebase/firestore';
 import type { Invoice, Client } from '@/lib/types';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -36,13 +36,18 @@ export default function AnalyticsPage() {
 
   const companyId = userProfile?.companyId;
 
-  const { data: invoices, isLoading: isLoadingInvoices } = useCollection<Invoice>(
-    companyId && firestore ? query(collection(firestore, 'companies', companyId, 'invoices')) : null
-  );
+  const invoicesQuery = useMemoFirebase(() => {
+    if (!firestore || !companyId) return null;
+    return query(collection(firestore, 'companies', companyId, 'invoices'));
+  }, [firestore, companyId]);
 
-  const { data: clients, isLoading: isLoadingClients } = useCollection<Client>(
-    companyId && firestore ? query(collection(firestore, 'companies', companyId, 'clients')) : null
-  );
+  const clientsQuery = useMemoFirebase(() => {
+    if (!firestore || !companyId) return null;
+    return query(collection(firestore, 'companies', companyId, 'clients'));
+  }, [firestore, companyId]);
+
+  const { data: invoices, isLoading: isLoadingInvoices } = useCollection<Invoice>(invoicesQuery);
+  const { data: clients, isLoading: isLoadingClients } = useCollection<Client>(clientsQuery);
 
   const analyticsData = useMemo(() => {
     if (!invoices) return null;
