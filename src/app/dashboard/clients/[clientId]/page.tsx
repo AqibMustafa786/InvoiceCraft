@@ -4,15 +4,15 @@
 
 import { useMemo, useState } from 'react';
 import { useAuth } from '@/context/auth-provider';
-import { useCollection, useDoc, useFirebase, deleteDocumentNonBlocking } from '@/firebase';
+import { useCollection, useDoc, deleteDocumentNonBlocking, updateDocumentNonBlocking } from '@/firebase';
 import { collection, query, where, doc } from 'firebase/firestore';
-import type { Client, Estimate, Invoice, Quote, InsuranceDocument, AuditLogEntry } from '@/lib/types';
+import type { Client, Estimate, Invoice, Quote, InsuranceDocument, AuditLogEntry, DocumentStatus } from '@/lib/types';
 import { useParams, useRouter } from 'next/navigation';
 import { Bar, BarChart, CartesianGrid, Legend, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Mail, Phone, Edit, ArrowLeft, DollarSign, Clock, FileWarning, Files, XCircle, FilePlus2, FileText, Shield, Trash2, History } from 'lucide-react';
+import { Mail, Phone, Edit, ArrowLeft, DollarSign, Clock, FileWarning, Files, XCircle, FilePlus2, FileText, Shield, Trash2, History, MoreHorizontal, Eye } from 'lucide-react';
 import Link from 'next/link';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -33,6 +33,9 @@ import {
     AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { HistoryModal } from '@/components/dashboard/history-modal';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from '../ui/sheet';
+import { ClientInvoicePreview } from '../invoice-preview';
 
 
 const currencySymbols: { [key: string]: string } = {
@@ -40,6 +43,7 @@ const currencySymbols: { [key: string]: string } = {
 };
 
 type DocumentType = Invoice | Estimate | Quote | InsuranceDocument;
+const STATUS_OPTIONS: DocumentStatus[] = ['draft', 'sent', 'paid', 'overdue', 'accepted', 'rejected', 'expired', 'active', 'cancelled'];
 
 function ClientDashboardStats({ documents }: { documents: DocumentType[] }) {
   const stats = useMemo(() => {
@@ -193,6 +197,7 @@ export default function ClientPage() {
   const { clientId } = params;
   const [isClientDialogOpen, setIsClientDialogOpen] = useState(false);
   const [historyModalState, setHistoryModalState] = useState<{ isOpen: boolean, auditLog: AuditLogEntry[]}>({isOpen: false, auditLog: []});
+  const [deleteCandidate, setDeleteCandidate] = useState<{ id: string; collection: string } | null>(null);
 
   const companyId = userProfile?.companyId;
 
@@ -218,6 +223,23 @@ export default function ClientPage() {
   const client = useMemo(() => processData(rawClient), [rawClient]);
 
   const allDocuments: DocumentType[] = [...(invoices || []), ...(estimates || [])];
+  
+  const getStatusVariant = (status: DocumentStatus) => {
+      switch (status) {
+          case 'paid':
+          case 'accepted':
+          case 'active':
+               return 'success';
+          case 'sent': return 'secondary';
+          case 'overdue':
+          case 'rejected':
+          case 'expired':
+          case 'cancelled':
+              return 'destructive';
+          case 'draft':
+          default: return 'outline';
+      }
+  };
 
   const handleCreateDocument = (docType: 'invoice' | 'estimate' | 'quote' | 'insurance') => {
     if (!client) return;
@@ -260,14 +282,36 @@ export default function ClientPage() {
     router.push('/dashboard?tab=clients');
   };
   
-  const handleHistoryClick = (auditLog?: AuditLogEntry[]) => {
+   const handleHistoryClick = (auditLog?: AuditLogEntry[]) => {
     if (!auditLog || auditLog.length === 0) {
-      toast({ title: "No History", description: "No history has been recorded for this client yet." });
+      toast({ title: "No History", description: "No history has been recorded for this document yet." });
       return;
     }
     const sortedLog = (auditLog || []).sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
     setHistoryModalState({ isOpen: true, auditLog: sortedLog });
   };
+  
+  const handleDeleteDocument = () => {
+        if (!deleteCandidate || !firestore || !companyId) return;
+        const { id, collection: collectionName } = deleteCandidate;
+        const docRef = doc(firestore, 'companies', companyId, collectionName, id);
+        deleteDocumentNonBlocking(docRef);
+        setDeleteCandidate(null);
+        toast({
+            title: "Document Deleted",
+            description: `The document has been deleted.`,
+        });
+    };
+
+    const handleStatusChange = (id: string, collectionName: string, newStatus: DocumentStatus) => {
+        if (!firestore || !companyId) return;
+        const docRef = doc(firestore, 'companies', companyId, collectionName, id);
+        updateDocumentNonBlocking(docRef, { status: newStatus });
+        toast({
+            title: "Status Updated",
+            description: `Document status changed to "${newStatus}".`,
+        });
+    };
 
 
   if (isClientLoading || isInvoicesLoading || isEstimatesLoading) {
@@ -291,6 +335,21 @@ export default function ClientPage() {
             onClose={() => setHistoryModalState({ isOpen: false, auditLog: [] })}
             auditLog={historyModalState.auditLog}
         />
+        <AlertDialog open={deleteCandidate !== null} onOpenChange={(open) => !open && setDeleteCandidate(null)}>
+            <AlertDialogContent>
+                <AlertDialogHeader>
+                    <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                    <AlertDialogDescription>
+                        This action cannot be undone. This will permanently delete this document.
+                    </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                    <AlertDialogCancel onClick={() => setDeleteCandidate(null)}>Cancel</AlertDialogCancel>
+                    <AlertDialogAction onClick={handleDeleteDocument}>Delete</AlertDialogAction>
+                </AlertDialogFooter>
+            </AlertDialogContent>
+        </AlertDialog>
+
        <div className="flex justify-between items-start">
          <Button variant="outline" onClick={() => router.push('/dashboard?tab=clients')}>
             <ArrowLeft className="mr-2 h-4 w-4" />
@@ -376,14 +435,86 @@ export default function ClientPage() {
             <CardHeader><CardTitle>Invoices</CardTitle></CardHeader>
             <CardContent>
                  <Table>
-                    <TableHeader><TableRow><TableHead>Number</TableHead><TableHead>Amount</TableHead><TableHead>Status</TableHead><TableHead>Date</TableHead></TableRow></TableHeader>
+                    <TableHeader>
+                        <TableRow>
+                            <TableHead>Number</TableHead>
+                            <TableHead>Amount</TableHead>
+                            <TableHead>Status</TableHead>
+                            <TableHead>Date</TableHead>
+                            <TableHead className="text-center">History</TableHead>
+                            <TableHead className="text-right">Actions</TableHead>
+                        </TableRow>
+                    </TableHeader>
                     <TableBody>
                         {invoices?.map(inv => (
                             <TableRow key={inv.id}>
                                 <TableCell>{inv.invoiceNumber}</TableCell>
                                 <TableCell>{currencySymbols[inv.currency] || '$'}{inv.summary.grandTotal.toFixed(2)}</TableCell>
-                                <TableCell><Badge>{inv.status}</Badge></TableCell>
+                                <TableCell>
+                                  <DropdownMenu>
+                                    <DropdownMenuTrigger asChild>
+                                      <Button variant="outline" className="capitalize w-24 justify-start rounded-full h-7 text-xs">
+                                        <Badge variant={getStatusVariant(inv.status)} className="w-full justify-center rounded-full">{inv.status}</Badge>
+                                      </Button>
+                                    </DropdownMenuTrigger>
+                                    <DropdownMenuContent align="start">
+                                        {STATUS_OPTIONS.map(status => (
+                                            <DropdownMenuItem
+                                                key={status}
+                                                disabled={inv.status === status}
+                                                onClick={() => handleStatusChange(inv.id, 'invoices', status)}
+                                                className="capitalize text-xs"
+                                            >
+                                                {status}
+                                            </DropdownMenuItem>
+                                        ))}
+                                    </DropdownMenuContent>
+                                  </DropdownMenu>
+                                </TableCell>
                                 <TableCell>{safeFormat(inv.invoiceDate, 'MMM d, yyyy')}</TableCell>
+                                <TableCell className="text-center">
+                                  <Button variant="ghost" size="icon" className="rounded-full h-7 w-7" onClick={() => handleHistoryClick(inv.auditLog)}>
+                                      <History className="h-3.5 w-3.5" />
+                                  </Button>
+                                </TableCell>
+                                <TableCell className="text-right">
+                                  <DropdownMenu>
+                                      <DropdownMenuTrigger asChild>
+                                          <Button variant="ghost" size="icon" className="rounded-full h-7 w-7">
+                                              <MoreHorizontal className="h-3.5 w-3.5" />
+                                          </Button>
+                                      </DropdownMenuTrigger>
+                                      <DropdownMenuContent align="end">
+                                        <Sheet>
+                                          <SheetTrigger asChild>
+                                            <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+                                              <Eye className="mr-2 h-3.5 w-3.5" />
+                                              <span className="text-xs">Preview</span>
+                                            </DropdownMenuItem>
+                                          </SheetTrigger>
+                                          <SheetContent className="w-full sm:max-w-4xl overflow-y-auto">
+                                            <SheetHeader>
+                                              <SheetTitle>Invoice Preview</SheetTitle>
+                                              <SheetDescription>{inv.invoiceNumber}</SheetDescription>
+                                            </SheetHeader>
+                                             <div className="py-4">
+                                                <ClientInvoicePreview invoice={inv} accentColor="hsl(var(--primary))" backgroundColor="hsl(var(--background))" textColor="hsl(var(--foreground))" />
+                                             </div>
+                                          </SheetContent>
+                                        </Sheet>
+                                        <DropdownMenuItem asChild>
+                                          <Link href={`/create-invoice?draftId=${inv.id}`} className="cursor-pointer">
+                                              <Edit className="mr-2 h-3.5 w-3.5" />
+                                              <span className="text-xs">Edit</span>
+                                          </Link>
+                                        </DropdownMenuItem>
+                                        <DropdownMenuItem onClick={() => setDeleteCandidate({id: inv.id, collection: 'invoices'})} className="text-destructive cursor-pointer">
+                                            <Trash2 className="mr-2 h-3.5 w-3.5" />
+                                            <span className="text-xs">Delete</span>
+                                        </DropdownMenuItem>
+                                      </DropdownMenuContent>
+                                  </DropdownMenu>
+                                </TableCell>
                             </TableRow>
                         ))}
                     </TableBody>
@@ -415,5 +546,6 @@ export default function ClientPage() {
     </div>
   );
 }
+
 
 
