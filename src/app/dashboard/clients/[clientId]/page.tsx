@@ -16,7 +16,7 @@ import { Mail, Phone, Edit, ArrowLeft, DollarSign, Clock, FileWarning, Files, XC
 import Link from 'next/link';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { format, subYears, eachMonthOfInterval, startOfMonth, isValid } from 'date-fns';
+import { format, subYears, eachMonthOfInterval, startOfMonth, isValid, subDays, eachDayOfInterval, startOfYear } from 'date-fns';
 import { Badge } from '@/components/ui/badge';
 import { ChartContainer, ChartTooltip, ChartTooltipContent, type ChartConfig, ChartLegend, ChartLegendContent } from '@/components/ui/chart';
 import { ClientFormDialog } from '@/components/dashboard/client-form-dialog';
@@ -76,34 +76,73 @@ function ClientDashboardStats({ documents }: { documents: DocumentType[] }) {
 }
 
 function ClientCharts({ documents }: { documents: DocumentType[] }) {
+  const [revenueRange, setRevenueRange] = useState<'monthly' | 'yearly' | 'daily'>('monthly');
   const invoiceData = documents.filter(doc => doc.documentType === 'invoice') as Invoice[];
 
-  const monthlyRevenue = useMemo(() => {
-    const last12Months = eachMonthOfInterval({
-      start: subYears(new Date(), 1),
-      end: new Date(),
-    });
+  const revenueData = useMemo(() => {
+    let data: { name: string, revenue: number }[] = [];
+    const now = new Date();
 
-    const data = last12Months.map(month => ({
-      name: format(month, 'MMM yy'),
-      revenue: 0,
-    }));
-    
-    const dataMap = new Map(data.map(d => [d.name, d]));
-
-    invoiceData.forEach(invoice => {
+    const paidInvoices = invoiceData.filter(invoice => {
         const invoiceDate = invoice.invoiceDate ? (invoice.invoiceDate as any).toDate ? (invoice.invoiceDate as any).toDate() : new Date(invoice.invoiceDate) : null;
-        if (invoice.status === 'paid' && invoiceDate && isValid(invoiceDate)) {
-            const monthKey = format(invoiceDate, 'MMM yy');
-            if (dataMap.has(monthKey)) {
-                const dataPoint = dataMap.get(monthKey)!;
-                dataPoint.revenue += invoice.summary.grandTotal;
-            }
-        }
+        return invoice.status === 'paid' && invoiceDate && isValid(invoiceDate);
     });
 
-    return Array.from(dataMap.values());
-}, [invoiceData]);
+    switch (revenueRange) {
+        case 'yearly': {
+            const start = startOfYear(now);
+            const months = eachMonthOfInterval({ start, end: now });
+            const dataMap = new Map(months.map(d => [format(d, 'MMM'), { name: format(d, 'MMM'), revenue: 0 }]));
+
+            paidInvoices.forEach(invoice => {
+                const invoiceDate = (invoice.invoiceDate as any).toDate();
+                if (invoiceDate >= start) {
+                    const monthKey = format(invoiceDate, 'MMM');
+                    if (dataMap.has(monthKey)) {
+                        dataMap.get(monthKey)!.revenue += invoice.summary.grandTotal;
+                    }
+                }
+            });
+            data = Array.from(dataMap.values());
+            break;
+        }
+        case 'daily': {
+            const start = subDays(now, 29);
+            const days = eachDayOfInterval({ start, end: now });
+            const dataMap = new Map(days.map(d => [format(d, 'd MMM'), { name: format(d, 'd MMM'), revenue: 0 }]));
+
+            paidInvoices.forEach(invoice => {
+                const invoiceDate = (invoice.invoiceDate as any).toDate();
+                if (invoiceDate >= start) {
+                    const dayKey = format(invoiceDate, 'd MMM');
+                    if (dataMap.has(dayKey)) {
+                        dataMap.get(dayKey)!.revenue += invoice.summary.grandTotal;
+                    }
+                }
+            });
+            data = Array.from(dataMap.values());
+            break;
+        }
+        case 'monthly':
+        default: {
+            const last12Months = eachMonthOfInterval({ start: subYears(now, 1), end: now });
+            const dataMap = new Map(last12Months.map(d => [format(d, 'yyyy-MMM'), { name: format(d, 'MMM yy'), revenue: 0 }]));
+
+            paidInvoices.forEach(invoice => {
+                const invoiceDate = (invoice.invoiceDate as any).toDate();
+                const monthKey = format(invoiceDate, 'yyyy-MMM');
+                if (dataMap.has(monthKey)) {
+                    dataMap.get(monthKey)!.revenue += invoice.summary.grandTotal;
+                }
+            });
+            data = Array.from(dataMap.values());
+            break;
+        }
+    }
+
+    return data;
+}, [invoiceData, revenueRange]);
+
 
   const statusBreakdown = useMemo(() => {
     const statuses: Record<string, number> = { paid: 0, sent: 0, overdue: 0, draft: 0 };
@@ -127,11 +166,20 @@ function ClientCharts({ documents }: { documents: DocumentType[] }) {
     <div className="grid gap-4 md:grid-cols-2">
        <Card>
         <CardHeader>
-          <CardTitle>Monthly Revenue (Last 12 Months)</CardTitle>
+            <div className="flex justify-between items-center">
+              <CardTitle>Revenue</CardTitle>
+              <Tabs defaultValue="monthly" onValueChange={(value) => setRevenueRange(value as any)} className="w-auto">
+                <TabsList className="h-7 text-xs">
+                  <TabsTrigger value="daily">Last 30 Days</TabsTrigger>
+                  <TabsTrigger value="monthly">Last 12 Months</TabsTrigger>
+                  <TabsTrigger value="yearly">This Year</TabsTrigger>
+                </TabsList>
+              </Tabs>
+            </div>
         </CardHeader>
         <CardContent>
           <ChartContainer config={chartConfig} className="h-[250px] w-full">
-            <BarChart data={monthlyRevenue}>
+            <BarChart data={revenueData}>
               <CartesianGrid vertical={false} />
               <XAxis dataKey="name" tickLine={false} tickMargin={10} axisLine={false} />
               <YAxis tickLine={false} axisLine={false} tickFormatter={(value) => `$${value / 1000}k`} />
@@ -287,7 +335,11 @@ export default function ClientPage() {
       toast({ title: "No History", description: "No history has been recorded for this document yet." });
       return;
     }
-    const sortedLog = (auditLog || []).sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+    const sortedLog = (auditLog || []).sort((a, b) => {
+        const dateA = a.timestamp?.toDate ? a.timestamp.toDate() : new Date(a.timestamp);
+        const dateB = b.timestamp?.toDate ? b.timestamp.toDate() : new Date(b.timestamp);
+        return dateB.getTime() - dateA.getTime();
+    });
     setHistoryModalState({ isOpen: true, auditLog: sortedLog });
   };
   
@@ -382,7 +434,7 @@ export default function ClientPage() {
                         <AlertDialogHeader>
                             <AlertDialogTitle>Are you sure?</AlertDialogTitle>
                             <AlertDialogDescription>
-                                This will permanently delete the client and all associated documents. This action cannot be undone.
+                                This will permanently delete the client. This action cannot be undone. Associated documents will NOT be deleted.
                             </AlertDialogDescription>
                         </AlertDialogHeader>
                         <AlertDialogFooter>
@@ -551,4 +603,5 @@ export default function ClientPage() {
     </div>
   );
 }
+
 
