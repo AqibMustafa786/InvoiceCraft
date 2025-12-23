@@ -3,6 +3,7 @@
 
 import { SidebarNav } from "@/components/dashboard/sidebar-nav";
 import { usePathname } from "next/navigation";
+import { Greeting } from "@/components/dashboard/greeting";
 
 export default function DashboardLayout({
   children,
@@ -17,6 +18,7 @@ export default function DashboardLayout({
   
   return (
     <div className="container mx-auto">
+      <Greeting />
         <div className="grid grid-cols-1 md:grid-cols-[240px_1fr] gap-x-8 gap-y-4">
             <aside className="md:sticky md:top-24 h-full">
                 <SidebarNav />

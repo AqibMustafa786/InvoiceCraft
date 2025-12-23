@@ -14,15 +14,15 @@ export function Greeting() {
 
     const getGreetingMessage = () => {
       const hour = new Date().getHours();
-      const name = userProfile?.name?.split(' ')[0] || user.displayName?.split(' ')[0] || 'Sir';
+      const name = userProfile?.name?.split(' ')[0] || user.displayName?.split(' ')[0] || 'User';
 
       if (hour < 12 && hour >= 6) {
-        return `Good Morning Sir @${name}`;
+        return `Good Morning, ${name}`;
       }
       if (hour < 19 && hour >= 12) {
-        return `Good Afternoon Sir @${name}`;
+        return `Good Afternoon, ${name}`;
       }
-      return `Good Night Sir @${name}`;
+      return `Good Evening, ${name}`;
     };
 
     setGreeting(getGreetingMessage());
@@ -60,7 +60,7 @@ export function Greeting() {
       variants={containerVariants}
       initial="hidden"
       animate="visible"
-      className="px-4 py-2 mb-4 text-sm text-center text-muted-foreground flex justify-center flex-wrap gap-1"
+      className="py-4 mb-4 text-3xl font-bold font-headline flex justify-start flex-wrap gap-1.5"
     >
       {greeting.split(' ').map((word, index) => (
         <motion.span

@@ -12,7 +12,6 @@ import { useRouter } from "next/navigation";
 import { signOut } from "firebase/auth";
 import { useFirebase } from "@/firebase";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
-import { Greeting } from "./greeting";
 
 const dashboardNavItems = [
     { href: "/dashboard", tab: "invoices", label: "Invoices", icon: FileText },
@@ -47,7 +46,6 @@ export function SidebarNav() {
     return (
         <div className="flex flex-col h-full bg-card rounded-lg border">
             <ScrollArea className="flex-grow">
-                <Greeting />
                 <div className="space-y-4 py-4">
                     <div className="px-3 py-2">
                          <h2 className="mb-2 px-4 text-lg font-semibold tracking-tight">

@@ -32,7 +32,7 @@ const clientSchema = z.object({
   phone: z.string().optional(),
   address: z.string().optional(),
   shippingAddress: z.string().optional(),
-  website: z.string().optional(),
+  website: z.string().url({ message: "Please enter a valid URL." }).optional().or(z.literal('')),
   taxId: z.string().optional(),
   notes: z.string().optional(),
 });
@@ -57,20 +57,20 @@ export default function ClientProfilePage() {
   const { data: existingClient, isLoading: isLoadingClient } = useDoc<Client>(docRef);
   
   const invoicesQuery = useMemoFirebase(() => {
-    if (firestore && userProfile?.companyId && existingClient?.name && !isNewClient) {
+    if (firestore && userProfile?.companyId && existingClient?.id && !isNewClient) {
       return query(
         collection(firestore, 'companies', userProfile.companyId, 'invoices'), 
-        where('client.name', '==', existingClient.name)
+        where('client.clientId', '==', existingClient.id)
       );
     }
     return null;
   }, [firestore, userProfile?.companyId, existingClient, isNewClient]);
 
   const estimatesQuery = useMemoFirebase(() => {
-    if (firestore && userProfile?.companyId && existingClient?.name && !isNewClient) {
+    if (firestore && userProfile?.companyId && existingClient?.id && !isNewClient) {
       return query(
         collection(firestore, 'companies', userProfile.companyId, 'estimates'), 
-        where('client.name', '==', existingClient.name)
+        where('client.clientId', '==', existingClient.id)
       );
     }
     return null;
@@ -150,13 +150,13 @@ export default function ClientProfilePage() {
   return (
     <div className="container mx-auto p-4 md:p-8 space-y-8">
       <div className="flex items-center gap-4">
-        <Button variant="outline" size="icon" onClick={() => router.push('/dashboard')}>
+        <Button variant="outline" size="icon" onClick={() => router.push('/dashboard?tab=clients')}>
           <ArrowLeft className="h-4 w-4" />
         </Button>
         <h1 className="text-3xl font-bold font-headline">{isNewClient ? 'Create New Client' : form.getValues('name')}</h1>
       </div>
 
-      <Card>
+      <Card className='bg-card/50 backdrop-blur-sm'>
         <CardHeader>
           <CardTitle>Client Information</CardTitle>
           <CardDescription>Manage the contact and address details for this client.</CardDescription>
@@ -216,7 +216,7 @@ export default function ClientProfilePage() {
       </Card>
 
       {!isNewClient && (
-        <Card>
+        <Card className='bg-card/50 backdrop-blur-sm'>
           <CardHeader>
             <CardTitle>Associated Documents</CardTitle>
             <CardDescription>All invoices and estimates related to {form.getValues('name')}.</CardDescription>
