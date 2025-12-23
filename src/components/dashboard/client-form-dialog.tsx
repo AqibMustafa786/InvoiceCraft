@@ -126,10 +126,10 @@ export function ClientFormDialog({ open, onOpenChange, client, onSave }: ClientF
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[480px]">
+      <DialogContent className="sm:max-w-[480px] bg-card/95 backdrop-blur-sm">
         <DialogHeader>
           <DialogTitle className="text-xl">{isNewClient ? 'Create New Client' : 'Edit Client'}</DialogTitle>
-          <DialogDescription className="text-accent">
+          <DialogDescription>
             {isNewClient ? 'Add a new client to your records.' : `Editing ${client?.name}.`}
           </DialogDescription>
         </DialogHeader>
