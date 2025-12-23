@@ -705,7 +705,7 @@ export default function DashboardPage() {
                 onClose={() => setHistoryModalState({ isOpen: false, auditLog: [] })}
                 auditLog={historyModalState.auditLog}
             />
-            <div className="space-y-8">
+            <div className="space-y-6">
                 <FilterSheet
                     open={isFilterSheetOpen}
                     onOpenChange={setIsFilterSheetOpen}
@@ -730,7 +730,7 @@ export default function DashboardPage() {
                 </AlertDialog>
 
                 <motion.div 
-                    className="mb-8"
+                    className="mb-6"
                     variants={pageVariants}
                     initial="hidden"
                     animate="visible"
@@ -738,50 +738,48 @@ export default function DashboardPage() {
                     
                     <div className="flex justify-between items-center gap-4 flex-wrap">
                         <motion.div variants={pageVariants}>
-                            <h1 className="text-3xl font-bold font-headline">Dashboard</h1>
-                            <p className="text-muted-foreground">An overview of your financial documents and activities.</p>
+                            <h1 className="text-2xl font-bold font-headline">Dashboard</h1>
+                            <p className="text-muted-foreground text-sm">An overview of your financial documents and activities.</p>
                         </motion.div>
                     </div>
                 </motion.div>
 
                  <motion.div 
-                    className="mb-8"
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.2 }}
                  >
                     <Card className='bg-card/50 backdrop-blur-sm'>
                         <CardHeader>
-                            <CardTitle>Quick Actions</CardTitle>
-                            <CardDescription>Start creating a new document or add a new client.</CardDescription>
+                            <CardTitle className="text-lg">Quick Actions</CardTitle>
                         </CardHeader>
-                        <CardContent className="flex flex-wrap gap-4">
+                        <CardContent className="flex flex-wrap gap-2">
                             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.98 }}>
-                                <Button onClick={() => router.push('/dashboard/clients/new')} className="rounded-full">
+                                <Button size="sm" onClick={() => router.push('/dashboard/clients/new')} className="rounded-full">
                                     <Users className="mr-2 h-4 w-4" />
                                     Add Client
                                 </Button>
                             </motion.div>
                             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.98 }}>
-                                <Button onClick={handleCreateInvoice} variant="outline" className="rounded-full">
+                                <Button size="sm" onClick={handleCreateInvoice} variant="outline" className="rounded-full">
                                     <FilePlus2 className="mr-2 h-4 w-4" />
                                     New Invoice
                                 </Button>
                             </motion.div>
                              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.98 }}>
-                                <Button onClick={handleCreateEstimate} variant="outline" className="rounded-full">
+                                <Button size="sm" onClick={handleCreateEstimate} variant="outline" className="rounded-full">
                                     <FilePlus2 className="mr-2 h-4 w-4" />
                                     New Estimate
                                 </Button>
                             </motion.div>
                              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.98 }}>
-                                <Button onClick={handleCreateQuote} variant="outline" className="rounded-full">
+                                <Button size="sm" onClick={handleCreateQuote} variant="outline" className="rounded-full">
                                     <FileText className="mr-2 h-4 w-4" />
                                     New Quote
                                 </Button>
                             </motion.div>
                              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.98 }}>
-                                <Button onClick={() => router.push('/create-insurance')} variant="outline" className="rounded-full">
+                                <Button size="sm" onClick={() => router.push('/create-insurance')} variant="outline" className="rounded-full">
                                     <Shield className="mr-2 h-4 w-4" />
                                     New Insurance Doc
                                 </Button>
@@ -793,7 +791,7 @@ export default function DashboardPage() {
                 <motion.div initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.3, delay: 0.1 }}>
                     <div className="flex justify-between items-end mb-4">
                         <div className="flex items-center gap-2">
-                            <Button variant="outline" className='rounded-full' onClick={() => setIsFilterSheetOpen(true)}>
+                            <Button variant="outline" size="sm" className='rounded-full' onClick={() => setIsFilterSheetOpen(true)}>
                             <Filter className="mr-2 h-4 w-4" />
                             Filter
                             {activeFilterCount > 0 && (
