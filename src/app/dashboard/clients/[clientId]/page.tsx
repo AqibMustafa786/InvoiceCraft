@@ -36,6 +36,7 @@ import { HistoryModal } from '@/components/dashboard/history-modal';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { ClientInvoicePreview } from '@/components/invoice-preview';
+import { motion } from 'framer-motion';
 
 
 const currencySymbols: { [key: string]: string } = {
@@ -67,10 +68,10 @@ function ClientDashboardStats({ documents }: { documents: DocumentType[] }) {
 
   return (
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-      <Card><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Total Revenue</CardTitle><DollarSign className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent><div className="text-2xl font-bold">{symbol}{stats.totalRevenue.toFixed(2)}</div></CardContent></Card>
-      <Card><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Pending Amount</CardTitle><Clock className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent><div className="text-2xl font-bold">{symbol}{stats.pendingAmount.toFixed(2)}</div></CardContent></Card>
-      <Card><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Overdue Amount</CardTitle><FileWarning className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent><div className="text-2xl font-bold">{symbol}{stats.overdueAmount.toFixed(2)}</div></CardContent></Card>
-      <Card><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Total Invoices</CardTitle><Files className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent><div className="text-2xl font-bold">{stats.totalInvoices}</div></CardContent></Card>
+      <Card className="bg-card/50 backdrop-blur-sm shadow-lg transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-1"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Total Revenue</CardTitle><DollarSign className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent><div className="text-2xl font-bold">{symbol}{stats.totalRevenue.toFixed(2)}</div></CardContent></Card>
+      <Card className="bg-card/50 backdrop-blur-sm shadow-lg transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-1"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Pending Amount</CardTitle><Clock className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent><div className="text-2xl font-bold">{symbol}{stats.pendingAmount.toFixed(2)}</div></CardContent></Card>
+      <Card className="bg-card/50 backdrop-blur-sm shadow-lg transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-1"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Overdue Amount</CardTitle><FileWarning className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent><div className="text-2xl font-bold">{symbol}{stats.overdueAmount.toFixed(2)}</div></CardContent></Card>
+      <Card className="bg-card/50 backdrop-blur-sm shadow-lg transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-1"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Total Invoices</CardTitle><Files className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent><div className="text-2xl font-bold">{stats.totalInvoices}</div></CardContent></Card>
     </div>
   );
 }
@@ -164,7 +165,7 @@ function ClientCharts({ documents }: { documents: DocumentType[] }) {
 
   return (
     <div className="grid gap-4 md:grid-cols-2">
-       <Card>
+       <Card className="bg-card/50 backdrop-blur-sm shadow-lg transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-1">
         <CardHeader>
             <div className="flex justify-between items-center">
               <CardTitle>Revenue</CardTitle>
@@ -189,7 +190,7 @@ function ClientCharts({ documents }: { documents: DocumentType[] }) {
           </ChartContainer>
         </CardContent>
       </Card>
-      <Card>
+      <Card className="bg-card/50 backdrop-blur-sm shadow-lg transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-1">
         <CardHeader>
           <CardTitle>Invoice Status Breakdown</CardTitle>
         </CardHeader>
@@ -233,6 +234,16 @@ const processData = (data: any): any => {
         }
     }
     return processed;
+};
+
+const pageVariants = {
+  hidden: { opacity: 0, y: -10 },
+  visible: { opacity: 1, y: 0, transition: { staggerChildren: 0.1, duration: 0.3 } },
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 10 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.3, ease: 'easeOut' } },
 };
 
 
@@ -375,7 +386,12 @@ export default function ClientPage() {
   }
   
   return (
-    <div className="space-y-6">
+    <motion.div 
+      className="space-y-6"
+      variants={pageVariants}
+      initial="hidden"
+      animate="visible"
+    >
        <ClientFormDialog
             open={isClientDialogOpen}
             onOpenChange={setIsClientDialogOpen}
@@ -402,14 +418,14 @@ export default function ClientPage() {
             </AlertDialogContent>
         </AlertDialog>
 
-       <div className="flex justify-between items-start">
+       <motion.div variants={itemVariants} className="flex justify-between items-start">
          <Button variant="outline" onClick={() => router.push('/dashboard?tab=clients')}>
             <ArrowLeft className="mr-2 h-4 w-4" />
             Back to All Clients
         </Button>
-       </div>
-      <div className="grid gap-6 lg:grid-cols-3">
-        <Card className="lg:col-span-1">
+       </motion.div>
+      <motion.div variants={itemVariants} className="grid gap-6 lg:grid-cols-3">
+        <Card className="lg:col-span-1 bg-card/50 backdrop-blur-sm shadow-lg">
           <CardHeader className="flex flex-row items-start gap-4 space-y-0">
              <Avatar className="h-20 w-20">
                 <AvatarImage src={client.avatarUrl || ''} alt={client.name} />
@@ -446,12 +462,13 @@ export default function ClientPage() {
             </div>
           </CardContent>
         </Card>
-        <div className="lg:col-span-2 space-y-6">
+        <motion.div variants={itemVariants} className="lg:col-span-2 space-y-6">
             <ClientDashboardStats documents={allDocuments} />
-        </div>
-      </div>
+        </motion.div>
+      </motion.div>
       
-       <Card>
+       <motion.div variants={itemVariants}>
+        <Card className="bg-card/50 backdrop-blur-sm shadow-lg">
             <CardHeader>
                 <CardTitle className="text-base">Quick Actions</CardTitle>
             </CardHeader>
@@ -474,16 +491,20 @@ export default function ClientPage() {
                 </Button>
             </CardContent>
         </Card>
+       </motion.div>
       
-      <ClientCharts documents={allDocuments} />
+      <motion.div variants={itemVariants}>
+        <ClientCharts documents={allDocuments} />
+      </motion.div>
 
+      <motion.div variants={itemVariants}>
       <Tabs defaultValue="invoices">
         <TabsList>
           <TabsTrigger value="invoices">Invoices</TabsTrigger>
           <TabsTrigger value="estimates">Estimates</TabsTrigger>
         </TabsList>
         <TabsContent value="invoices">
-           <Card>
+           <Card className="bg-card/50 backdrop-blur-sm shadow-lg">
             <CardHeader><CardTitle>Invoices</CardTitle></CardHeader>
             <CardContent>
                  <Table>
@@ -580,7 +601,7 @@ export default function ClientPage() {
            </Card>
         </TabsContent>
         <TabsContent value="estimates">
-             <Card>
+             <Card className="bg-card/50 backdrop-blur-sm shadow-lg">
             <CardHeader><CardTitle>Estimates</CardTitle></CardHeader>
             <CardContent>
                   <Table>
@@ -600,8 +621,10 @@ export default function ClientPage() {
            </Card>
         </TabsContent>
       </Tabs>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 }
+
 
 
