@@ -3,7 +3,7 @@
 
 import { useMemo, useState } from 'react';
 import { useAuth } from '@/context/auth-provider';
-import { useCollection } from '@/firebase';
+import { useCollection, useFirebase } from '@/firebase';
 import { collection, query } from 'firebase/firestore';
 import type { Invoice, Client } from '@/lib/types';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -31,16 +31,17 @@ const safeFormat = (date: any, formatString: string) => {
 
 export default function AnalyticsPage() {
   const { user, userProfile } = useAuth();
+  const { firestore } = useFirebase();
   const [revenueRange, setRevenueRange] = useState<'monthly' | 'yearly'>('monthly');
 
   const companyId = userProfile?.companyId;
 
   const { data: invoices, isLoading: isLoadingInvoices } = useCollection<Invoice>(
-    companyId ? query(collection(userProfile.firestore, 'companies', companyId, 'invoices')) : null
+    companyId && firestore ? query(collection(firestore, 'companies', companyId, 'invoices')) : null
   );
 
   const { data: clients, isLoading: isLoadingClients } = useCollection<Client>(
-    companyId ? query(collection(userProfile.firestore, 'companies', companyId, 'clients')) : null
+    companyId && firestore ? query(collection(firestore, 'companies', companyId, 'clients')) : null
   );
 
   const analyticsData = useMemo(() => {
