@@ -8,12 +8,14 @@ import { collection, query } from 'firebase/firestore';
 import type { Invoice, Client } from '@/lib/types';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis, Tooltip, ResponsiveContainer, Legend } from 'recharts';
-import { DollarSign, Clock, AlertTriangle, Users, ArrowDown, ArrowUp } from 'lucide-react';
+import { DollarSign, Clock, AlertTriangle, Users, ArrowLeft } from 'lucide-react';
 import { format, subYears, eachMonthOfInterval, startOfYear, isValid, isAfter } from 'date-fns';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Button } from '@/components/ui/button';
+import { useRouter } from 'next/navigation';
 
 const currencySymbols: { [key: string]: string } = {
   USD: '$', EUR: '€', GBP: '£', JPY: '¥', PKR: '₨',
@@ -30,9 +32,10 @@ const safeFormat = (date: any, formatString: string) => {
 }
 
 export default function AnalyticsPage() {
-  const { user, userProfile } = useAuth();
+  const { userProfile } = useAuth();
   const { firestore } = useFirebase();
   const [revenueRange, setRevenueRange] = useState<'monthly' | 'yearly'>('monthly');
+  const router = useRouter();
 
   const companyId = userProfile?.companyId;
 
@@ -161,6 +164,12 @@ export default function AnalyticsPage() {
 
   return (
     <div className="space-y-6">
+      <div className="flex justify-between items-start">
+         <Button variant="outline" onClick={() => router.push('/dashboard')}>
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            Back to Dashboard
+        </Button>
+       </div>
       <h1 className="text-3xl font-bold font-headline">Analytics</h1>
       
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
