@@ -60,7 +60,7 @@ export function Greeting() {
       variants={containerVariants}
       initial="hidden"
       animate="visible"
-      className="py-4 mb-4 text-3xl font-bold font-headline flex justify-start flex-wrap gap-1.5"
+      className="py-4 mb-4 text-2xl font-bold font-headline flex justify-start flex-wrap gap-1.5"
     >
       {greeting.split(' ').map((word, index) => (
         <motion.span
