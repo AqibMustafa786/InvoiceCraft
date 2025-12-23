@@ -12,7 +12,7 @@ import { Bar, BarChart, CartesianGrid, Legend, Pie, PieChart, ResponsiveContaine
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Mail, Phone, Edit, ArrowLeft, DollarSign, Clock, FileWarning, Files, XCircle } from 'lucide-react';
+import { Mail, Phone, Edit, ArrowLeft, DollarSign, Clock, FileWarning, Files, XCircle, FilePlus2, FileText, Shield } from 'lucide-react';
 import Link from 'next/link';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -20,6 +20,7 @@ import { format, subYears, eachMonthOfInterval, startOfMonth } from 'date-fns';
 import { Badge } from '@/components/ui/badge';
 import { ChartContainer, ChartTooltip, ChartTooltipContent, type ChartConfig, ChartLegend, ChartLegendContent } from '@/components/ui/chart';
 import { ClientFormDialog } from '@/components/dashboard/client-form-dialog';
+import { useToast } from '@/hooks/use-toast';
 
 const currencySymbols: { [key: string]: string } = {
   USD: '$', EUR: '€', GBP: '£', JPY: '¥', PKR: '₨',
@@ -175,6 +176,7 @@ export default function ClientPage() {
   const { userProfile } = useAuth();
   const params = useParams();
   const router = useRouter();
+  const { toast } = useToast();
   const { clientId } = params;
   const [isClientDialogOpen, setIsClientDialogOpen] = useState(false);
 
@@ -202,6 +204,38 @@ export default function ClientPage() {
   const client = useMemo(() => processData(rawClient), [rawClient]);
 
   const allDocuments: DocumentType[] = [...(invoices || []), ...(estimates || [])];
+
+  const handleCreateDocument = (docType: 'invoice' | 'estimate' | 'quote' | 'insurance') => {
+    if (!client) return;
+
+    // Check plan limits
+    const isBusinessPlan = userProfile?.plan === 'business';
+    if (docType === 'invoice' && !isBusinessPlan && (invoices?.length || 0) >= 5) {
+        toast({ title: "Free Plan Limit Reached", description: "Upgrade to create unlimited invoices.", variant: "destructive" });
+        router.push('/pricing');
+        return;
+    }
+    if (docType === 'estimate' && !isBusinessPlan && (estimates?.length || 0) >= 3) {
+        toast({ title: "Free Plan Limit Reached", description: "Upgrade to create unlimited estimates.", variant: "destructive" });
+        router.push('/pricing');
+        return;
+    }
+    if ((docType === 'quote' || docType === 'insurance') && !isBusinessPlan) {
+        toast({ title: "Upgrade Required", description: `Creating ${docType}s is a Business Plan feature.`, variant: "destructive" });
+        router.push('/pricing');
+        return;
+    }
+    
+    const queryParams = new URLSearchParams({
+        clientId: client.id,
+        clientName: client.name,
+        clientAddress: client.address,
+        clientEmail: client.email,
+        clientPhone: client.phone || '',
+    });
+    router.push(`/create-${docType}?${queryParams.toString()}`);
+  }
+
 
   if (isClientLoading || isInvoicesLoading || isEstimatesLoading) {
     return <div>Loading client data...</div>;
@@ -250,6 +284,30 @@ export default function ClientPage() {
             <ClientDashboardStats documents={allDocuments} />
         </div>
       </div>
+      
+       <Card>
+            <CardHeader>
+                <CardTitle className="text-base">Quick Actions</CardTitle>
+            </CardHeader>
+            <CardContent className="flex flex-wrap items-center gap-2">
+                <Button size="sm" onClick={() => handleCreateDocument('invoice')} variant="outline" className="rounded-full">
+                    <FilePlus2 className="mr-2 h-3 w-3" />
+                    New Invoice
+                </Button>
+                <Button size="sm" onClick={() => handleCreateDocument('estimate')} variant="outline" className="rounded-full">
+                    <FilePlus2 className="mr-2 h-3 w-3" />
+                    New Estimate
+                </Button>
+                <Button size="sm" onClick={() => handleCreateDocument('quote')} variant="outline" className="rounded-full">
+                    <FileText className="mr-2 h-3 w-3" />
+                    New Quote
+                </Button>
+                <Button size="sm" onClick={() => handleCreateDocument('insurance')} variant="outline" className="rounded-full">
+                    <Shield className="mr-2 h-3 w-3" />
+                    New Insurance Doc
+                </Button>
+            </CardContent>
+        </Card>
       
       <ClientCharts documents={allDocuments} />
 
@@ -302,4 +360,5 @@ export default function ClientPage() {
     </div>
   );
 }
+
 

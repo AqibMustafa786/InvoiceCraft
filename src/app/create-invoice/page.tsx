@@ -1,9 +1,10 @@
 
+
 'use client';
 
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { createPortal } from 'react-dom';
-import type { Invoice, LineItem, AuditLogEntry } from '@/lib/types';
+import type { Invoice, LineItem, AuditLogEntry, Client } from '@/lib/types';
 import { InvoiceForm } from '@/components/invoice-form';
 import { ClientInvoicePreview } from '@/components/invoice-preview';
 import { Button } from '@/components/ui/button';
@@ -28,6 +29,7 @@ import { useAuth } from '@/context/auth-provider';
 import { motion } from 'framer-motion';
 
 const INVOICES_COLLECTION = 'invoices';
+const CLIENTS_COLLECTION = 'clients';
 
 const getInitialLineItem = (): LineItem => ({ id: crypto.randomUUID(), name: '', quantity: 1, unitPrice: 0, taxable: false });
 
@@ -360,6 +362,7 @@ export default function CreateInvoicePage() {
   const { user, userProfile, isLoading: isAuthLoading } = useAuth();
 
   const draftId = searchParams.get('draftId');
+  const prefillClientId = searchParams.get('clientId');
   const companyId = userProfile?.companyId;
 
   const docRef = useMemoFirebase(() => {
@@ -367,12 +370,18 @@ export default function CreateInvoicePage() {
     return doc(firestore, 'companies', companyId, INVOICES_COLLECTION, draftId);
   }, [draftId, firestore, companyId]);
 
+  const clientRef = useMemoFirebase(() => {
+    if (!prefillClientId || !firestore || !companyId) return null;
+    return doc(firestore, 'companies', companyId, CLIENTS_COLLECTION, prefillClientId);
+  }, [prefillClientId, firestore, companyId]);
+
   const companyDocRef = useMemoFirebase(() => {
     if (!firestore || !companyId) return null;
     return doc(firestore, 'companies', companyId);
   }, [firestore, companyId]);
 
   const { data: remoteDraft, isLoading: isDraftLoading } = useDoc<Invoice>(docRef);
+  const { data: prefillClient, isLoading: isClientLoading } = useDoc<Client>(clientRef);
   const { data: companyData, isLoading: isCompanyLoading } = useDoc(companyDocRef);
 
   const computeSummary = useCallback((inv: Invoice): Invoice => {
@@ -401,7 +410,7 @@ export default function CreateInvoicePage() {
   }, [invoice, computeSummary]);
 
   useEffect(() => {
-    if (isAuthLoading || (draftId && isDraftLoading) || isCompanyLoading) return;
+    if (isAuthLoading || (draftId && isDraftLoading) || (prefillClientId && isClientLoading) || isCompanyLoading) return;
     if (!user || !userProfile) {
         router.push('/login');
         return;
@@ -490,6 +499,28 @@ export default function CreateInvoicePage() {
             companyId: companyId || '',
             auditLog: [newAuditLogEntry]
         };
+
+        if (prefillClient) {
+          initialInvoice.client = {
+            clientId: prefillClient.id,
+            name: prefillClient.name,
+            companyName: prefillClient.companyName,
+            address: prefillClient.address,
+            phone: prefillClient.phone || '',
+            email: prefillClient.email,
+            shippingAddress: prefillClient.shippingAddress,
+          };
+        } else if (prefillClientId) {
+          initialInvoice.client = {
+            clientId: prefillClientId,
+            name: searchParams.get('clientName') || '',
+            address: searchParams.get('clientAddress') || '',
+            email: searchParams.get('clientEmail') || '',
+            phone: searchParams.get('clientPhone') || '',
+            companyName: '',
+            shippingAddress: '',
+          }
+        }
     }
     
     setInvoice(initialInvoice);
@@ -503,7 +534,7 @@ export default function CreateInvoicePage() {
            setAccentColor(`hsl(${computedColor})`);
         }
     }
-  }, [draftId, remoteDraft, isDraftLoading, user, userProfile, isAuthLoading, companyId, router, firestore, companyData, isCompanyLoading]);
+  }, [draftId, remoteDraft, isDraftLoading, prefillClientId, prefillClient, isClientLoading, user, userProfile, isAuthLoading, companyId, router, firestore, companyData, isCompanyLoading, searchParams]);
   
   const serializedInvoice = useMemo(() => invoice ? JSON.stringify(invoice) : '', [invoice]);
 
@@ -751,6 +782,4 @@ export default function CreateInvoicePage() {
     </>
   );
 }
-    
-
     

@@ -1,9 +1,10 @@
 
+
 'use client';
 
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { createPortal } from 'react-dom';
-import type { InsuranceDocument, LineItem, AuditLogEntry } from '@/lib/types';
+import type { InsuranceDocument, LineItem, AuditLogEntry, Client } from '@/lib/types';
 import { InsuranceForm } from '@/components/insurance-form';
 import { InsurancePreview } from '@/components/insurance-preview';
 import { Button } from '@/components/ui/button';
@@ -30,6 +31,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { HistoryModal } from '@/components/dashboard/history-modal';
 
 const INSURANCE_COLLECTION = 'insurance';
+const CLIENTS_COLLECTION = 'clients';
 
 const getInitialLineItem = (): LineItem => ({ id: crypto.randomUUID(), name: 'Premium', quantity: 1, rate: 1200, unitPrice: 1200 });
 
@@ -231,6 +233,7 @@ export default function CreateInsurancePage() {
   const [historyModalState, setHistoryModalState] = useState<{ isOpen: boolean, auditLog: AuditLogEntry[]}>({isOpen: false, auditLog: []});
 
   const draftId = searchParams.get('draftId');
+  const prefillClientId = searchParams.get('clientId');
   const companyId = userProfile?.companyId;
 
   const docRef = useMemoFirebase(() => {
@@ -238,10 +241,16 @@ export default function CreateInsurancePage() {
     return doc(firestore, 'companies', companyId, INSURANCE_COLLECTION, draftId as string);
   }, [draftId, firestore, companyId]);
 
+  const clientRef = useMemoFirebase(() => {
+    if (!prefillClientId || !firestore || !companyId) return null;
+    return doc(firestore, 'companies', companyId, CLIENTS_COLLECTION, prefillClientId);
+  }, [prefillClientId, firestore, companyId]);
+
   const { data: remoteDraft, isLoading: isDraftLoading } = useDoc<InsuranceDocument>(docRef);
+  const { data: prefillClient, isLoading: isClientLoading } = useDoc<Client>(clientRef);
 
   useEffect(() => {
-    if (isAuthLoading || (draftId && isDraftLoading)) return;
+    if (isAuthLoading || (draftId && isDraftLoading) || (prefillClientId && isClientLoading)) return;
     if (!user || !userProfile) {
         router.push('/login');
         return;
@@ -291,6 +300,26 @@ export default function CreateInsurancePage() {
             companyId: userProfile.companyId,
             auditLog: [newAuditLogEntry]
         };
+
+        if (prefillClient) {
+          initialDocument.policyHolder = {
+            clientId: prefillClient.id,
+            name: prefillClient.name,
+            companyName: prefillClient.companyName,
+            address: prefillClient.address,
+            phone: prefillClient.phone || '',
+            email: prefillClient.email,
+          };
+        } else if (prefillClientId) {
+          initialDocument.policyHolder = {
+            clientId: prefillClientId,
+            name: searchParams.get('clientName') || '',
+            address: searchParams.get('clientAddress') || '',
+            email: searchParams.get('clientEmail') || '',
+            phone: searchParams.get('clientPhone') || '',
+            companyName: '',
+          }
+        }
     }
     
     setDocument(initialDocument);
@@ -302,7 +331,7 @@ export default function CreateInsurancePage() {
            setAccentColor(`hsl(${computedColor})`);
         }
     }
-  }, [draftId, remoteDraft, isDraftLoading, user, userProfile, isAuthLoading, firestore, router]);
+  }, [draftId, remoteDraft, isDraftLoading, prefillClientId, prefillClient, isClientLoading, user, userProfile, isAuthLoading, firestore, router, searchParams]);
   
   const handleHistoryClick = (auditLog?: AuditLogEntry[]) => {
       const sortedLog = (auditLog || []).sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
@@ -363,6 +392,10 @@ export default function CreateInsurancePage() {
       id: newId,
       userId: user.uid, 
       companyId: companyId,
+      policyHolder: {
+        ...document.policyHolder,
+        clientId: document.policyHolder.clientId,
+      },
       updatedAt: Timestamp.now(),
       auditLog: updatedAuditLog.map(log => ({ ...log, timestamp: safeTimestamp(log.timestamp) })),
       documentDate: safeTimestamp(document.documentDate),
@@ -569,3 +602,4 @@ export default function CreateInsurancePage() {
     </>
   );
 }
+

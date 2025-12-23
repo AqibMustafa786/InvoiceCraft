@@ -1,9 +1,10 @@
 
+
 'use client';
 
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { createPortal } from 'react-dom';
-import type { Estimate, LineItem, Quote, AuditLogEntry } from '@/lib/types';
+import type { Estimate, LineItem, Quote, AuditLogEntry, Client } from '@/lib/types';
 import { DocumentForm } from '@/components/document-form';
 import { ClientDocumentPreview } from '@/components/document-preview';
 import { Button } from '@/components/ui/button';
@@ -29,6 +30,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/co
 import { Skeleton } from '@/components/ui/skeleton';
 
 const ESTIMATES_COLLECTION = 'estimates';
+const CLIENTS_COLLECTION = 'clients';
 
 const getInitialLineItem = (): LineItem => ({ id: crypto.randomUUID(), name: '', quantity: 1, unitPrice: 0, taxable: false });
 
@@ -298,6 +300,7 @@ export default function CreateEstimatePage() {
   const searchParams = useSearchParams();
   
   const draftId = searchParams.get('draftId');
+  const prefillClientId = searchParams.get('clientId');
   const companyId = userProfile?.companyId;
 
   const docRef = useMemoFirebase(() => {
@@ -305,7 +308,13 @@ export default function CreateEstimatePage() {
     return doc(firestore, 'companies', companyId, ESTIMATES_COLLECTION, draftId);
   }, [draftId, firestore, companyId]);
 
+  const clientRef = useMemoFirebase(() => {
+    if (!prefillClientId || !firestore || !companyId) return null;
+    return doc(firestore, 'companies', companyId, CLIENTS_COLLECTION, prefillClientId);
+  }, [prefillClientId, firestore, companyId]);
+
   const { data: remoteDraft, isLoading: isDraftLoading } = useDoc<Estimate>(docRef);
+  const { data: prefillClient, isLoading: isClientLoading } = useDoc<Client>(clientRef);
 
   const computeSummary = useCallback((est: Estimate | Quote): Estimate | Quote => {
     const subtotal = est.lineItems.reduce((acc, item) => acc + (Number(item.quantity) || 0) * (Number(item.unitPrice) || 0), 0);
@@ -333,7 +342,7 @@ export default function CreateEstimatePage() {
   }, [document, computeSummary]);
 
   useEffect(() => {
-    if (isAuthLoading || (draftId && isDraftLoading)) return;
+    if (isAuthLoading || (draftId && isDraftLoading) || (prefillClientId && isClientLoading)) return;
     if (!user || !userProfile) {
         router.push('/login');
         return;
@@ -402,12 +411,34 @@ export default function CreateEstimatePage() {
             companyId: companyId || '',
             auditLog: [newAuditLogEntry]
         };
+
+        if (prefillClient) {
+          initialDocument.client = {
+            clientId: prefillClient.id,
+            name: prefillClient.name,
+            companyName: prefillClient.companyName,
+            address: prefillClient.address,
+            phone: prefillClient.phone || '',
+            email: prefillClient.email,
+            projectLocation: '',
+          };
+        } else if (prefillClientId) {
+          initialDocument.client = {
+            clientId: prefillClientId,
+            name: searchParams.get('clientName') || '',
+            address: searchParams.get('clientAddress') || '',
+            email: searchParams.get('clientEmail') || '',
+            phone: searchParams.get('clientPhone') || '',
+            companyName: '',
+            projectLocation: '',
+          }
+        }
     }
     
     setDocument(initialDocument);
     setOriginalDocument(JSON.parse(JSON.stringify(initialDocument)));
 
-  }, [draftId, remoteDraft, isDraftLoading, user, userProfile, isAuthLoading, companyId, firestore, router]);
+  }, [draftId, remoteDraft, isDraftLoading, prefillClientId, prefillClient, isClientLoading, user, userProfile, isAuthLoading, companyId, firestore, router, searchParams]);
 
 
   useEffect(() => {
@@ -703,6 +734,4 @@ export default function CreateEstimatePage() {
     </>
   );
 }
-    
-
     
