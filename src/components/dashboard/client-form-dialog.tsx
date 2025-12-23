@@ -19,6 +19,7 @@ import { Save, Loader2, UploadCloud } from 'lucide-react';
 import type { Client } from '@/lib/types';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
+import { Label } from '@/components/ui/label';
 
 const CLIENTS_COLLECTION = 'clients';
 
@@ -237,3 +238,4 @@ export function ClientFormDialog({ open, onOpenChange, client, onSave }: ClientF
     </Dialog>
   );
 }
+
