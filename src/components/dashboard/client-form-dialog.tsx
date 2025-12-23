@@ -16,6 +16,7 @@ import { useFirebase } from '@/firebase';
 import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
 import { Save, Loader2 } from 'lucide-react';
 import type { Client } from '@/lib/types';
+import { Label } from '@/components/ui/label';
 
 const CLIENTS_COLLECTION = 'clients';
 
