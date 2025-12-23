@@ -61,7 +61,7 @@ export function Greeting() {
       variants={containerVariants}
       initial="hidden"
       animate="visible"
-      className="py-4 mb-2 text-lg font-semibold flex items-center"
+      className="mb-2 text-lg font-semibold flex items-center"
     >
       {greeting.split(' ').map((word, index) => (
         <motion.span
