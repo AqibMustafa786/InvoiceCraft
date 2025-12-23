@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -60,13 +61,13 @@ export function Greeting() {
       variants={containerVariants}
       initial="hidden"
       animate="visible"
-      className="py-4 mb-2 text-xl font-bold font-headline flex justify-start flex-wrap gap-1.5"
+      className="py-4 mb-2 text-lg font-semibold flex items-center"
     >
       {greeting.split(' ').map((word, index) => (
         <motion.span
           key={index}
           variants={wordVariants}
-          style={{ display: 'inline-block' }}
+          className="mr-1.5"
         >
           {word}
         </motion.span>

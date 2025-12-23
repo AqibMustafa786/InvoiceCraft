@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import { useState, useMemo, useCallback } from 'react';
@@ -566,12 +567,12 @@ export default function DashboardPage() {
             <Table>
                 <TableHeader>
                     <TableRow>
-                        <TableHead>Number</TableHead>
-                        <TableHead>Client</TableHead>
-                        <TableHead>Amount</TableHead>
-                        <TableHead>Status</TableHead>
-                        <TableHead className="text-center">History</TableHead>
-                        <TableHead className="text-right">Actions</TableHead>
+                        <TableHead className="text-xs">Number</TableHead>
+                        <TableHead className="text-xs">Client</TableHead>
+                        <TableHead className="text-xs">Amount</TableHead>
+                        <TableHead className="text-xs">Status</TableHead>
+                        <TableHead className="text-center text-xs">History</TableHead>
+                        <TableHead className="text-right text-xs">Actions</TableHead>
                     </TableRow>
                 </TableHeader>
                 <motion.tbody
@@ -618,13 +619,13 @@ export default function DashboardPage() {
                             className="transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted"
                             as={TableRow}
                         >
-                            <TableCell className="font-medium">{docNumber}</TableCell>
-                            <TableCell>{clientName}</TableCell>
-                            <TableCell>{currencySymbols[(doc as any).currency] || '$'}{calculateTotal(doc).toFixed(2)}</TableCell>
+                            <TableCell className="font-medium text-xs">{docNumber}</TableCell>
+                            <TableCell className="text-xs">{clientName}</TableCell>
+                            <TableCell className="text-xs">{currencySymbols[(doc as any).currency] || '$'}{calculateTotal(doc).toFixed(2)}</TableCell>
                             <TableCell>
                                 <DropdownMenu>
                                     <DropdownMenuTrigger asChild>
-                                        <Button variant="outline" className="capitalize w-28 justify-start rounded-full">
+                                        <Button variant="outline" className="capitalize w-24 justify-start rounded-full h-7 text-xs">
                                             <Badge variant={getStatusVariant(doc.status)} className="w-full justify-center rounded-full">{doc.status}</Badge>
                                         </Button>
                                     </DropdownMenuTrigger>
@@ -634,7 +635,7 @@ export default function DashboardPage() {
                                                 key={status}
                                                 disabled={doc.status === status}
                                                 onClick={() => handleStatusChange(doc.id, docCollection, status)}
-                                                className="capitalize"
+                                                className="capitalize text-xs"
                                             >
                                                 {status}
                                             </DropdownMenuItem>
@@ -643,46 +644,46 @@ export default function DashboardPage() {
                                 </DropdownMenu>
                             </TableCell>
                              <TableCell className="text-center">
-                                <Button variant="ghost" size="icon" className="rounded-full" onClick={() => handleHistoryClick((doc as any).auditLog)}>
-                                    <History className="h-4 w-4" />
+                                <Button variant="ghost" size="icon" className="rounded-full h-7 w-7" onClick={() => handleHistoryClick((doc as any).auditLog)}>
+                                    <History className="h-3.5 w-3.5" />
                                 </Button>
                             </TableCell>
                             <TableCell className="text-right">
                                 <DropdownMenu>
                                     <DropdownMenuTrigger asChild>
-                                        <Button variant="ghost" size="icon" className="rounded-full">
-                                            <MoreHorizontal className="h-4 w-4" />
+                                        <Button variant="ghost" size="icon" className="rounded-full h-7 w-7">
+                                            <MoreHorizontal className="h-3.5 w-3.5" />
                                             <span className="sr-only">More actions</span>
                                         </Button>
                                     </DropdownMenuTrigger>
                                     <DropdownMenuContent align="end">
                                         <DropdownMenuItem asChild>
                                             <Link href={editUrl} className="cursor-pointer">
-                                                <Edit className="mr-2 h-4 w-4" />
-                                                <span>Edit</span>
+                                                <Edit className="mr-2 h-3.5 w-3.5" />
+                                                <span className="text-xs">Edit</span>
                                             </Link>
                                         </DropdownMenuItem>
                                         {(docType === 'estimate' || docType === 'quote') && (
                                             <>
                                                 <DropdownMenuItem onClick={() => handleShare(doc.id, doc.documentType as 'estimate' | 'quote')} className="cursor-pointer">
-                                                    <Share2 className="mr-2 h-4 w-4" />
-                                                    <span>Share Link</span>
+                                                    <Share2 className="mr-2 h-3.5 w-3.5" />
+                                                    <span className="text-xs">Share Link</span>
                                                 </DropdownMenuItem>
                                                 <DropdownMenuItem onClick={() => handleConvertToInvoice(doc as Estimate | Quote)} className="cursor-pointer">
-                                                    <FileText className="mr-2 h-4 w-4" />
-                                                    <span>Convert to Invoice</span>
+                                                    <FileText className="mr-2 h-3.5 w-3.5" />
+                                                    <span className="text-xs">Convert to Invoice</span>
                                                 </DropdownMenuItem>
                                             </>
                                         )}
                                          {docType === 'insurance' && (
                                             <DropdownMenuItem onClick={() => handleShare(doc.id, 'insurance')} className="cursor-pointer">
-                                                <Share2 className="mr-2 h-4 w-4" />
-                                                <span>Share COI</span>
+                                                <Share2 className="mr-2 h-3.5 w-3.5" />
+                                                <span className="text-xs">Share COI</span>
                                             </DropdownMenuItem>
                                          )}
                                         <DropdownMenuItem onClick={() => setDeleteCandidate({id: doc.id, collection: docCollection})} className="text-destructive cursor-pointer">
-                                            <Trash2 className="mr-2 h-4 w-4" />
-                                            <span>Delete</span>
+                                            <Trash2 className="mr-2 h-3.5 w-3.5" />
+                                            <span className="text-xs">Delete</span>
                                         </DropdownMenuItem>
                                     </DropdownMenuContent>
                                 </DropdownMenu>
@@ -703,31 +704,31 @@ export default function DashboardPage() {
 
     if (isLoading) {
         return (
-            <div className="container mx-auto p-4 md:p-8">
-                 <div className="flex justify-between items-center mb-8 gap-4 flex-wrap">
+            <div className="space-y-4">
+                 <div className="flex justify-between items-center mb-4 gap-4 flex-wrap">
                     <div>
-                        <Skeleton className="h-9 w-64 mb-2" />
-                        <Skeleton className="h-5 w-80" />
+                        <Skeleton className="h-8 w-48 mb-1" />
+                        <Skeleton className="h-4 w-72" />
                     </div>
                     <div className="flex gap-2">
-                        <Skeleton className="h-10 w-36 rounded-full" />
-                        <Skeleton className="h-10 w-36 rounded-full" />
+                        <Skeleton className="h-9 w-32 rounded-full" />
+                        <Skeleton className="h-9 w-32 rounded-full" />
                     </div>
                 </div>
-                 <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-8">
-                    <Skeleton className="h-28 w-full" />
-                    <Skeleton className="h-28 w-full" />
-                    <Skeleton className="h-28 w-full" />
-                    <Skeleton className="h-28 w-full" />
+                 <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-4">
+                    <Skeleton className="h-24 w-full" />
+                    <Skeleton className="h-24 w-full" />
+                    <Skeleton className="h-24 w-full" />
+                    <Skeleton className="h-24 w-full" />
                 </div>
                 <Card>
                     <CardHeader>
-                        <Skeleton className="h-10 w-full max-w-sm" />
+                        <Skeleton className="h-9 w-1/2" />
                     </CardHeader>
                     <CardContent>
                         <div className="space-y-2">
                             {[...Array(5)].map((_, i) => (
-                                <Skeleton key={i} className="h-12 w-full" />
+                                <Skeleton key={i} className="h-10 w-full" />
                             ))}
                         </div>
                     </CardContent>
@@ -750,7 +751,7 @@ export default function DashboardPage() {
                 onClose={() => setHistoryModalState({ isOpen: false, auditLog: [] })}
                 auditLog={historyModalState.auditLog}
             />
-            <div className="space-y-6">
+            <div className="space-y-4">
                 <FilterSheet
                     open={isFilterSheetOpen}
                     onOpenChange={setIsFilterSheetOpen}
@@ -775,15 +776,15 @@ export default function DashboardPage() {
                 </AlertDialog>
 
                 <motion.div 
-                    className="mb-6"
+                    className="mb-4"
                     variants={pageVariants}
                     initial="hidden"
                     animate="visible"
                 >
                      <div className="flex justify-between items-center gap-4 flex-wrap">
                         <motion.div variants={pageVariants}>
-                            <h1 className="text-2xl font-bold font-headline">Dashboard</h1>
-                            <p className="text-sm text-muted-foreground">An overview of your financial documents and activities.</p>
+                            <h1 className="text-xl font-bold font-headline">Dashboard</h1>
+                            <p className="text-xs text-muted-foreground">An overview of your financial documents and activities.</p>
                         </motion.div>
                     </div>
                 </motion.div>
@@ -798,36 +799,26 @@ export default function DashboardPage() {
                             <CardTitle className="text-base">Quick Actions</CardTitle>
                         </CardHeader>
                         <CardContent className="flex flex-wrap items-center gap-2">
-                            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.98 }}>
-                                <Button size="sm" onClick={() => router.push('/dashboard/clients/new')} className="rounded-full">
-                                    <Users className="mr-2 h-4 w-4" />
-                                    Add Client
-                                </Button>
-                            </motion.div>
-                            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.98 }}>
-                                <Button size="sm" onClick={handleCreateInvoice} variant="outline" className="rounded-full">
-                                    <FilePlus2 className="mr-2 h-4 w-4" />
-                                    New Invoice
-                                </Button>
-                            </motion.div>
-                             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.98 }}>
-                                <Button size="sm" onClick={handleCreateEstimate} variant="outline" className="rounded-full">
-                                    <FilePlus2 className="mr-2 h-4 w-4" />
-                                    New Estimate
-                                </Button>
-                            </motion.div>
-                             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.98 }}>
-                                <Button size="sm" onClick={handleCreateQuote} variant="outline" className="rounded-full">
-                                    <FileText className="mr-2 h-4 w-4" />
-                                    New Quote
-                                </Button>
-                            </motion.div>
-                             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.98 }}>
-                                <Button size="sm" onClick={() => router.push('/create-insurance')} variant="outline" className="rounded-full">
-                                    <Shield className="mr-2 h-4 w-4" />
-                                    New Insurance Doc
-                                </Button>
-                            </motion.div>
+                             <Button size="sm" onClick={() => router.push('/dashboard/clients/new')} className="rounded-full">
+                                <Users className="mr-2 h-4 w-4" />
+                                Add Client
+                            </Button>
+                            <Button size="sm" onClick={handleCreateInvoice} variant="outline" className="rounded-full">
+                                <FilePlus2 className="mr-2 h-4 w-4" />
+                                New Invoice
+                            </Button>
+                             <Button size="sm" onClick={handleCreateEstimate} variant="outline" className="rounded-full">
+                                <FilePlus2 className="mr-2 h-4 w-4" />
+                                New Estimate
+                            </Button>
+                             <Button size="sm" onClick={handleCreateQuote} variant="outline" className="rounded-full">
+                                <FileText className="mr-2 h-4 w-4" />
+                                New Quote
+                            </Button>
+                             <Button size="sm" onClick={() => router.push('/create-insurance')} variant="outline" className="rounded-full">
+                                <Shield className="mr-2 h-4 w-4" />
+                                New Insurance Doc
+                            </Button>
                             <div className="border-l ml-2 pl-4 flex items-center gap-2">
                                 <Button variant="outline" size="sm" className='rounded-full' onClick={() => setIsFilterSheetOpen(true)}>
                                 <Filter className="mr-2 h-4 w-4" />
@@ -849,7 +840,8 @@ export default function DashboardPage() {
                 <motion.div initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.3, delay: 0.1 }}>
                     {activeTab === 'invoices' && (
                         <Card className='bg-card/50 backdrop-blur-sm'>
-                            <CardContent className="pt-6">
+                            <CardHeader><CardTitle className="text-base">Invoices</CardTitle></CardHeader>
+                            <CardContent className="pt-0">
                                 <DashboardStatsGrid documents={filteredInvoices} docType="invoice" onKpiClick={handleKpiClick} />
                                 {renderTable(filteredInvoices, 'invoice')}
                             </CardContent>
@@ -857,7 +849,8 @@ export default function DashboardPage() {
                     )}
                     {activeTab === 'estimates' && (
                         <Card className='bg-card/50 backdrop-blur-sm'>
-                            <CardContent className="pt-6">
+                            <CardHeader><CardTitle className="text-base">Estimates</CardTitle></CardHeader>
+                            <CardContent className="pt-0">
                                 <DashboardStatsGrid documents={filteredEstimates} docType="estimate" onKpiClick={handleKpiClick} />
                                 {renderTable(filteredEstimates, 'estimate')}
                             </CardContent>
@@ -865,7 +858,8 @@ export default function DashboardPage() {
                     )}
                     {activeTab === 'quotes' && (
                         <Card className='bg-card/50 backdrop-blur-sm'>
-                            <CardContent className="pt-6">
+                           <CardHeader><CardTitle className="text-base">Quotes</CardTitle></CardHeader>
+                            <CardContent className="pt-0">
                                 <DashboardStatsGrid documents={filteredQuotes} docType="quote" onKpiClick={handleKpiClick} />
                                 {renderTable(filteredQuotes, 'quote')}
                             </CardContent>
@@ -873,7 +867,8 @@ export default function DashboardPage() {
                     )}
                      {activeTab === 'insurance' && (
                         <Card className='bg-card/50 backdrop-blur-sm'>
-                            <CardContent className="pt-6">
+                             <CardHeader><CardTitle className="text-base">Insurance</CardTitle></CardHeader>
+                            <CardContent className="pt-0">
                                 <DashboardStatsGrid documents={filteredInsurance} docType="insurance" onKpiClick={handleKpiClick} />
                                 {renderTable(filteredInsurance, 'insurance')}
                             </CardContent>
@@ -882,17 +877,17 @@ export default function DashboardPage() {
                     {activeTab === 'clients' && (
                          <Card className='bg-card/50 backdrop-blur-sm'>
                             <CardHeader>
-                                <CardTitle className="text-lg">Clients</CardTitle>
-                                <CardDescription>A list of all your clients. Click a client to view their profile and documents.</CardDescription>
+                                <CardTitle className="text-base">Clients</CardTitle>
+                                <CardDescription className="text-xs">A list of all your clients. Click a client to view their profile and documents.</CardDescription>
                             </CardHeader>
                             <CardContent>
                                 <Table>
                                     <TableHeader>
                                         <TableRow>
-                                            <TableHead>Name</TableHead>
-                                            <TableHead>Company</TableHead>
-                                            <TableHead>Email</TableHead>
-                                            <TableHead className="text-right">Actions</TableHead>
+                                            <TableHead className="text-xs">Name</TableHead>
+                                            <TableHead className="text-xs">Company</TableHead>
+                                            <TableHead className="text-xs">Email</TableHead>
+                                            <TableHead className="text-right text-xs">Actions</TableHead>
                                         </TableRow>
                                     </TableHeader>
                                     <TableBody>
@@ -902,9 +897,9 @@ export default function DashboardPage() {
                                                 className="cursor-pointer"
                                                 onClick={() => router.push(`/dashboard/clients/${client.id}`)}
                                             >
-                                                <TableCell className="font-medium">{client.name}</TableCell>
-                                                <TableCell>{client.companyName}</TableCell>
-                                                <TableCell>{client.email}</TableCell>
+                                                <TableCell className="font-medium text-xs">{client.name}</TableCell>
+                                                <TableCell className="text-xs">{client.companyName}</TableCell>
+                                                <TableCell className="text-xs">{client.email}</TableCell>
                                                 <TableCell className="text-right">
                                                      <Button variant="ghost" size="sm">View</Button>
                                                 </TableCell>
@@ -922,3 +917,4 @@ export default function DashboardPage() {
         </>
     );
 }
+
