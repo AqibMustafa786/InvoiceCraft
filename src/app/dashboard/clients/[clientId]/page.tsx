@@ -209,7 +209,7 @@ export default function ClientPage() {
         <Card className="lg:col-span-1">
           <CardHeader className="flex flex-row items-start gap-4 space-y-0">
              <Avatar className="h-20 w-20">
-                <AvatarImage src={client.avatarUrl} />
+                <AvatarImage src={client.avatarUrl || ''} />
                 <AvatarFallback>{client.name.charAt(0)}</AvatarFallback>
              </Avatar>
              <div className="flex-1">
@@ -282,3 +282,4 @@ export default function ClientPage() {
     </div>
   );
 }
+
