@@ -85,25 +85,25 @@ function ClientCharts({ documents }: { documents: DocumentType[] }) {
     });
 
     const data = last12Months.map(month => ({
-      name: format(month, 'MMM'),
+      name: format(month, 'MMM yy'),
       revenue: 0,
     }));
+    
+    const dataMap = new Map(data.map(d => [d.name, d]));
 
     invoiceData.forEach(invoice => {
-      if (invoice.status === 'paid' && invoice.invoiceDate) {
-        const monthIndex = new Date(invoice.invoiceDate).getMonth();
-        const year = new Date(invoice.invoiceDate).getFullYear();
-        const currentYear = new Date().getFullYear();
-        if(year === currentYear || year === currentYear - 1){
-            const monthName = format(new Date(invoice.invoiceDate), 'MMM');
-            const dataPoint = data.find(d => d.name === monthName);
-            if(dataPoint) dataPoint.revenue += invoice.summary.grandTotal;
+        const invoiceDate = invoice.invoiceDate ? (invoice.invoiceDate as any).toDate ? (invoice.invoiceDate as any).toDate() : new Date(invoice.invoiceDate) : null;
+        if (invoice.status === 'paid' && invoiceDate && isValid(invoiceDate)) {
+            const monthKey = format(invoiceDate, 'MMM yy');
+            if (dataMap.has(monthKey)) {
+                const dataPoint = dataMap.get(monthKey)!;
+                dataPoint.revenue += invoice.summary.grandTotal;
+            }
         }
-      }
     });
 
-    return data;
-  }, [invoiceData]);
+    return Array.from(dataMap.values());
+}, [invoiceData]);
 
   const statusBreakdown = useMemo(() => {
     const statuses: Record<string, number> = { paid: 0, sent: 0, overdue: 0, draft: 0 };
@@ -501,8 +501,8 @@ export default function ClientPage() {
                                                 <ClientInvoicePreview 
                                                   invoice={inv} 
                                                   accentColor={inv.accentColor || 'hsl(var(--primary))'}
-                                                  backgroundColor={inv.backgroundColor || 'hsl(var(--background))'}
-                                                  textColor={inv.textColor || 'hsl(var(--foreground))'}
+                                                  backgroundColor={inv.backgroundColor || '#FFFFFF'}
+                                                  textColor={inv.textColor || '#374151'}
                                                 />
                                              </div>
                                           </SheetContent>
@@ -551,10 +551,4 @@ export default function ClientPage() {
     </div>
   );
 }
-
-
-
-
-
-
 
