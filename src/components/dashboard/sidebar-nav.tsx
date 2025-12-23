@@ -46,9 +46,9 @@ export function SidebarNav() {
     return (
         <div className="flex flex-col h-full bg-card rounded-lg border">
             <ScrollArea className="flex-grow">
-                <div className="space-y-4 py-4">
+                <div className="space-y-2 py-4">
                     <div className="px-3 py-2">
-                         <h2 className="mb-2 px-4 text-lg font-semibold tracking-tight">
+                         <h2 className="mb-2 px-4 text-base font-semibold tracking-tight">
                              Dashboard
                          </h2>
                          <div className="space-y-1">
@@ -59,7 +59,7 @@ export function SidebarNav() {
                                       key={item.href + item.tab}
                                       asChild
                                       variant={isActive ? "secondary" : "ghost"} 
-                                      className={cn("w-full justify-start", isActive && "text-primary")}
+                                      className={cn("w-full justify-start text-sm h-9", isActive && "text-primary")}
                                     >
                                       <Link href={`${item.href}?tab=${item.tab}`}>
                                          <item.icon className="mr-2 h-4 w-4" />
@@ -71,7 +71,7 @@ export function SidebarNav() {
                          </div>
                     </div>
                      <div className="px-3 py-2">
-                         <h2 className="mb-2 px-4 text-lg font-semibold tracking-tight">
+                         <h2 className="mb-2 px-4 text-base font-semibold tracking-tight">
                              Pages
                          </h2>
                          <div className="space-y-1">
@@ -82,7 +82,7 @@ export function SidebarNav() {
                                       key={item.href}
                                       asChild
                                       variant={isActive ? "secondary" : "ghost"} 
-                                      className={cn("w-full justify-start", isActive && "text-primary")}
+                                      className={cn("w-full justify-start text-sm h-9", isActive && "text-primary")}
                                     >
                                       <Link href={item.href}>
                                          <item.icon className="mr-2 h-4 w-4" />
@@ -95,30 +95,30 @@ export function SidebarNav() {
                     </div>
                 </div>
             </ScrollArea>
-             <div className="mt-auto border-t p-4 space-y-2">
+             <div className="mt-auto border-t p-2 space-y-2">
                  {user && (
-                    <div className="flex items-center gap-3">
-                        <Avatar className="h-10 w-10">
+                    <div className="flex items-center gap-2 p-2">
+                        <Avatar className="h-8 w-8">
                             <AvatarImage src={user.photoURL || undefined} alt={user.displayName || user.email || 'User'} />
-                            <AvatarFallback>
+                            <AvatarFallback className="text-xs">
                                 {user.displayName?.charAt(0) || user.email?.charAt(0) || '?'}
                             </AvatarFallback>
                         </Avatar>
                         <div className="text-xs">
-                            <p className="font-bold">{user.displayName || user.email}</p>
+                            <p className="font-bold text-sm">{user.displayName || user.email}</p>
                             <p className="text-muted-foreground">{userProfile?.plan === 'business' ? 'Business Plan' : 'Free Plan'}</p>
                         </div>
                     </div>
                  )}
                  {userProfile?.plan === 'business' && (
-                     <Button asChild variant="outline" className="w-full justify-start">
+                     <Button asChild variant="outline" size="sm" className="w-full justify-start">
                         <Link href="/billing">
                             <CreditCard className="mr-2 h-4 w-4" />
                             Manage Billing
                         </Link>
                     </Button>
                  )}
-                <Button onClick={handleLogout} variant="ghost" className="w-full justify-start">
+                <Button onClick={handleLogout} variant="ghost" size="sm" className="w-full justify-start">
                     <LogOut className="mr-2 h-4 w-4" />
                     Logout
                 </Button>
