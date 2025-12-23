@@ -777,24 +777,9 @@ export default function DashboardPage() {
                                 <TableCell className="text-xs">{client.companyName}</TableCell>
                                 <TableCell className="text-xs">{client.email}</TableCell>
                                 <TableCell className="text-right">
-                                     <DropdownMenu>
-                                        <DropdownMenuTrigger asChild>
-                                            <Button variant="ghost" size="icon" className="rounded-full h-7 w-7">
-                                                <MoreHorizontal className="h-3.5 w-3.5" />
-                                                <span className="sr-only">Client Actions</span>
-                                            </Button>
-                                        </DropdownMenuTrigger>
-                                        <DropdownMenuContent align="end">
-                                            <DropdownMenuItem onClick={() => handleEditClient(client)} className="cursor-pointer">
-                                                <Edit className="mr-2 h-3.5 w-3.5" />
-                                                <span className="text-xs">Edit</span>
-                                            </DropdownMenuItem>
-                                             <DropdownMenuItem onClick={() => setDeleteCandidate({id: client.id, collection: CLIENTS_COLLECTION})} className="text-destructive cursor-pointer">
-                                                <Trash2 className="mr-2 h-3.5 w-3.5" />
-                                                <span className="text-xs">Delete</span>
-                                            </DropdownMenuItem>
-                                        </DropdownMenuContent>
-                                    </DropdownMenu>
+                                     <Button asChild variant="ghost" size="sm">
+                                        <Link href={`/dashboard/clients/${client.id}`}>View</Link>
+                                    </Button>
                                 </TableCell>
                             </TableRow>
                         )) : (
@@ -981,5 +966,6 @@ export default function DashboardPage() {
         </>
     );
 }
+
 
 
