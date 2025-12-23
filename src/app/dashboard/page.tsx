@@ -780,13 +780,12 @@ export default function DashboardPage() {
                     initial="hidden"
                     animate="visible"
                 >
-                    
-                    <div className="flex justify-between items-center gap-4 flex-wrap">
+                     <div className="flex justify-between items-center gap-4 flex-wrap">
                         <motion.div variants={pageVariants}>
                             <h1 className="text-2xl font-bold font-headline">Dashboard</h1>
                             <p className="text-muted-foreground text-sm">An overview of your financial documents and activities.</p>
                         </motion.div>
-                        <div className="flex items-center gap-2">
+                         <div className="flex items-center gap-2">
                             <Button variant="outline" size="sm" className='rounded-full' onClick={() => setIsFilterSheetOpen(true)}>
                             <Filter className="mr-2 h-4 w-4" />
                             Filter
@@ -809,7 +808,7 @@ export default function DashboardPage() {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.2 }}
                  >
-                    <Card className='bg-card/50 backdrop-blur-sm'>
+                     <Card className='bg-card/50 backdrop-blur-sm'>
                         <CardHeader>
                             <CardTitle className="text-lg">Quick Actions</CardTitle>
                         </CardHeader>
