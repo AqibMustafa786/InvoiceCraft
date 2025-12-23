@@ -26,28 +26,37 @@ export default function DashboardLayout({
     open: { width: '220px', transition: { type: 'spring', stiffness: 300, damping: 30 } },
     closed: { width: '56px', transition: { type: 'spring', stiffness: 300, damping: 30 } },
   };
+  
+  const buttonVariants = {
+      open: { left: '220px', x: '-50%', transition: { type: 'spring', stiffness: 300, damping: 30 } },
+      closed: { left: '56px', x: '-50%', transition: { type: 'spring', stiffness: 300, damping: 30 } },
+  }
 
   return (
-    <div className="px-4 md:px-8">
+    <div className="px-4 md:px-8 relative">
       <Greeting />
-        <div className="flex gap-x-8 mt-2">
+        <div className="flex gap-x-8 mt-2 relative">
             <motion.aside
               variants={sidebarVariants}
               animate={isSidebarOpen ? 'open' : 'closed'}
               className="relative"
             >
                 <SidebarNav isSidebarOpen={isSidebarOpen} />
-                 <div className="absolute bottom-4 left-0 right-0 flex justify-center">
-                    <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-                        className="rounded-full bg-secondary hover:bg-secondary/80"
-                    >
-                        {isSidebarOpen ? <PanelLeftClose className="h-4 w-4" /> : <PanelLeftOpen className="h-4 w-4" />}
-                    </Button>
-                </div>
             </motion.aside>
+             <motion.div
+                variants={buttonVariants}
+                animate={isSidebarOpen ? 'open' : 'closed'}
+                className="absolute top-0 z-10"
+              >
+                <Button
+                    variant="outline"
+                    size="icon"
+                    onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+                    className="rounded-full bg-background shadow-md border-border"
+                >
+                    {isSidebarOpen ? <PanelLeftClose className="h-4 w-4" /> : <PanelLeftOpen className="h-4 w-4" />}
+                </Button>
+            </motion.div>
             <main className="flex-1">{children}</main>
         </div>
     </div>
