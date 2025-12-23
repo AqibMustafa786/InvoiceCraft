@@ -899,10 +899,7 @@ export default function DashboardPage() {
                             </div>
                         </CardHeader>
                         <CardContent className="flex flex-wrap items-center gap-2 pt-0">
-                            <Button size="sm" onClick={handleAddClient} className="rounded-full">
-                                <Users className="mr-2 h-3 w-3" />
-                                Add Client
-                            </Button>
+                            
                             <Button size="sm" onClick={handleCreateInvoice} variant="outline" className="rounded-full">
                                 <FilePlus2 className="mr-2 h-3 w-3" />
                                 New Invoice
@@ -966,6 +963,7 @@ export default function DashboardPage() {
         </>
     );
 }
+
 
 
 
