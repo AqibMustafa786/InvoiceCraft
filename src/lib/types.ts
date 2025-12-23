@@ -77,6 +77,7 @@ export interface Client {
   website?: string;
   taxId?: string;
   notes?: string;
+  avatarUrl?: string;
   createdAt: any;
   updatedAt: any;
 }

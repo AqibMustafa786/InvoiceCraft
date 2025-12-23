@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, ChangeEvent } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -14,9 +14,9 @@ import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/context/auth-provider';
 import { useFirebase } from '@/firebase';
 import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
-import { Save } from 'lucide-react';
+import { Save, Loader2, UploadCloud } from 'lucide-react';
 import type { Client } from '@/lib/types';
-import { ScrollArea } from '../ui/scroll-area';
+import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 
 const CLIENTS_COLLECTION = 'clients';
 
@@ -30,6 +30,7 @@ const clientSchema = z.object({
   website: z.string().url({ message: "Please enter a valid URL." }).optional().or(z.literal('')),
   taxId: z.string().optional(),
   notes: z.string().optional(),
+  avatarUrl: z.string().url().optional(),
 });
 
 type ClientFormValues = z.infer<typeof clientSchema>;
@@ -46,6 +47,7 @@ export function ClientFormDialog({ open, onOpenChange, client, onSave }: ClientF
   const { firestore } = useFirebase();
   const { toast } = useToast();
   const [isSaving, setIsSaving] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
 
   const isNewClient = !client;
 
@@ -60,7 +62,8 @@ export function ClientFormDialog({ open, onOpenChange, client, onSave }: ClientF
       shippingAddress: '',
       website: '',
       taxId: '',
-      notes: ''
+      notes: '',
+      avatarUrl: '',
     }
   });
 
@@ -78,11 +81,57 @@ export function ClientFormDialog({ open, onOpenChange, client, onSave }: ClientF
           shippingAddress: '',
           website: '',
           taxId: '',
-          notes: ''
+          notes: '',
+          avatarUrl: '',
         });
       }
     }
   }, [client, open, form]);
+
+  const handleAvatarUpload = async (e: ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      if (file.size > 2 * 1024 * 1024) { // 2MB limit for avatars
+        toast({
+          title: "Image too large",
+          description: "Please upload an image smaller than 2MB.",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      setIsUploading(true);
+      const formData = new FormData();
+      formData.append('file', file);
+
+      try {
+        const response = await fetch('/api/upload', {
+          method: 'POST',
+          body: formData,
+        });
+
+        if (!response.ok) {
+          throw new Error('Upload failed');
+        }
+
+        const { url } = await response.json();
+        form.setValue('avatarUrl', url);
+        toast({
+          title: "Avatar Uploaded",
+          description: "The new avatar is ready to be saved.",
+        });
+      } catch (error) {
+        toast({
+          title: "Upload Failed",
+          description: "Could not upload the avatar. Please try again.",
+          variant: "destructive",
+        });
+      } finally {
+        setIsUploading(false);
+      }
+    }
+  };
+
 
   const onSubmit = async (data: ClientFormValues) => {
     setIsSaving(true);
@@ -137,6 +186,25 @@ export function ClientFormDialog({ open, onOpenChange, client, onSave }: ClientF
         <div className="max-h-[60vh] overflow-y-auto pr-6 -mr-6">
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                 <div className="flex items-center gap-4">
+                    <Avatar className="h-20 w-20">
+                      <AvatarImage src={form.watch('avatarUrl')} />
+                      <AvatarFallback className="text-2xl">
+                        {form.watch('name')?.charAt(0).toUpperCase()}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div className="flex-1 space-y-2">
+                        <Label>Profile Picture</Label>
+                        <Input id="avatar-upload" type="file" className="hidden" onChange={handleAvatarUpload} accept="image/png, image/jpeg, image/gif" disabled={isUploading}/>
+                        <Button asChild variant="outline" className="w-full">
+                           <label htmlFor="avatar-upload" className="cursor-pointer">
+                              {isUploading ? <Loader2 className="mr-2 h-4 w-4 animate-spin"/> : <UploadCloud className="mr-2 h-4 w-4"/>}
+                              {isUploading ? 'Uploading...' : 'Upload Picture'}
+                           </label>
+                        </Button>
+                    </div>
+                </div>
+
                 <FormField control={form.control} name="name" render={({ field }) => (
                   <FormItem><FormLabel>Full Name</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
                 )} />
@@ -172,8 +240,9 @@ export function ClientFormDialog({ open, onOpenChange, client, onSave }: ClientF
           <DialogClose asChild>
             <Button type="button" variant="outline">Cancel</Button>
           </DialogClose>
-          <Button type="submit" disabled={isSaving} onClick={form.handleSubmit(onSubmit)}>
-            <Save className="mr-2 h-4 w-4" /> {isSaving ? 'Saving...' : 'Save Client'}
+          <Button type="submit" disabled={isSaving || isUploading} onClick={form.handleSubmit(onSubmit)}>
+            {isSaving ? <Loader2 className="mr-2 h-4 w-4 animate-spin"/> : <Save className="mr-2 h-4 w-4" />}
+            {isSaving ? 'Saving...' : 'Save Client'}
           </Button>
         </DialogFooter>
       </DialogContent>
