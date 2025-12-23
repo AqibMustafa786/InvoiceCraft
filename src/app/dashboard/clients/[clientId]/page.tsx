@@ -34,8 +34,8 @@ import {
 } from "@/components/ui/alert-dialog";
 import { HistoryModal } from '@/components/dashboard/history-modal';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from '../ui/sheet';
-import { ClientInvoicePreview } from '../invoice-preview';
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
+import { ClientInvoicePreview } from '@/components/invoice-preview';
 
 
 const currencySymbols: { [key: string]: string } = {
@@ -546,6 +546,7 @@ export default function ClientPage() {
     </div>
   );
 }
+
 
 
 
