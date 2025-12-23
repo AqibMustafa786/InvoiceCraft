@@ -2,12 +2,12 @@
 'use client';
 
 import { useState } from 'react';
-import { Bot, X, Send, Sparkles } from 'lucide-react';
+import { Bot, X, Send, Sparkles, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
-import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
+import { Avatar, AvatarFallback } from './ui/avatar';
 import { ScrollArea } from './ui/scroll-area';
 import { Input } from './ui/input';
 
@@ -18,15 +18,23 @@ const suggestedPrompts = [
   "How client dashboard works?"
 ];
 
+type Message = {
+  id: number;
+  sender: 'user' | 'ai';
+  text: string;
+  isLoading?: boolean;
+};
+
 export function AIChatbot() {
   const [isOpen, setIsOpen] = useState(false);
-  const [messages, setMessages] = useState([
+  const [messages, setMessages] = useState<Message[]>([
     {
       id: 1,
       sender: 'ai',
       text: 'Hello! I am your AI-powered Product Assistant. How can I help you understand InvoiceCraft today?',
     },
   ]);
+  const [inputValue, setInputValue] = useState('');
 
   const chatbotVariants = {
     closed: {
@@ -42,10 +50,38 @@ export function AIChatbot() {
       transition: { duration: 0.3, ease: 'easeIn' },
     },
   };
+  
+  const handleSendMessage = (text: string) => {
+    if (!text.trim()) return;
 
-  const handleSuggestionClick = (prompt: string) => {
-    // In the future, this will trigger a query to the AI
-    console.log("Suggestion clicked:", prompt);
+    const userMessage: Message = {
+      id: Date.now(),
+      sender: 'user',
+      text,
+    };
+    const aiResponse: Message = {
+      id: Date.now() + 1,
+      sender: 'ai',
+      text: 'Thinking...',
+      isLoading: true,
+    };
+
+    setMessages(prev => [...prev, userMessage, aiResponse]);
+    setInputValue('');
+
+    // Simulate AI response
+    setTimeout(() => {
+        setMessages(prev => prev.map(msg => 
+            msg.id === aiResponse.id 
+            ? { ...msg, text: `I'm still learning! For now, I can't answer "${text}". Try another question.`, isLoading: false }
+            : msg
+        ));
+    }, 1500);
+  };
+
+  const handleFormSubmit = (e: React.FormEvent) => {
+      e.preventDefault();
+      handleSendMessage(inputValue);
   };
 
   return (
@@ -97,10 +133,18 @@ export function AIChatbot() {
                               : 'bg-primary text-primary-foreground'
                           )}
                         >
-                          {message.text}
+                          {message.isLoading ? (
+                            <div className="flex items-center gap-2">
+                                <Loader2 className="h-4 w-4 animate-spin" />
+                                <span>Thinking...</span>
+                            </div>
+                          ) : (
+                            message.text
+                          )}
                         </div>
                       </div>
                     ))}
+                    {messages[messages.length-1]?.sender !== 'user' && (
                      <div className="space-y-3 pt-4">
                         <div className="flex items-center gap-2">
                             <Sparkles className="h-4 w-4 text-muted-foreground" />
@@ -113,19 +157,25 @@ export function AIChatbot() {
                                     variant="outline"
                                     size="sm"
                                     className="h-auto py-1.5 px-3 text-xs"
-                                    onClick={() => handleSuggestionClick(prompt)}
+                                    onClick={() => handleSendMessage(prompt)}
                                 >
                                     {prompt}
                                 </Button>
                             ))}
                         </div>
                     </div>
+                    )}
                   </div>
                 </ScrollArea>
               </CardContent>
               <CardFooter className="p-4 border-t">
-                 <div className="relative w-full">
-                    <Input placeholder="Ask a question..." className="pr-12" />
+                 <form onSubmit={handleFormSubmit} className="relative w-full">
+                    <Input 
+                        placeholder="Ask a question..." 
+                        className="pr-12 h-10"
+                        value={inputValue}
+                        onChange={(e) => setInputValue(e.target.value)}
+                    />
                     <Button
                         type="submit"
                         size="icon"
@@ -133,7 +183,7 @@ export function AIChatbot() {
                     >
                         <Send className="h-4 w-4" />
                     </Button>
-                 </div>
+                 </form>
               </CardFooter>
             </Card>
           </motion.div>
