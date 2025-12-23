@@ -4,7 +4,7 @@
 
 import { useMemo, useState } from 'react';
 import { useAuth } from '@/context/auth-provider';
-import { useCollection, useDoc, deleteDocumentNonBlocking, updateDocumentNonBlocking, useFirebase } from '@/firebase';
+import { useCollection, useDoc, deleteDocumentNonBlocking, updateDocumentNonBlocking } from '@/firebase';
 import { collection, query, where, doc } from 'firebase/firestore';
 import type { Client, Estimate, Invoice, Quote, InsuranceDocument, AuditLogEntry, DocumentStatus } from '@/lib/types';
 import { useParams, useRouter } from 'next/navigation';
@@ -16,7 +16,7 @@ import { Mail, Phone, Edit, ArrowLeft, DollarSign, Clock, FileWarning, Files, XC
 import Link from 'next/link';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { format, subYears, eachMonthOfInterval, startOfMonth, isValid, subDays, eachDayOfInterval, startOfYear } from 'date-fns';
+import { format, subYears, eachMonthOfInterval, startOfMonth, isValid, subDays, eachDayOfInterval, startOfYear, isAfter } from 'date-fns';
 import { Badge } from '@/components/ui/badge';
 import { ChartContainer, ChartTooltip, ChartTooltipContent, type ChartConfig, ChartLegend, ChartLegendContent } from '@/components/ui/chart';
 import { ClientFormDialog } from '@/components/dashboard/client-form-dialog';
@@ -37,6 +37,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { ClientInvoicePreview } from '@/components/invoice-preview';
 import { motion } from 'framer-motion';
+import { useFirebase, useMemoFirebase } from '@/firebase/provider';
 
 
 const currencySymbols: { [key: string]: string } = {
@@ -85,7 +86,7 @@ function ClientCharts({ documents }: { documents: DocumentType[] }) {
     const now = new Date();
 
     const paidInvoices = invoiceData.filter(invoice => {
-        const invoiceDate = invoice.invoiceDate ? (invoice.invoiceDate as any).toDate ? (invoice.invoiceDate as any).toDate() : new Date(invoice.invoiceDate) : null;
+        const invoiceDate = invoice.invoiceDate ? ('toDate' in invoice.invoiceDate ? (invoice.invoiceDate as any).toDate() : new Date(invoice.invoiceDate)) : null;
         return invoice.status === 'paid' && invoiceDate && isValid(invoiceDate);
     });
 
@@ -93,12 +94,12 @@ function ClientCharts({ documents }: { documents: DocumentType[] }) {
         case 'yearly': {
             const start = startOfYear(now);
             const months = eachMonthOfInterval({ start, end: now });
-            const dataMap = new Map(months.map(d => [format(d, 'MMM'), { name: format(d, 'MMM'), revenue: 0 }]));
+            const dataMap = new Map(months.map(d => [format(d, 'yyyy-MMM'), { name: format(d, 'MMM'), revenue: 0 }]));
 
             paidInvoices.forEach(invoice => {
                 const invoiceDate = (invoice.invoiceDate as any).toDate();
-                if (invoiceDate >= start) {
-                    const monthKey = format(invoiceDate, 'MMM');
+                if (isAfter(invoiceDate, start)) {
+                    const monthKey = format(invoiceDate, 'yyyy-MMM');
                     if (dataMap.has(monthKey)) {
                         dataMap.get(monthKey)!.revenue += invoice.summary.grandTotal;
                     }
@@ -110,12 +111,12 @@ function ClientCharts({ documents }: { documents: DocumentType[] }) {
         case 'daily': {
             const start = subDays(now, 29);
             const days = eachDayOfInterval({ start, end: now });
-            const dataMap = new Map(days.map(d => [format(d, 'd MMM'), { name: format(d, 'd MMM'), revenue: 0 }]));
+            const dataMap = new Map(days.map(d => [format(d, 'yyyy-MM-dd'), { name: format(d, 'd MMM'), revenue: 0 }]));
 
             paidInvoices.forEach(invoice => {
                 const invoiceDate = (invoice.invoiceDate as any).toDate();
-                if (invoiceDate >= start) {
-                    const dayKey = format(invoiceDate, 'd MMM');
+                if (isAfter(invoiceDate, start)) {
+                    const dayKey = format(invoiceDate, 'yyyy-MM-dd');
                     if (dataMap.has(dayKey)) {
                         dataMap.get(dayKey)!.revenue += invoice.summary.grandTotal;
                     }
@@ -131,9 +132,11 @@ function ClientCharts({ documents }: { documents: DocumentType[] }) {
 
             paidInvoices.forEach(invoice => {
                 const invoiceDate = (invoice.invoiceDate as any).toDate();
-                const monthKey = format(invoiceDate, 'yyyy-MMM');
-                if (dataMap.has(monthKey)) {
-                    dataMap.get(monthKey)!.revenue += invoice.summary.grandTotal;
+                if (isAfter(invoiceDate, subYears(now, 1))) {
+                  const monthKey = format(invoiceDate, 'yyyy-MMM');
+                  if (dataMap.has(monthKey)) {
+                      dataMap.get(monthKey)!.revenue += invoice.summary.grandTotal;
+                  }
                 }
             });
             data = Array.from(dataMap.values());
@@ -212,6 +215,7 @@ const safeFormat = (date: any, formatString: string) => {
     if (!date) return 'N/A';
     try {
         const d = date.toDate ? date.toDate() : new Date(date);
+        if (!isValid(d)) return "Invalid Date";
         return format(d, formatString);
     } catch (e) {
         return "Invalid Date";
@@ -260,26 +264,28 @@ export default function ClientPage() {
 
   const companyId = userProfile?.companyId;
 
-  const clientRef = useMemo(() => {
+  const clientRef = useMemoFirebase(() => {
     if (!firestore || !companyId || !clientId) return null;
     return doc(firestore, 'companies', companyId, 'clients', clientId as string);
   }, [firestore, companyId, clientId]);
 
-  const invoicesQuery = useMemo(() => {
+  const invoicesQuery = useMemoFirebase(() => {
     if (!firestore || !companyId || !clientId) return null;
     return query(collection(firestore, 'companies', companyId, 'invoices'), where('client.clientId', '==', clientId));
   }, [firestore, companyId, clientId]);
 
-  const estimatesQuery = useMemo(() => {
+  const estimatesQuery = useMemoFirebase(() => {
     if (!firestore || !companyId || !clientId) return null;
     return query(collection(firestore, 'companies', companyId, 'estimates'), where('client.clientId', '==', clientId));
   }, [firestore, companyId, clientId]);
   
   const { data: rawClient, isLoading: isClientLoading } = useDoc<Client>(clientRef);
-  const { data: invoices, isLoading: isInvoicesLoading } = useCollection<Invoice>(invoicesQuery);
-  const { data: estimates, isLoading: isEstimatesLoading } = useCollection<Estimate>(estimatesQuery);
+  const { data: rawInvoices, isLoading: isInvoicesLoading } = useCollection<Invoice>(invoicesQuery);
+  const { data: rawEstimates, isLoading: isEstimatesLoading } = useCollection<Estimate>(estimatesQuery);
 
   const client = useMemo(() => processData(rawClient), [rawClient]);
+  const invoices = useMemo(() => rawInvoices?.map(processData), [rawInvoices]);
+  const estimates = useMemo(() => rawEstimates?.map(processData), [rawEstimates]);
 
   const allDocuments: DocumentType[] = [...(invoices || []), ...(estimates || [])];
   
@@ -625,6 +631,4 @@ export default function ClientPage() {
     </motion.div>
   );
 }
-
-
 
