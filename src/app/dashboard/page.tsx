@@ -39,6 +39,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { motion } from 'framer-motion';
 import { KpiDetailsModal } from '@/components/dashboard/kpi-details-modal';
 import { HistoryModal } from '@/components/dashboard/history-modal';
+import { ClientFormSheet } from '@/components/dashboard/client-form-sheet';
 
 const INVOICES_COLLECTION = 'invoices';
 const ESTIMATES_COLLECTION = 'estimates';
@@ -211,7 +212,7 @@ const DashboardStatsGrid: React.FC<DashboardStatsGridProps> = ({ documents, docT
                 <Card className="bg-card/50 backdrop-blur-sm shadow-sm transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-0.5"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1"><CardTitle className="text-xs font-medium">Total Estimated Value</CardTitle><DollarSign className="h-3 w-3 text-muted-foreground" /></CardHeader><CardContent><div className="text-xl font-bold">{formatCurrency(s.totalValue)}</div></CardContent></Card>
                 <Card className="bg-card/50 backdrop-blur-sm shadow-sm transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-0.5"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1"><CardTitle className="text-xs font-medium">Conversion Rate</CardTitle><Percent className="h-3 w-3 text-muted-foreground" /></CardHeader><CardContent><div className="text-xl font-bold">{s.conversionRate.toFixed(1)}%</div></CardContent></Card>
                 <Card className="bg-card/50 backdrop-blur-sm shadow-sm transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-0.5"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1"><CardTitle className="text-xs font-medium">Avg. {docTypeCap} Value</CardTitle><AreaChart className="h-3 w-3 text-muted-foreground" /></CardHeader><CardContent><div className="text-xl font-bold">{formatCurrency(s.avgValue)}</div></CardContent></Card>
-                <Card className="bg-card/50 backdrop-blur-sm shadow-sm transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-0.5"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1"><CardTitle className="text-xs font-medium">Drafts</CardTitle><FileText className="h-3 w-3 text-muted-foreground" /></CardHeader><CardContent><div className="text-xl font-bold">{s.draftCount}</div></CardContent></Card>
+                <Card as="button" onClick={() => onKpiClick(`Draft ${docTypeCap}s`, s.draftDocs)} className="text-left w-full bg-card/50 backdrop-blur-sm shadow-sm transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-0.5"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1"><CardTitle className="text-xs font-medium">Drafts</CardTitle><FileText className="h-3 w-3 text-muted-foreground" /></CardHeader><CardContent><div className="text-xl font-bold">{s.draftCount}</div></CardContent></Card>
             </div>
         );
     }
@@ -224,6 +225,8 @@ export default function DashboardPage() {
     const [deleteCandidate, setDeleteCandidate] = useState<{ id: string; collection: string } | null>(null);
     const [filters, setFilters] = useState<DashboardFilters>(initialFilters);
     const [isFilterSheetOpen, setIsFilterSheetOpen] = useState(false);
+    const [isClientSheetOpen, setIsClientSheetOpen] = useState(false);
+    const [editingClient, setEditingClient] = useState<Client | null>(null);
     const [modalState, setModalState] = useState<{ isOpen: boolean; title: string; data: DocumentType[] }>({ isOpen: false, title: '', data: [] });
     const [historyModalState, setHistoryModalState] = useState<{ isOpen: boolean, auditLog: AuditLogEntry[]}>({isOpen: false, auditLog: []});
     const { toast } = useToast();
@@ -319,6 +322,27 @@ export default function DashboardPage() {
             });
             router.push('/pricing');
         }
+    };
+    
+    const handleAddClient = () => {
+        setEditingClient(null);
+        setIsClientSheetOpen(true);
+    };
+
+    const handleEditClient = (client: Client) => {
+        setEditingClient(client);
+        setIsClientSheetOpen(true);
+    };
+    
+     const handleDeleteClient = (clientId: string) => {
+        if (!firestore || !companyId) return;
+        const docRef = doc(firestore, 'companies', companyId, CLIENTS_COLLECTION, clientId);
+        deleteDocumentNonBlocking(docRef);
+        setDeleteCandidate(null);
+        toast({
+            title: "Client Deleted",
+            description: "The client has been successfully deleted.",
+        });
     };
 
     const calculateTotal = useCallback((doc: DocumentType): number => {
@@ -583,7 +607,7 @@ export default function DashboardPage() {
     
     const isLoading = isAuthLoading || isLoadingInvoices || isLoadingEstimates || isLoadingQuotes || isLoadingInsurance;
 
-    const renderTable = (docs: DocumentType[], docType: 'invoice' | 'estimate' | 'quote' | 'insurance') => (
+    const renderDocumentsTable = (docs: DocumentType[], docType: 'invoice' | 'estimate' | 'quote' | 'insurance') => (
         <div className="overflow-x-auto">
             <Table>
                 <TableHeader>
@@ -722,6 +746,65 @@ export default function DashboardPage() {
             </Table>
         </div>
     );
+    
+    const renderClientsTable = () => (
+        <Card className='bg-card/50 backdrop-blur-sm'>
+            <CardHeader>
+                <div className="flex justify-between items-center">
+                    <div>
+                        <CardTitle className="text-base">Clients</CardTitle>
+                        <CardDescription className="text-xs">A list of all your clients. Click a client to view their profile and documents.</CardDescription>
+                    </div>
+                    <Button size="sm" className='rounded-full' onClick={handleAddClient}><Users className="mr-2 h-4 w-4"/>Add Client</Button>
+                </div>
+            </CardHeader>
+            <CardContent>
+                <Table>
+                    <TableHeader>
+                        <TableRow>
+                            <TableHead className="text-xs">Name</TableHead>
+                            <TableHead className="text-xs">Company</TableHead>
+                            <TableHead className="text-xs">Email</TableHead>
+                            <TableHead className="text-right text-xs">Actions</TableHead>
+                        </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                        {isLoadingClients ? (
+                             <TableRow><TableCell colSpan={4} className="text-center h-24">Loading clients...</TableCell></TableRow>
+                        ) : filteredClients && filteredClients.length > 0 ? filteredClients.map((client) => (
+                            <TableRow key={client.id}>
+                                <TableCell className="font-medium text-xs">{client.name}</TableCell>
+                                <TableCell className="text-xs">{client.companyName}</TableCell>
+                                <TableCell className="text-xs">{client.email}</TableCell>
+                                <TableCell className="text-right">
+                                     <DropdownMenu>
+                                        <DropdownMenuTrigger asChild>
+                                            <Button variant="ghost" size="icon" className="rounded-full h-7 w-7">
+                                                <MoreHorizontal className="h-3.5 w-3.5" />
+                                                <span className="sr-only">Client Actions</span>
+                                            </Button>
+                                        </DropdownMenuTrigger>
+                                        <DropdownMenuContent align="end">
+                                            <DropdownMenuItem onClick={() => handleEditClient(client)} className="cursor-pointer">
+                                                <Edit className="mr-2 h-3.5 w-3.5" />
+                                                <span className="text-xs">Edit</span>
+                                            </DropdownMenuItem>
+                                             <DropdownMenuItem onClick={() => setDeleteCandidate({id: client.id, collection: CLIENTS_COLLECTION})} className="text-destructive cursor-pointer">
+                                                <Trash2 className="mr-2 h-3.5 w-3.5" />
+                                                <span className="text-xs">Delete</span>
+                                            </DropdownMenuItem>
+                                        </DropdownMenuContent>
+                                    </DropdownMenu>
+                                </TableCell>
+                            </TableRow>
+                        )) : (
+                            <TableRow><TableCell colSpan={4} className="text-center h-24">No clients found.</TableCell></TableRow>
+                        )}
+                    </TableBody>
+                </Table>
+            </CardContent>
+         </Card>
+    );
 
     if (isLoading) {
         return (
@@ -771,6 +854,12 @@ export default function DashboardPage() {
                 isOpen={historyModalState.isOpen}
                 onClose={() => setHistoryModalState({ isOpen: false, auditLog: [] })}
                 auditLog={historyModalState.auditLog}
+            />
+            <ClientFormSheet
+                open={isClientSheetOpen}
+                onOpenChange={setIsClientSheetOpen}
+                client={editingClient}
+                onSave={() => setIsClientSheetOpen(false)}
             />
             <div className="space-y-4">
                 <FilterSheet
@@ -825,7 +914,7 @@ export default function DashboardPage() {
                             </div>
                         </CardHeader>
                         <CardContent className="flex flex-wrap items-center gap-2 pt-0">
-                             <Button size="sm" onClick={() => router.push('/dashboard/clients/new')} className="rounded-full">
+                            <Button size="sm" onClick={handleAddClient} className="rounded-full">
                                 <Users className="mr-2 h-3 w-3" />
                                 Add Client
                             </Button>
@@ -855,7 +944,7 @@ export default function DashboardPage() {
                             <CardHeader><CardTitle className="text-base">Invoices</CardTitle></CardHeader>
                             <CardContent className="pt-0">
                                 <DashboardStatsGrid documents={filteredInvoices} docType="invoice" onKpiClick={handleKpiClick} />
-                                {renderTable(filteredInvoices, 'invoice')}
+                                {renderDocumentsTable(filteredInvoices, 'invoice')}
                             </CardContent>
                         </Card>
                     )}
@@ -864,7 +953,7 @@ export default function DashboardPage() {
                             <CardHeader><CardTitle className="text-base">Estimates</CardTitle></CardHeader>
                             <CardContent className="pt-0">
                                 <DashboardStatsGrid documents={filteredEstimates} docType="estimate" onKpiClick={handleKpiClick} />
-                                {renderTable(filteredEstimates, 'estimate')}
+                                {renderDocumentsTable(filteredEstimates, 'estimate')}
                             </CardContent>
                         </Card>
                     )}
@@ -873,7 +962,7 @@ export default function DashboardPage() {
                            <CardHeader><CardTitle className="text-base">Quotes</CardTitle></CardHeader>
                             <CardContent className="pt-0">
                                 <DashboardStatsGrid documents={filteredQuotes} docType="quote" onKpiClick={handleKpiClick} />
-                                {renderTable(filteredQuotes, 'quote')}
+                                {renderDocumentsTable(filteredQuotes, 'quote')}
                             </CardContent>
                         </Card>
                     )}
@@ -882,48 +971,11 @@ export default function DashboardPage() {
                              <CardHeader><CardTitle className="text-base">Insurance</CardTitle></CardHeader>
                             <CardContent className="pt-0">
                                 <DashboardStatsGrid documents={filteredInsurance} docType="insurance" onKpiClick={handleKpiClick} />
-                                {renderTable(filteredInsurance, 'insurance')}
+                                {renderDocumentsTable(filteredInsurance, 'insurance')}
                             </CardContent>
                         </Card>
                     )}
-                    {activeTab === 'clients' && (
-                         <Card className='bg-card/50 backdrop-blur-sm'>
-                            <CardHeader>
-                                <CardTitle className="text-base">Clients</CardTitle>
-                                <CardDescription className="text-xs">A list of all your clients. Click a client to view their profile and documents.</CardDescription>
-                            </CardHeader>
-                            <CardContent>
-                                <Table>
-                                    <TableHeader>
-                                        <TableRow>
-                                            <TableHead className="text-xs">Name</TableHead>
-                                            <TableHead className="text-xs">Company</TableHead>
-                                            <TableHead className="text-xs">Email</TableHead>
-                                            <TableHead className="text-right text-xs">Actions</TableHead>
-                                        </TableRow>
-                                    </TableHeader>
-                                    <TableBody>
-                                        {filteredClients ? filteredClients.map((client) => (
-                                            <TableRow 
-                                                key={client.id} 
-                                                className="cursor-pointer"
-                                                onClick={() => router.push(`/dashboard/clients/${client.id}`)}
-                                            >
-                                                <TableCell className="font-medium text-xs">{client.name}</TableCell>
-                                                <TableCell className="text-xs">{client.companyName}</TableCell>
-                                                <TableCell className="text-xs">{client.email}</TableCell>
-                                                <TableCell className="text-right">
-                                                     <Button variant="ghost" size="sm">View</Button>
-                                                </TableCell>
-                                            </TableRow>
-                                        )) : (
-                                            <TableRow><TableCell colSpan={4} className="text-center h-24">No clients found.</TableCell></TableRow>
-                                        )}
-                                    </TableBody>
-                                </Table>
-                            </CardContent>
-                         </Card>
-                    )}
+                    {activeTab === 'clients' && renderClientsTable()}
                 </motion.div>
             </div>
         </>
