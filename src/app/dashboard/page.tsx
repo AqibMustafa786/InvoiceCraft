@@ -39,7 +39,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { motion } from 'framer-motion';
 import { KpiDetailsModal } from '@/components/dashboard/kpi-details-modal';
 import { HistoryModal } from '@/components/dashboard/history-modal';
-import { ClientFormSheet } from '@/components/dashboard/client-form-sheet';
+import { ClientFormDialog } from '@/components/dashboard/client-form-dialog';
 
 const INVOICES_COLLECTION = 'invoices';
 const ESTIMATES_COLLECTION = 'estimates';
@@ -225,7 +225,7 @@ export default function DashboardPage() {
     const [deleteCandidate, setDeleteCandidate] = useState<{ id: string; collection: string } | null>(null);
     const [filters, setFilters] = useState<DashboardFilters>(initialFilters);
     const [isFilterSheetOpen, setIsFilterSheetOpen] = useState(false);
-    const [isClientSheetOpen, setIsClientSheetOpen] = useState(false);
+    const [isClientDialogOpen, setIsClientDialogOpen] = useState(false);
     const [editingClient, setEditingClient] = useState<Client | null>(null);
     const [modalState, setModalState] = useState<{ isOpen: boolean; title: string; data: DocumentType[] }>({ isOpen: false, title: '', data: [] });
     const [historyModalState, setHistoryModalState] = useState<{ isOpen: boolean, auditLog: AuditLogEntry[]}>({isOpen: false, auditLog: []});
@@ -326,12 +326,12 @@ export default function DashboardPage() {
     
     const handleAddClient = () => {
         setEditingClient(null);
-        setIsClientSheetOpen(true);
+        setIsClientDialogOpen(true);
     };
 
     const handleEditClient = (client: Client) => {
         setEditingClient(client);
-        setIsClientSheetOpen(true);
+        setIsClientDialogOpen(true);
     };
     
      const handleDeleteClient = (clientId: string) => {
@@ -855,11 +855,11 @@ export default function DashboardPage() {
                 onClose={() => setHistoryModalState({ isOpen: false, auditLog: [] })}
                 auditLog={historyModalState.auditLog}
             />
-            <ClientFormSheet
-                open={isClientSheetOpen}
-                onOpenChange={setIsClientSheetOpen}
+            <ClientFormDialog
+                open={isClientDialogOpen}
+                onOpenChange={setIsClientDialogOpen}
                 client={editingClient}
-                onSave={() => setIsClientSheetOpen(false)}
+                onSave={() => setIsClientDialogOpen(false)}
             />
             <div className="space-y-4">
                 <FilterSheet
@@ -981,4 +981,5 @@ export default function DashboardPage() {
         </>
     );
 }
+
 
