@@ -196,18 +196,33 @@ export function AIChatbot() {
         transition={{ type: 'spring', stiffness: 260, damping: 20, delay: 1 }}
         className="fixed bottom-5 right-5 z-40"
       >
-        <Button size="icon" className="h-14 w-14 rounded-full shadow-2xl" onClick={() => setIsOpen(!isOpen)}>
-          <AnimatePresence>
-            {isOpen ? (
-              <motion.div key="x" initial={{ rotate: -90, scale: 0 }} animate={{ rotate: 0, scale: 1 }} exit={{ rotate: 90, scale: 0 }}>
-                <X className="h-7 w-7" />
-              </motion.div>
-            ) : (
-              <motion.div key="bot" initial={{ rotate: 90, scale: 0 }} animate={{ rotate: 0, scale: 1 }} exit={{ rotate: -90, scale: 0 }}>
-                <Bot className="h-7 w-7" />
-              </motion.div>
-            )}
-          </AnimatePresence>
+        <Button
+          size="icon"
+          className="h-14 w-14 rounded-full shadow-2xl"
+          onClick={() => setIsOpen(!isOpen)}
+        >
+          <motion.div
+            animate={{
+              scale: [1, 1.1, 1],
+            }}
+            transition={{
+              duration: 1.5,
+              repeat: Infinity,
+              ease: "easeInOut",
+            }}
+          >
+            <AnimatePresence>
+              {isOpen ? (
+                <motion.div key="x" initial={{ rotate: -90, scale: 0 }} animate={{ rotate: 0, scale: 1 }} exit={{ rotate: 90, scale: 0 }}>
+                  <X className="h-7 w-7" />
+                </motion.div>
+              ) : (
+                <motion.div key="bot" initial={{ rotate: 90, scale: 0 }} animate={{ rotate: 0, scale: 1 }} exit={{ rotate: -90, scale: 0 }}>
+                  <Bot className="h-7 w-7" />
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </motion.div>
         </Button>
       </motion.div>
     </>
