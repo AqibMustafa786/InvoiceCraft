@@ -10,6 +10,7 @@ import { cn } from '@/lib/utils';
 import { Avatar, AvatarFallback } from './ui/avatar';
 import { ScrollArea } from './ui/scroll-area';
 import { Input } from './ui/input';
+import { usePathname } from 'next/navigation';
 
 const suggestedPrompts = [
   "How does this app work?",
@@ -35,6 +36,7 @@ export function AIChatbot() {
     },
   ]);
   const [inputValue, setInputValue] = useState('');
+  const pathname = usePathname();
 
   const chatbotVariants = {
     closed: {
@@ -83,6 +85,11 @@ export function AIChatbot() {
       e.preventDefault();
       handleSendMessage(inputValue);
   };
+  
+  if (pathname !== '/') {
+    return null;
+  }
+
 
   return (
     <>
