@@ -95,7 +95,7 @@ export function AIChatbot() {
             exit="closed"
             className="fixed bottom-24 right-5 z-50 w-full max-w-sm"
           >
-            <Card className="flex flex-col h-[60vh] shadow-2xl bg-card/80 backdrop-blur-lg">
+            <Card className="flex h-[60vh] flex-col shadow-2xl bg-card/80 backdrop-blur-lg">
               <CardHeader className="flex flex-row items-center justify-between p-4 border-b">
                 <div className="flex items-center gap-3">
                     <div className="p-2 bg-primary/10 text-primary rounded-full">
@@ -107,7 +107,7 @@ export function AIChatbot() {
                   <X className="h-5 w-5 text-muted-foreground" />
                 </Button>
               </CardHeader>
-              <CardContent className="flex-1 p-0">
+              <CardContent className="flex-1 p-0 overflow-hidden">
                 <ScrollArea className="h-full p-4">
                   <div className="space-y-6">
                     {messages.map((message) => (
@@ -204,9 +204,10 @@ export function AIChatbot() {
           <motion.div
             animate={{
               scale: [1, 1.1, 1],
+              opacity: [0.8, 1, 0.8],
             }}
             transition={{
-              duration: 1.5,
+              duration: 2.5,
               repeat: Infinity,
               ease: "easeInOut",
             }}
