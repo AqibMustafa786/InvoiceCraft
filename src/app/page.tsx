@@ -10,12 +10,14 @@ import {
   FileText, FilePlus, Shield, HardHat, Code, Store, Car, Camera, Building, Scale, HeartPulse,
   LayoutDashboard, Edit, Bot, Brush, Cloud, Share2, Palette, ArrowRight, XCircle, Clock, AlertCircle, CheckCircle, Search, FileClock
 } from 'lucide-react';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Carousel, CarouselContent, CarouselItem } from '@/components/ui/carousel';
 import Autoplay from "embla-carousel-autoplay";
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { AIChatbot } from '@/components/ai-chatbot';
+import { useTheme } from 'next-themes';
+
 
 const tools = [
   {
@@ -148,6 +150,20 @@ const solutions = [
 
 
 export default function HomePage() {
+  const { theme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+  const [heroImage, setHeroImage] = useState('/home/invoice.png'); // Default to light theme image
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (mounted) {
+      setHeroImage(theme === 'dark' ? '/home/darkinvoice.png' : '/home/invoice.png');
+    }
+  }, [theme, mounted]);
+
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -249,7 +265,7 @@ export default function HomePage() {
                   className="relative w-full h-full animate-flip"
                 >
                   <Image 
-                    src="/home/invoice.png" 
+                    src={heroImage}
                     alt="Illustration of a person working on a laptop"
                     fill
                     sizes="(max-width: 1024px) 100vw, 50vw"
@@ -446,4 +462,3 @@ export default function HomePage() {
     </div>
   );
 }
-
