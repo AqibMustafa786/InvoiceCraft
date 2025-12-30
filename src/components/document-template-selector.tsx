@@ -21,14 +21,6 @@ interface DocumentTemplateSelectorProps {
 
 
 export function DocumentTemplateSelector({ selectedTemplate, onSelectTemplate, documentType, category }: DocumentTemplateSelectorProps) {
-  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
-  const [templateToPreview, setTemplateToPreview] = useState<Template | null>(null);
-
-  const handlePreview = (template: Template) => {
-    setTemplateToPreview(template);
-    setIsPreviewOpen(true);
-  };
-  
   const filteredTemplates = useMemo(() => {
     let generalCategory: EstimateCategory | InvoiceCategory = documentType === 'invoice' ? 'General Services' : 'Generic';
     let currentCategory = category;
@@ -75,6 +67,7 @@ export function DocumentTemplateSelector({ selectedTemplate, onSelectTemplate, d
               <div
               key={`${template.id}-${template.category}`}
               className="cursor-pointer group"
+              onClick={() => onSelectTemplate(template.id)}
               >
               <div
                   className={cn(
@@ -85,7 +78,6 @@ export function DocumentTemplateSelector({ selectedTemplate, onSelectTemplate, d
                   'hover:border-primary/50'
                   )}
                   style={{ width: '188px' }}
-                  onClick={() => onSelectTemplate(template.id)}
               >
                   <Image
                   src={template.thumbnailUrl}
@@ -95,22 +87,13 @@ export function DocumentTemplateSelector({ selectedTemplate, onSelectTemplate, d
                   className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
                   />
                    <div className="absolute inset-0 bg-black/20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                    <Button onClick={(e) => { e.stopPropagation(); handlePreview(template); }} variant="secondary" size="sm">
-                        <Eye className="mr-2 h-4 w-4" />
-                        Preview
-                    </Button>
-                </div>
+                   </div>
               </div>
               <p className="text-center text-sm font-semibold p-3">{template.name}</p>
               </div>
           )
         })}
       </div>
-      <TemplatePreview
-        template={templateToPreview}
-        isOpen={isPreviewOpen}
-        onClose={() => setIsPreviewOpen(false)}
-      />
     </>
   );
 }
