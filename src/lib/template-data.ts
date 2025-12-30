@@ -105,7 +105,7 @@ export const allTemplates: Template[] = [
   {
     id: 'construction-1',
     name: 'Foundation',
-    thumbnailUrl: '/templates/foundation.png',
+    thumbnailUrl: '/templates/invoice_page_templates/foundation.png',
     category: 'Construction',
     toolType: 'Invoice',
     description: 'A professional and clear template designed for construction projects, with sections for detailed work descriptions.',
