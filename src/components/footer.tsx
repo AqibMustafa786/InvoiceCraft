@@ -10,7 +10,7 @@ export function Footer() {
         {/* Branding Section */}
         <div className="flex flex-col gap-4 md:col-span-2">
           <Link href="/" className="flex items-center gap-2">
-            <span className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent">InvoiceCraft</span>
+            <span className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent">InvoiceCraft</span>
           </Link>
           <p className="max-w-sm text-muted-foreground">
             Smart, simple, and professional invoicing for modern freelancers and businesses.

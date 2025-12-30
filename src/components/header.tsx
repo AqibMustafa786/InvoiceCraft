@@ -87,7 +87,7 @@ export function Header() {
             <div className="container flex h-14 items-center">
                 <div className="mr-4 hidden md:flex">
                     <Link href="/" className="flex items-center gap-2">
-                        <span className="text-lg font-bold text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent">InvoiceCraft</span>
+                        <span className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent">InvoiceCraft</span>
                     </Link>
                 </div>
 
@@ -189,7 +189,7 @@ export function Header() {
                         <SheetHeader className="p-6 pb-0">
                             <SheetTitle>
                                 <Link href="/" className="flex items-center gap-2">
-                                    <span className="text-lg font-bold text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent">InvoiceCraft</span>
+                                    <span className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent">InvoiceCraft</span>
                                 </Link>
                             </SheetTitle>
                         </SheetHeader>
