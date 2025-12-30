@@ -32,7 +32,7 @@ const templates: Template[] = [
   { id: 'usa', name: 'USA', thumbnailUrl: '/templates/Usa.png', category: 'General Services' },
   
   // Construction
-  { id: 'construction-1', name: 'Foundation', thumbnailUrl: '/templates/construction-1.png', category: 'Construction' },
+  { id: 'construction-1', name: 'Foundation', thumbnailUrl: '/templates/invoicepagetemplates/FoundationInvoicetemplate.png', category: 'Construction' },
   { id: 'construction-2', name: 'Modern Dark', thumbnailUrl: '/templates/construction-2.png', category: 'Construction' },
   { id: 'construction-3', name: 'Minimalist', thumbnailUrl: '/templates/construction-3.png', category: 'Construction' },
   { id: 'construction-4', name: 'Side Accent', thumbnailUrl: '/templates/construction-4.png', category: 'Construction' },
