@@ -145,7 +145,7 @@ export const LegalTemplate1: React.FC<PageProps> = (props) => {
                     <div className="w-1/3">
                         <div className="flex justify-between p-1"><span>{t.subtotal || 'Subtotal'}</span><span>{currencySymbol}{subtotal.toFixed(2)}</span></div>
                         {discountAmount > 0 && <div className="flex justify-between p-1 text-red-600"><span>{t.discount || 'Discount'}</span><span>-{currencySymbol}{discountAmount.toFixed(2)}</span></div>}
-                        {invoice.summary.shippingCost > 0 && <div className="flex justify-between p-1"><span>{t.shipping || 'Shipping'}</span><span>{currencySymbol}{invoice.summary.shippingCost.toFixed(2)}</span></div>}
+                        {invoice.summary.shippingCost > 0 && <div className="flex justify-between p-1"><span>{t.other || 'Other'}</span><span>{currencySymbol}{invoice.summary.shippingCost.toFixed(2)}</span></div>}
                         <div className="flex justify-between p-1"><span>{t.salesTax || 'Sales Tax'}</span><span>{currencySymbol}{taxAmount.toFixed(2)}</span></div>
                         <div className="flex justify-between p-1 mt-1 border-t-2 border-black font-bold"><span>{t.total || 'Total'}</span><span>{currencySymbol}{total.toFixed(2)}</span></div>
                         {(invoice.amountPaid || 0) > 0 && <div className="flex justify-between p-1 text-green-600 font-bold"><span>{t.amountPaid || 'Amount Paid'}</span><span>-{currencySymbol}{(invoice.amountPaid || 0).toFixed(2)}</span></div>}
@@ -175,7 +175,11 @@ export const LegalTemplate2: React.FC<PageProps> = (props) => {
         <div className={`font-sans ${pageIndex < totalPages - 1 ? 'page-break-after' : ''}`} style={{ minHeight: '1056px', backgroundColor: props.backgroundColor, color: props.textColor }}>
             <header className="p-10 text-white flex justify-between" style={{backgroundColor: accentColor || '#1a202c'}}>
                 <div>
-                    <h1 className="text-2xl font-bold">{business.name}</h1>
+                    {business.logoUrl ? (
+                        <Image src={business.logoUrl} alt="Logo" width={100} height={40} className="object-contain filter invert brightness-0" />
+                    ) : (
+                         <h1 className="text-2xl font-bold">{business.name}</h1>
+                    )}
                     <p className="text-xs opacity-80 whitespace-pre-line">{business.address}</p>
                 </div>
                 <div className="text-right">
@@ -187,11 +191,10 @@ export const LegalTemplate2: React.FC<PageProps> = (props) => {
                 <section className="grid grid-cols-2 gap-8 text-sm mb-8">
                      <div>
                         <p className="font-bold">{t.client || 'Client'}</p>
-                        <p>{client.name}</p>
-                        <p className="whitespace-pre-line">{client.address}</p>
+                        <p>{client.name}<br/>{client.companyName && `${client.companyName}<br/>`}{client.address}</p>
                         <p>{client.email}</p>
                         <p>{client.phone}</p>
-                     </div>
+                    </div>
                      <div className="text-right">
                         <p><strong>{(t.date || 'Date')}:</strong> {safeFormat(invoice.invoiceDate, 'MMMM d, yyyy')}</p>
                         <p><strong>{(t.dueDate || 'Due Date')}:</strong> {safeFormat(invoice.dueDate, 'MMMM d, yyyy')}</p>
@@ -236,18 +239,19 @@ export const LegalTemplate3: React.FC<PageProps> = (props) => {
             <div className="bg-white p-8 shadow-lg">
                 <header className="flex justify-between items-start mb-8">
                     <div>
+                        {business.logoUrl && <Image src={business.logoUrl} alt="Logo" width={90} height={45} className="object-contain mb-2"/>}
                         <h1 className="text-2xl font-bold">{business.name}</h1>
                         <p className="text-xs text-gray-500 whitespace-pre-line">{business.address}</p>
                     </div>
                     <div className="text-right">
                         <h2 className="text-3xl font-extrabold text-gray-400">{(t.invoice || 'INVOICE').toUpperCase()}</h2>
-                        <p className="text-xs"># {invoice.invoiceNumber}</p>
+                        <p># {invoice.invoiceNumber}</p>
                     </div>
                 </header>
                 <section className="grid grid-cols-2 gap-8 text-xs mb-8">
                     <div>
                         <p className="font-bold text-gray-500 mb-1">Billed To</p>
-                        <p>{client.name}<br/>{client.address}<br/>{client.email}<br/>{client.phone}</p>
+                        <p>{client.name}<br/>{client.companyName && `${client.companyName}<br/>`}{client.address}<br/>{client.email}<br/>{client.phone}</p>
                     </div>
                     <div className="text-right">
                         <p><span className="font-bold text-gray-500">Date: </span>{safeFormat(invoice.invoiceDate, 'dd-MMM-yyyy')}</p>
@@ -286,12 +290,16 @@ export const LegalTemplate3: React.FC<PageProps> = (props) => {
 };
 // Template 4: Paralegal
 export const LegalTemplate4: React.FC<PageProps> = (props) => {
-    const { invoice, pageItems, pageIndex, totalPages, subtotal, total, balanceDue, currencySymbol, t } = props;
+    const { invoice, pageItems, pageIndex, totalPages, total, balanceDue, currencySymbol, t } = props;
     const { business, client } = invoice;
     return (
         <div className={`p-10 font-serif bg-white ${pageIndex < totalPages - 1 ? 'page-break-after' : ''}`} style={{ minHeight: '1056px', backgroundColor: props.backgroundColor, color: props.textColor }}>
             <header className="text-center mb-10">
-                <h1 className="text-4xl font-bold">{business.name}</h1>
+                 {business.logoUrl ? (
+                    <Image src={business.logoUrl} alt="Logo" width={100} height={50} className="object-contain mx-auto mb-2" />
+                 ) : (
+                    <h1 className="text-4xl font-bold">{business.name}</h1>
+                 )}
                 <p className="text-sm">{(t.attorneysAtLaw || 'Attorneys at Law')}</p>
             </header>
             <div className="w-full h-px bg-gray-300 mb-8"></div>
@@ -330,7 +338,13 @@ export const LegalTemplate5: React.FC<PageProps> = (props) => {
     const { business, client } = invoice;
     return (
         <div className={`flex ${pageIndex < totalPages - 1 ? 'page-break-after' : ''}`} style={{ minHeight: '1056px', backgroundColor: props.backgroundColor, color: props.textColor }}>
-            <div className="w-1/4 p-8 text-white" style={{backgroundColor: accentColor}}><h1 className="text-3xl font-bold">{business.name}</h1></div>
+            <div className="w-1/4 p-8 text-white" style={{backgroundColor: accentColor}}>
+                {business.logoUrl ? (
+                     <Image src={business.logoUrl} alt="Logo" width={100} height={50} className="object-contain filter invert brightness-0" />
+                ) : (
+                    <h1 className="text-3xl font-bold">{business.name}</h1>
+                )}
+            </div>
             <div className="w-3/4 p-10">
                 <header className="text-right mb-10"><h2 className="text-4xl font-bold">{(t.invoice || 'INVOICE').toUpperCase()}</h2></header>
                 <section className="text-sm mb-10">
@@ -367,3 +381,5 @@ export const LegalTemplate5: React.FC<PageProps> = (props) => {
         </div>
     )
 };
+
+    

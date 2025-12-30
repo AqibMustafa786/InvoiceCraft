@@ -1,5 +1,4 @@
 
-
 'use client';
 
 import React from 'react';
@@ -195,10 +194,11 @@ export const ConsultingTemplate2: React.FC<PageProps> = (props) => {
       >
         <header className="flex justify-between items-center">
           <div>
-            <h1 className="text-3xl font-bold">{business.name}</h1>
-            <p className="text-xs opacity-80 whitespace-pre-line">
-              {business.address}
-            </p>
+            {business.logoUrl ? (
+                <Image src={business.logoUrl} alt="Logo" width={100} height={40} className="object-contain filter invert brightness-0" />
+            ) : (
+                <h1 className="text-3xl font-bold">{business.name}</h1>
+            )}
           </div>
           <div className="text-right">
             <h2 className="text-2xl font-bold">INVOICE</h2>
@@ -280,11 +280,7 @@ export const ConsultingTemplate3: React.FC<PageProps> = (props) => {
                 <section className="grid grid-cols-2 gap-8 text-xs mb-8">
                     <div>
                         <p className="font-bold text-gray-500 mb-1">Billed To</p>
-                        <p>{client.name}</p>
-                        {client.companyName && <p>{client.companyName}</p>}
-                        <p>{client.address}</p>
-                        <p>{client.email}</p>
-                        <p>{client.phone}</p>
+                        <p>{client.name}<br/>{client.companyName && `${client.companyName}<br/>`}{client.address}<br/>{client.email}<br/>{client.phone}</p>
                     </div>
                     <div className="text-right">
                         <p><span className="font-bold text-gray-500">Date: </span>{safeFormat(invoice.invoiceDate, 'dd-MMM-yyyy')}</p>
@@ -307,7 +303,7 @@ export const ConsultingTemplate3: React.FC<PageProps> = (props) => {
                             {invoice.summary.shippingCost > 0 && <p className="flex justify-between"><span>Other Fees:</span><span>{currencySymbol}{invoice.summary.shippingCost.toFixed(2)}</span></p>}
                             <p className="flex justify-between"><span>Tax:</span><span>{currencySymbol}{taxAmount.toFixed(2)}</span></p>
                             <p className="flex justify-between font-bold"><span>Total:</span><span>{currencySymbol}{total.toFixed(2)}</span></p>
-                             {(invoice.amountPaid || 0) > 0 && <p className="flex justify-between text-green-600"><span>Paid:</span><span>-{currencySymbol}{(invoice.amountPaid || 0).toFixed(2)}</span></p>}
+                            {(invoice.amountPaid || 0) > 0 && <p className="flex justify-between text-green-600"><span>Paid:</span><span>-{currencySymbol}{(invoice.amountPaid || 0).toFixed(2)}</span></p>}
                             <p className="flex justify-between font-bold text-sm mt-2 pt-2 border-t border-gray-300"><span>Balance Due:</span><span>{currencySymbol}{balanceDue.toFixed(2)}</span></p>
                         </div>
                     </div>
@@ -328,7 +324,11 @@ export const ConsultingTemplate4: React.FC<PageProps> = (props) => {
     return (
         <div className={`font-sans ${pageIndex < totalPages - 1 ? 'page-break-after' : ''}`} style={{ minHeight: '1056px', backgroundColor: props.backgroundColor, color: props.textColor }}>
             <header style={{ backgroundColor: accentColor }} className="text-white p-10 flex justify-between items-center">
-                <h1 className="text-3xl font-bold">{business.name}</h1>
+                {business.logoUrl ? (
+                    <Image src={business.logoUrl} alt="Logo" width={100} height={40} className="object-contain filter invert brightness-0" />
+                ) : (
+                    <h1 className="text-3xl font-bold">{business.name}</h1>
+                )}
                 <h2 className="text-xl">Invoice #{invoice.invoiceNumber}</h2>
             </header>
             <div className="p-10">
@@ -408,7 +408,7 @@ export const ConsultingTemplate5: React.FC<PageProps> = (props) => {
                     </div>
                 </div>
                 {business.ownerSignature && (
-                    <div className="mt-8 flex justify-start">
+                    <div className="mt-8">
                         <SignatureDisplay signature={business.ownerSignature} label="Authorized Signature" />
                     </div>
                 )}
@@ -417,3 +417,5 @@ export const ConsultingTemplate5: React.FC<PageProps> = (props) => {
         </div>
     );
 };
+
+    
