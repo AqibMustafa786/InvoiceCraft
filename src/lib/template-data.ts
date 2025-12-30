@@ -65,6 +65,16 @@ export const allTemplates: Template[] = [
     description: 'A professional and compliant template designed specifically for US-based businesses.',
     useCases: ['US Businesses', 'Contractors', 'Service Providers'],
   },
+  {
+    id: 'construction-1',
+    name: 'Foundation',
+    thumbnailUrl: '/templates/invoicepagetemplates/FoundationInvoicetemplate.png',
+    category: 'Construction',
+    toolType: 'Invoice',
+    description: 'A professional and clear template designed for construction projects, with sections for detailed work descriptions.',
+    useCases: ['Construction', 'Contractors', 'Building'],
+  },
+
   // --- ESTIMATE & QUOTE TEMPLATES ---
   {
     id: 'generic-1',
@@ -102,16 +112,7 @@ export const allTemplates: Template[] = [
     description: 'A sleek, contemporary design that puts your brand front and center. Ideal for modern businesses and creative professionals.',
     useCases: ['Agencies', 'Tech Startups', 'Consultants'],
   },
-  {
-    id: 'construction-1',
-    name: 'Foundation',
-    thumbnailUrl: '/templates/invoicepagetemplates/FoundationInvoicetemplate.png',
-    category: 'Construction',
-    toolType: 'Invoice',
-    description: 'A professional and clear template designed for construction projects, with sections for detailed work descriptions.',
-    useCases: ['Construction', 'Contractors', 'Building'],
-  },
-
+ 
   // --- INSURANCE TEMPLATES ---
   {
     id: 'usa-claim-default',

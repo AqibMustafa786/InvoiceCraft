@@ -66,13 +66,16 @@ export default function TemplatesPage() {
   
   const groupedTemplates = useMemo(() => {
     return filteredAndSortedTemplates.reduce((acc, template) => {
-      const key = template.toolType;
-      if (!acc[key]) {
-        acc[key] = [];
+      const { toolType, category } = template;
+      if (!acc[toolType]) {
+        acc[toolType] = {};
       }
-      acc[key].push(template);
+      if (!acc[toolType][category]) {
+        acc[toolType][category] = [];
+      }
+      acc[toolType][category].push(template);
       return acc;
-    }, {} as Record<string, Template[]>);
+    }, {} as Record<string, Record<string, Template[]>>);
   }, [filteredAndSortedTemplates]);
 
 
@@ -151,21 +154,26 @@ export default function TemplatesPage() {
         </Card>
 
         {Object.keys(groupedTemplates).length > 0 ? (
-           Object.entries(groupedTemplates).map(([toolType, templates]) => (
-            <section key={toolType} className="mb-16">
-              <h2 className="text-3xl font-bold font-headline mb-8">{toolType} Templates</h2>
-              <motion.div 
-                className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8"
-                variants={containerVariants}
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true, amount: 0.1 }}
-              >
-                {templates.map((template) => (
-                  <TemplateCard key={template.id + template.toolType} template={template} onPreview={handlePreview} />
-                ))}
-              </motion.div>
-            </section>
+          Object.entries(groupedTemplates).map(([toolType, categories]) => (
+            <div key={toolType}>
+              <h2 className="text-3xl font-bold font-headline mb-4 mt-12">{toolType} Templates</h2>
+              {Object.entries(categories).map(([category, templates]) => (
+                <section key={category} className="mb-12">
+                  <h3 className="text-xl font-semibold mb-6 border-b pb-2">{category}</h3>
+                  <motion.div 
+                    className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8"
+                    variants={containerVariants}
+                    initial="hidden"
+                    whileInView="visible"
+                    viewport={{ once: true, amount: 0.1 }}
+                  >
+                    {templates.map((template) => (
+                      <TemplateCard key={`${template.id}-${template.toolType}`} template={template} onPreview={handlePreview} />
+                    ))}
+                  </motion.div>
+                </section>
+              ))}
+            </div>
           ))
         ) : (
             <div className="text-center py-16 text-muted-foreground">
