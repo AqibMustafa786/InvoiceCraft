@@ -7,6 +7,7 @@ export interface Template {
   toolType: 'Invoice' | 'Estimate' | 'Quote' | 'Insurance';
   description: string;
   useCases: string[];
+  isPro?: boolean;
 }
 
 export const allTemplates: Template[] = [
@@ -64,15 +65,6 @@ export const allTemplates: Template[] = [
     toolType: 'Invoice',
     description: 'A professional and compliant template designed specifically for US-based businesses.',
     useCases: ['US Businesses', 'Contractors', 'Service Providers'],
-  },
-  {
-    id: 'construction-1',
-    name: 'Foundation',
-    thumbnailUrl: '/templates/invoicepagetemplates/FoundationInvoicetemplate.png',
-    category: 'Construction',
-    toolType: 'Invoice',
-    description: 'A professional and clear template designed for construction projects, with sections for detailed work descriptions.',
-    useCases: ['Construction', 'Contractors', 'Building'],
   },
    {
     id: 'construction-2',
