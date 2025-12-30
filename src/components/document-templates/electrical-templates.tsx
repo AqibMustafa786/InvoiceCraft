@@ -1,3 +1,4 @@
+
 'use client';
 
 import React from 'react';
@@ -147,7 +148,7 @@ export const ElectricalTemplate2: React.FC<TemplateProps> = ({ document, pageIte
     const currencySymbol = currencySymbols[currency] || '$';
     const accentColor = style.color || '#0B57D0';
     const docTitle = document.documentType === 'quote' ? 'ESTIMATE' : 'ESTIMATE';
-    const docTypeTerm = document.documentType === 'quote' : 'estimate';
+    const docTypeTerm = document.documentType === 'quote' ? 'quote' : 'estimate';
 
     return (
         <div className={`p-10 bg-white font-sans text-gray-800 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: 'Verdana, sans-serif', fontSize: '9.5pt', minHeight: '1056px', color: textColor, backgroundColor: document.backgroundColor }}>
@@ -271,17 +272,17 @@ export const ElectricalTemplate3: React.FC<TemplateProps> = ({ document, pageIte
                     <div className="flex justify-end">
                         <table className="w-1/3 text-xs">
                              <tbody>
-                                <tr><td className="py-1">Subtotal</td><td className="text-right">{currencySymbol}{summary.subtotal.toFixed(2)}</td></tr>
-                                {summary.discount > 0 && <tr><td className="py-1 text-red-500">Discount</td><td className="text-right text-red-500">-{currencySymbol}{summary.discount.toFixed(2)}</td></tr>}
-                                {summary.shippingCost > 0 && <tr><td className="py-1">Shipping/Extra</td><td className="text-right">{currencySymbol}{summary.shippingCost.toFixed(2)}</td></tr>}
-                                <tr><td className="py-1">Tax</td><td className="text-right">{currencySymbol}{summary.taxAmount.toFixed(2)}</td></tr>
+                                <tr><td className="py-1 text-gray-500">Subtotal</td><td className="text-right">{currencySymbol}{summary.subtotal.toFixed(2)}</td></tr>
+                                {summary.discount > 0 && <tr><td className="py-1 text-gray-500">Discount</td><td className="text-right text-red-500">-{currencySymbol}{summary.discount.toFixed(2)}</td></tr>}
+                                {summary.shippingCost > 0 && <tr><td className="py-1 text-gray-500">Shipping/Extra</td><td className="text-right">{currencySymbol}{summary.shippingCost.toFixed(2)}</td></tr>}
+                                <tr><td className="py-1 text-gray-500">Sales Tax</td><td className="text-right">{currencySymbol}{summary.taxAmount.toFixed(2)}</td></tr>
                                 <tr className="font-bold text-base border-t-2 border-black"><td className="pt-2">TOTAL</td><td className="pt-2 text-right">{currencySymbol}{summary.grandTotal.toFixed(2)}</td></tr>
                             </tbody>
                         </table>
                     </div>
                      <div className="text-xs mt-8">
                         <p className="font-bold">Terms & Conditions:</p>
-                        <p className="whitespace-pre-line text-gray-500">{document.termsAndConditions.replace('{docType}', docTypeTerm)}</p>
+                        <p className="text-gray-500 whitespace-pre-line">{document.termsAndConditions.replace('{docType}', docTypeTerm)}</p>
                     </div>
                     <div className="flex justify-between mt-8">
                         <SignatureDisplay signature={document.business.ownerSignature} label="Authorized Signature" />
@@ -377,7 +378,7 @@ export const ElectricalTemplate5: React.FC<TemplateProps> = ({ document, pageIte
     const docTypeTerm = document.documentType === 'quote' ? 'quote' : 'estimate';
 
     return (
-        <div className={`p-10 bg-gray-50 font-['Roboto',_sans-serif] text-gray-900 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{minHeight: '1056px', color: textColor, backgroundColor: document.backgroundColor}}>
+        <div className={`p-10 bg-gray-50 font-['Roboto',_sans-serif] text-gray-900 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ minHeight: '1056px', color: textColor, backgroundColor: document.backgroundColor }}>
             <header className="flex justify-between items-start mb-8">
                 <div>
                   <h1 className="text-3xl font-bold">{business.name}</h1>
@@ -429,7 +430,7 @@ export const ElectricalTemplate5: React.FC<TemplateProps> = ({ document, pageIte
                     </div>
                     <div className="w-1/3 text-sm space-y-1">
                         <p className="flex justify-between"><span>Subtotal</span><span>{currencySymbol}{summary.subtotal.toFixed(2)}</span></p>
-                        {summary.discount > 0 && <p className="flex justify-between text-red-500"><span>Discount</span><span>-{currencySymbol}{summary.discount.toFixed(2)}</span></p>}
+                        {summary.discount > 0 && <p className="flex justify-between"><span>Discount</span><span className="text-red-500">-{currencySymbol}{summary.discount.toFixed(2)}</span></p>}
                         {summary.shippingCost > 0 && <p className="flex justify-between"><span>Shipping/Extra</span><span>{currencySymbol}{summary.shippingCost.toFixed(2)}</span></p>}
                         <p className="flex justify-between"><span>Tax</span><span>{currencySymbol}{summary.taxAmount.toFixed(2)}</span></p>
                         <p className="flex justify-between font-bold text-lg mt-2 pt-2 border-t-2 border-black"><span>Total Estimate</span><span>{currencySymbol}{summary.grandTotal.toFixed(2)}</span></p>
@@ -441,3 +442,10 @@ export const ElectricalTemplate5: React.FC<TemplateProps> = ({ document, pageIte
 };
 
 export const ElectricalTemplate6: React.FC<TemplateProps> = (props) => <ElectricalTemplate1 {...props} />;
+export const ElectricalTemplate7: React.FC<TemplateProps> = (props) => <ElectricalTemplate2 {...props} />;
+export const ElectricalTemplate8: React.FC<TemplateProps> = (props) => <ElectricalTemplate3 {...props} />;
+export const ElectricalTemplate9: React.FC<TemplateProps> = (props) => <ElectricalTemplate4 {...props} />;
+export const ElectricalTemplate10: React.FC<TemplateProps> = (props) => <ElectricalTemplate5 {...props} />;
+
+
+    

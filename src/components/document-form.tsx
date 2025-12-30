@@ -46,7 +46,7 @@ import { RadioGroup, RadioGroupItem } from './ui/radio-group';
 
 interface DocumentFormProps {
   document: Estimate | Quote;
-  setDocument: Dispatch<SetStateAction<Estimate | Quote>>;
+  setDocument: Dispatch<React.SetStateAction<Estimate | Quote>>;
   accentColor: string;
   setAccentColor: Dispatch<SetStateAction<string>>;
   backgroundColor: string;
@@ -483,7 +483,6 @@ export function DocumentForm({ document, setDocument, accentColor, setAccentColo
     toast({ title: 'Preset Deleted', description: `"${selectedPreset}" has been deleted.` });
     setSelectedPreset(''); // Clear selection
   };
-
 
   const currencySymbol = currencies.find(c => c.value === document.currency)?.label.split(' ')[1] || '$';
   const isSigned = !!document.clientSignature;
@@ -1195,7 +1194,7 @@ export function DocumentForm({ document, setDocument, accentColor, setAccentColo
                           <DialogTitle>Save Line Item Preset</DialogTitle>
                           <DialogDescription>
                               Save the current set of line items for quick use in the future.
-                          </AlertDialogDescription>
+                          </DialogDescription>
                       </DialogHeader>
                       <div className="space-y-2">
                           <Label htmlFor="preset-name">Preset Name</Label>
