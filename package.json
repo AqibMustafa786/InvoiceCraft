@@ -1,3 +1,4 @@
+
 {
   "name": "nextn",
   "version": "0.1.0",
@@ -50,10 +51,8 @@
     "framer-motion": "^11.2.10",
     "genkit": "^1.27.0",
     "lucide-react": "^0.475.0",
-    "next": "15.3.8",
+    "next": "14.2.3",
     "next-themes": "^0.3.0",
-    "patch-package": "^8.0.0",
-    "puppeteer": "^22.10.0",
     "react": "^18.3.1",
     "react-day-picker": "^8.10.1",
     "react-dom": "^18.3.1",

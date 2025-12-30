@@ -15,8 +15,10 @@ import { Carousel, CarouselContent, CarouselItem } from '@/components/ui/carouse
 import Autoplay from "embla-carousel-autoplay";
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { AIChatbot } from '@/components/ai-chatbot';
 import { useTheme } from 'next-themes';
+import dynamic from 'next/dynamic';
+
+const AIChatbot = dynamic(() => import('@/components/ai-chatbot').then(mod => mod.AIChatbot), { ssr: false });
 
 
 const tools = [
@@ -190,7 +192,7 @@ export default function HomePage() {
       },
     },
   };
-
+  
   const heroImageSrc = mounted && theme === 'dark' ? '/home/darkinvoice.png' : '/home/invoice.png';
 
   return (
@@ -201,7 +203,7 @@ export default function HomePage() {
             aria-hidden="true"
             className="absolute inset-0 z-0"
           >
-           <svg className="absolute -right-40 top-0 w-[150%] h-[150%] sm:w-full sm:h-full" viewBox="0 0 1440 892" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+            <svg className="absolute -right-40 top-0 w-[150%] h-[150%] sm:w-full sm:h-full" viewBox="0 0 1440 892" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
               <path d="M1440 892V0H0V892H1440Z" className="fill-background"></path>
               <path d="M1665 829C1665 829 1320.5 1013 1075.5 829C830.5 645 915 214.5 649.5 214.5C384 214.5 319 481 107.5 481C-104 481 -178.5 233 -178.5 233" className="stroke-primary/10" strokeWidth="2"></path>
               <path d="M1665 754C1665 754 1320.5 938 1075.5 754C830.5 570 864.967 167.319 630.5 162.5C396.033 157.681 319 481 107.5 481C-104 481 -178.5 233 -178.5 233" className="stroke-primary/20" strokeWidth="2"></path>
@@ -257,11 +259,8 @@ export default function HomePage() {
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.5, ease: 'easeOut' }}
               >
-                <motion.div
-                  className="relative w-full h-full animate-flip"
-                >
-                  <Image
-                    key={heroImageSrc}
+                 <Image
+                    key={heroImageSrc} // Key changes to force re-render on theme switch
                     src={heroImageSrc}
                     alt="Illustration of a person working on a laptop"
                     fill
@@ -270,7 +269,6 @@ export default function HomePage() {
                     className="object-contain"
                     data-ai-hint="workspace illustration"
                   />
-                </motion.div>
               </motion.div>
             </div>
           </div>

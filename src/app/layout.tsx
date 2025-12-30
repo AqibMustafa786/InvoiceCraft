@@ -1,5 +1,6 @@
 
 import type { Metadata } from 'next';
+import { Inter, Poppins, Roboto } from 'next/font/google';
 import './globals.css';
 import { cn } from '@/lib/utils';
 import { Toaster } from '@/components/ui/toaster';
@@ -9,6 +10,24 @@ import { Header } from '@/components/header';
 import { FirebaseClientProvider } from '@/firebase';
 import { AuthProvider } from '@/context/auth-provider';
 import { SplashScreenProvider } from '@/context/splash-screen-provider';
+
+const inter = Inter({
+  subsets: ['latin'],
+  variable: '--font-inter',
+});
+
+const poppins = Poppins({
+  subsets: ['latin'],
+  weight: ['300', '400', '500', '600', '700'],
+  variable: '--font-poppins',
+});
+
+const roboto = Roboto({
+    subsets: ['latin'],
+    weight: ['300', '400', '500', '700'],
+    variable: '--font-roboto',
+});
+
 
 export const metadata: Metadata = {
   title: 'InvoiceCraft - Professional Invoice Generator',
@@ -22,14 +41,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet" />
-      </head>
       <body
         className={cn(
-          'min-h-screen bg-background font-body antialiased'
+          'min-h-screen bg-background font-body antialiased',
+          inter.variable,
+          poppins.variable,
+          roboto.variable
         )}
       >
         <FirebaseClientProvider>
