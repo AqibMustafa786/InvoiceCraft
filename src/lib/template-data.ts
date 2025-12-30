@@ -102,6 +102,15 @@ export const allTemplates: Template[] = [
     description: 'A sleek, contemporary design that puts your brand front and center. Ideal for modern businesses and creative professionals.',
     useCases: ['Agencies', 'Tech Startups', 'Consultants'],
   },
+  {
+    id: 'construction-1',
+    name: 'Foundation',
+    thumbnailUrl: '/templates/invoice_page_templates/c1.png',
+    category: 'Construction',
+    toolType: 'Invoice',
+    description: 'A professional and clear template designed for construction projects, with sections for detailed work descriptions.',
+    useCases: ['Construction', 'Contractors', 'Building'],
+  },
 
   // --- INSURANCE TEMPLATES ---
   {
