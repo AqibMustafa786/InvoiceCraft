@@ -152,17 +152,10 @@ const solutions = [
 export default function HomePage() {
   const { resolvedTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
-  const [heroImage, setHeroImage] = useState('/home/invoice.png');
 
   useEffect(() => {
     setMounted(true);
   }, []);
-
-  useEffect(() => {
-    if (mounted) {
-      setHeroImage(resolvedTheme === 'dark' ? '/home/darkinvoice.png' : '/home/invoice.png');
-    }
-  }, [resolvedTheme, mounted]);
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -242,7 +235,8 @@ export default function HomePage() {
                   className="mt-6 text-base text-muted-foreground md:text-lg"
                   variants={itemVariants}
                 >
-                  We develop beautiful and functional documents for desktop, tablet, and mobile.
+                  We develop beautiful and functional documents for desktop, tablet,
+                  and mobile.
                 </motion.p>
                 <motion.div 
                   className="flex flex-col items-center justify-center gap-4 mt-8 sm:flex-row lg:justify-start"
@@ -264,16 +258,18 @@ export default function HomePage() {
                 <motion.div
                   className="relative w-full h-full animate-flip"
                 >
-                  {mounted && <Image 
-                    key={heroImage}
-                    src={heroImage}
-                    alt="Illustration of a person working on a laptop"
-                    fill
-                    sizes="(max-width: 1024px) 100vw, 50vw"
-                    priority
-                    className="object-contain"
-                    data-ai-hint="workspace illustration"
-                  />}
+                 {mounted && (
+                    <Image
+                      key={resolvedTheme}
+                      src={resolvedTheme === 'dark' ? '/home/darkinvoice.png' : '/home/invoice.png'}
+                      alt="Illustration of a person working on a laptop"
+                      fill
+                      sizes="(max-width: 1024px) 100vw, 50vw"
+                      priority
+                      className="object-contain"
+                      data-ai-hint="workspace illustration"
+                    />
+                  )}
                 </motion.div>
               </motion.div>
             </div>
