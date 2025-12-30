@@ -101,24 +101,6 @@ export const allTemplates: Template[] = [
     description: 'Features a colored side panel for a touch of branding while keeping the main content area clean.',
     useCases: ['General Contractors', 'Commercial Construction'],
   },
-  {
-    id: 'construction-5',
-    name: 'Bold Grid',
-    thumbnailUrl: '/templates/construction-5.png',
-    category: 'Construction',
-    toolType: 'Invoice',
-    description: 'A strong, grid-based layout that organizes information clearly and professionally.',
-    useCases: ['Large Projects', 'Developers', 'Engineering Firms'],
-  },
-  {
-    id: 'construction-6',
-    name: 'Classic',
-    thumbnailUrl: '/templates/construction-6.png',
-    category: 'Construction',
-    toolType: 'Invoice',
-    description: 'A traditional and trusted layout for construction invoicing, easy for all parties to understand.',
-    useCases: ['Traditional Builders', 'Home Builders', 'Remodelers'],
-  },
 
   // --- ESTIMATE & QUOTE TEMPLATES ---
   {
