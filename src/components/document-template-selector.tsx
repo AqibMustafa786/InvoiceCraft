@@ -22,16 +22,19 @@ export function DocumentTemplateSelector({ selectedTemplate, onSelectTemplate, d
     const toolTypeToShow = isInvoice ? 'Invoice' : 'Estimate'; // Quotes use Estimate templates
 
     let templates = allTemplates.filter(t => t.toolType === toolTypeToShow);
-
+    
     // If a specific category is selected, filter by it. Otherwise, show general templates.
     if (category && category !== 'General Services' && category !== 'Generic') {
       const categoryTemplates = templates.filter(t => t.category === category);
       if (categoryTemplates.length > 0) {
         return categoryTemplates;
+      } else {
+         // If no specific templates, return an empty array to show the message
+         return [];
       }
     }
     
-    // Fallback to general templates if no specific category is selected or no templates are found for it
+    // Fallback to general templates if no specific category is selected
     const fallbackCategory = isInvoice ? 'General Services' : 'Generic';
     return templates.filter(t => t.category === fallbackCategory);
 
