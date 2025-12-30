@@ -1,5 +1,4 @@
 
-
 'use client';
 
 import { cn } from '@/lib/utils';
@@ -21,12 +20,27 @@ interface DocumentTemplateSelectorProps {
 
 
 export function DocumentTemplateSelector({ selectedTemplate, onSelectTemplate, documentType, category }: DocumentTemplateSelectorProps) {
-  const filteredTemplates = useMemo(() => {
-    let generalCategory: EstimateCategory | InvoiceCategory = documentType === 'invoice' ? 'General Services' : 'Generic';
-    let currentCategory = category;
+  const [selectedPreview, setSelectedPreview] = useState<Template | null>(null);
+  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
 
-    if (documentType === 'estimate' && category) {
-      // Map invoice category to estimate category if needed
+  const handlePreview = (template: Template) => {
+    setSelectedPreview(template);
+    setIsPreviewOpen(true);
+  };
+  
+  const filteredTemplates = useMemo(() => {
+    const isInvoice = documentType === 'invoice';
+    const toolTypeToShow = isInvoice ? 'Invoice' : 'Estimate'; // Quotes use Estimate templates
+
+    if (!category) {
+        return allTemplates.filter(t => t.category === (isInvoice ? 'General Services' : 'Generic') && t.toolType === toolTypeToShow);
+    }
+    
+    // This logic handles the mapping between Invoice and Estimate category names if they differ.
+    // For now, we assume a direct match is possible for invoices.
+    let currentCategory: EstimateCategory | InvoiceCategory = category;
+
+    if (!isInvoice && category) {
       const categoryMap: { [key in InvoiceCategory]?: EstimateCategory } = {
         'Construction': 'Construction Estimate',
         'Plumbing': 'Plumbing Estimate',
@@ -40,20 +54,19 @@ export function DocumentTemplateSelector({ selectedTemplate, onSelectTemplate, d
       };
       currentCategory = categoryMap[category as InvoiceCategory] || category;
     }
-    
-    if (!currentCategory || currentCategory === 'General Services' && documentType !== 'invoice') {
-        currentCategory = 'Generic';
-    }
 
-    if (currentCategory === 'General Services' && documentType === 'invoice') {
-        return allTemplates.filter(t => t.category === "General Services" && t.toolType === "Invoice");
-    }
-
-    if (currentCategory === 'Generic') {
-        return allTemplates.filter(t => t.category === "Generic" && t.toolType !== "Invoice");
+    // Main filtering logic
+    const templatesForCategory = allTemplates.filter(t => 
+        t.category === currentCategory && t.toolType === toolTypeToShow
+    );
+    
+    // If no specific templates are found for the category, fall back to general templates.
+    if (templatesForCategory.length === 0) {
+        const fallbackCategory = isInvoice ? 'General Services' : 'Generic';
+        return allTemplates.filter(t => t.category === fallbackCategory && t.toolType === toolTypeToShow);
     }
     
-    return allTemplates.filter(t => t.category === currentCategory);
+    return templatesForCategory;
 
   }, [category, documentType]);
 
@@ -65,9 +78,8 @@ export function DocumentTemplateSelector({ selectedTemplate, onSelectTemplate, d
         {filteredTemplates.map((template) => {
           return (
               <div
-              key={`${template.id}-${template.category}`}
+              key={`${template.id}-${template.category}-${template.toolType}`}
               className="cursor-pointer group"
-              onClick={() => onSelectTemplate(template.id)}
               >
               <div
                   className={cn(
@@ -78,6 +90,7 @@ export function DocumentTemplateSelector({ selectedTemplate, onSelectTemplate, d
                   'hover:border-primary/50'
                   )}
                   style={{ width: '188px' }}
+                  onClick={() => onSelectTemplate(template.id)}
               >
                   <Image
                   src={template.thumbnailUrl}
@@ -86,7 +99,11 @@ export function DocumentTemplateSelector({ selectedTemplate, onSelectTemplate, d
                   height={250}
                   className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
                   />
-                   <div className="absolute inset-0 bg-black/20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                   <div className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                      <Button onClick={(e) => { e.stopPropagation(); handlePreview(template); }} variant="secondary">
+                        <Eye className="mr-2 h-4 w-4" />
+                        Preview
+                      </Button>
                    </div>
               </div>
               <p className="text-center text-sm font-semibold p-3">{template.name}</p>
@@ -94,6 +111,12 @@ export function DocumentTemplateSelector({ selectedTemplate, onSelectTemplate, d
           )
         })}
       </div>
+      <TemplatePreview
+        template={selectedPreview}
+        isOpen={isPreviewOpen}
+        onClose={() => setIsPreviewOpen(false)}
+      />
     </>
   );
 }
+
