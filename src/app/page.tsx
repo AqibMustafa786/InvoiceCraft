@@ -10,12 +10,11 @@ import {
   FileText, FilePlus, Shield, HardHat, Code, Store, Car, Camera, Building, Scale, HeartPulse,
   LayoutDashboard, Edit, Bot, Brush, Cloud, Share2, Palette, ArrowRight, XCircle, Clock, AlertCircle, CheckCircle, Search, FileClock
 } from 'lucide-react';
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { Carousel, CarouselContent, CarouselItem } from '@/components/ui/carousel';
 import Autoplay from "embla-carousel-autoplay";
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { useTheme } from 'next-themes';
 import dynamic from 'next/dynamic';
 
 const AIChatbot = dynamic(() => import('@/components/ai-chatbot').then(mod => mod.AIChatbot), { ssr: false });
@@ -152,12 +151,6 @@ const solutions = [
 
 
 export default function HomePage() {
-  const [mounted, setMounted] = useState(false);
-  const { theme } = useTheme();
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -193,8 +186,6 @@ export default function HomePage() {
     },
   };
   
-  const heroImageSrc = mounted && theme === 'dark' ? '/darkinvoice.png' : '/invoice.png';
-
   return (
     <div className="flex flex-col min-h-[calc(100vh-8rem)]">
       <main className="flex-1">
@@ -269,8 +260,7 @@ export default function HomePage() {
                 }}
               >
                  <Image
-                    key={heroImageSrc} // Key changes to force re-render on theme switch
-                    src={heroImageSrc}
+                    src="/home/invoice.png"
                     alt="Illustration of a person working on a laptop"
                     fill
                     sizes="(max-width: 1024px) 100vw, 50vw"
