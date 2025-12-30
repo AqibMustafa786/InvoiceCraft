@@ -77,7 +77,7 @@ export const allTemplates: Template[] = [
    {
     id: 'construction-2',
     name: 'Modern Dark',
-    thumbnailUrl: '/templates/invoicepagetemplates/ModernDark.png',
+    thumbnailUrl: '/templates/invoicepagetemplates/Moderndark.png',
     category: 'Construction',
     toolType: 'Invoice',
     description: 'A sleek, dark-themed template for construction companies wanting a modern and bold look.',
