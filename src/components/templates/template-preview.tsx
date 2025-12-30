@@ -37,7 +37,7 @@ export function TemplatePreview({ template, isOpen, onClose }: TemplatePreviewPr
         </SheetHeader>
         <div className="flex-1 grid grid-cols-1 lg:grid-cols-3 gap-0 overflow-hidden">
           <ScrollArea className="col-span-1 lg:col-span-2 h-full">
-            <div className="p-8 bg-muted">
+            <div className="p-8 bg-background">
                <div className="w-full max-w-2xl mx-auto bg-background rounded-md shadow-2xl overflow-hidden">
                  <Image
                     src={template.thumbnailUrl}
