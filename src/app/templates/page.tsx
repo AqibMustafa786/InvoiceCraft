@@ -11,6 +11,8 @@ import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
 import { Search, X } from 'lucide-react';
+import { Card } from '@/components/ui/card';
+import { Label } from '@/components/ui/label';
 
 type ToolType = 'All' | 'Invoice' | 'Estimate' | 'Quote' | 'Insurance';
 
