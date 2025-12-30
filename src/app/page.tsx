@@ -193,7 +193,7 @@ export default function HomePage() {
     },
   };
   
-  const heroImageSrc = mounted && theme === 'dark' ? '/home/darkinvoice.png' : '/home/invoice.png';
+  const heroImageSrc = mounted && theme === 'dark' ? '/darkinvoice.png' : '/invoice.png';
 
   return (
     <div className="flex flex-col min-h-[calc(100vh-8rem)]">
@@ -256,8 +256,17 @@ export default function HomePage() {
               <motion.div 
                 className="relative w-full h-80 lg:h-auto lg:aspect-[4/3]"
                 initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.5, ease: 'easeOut' }}
+                animate={{ 
+                  opacity: 1, 
+                  scale: 1,
+                  y: ["0rem", "-1.5rem", "0rem"],
+                }}
+                transition={{ 
+                  duration: 3, 
+                  ease: "easeInOut",
+                  repeat: Infinity,
+                  repeatType: "loop",
+                }}
               >
                  <Image
                     key={heroImageSrc} // Key changes to force re-render on theme switch
