@@ -1,0 +1,77 @@
+
+'use client';
+
+import { motion } from 'framer-motion';
+import Image from 'next/image';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Eye } from 'lucide-react';
+import type { Template } from '@/lib/template-data';
+import { cn } from '@/lib/utils';
+
+interface TemplateCardProps {
+  template: Template;
+  onPreview: (template: Template) => void;
+}
+
+export function TemplateCard({ template, onPreview }: TemplateCardProps) {
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { 
+      opacity: 1, 
+      y: 0, 
+      transition: { 
+        duration: 0.5,
+        ease: "easeOut"
+      } 
+    },
+  };
+  
+  const toolColors: Record<string, string> = {
+    Invoice: 'bg-blue-100 text-blue-800 dark:bg-blue-900/50 dark:text-blue-300',
+    Estimate: 'bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-300',
+    Quote: 'bg-purple-100 text-purple-800 dark:bg-purple-900/50 dark:text-purple-300',
+    Insurance: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/50 dark:text-yellow-300',
+  }
+
+  return (
+    <motion.div
+      variants={itemVariants}
+      whileHover={{ y: -8, scale: 1.03 }}
+      transition={{ type: 'spring', stiffness: 300 }}
+      className="group relative block overflow-hidden rounded-xl border bg-card shadow-sm"
+    >
+      <div className="relative aspect-[3/4] overflow-hidden">
+        <Image
+          src={template.thumbnailUrl}
+          alt={`Thumbnail for ${template.name} template`}
+          fill
+          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+          className="object-cover object-top transition-transform duration-500 ease-in-out group-hover:scale-105"
+        />
+        <div 
+          aria-hidden="true" 
+          className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+        ></div>
+        <div className="absolute inset-0 flex items-center justify-center opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+          <Button onClick={() => onPreview(template)} variant="secondary">
+            <Eye className="mr-2 h-4 w-4" />
+            Preview
+          </Button>
+        </div>
+      </div>
+      <div className="p-4 bg-card">
+        <div className="flex items-center justify-between">
+          <h3 className="font-semibold text-card-foreground">{template.name}</h3>
+          <Badge 
+            variant="outline" 
+            className={cn("text-xs", toolColors[template.toolType] || 'border')}
+          >
+            {template.toolType}
+          </Badge>
+        </div>
+        <p className="text-xs text-muted-foreground mt-1">{template.category}</p>
+      </div>
+    </motion.div>
+  );
+}

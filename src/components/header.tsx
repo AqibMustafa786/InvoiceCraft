@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
-import { Menu, Search, ChevronDown, FileText, Gem, Home, Shield, FilePlus, Tag } from 'lucide-react';
+import { Menu, Search, ChevronDown, FileText, Gem, Home, Shield, FilePlus, Tag, Book } from 'lucide-react';
 import { ModeToggle } from '@/components/mode-toggle';
 import { cn } from '@/lib/utils';
 import { motion } from 'framer-motion';
@@ -22,9 +22,9 @@ import {
 import { ScrollArea } from './ui/scroll-area';
 
 const mainNavLinks = [
-    { href: "/", label: "Home", icon: <Home /> },
     { href: "/features", label: "Features", icon: <Gem /> },
     { href: "/pricing", label: "Pricing", icon: <Tag /> },
+    { href: "/templates", label: "Templates", icon: <Book /> },
 ]
 
 const generalToolsLinks = [
