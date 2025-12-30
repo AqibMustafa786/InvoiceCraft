@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import Image from 'next/image';
 import { Template } from '@/lib/template-data';
 import { FileText, DraftingCompass, Shield, FileQuestion } from 'lucide-react';
+import React from 'react';
 
 interface TemplatePreviewProps {
   template: Template | null;
@@ -31,12 +32,12 @@ export function TemplatePreview({ template, isOpen, onClose }: TemplatePreviewPr
     <Sheet open={isOpen} onOpenChange={onClose}>
       <SheetContent className="w-full max-w-5xl p-0 flex flex-col">
         <SheetHeader className="p-6 border-b">
+          <SheetDescription className='text-sm text-primary font-semibold'>{template.category}</SheetDescription>
           <SheetTitle className="text-2xl font-bold">{template.name}</SheetTitle>
-          <SheetDescription>A read-only preview of the "{template.name}" template.</SheetDescription>
         </SheetHeader>
         <div className="flex-1 grid grid-cols-1 lg:grid-cols-3 gap-0 overflow-hidden">
           <ScrollArea className="col-span-1 lg:col-span-2 h-full">
-            <div className="p-8 bg-muted">
+            <div className="p-8 bg-gray-200 dark:bg-gray-800">
                <div className="w-full max-w-2xl mx-auto bg-white rounded-md shadow-2xl overflow-hidden">
                  <Image
                     src={template.thumbnailUrl}
