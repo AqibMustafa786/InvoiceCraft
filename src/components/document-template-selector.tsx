@@ -34,9 +34,15 @@ export function DocumentTemplateSelector({ selectedTemplate, onSelectTemplate, d
 
     // If a category is selected, find templates for that specific category.
     if (category && category !== "General Services" && category !== "Generic") {
-      return allTemplates.filter(t => 
-        t.category === category && t.toolType === toolTypeToShow
+      // The category in the dropdown might be "Plumbing", but in the data it's "Plumbing Services"
+      // We check for a partial match to be more robust.
+      const specificTemplates = allTemplates.filter(t => 
+        t.category.includes(category) && t.toolType === toolTypeToShow
       );
+
+      if (specificTemplates.length > 0) {
+        return specificTemplates;
+      }
     }
     
     // Otherwise, show the default general templates.
