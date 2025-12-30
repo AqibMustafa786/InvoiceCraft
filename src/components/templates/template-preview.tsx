@@ -36,14 +36,14 @@ export function TemplatePreview({ template, isOpen, onClose }: TemplatePreviewPr
         </SheetHeader>
         <div className="flex-1 grid grid-cols-1 lg:grid-cols-3 gap-0 overflow-hidden">
           <ScrollArea className="col-span-1 lg:col-span-2 h-full">
-            <div className="p-8 bg-muted/30">
-               <div className="aspect-[8.5/11] w-full max-w-2xl mx-auto bg-white rounded-md shadow-2xl overflow-hidden">
+            <div className="p-8 bg-muted">
+               <div className="w-full max-w-2xl mx-auto bg-white rounded-md shadow-2xl overflow-hidden">
                  <Image
                     src={template.thumbnailUrl}
                     alt={`Preview of ${template.name}`}
                     width={850}
                     height={1100}
-                    className="w-full h-full object-cover object-top"
+                    className="w-full h-auto object-contain"
                   />
                </div>
             </div>
