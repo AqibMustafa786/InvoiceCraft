@@ -150,9 +150,9 @@ const solutions = [
 
 
 export default function HomePage() {
-  const { theme } = useTheme();
+  const { resolvedTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
-  const [heroImage, setHeroImage] = useState('/home/invoice.png'); // Default to light theme image
+  const [heroImage, setHeroImage] = useState('/home/invoice.png');
 
   useEffect(() => {
     setMounted(true);
@@ -160,9 +160,9 @@ export default function HomePage() {
 
   useEffect(() => {
     if (mounted) {
-      setHeroImage(theme === 'dark' ? '/home/darkinvoice.png' : '/home/invoice.png');
+      setHeroImage(resolvedTheme === 'dark' ? '/home/darkinvoice.png' : '/home/invoice.png');
     }
-  }, [theme, mounted]);
+  }, [resolvedTheme, mounted]);
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -264,7 +264,8 @@ export default function HomePage() {
                 <motion.div
                   className="relative w-full h-full animate-flip"
                 >
-                  <Image 
+                  {mounted && <Image 
+                    key={heroImage}
                     src={heroImage}
                     alt="Illustration of a person working on a laptop"
                     fill
@@ -272,7 +273,7 @@ export default function HomePage() {
                     priority
                     className="object-contain"
                     data-ai-hint="workspace illustration"
-                  />
+                  />}
                 </motion.div>
               </motion.div>
             </div>
