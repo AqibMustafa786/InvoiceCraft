@@ -40,12 +40,15 @@ export function Footer() {
               <Link href="/pricing" className="transition-colors text-muted-foreground hover:text-primary">Pricing</Link>
               <Link href="/create-invoice" className="transition-colors text-muted-foreground hover:text-primary">Create Invoice</Link>
               <Link href="/create-estimate" className="transition-colors text-muted-foreground hover:text-primary">Create Estimate</Link>
+              <Link href="/create-quote" className="transition-colors text-muted-foreground hover:text-primary">Create Quote</Link>
+              <Link href="/create-insurance" className="transition-colors text-muted-foreground hover:text-primary">Create Insurance</Link>
             </nav>
           </div>
           <div className="space-y-4">
             <h3 className="font-semibold tracking-wider uppercase text-foreground">Company</h3>
             <nav className="flex flex-col space-y-3">
               <Link href="/about" className="transition-colors text-muted-foreground hover:text-primary">About Us</Link>
+              <Link href="/blog" className="transition-colors text-muted-foreground hover:text-primary">Blog</Link>
               <Link href="/careers" className="transition-colors text-muted-foreground hover:text-primary">Careers</Link>
               <Link href="/press" className="transition-colors text-muted-foreground hover:text-primary">Press</Link>
             </nav>
