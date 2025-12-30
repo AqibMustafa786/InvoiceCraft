@@ -32,14 +32,9 @@ export function DocumentTemplateSelector({ selectedTemplate, onSelectTemplate, d
     const isInvoice = documentType === 'invoice';
     const toolTypeToShow = isInvoice ? 'Invoice' : 'Estimate'; // Quotes use Estimate templates
 
-    if (!category) {
-        return allTemplates.filter(t => t.category === (isInvoice ? 'General Services' : 'Generic') && t.toolType === toolTypeToShow);
-    }
-    
-    // This logic handles the mapping between Invoice and Estimate category names if they differ.
-    // For now, we assume a direct match is possible for invoices.
-    let currentCategory: EstimateCategory | InvoiceCategory = category;
+    let currentCategory: EstimateCategory | InvoiceCategory | undefined = category;
 
+    // This logic handles the mapping between Invoice and Estimate category names if they differ.
     if (!isInvoice && category) {
       const categoryMap: { [key in InvoiceCategory]?: EstimateCategory } = {
         'Construction': 'Construction Estimate',
@@ -54,19 +49,24 @@ export function DocumentTemplateSelector({ selectedTemplate, onSelectTemplate, d
       };
       currentCategory = categoryMap[category as InvoiceCategory] || category;
     }
-
-    // Main filtering logic
+    
     const templatesForCategory = allTemplates.filter(t => 
         t.category === currentCategory && t.toolType === toolTypeToShow
     );
-    
-    // If no specific templates are found for the category, fall back to general templates.
-    if (templatesForCategory.length === 0) {
-        const fallbackCategory = isInvoice ? 'General Services' : 'Generic';
-        return allTemplates.filter(t => t.category === fallbackCategory && t.toolType === toolTypeToShow);
+
+    // If a category is selected and no specific templates are found, show an empty array.
+    // Otherwise, if no category is selected, show the default general templates.
+    if (category && templatesForCategory.length === 0) {
+        return [];
     }
     
-    return templatesForCategory;
+    if (templatesForCategory.length > 0) {
+        return templatesForCategory;
+    }
+
+    // Fallback for when no category is selected
+    const fallbackCategory = isInvoice ? 'General Services' : 'Generic';
+    return allTemplates.filter(t => t.category === fallbackCategory && t.toolType === toolTypeToShow);
 
   }, [category, documentType]);
 
@@ -111,6 +111,12 @@ export function DocumentTemplateSelector({ selectedTemplate, onSelectTemplate, d
           )
         })}
       </div>
+      {filteredTemplates.length === 0 && (
+        <div className="text-center py-10 text-muted-foreground">
+          <p>No specific templates found for this category.</p>
+          <p className="text-xs">Showing general templates.</p>
+        </div>
+      )}
       <TemplatePreview
         template={selectedPreview}
         isOpen={isPreviewOpen}
@@ -119,4 +125,3 @@ export function DocumentTemplateSelector({ selectedTemplate, onSelectTemplate, d
     </>
   );
 }
-
