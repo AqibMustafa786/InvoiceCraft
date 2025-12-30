@@ -50,17 +50,17 @@
   }
  
   .dark {
-    --background-hsl: 240 10% 3.9%;
+    --background-hsl: 20 10% 4%; /* Very dark desaturated brown */
     --background: hsl(var(--background-hsl));
     --foreground: 210 40% 98%;
  
-    --card: 240 10% 7%; /* Slightly lighter than background */
+    --card: 20 10% 7%; /* Slightly lighter than background */
     --card-foreground: 210 40% 98%;
  
     --popover: 240 10% 3.9%;
     --popover-foreground: 210 40% 98%;
  
-    --primary: 300 80% 60%; /* Vibrant Purple/Magenta */
+    --primary: 35 85% 55%; /* Orange */
     --primary-foreground: 210 40% 98%;
  
     --secondary: 240 4% 15%;
@@ -69,7 +69,7 @@
     --muted: 240 4% 15%;
     --muted-foreground: 215 20.2% 65.1%;
  
-    --accent: 300 80% 55%;
+    --accent: 35 92% 50%; /* Vibrant Orange for glow */
     --accent-foreground: 210 40% 98%;
  
     --destructive: 0 62.8% 30.6%;
@@ -94,8 +94,7 @@
   }
   
   .dark body {
-     background-image: 
-        radial-gradient(ellipse 50% 80% at 50% -20%, hsl(var(--primary) / 0.1), transparent);
+     background-image: radial-gradient(ellipse 80% 80% at 50% 120%, hsl(var(--accent) / 0.15), transparent);
   }
 }
 
