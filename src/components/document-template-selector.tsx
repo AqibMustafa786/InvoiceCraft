@@ -21,21 +21,19 @@ export function DocumentTemplateSelector({ selectedTemplate, onSelectTemplate, d
     const isInvoice = documentType === 'invoice';
     const toolTypeToShow = isInvoice ? 'Invoice' : 'Estimate'; // Quotes use Estimate templates
 
-    // If a category is selected, find templates for that specific category.
-    if (category) {
-      const categoryToMatch = isInvoice ? category : `${category} Estimate`;
-      const specificTemplates = allTemplates.filter(t => 
-        t.category === categoryToMatch && t.toolType === toolTypeToShow
-      );
+    let templates = allTemplates.filter(t => t.toolType === toolTypeToShow);
 
-      if (specificTemplates.length > 0) {
-        return specificTemplates;
+    // If a specific category is selected, filter by it. Otherwise, show general templates.
+    if (category && category !== 'General Services' && category !== 'Generic') {
+      const categoryTemplates = templates.filter(t => t.category === category);
+      if (categoryTemplates.length > 0) {
+        return categoryTemplates;
       }
     }
     
-    // Otherwise, show the default general templates.
+    // Fallback to general templates if no specific category is selected or no templates are found for it
     const fallbackCategory = isInvoice ? 'General Services' : 'Generic';
-    return allTemplates.filter(t => t.category === fallbackCategory && t.toolType === toolTypeToShow);
+    return templates.filter(t => t.category === fallbackCategory);
 
   }, [category, documentType]);
 
@@ -67,9 +65,6 @@ export function DocumentTemplateSelector({ selectedTemplate, onSelectTemplate, d
                 height={250}
                 className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
                 />
-                <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                <span className="text-white font-bold text-lg">Select</span>
-                </div>
                 {template.isPro && (
                 <Badge className="absolute top-2 right-2" variant="secondary">
                     PRO
