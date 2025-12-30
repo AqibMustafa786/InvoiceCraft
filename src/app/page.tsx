@@ -278,11 +278,13 @@ export default function HomePage() {
                 </div>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
                     {tools.map((tool) => (
-                        <Link href={tool.href} key={tool.href}>
+                        <Link href={tool.href} key={tool.href} className="group">
                             <motion.div whileHover={{ y: -8, scale: 1.05 }} transition={{ type: "spring", stiffness: 300 }}>
-                                <Card className="bg-card/50 backdrop-blur-sm shadow-lg hover:shadow-primary/20 transition-all duration-300">
+                                <Card className="bg-card/50 backdrop-blur-sm shadow-lg group-hover:shadow-primary/20 transition-all duration-300">
                                     <CardContent className="flex flex-col items-center justify-center p-6 text-center gap-4">
-                                        {tool.icon}
+                                        <motion.div whileHover={{scale: 1.1, rotate: -5}} transition={{ type: "spring", stiffness: 400 }}>
+                                            {tool.icon}
+                                        </motion.div>
                                         <p className="font-semibold text-lg">{tool.label}</p>
                                     </CardContent>
                                 </Card>
