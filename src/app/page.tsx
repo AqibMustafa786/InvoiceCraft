@@ -151,11 +151,19 @@ const solutions = [
 
 export default function HomePage() {
   const { resolvedTheme } = useTheme();
+  const [imageSrc, setImageSrc] = useState('/home/invoice.png'); // Default to light theme image
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  useEffect(() => {
+    // This effect runs after the component has mounted and `resolvedTheme` is available
+    if (mounted) {
+      setImageSrc(resolvedTheme === 'dark' ? '/home/darkinvoice.png' : '/home/invoice.png');
+    }
+  }, [mounted, resolvedTheme]);
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -258,18 +266,16 @@ export default function HomePage() {
                 <motion.div
                   className="relative w-full h-full animate-flip"
                 >
-                 {mounted && (
-                    <Image
-                      key={resolvedTheme}
-                      src={resolvedTheme === 'dark' ? '/home/darkinvoice.png' : '/home/invoice.png'}
-                      alt="Illustration of a person working on a laptop"
-                      fill
-                      sizes="(max-width: 1024px) 100vw, 50vw"
-                      priority
-                      className="object-contain"
-                      data-ai-hint="workspace illustration"
-                    />
-                  )}
+                  <Image
+                    key={imageSrc} // Force re-render when src changes
+                    src={imageSrc}
+                    alt="Illustration of a person working on a laptop"
+                    fill
+                    sizes="(max-width: 1024px) 100vw, 50vw"
+                    priority
+                    className="object-contain"
+                    data-ai-hint="workspace illustration"
+                  />
                 </motion.div>
               </motion.div>
             </div>
