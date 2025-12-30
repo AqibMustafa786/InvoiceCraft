@@ -246,21 +246,18 @@ export default function HomePage() {
               </motion.div>
               <motion.div 
                 className="relative w-full h-80 lg:h-auto lg:aspect-[4/3]"
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ 
-                  opacity: 1, 
-                  scale: 1,
+                animate={{
                   y: ["0rem", "-1.5rem", "0rem"],
                 }}
                 transition={{ 
-                  duration: 3, 
+                  duration: 4, 
                   ease: "easeInOut",
                   repeat: Infinity,
                   repeatType: "loop",
                 }}
               >
                  <Image
-                    src="/home/invoice.png"
+                    src="/home/invocie.png"
                     alt="Illustration of a person working on a laptop"
                     fill
                     sizes="(max-width: 1024px) 100vw, 50vw"
