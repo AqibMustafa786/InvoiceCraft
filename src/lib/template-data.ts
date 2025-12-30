@@ -77,7 +77,7 @@ export const allTemplates: Template[] = [
    {
     id: 'construction-2',
     name: 'Modern Dark',
-    thumbnailUrl: '/templates/invoicepagetemplates/ModernDarkInvoicetemplate.png',
+    thumbnailUrl: '/templates/invoicepagetemplates/ModernDark.png',
     category: 'Construction',
     toolType: 'Invoice',
     description: 'A sleek, dark-themed template for construction companies wanting a modern and bold look.',
@@ -86,7 +86,7 @@ export const allTemplates: Template[] = [
   {
     id: 'construction-3',
     name: 'Minimalist',
-    thumbnailUrl: '/templates/invoicepagetemplates/MinimalistInvoicetemplate.png',
+    thumbnailUrl: '/templates/invoicepagetemplates/Minimalist.png',
     category: 'Construction',
     toolType: 'Invoice',
     description: 'A clean and minimal design that focuses on the core details of the construction job.',
@@ -95,7 +95,7 @@ export const allTemplates: Template[] = [
   {
     id: 'construction-4',
     name: 'Side Accent',
-    thumbnailUrl: '/templates/invoicepagetemplates/SideAccentInvoicetemplate.png',
+    thumbnailUrl: '/templates/invoicepagetemplates/SideAccent.png',
     category: 'Construction',
     toolType: 'Invoice',
     description: 'Features a colored side panel for a touch of branding while keeping the main content area clean.',
