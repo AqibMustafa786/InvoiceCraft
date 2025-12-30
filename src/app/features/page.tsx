@@ -123,7 +123,7 @@ export default function FeaturesPage() {
                 viewport={{ once: true, amount: 0.2 }}
             >
                 {coreFeatures.map((feature, index) => (
-                    <motion.div key={index} variants={itemVariants}>
+                    <motion.div key={index} variants={itemVariants} whileHover={{ y: -5 }} transition={{ type: 'spring', stiffness: 300 }}>
                         <Card className="border bg-card/50 shadow-lg hover:shadow-primary/20 transition-all duration-300 h-full p-6 flex flex-col items-center text-center">
                             {feature.icon}
                             <h3 className="text-xl font-semibold mt-4 mb-2">{feature.name}</h3>
@@ -147,7 +147,7 @@ export default function FeaturesPage() {
                     viewport={{ once: true, amount: 0.2 }}
                 >
                     {advancedFeatures.map((feature, index) => (
-                        <motion.div key={index} variants={itemVariants}>
+                        <motion.div key={index} variants={itemVariants} whileHover={{ y: -5 }} transition={{ type: 'spring', stiffness: 300 }}>
                             <Card className="border bg-card/50 shadow-lg hover:shadow-primary/20 transition-all duration-300 h-full p-6 flex flex-col items-center text-center">
                                 {feature.icon}
                                 <h3 className="text-xl font-semibold mt-4 mb-2">{feature.name}</h3>
@@ -173,7 +173,7 @@ export default function FeaturesPage() {
                         viewport={{ once: true, amount: 0.2 }}
                     >
                         {templateCategories.map((cat) => (
-                            <motion.div key={cat.name} variants={itemVariants}>
+                            <motion.div key={cat.name} variants={itemVariants} whileHover={{ y: -5 }} transition={{ type: 'spring', stiffness: 300 }}>
                                 <Card className="bg-card/50 backdrop-blur-sm shadow-md hover:shadow-primary/20 transition-all duration-300">
                                     <CardContent className="flex flex-col items-center justify-center p-4 text-center gap-2">
                                         {React.cloneElement(cat.icon, { className: "h-8 w-8 text-primary" })}
@@ -190,11 +190,11 @@ export default function FeaturesPage() {
             <section className="text-center py-20 md:py-28">
                  <h2 className="text-3xl md:text-4xl font-bold font-headline">Ready to Get Started?</h2>
                  <p className="mt-4 text-muted-foreground max-w-xl mx-auto">Stop wasting time on manual invoicing. Join thousands of freelancers and businesses streamlining their billing with InvoiceCraft.</p>
-                 <div className="mt-8">
+                 <motion.div className="mt-8" whileHover={{ scale: 1.05 }} transition={{ type: 'spring', stiffness: 300 }}>
                      <Button asChild size="lg">
                         <Link href="/dashboard">Create Your First Invoice <ArrowRight className="ml-2 h-5 w-5" /></Link>
                     </Button>
-                 </div>
+                 </motion.div>
             </section>
         </div>
     );
