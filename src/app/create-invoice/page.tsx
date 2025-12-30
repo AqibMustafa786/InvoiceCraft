@@ -2,7 +2,7 @@
 
 'use client';
 
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useEffect, useCallback, useMemo, ChangeEvent } from 'react';
 import { createPortal } from 'react-dom';
 import type { Invoice, LineItem, AuditLogEntry, Client } from '@/lib/types';
 import { InvoiceForm } from '@/components/invoice-form';
@@ -355,6 +355,7 @@ export default function CreateInvoicePage() {
   const [accentColor, setAccentColor] = useState<string>('hsl(var(--primary))');
   const [backgroundColor, setBackgroundColor] = useState<string>('#FFFFFF');
   const [textColor, setTextColor] = useState<string>('#374151');
+  const [isUploading, setIsUploading] = useState(false);
   const { toast } = useToast();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -669,6 +670,61 @@ export default function CreateInvoicePage() {
       });
   };
 
+  const handleLogoUpload = async (e: ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      if (file.size > 4 * 1024 * 1024) { // 4MB limit
+        toast({
+          title: "Image too large",
+          description: "Please upload an image smaller than 4MB.",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      setIsUploading(true);
+      const formData = new FormData();
+      formData.append('file', file);
+
+      try {
+        const response = await fetch('/api/upload', {
+          method: 'POST',
+          body: formData,
+        });
+
+        if (!response.ok) {
+          throw new Error('Upload failed');
+        }
+
+        const { url } = await response.json();
+        setInvoice(prev => {
+          if (!prev) return null;
+          return {
+            ...prev,
+            business: {
+                ...prev.business,
+                logoUrl: url
+            }
+          }
+        });
+        toast({
+          title: "Logo Uploaded",
+          description: "Your logo has been successfully uploaded.",
+        });
+      } catch (error) {
+        console.error("Upload error:", error);
+        toast({
+          title: "Upload Failed",
+          description: "Could not upload the logo. Please try again.",
+          variant: "destructive",
+        });
+      } finally {
+        setIsUploading(false);
+      }
+    }
+  };
+
+
   if (!processedInvoice || (draftId && isDraftLoading) || isAuthLoading || isCompanyLoading) {
     return (
         <div className="container mx-auto p-4 md:p-8">
@@ -737,6 +793,8 @@ export default function CreateInvoicePage() {
                   textColor={textColor}
                   setTextColor={setTextColor}
                   toast={toast}
+                  onLogoUpload={handleLogoUpload}
+                  isUploading={isUploading}
                 />
               </div>
           </motion.div>

@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import { ChangeEvent, Dispatch, SetStateAction, useState, useEffect } from 'react';
@@ -45,6 +46,8 @@ interface InvoiceFormProps {
   textColor: string;
   setTextColor: Dispatch<SetStateAction<string>>;
   toast: (options: { title: string; description: string; variant?: "default" | "destructive" }) => void;
+  onLogoUpload: (e: ChangeEvent<HTMLInputElement>) => void;
+  isUploading: boolean;
 }
 
 interface Preset {
@@ -164,12 +167,11 @@ const CustomSelect = ({ value, onValueChange, options, placeholder, name }: { va
 };
 
 
-export function InvoiceForm({ invoice, setInvoice, accentColor, setAccentColor, backgroundColor, setBackgroundColor, textColor, setTextColor, toast }: InvoiceFormProps) {
+export function InvoiceForm({ invoice, setInvoice, accentColor, setAccentColor, backgroundColor, setBackgroundColor, textColor, setTextColor, toast, onLogoUpload, isUploading }: InvoiceFormProps) {
   const [bulkAddCount, setBulkAddCount] = useState(10);
   const [accentColorInput, setAccentColorInput] = useState(accentColor);
   const [bgColorInput, setBgColorInput] = useState(backgroundColor);
   const [textColorInput, setTextColorInput] = useState(textColor);
-  const [isUploading, setIsUploading] = useState(false);
   const [isSignatureDialogOpen, setIsSignatureDialogOpen] = useState(false);
   const [presets, setPresets] = useState<Preset[]>([]);
   const [selectedPreset, setSelectedPreset] = useState<string>('');
@@ -335,57 +337,6 @@ export function InvoiceForm({ invoice, setInvoice, accentColor, setAccentColor, 
     setInvoice(prev => ({ ...prev, lineItems: newItems }));
   };
 
-  const handleLogoUpload = async (e: ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      const file = e.target.files[0];
-      if (file.size > 4 * 1024 * 1024) { // 4MB limit
-        toast({
-          title: "Image too large",
-          description: "Please upload an image smaller than 4MB.",
-          variant: "destructive",
-        });
-        return;
-      }
-
-      setIsUploading(true);
-      const formData = new FormData();
-      formData.append('file', file);
-
-      try {
-        const response = await fetch('/api/upload', {
-          method: 'POST',
-          body: formData,
-        });
-
-        if (!response.ok) {
-          throw new Error('Upload failed');
-        }
-
-        const { url } = await response.json();
-        setInvoice(prev => ({
-            ...prev,
-            business: {
-                ...prev.business,
-                logoUrl: url
-            }
-        }));
-        toast({
-          title: "Logo Uploaded",
-          description: "Your logo has been successfully uploaded.",
-        });
-      } catch (error) {
-        console.error("Upload error:", error);
-        toast({
-          title: "Upload Failed",
-          description: "Could not upload the logo. Please try again.",
-          variant: "destructive",
-        });
-      } finally {
-        setIsUploading(false);
-      }
-    }
-  };
-
   const handleRemoveLogo = () => {
     setInvoice(prev => ({
         ...prev,
@@ -489,7 +440,7 @@ export function InvoiceForm({ invoice, setInvoice, accentColor, setAccentColor, 
                         </label>
                     </Button>
                 )}
-                 <Input id="logo-upload" type="file" className="sr-only" onChange={handleLogoUpload} accept="image/png, image/jpeg, image/gif" disabled={isUploading}/>
+                 <Input id="logo-upload" type="file" className="sr-only" onChange={onLogoUpload} accept="image/png, image/jpeg, image/gif" disabled={isUploading}/>
                 </div>
             </div>
             <div className="space-y-2">
