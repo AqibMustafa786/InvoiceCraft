@@ -48,7 +48,8 @@ export default function TemplatesPage() {
     }
     
     if (activeTool !== 'All') {
-      templates = templates.filter(t => t.toolType === activeTool);
+      const toolType = activeTool === 'Estimate' ? ['Estimate', 'Quote'] : [activeTool];
+      templates = templates.filter(t => toolType.includes(t.toolType));
     }
     
     if (searchTerm) {
@@ -93,37 +94,36 @@ export default function TemplatesPage() {
             </PageHeaderDescription>
         </PageHeader>
 
-        <div className="space-y-8">
+        <div className="space-y-6">
             {/* Filter Controls */}
-            <div className="bg-card/50 backdrop-blur-sm p-4 border rounded-lg flex flex-col md:flex-row items-center gap-4">
+            <div className="bg-card/50 backdrop-blur-sm p-3 border rounded-lg flex flex-col md:flex-row items-center gap-4">
                 <div className="relative w-full md:flex-1">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                     <Input 
                         placeholder="Search templates..." 
-                        className="pl-10 text-base" 
+                        className="pl-10 h-10" 
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                     />
                 </div>
-                 <div className="flex w-full md:w-auto items-center gap-4">
+                 <div className="flex w-full md:w-auto items-center gap-2">
                     <ToggleGroup 
                       type="single" 
+                      defaultValue="All"
                       value={activeTool}
                       onValueChange={(value) => setActiveTool(value || 'All')}
-                      className="justify-start"
+                      className="justify-start border rounded-md p-0.5"
                     >
                       {toolTypes.map(tool => (
-                        <ToggleGroupItem key={tool} value={tool} aria-label={`Filter by ${tool}`} className="flex gap-2">
+                        <ToggleGroupItem key={tool} value={tool} aria-label={`Filter by ${tool}`} className="flex gap-2 px-3 py-1.5 h-auto text-xs data-[state=on]:bg-background data-[state=on]:shadow-sm border-none">
                            {toolIcons[tool]} {tool}
                         </ToggleGroupItem>
                       ))}
                     </ToggleGroup>
                      <Select value={sortBy} onValueChange={setSortBy}>
-                        <SelectTrigger className="w-[180px]">
-                            <div className="flex items-center gap-2">
-                                <SortAsc className="h-4 w-4" />
-                                <SelectValue placeholder="Sort by..." />
-                            </div>
+                        <SelectTrigger className="w-auto h-10 text-xs gap-2">
+                            <SortAsc className="h-4 w-4" />
+                            <SelectValue placeholder="Sort by..." />
                         </SelectTrigger>
                         <SelectContent>
                             <SelectItem value="name">Sort by Name</SelectItem>
@@ -134,15 +134,16 @@ export default function TemplatesPage() {
             </div>
 
             {/* Category Filters */}
-            <ScrollArea className="w-full">
-              <div className="flex items-center gap-4 border-b pb-2">
+            <ScrollArea className="w-full whitespace-nowrap">
+              <div className="flex items-center gap-2 border-b pb-2">
                 {allCategories.map(category => (
                   <Button
                     key={category}
                     variant="ghost"
+                    size="sm"
                     onClick={() => setActiveCategory(category)}
                     className={cn(
-                      "relative text-sm font-medium transition-colors whitespace-nowrap",
+                      "relative text-sm font-medium transition-colors h-8 px-3",
                       activeCategory === category ? "text-primary" : "text-muted-foreground hover:text-primary"
                     )}
                   >
@@ -188,4 +189,3 @@ export default function TemplatesPage() {
     </>
   );
 }
-
