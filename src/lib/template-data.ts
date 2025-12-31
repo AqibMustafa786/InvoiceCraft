@@ -107,7 +107,7 @@ export const allTemplates: Template[] = [
   {
     id: 'plumbing-1',
     name: 'Direct Flow',
-    thumbnailUrl: '/templates/invoicepagetemplates/Direct-Flow.png',
+    thumbnailUrl: '/templates/invoicepagetemplates/plumbing1.png',
     category: 'Plumbing',
     toolType: 'Invoice',
     description: 'A straightforward template for plumbing jobs, clearly listing services and costs.',
@@ -116,7 +116,7 @@ export const allTemplates: Template[] = [
   {
     id: 'plumbing-2',
     name: 'Modern Blue',
-    thumbnailUrl: '/templates/invoicepagetemplates/ModernBluePlumbing.png',
+    thumbnailUrl: '/templates/invoicepagetemplates/plumbing2.png',
     category: 'Plumbing',
     toolType: 'Invoice',
     description: 'A clean, modern template with blue accents, ideal for professional plumbing services.',
@@ -125,7 +125,7 @@ export const allTemplates: Template[] = [
   {
     id: 'plumbing-3',
     name: 'Clean & Minimal',
-    thumbnailUrl: '/templates/invoicepagetemplates/CleanMinimalPlumbing.png',
+    thumbnailUrl: '/templates/invoicepagetemplates/plumbing3.png',
     category: 'Plumbing',
     toolType: 'Invoice',
     description: 'A simple and elegant template that is easy to read and focuses on the essentials.',
@@ -134,7 +134,7 @@ export const allTemplates: Template[] = [
   {
     id: 'plumbing-4',
     name: 'Side Panel',
-    thumbnailUrl: '/templates/invoicepagetemplates/SidePanelPlumbing.png',
+    thumbnailUrl: '/templates/invoicepagetemplates/plumbing4.png',
     category: 'Plumbing',
     toolType: 'Invoice',
     description: 'A stylish template with a side panel for company branding and contact information.',
