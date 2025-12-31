@@ -1,5 +1,4 @@
 import { cn } from "@/lib/utils"
-import { Breadcrumbs } from "./breadcrumbs"
 
 function PageHeader({
   className,
@@ -14,7 +13,6 @@ function PageHeader({
       )}
       {...props}
     >
-      <Breadcrumbs />
       {children}
     </section>
   )

@@ -4,175 +4,149 @@
 import { useState, useMemo } from 'react';
 import { PageHeader, PageHeaderDescription, PageHeaderHeading } from '@/components/page-header';
 import { allTemplates, Template } from '@/lib/template-data';
-import { TemplateCard } from '@/components/templates/template-card';
 import { TemplatePreview } from '@/components/templates/template-preview';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Input } from '@/components/ui/input';
-import { Search, X } from 'lucide-react';
-import { Card } from '@/components/ui/card';
-import { Label } from '@/components/ui/label';
+import { Card, CardContent } from '@/components/ui/card';
+import Image from 'next/image';
+import { Eye, CheckCircle } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
-type ToolType = 'All' | 'Invoice' | 'Estimate' | 'Quote' | 'Insurance';
+const categories = ["All", ...new Set(allTemplates.map(t => t.category))];
 
-const toolTypes: ToolType[] = ['All', 'Invoice', 'Estimate', 'Quote', 'Insurance'];
-const categories = [...new Set(allTemplates.map(t => t.category))];
+const featurePoints = ["Easy to Customize", "Fully Responsive", "Semantic Code"];
 
 export default function TemplatesPage() {
   const [selectedTemplate, setSelectedTemplate] = useState<Template | null>(null);
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
-  const [selectedTool, setSelectedTool] = useState<ToolType>('All');
-  const [selectedCategory, setSelectedCategory] = useState<string>('All');
-  const [searchTerm, setSearchTerm] = useState('');
-  const [sortBy, setSortBy] = useState<'category' | 'name'>('category');
+  const [activeCategory, setActiveCategory] = useState('All');
 
   const handlePreview = (template: Template) => {
     setSelectedTemplate(template);
     setIsPreviewOpen(true);
   };
 
-  const filteredAndSortedTemplates = useMemo(() => {
-    let templates = allTemplates;
-
-    if (selectedTool !== 'All') {
-      templates = templates.filter(t => t.toolType === selectedTool);
+  const filteredTemplates = useMemo(() => {
+    if (activeCategory === 'All') {
+      return allTemplates;
     }
-
-    if (selectedCategory !== 'All') {
-      templates = templates.filter(t => t.category === selectedCategory);
-    }
-    
-    if (searchTerm) {
-        templates = templates.filter(t => 
-            t.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            t.category.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            t.useCases.some(uc => uc.toLowerCase().includes(searchTerm.toLowerCase()))
-        );
-    }
-
-    templates.sort((a, b) => {
-      if (sortBy === 'name') {
-        return a.name.localeCompare(b.name);
-      }
-      // Default to category sort
-      if (a.category < b.category) return -1;
-      if (a.category > b.category) return 1;
-      return a.name.localeCompare(b.name);
-    });
-
-    return templates;
-  }, [selectedTool, selectedCategory, searchTerm, sortBy]);
+    return allTemplates.filter(t => t.category === activeCategory);
+  }, [activeCategory]);
   
-  const groupedTemplates = useMemo(() => {
-    return filteredAndSortedTemplates.reduce((acc, template) => {
-      const { category } = template;
-      if (!acc[category]) {
-        acc[category] = [];
-      }
-      acc[category].push(template);
-      return acc;
-    }, {} as Record<string, Template[]>);
-  }, [filteredAndSortedTemplates]);
-
-
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
       transition: {
-        staggerChildren: 0.08,
+        staggerChildren: 0.05,
       },
     },
   };
 
-  const resetFilters = () => {
-    setSelectedTool('All');
-    setSelectedCategory('All');
-    setSearchTerm('');
-    setSortBy('category');
+  const itemVariants = {
+    hidden: { opacity: 0, scale: 0.95, y: 10 },
+    visible: { opacity: 1, scale: 1, y: 0 },
+    exit: { opacity: 0, scale: 0.95, y: -10 },
   };
 
   return (
     <>
-      <div className="container mx-auto px-4 md:px-6">
-        <PageHeader>
-          <PageHeaderHeading>Explore Our Templates</PageHeaderHeading>
-          <PageHeaderDescription>
-            Professionally designed templates for every need. Preview our collection to find the perfect fit for your business.
-          </PageHeaderDescription>
-        </PageHeader>
-        
-        <Card className="p-4 mb-8 bg-card/50 backdrop-blur-sm shadow-lg">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 items-end">
-                <div className="space-y-2">
-                    <Label htmlFor="search">Search Templates</Label>
-                    <div className="relative">
-                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-                        <Input id="search" placeholder="e.g., Construction, Modern..." className="pl-10" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
-                    </div>
-                </div>
-                <div className="space-y-2">
-                    <Label htmlFor="tool-filter">Filter by Tool</Label>
-                    <Select value={selectedTool} onValueChange={(value) => setSelectedTool(value as ToolType)}>
-                        <SelectTrigger id="tool-filter"><SelectValue /></SelectTrigger>
-                        <SelectContent>
-                            {toolTypes.map(tool => <SelectItem key={tool} value={tool}>{tool}</SelectItem>)}
-                        </SelectContent>
-                    </Select>
-                </div>
-                <div className="space-y-2">
-                    <Label htmlFor="category-filter">Filter by Category</Label>
-                    <Select value={selectedCategory} onValueChange={(value) => setSelectedCategory(value)}>
-                        <SelectTrigger id="category-filter"><SelectValue /></SelectTrigger>
-                        <SelectContent>
-                            <SelectItem value="All">All Categories</SelectItem>
-                            {categories.map(cat => <SelectItem key={cat} value={cat}>{cat}</SelectItem>)}
-                        </SelectContent>
-                    </Select>
-                </div>
-                <div className="flex gap-2">
-                    <div className="space-y-2 flex-1">
-                        <Label htmlFor="sort-by">Sort By</Label>
-                        <Select value={sortBy} onValueChange={(value) => setSortBy(value as 'name' | 'category')}>
-                            <SelectTrigger id="sort-by"><SelectValue /></SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="category">Category</SelectItem>
-                                <SelectItem value="name">Name</SelectItem>
-                            </SelectContent>
-                        </Select>
-                    </div>
-                     <Button variant="ghost" size="icon" className="self-end" onClick={resetFilters}>
-                        <X className="h-5 w-5" />
-                        <span className="sr-only">Reset Filters</span>
-                    </Button>
-                </div>
-            </div>
-        </Card>
+      <div className="w-full py-20 md:py-28 bg-gradient-to-br from-[#2c1a3b] to-[#1a1a2e] text-white overflow-hidden">
+        <div className="container mx-auto px-4 md:px-6">
+           <div className="flex items-center justify-center gap-4 md:gap-8 text-sm md:text-base">
+            {featurePoints.map(point => (
+                 <div key={point} className="flex items-center gap-2">
+                    <CheckCircle className="h-5 w-5 text-primary" />
+                    <span>{point}</span>
+                 </div>
+            ))}
+           </div>
+          <div className="relative mt-12 flex items-center justify-center">
+            {/* Background stacked cards */}
+            <motion.div 
+                initial={{ opacity: 0, y: 50, scale: 0.8 }}
+                animate={{ opacity: 1, y: 0, scale: 0.8 }}
+                transition={{ duration: 0.5, delay: 0.3 }}
+                className="absolute w-full max-w-5xl h-[600px] bg-card/80 rounded-2xl shadow-2xl transform -rotate-3"
+            />
+            <motion.div 
+                 initial={{ opacity: 0, y: 50, scale: 0.9 }}
+                animate={{ opacity: 1, y: 0, scale: 0.9 }}
+                transition={{ duration: 0.5, delay: 0.15 }}
+                className="absolute w-full max-w-5xl h-[600px] bg-card/90 rounded-2xl shadow-2xl transform rotate-2"
+            />
 
-        {Object.keys(groupedTemplates).length > 0 ? (
-          Object.entries(groupedTemplates).map(([category, templates]) => (
-            <section key={category} className="mb-16">
-              <h2 className="text-3xl font-bold font-headline mb-8 border-b pb-4">{category}</h2>
-              <motion.div 
-                className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8"
-                variants={containerVariants}
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true, amount: 0.1 }}
-              >
-                {templates.map((template) => (
-                  <TemplateCard key={`${template.id}-${template.toolType}`} template={template} onPreview={handlePreview} />
-                ))}
-              </motion.div>
-            </section>
-          ))
-        ) : (
-            <div className="text-center py-16 text-muted-foreground">
-                <p className="text-lg font-semibold">No templates found.</p>
-                <p>Try adjusting your search or filter criteria.</p>
-            </div>
-        )}
+            {/* Main content card */}
+            <motion.div
+                initial={{ opacity: 0, y: 50 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+                className="relative w-full max-w-5xl bg-card text-card-foreground rounded-2xl shadow-2xl z-10"
+            >
+              <CardContent className="p-6 md:p-8">
+                <div className="text-center mb-8">
+                  <h2 className="text-sm font-semibold tracking-wider uppercase text-muted-foreground">OUR PORTFOLIO</h2>
+                  <div className="mt-4 flex items-center justify-center gap-4 md:gap-8 border-b pb-4">
+                    {categories.map(category => (
+                      <Button
+                        key={category}
+                        variant="ghost"
+                        onClick={() => setActiveCategory(category)}
+                        className={cn(
+                          "relative text-sm font-medium transition-colors",
+                          activeCategory === category ? "text-primary" : "text-muted-foreground hover:text-primary"
+                        )}
+                      >
+                        {category}
+                         {activeCategory === category && (
+                          <motion.div
+                            className="absolute -bottom-4 left-0 right-0 h-0.5 bg-primary"
+                            layoutId="active-category-underline"
+                          />
+                        )}
+                      </Button>
+                    ))}
+                  </div>
+                </div>
+
+                <motion.div
+                  key={activeCategory} // This key is crucial for AnimatePresence to detect changes
+                  className="columns-2 md:columns-3 lg:columns-4 gap-4"
+                  variants={containerVariants}
+                  initial="hidden"
+                  animate="visible"
+                >
+                  <AnimatePresence mode="popLayout">
+                    {filteredTemplates.map((template, index) => (
+                      <motion.div
+                        key={template.id + template.toolType}
+                        variants={itemVariants}
+                        layout
+                        className="mb-4 break-inside-avoid group relative"
+                      >
+                        <div className="relative overflow-hidden rounded-lg shadow-md">
+                          <Image
+                            src={template.thumbnailUrl}
+                            alt={`Preview of ${template.name}`}
+                            width={500}
+                            height={700}
+                            className="w-full h-auto object-cover transition-transform duration-300 ease-in-out group-hover:scale-105"
+                          />
+                           <div className="absolute inset-0 bg-black/50 opacity-0 transition-opacity group-hover:opacity-100 flex flex-col items-center justify-center p-4 text-center">
+                              <h3 className="font-bold text-white">{template.name}</h3>
+                              <Button variant="secondary" size="sm" className="mt-2" onClick={() => handlePreview(template)}>
+                                <Eye className="mr-2 h-4 w-4" /> View
+                              </Button>
+                          </div>
+                        </div>
+                      </motion.div>
+                    ))}
+                  </AnimatePresence>
+                </motion.div>
+              </CardContent>
+            </motion.div>
+          </div>
+        </div>
       </div>
       <TemplatePreview
         template={selectedTemplate}
