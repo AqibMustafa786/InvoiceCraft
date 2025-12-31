@@ -70,7 +70,7 @@ export const allTemplates: Template[] = [
   {
     id: 'construction-1',
     name: 'Foundation',
-    thumbnailUrl: '/templates/invoicepagetemplates/Foundation.png',
+    thumbnailUrl: '/templates/invociepagetemplates/FoundationInvoicetemplate.png',
     category: 'Construction',
     toolType: 'Invoice',
     description: 'A detailed and professional template for construction projects, outlining labor and materials separately.',
@@ -133,7 +133,7 @@ export const allTemplates: Template[] = [
   },
   {
     id: 'plumbing-4',
-    name: 'Side Panel',
+    name: 'Side panel',
     thumbnailUrl: '/templates/invoicepagetemplates/plumbing4.png',
     category: 'Plumbing',
     toolType: 'Invoice',
@@ -244,8 +244,8 @@ export const allTemplates: Template[] = [
    // --- Roofing Invoice Templates ---
   {
     id: 'roofing-1',
-    name: 'Top View',
-    thumbnailUrl: '/templates/invoicepagetemplates/Top-View.png',
+    name: 'Gable',
+    thumbnailUrl: '/templates/invoicepagetemplates/Roofing1.png',
     category: 'Roofing',
     toolType: 'Invoice',
     description: 'A comprehensive template for roofing estimates and invoices.',
@@ -253,8 +253,8 @@ export const allTemplates: Template[] = [
   },
   {
     id: 'roofing-2',
-    name: 'Shingle',
-    thumbnailUrl: '/templates/invoicepagetemplates/Roofing4.png',
+    name: 'Pinnacle',
+    thumbnailUrl: '/templates/invoicepagetemplates/Roofing2.png',
     category: 'Roofing',
     toolType: 'Invoice',
     description: 'A clean, professional template ideal for residential roofing projects.',
@@ -262,8 +262,8 @@ export const allTemplates: Template[] = [
   },
   {
     id: 'roofing-3',
-    name: 'Gable',
-    thumbnailUrl: '/templates/invoicepagetemplates/Roofing1.png',
+    name: 'Ridge',
+    thumbnailUrl: '/templates/invoicepagetemplates/Roofing3.png',
     category: 'Roofing',
     toolType: 'Invoice',
     description: 'A grid-based, modern template perfect for detailed roofing job breakdowns.',
@@ -271,8 +271,8 @@ export const allTemplates: Template[] = [
   },
   {
     id: 'roofing-4',
-    name: 'Pinnacle',
-    thumbnailUrl: '/templates/invoicepagetemplates/Roofing2.png',
+    name: 'Shingle',
+    thumbnailUrl: '/templates/invoicepagetemplates/Roofing4.png',
     category: 'Roofing',
     toolType: 'Invoice',
     description: 'An elegant and clean design for high-end roofing and architectural services.',
