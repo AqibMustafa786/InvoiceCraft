@@ -199,7 +199,7 @@ export const allTemplates: Template[] = [
   {
     id: 'hvac-1',
     name: 'Climate Control',
-    thumbnailUrl: '/templates/invoicepagetemplates/Climate-Control.png',
+    thumbnailUrl: '/templates/invoicepagetemplates/HVAC2.png',
     category: 'HVAC Services',
     toolType: 'Invoice',
     description: 'A clean and detailed template perfect for HVAC installation and repair services.',
@@ -208,7 +208,7 @@ export const allTemplates: Template[] = [
   {
     id: 'hvac-2',
     name: 'Coolant',
-    thumbnailUrl: '/templates/invoicepagetemplates/Coolant.png',
+    thumbnailUrl: '/templates/invoicepagetemplates/HVAC3.png',
     category: 'HVAC Services',
     toolType: 'Invoice',
     description: 'A modern and fresh design for HVAC companies, with cool color accents.',
@@ -217,7 +217,7 @@ export const allTemplates: Template[] = [
   {
     id: 'hvac-3',
     name: 'Clean Grid',
-    thumbnailUrl: '/templates/invoicepagetemplates/Clean-Grid.png',
+    thumbnailUrl: '/templates/invoicepagetemplates/HVAC1.png',
     category: 'HVAC Services',
     toolType: 'Invoice',
     description: 'A simple, grid-based invoice for clear and straightforward HVAC billing.',
@@ -226,7 +226,7 @@ export const allTemplates: Template[] = [
   {
     id: 'hvac-4',
     name: 'Corporate Blue',
-    thumbnailUrl: '/templates/invoicepagetemplates/Corporate-Blue.png',
+    thumbnailUrl: '/templates/invoicepagetemplates/HVAC4.png',
     category: 'HVAC Services',
     toolType: 'Invoice',
     description: 'A professional and corporate-style invoice for commercial HVAC services.',
