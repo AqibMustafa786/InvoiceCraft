@@ -244,18 +244,7 @@ export default function HomePage() {
                    </motion.div>
                 </motion.div>
               </motion.div>
-              <motion.div 
-                className="relative w-full h-80 lg:h-auto lg:aspect-[4/3]"
-                animate={{
-                  y: ["0rem", "-1.5rem", "0rem"],
-                }}
-                transition={{ 
-                  duration: 4, 
-                  ease: "easeInOut",
-                  repeat: Infinity,
-                  repeatType: "loop",
-                }}
-              >
+              <div className="relative w-full h-80 lg:h-auto lg:aspect-[4/3] animate-flip">
                  <Image
                     src="/home/invocie.png"
                     alt="Illustration of a person working on a laptop"
@@ -265,7 +254,7 @@ export default function HomePage() {
                     className="object-contain"
                     data-ai-hint="workspace illustration"
                   />
-              </motion.div>
+              </div>
             </div>
           </div>
         </section>
