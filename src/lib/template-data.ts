@@ -153,7 +153,7 @@ export const allTemplates: Template[] = [
   {
     id: 'electrical-1',
     name: 'Voltage',
-    thumbnailUrl: '/templates/invoicepagetemplates/Voltage.png',
+    thumbnailUrl: '/templates/invoicepagetemplates/Electrical1.png',
     category: 'Electrical Services',
     toolType: 'Invoice',
     description: 'A sharp, professional template for electricians and electrical contractors.',
@@ -162,7 +162,7 @@ export const allTemplates: Template[] = [
   {
     id: 'electrical-2',
     name: 'Circuit',
-    thumbnailUrl: '/templates/invoicepagetemplates/Circuit.png',
+    thumbnailUrl: '/templates/invoicepagetemplates/Electrical2.png',
     category: 'Electrical Services',
     toolType: 'Invoice',
     description: 'A modern template with circuit-themed design elements for tech-savvy electricians.',
@@ -171,7 +171,7 @@ export const allTemplates: Template[] = [
   {
     id: 'electrical-3',
     name: 'Spark',
-    thumbnailUrl: '/templates/invoicepagetemplates/Spark.png',
+    thumbnailUrl: '/templates/invoicepagetemplates/Electrical3.png',
     category: 'Electrical Services',
     toolType: 'Invoice',
     description: 'A clean and minimalist template for quick and clear electrical service billing.',
@@ -180,7 +180,7 @@ export const allTemplates: Template[] = [
   {
     id: 'electrical-4',
     name: 'Wired',
-    thumbnailUrl: '/templates/invoicepagetemplates/Wired.png',
+    thumbnailUrl: '/templates/invoicepagetemplates/Electrical4.png',
     category: 'Electrical Services',
     toolType: 'Invoice',
     description: 'A stylish invoice with a side panel accent, great for professional branding.',
