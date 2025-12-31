@@ -25,7 +25,7 @@ export default function TemplatesPage() {
   const [selectedTool, setSelectedTool] = useState<ToolType>('All');
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
   const [searchTerm, setSearchTerm] = useState('');
-  const [sortBy, setSortBy] = useState<'name' | 'category'>('category');
+  const [sortBy, setSortBy] = useState<'category' | 'name'>('category');
 
   const handlePreview = (template: Template) => {
     setSelectedTemplate(template);
