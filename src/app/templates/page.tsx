@@ -51,11 +51,11 @@ export default function TemplatesPage() {
 
   return (
     <>
-      <div className="w-full py-20 md:py-28 bg-gradient-to-br from-[#2c1a3b] to-[#1a1a2e] text-white overflow-hidden">
+      <div className="w-full py-20 md:py-28 bg-background text-foreground overflow-hidden">
         <div className="container mx-auto px-4 md:px-6">
            <div className="flex items-center justify-center gap-4 md:gap-8 text-sm md:text-base">
             {featurePoints.map(point => (
-                 <div key={point} className="flex items-center gap-2">
+                 <div key={point} className="flex items-center gap-2 text-muted-foreground">
                     <CheckCircle className="h-5 w-5 text-primary" />
                     <span>{point}</span>
                  </div>
