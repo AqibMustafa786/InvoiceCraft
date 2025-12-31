@@ -96,12 +96,12 @@ export default function TemplatesPage() {
 
         <div className="space-y-6">
             {/* Filter Controls */}
-            <div className="bg-card/50 backdrop-blur-sm p-3 border rounded-lg flex flex-col md:flex-row items-center gap-4">
+            <div className="flex flex-col md:flex-row items-center gap-4">
                 <div className="relative w-full md:flex-1">
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                     <Input 
                         placeholder="Search templates..." 
-                        className="pl-10 h-10" 
+                        className="pl-10 h-9" 
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                     />
@@ -112,16 +112,16 @@ export default function TemplatesPage() {
                       defaultValue="All"
                       value={activeTool}
                       onValueChange={(value) => setActiveTool(value || 'All')}
-                      className="justify-start border rounded-md p-0.5"
+                      className="justify-start border rounded-md p-0.5 h-9"
                     >
                       {toolTypes.map(tool => (
-                        <ToggleGroupItem key={tool} value={tool} aria-label={`Filter by ${tool}`} className="flex gap-2 px-3 py-1.5 h-auto text-xs data-[state=on]:bg-background data-[state=on]:shadow-sm border-none">
+                        <ToggleGroupItem key={tool} value={tool} aria-label={`Filter by ${tool}`} className="flex gap-2 px-3 py-1.5 h-full text-xs data-[state=on]:bg-background data-[state=on]:shadow-sm border-none">
                            {toolIcons[tool]} {tool}
                         </ToggleGroupItem>
                       ))}
                     </ToggleGroup>
                      <Select value={sortBy} onValueChange={setSortBy}>
-                        <SelectTrigger className="w-auto h-10 text-xs gap-2">
+                        <SelectTrigger className="w-auto h-9 text-xs gap-2">
                             <SortAsc className="h-4 w-4" />
                             <SelectValue placeholder="Sort by..." />
                         </SelectTrigger>
@@ -134,31 +134,35 @@ export default function TemplatesPage() {
             </div>
 
             {/* Category Filters */}
-            <ScrollArea className="w-full whitespace-nowrap">
-              <div className="flex items-center gap-2 border-b pb-2">
-                {allCategories.map(category => (
-                  <Button
-                    key={category}
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => setActiveCategory(category)}
-                    className={cn(
-                      "relative text-sm font-medium transition-colors h-8 px-3",
-                      activeCategory === category ? "text-primary" : "text-muted-foreground hover:text-primary hover:bg-muted/50"
-                    )}
-                  >
-                    {category}
-                    {activeCategory === category && (
-                      <motion.div
-                        className="absolute -bottom-2.5 left-0 right-0 h-0.5 bg-primary"
-                        layoutId="active-category-underline"
-                      />
-                    )}
-                  </Button>
-                ))}
-              </div>
-              <ScrollBar orientation="horizontal" />
-            </ScrollArea>
+            <div className="relative">
+                <ScrollArea className="w-full whitespace-nowrap">
+                    <div className="flex items-center gap-2 pb-2">
+                        {allCategories.map(category => (
+                        <Button
+                            key={category}
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => setActiveCategory(category)}
+                            className={cn(
+                                "relative text-sm font-medium transition-colors h-8 px-3",
+                                activeCategory === category ? "text-primary" : "text-muted-foreground hover:text-primary hover:bg-transparent"
+                            )}
+                        >
+                            {category}
+                            {activeCategory === category && (
+                            <motion.div
+                                className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary"
+                                layoutId="active-category-underline"
+                            />
+                            )}
+                        </Button>
+                        ))}
+                    </div>
+                    <ScrollBar orientation="horizontal" />
+                </ScrollArea>
+                <div className="absolute top-0 bottom-2 w-full border-b -z-10"></div>
+            </div>
+
 
             {/* Template Grid */}
             <motion.div
