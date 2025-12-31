@@ -254,7 +254,7 @@ export const allTemplates: Template[] = [
   {
     id: 'roofing-2',
     name: 'Shingle',
-    thumbnailUrl: '/templates/invoicepagetemplates/Shingle.png',
+    thumbnailUrl: '/templates/invoicepagetemplates/Roofing4.png',
     category: 'Roofing',
     toolType: 'Invoice',
     description: 'A clean, professional template ideal for residential roofing projects.',
@@ -263,7 +263,7 @@ export const allTemplates: Template[] = [
   {
     id: 'roofing-3',
     name: 'Gable',
-    thumbnailUrl: '/templates/invoicepagetemplates/Gable.png',
+    thumbnailUrl: '/templates/invoicepagetemplates/Roofing1.png',
     category: 'Roofing',
     toolType: 'Invoice',
     description: 'A grid-based, modern template perfect for detailed roofing job breakdowns.',
@@ -272,7 +272,7 @@ export const allTemplates: Template[] = [
   {
     id: 'roofing-4',
     name: 'Pinnacle',
-    thumbnailUrl: '/templates/invoicepagetemplates/Pinnacle.png',
+    thumbnailUrl: '/templates/invoicepagetemplates/Roofing2.png',
     category: 'Roofing',
     toolType: 'Invoice',
     description: 'An elegant and clean design for high-end roofing and architectural services.',
@@ -281,7 +281,7 @@ export const allTemplates: Template[] = [
   {
     id: 'roofing-5',
     name: 'Ridge',
-    thumbnailUrl: '/templates/invoicepagetemplates/Ridge.png',
+    thumbnailUrl: '/templates/invoicepagetemplates/Roofing3.png',
     category: 'Roofing',
     toolType: 'Invoice',
     description: 'A bold, clear template with a side panel for detailed project information.',
