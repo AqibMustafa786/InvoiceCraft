@@ -144,7 +144,7 @@ export default function TemplatesPage() {
                     onClick={() => setActiveCategory(category)}
                     className={cn(
                       "relative text-sm font-medium transition-colors h-8 px-3",
-                      activeCategory === category ? "text-primary" : "text-muted-foreground hover:text-primary"
+                      activeCategory === category ? "text-primary" : "text-muted-foreground hover:text-primary hover:bg-muted/50"
                     )}
                   >
                     {category}
