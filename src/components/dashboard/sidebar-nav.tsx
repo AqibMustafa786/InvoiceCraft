@@ -14,11 +14,11 @@ import { useFirebase } from "@/firebase";
 import { motion, AnimatePresence } from 'framer-motion';
 
 const dashboardNavItems = [
-    { href: "/dashboard", tab: "invoices", label: "Invoices", icon: FileText },
-    { href: "/dashboard", tab: "estimates", label: "Estimates", icon: FileQuestion },
-    { href: "/dashboard", tab: "quotes", label: "Quotes", icon: FilePlus },
-    { href: "/dashboard", tab: "insurance", label: "Insurance", icon: Shield },
-    { href: "/dashboard", tab: "clients", label: "Clients", icon: Users },
+    { href: "/dashboard?tab=invoices", tab: "invoices", label: "Invoices", icon: FileText },
+    { href: "/dashboard?tab=estimates", tab: "estimates", label: "Estimates", icon: FileQuestion },
+    { href: "/dashboard?tab=quotes", tab: "quotes", label: "Quotes", icon: FilePlus },
+    { href: "/dashboard?tab=insurance", tab: "insurance", label: "Insurance", icon: Shield },
+    { href: "/dashboard?tab=clients", tab: "clients", label: "Clients", icon: Users },
     { href: "/dashboard/analytics", tab: "analytics", label: "Analytics", icon: AreaChart },
 ];
 
@@ -72,17 +72,17 @@ export function SidebarNav({ isSidebarOpen }: SidebarNavProps) {
                          </AnimatePresence>
                          <div className="space-y-1">
                             {dashboardNavItems.map((item) => {
-                                const isActive = item.href === '/dashboard'
-                                    ? pathname === item.href && activeTab === item.tab
+                                const isActive = item.href.startsWith('/dashboard?')
+                                    ? pathname === '/dashboard' && activeTab === item.tab
                                     : pathname === item.href;
                                 return (
                                    <Button 
-                                      key={item.href + item.tab}
+                                      key={item.href}
                                       asChild
                                       variant={isActive ? "secondary" : "ghost"} 
                                       className={cn("w-full justify-start text-xs h-8", isActive && "text-primary", !isSidebarOpen && "justify-center")}
                                     >
-                                      <Link href={item.tab ? `${item.href}?tab=${item.tab}`: item.href} title={item.label}>
+                                      <Link href={item.href} title={item.label}>
                                          <item.icon className={cn("h-3.5 w-3.5", isSidebarOpen && "mr-2")} />
                                          <AnimatePresence>
                                             {isSidebarOpen && (
