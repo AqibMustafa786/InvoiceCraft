@@ -1,5 +1,4 @@
 
-
 'use client';
 
 import { ChangeEvent, Dispatch, SetStateAction, useState, useEffect } from 'react';
@@ -201,14 +200,6 @@ export function InvoiceForm({ invoice, setInvoice, accentColor, setAccentColor, 
   useEffect(() => {
     setTextColorInput(textColor);
   }, [textColor]);
-
-  useEffect(() => {
-     setInvoice(prev => ({ ...prev, backgroundColor: backgroundColor }));
-  }, [backgroundColor, setInvoice]);
-
-  useEffect(() => {
-    setInvoice(prev => ({ ...prev, textColor: textColor }));
- }, [textColor, setInvoice]);
 
   const handleNestedChange = (section: 'business' | 'client' | 'summary', e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -485,7 +476,7 @@ export function InvoiceForm({ invoice, setInvoice, accentColor, setAccentColor, 
                         value={backgroundColor}
                         onChange={(e) => {
                             setBackgroundColor(e.target.value);
-                            setBgColorInput(e.target.value);
+                            setInvoice(prev => ({...prev, backgroundColor: e.target.value }));
                         }}
                         className="absolute right-1 top-1/2 -translate-y-1/2 h-8 w-8 p-1 rounded-md cursor-pointer bg-transparent border-none appearance-none"
                     />
@@ -509,7 +500,7 @@ export function InvoiceForm({ invoice, setInvoice, accentColor, setAccentColor, 
                         value={textColor}
                         onChange={(e) => {
                             setTextColor(e.target.value);
-                            setTextColorInput(e.target.value);
+                            setInvoice(prev => ({...prev, textColor: e.target.value }));
                         }}
                         className="absolute right-1 top-1/2 -translate-y-1/2 h-8 w-8 p-1 rounded-md cursor-pointer bg-transparent border-none appearance-none"
                     />
@@ -1192,4 +1183,5 @@ export function InvoiceForm({ invoice, setInvoice, accentColor, setAccentColor, 
 
 
 
+    
     
