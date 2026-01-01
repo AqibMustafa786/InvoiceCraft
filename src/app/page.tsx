@@ -2,7 +2,6 @@
 
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import Marquee from '@/components/marquee';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 import {
@@ -303,10 +302,6 @@ export default function HomePage() {
         </section>
 
         <StackedCarousel />
-
-        <section className="py-12 md:py-20">
-          <Marquee />
-        </section>
 
         <AIChatbot />
       </main>
