@@ -45,24 +45,31 @@ const tools = [
 
 const featuredTemplates = [
   {
+    name: "Medical",
+    count: 5,
+    imageUrl: "https://picsum.photos/seed/snow-mountain/600/800",
+    imageHint: "snowy mountain",
+    icon: <HeartPulse />,
+  },
+  {
     name: "Construction",
     count: 6,
-    imageUrl: "https://picsum.photos/seed/construction-template/600/800",
-    imageHint: "construction site",
+    imageUrl: "https://picsum.photos/seed/man-by-lake/600/800",
+    imageHint: "man lake",
     icon: <HardHat />,
   },
   {
     name: "IT & Freelance",
     count: 5,
-    imageUrl: "https://picsum.photos/seed/freelance-desk/600/800",
-    imageHint: "creative desk",
+    imageUrl: "https://picsum.photos/seed/stormy-sea/600/800",
+    imageHint: "stormy sea",
     icon: <Code />,
   },
-  {
+   {
     name: "Retail",
     count: 3,
-    imageUrl: "https://picsum.photos/seed/retail-store/600/800",
-    imageHint: "retail store",
+    imageUrl: "https://picsum.photos/seed/grapes-vine/600/800",
+    imageHint: "grapes vine",
     icon: <Store />,
   },
   {
@@ -93,13 +100,6 @@ const featuredTemplates = [
     imageHint: "law books",
     icon: <Scale />,
   },
-  {
-    name: "Medical",
-    count: 5,
-    imageUrl: "https://picsum.photos/seed/medical-tools/600/800",
-    imageHint: "medical tools",
-    icon: <HeartPulse />,
-  }
 ];
 
 const homePageFeatures = [
@@ -390,7 +390,6 @@ export default function HomePage() {
                   opts={{
                     align: "start",
                     loop: true,
-                    slidesToScroll: 1,
                   }}
                   plugins={[
                     Autoplay({
@@ -400,9 +399,9 @@ export default function HomePage() {
                   ]}
                   className="w-full"
                 >
-                <CarouselContent>
+                <CarouselContent className="-ml-4">
                   {featuredTemplates.map((template, index) => (
-                    <CarouselItem key={index} className="sm:basis-1/2 md:basis-1/3 lg:basis-1/4">
+                    <CarouselItem key={index} className="pl-4 sm:basis-1/2 md:basis-1/3 lg:basis-1/4">
                        <motion.div
                           className="relative overflow-hidden rounded-xl shadow-lg group h-96"
                           variants={itemVariants}
@@ -412,17 +411,17 @@ export default function HomePage() {
                             src={template.imageUrl}
                             alt={`${template.name} template`}
                             fill
+                            sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
                             className="w-full h-full object-cover transition-transform duration-500 ease-in-out group-hover:scale-110"
                             data-ai-hint={template.imageHint}
                           />
                           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"></div>
                           <motion.div 
                             className="absolute bottom-0 left-0 p-6 text-white"
-                            variants={cardHoverVariants}
                           >
                             <div className="flex items-center gap-3 mb-2 opacity-80">
                               {React.cloneElement(template.icon, { className: "h-5 w-5" })}
-                              <span className="text-sm font-medium tracking-wider uppercase">{template.count} Templates</span>
+                              <span className="text-sm font-medium tracking-wider uppercase">{template.count} TEMPLATES</span>
                             </div>
                             <h3 className="text-3xl font-bold font-headline">{template.name}</h3>
                           </motion.div>
