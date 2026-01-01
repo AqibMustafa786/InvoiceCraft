@@ -226,8 +226,8 @@ export default function HomePage() {
                         <div key={index} className={feature.className}>
                              <motion.div whileHover={{ y: -8, scale: 1.02 }} transition={{ type: "spring", stiffness: 300 }} className="h-full">
                                 <Card className="border bg-card shadow-lg hover:shadow-primary/20 transition-all duration-300 h-full p-6 flex flex-col items-center text-center">
-                                    {feature.icon}
-                                    <h3 className="text-xl font-semibold mt-4 mb-2">{feature.name}</h3>
+                                    {React.cloneElement(feature.icon, { className: "h-8 w-8 text-primary" })}
+                                    <h3 className="text-xl font-semibold mt-4 mb-2 text-primary">{feature.name}</h3>
                                     <p className="text-muted-foreground text-sm flex-1">{feature.description}</p>
                                 </Card>
                             </motion.div>
