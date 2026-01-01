@@ -65,7 +65,7 @@ const homePageFeatures = [
         icon: <Palette className="h-8 w-8 text-primary" />,
         name: 'Deep Customization',
         description: 'Personalize documents with your logo, brand colors, and professional templates.',
-        className: '',
+        className: 'md:col-span-2',
     },
     {
         icon: <Bot className="h-8 w-8 text-primary" />,
