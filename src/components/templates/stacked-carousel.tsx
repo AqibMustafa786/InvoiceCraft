@@ -3,16 +3,24 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
+import { allTemplates } from '@/lib/template-data';
 
-const carouselData = [
-  { src: '/templates/Modern.png', alt: 'Modern Template', hint: 'modern invoice' },
-  { src: '/templates/construction-1.png', alt: 'Construction Template', hint: 'construction estimate' },
-  { src: '/templates/it-1.png', alt: 'IT Service Template', hint: 'freelance invoice' },
-  { src: '/templates/Usa-insurance.png', alt: 'Insurance Document Template', hint: 'insurance certificate' },
-  { src: '/templates/Elegant.png', alt: 'Elegant Template', hint: 'elegant design' },
-  { src: '/templates/plumbing-1.png', alt: 'Plumbing Template', hint: 'plumbing invoice' },
-  { src: '/templates/photography-1.png', alt: 'Photography Template', hint: 'photography invoice' },
-];
+// Select a diverse set of templates to showcase
+const carouselData = allTemplates
+  .filter(t => [
+    'modern', 
+    'construction-1', 
+    'it-1', 
+    'usa-claim-default', 
+    'elegant', 
+    'plumbing-1',
+    'photography-1'
+  ].includes(t.id))
+  .map(t => ({
+    src: t.thumbnailUrl,
+    alt: t.name,
+    hint: t.useCases.join(' ').toLowerCase(),
+  }));
 
 export function StackedCarousel() {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -22,15 +30,18 @@ export function StackedCarousel() {
   const updateCarousel = () => {
     if (!carouselRef.current) return;
     const cards = carouselRef.current.querySelectorAll('.carousel-card');
+    
+    if (cards.length === 0) return;
 
     cards.forEach((card, index) => {
       card.className = 'carousel-card hidden'; // Reset classes
 
+      const totalCards = cards.length;
       if (index === currentIndex) {
         card.classList.add('active');
-      } else if (index === (currentIndex - 1 + cards.length) % cards.length) {
+      } else if (index === (currentIndex - 1 + totalCards) % totalCards) {
         card.classList.add('prev');
-      } else if (index === (currentIndex + 1) % cards.length) {
+      } else if (index === (currentIndex + 1) % totalCards) {
         card.classList.add('next');
       }
     });
@@ -61,7 +72,13 @@ export function StackedCarousel() {
 
   useEffect(() => {
     startAutoSlide();
-    return () => stopAutoSlide();
+    // Initial update in case the component re-renders
+    const timer = setTimeout(updateCarousel, 10);
+    
+    return () => {
+      stopAutoSlide();
+      clearTimeout(timer);
+    };
   }, []);
 
   return (
@@ -84,7 +101,7 @@ export function StackedCarousel() {
         ))}
       </div>
 
-      <div className="carousel-controls">
+      <div className="controls">
         <button id="prev" onClick={prevCard}>‹</button>
         <button id="next" onClick={nextCard}>›</button>
       </div>
