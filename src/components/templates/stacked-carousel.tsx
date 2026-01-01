@@ -43,6 +43,7 @@ export function StackedCarousel() {
   };
 
   const startAutoSlide = () => {
+    stopAutoSlide(); // Clear any existing interval
     intervalRef.current = setInterval(nextCard, 4500);
   };
 
@@ -81,7 +82,7 @@ export function StackedCarousel() {
         ))}
       </div>
 
-      <div className="controls">
+      <div className="carousel-controls">
         <button id="prev" onClick={prevCard}>‹</button>
         <button id="next" onClick={nextCard}>›</button>
       </div>
