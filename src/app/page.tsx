@@ -1,4 +1,3 @@
-
 'use client';
 
 import Link from 'next/link';
@@ -203,7 +202,7 @@ export default function HomePage() {
                                         <motion.div whileHover={{scale: 1.1, rotate: -5}} transition={{ type: "spring", stiffness: 400 }}>
                                             {tool.icon}
                                         </motion.div>
-                                        <p className="font-semibold text-lg">{tool.label}</p>
+                                        <p className="font-semibold text-lg text-primary">{tool.label}</p>
                                     </CardContent>
                                 </Card>
                             </motion.div>
