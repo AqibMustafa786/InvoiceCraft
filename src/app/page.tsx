@@ -5,12 +5,15 @@ import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 import {
-  FileText, FilePlus, Shield,
+  FileText, FilePlus, Shield, HardHat, Code, Store, Car, Camera, Building, Scale, HeartPulse,
   LayoutDashboard, Edit, Bot, Brush, Cloud, Share2, Palette, ArrowRight, XCircle, Clock, AlertCircle, CheckCircle, Search, FileClock
 } from 'lucide-react';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { Carousel, CarouselContent, CarouselItem } from '@/components/ui/carousel';
+import Autoplay from "embla-carousel-autoplay";
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { useTheme } from 'next-themes';
 import dynamic from 'next/dynamic';
 import { StackedCarousel } from '@/components/templates/stacked-carousel';
 
@@ -89,30 +92,15 @@ const solutions = [
 
 
 export default function HomePage() {
+  const [mounted, setMounted] = useState(false);
+  const { theme } = useTheme();
 
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.2,
-        delayChildren: 0.1,
-      },
-    },
-  };
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
-  const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: { 
-      opacity: 1, 
-      y: 0, 
-      transition: { 
-        duration: 0.5,
-        ease: "easeOut"
-      } 
-    },
-  };
-  
+  const heroImageSrc = !mounted ? '/home/invocie.png' : theme === 'dark' ? '/darkinvoice.png' : '/home/invocie.png';
+
   return (
     <div className="flex flex-col min-h-[calc(100vh-8rem)]">
       <main className="flex-1">
@@ -131,19 +119,23 @@ export default function HomePage() {
             <div className="grid gap-12 lg:grid-cols-2 lg:gap-16 items-center">
               <motion.div 
                 className="max-w-xl text-center lg:text-left"
-                variants={containerVariants}
-                initial="hidden"
-                animate="visible"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, ease: 'easeOut' }}
               >
                 <motion.p 
                   className="mb-2 text-sm font-bold tracking-wider uppercase text-primary"
-                  variants={itemVariants}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.2 }}
                 >
                   Welcome to InvoiceCraft
                 </motion.p>
                 <motion.h1 
                   className="text-3xl font-bold tracking-tight md:text-4xl lg:text-5xl font-headline"
-                  variants={itemVariants}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.3 }}
                 >
                   Let's Control Your Business With{' '}
                   <span className="relative inline-block">
@@ -155,14 +147,18 @@ export default function HomePage() {
                 </motion.h1>
                 <motion.p 
                   className="mt-6 text-base text-muted-foreground md:text-lg"
-                  variants={itemVariants}
+                   initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.4 }}
                 >
                   We develop beautiful and functional documents for desktop, tablet,
                   and mobile.
                 </motion.p>
                 <motion.div 
                   className="flex flex-col items-center justify-center gap-4 mt-8 sm:flex-row lg:justify-start"
-                  variants={itemVariants}
+                   initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.5 }}
                 >
                    <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.98 }}>
                       <Button asChild size="lg" className="w-full sm:w-auto">
@@ -173,7 +169,8 @@ export default function HomePage() {
               </motion.div>
               <div className="relative w-full h-80 lg:h-auto lg:aspect-[4/3] animate-flip">
                  <Image
-                    src="/home/invocie.png"
+                    key={heroImageSrc} // Key changes to force re-render on theme switch
+                    src={heroImageSrc}
                     alt="Illustration of a person working on a laptop"
                     fill
                     sizes="(max-width: 1024px) 100vw, 50vw"
@@ -198,9 +195,7 @@ export default function HomePage() {
                             <motion.div whileHover={{ y: -8, scale: 1.05 }} transition={{ type: "spring", stiffness: 300 }}>
                                 <Card className="bg-card/50 backdrop-blur-sm shadow-lg group-hover:shadow-primary/20 transition-all duration-300">
                                     <CardContent className="flex flex-col items-center justify-center p-6 text-center gap-4">
-                                        <motion.div whileHover={{scale: 1.1, rotate: -5}} transition={{ type: "spring", stiffness: 400 }}>
-                                            {tool.icon}
-                                        </motion.div>
+                                        {React.cloneElement(tool.icon, { className: "h-10 w-10 text-primary" })}
                                         <p className="font-semibold text-lg text-primary">{tool.label}</p>
                                     </CardContent>
                                 </Card>
@@ -211,7 +206,7 @@ export default function HomePage() {
             </div>
         </section>
         
-        <section className="py-20 md:py-28">
+         <section className="py-20 md:py-28 bg-[hsl(222.2,84%,4.9%)] text-primary-foreground">
              <div className="container px-4 mx-auto md:px-6">
                 <div className="text-center max-w-2xl mx-auto mb-12">
                     <h2 className="text-4xl md:text-5xl font-bold font-headline">Features That Power Your Business</h2>
@@ -223,7 +218,7 @@ export default function HomePage() {
                     {homePageFeatures.map((feature, index) => (
                         <div key={index} className={feature.className}>
                              <motion.div whileHover={{ y: -8, scale: 1.02 }} transition={{ type: "spring", stiffness: 300 }} className="h-full">
-                                <Card className="border bg-card shadow-lg hover:shadow-primary/20 transition-all duration-300 h-full p-6 flex flex-col items-center text-center">
+                                <Card className="border bg-card/80 shadow-lg hover:shadow-primary/20 transition-all duration-300 h-full p-6 flex flex-col items-center text-center">
                                     {React.cloneElement(feature.icon, { className: "h-8 w-8 text-primary" })}
                                     <h3 className="text-xl font-semibold mt-4 mb-2 text-primary">{feature.name}</h3>
                                     <p className="text-muted-foreground text-sm flex-1">{feature.description}</p>
