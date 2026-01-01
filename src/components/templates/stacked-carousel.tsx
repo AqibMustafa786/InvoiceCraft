@@ -5,11 +5,13 @@ import React, { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 
 const carouselData = [
-  { src: 'https://picsum.photos/seed/construction-1/740/440', alt: 'Construction Template', hint: 'construction template' },
-  { src: 'https://picsum.photos/seed/it-service/740/440', alt: 'IT Service Template', hint: 'IT service' },
-  { src: 'https://picsum.photos/seed/modern-invoice/740/440', alt: 'Modern Invoice Template', hint: 'modern invoice' },
-  { src: 'https://picsum.photos/seed/insurance-doc/740/440', alt: 'Insurance Document Template', hint: 'insurance document' },
-  { src: 'https://picsum.photos/seed/elegant-design/740/440', alt: 'Elegant Template', hint: 'elegant design' },
+  { src: '/templates/Modern.png', alt: 'Modern Template', hint: 'modern invoice' },
+  { src: '/templates/construction-1.png', alt: 'Construction Template', hint: 'construction estimate' },
+  { src: '/templates/it-1.png', alt: 'IT Service Template', hint: 'freelance invoice' },
+  { src: '/templates/Usa-insurance.png', alt: 'Insurance Document Template', hint: 'insurance certificate' },
+  { src: '/templates/Elegant.png', alt: 'Elegant Template', hint: 'elegant design' },
+  { src: '/templates/plumbing-1.png', alt: 'Plumbing Template', hint: 'plumbing invoice' },
+  { src: '/templates/photography-1.png', alt: 'Photography Template', hint: 'photography invoice' },
 ];
 
 export function StackedCarousel() {
