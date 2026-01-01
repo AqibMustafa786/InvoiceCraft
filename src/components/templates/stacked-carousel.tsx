@@ -5,11 +5,11 @@ import React, { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 
 const carouselData = [
-  { src: '/templates/construction-1.png', alt: 'Construction Template' },
-  { src: '/templates/it-1.png', alt: 'IT Service Template' },
-  { src: '/templates/Modern.png', alt: 'Modern Invoice Template' },
-  { src: '/templates/Usa-insurance.png', alt: 'Insurance Document Template' },
-  { src: '/templates/Elegant.png', alt: 'Elegant Template' },
+  { src: 'https://picsum.photos/seed/construction-1/740/440', alt: 'Construction Template', hint: 'construction template' },
+  { src: 'https://picsum.photos/seed/it-service/740/440', alt: 'IT Service Template', hint: 'IT service' },
+  { src: 'https://picsum.photos/seed/modern-invoice/740/440', alt: 'Modern Invoice Template', hint: 'modern invoice' },
+  { src: 'https://picsum.photos/seed/insurance-doc/740/440', alt: 'Insurance Document Template', hint: 'insurance document' },
+  { src: 'https://picsum.photos/seed/elegant-design/740/440', alt: 'Elegant Template', hint: 'elegant design' },
 ];
 
 export function StackedCarousel() {
@@ -76,12 +76,12 @@ export function StackedCarousel() {
       >
         {carouselData.map((item, index) => (
           <div className="carousel-card" key={index}>
-            <Image src={item.src} alt={item.alt} fill priority={index < 3} sizes="(max-width: 768px) 100vw, 740px" />
+            <Image src={item.src} alt={item.alt} data-ai-hint={item.hint} fill priority={index < 3} sizes="(max-width: 768px) 100vw, 740px" />
           </div>
         ))}
       </div>
 
-      <div className="carousel-controls">
+      <div className="controls">
         <button id="prev" onClick={prevCard}>‹</button>
         <button id="next" onClick={nextCard}>›</button>
       </div>
