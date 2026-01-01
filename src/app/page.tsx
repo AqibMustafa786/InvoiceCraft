@@ -1,3 +1,4 @@
+
 'use client';
 
 import Link from 'next/link';
@@ -99,7 +100,7 @@ export default function HomePage() {
     setMounted(true);
   }, []);
 
-  const heroImageSrc = !mounted ? '/home/invocie.png' : theme === 'dark' ? '/darkinvoice.png' : '/home/invocie.png';
+  const heroImageSrc = '/home/invocie.png';
 
   return (
     <div className="flex flex-col min-h-[calc(100vh-8rem)]">
