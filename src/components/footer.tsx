@@ -39,10 +39,6 @@ export function Footer() {
               <Link href="/features" className="transition-colors text-muted-foreground hover:text-primary">Features</Link>
               <Link href="/pricing" className="transition-colors text-muted-foreground hover:text-primary">Pricing</Link>
               <Link href="/templates" className="transition-colors text-muted-foreground hover:text-primary">Templates</Link>
-              <Link href="/create-invoice" className="transition-colors text-muted-foreground hover:text-primary">Create Invoice</Link>
-              <Link href="/create-estimate" className="transition-colors text-muted-foreground hover:text-primary">Create Estimate</Link>
-              <Link href="/create-quote" className="transition-colors text-muted-foreground hover:text-primary">Create Quote</Link>
-              <Link href="/create-insurance" className="transition-colors text-muted-foreground hover:text-primary">Create Insurance</Link>
             </nav>
           </div>
           <div className="space-y-4">

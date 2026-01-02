@@ -6,14 +6,10 @@ import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 import {
-  FileText, FilePlus, Shield, HardHat, Code, Store, Car, Camera, Building, Scale, HeartPulse,
-  LayoutDashboard, Edit, Bot, Brush, Cloud, Share2, Palette, ArrowRight, XCircle, Clock, AlertCircle, CheckCircle, Search, FileClock
+  FileText, FilePlus, Shield,
+  LayoutDashboard, Edit, Bot, Share2, Palette, ArrowRight, XCircle, Clock, AlertCircle, CheckCircle, Search, FileClock
 } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
-import { Carousel, CarouselContent, CarouselItem } from '@/components/ui/carousel';
-import Autoplay from "embla-carousel-autoplay";
-import { Card, CardContent } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { useTheme } from 'next-themes';
 import dynamic from 'next/dynamic';
 import { StackedCarousel } from '@/components/templates/stacked-carousel';
@@ -49,31 +45,26 @@ const homePageFeatures = [
         icon: <Edit className="h-8 w-8 text-primary" />,
         name: 'Live Preview',
         description: 'See your changes in real-time as you build your document, ensuring a perfect result.',
-        className: 'md:col-span-2',
     },
     {
         icon: <LayoutDashboard className="h-8 w-8 text-primary" />,
-        name: 'Cloud-Powered Dashboard',
-        description: 'Securely access and manage all your documents from anywhere with our Firestore-backed dashboard.',
-        className: '',
+        name: 'Cloud Dashboard',
+        description: 'Securely access and manage all your documents from anywhere.',
     },
     {
         icon: <Share2 className="h-8 w-8 text-primary" />,
         name: 'Share & Collaborate',
         description: 'Email documents directly to clients or share public links for online viewing and acceptance.',
-        className: '',
     },
     {
         icon: <Palette className="h-8 w-8 text-primary" />,
         name: 'Deep Customization',
         description: 'Personalize documents with your logo, brand colors, and professional templates.',
-        className: 'md:col-span-2',
     },
     {
         icon: <Bot className="h-8 w-8 text-primary" />,
         name: 'AI-Powered Workflow',
         description: 'Leverage Genkit AI for intelligent features like automated PDF generation for emails.',
-        className: 'md:col-span-2',
     }
 ];
 
@@ -103,7 +94,7 @@ export default function HomePage() {
   const heroImageSrc = '/home/invocie.png';
 
   return (
-    <div className="flex flex-col min-h-[calc(100vh-8rem)]">
+    <div className="flex flex-col min-h-dvh">
       <main className="flex-1">
         <section className="relative w-full py-20 overflow-hidden md:py-24 lg:py-32">
            <div
@@ -193,13 +184,11 @@ export default function HomePage() {
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
                     {tools.map((tool) => (
                         <Link href={tool.href} key={tool.href} className="group">
-                            <motion.div whileHover={{ y: -8, scale: 1.05 }} transition={{ type: "spring", stiffness: 300 }}>
-                                <Card className="bg-card/50 backdrop-blur-sm shadow-lg group-hover:shadow-primary/20 transition-all duration-300">
-                                    <CardContent className="flex flex-col items-center justify-center p-6 text-center gap-4">
-                                        {React.cloneElement(tool.icon, { className: "h-10 w-10 text-primary" })}
-                                        <p className="font-semibold text-lg text-primary">{tool.label}</p>
-                                    </CardContent>
-                                </Card>
+                            <motion.div whileHover={{ y: -8, scale: 1.05 }} transition={{ type: "spring", stiffness: 300 }} className="h-full">
+                                <div className="bg-card/50 backdrop-blur-sm shadow-lg group-hover:shadow-primary/20 transition-all duration-300 rounded-xl p-6 flex flex-col items-center text-center gap-4 h-full">
+                                    {React.cloneElement(tool.icon, { className: "h-10 w-10 text-primary" })}
+                                    <p className="font-semibold text-lg">{tool.label}</p>
+                                </div>
                             </motion.div>
                         </Link>
                     ))}
@@ -214,16 +203,16 @@ export default function HomePage() {
                     <p className="mt-4 text-muted-foreground">InvoiceCraft is packed with powerful, intuitive features designed to save you time, make you look professional, and help you get paid faster.</p>
                 </div>
                  <div 
-                    className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto"
+                    className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto"
                   >
                     {homePageFeatures.map((feature, index) => (
-                        <div key={index} className={feature.className}>
+                        <div key={index}>
                              <motion.div whileHover={{ y: -8, scale: 1.02 }} transition={{ type: "spring", stiffness: 300 }} className="h-full">
-                                <Card className="border bg-card/80 shadow-lg hover:shadow-primary/20 transition-all duration-300 h-full p-6 flex flex-col items-center text-center">
+                                <div className="border bg-card/80 shadow-lg hover:shadow-primary/20 transition-all duration-300 h-full p-6 flex flex-col items-center text-center rounded-xl">
                                     {React.cloneElement(feature.icon, { className: "h-8 w-8 text-primary" })}
-                                    <h3 className="text-xl font-semibold mt-4 mb-2 text-primary">{feature.name}</h3>
+                                    <h3 className="text-xl font-semibold mt-4 mb-2">{feature.name}</h3>
                                     <p className="text-muted-foreground text-sm flex-1">{feature.description}</p>
-                                </Card>
+                                </div>
                             </motion.div>
                         </div>
                     ))}
@@ -251,22 +240,20 @@ export default function HomePage() {
                         viewport={{ once: true, amount: 0.5 }}
                         transition={{ duration: 0.5, ease: "easeOut" }}
                     >
-                        <Card className="h-full bg-destructive/5 border-destructive/20 border shadow-lg">
-                            <CardContent className="p-8">
-                                <h3 className="text-2xl font-bold font-headline mb-6 text-destructive/30">The Problems</h3>
-                                <ul className="space-y-4">
-                                    {problems.map((item, index) => (
-                                        <li key={index} className="flex items-start gap-3">
-                                            {item.icon}
-                                            <span className="text-muted-foreground pt-0.5">{item.text}</span>
-                                        </li>
-                                    ))}
-                                </ul>
-                                <div className="mt-6">
-                                    <Badge variant="destructive" className="bg-destructive/10 text-destructive-foreground hover:bg-destructive/20">Before InvoiceCraft</Badge>
-                                </div>
-                            </CardContent>
-                        </Card>
+                        <div className="h-full bg-destructive/5 border-destructive/20 border shadow-lg p-8 rounded-xl">
+                            <h3 className="text-2xl font-bold font-headline mb-6 text-destructive/30">The Problems</h3>
+                            <ul className="space-y-4">
+                                {problems.map((item, index) => (
+                                    <li key={index} className="flex items-start gap-3">
+                                        {item.icon}
+                                        <span className="text-muted-foreground pt-0.5">{item.text}</span>
+                                    </li>
+                                ))}
+                            </ul>
+                            <div className="mt-6">
+                                <Badge variant="destructive" className="bg-destructive/10 text-destructive-foreground hover:bg-destructive/20">Before InvoiceCraft</Badge>
+                            </div>
+                        </div>
                     </motion.div>
 
                     {/* Solutions Card */}
@@ -276,22 +263,20 @@ export default function HomePage() {
                         viewport={{ once: true, amount: 0.5 }}
                         transition={{ duration: 0.5, ease: "easeOut" }}
                     >
-                        <Card className="h-full bg-primary/5 border-primary/20 border shadow-lg">
-                            <CardContent className="p-8">
-                                <h3 className="text-2xl font-bold font-headline mb-6 text-primary">The Solutions</h3>
-                                <ul className="space-y-4">
-                                    {solutions.map((item, index) => (
-                                        <li key={index} className="flex items-start gap-3">
-                                            {item.icon}
-                                            <span className="text-muted-foreground pt-0.5">{item.text}</span>
-                                        </li>
-                                    ))}
-                                </ul>
-                                <div className="mt-6">
-                                    <Badge variant="secondary" className="bg-primary/10 text-primary hover:bg-primary/20">With InvoiceCraft</Badge>
-                                </div>
-                            </CardContent>
-                        </Card>
+                        <div className="h-full bg-primary/5 border-primary/20 border shadow-lg p-8 rounded-xl">
+                            <h3 className="text-2xl font-bold font-headline mb-6 text-primary">The Solutions</h3>
+                            <ul className="space-y-4">
+                                {solutions.map((item, index) => (
+                                    <li key={index} className="flex items-start gap-3">
+                                        {item.icon}
+                                        <span className="text-muted-foreground pt-0.5">{item.text}</span>
+                                    </li>
+                                ))}
+                            </ul>
+                            <div className="mt-6">
+                                <Badge variant="secondary" className="bg-primary/10 text-primary hover:bg-primary/20">With InvoiceCraft</Badge>
+                            </div>
+                        </div>
                     </motion.div>
                 </div>
             </div>

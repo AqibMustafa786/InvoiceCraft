@@ -60,7 +60,7 @@ export default function RootLayout({
               <SplashScreenProvider>
                 <div className="app-main-container relative flex min-h-dvh flex-col">
                   <Header />
-                  <main className="flex-1 py-8">
+                  <main className="flex-1">
                       {children}
                   </main>
                   <Footer />

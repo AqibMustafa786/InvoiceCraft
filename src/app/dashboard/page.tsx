@@ -1,5 +1,4 @@
 
-
 'use client';
 
 import { useState, useMemo, useCallback } from 'react';
@@ -177,27 +176,27 @@ const DashboardStatsGrid: React.FC<DashboardStatsGridProps> = ({ documents, docT
     if (docType === 'invoice') {
         const s = stats as any;
         return (
-            <motion.div className="grid gap-2 md:grid-cols-2 lg:grid-cols-4 mb-4" variants={pageVariants}>
+            <motion.div className="grid gap-2 grid-cols-2 md:grid-cols-4 lg:grid-cols-4 mb-4" variants={pageVariants}>
                 <motion.div variants={pageVariants}><Card as="button" onClick={() => onKpiClick('Total Revenue', s.paidInvoices)} className="text-left w-full bg-card/50 backdrop-blur-sm shadow-sm transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-0.5"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1"><CardTitle className="text-xs font-medium">Total Revenue</CardTitle><DollarSign className="h-3 w-3 text-muted-foreground" /></CardHeader><CardContent><div className="text-xl font-bold">{formatCurrency(s.totalRevenue)}</div><p className="text-xs text-muted-foreground">{s.paidCount} paid invoices</p></CardContent></Card></motion.div>
                 <motion.div variants={pageVariants}><Card as="button" onClick={() => onKpiClick('Pending Invoices', s.outstandingInvoices)} className="text-left w-full bg-card/50 backdrop-blur-sm shadow-sm transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-0.5"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1"><CardTitle className="text-xs font-medium">Pending</CardTitle><Clock className="h-3 w-3 text-muted-foreground" /></CardHeader><CardContent><div className="text-xl font-bold">{formatCurrency(s.outstanding)}</div></CardContent></Card></motion.div>
                 <motion.div variants={pageVariants}><Card as="button" onClick={() => onKpiClick('Overdue Invoices', s.overdueInvoices)} className="text-left w-full bg-card/50 backdrop-blur-sm shadow-sm transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-0.5"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1"><CardTitle className="text-xs font-medium">Overdue</CardTitle><FileWarning className="h-3 w-3 text-muted-foreground" /></CardHeader><CardContent><div className="text-xl font-bold">{formatCurrency(s.overdue)}</div></CardContent></Card></motion.div>
                 <motion.div variants={pageVariants}><Card className="bg-card/50 backdrop-blur-sm shadow-sm transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-0.5"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1"><CardTitle className="text-xs font-medium">Total Invoiced</CardTitle><Files className="h-3 w-3 text-muted-foreground" /></CardHeader><CardContent><div className="text-xl font-bold">{formatCurrency(s.totalInvoiced)}</div></CardContent></Card></motion.div>
-                <motion.div variants={pageVariants}><Card className="bg-card/50 backdrop-blur-sm shadow-sm transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-0.5"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1"><CardTitle className="text-xs font-medium">Avg. Invoice Value</CardTitle><AreaChart className="h-3 w-3 text-muted-foreground" /></CardHeader><CardContent><div className="text-xl font-bold">{formatCurrency(s.avgInvoiceValue)}</div></CardContent></Card></motion.div>
-                <motion.div variants={pageVariants}><Card className="bg-card/50 backdrop-blur-sm shadow-sm transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-0.5"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1"><CardTitle className="text-xs font-medium">Unique Clients</CardTitle><Users className="h-3 w-3 text-muted-foreground" /></CardHeader><CardContent><div className="text-xl font-bold">{s.uniqueClients}</div></CardContent></Card></motion.div>
-                <motion.div variants={pageVariants}><Card className="bg-card/50 backdrop-blur-sm shadow-sm transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-0.5"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1"><CardTitle className="text-xs font-medium">Most Used Category</CardTitle><Package className="h-3 w-3 text-muted-foreground" /></CardHeader><CardContent><div className="text-lg font-bold">{s.mostUsedCategory || 'N/A'}</div></CardContent></Card></motion.div>
-                <motion.div variants={pageVariants}><Card as="button" onClick={() => onKpiClick('Draft Invoices', s.draftInvoices)} className="text-left w-full bg-card/50 backdrop-blur-sm shadow-sm transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-0.5"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1"><CardTitle className="text-xs font-medium">Drafts</CardTitle><FileText className="h-3 w-3 text-muted-foreground" /></CardHeader><CardContent><div className="text-xl font-bold">{s.drafts}</div></CardContent></Card></motion.div>
+                <motion.div variants={pageVariants} className="col-span-2 sm:col-span-1"><Card className="bg-card/50 backdrop-blur-sm shadow-sm transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-0.5"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1"><CardTitle className="text-xs font-medium">Avg. Invoice Value</CardTitle><AreaChart className="h-3 w-3 text-muted-foreground" /></CardHeader><CardContent><div className="text-xl font-bold">{formatCurrency(s.avgInvoiceValue)}</div></CardContent></Card></motion.div>
+                <motion.div variants={pageVariants} className="col-span-2 sm:col-span-1"><Card className="bg-card/50 backdrop-blur-sm shadow-sm transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-0.5"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1"><CardTitle className="text-xs font-medium">Unique Clients</CardTitle><Users className="h-3 w-3 text-muted-foreground" /></CardHeader><CardContent><div className="text-xl font-bold">{s.uniqueClients}</div></CardContent></Card></motion.div>
+                <motion.div variants={pageVariants} className="col-span-2 md:col-span-1"><Card className="bg-card/50 backdrop-blur-sm shadow-sm transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-0.5"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1"><CardTitle className="text-xs font-medium">Most Used Category</CardTitle><Package className="h-3 w-3 text-muted-foreground" /></CardHeader><CardContent><div className="text-lg font-bold">{s.mostUsedCategory || 'N/A'}</div></CardContent></Card></motion.div>
+                <motion.div variants={pageVariants} className="col-span-2 md:col-span-1"><Card as="button" onClick={() => onKpiClick('Draft Invoices', s.draftInvoices)} className="text-left w-full bg-card/50 backdrop-blur-sm shadow-sm transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-0.5"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1"><CardTitle className="text-xs font-medium">Drafts</CardTitle><FileText className="h-3 w-3 text-muted-foreground" /></CardHeader><CardContent><div className="text-xl font-bold">{s.drafts}</div></CardContent></Card></motion.div>
             </motion.div>
         );
     } else if (docType === 'insurance') {
         const s = stats as any;
         return (
-            <motion.div className="grid gap-2 md:grid-cols-2 lg:grid-cols-4 mb-4" variants={pageVariants}>
+            <motion.div className="grid gap-2 grid-cols-2 md:grid-cols-4 lg:grid-cols-4 mb-4" variants={pageVariants}>
                  <motion.div variants={pageVariants}><Card className="bg-card/50 backdrop-blur-sm shadow-sm transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-0.5"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1"><CardTitle className="text-xs font-medium">Total Policies</CardTitle><Shield className="h-3 w-3 text-muted-foreground" /></CardHeader><CardContent><div className="text-xl font-bold">{s.totalPolicies}</div></CardContent></Card></motion.div>
                  <motion.div variants={pageVariants}><Card className="bg-card/50 backdrop-blur-sm shadow-sm transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-0.5"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1"><CardTitle className="text-xs font-medium">Active Policies</CardTitle><CheckCircle className="h-3 w-3 text-muted-foreground" /></CardHeader><CardContent><div className="text-xl font-bold">{s.activePolicies}</div></CardContent></Card></motion.div>
                  <motion.div variants={pageVariants}><Card className="bg-card/50 backdrop-blur-sm shadow-sm transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-0.5"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1"><CardTitle className="text-xs font-medium">Expired Policies</CardTitle><FileWarning className="h-3 w-3 text-muted-foreground" /></CardHeader><CardContent><div className="text-xl font-bold">{s.expiredPolicies}</div></CardContent></Card></motion.div>
                  <motion.div variants={pageVariants}><Card className="bg-card/50 backdrop-blur-sm shadow-sm transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-0.5"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1"><CardTitle className="text-xs font-medium">Draft Policies</CardTitle><FileText className="h-3 w-3 text-muted-foreground" /></CardHeader><CardContent><div className="text-xl font-bold">{s.draftPolicies}</div></CardContent></Card></motion.div>
-                 <motion.div variants={pageVariants}><Card className="bg-card/50 backdrop-blur-sm shadow-sm transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-0.5"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1"><CardTitle className="text-xs font-medium">Insured Clients</CardTitle><Users className="h-3 w-3 text-muted-foreground" /></CardHeader><CardContent><div className="text-xl font-bold">{s.insuredClients}</div></CardContent></Card></motion.div>
-                 <motion.div variants={pageVariants}><Card className="bg-card/50 backdrop-blur-sm shadow-sm transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-0.5"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1"><CardTitle className="text-xs font-medium">Top Policy Type</CardTitle><Package className="h-3 w-3 text-muted-foreground" /></CardHeader><CardContent><div className="text-lg font-bold">{s.mostUsedPolicyType}</div></CardContent></Card></motion.div>
+                 <motion.div variants={pageVariants} className="col-span-2 sm:col-span-1"><Card className="bg-card/50 backdrop-blur-sm shadow-sm transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-0.5"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1"><CardTitle className="text-xs font-medium">Insured Clients</CardTitle><Users className="h-3 w-3 text-muted-foreground" /></CardHeader><CardContent><div className="text-xl font-bold">{s.insuredClients}</div></CardContent></Card></motion.div>
+                 <motion.div variants={pageVariants} className="col-span-2 sm:col-span-1"><Card className="bg-card/50 backdrop-blur-sm shadow-sm transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-0.5"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1"><CardTitle className="text-xs font-medium">Top Policy Type</CardTitle><Package className="h-3 w-3 text-muted-foreground" /></CardHeader><CardContent><div className="text-lg font-bold">{s.mostUsedPolicyType}</div></CardContent></Card></motion.div>
             </motion.div>
         )
     }
@@ -205,15 +204,15 @@ const DashboardStatsGrid: React.FC<DashboardStatsGridProps> = ({ documents, docT
         const s = stats as any;
         const docTypeCap = docType.charAt(0).toUpperCase() + docType.slice(1);
         return (
-             <motion.div className="grid gap-2 md:grid-cols-2 lg:grid-cols-4 mb-4" variants={pageVariants}>
+             <motion.div className="grid gap-2 grid-cols-2 md:grid-cols-4 lg:grid-cols-4 mb-4" variants={pageVariants}>
                 <motion.div variants={pageVariants}><Card className="bg-card/50 backdrop-blur-sm shadow-sm transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-0.5"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1"><CardTitle className="text-xs font-medium">Total {docTypeCap}s</CardTitle><Files className="h-3 w-3 text-muted-foreground" /></CardHeader><CardContent><div className="text-xl font-bold">{s.totalCount}</div></CardContent></Card></motion.div>
                 <motion.div variants={pageVariants}><Card className="bg-card/50 backdrop-blur-sm shadow-sm transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-0.5"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1"><CardTitle className="text-xs font-medium">Accepted</CardTitle><CheckCircle className="h-3 w-3 text-muted-foreground" /></CardHeader><CardContent><div className="text-xl font-bold">{s.acceptedCount}</div></CardContent></Card></motion.div>
                 <motion.div variants={pageVariants}><Card className="bg-card/50 backdrop-blur-sm shadow-sm transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-0.5"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1"><CardTitle className="text-xs font-medium">Rejected</CardTitle><XCircle className="h-3 w-3 text-muted-foreground" /></CardHeader><CardContent><div className="text-xl font-bold">{s.rejectedCount}</div></CardContent></Card></motion.div>
                 <motion.div variants={pageVariants}><Card className="bg-card/50 backdrop-blur-sm shadow-sm transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-0.5"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1"><CardTitle className="text-xs font-medium">Pending Approval</CardTitle><Clock className="h-3 w-3 text-muted-foreground" /></CardHeader><CardContent><div className="text-xl font-bold">{s.pendingCount}</div></CardContent></Card></motion.div>
-                <motion.div variants={pageVariants}><Card className="bg-card/50 backdrop-blur-sm shadow-sm transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-0.5"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1"><CardTitle className="text-xs font-medium">Total Estimated Value</CardTitle><DollarSign className="h-3 w-3 text-muted-foreground" /></CardHeader><CardContent><div className="text-xl font-bold">{formatCurrency(s.totalValue)}</div></CardContent></Card></motion.div>
-                <motion.div variants={pageVariants}><Card className="bg-card/50 backdrop-blur-sm shadow-sm transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-0.5"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1"><CardTitle className="text-xs font-medium">Conversion Rate</CardTitle><Percent className="h-3 w-3 text-muted-foreground" /></CardHeader><CardContent><div className="text-xl font-bold">{s.conversionRate.toFixed(1)}%</div></CardContent></Card></motion.div>
-                <motion.div variants={pageVariants}><Card className="bg-card/50 backdrop-blur-sm shadow-sm transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-0.5"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1"><CardTitle className="text-xs font-medium">Avg. {docTypeCap} Value</CardTitle><AreaChart className="h-3 w-3 text-muted-foreground" /></CardHeader><CardContent><div className="text-xl font-bold">{formatCurrency(s.avgValue)}</div></CardContent></Card></motion.div>
-                <motion.div variants={pageVariants}><Card as="button" onClick={() => onKpiClick(`Draft ${docTypeCap}s`, s.draftDocs)} className="text-left w-full bg-card/50 backdrop-blur-sm shadow-sm transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-0.5"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1"><CardTitle className="text-xs font-medium">Drafts</CardTitle><FileText className="h-3 w-3 text-muted-foreground" /></CardHeader><CardContent><div className="text-xl font-bold">{s.draftCount}</div></CardContent></Card></motion.div>
+                <motion.div variants={pageVariants} className="col-span-2 sm:col-span-1"><Card className="bg-card/50 backdrop-blur-sm shadow-sm transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-0.5"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1"><CardTitle className="text-xs font-medium">Total Estimated Value</CardTitle><DollarSign className="h-3 w-3 text-muted-foreground" /></CardHeader><CardContent><div className="text-xl font-bold">{formatCurrency(s.totalValue)}</div></CardContent></Card></motion.div>
+                <motion.div variants={pageVariants} className="col-span-2 sm:col-span-1"><Card className="bg-card/50 backdrop-blur-sm shadow-sm transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-0.5"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1"><CardTitle className="text-xs font-medium">Conversion Rate</CardTitle><Percent className="h-3 w-3 text-muted-foreground" /></CardHeader><CardContent><div className="text-xl font-bold">{s.conversionRate.toFixed(1)}%</div></CardContent></Card></motion.div>
+                <motion.div variants={pageVariants} className="col-span-2 md:col-span-1"><Card className="bg-card/50 backdrop-blur-sm shadow-sm transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-0.5"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1"><CardTitle className="text-xs font-medium">Avg. {docTypeCap} Value</CardTitle><AreaChart className="h-3 w-3 text-muted-foreground" /></CardHeader><CardContent><div className="text-xl font-bold">{formatCurrency(s.avgValue)}</div></CardContent></Card></motion.div>
+                <motion.div variants={pageVariants} className="col-span-2 md:col-span-1"><Card as="button" onClick={() => onKpiClick(`Draft ${docTypeCap}s`, s.draftDocs)} className="text-left w-full bg-card/50 backdrop-blur-sm shadow-sm transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-0.5"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1"><CardTitle className="text-xs font-medium">Drafts</CardTitle><FileText className="h-3 w-3 text-muted-foreground" /></CardHeader><CardContent><div className="text-xl font-bold">{s.draftCount}</div></CardContent></Card></motion.div>
             </motion.div>
         );
     }
@@ -329,11 +328,6 @@ export default function DashboardPage() {
     
     const handleAddClient = () => {
         setEditingClient(null);
-        setIsClientDialogOpen(true);
-    };
-
-    const handleEditClient = (client: Client) => {
-        setEditingClient(client);
         setIsClientDialogOpen(true);
     };
     
@@ -597,11 +591,11 @@ export default function DashboardPage() {
             <Table>
                 <TableHeader>
                     <TableRow>
-                        <TableHead className="text-xs">Number</TableHead>
+                        <TableHead className="text-xs hidden sm:table-cell">Number</TableHead>
                         <TableHead className="text-xs">Client</TableHead>
-                        <TableHead className="text-xs">Amount</TableHead>
+                        <TableHead className="text-xs hidden md:table-cell">Amount</TableHead>
                         <TableHead className="text-xs">Status</TableHead>
-                        <TableHead className="text-center text-xs">History</TableHead>
+                        <TableHead className="text-center text-xs hidden lg:table-cell">History</TableHead>
                         <TableHead className="text-right text-xs">Actions</TableHead>
                     </TableRow>
                 </TableHeader>
@@ -649,9 +643,9 @@ export default function DashboardPage() {
                             className="transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted"
                             as={TableRow}
                         >
-                            <TableCell className="font-medium text-xs">{docNumber}</TableCell>
+                            <TableCell className="font-medium text-xs hidden sm:table-cell">{docNumber}</TableCell>
                             <TableCell className="text-xs">{clientName}</TableCell>
-                            <TableCell className="text-xs">{currencySymbols[(doc as any).currency] || '$'}{calculateTotal(doc).toFixed(2)}</TableCell>
+                            <TableCell className="text-xs hidden md:table-cell">{currencySymbols[(doc as any).currency] || '$'}{calculateTotal(doc).toFixed(2)}</TableCell>
                             <TableCell>
                                 <DropdownMenu>
                                     <DropdownMenuTrigger asChild>
@@ -673,7 +667,7 @@ export default function DashboardPage() {
                                     </DropdownMenuContent>
                                 </DropdownMenu>
                             </TableCell>
-                             <TableCell className="text-center">
+                             <TableCell className="text-center hidden lg:table-cell">
                                 <Button variant="ghost" size="icon" className="rounded-full h-7 w-7" onClick={() => handleHistoryClick((doc as any).auditLog)}>
                                     <History className="h-3.5 w-3.5" />
                                 </Button>
@@ -735,7 +729,7 @@ export default function DashboardPage() {
     const renderClientsTable = () => (
         <Card className='bg-card/50 backdrop-blur-sm'>
             <CardHeader>
-                <div className="flex justify-between items-center">
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                     <div>
                         <CardTitle className="text-base">Clients</CardTitle>
                         <CardDescription className="text-xs">A list of all your clients.</CardDescription>
@@ -744,43 +738,45 @@ export default function DashboardPage() {
                 </div>
             </CardHeader>
             <CardContent>
-                <Table>
-                    <TableHeader>
-                        <TableRow>
-                            <TableHead className="text-xs">Name</TableHead>
-                            <TableHead className="text-xs">Company</TableHead>
-                            <TableHead className="text-xs">Email</TableHead>
-                            <TableHead className="text-right text-xs">Actions</TableHead>
-                        </TableRow>
-                    </TableHeader>
-                    <motion.tbody
-                      variants={tableContainerVariants}
-                      initial="hidden"
-                      animate="visible"
-                      as={TableBody}
-                    >
-                        {isLoadingClients ? (
-                             <TableRow><TableCell colSpan={4} className="text-center h-24">Loading clients...</TableCell></TableRow>
-                        ) : filteredClients && filteredClients.length > 0 ? filteredClients.map((client) => (
-                            <motion.tr
-                                as={TableRow}
-                                key={client.id}
-                                variants={tableRowVariants}
-                                className="cursor-pointer"
-                                onClick={() => router.push(`/dashboard/clients/${client.id}`)}
-                            >
-                                <TableCell className="font-medium text-xs">{client.name}</TableCell>
-                                <TableCell className="text-xs">{client.companyName}</TableCell>
-                                <TableCell className="text-xs">{client.email}</TableCell>
-                                <TableCell className="text-right">
-                                     <Button variant="ghost" size="sm">View</Button>
-                                </TableCell>
-                            </motion.tr>
-                        )) : (
-                            <TableRow><TableCell colSpan={4} className="text-center h-24">No clients found.</TableCell></TableRow>
-                        )}
-                    </motion.tbody>
-                </Table>
+                <div className="overflow-x-auto">
+                    <Table>
+                        <TableHeader>
+                            <TableRow>
+                                <TableHead className="text-xs">Name</TableHead>
+                                <TableHead className="text-xs hidden sm:table-cell">Company</TableHead>
+                                <TableHead className="text-xs hidden md:table-cell">Email</TableHead>
+                                <TableHead className="text-right text-xs">Actions</TableHead>
+                            </TableRow>
+                        </TableHeader>
+                        <motion.tbody
+                          variants={tableContainerVariants}
+                          initial="hidden"
+                          animate="visible"
+                          as={TableBody}
+                        >
+                            {isLoadingClients ? (
+                                 <TableRow><TableCell colSpan={4} className="text-center h-24">Loading clients...</TableCell></TableRow>
+                            ) : filteredClients && filteredClients.length > 0 ? filteredClients.map((client) => (
+                                <motion.tr
+                                    as={TableRow}
+                                    key={client.id}
+                                    variants={tableRowVariants}
+                                    className="cursor-pointer"
+                                    onClick={() => router.push(`/dashboard/clients/${client.id}`)}
+                                >
+                                    <TableCell className="font-medium text-xs">{client.name}</TableCell>
+                                    <TableCell className="text-xs hidden sm:table-cell">{client.companyName}</TableCell>
+                                    <TableCell className="text-xs hidden md:table-cell">{client.email}</TableCell>
+                                    <TableCell className="text-right">
+                                         <Button variant="ghost" size="sm">View</Button>
+                                    </TableCell>
+                                </motion.tr>
+                            )) : (
+                                <TableRow><TableCell colSpan={4} className="text-center h-24">No clients found.</TableCell></TableRow>
+                            )}
+                        </motion.tbody>
+                    </Table>
+                </div>
             </CardContent>
          </Card>
     );
@@ -867,13 +863,13 @@ export default function DashboardPage() {
                  <motion.div variants={pageVariants}>
                     <Card className='bg-card/50 backdrop-blur-sm'>
                         <CardHeader className='pb-4'>
-                            <div className="flex justify-between items-center gap-4 flex-wrap">
+                            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                                 <motion.div variants={pageVariants}>
                                     <h1 className="text-xl font-bold font-headline">Dashboard</h1>
                                     <p className="text-xs text-muted-foreground">An overview of your financial documents and activities.</p>
                                 </motion.div>
-                                 <div className="flex items-center gap-2">
-                                    <Button variant="outline" size="sm" className='rounded-full' onClick={() => setIsFilterSheetOpen(true)}>
+                                 <div className="flex items-center gap-2 w-full sm:w-auto">
+                                    <Button variant="outline" size="sm" className='rounded-full flex-1 sm:flex-none' onClick={() => setIsFilterSheetOpen(true)}>
                                     <Filter className="mr-2 h-3.5 w-3.5" />
                                     Filter
                                     {activeFilterCount > 0 && (
@@ -957,4 +953,3 @@ export default function DashboardPage() {
         </>
     );
 }
-

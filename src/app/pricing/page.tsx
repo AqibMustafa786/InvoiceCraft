@@ -172,7 +172,7 @@ export default function PricingPage() {
                 </div>
               </CardHeader>
               <CardContent className="flex-1 space-y-4">
-                <ul className="space-y-3 text-muted-foreground">
+                <ul className="space-y-3 text-sm text-muted-foreground">
                   {plan.features.map((feature, index) => (
                     <li key={index} className="flex items-center gap-2">
                       {feature.included ? <Check className="h-5 w-5 text-primary" /> : <X className="h-5 w-5 text-muted-foreground/50" />}
@@ -184,14 +184,15 @@ export default function PricingPage() {
               <CardFooter>
                  {plan.title === 'Business' ? (
                   <Button 
-                    className={`w-full text-white bg-gradient-to-r from-primary to-accent shadow-lg hover:scale-105 transition-transform`} 
+                    className={`w-full text-lg ${plan.variant === 'primary' ? 'text-white bg-gradient-to-r from-primary to-accent shadow-lg hover:scale-105 transition-transform' : ''}`}
                     onClick={handleCheckout}
                     disabled={isLoading}
+                    size="lg"
                   >
                      {isLoading ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Please wait</> : 'Choose Business'}
                   </Button>
                 ) : (
-                  <Button asChild className="w-full" variant="outline">
+                  <Button asChild className="w-full" variant="outline" size="lg">
                       <Link href={plan.ctaLink}>{plan.cta}</Link>
                   </Button>
                 )}
@@ -204,7 +205,7 @@ export default function PricingPage() {
        <div className="my-16 md:my-24">
          <h2 className="text-3xl md:text-4xl font-bold font-headline text-center mb-10">Feature Comparison</h2>
          <Card className="bg-card/50 backdrop-blur-sm shadow-lg">
-          <CardContent className="p-0">
+          <CardContent className="p-0 overflow-x-auto">
             <Table>
                 <TableHeader>
                     <TableRow>
@@ -233,5 +234,3 @@ export default function PricingPage() {
     </div>
   );
 }
-
-    

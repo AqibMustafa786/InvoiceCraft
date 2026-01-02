@@ -135,7 +135,7 @@ export default function AnalyticsPage() {
 
   if (isLoadingInvoices || isLoadingClients) {
     return (
-      <div className="space-y-6">
+      <div className="space-y-6 p-4 md:p-8">
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           <Skeleton className="h-32" />
           <Skeleton className="h-32" />

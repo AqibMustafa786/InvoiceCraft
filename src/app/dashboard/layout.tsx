@@ -25,13 +25,18 @@ export default function DashboardLayout({
     window.addEventListener('resize', checkIsMobile);
     return () => window.removeEventListener('resize', checkIsMobile);
   }, []);
+  
+  useEffect(() => {
+      if (isMobile) {
+          setIsSidebarOpen(false);
+      } else {
+          setIsSidebarOpen(true);
+      }
+  }, [isMobile]);
 
   // Don't apply this layout to nested client pages like /dashboard/clients/[clientId]
-  if (pathname.startsWith('/dashboard/clients/')) {
-    return <main className="px-4 md:px-8">{children}</main>
-  }
-  if (pathname.startsWith('/dashboard/analytics')) {
-    return <main className="px-4 md:px-8">{children}</main>
+  if (pathname.startsWith('/dashboard/clients/') || pathname.startsWith('/dashboard/analytics')) {
+    return <main className="px-4 py-8 md:px-8">{children}</main>
   }
   
   const sidebarVariants = {
@@ -41,7 +46,7 @@ export default function DashboardLayout({
 
   if (isMobile) {
     return (
-      <div className="px-4 md:px-8">
+      <div className="px-4 md:px-8 py-8">
         <div className="flex justify-between items-center mb-4">
           <Greeting />
           <Sheet>
@@ -61,7 +66,7 @@ export default function DashboardLayout({
   }
 
   return (
-    <div className="px-4 md:px-8">
+    <div className="px-4 md:px-8 py-8">
       <Greeting />
         <div className="flex gap-x-8 mt-2">
             <motion.aside

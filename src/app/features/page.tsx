@@ -5,11 +5,9 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
 import {
-  FileText, FilePlus, Shield, HardHat, Code, Store, Car, Camera, Building, Scale, HeartPulse,
   LayoutDashboard, Edit, Bot, Brush, Cloud, Share2, Palette, ArrowRight, CheckCircle, Mail, Printer
 } from 'lucide-react';
 import React from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { PageHeader, PageHeaderDescription, PageHeaderHeading } from '@/components/page-header';
 
 const coreFeatures = [
@@ -68,19 +66,6 @@ const advancedFeatures = [
     },
 ];
 
-const templateCategories = [
-  { name: "General Services", icon: <FileText /> },
-  { name: "Construction", icon: <HardHat /> },
-  { name: "IT & Freelance", icon: <Code /> },
-  { name: "Retail & E-commerce", icon: <Store /> },
-  { name: "Auto Repair", icon: <Car /> },
-  { name: "Photography", icon: <Camera /> },
-  { name: "Real Estate", icon: <Building /> },
-  { name: "Legal Services", icon: <Scale /> },
-  { name: "Medical", icon: <HeartPulse /> },
-  { name: "And many more...", icon: <FilePlus /> },
-];
-
 export default function FeaturesPage() {
     const containerVariants = {
         hidden: { opacity: 0 },
@@ -106,7 +91,7 @@ export default function FeaturesPage() {
     };
 
     return (
-        <div className="container px-4 mx-auto md:px-6">
+        <div className="container px-4 mx-auto md:px-6 py-8">
             <PageHeader>
                 <PageHeaderHeading>Features That Power Your Business</PageHeaderHeading>
                 <PageHeaderDescription>
@@ -123,12 +108,12 @@ export default function FeaturesPage() {
                 viewport={{ once: true, amount: 0.2 }}
             >
                 {coreFeatures.map((feature, index) => (
-                    <motion.div key={index} variants={itemVariants} whileHover={{ y: -5 }} transition={{ type: 'spring', stiffness: 300 }}>
-                        <Card className="border bg-card/50 shadow-lg hover:shadow-primary/20 transition-all duration-300 h-full p-6 flex flex-col items-center text-center">
+                    <motion.div key={index} variants={itemVariants} whileHover={{ y: -5 }} transition={{ type: 'spring', stiffness: 300 }} className="h-full">
+                        <div className="border bg-card/50 shadow-lg hover:shadow-primary/20 transition-all duration-300 h-full p-6 flex flex-col items-center text-center rounded-xl">
                             {feature.icon}
                             <h3 className="text-xl font-semibold mt-4 mb-2">{feature.name}</h3>
                             <p className="text-muted-foreground text-sm flex-1">{feature.description}</p>
-                        </Card>
+                        </div>
                     </motion.div>
                 ))}
             </motion.div>
@@ -147,46 +132,18 @@ export default function FeaturesPage() {
                     viewport={{ once: true, amount: 0.2 }}
                 >
                     {advancedFeatures.map((feature, index) => (
-                        <motion.div key={index} variants={itemVariants} whileHover={{ y: -5 }} transition={{ type: 'spring', stiffness: 300 }}>
-                            <Card className="border bg-card/50 shadow-lg hover:shadow-primary/20 transition-all duration-300 h-full p-6 flex flex-col items-center text-center">
+                        <motion.div key={index} variants={itemVariants} whileHover={{ y: -5 }} transition={{ type: 'spring', stiffness: 300 }} className="h-full">
+                             <div className="border bg-card/50 shadow-lg hover:shadow-primary/20 transition-all duration-300 h-full p-6 flex flex-col items-center text-center rounded-xl">
                                 {feature.icon}
                                 <h3 className="text-xl font-semibold mt-4 mb-2">{feature.name}</h3>
                                 <p className="text-muted-foreground text-sm flex-1">{feature.description}</p>
-                            </Card>
+                            </div>
                         </motion.div>
                     ))}
                 </motion.div>
             </div>
             
-             {/* Template Section */}
-            <section className="py-20 md:py-28 bg-primary/5 rounded-3xl">
-                <div className="container px-4 mx-auto md:px-6">
-                    <div className="text-center max-w-2xl mx-auto mb-12">
-                        <h2 className="text-4xl md:text-5xl font-bold font-headline">Templates for Every Industry</h2>
-                        <p className="mt-4 text-muted-foreground">Our extensive template library ensures you always look professional, no matter your field.</p>
-                    </div>
-                    <motion.div 
-                        className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6 max-w-5xl mx-auto"
-                        variants={containerVariants}
-                        initial="hidden"
-                        whileInView="visible"
-                        viewport={{ once: true, amount: 0.2 }}
-                    >
-                        {templateCategories.map((cat) => (
-                            <motion.div key={cat.name} variants={itemVariants} whileHover={{ y: -5 }} transition={{ type: 'spring', stiffness: 300 }}>
-                                <Card className="bg-card/50 backdrop-blur-sm shadow-md hover:shadow-primary/20 transition-all duration-300">
-                                    <CardContent className="flex flex-col items-center justify-center p-4 text-center gap-2">
-                                        {React.cloneElement(cat.icon, { className: "h-8 w-8 text-primary" })}
-                                        <p className="font-semibold text-sm">{cat.name}</p>
-                                    </CardContent>
-                                </Card>
-                            </motion.div>
-                        ))}
-                    </motion.div>
-                </div>
-            </section>
-            
-            {/* CTA Section */}
+             {/* CTA Section */}
             <section className="text-center py-20 md:py-28">
                  <h2 className="text-3xl md:text-4xl font-bold font-headline">Ready to Get Started?</h2>
                  <p className="mt-4 text-muted-foreground max-w-xl mx-auto">Stop wasting time on manual invoicing. Join thousands of freelancers and businesses streamlining their billing with InvoiceCraft.</p>

@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
-import { Menu, Search, ChevronDown, FileText, Gem, Home, Shield, FilePlus, Tag, Book } from 'lucide-react';
+import { Menu, Search, ChevronDown, FileText, Gem, Home, Shield, FilePlus, Tag, Book, X as XIcon } from 'lucide-react';
 import { ModeToggle } from '@/components/mode-toggle';
 import { cn } from '@/lib/utils';
 import { motion } from 'framer-motion';
@@ -39,7 +39,7 @@ function NavLink({ href, label, isActive }: { href: string, label: string, isAct
         <Link
             href={href}
             className={cn(
-                "relative block px-3 py-2 transition",
+                "relative block px-3 py-2 transition text-sm font-medium",
                 isActive ? "text-primary" : "text-foreground hover:text-primary"
             )}
         >
@@ -58,8 +58,7 @@ export function Header() {
     const pathname = usePathname();
     const router = useRouter();
     const [open, setOpen] = useState(false);
-    const [isToolsMenuOpen, setIsToolsMenuOpen] = useState(false);
-
+    const [isSheetOpen, setIsSheetOpen] = useState(false);
 
     useEffect(() => {
         const down = (e: KeyboardEvent) => {
@@ -77,8 +76,8 @@ export function Header() {
         command();
     }, []);
 
-    // Do not render the header on dashboard pages
-    if (pathname.startsWith('/dashboard')) {
+    // Do not render the header on dashboard pages or specific auth pages
+    if (pathname.startsWith('/dashboard') || ['/login', '/signup', '/forgot-password'].includes(pathname)) {
         return null;
     }
 
@@ -90,29 +89,70 @@ export function Header() {
                         <span className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent">InvoiceCraft</span>
                     </Link>
                 </div>
+                 {/* Mobile: Hamburger Menu */}
+                 <div className="md:hidden">
+                    <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
+                        <SheetTrigger asChild>
+                            <Button variant="ghost" size="icon">
+                                <Menu className="h-5 w-5" />
+                                <span className="sr-only">Toggle navigation menu</span>
+                            </Button>
+                        </SheetTrigger>
+                        <SheetContent side="left" className="flex w-full flex-col p-0 sm:max-w-xs">
+                            <SheetHeader className="p-6 pb-4">
+                                <SheetTitle>
+                                     <Link href="/" className="flex items-center gap-2" onClick={() => setIsSheetOpen(false)}>
+                                        <span className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent">InvoiceCraft</span>
+                                    </Link>
+                                </SheetTitle>
+                            </SheetHeader>
+                            <ScrollArea className="flex-grow my-2 px-6">
+                                <nav className="grid gap-2 text-lg font-medium">
+                                    {[...mainNavLinks, ...generalToolsLinks.map(l => ({href: l.href, label: l.label}))].map(link => (
+                                        <Link
+                                            key={link.href}
+                                            href={link.href}
+                                            className={cn(
+                                                "block py-2 transition-colors",
+                                                pathname === link.href ? "text-primary font-semibold" : "text-muted-foreground hover:text-primary"
+                                            )}
+                                            onClick={() => setIsSheetOpen(false)}
+                                        >
+                                            {link.label}
+                                        </Link>
+                                    ))}
+                                </nav>
+                            </ScrollArea>
+                            <div className='mt-auto border-t p-6'>
+                                <AuthNav isMobile={true} />
+                            </div>
+                        </SheetContent>
+                    </Sheet>
+                </div>
+                {/* Mobile: Centered Logo */}
+                <div className="flex md:hidden flex-1 justify-center">
+                     <Link href="/" className="flex items-center gap-2">
+                        <span className="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent">InvoiceCraft</span>
+                    </Link>
+                </div>
 
-                <nav className="hidden md:flex flex-1 items-center justify-center space-x-1 text-sm font-medium">
+
+                {/* Desktop: Centered Navigation */}
+                <nav className="hidden md:flex flex-1 items-center justify-center space-x-1">
                     {mainNavLinks.map(link => (
                         <NavLink key={link.href} href={link.href} label={link.label} isActive={pathname === link.href} />
                     ))}
-                    <DropdownMenu open={isToolsMenuOpen} onOpenChange={setIsToolsMenuOpen}>
+                    <DropdownMenu>
                       <DropdownMenuTrigger asChild>
                         <Button 
                           variant="ghost" 
-                          className="px-3 py-2 flex items-center gap-1 focus-visible:ring-0 data-[state=open]:bg-accent"
-                          onMouseEnter={() => setIsToolsMenuOpen(true)}
-                          onMouseLeave={() => setIsToolsMenuOpen(false)}
+                          className="px-3 py-2 flex items-center gap-1 text-sm font-medium focus-visible:ring-0"
                         >
                           Tools
-                          <ChevronDown className={cn("h-4 w-4 transition-transform duration-200", isToolsMenuOpen && "rotate-180")} />
+                          <ChevronDown className="h-4 w-4 transition-transform duration-200" />
                         </Button>
                       </DropdownMenuTrigger>
-                      <DropdownMenuContent 
-                        align="center"
-                        className="w-80 p-4"
-                        onMouseEnter={() => setIsToolsMenuOpen(true)}
-                        onMouseLeave={() => setIsToolsMenuOpen(false)}
-                      >
+                      <DropdownMenuContent align="center" className="w-80 p-4">
                         <div className="grid grid-cols-1 gap-2">
                           {generalToolsLinks.map(link => (
                             <Link href={link.href} key={link.href}>
@@ -132,17 +172,15 @@ export function Header() {
                     </DropdownMenu>
                 </nav>
 
-                <div className="flex flex-1 items-center justify-end gap-2">
-                     <Button variant="outline" className="relative h-9 w-full justify-start rounded-md text-sm text-muted-foreground sm:pr-12 md:w-40 lg:w-64" onClick={() => setOpen(true)}>
-                        <Search className="h-4 w-4 mr-2" />
-                        <span className="hidden lg:inline-flex">Search...</span>
-                        <span className="inline-flex lg:hidden">Search...</span>
-                        <kbd className="pointer-events-none absolute right-[0.3rem] top-[0.3rem] hidden h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium opacity-100 sm:flex">
-                            <span className="text-xs">⌘</span>K
-                        </kbd>
+                <div className="flex flex-1 md:flex-initial items-center justify-end gap-2">
+                     <Button variant="ghost" size="icon" className="relative h-9 w-9" onClick={() => setOpen(true)}>
+                        <Search className="h-4 w-4" />
+                        <span className="sr-only">Search</span>
                     </Button>
                     <ModeToggle />
-                    <AuthNav />
+                    <div className="hidden md:block">
+                        <AuthNav />
+                    </div>
                      <CommandDialog open={open} onOpenChange={setOpen}>
                         <DialogTitle className="sr-only">Search</DialogTitle>
                         <CommandInput placeholder="Type a command or search..." />
@@ -177,43 +215,6 @@ export function Header() {
                         </CommandList>
                     </CommandDialog>
                 </div>
-                
-                <Sheet>
-                    <SheetTrigger asChild>
-                        <Button variant="outline" size="icon" className="md:hidden ml-4">
-                        <Menu className="h-5 w-5" />
-                        <span className="sr-only">Toggle navigation menu</span>
-                        </Button>
-                    </SheetTrigger>
-                    <SheetContent side="left" className="flex w-full flex-col p-0 sm:max-w-sm">
-                        <SheetHeader className="p-6 pb-0">
-                            <SheetTitle>
-                                <Link href="/" className="flex items-center gap-2">
-                                    <span className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent">InvoiceCraft</span>
-                                </Link>
-                            </SheetTitle>
-                        </SheetHeader>
-                        <ScrollArea className="flex-grow my-4 px-6">
-                            <nav className="grid gap-4 text-lg font-medium">
-                                {[...mainNavLinks, ...generalToolsLinks.map(l => ({href: l.href, label: l.label}))].map(link => (
-                                    <Link
-                                        key={link.href}
-                                        href={link.href}
-                                        className={cn(
-                                            "block py-2 transition",
-                                            pathname === link.href ? "text-primary font-semibold" : "text-muted-foreground hover:text-primary"
-                                        )}
-                                    >
-                                        {link.label}
-                                    </Link>
-                                ))}
-                            </nav>
-                        </ScrollArea>
-                         <div className='mt-auto border-t p-6'>
-                            <AuthNav isMobile={true} />
-                        </div>
-                    </SheetContent>
-                </Sheet>
             </div>
         </header>
     );
