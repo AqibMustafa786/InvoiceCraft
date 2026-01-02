@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import { ChangeEvent, Dispatch, SetStateAction, useState, useEffect } from 'react';
@@ -597,23 +598,6 @@ export function DocumentForm({ document, setDocument, accentColor, setAccentColo
                     </div>
                 </div>
                  <div className="space-y-2">
-                    <Label>Document Type</Label>
-                    <RadioGroup
-                        value={document.documentType}
-                        onValueChange={(value) => setDocument(p => ({...p, documentType: value as 'estimate' | 'quote'}))}
-                        className="flex gap-4"
-                    >
-                        <div className="flex items-center space-x-2">
-                            <RadioGroupItem value="estimate" id="type-estimate" />
-                            <Label htmlFor="type-estimate">Estimate</Label>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                            <RadioGroupItem value="quote" id="type-quote" />
-                            <Label htmlFor="type-quote">Quote</Label>
-                        </div>
-                    </RadioGroup>
-                </div>
-                 <div className="space-y-2">
                     <Label htmlFor="fontFamily">Font Family</Label>
                     <Select value={document.fontFamily} onValueChange={(value) => setDocument(p => ({...p, fontFamily: value}))}>
                         <SelectTrigger id="fontFamily">
@@ -1209,16 +1193,16 @@ export function DocumentForm({ document, setDocument, accentColor, setAccentColo
               </div>
             </div>
 
-            <div className="hidden md:grid md:grid-cols-[2fr_100px_120px_60px_120px_auto] gap-x-4 text-sm font-medium text-muted-foreground pt-4">
+            <div className="hidden md:grid md:grid-cols-[1fr_80px_100px_60px_120px_auto] gap-x-4 text-sm font-medium text-muted-foreground pt-4">
                 <Label>Item Name / Description</Label>
                 <Label>Quantity</Label>
                 <Label>Unit Price</Label>
                 <Label className="text-center">Taxable</Label>
-                <Label>Total</Label>
+                <Label>Subtotal</Label>
                 <span></span>
             </div>
             {document.lineItems.map((item, index) => (
-                <div key={item.id} className="grid grid-cols-1 md:grid-cols-[2fr_100px_120px_60px_120px_auto] gap-x-4 gap-y-2 items-start border-b pb-4">
+                <div key={item.id} className="grid grid-cols-1 md:grid-cols-[1fr_80px_100px_60px_120px_auto] gap-x-4 gap-y-2 items-center border-b pb-4">
                     <div className="space-y-2 md:col-span-1">
                         <Label htmlFor={`itemName-${index}`} className="md:hidden">Item Name / Description</Label>
                         <Textarea id={`itemName-${index}`} value={item.name} onChange={(e) => handleItemChange(index, 'name', e.target.value)} rows={1} className="min-h-0"/>
@@ -1340,3 +1324,4 @@ export function DocumentForm({ document, setDocument, accentColor, setAccentColo
     
 
     
+
