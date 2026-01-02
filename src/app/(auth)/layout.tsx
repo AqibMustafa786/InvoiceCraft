@@ -49,8 +49,8 @@ export default function AuthLayout({
                     </div>
                 </div>
             </div>
-             <div className="relative bg-background p-8 rounded-2xl shadow-2xl mt-8 flex gap-6 items-center">
-                 <div className="flex-1">
+             <div className="relative bg-background p-8 rounded-2xl shadow-2xl mt-8 flex flex-col sm:flex-row gap-6 items-center">
+                 <div className="flex-1 text-center sm:text-left">
                     <h3 className="font-bold text-lg">Focus on Your Work, Not Your Paperwork</h3>
                     <p className="text-sm text-muted-foreground mt-1">Join thousands of freelancers and small businesses streamlining their billing.</p>
                 </div>

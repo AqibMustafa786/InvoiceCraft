@@ -214,7 +214,7 @@ export default function HomePage() {
                     <p className="mt-4 text-muted-foreground">InvoiceCraft is packed with powerful, intuitive features designed to save you time, make you look professional, and help you get paid faster.</p>
                 </div>
                  <div 
-                    className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-6xl mx-auto"
+                    className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto"
                   >
                     {homePageFeatures.map((feature, index) => (
                         <div key={index} className={feature.className}>

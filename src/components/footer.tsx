@@ -67,8 +67,8 @@ export function Footer() {
       </div>
 
       {/* Bottom Bar */}
-      <div className="container flex flex-col items-center justify-between gap-4 px-4 py-6 mx-auto sm:flex-row md:px-6">
-        <p className="text-sm text-muted-foreground">
+      <div className="container flex flex-col-reverse sm:flex-row items-center justify-between gap-4 px-4 py-6 mx-auto">
+        <p className="text-sm text-center sm:text-left text-muted-foreground">
             © {new Date().getFullYear()} InvoiceCraft. All rights reserved.
         </p>
          <div className="flex items-center gap-4 text-sm">

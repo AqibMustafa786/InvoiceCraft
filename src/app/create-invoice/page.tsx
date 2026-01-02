@@ -26,7 +26,7 @@ import {
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { useAuth } from '@/context/auth-provider';
 import { motion } from 'framer-motion';
-import { toNumberSafe } from '@/lib/utils';
+import { toNumberSafe, toDateSafe } from '@/lib/utils';
 
 const INVOICES_COLLECTION = 'invoices';
 const CLIENTS_COLLECTION = 'clients';
@@ -41,17 +41,6 @@ const normalizeAuditLog = (auditLog: any): AuditLogEntry[] => {
       timestamp: toDateSafe(entry.timestamp)
   }));
 };
-
-const toDateSafe = (value: any): Date | null => {
-    if (!value) return null;
-    if (value instanceof Date) return value;
-    if (value.toDate && typeof value.toDate === 'function') {
-        return value.toDate();
-    }
-    const d = new Date(value);
-    return isValid(d) ? d : null;
-};
-
 
 const diff = (original: any, updated: any): string[] => {
     const changes: string[] = [];
@@ -425,7 +414,7 @@ export default function CreateInvoicePage() {
             if (Object.prototype.hasOwnProperty.call(data, key)) {
                 const value = data[key];
                 if (value && typeof value === 'object' && value.toDate) { // Firestore Timestamp check
-                    processed[key] = value.toDate();
+                    processed[key] = toDateSafe(value);
                 } else if (value && typeof value === 'object' && !Array.isArray(value)) {
                     processed[key] = processData(value); // Recurse for nested objects
                 } else {
@@ -774,12 +763,12 @@ export default function CreateInvoicePage() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 xl:gap-12">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           <motion.div 
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5 }}
-            className="lg:col-span-3"
+            className="lg:col-span-1 order-2 lg:order-1"
           >
              <div className="space-y-6">
                 <h2 className="text-2xl font-bold font-headline mb-4 text-center lg:text-left">Fill in Details</h2>
@@ -798,7 +787,7 @@ export default function CreateInvoicePage() {
                 />
               </div>
           </motion.div>
-          <div className="lg:col-span-2">
+          <div className="lg:col-span-1 order-1 lg:order-2">
              <div className="sticky top-24 space-y-4">
                 <Sheet>
                     <SheetTrigger asChild>
@@ -840,4 +829,3 @@ export default function CreateInvoicePage() {
     </>
   );
 }
-    

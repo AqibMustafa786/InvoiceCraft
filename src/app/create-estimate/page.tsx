@@ -27,7 +27,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { Skeleton } from '@/components/ui/skeleton';
-import { toNumberSafe } from '@/lib/utils';
+import { toNumberSafe, toDateSafe } from '@/lib/utils';
 
 const ESTIMATES_COLLECTION = 'estimates';
 const CLIENTS_COLLECTION = 'clients';
@@ -40,16 +40,6 @@ const normalizeAuditLog = (auditLog: any): AuditLogEntry[] => {
     return Object.values(auditLog);
   }
   return [];
-};
-
-const toDateSafe = (value: any): Date | null => {
-    if (!value) return null;
-    if (value instanceof Date) return value;
-    if (value.toDate && typeof value.toDate === 'function') {
-        return value.toDate();
-    }
-    const d = new Date(value);
-    return isValid(d) ? d : null;
 };
 
 const diff = (original: any, updated: any): string[] => {
@@ -357,7 +347,7 @@ export default function CreateEstimatePage() {
             if (Object.prototype.hasOwnProperty.call(data, key)) {
                 const value = data[key];
                 if (value && typeof value === 'object' && value.toDate) { // Firestore Timestamp check
-                    processed[key] = value.toDate();
+                    processed[key] = toDateSafe(value);
                 } else if (value && typeof value === 'object' && !Array.isArray(value)) {
                     processed[key] = processData(value); // Recurse for nested objects
                 } else {
@@ -611,13 +601,13 @@ export default function CreateEstimatePage() {
 
   if (!processedDocument) {
     return (
-        <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
-            <div className="lg:col-span-3 space-y-4">
-            <Skeleton className="h-48 w-full" />
-            <Skeleton className="h-64 w-full" />
-            <Skeleton className="h-96 w-full" />
+        <div className="grid grid-cols-1 lg:grid-cols-2 lg:gap-8">
+            <div className="lg:col-span-1 space-y-4">
+              <Skeleton className="h-48 w-full" />
+              <Skeleton className="h-64 w-full" />
+              <Skeleton className="h-96 w-full" />
             </div>
-            <div className="lg:col-span-2">
+            <div className="hidden lg:block lg:col-span-1">
                 <Skeleton className="h-[800px] w-full" />
             </div>
         </div>
@@ -666,39 +656,25 @@ export default function CreateEstimatePage() {
           </div>
         </div>
 
-        {!document ? (
-            <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
-              <div className="lg:col-span-3 space-y-4">
-                <Skeleton className="h-48 w-full" />
-                <Skeleton className="h-64 w-full" />
-                <Skeleton className="h-96 w-full" />
-              </div>
-              <div className="lg:col-span-2">
-                  <Skeleton className="h-[800px] w-full" />
-              </div>
-            </div>
-        ) : (
-          <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
-            <div className="lg:col-span-3">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div className="lg:col-span-1 order-2 lg:order-1">
               <div className="space-y-6">
-                <div>
-                  <h2 className="text-2xl font-bold font-headline mb-4 text-center lg:text-left">Fill in Details</h2>
-                  <DocumentForm 
-                    document={document} 
-                    setDocument={setDocument} 
-                    accentColor={accentColor}
-                    setAccentColor={setAccentColor}
-                    backgroundColor={backgroundColor}
-                    setBackgroundColor={setBackgroundColor}
-                    textColor={textColor}
-                    setTextColor={setTextColor}
-                    toast={toast}
-                    documentType="estimate"
-                  />
-                </div>
+                <h2 className="text-2xl font-bold font-headline mb-4 text-center lg:text-left">Fill in Details</h2>
+                <DocumentForm 
+                  document={document} 
+                  setDocument={setDocument} 
+                  accentColor={accentColor}
+                  setAccentColor={setAccentColor}
+                  backgroundColor={backgroundColor}
+                  setBackgroundColor={setBackgroundColor}
+                  textColor={textColor}
+                  setTextColor={setTextColor}
+                  toast={toast}
+                  documentType="estimate"
+                />
               </div>
             </div>
-            <div className="lg:col-span-2">
+            <div className="lg:col-span-1 order-1 lg:order-2">
               <div className="sticky top-24 space-y-4">
                   <Sheet>
                       <SheetTrigger asChild>
@@ -727,11 +703,9 @@ export default function CreateEstimatePage() {
                   </div>
               </div>
             </div>
-          </div>
-        )}
+        </div>
       </div>
       {processedDocument && <PrintableDocument doc={processedDocument} accentColor={accentColor} backgroundColor={backgroundColor} textColor={textColor} />}
     </>
   );
 }
-    
