@@ -24,13 +24,14 @@ const currencySymbols: { [key: string]: string } = {
 };
 
 const safeFormat = (date: any, formatString: string) => {
-  if (!date) return 'N/A';
-  try {
-      const d = date.toDate ? date.toDate() : new Date(date);
-      return format(d, formatString);
-  } catch (e) {
-      return "Invalid Date";
-  }
+    if (!date) return 'N/A';
+    try {
+        const d = date.toDate ? date.toDate() : new Date(date);
+        if (!isValid(d)) return "Invalid Date";
+        return format(d, formatString);
+    } catch (e) {
+        return "Invalid Date";
+    }
 }
 
 export default function AnalyticsPage() {
