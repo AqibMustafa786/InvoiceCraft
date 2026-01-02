@@ -1,5 +1,4 @@
 
-
 'use client';
 
 import { useState, useEffect, useCallback, useMemo, ChangeEvent } from 'react';
@@ -27,6 +26,7 @@ import {
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { useAuth } from '@/context/auth-provider';
 import { motion } from 'framer-motion';
+import { toNumberSafe } from '@/lib/utils';
 
 const INVOICES_COLLECTION = 'invoices';
 const CLIENTS_COLLECTION = 'clients';
@@ -386,12 +386,12 @@ export default function CreateInvoicePage() {
   const { data: companyData, isLoading: isCompanyLoading } = useDoc(companyDocRef);
 
   const computeSummary = useCallback((inv: Invoice): Invoice => {
-    const subtotal = inv.lineItems.reduce((acc, item) => acc + (Number(item.quantity) || 0) * (Number(item.unitPrice) || 0), 0);
-    const taxableTotal = inv.lineItems.filter(i => i.taxable !== false).reduce((s, i) => s + ((Number(i.quantity) || 0) * (Number(i.unitPrice) || 0)), 0);
-    const taxPercentage = Number(inv.summary.taxPercentage) || 0;
+    const subtotal = inv.lineItems.reduce((acc, item) => acc + (toNumberSafe(item.quantity)) * (toNumberSafe(item.unitPrice)), 0);
+    const taxableTotal = inv.lineItems.filter(i => i.taxable !== false).reduce((s, i) => s + ((toNumberSafe(i.quantity)) * (toNumberSafe(i.unitPrice))), 0);
+    const taxPercentage = toNumberSafe(inv.summary.taxPercentage);
     const taxAmount = taxableTotal * (taxPercentage / 100);
-    const discountAmount = Number(inv.summary.discount) || 0;
-    const shippingCost = Number(inv.summary.shippingCost) || 0;
+    const discountAmount = toNumberSafe(inv.summary.discount);
+    const shippingCost = toNumberSafe(inv.summary.shippingCost);
     const grandTotal = subtotal + taxAmount - discountAmount + shippingCost;
 
     return {

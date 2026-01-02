@@ -40,7 +40,7 @@ import { motion } from 'framer-motion';
 import { KpiDetailsModal } from '@/components/dashboard/kpi-details-modal';
 import { HistoryModal } from '@/components/dashboard/history-modal';
 import { ClientFormDialog } from '@/components/dashboard/client-form-dialog';
-import { toDateSafe } from '@/lib/utils';
+import { toDateSafe, toNumberSafe } from '@/lib/utils';
 
 const INVOICES_COLLECTION = 'invoices';
 const ESTIMATES_COLLECTION = 'estimates';
@@ -111,10 +111,10 @@ const DashboardStatsGrid: React.FC<DashboardStatsGridProps> = ({ documents, docT
             const draftInvoices = documents.filter(d => d.status === 'draft') as Invoice[];
             const nonDraftInvoices = documents.filter(d => d.status !== 'draft') as Invoice[];
 
-            const totalRevenue = paidInvoices.reduce((acc, doc) => acc + (doc.summary?.grandTotal || 0), 0);
-            const outstanding = outstandingInvoices.reduce((acc, doc) => acc + (doc.summary?.grandTotal || 0), 0);
-            const overdue = overdueInvoices.reduce((acc, doc) => acc + (doc.summary?.grandTotal || 0), 0);
-            const totalInvoiced = nonDraftInvoices.reduce((acc, doc) => acc + (doc.summary?.grandTotal || 0), 0);
+            const totalRevenue = paidInvoices.reduce((acc, doc) => acc + (toNumberSafe(doc.summary?.grandTotal)), 0);
+            const outstanding = outstandingInvoices.reduce((acc, doc) => acc + (toNumberSafe(doc.summary?.grandTotal)), 0);
+            const overdue = overdueInvoices.reduce((acc, doc) => acc + (toNumberSafe(doc.summary?.grandTotal)), 0);
+            const totalInvoiced = nonDraftInvoices.reduce((acc, doc) => acc + (toNumberSafe(doc.summary?.grandTotal)), 0);
             const avgInvoiceValue = nonDraftInvoices.length > 0 ? totalInvoiced / nonDraftInvoices.length : 0;
             
             return {
@@ -152,8 +152,8 @@ const DashboardStatsGrid: React.FC<DashboardStatsGridProps> = ({ documents, docT
             const draftDocs = documents.filter(d => d.status === 'draft') as (Estimate | Quote)[];
             const nonDraftDocs = documents.filter(d => d.status !== 'draft') as (Estimate | Quote)[];
             
-            const totalValue = nonDraftDocs.reduce((acc, doc) => acc + (doc.summary?.grandTotal || 0), 0);
-            const acceptedValue = acceptedDocs.reduce((acc, doc) => acc + (doc.summary?.grandTotal || 0), 0);
+            const totalValue = nonDraftDocs.reduce((acc, doc) => acc + (toNumberSafe(doc.summary?.grandTotal)), 0);
+            const acceptedValue = acceptedDocs.reduce((acc, doc) => acc + (toNumberSafe(doc.summary?.grandTotal)), 0);
             
             const conversionRate = nonDraftDocs.length > 0 ? (acceptedDocs.length / nonDraftDocs.length) * 100 : 0;
             const avgValue = nonDraftDocs.length > 0 ? totalValue / nonDraftDocs.length : 0;
@@ -171,7 +171,7 @@ const DashboardStatsGrid: React.FC<DashboardStatsGridProps> = ({ documents, docT
 
     const formatCurrency = (amount: number) => {
         const currency = (documents[0] as any)?.currency || 'USD';
-        return `${currencySymbols[currency] || '$'}${amount.toFixed(2)}`;
+        return `${currencySymbols[currency] || '$'}${toNumberSafe(amount).toFixed(2)}`;
     };
 
     if (docType === 'invoice') {
@@ -353,11 +353,11 @@ export default function DashboardPage() {
 
     const calculateTotal = useCallback((doc: DocumentType): number => {
          if ('summary' in doc && doc.summary) {
-            return (doc as Invoice | Estimate | Quote).summary.grandTotal || 0;
+            return (toNumberSafe((doc as Invoice | Estimate | Quote).summary.grandTotal));
         }
         if ('items' in doc) {
             const insuranceDoc = doc as InsuranceDocument;
-            const subtotal = insuranceDoc.items.reduce((acc, item) => acc + (item.quantity || 1) * (item.rate || 0), 0);
+            const subtotal = insuranceDoc.items.reduce((acc, item) => acc + (toNumberSafe(item.quantity)) * (toNumberSafe(item.rate)), 0);
             return subtotal;
         }
         return 0;

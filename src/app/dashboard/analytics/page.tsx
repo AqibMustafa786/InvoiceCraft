@@ -17,7 +17,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
-import { toDateSafe } from '@/lib/utils';
+import { toDateSafe, toNumberSafe } from '@/lib/utils';
 
 
 const currencySymbols: { [key: string]: string } = {
@@ -56,9 +56,9 @@ export default function AnalyticsPage() {
     const paidInvoices = invoices.filter(i => i.status === 'paid');
     const sentInvoices = invoices.filter(i => i.status === 'sent' || i.status === 'overdue');
 
-    const totalRevenue = paidInvoices.reduce((acc, i) => acc + (i.summary?.grandTotal || 0), 0);
-    const outstandingAmount = sentInvoices.reduce((acc, i) => acc + (i.summary?.grandTotal || 0) - (i.amountPaid || 0), 0);
-    const overdueAmount = invoices.filter(i => i.status === 'overdue').reduce((acc, i) => acc + (i.summary?.grandTotal || 0) - (i.amountPaid || 0), 0);
+    const totalRevenue = paidInvoices.reduce((acc, i) => acc + (toNumberSafe(i.summary?.grandTotal)), 0);
+    const outstandingAmount = sentInvoices.reduce((acc, i) => acc + (toNumberSafe(i.summary?.grandTotal)) - (toNumberSafe(i.amountPaid)), 0);
+    const overdueAmount = invoices.filter(i => i.status === 'overdue').reduce((acc, i) => acc + (toNumberSafe(i.summary?.grandTotal)) - (toNumberSafe(i.amountPaid)), 0);
     
     return {
       totalRevenue,
@@ -90,7 +90,7 @@ export default function AnalyticsPage() {
             if (isAfter(invoiceDate, start)) {
                 const monthKey = format(invoiceDate, 'MMM');
                 if (dataMap.has(monthKey)) {
-                    dataMap.get(monthKey)!.revenue += invoice.summary.grandTotal;
+                    dataMap.get(monthKey)!.revenue += toNumberSafe(invoice.summary.grandTotal);
                 }
             }
         });
@@ -104,7 +104,7 @@ export default function AnalyticsPage() {
              if (isAfter(invoiceDate, subYears(now,1))) {
                 const monthKey = format(invoiceDate, 'yyyy-MMM');
                 if (dataMap.has(monthKey)) {
-                    dataMap.get(monthKey)!.revenue += invoice.summary.grandTotal;
+                    dataMap.get(monthKey)!.revenue += toNumberSafe(invoice.summary.grandTotal);
                 }
             }
         });
@@ -124,7 +124,7 @@ export default function AnalyticsPage() {
         if (!clientRevenue[clientName]) {
             clientRevenue[clientName] = { name: clientName, revenue: 0 };
         }
-        clientRevenue[clientName].revenue += invoice.summary.grandTotal;
+        clientRevenue[clientName].revenue += toNumberSafe(invoice.summary.grandTotal);
     });
 
     return Object.values(clientRevenue).sort((a, b) => b.revenue - a.revenue).slice(0, 10);
@@ -186,9 +186,9 @@ export default function AnalyticsPage() {
       <motion.h1 variants={itemVariants} className="text-3xl font-bold font-headline">Analytics</motion.h1>
       
       <motion.div variants={itemVariants} className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <Card className="bg-card/50 backdrop-blur-sm shadow-lg transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-1"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Total Revenue</CardTitle><DollarSign className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent><div className="text-2xl font-bold">{symbol}{analyticsData?.totalRevenue.toFixed(2)}</div><p className="text-xs text-muted-foreground">From {analyticsData?.paidInvoices.length} paid invoices</p></CardContent></Card>
-        <Card className="bg-card/50 backdrop-blur-sm shadow-lg transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-1"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Outstanding Amount</CardTitle><Clock className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent><div className="text-2xl font-bold">{symbol}{analyticsData?.outstandingAmount.toFixed(2)}</div></CardContent></Card>
-        <Card className="bg-card/50 backdrop-blur-sm shadow-lg transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-1"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Overdue Amount</CardTitle><AlertTriangle className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent><div className="text-2xl font-bold">{symbol}{analyticsData?.overdueAmount.toFixed(2)}</div></CardContent></Card>
+        <Card className="bg-card/50 backdrop-blur-sm shadow-lg transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-1"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Total Revenue</CardTitle><DollarSign className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent><div className="text-2xl font-bold">{symbol}{toNumberSafe(analyticsData?.totalRevenue).toFixed(2)}</div><p className="text-xs text-muted-foreground">From {analyticsData?.paidInvoices.length} paid invoices</p></CardContent></Card>
+        <Card className="bg-card/50 backdrop-blur-sm shadow-lg transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-1"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Outstanding Amount</CardTitle><Clock className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent><div className="text-2xl font-bold">{symbol}{toNumberSafe(analyticsData?.outstandingAmount).toFixed(2)}</div></CardContent></Card>
+        <Card className="bg-card/50 backdrop-blur-sm shadow-lg transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-1"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Overdue Amount</CardTitle><AlertTriangle className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent><div className="text-2xl font-bold">{symbol}{toNumberSafe(analyticsData?.overdueAmount).toFixed(2)}</div></CardContent></Card>
         <Card className="bg-card/50 backdrop-blur-sm shadow-lg transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-1"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Total Clients</CardTitle><Users className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent><div className="text-2xl font-bold">{analyticsData?.totalClients}</div></CardContent></Card>
       </motion.div>
 
@@ -229,7 +229,7 @@ export default function AnalyticsPage() {
                 <CartesianGrid strokeDasharray="3 3" horizontal={false}/>
                 <XAxis type="number" hide />
                 <YAxis type="category" dataKey="name" width={80} fontSize={12} tickLine={false} axisLine={false} />
-                <Tooltip cursor={{ fill: 'hsl(var(--muted))' }} contentStyle={{backgroundColor: 'hsl(var(--background))'}} formatter={(value) => `${symbol}${Number(value).toFixed(2)}`}/>
+                <Tooltip cursor={{ fill: 'hsl(var(--muted))' }} contentStyle={{backgroundColor: 'hsl(var(--background))'}} formatter={(value) => `${symbol}${toNumberSafe(value).toFixed(2)}`}/>
                 <Bar dataKey="revenue" fill="hsl(var(--primary))" radius={[0, 4, 4, 0]} />
               </BarChart>
             </ResponsiveContainer>
@@ -259,7 +259,7 @@ export default function AnalyticsPage() {
                     <TableCell>{invoice.client.name}</TableCell>
                     <TableCell><Badge variant={getStatusVariant(invoice.status)}>{invoice.status}</Badge></TableCell>
                     <TableCell>{safeFormat(invoice.updatedAt, "MMM d, yyyy")}</TableCell>
-                    <TableCell className="text-right">{symbol}{invoice.summary.grandTotal.toFixed(2)}</TableCell>
+                    <TableCell className="text-right">{symbol}{toNumberSafe(invoice.summary.grandTotal).toFixed(2)}</TableCell>
                     </TableRow>
                 ))}
                 </TableBody>

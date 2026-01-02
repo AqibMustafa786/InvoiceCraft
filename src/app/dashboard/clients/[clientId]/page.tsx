@@ -38,7 +38,7 @@ import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTr
 import { ClientInvoicePreview } from '@/components/invoice-preview';
 import { motion } from 'framer-motion';
 import { useFirebase, useMemoFirebase } from '@/firebase/provider';
-import { toDateSafe } from '@/lib/utils';
+import { toDateSafe, toNumberSafe } from '@/lib/utils';
 
 
 const currencySymbols: { [key: string]: string } = {
@@ -52,16 +52,16 @@ function ClientDashboardStats({ documents }: { documents: DocumentType[] }) {
   const stats = useMemo(() => {
     const invoices = documents.filter(d => d.documentType === 'invoice') as Invoice[];
     
-    const totalRevenue = invoices.filter(i => i.status === 'paid').reduce((acc, i) => acc + (i.summary?.grandTotal || 0), 0);
-    const pendingAmount = invoices.filter(i => i.status === 'sent').reduce((acc, i) => acc + (i.summary?.grandTotal || 0), 0);
-    const overdueAmount = invoices.filter(i => i.status === 'overdue').reduce((acc, i) => acc + (i.summary?.grandTotal || 0), 0);
+    const totalRevenue = invoices.filter(i => i.status === 'paid').reduce((acc, i) => acc + (toNumberSafe(i.summary?.grandTotal)), 0);
+    const pendingAmount = invoices.filter(i => i.status === 'sent').reduce((acc, i) => acc + (toNumberSafe(i.summary?.grandTotal)), 0);
+    const overdueAmount = invoices.filter(i => i.status === 'overdue').reduce((acc, i) => acc + (toNumberSafe(i.summary?.grandTotal)), 0);
 
     return {
       totalInvoices: invoices.length,
       totalRevenue,
       pendingAmount,
       overdueAmount,
-      paidAmount: invoices.filter(i => i.status === 'paid').reduce((acc, i) => acc + (i.amountPaid || 0), 0),
+      paidAmount: invoices.filter(i => i.status === 'paid').reduce((acc, i) => acc + (toNumberSafe(i.amountPaid)), 0),
     };
   }, [documents]);
 
@@ -102,7 +102,7 @@ function ClientCharts({ documents }: { documents: DocumentType[] }) {
                 if (isAfter(invoiceDate, start)) {
                     const monthKey = format(invoiceDate, 'yyyy-MMM');
                     if (dataMap.has(monthKey)) {
-                        dataMap.get(monthKey)!.revenue += invoice.summary.grandTotal;
+                        dataMap.get(monthKey)!.revenue += toNumberSafe(invoice.summary.grandTotal);
                     }
                 }
             });
@@ -119,7 +119,7 @@ function ClientCharts({ documents }: { documents: DocumentType[] }) {
                 if (isAfter(invoiceDate, start)) {
                     const dayKey = format(invoiceDate, 'yyyy-MM-dd');
                     if (dataMap.has(dayKey)) {
-                        dataMap.get(dayKey)!.revenue += invoice.summary.grandTotal;
+                        dataMap.get(dayKey)!.revenue += toNumberSafe(invoice.summary.grandTotal);
                     }
                 }
             });
@@ -136,7 +136,7 @@ function ClientCharts({ documents }: { documents: DocumentType[] }) {
                 if (isAfter(invoiceDate, subYears(now, 1))) {
                   const monthKey = format(invoiceDate, 'yyyy-MMM');
                   if (dataMap.has(monthKey)) {
-                      dataMap.get(monthKey)!.revenue += invoice.summary.grandTotal;
+                      dataMap.get(monthKey)!.revenue += toNumberSafe(invoice.summary.grandTotal);
                   }
                 }
             });
@@ -518,7 +518,7 @@ export default function ClientPage() {
                         {invoices?.map(inv => (
                             <TableRow key={inv.id}>
                                 <TableCell>{inv.invoiceNumber}</TableCell>
-                                <TableCell>{currencySymbols[inv.currency] || '$'}{inv.summary.grandTotal.toFixed(2)}</TableCell>
+                                <TableCell>{currencySymbols[inv.currency] || '$'}{toNumberSafe(inv.summary.grandTotal).toFixed(2)}</TableCell>
                                 <TableCell>
                                   <DropdownMenu>
                                     <DropdownMenuTrigger asChild>
@@ -606,7 +606,7 @@ export default function ClientPage() {
                         {estimates?.map(est => (
                             <TableRow key={est.id}>
                                 <TableCell>{est.estimateNumber}</TableCell>
-                                <TableCell>{currencySymbols[est.currency] || '$'}{est.summary.grandTotal.toFixed(2)}</TableCell>
+                                <TableCell>{currencySymbols[est.currency] || '$'}{toNumberSafe(est.summary.grandTotal).toFixed(2)}</TableCell>
                                 <TableCell><Badge>{est.status}</Badge></TableCell>
                                 <TableCell>{safeFormat(est.estimateDate, 'MMM d, yyyy')}</TableCell>
                             </TableRow>
@@ -621,4 +621,5 @@ export default function ClientPage() {
     </motion.div>
   );
 }
+
 

@@ -1,3 +1,4 @@
+
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
 import { isValid, toDate } from 'date-fns';
@@ -34,4 +35,15 @@ export function toDateSafe(value: any): Date | null {
   } catch {
     return null;
   }
+}
+
+/**
+ * Safely converts a value to a number.
+ * Returns 0 if the value is not a valid number.
+ * @param value The value to convert.
+ * @returns A number.
+ */
+export function toNumberSafe(value: any): number {
+  const num = Number(value);
+  return isNaN(num) ? 0 : num;
 }

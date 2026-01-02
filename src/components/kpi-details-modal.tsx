@@ -13,7 +13,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { ScrollArea } from "@/components/ui/scroll-area";
 import type { Invoice, Estimate, Quote } from '@/lib/types';
 import { format } from 'date-fns';
-import { toDateSafe } from "@/lib/utils";
+import { toDateSafe, toNumberSafe } from "@/lib/utils";
 
 type DocumentType = Invoice | Estimate | Quote;
 
@@ -79,7 +79,7 @@ export function KpiDetailsModal({ isOpen, onClose, title, documents, currencySym
                       <TableCell className="font-medium">{info.number}</TableCell>
                       <TableCell>{info.client}</TableCell>
                       <TableCell>{info.date}</TableCell>
-                      <TableCell className="text-right">{currencySymbol}{info.amount.toFixed(2)}</TableCell>
+                      <TableCell className="text-right">{currencySymbol}{toNumberSafe(info.amount).toFixed(2)}</TableCell>
                     </TableRow>
                   );
                 })

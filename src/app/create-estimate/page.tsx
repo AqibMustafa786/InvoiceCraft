@@ -1,5 +1,4 @@
 
-
 'use client';
 
 import { useState, useEffect, useCallback, useMemo } from 'react';
@@ -28,6 +27,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { Skeleton } from '@/components/ui/skeleton';
+import { toNumberSafe } from '@/lib/utils';
 
 const ESTIMATES_COLLECTION = 'estimates';
 const CLIENTS_COLLECTION = 'clients';
@@ -317,12 +317,12 @@ export default function CreateEstimatePage() {
   const { data: prefillClient, isLoading: isClientLoading } = useDoc<Client>(clientRef);
 
   const computeSummary = useCallback((est: Estimate | Quote): Estimate | Quote => {
-    const subtotal = est.lineItems.reduce((acc, item) => acc + (Number(item.quantity) || 0) * (Number(item.unitPrice) || 0), 0);
-    const taxableTotal = est.lineItems.filter(i => i.taxable !== false).reduce((s, i) => s + ((Number(i.quantity) || 0) * (Number(i.unitPrice) || 0)), 0);
-    const taxPercentage = Number(est.summary.taxPercentage) || 0;
+    const subtotal = est.lineItems.reduce((acc, item) => acc + (toNumberSafe(item.quantity)) * (toNumberSafe(item.unitPrice)), 0);
+    const taxableTotal = est.lineItems.filter(i => i.taxable !== false).reduce((s, i) => s + ((toNumberSafe(i.quantity)) * (toNumberSafe(i.unitPrice))), 0);
+    const taxPercentage = toNumberSafe(est.summary.taxPercentage);
     const taxAmount = taxableTotal * (taxPercentage / 100);
-    const discountAmount = Number(est.summary.discount) || 0;
-    const shippingCost = Number(est.summary.shippingCost) || 0;
+    const discountAmount = toNumberSafe(est.summary.discount);
+    const shippingCost = toNumberSafe(est.summary.shippingCost);
     const grandTotal = subtotal + taxAmount - discountAmount + shippingCost;
 
     return {
