@@ -2,7 +2,7 @@
 
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { doc, getDocs, collectionGroup, query, where, Firestore } from 'firebase/firestore';
 import { useFirebase } from '@/firebase';
 import type { Invoice } from '@/lib/types';
@@ -11,8 +11,8 @@ import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 import { Badge } from '@/components/ui/badge';
-import { isValid } from 'date-fns';
 import { Skeleton } from '@/components/ui/skeleton';
+import { toDateSafe } from '@/lib/utils';
 
 async function findInvoice(firestore: Firestore, invoiceId: string): Promise<{ data: Invoice, ref: any } | null> {
     const q = query(collectionGroup(firestore, 'invoices'), where('id', '==', invoiceId));
@@ -67,14 +67,18 @@ export default function PublicInvoicePage({ params }: { params: { invoiceId: str
     }, [firestore, params.invoiceId]);
 
 
-    const fromJSON = (key: string, value: any) => {
-        if (['invoiceDate', 'dueDate', 'createdAt', 'updatedAt'].includes(key) && value) {
-            return value?.toDate ? value.toDate() : (isValid(new Date(value)) ? new Date(value) : value);
+    const loadedInvoice = useMemo(() => {
+        if (!invoice) return null;
+        const processed: any = {};
+        for (const key in invoice) {
+            if (Object.prototype.hasOwnProperty.call(invoice, key)) {
+                const value = (invoice as any)[key];
+                processed[key] = toDateSafe(value) || value;
+            }
         }
-        return value;
-    };
+        return processed as Invoice;
+    }, [invoice]);
     
-    const loadedInvoice = invoice ? JSON.parse(JSON.stringify(invoice), fromJSON) as Invoice : null;
     const isOwner = user && loadedInvoice && user.uid === loadedInvoice.userId;
 
     if (isLoading) {

@@ -3,7 +3,7 @@
 
 import { useEffect, useState } from 'react';
 import { doc, updateDoc, arrayUnion, serverTimestamp, getDocs, collectionGroup, query, where, Firestore } from 'firebase/firestore';
-import { useFirebase, useDoc, useMemoFirebase } from '@/firebase';
+import { useFirebase, useMemoFirebase } from '@/firebase';
 import type { Estimate } from '@/lib/types';
 import { EstimatePreview } from '@/components/estimate-preview';
 import { Button } from '@/components/ui/button';
@@ -23,6 +23,8 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
 import { Skeleton } from '@/components/ui/skeleton';
+import { toDateSafe } from '@/lib/utils';
+import { format } from 'date-fns';
 
 async function findEstimate(firestore: Firestore, estimateId: string): Promise<{ data: Estimate, ref: any } | null> {
     const q = query(collectionGroup(firestore, 'estimates'), where('id', '==', estimateId));
@@ -82,14 +84,18 @@ export default function PublicEstimatePage({ params }: { params: { estimateId: s
     }, [firestore, params.estimateId]);
 
 
-    const fromJSON = (key: string, value: any) => {
-        if (['estimateDate', 'validUntilDate', 'signedAt', 'timestamp'].includes(key) && value) {
-            return value?.toDate ? value.toDate() : (value ? new Date(value) : value);
+    const loadedEstimate = useMemo(() => {
+        if (!estimate) return null;
+        const processed: any = {};
+        for (const key in estimate) {
+            if (Object.prototype.hasOwnProperty.call(estimate, key)) {
+                const value = (estimate as any)[key];
+                processed[key] = toDateSafe(value) || value;
+            }
         }
-        return value;
-    };
-    
-    const loadedEstimate = estimate ? JSON.parse(JSON.stringify(estimate), fromJSON) as Estimate : null;
+        return processed as Estimate;
+    }, [estimate]);
+
     const isSigned = !!loadedEstimate?.clientSignature;
     const isDeclined = loadedEstimate?.status === 'rejected';
     const isOwner = user && loadedEstimate && user.uid === loadedEstimate.userId;

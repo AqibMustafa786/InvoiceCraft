@@ -2,7 +2,7 @@
 
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { doc, updateDoc, arrayUnion, serverTimestamp } from 'firebase/firestore';
 import { useFirebase, useDoc, useMemoFirebase } from '@/firebase';
 import type { Quote } from '@/lib/types';
@@ -22,7 +22,9 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "@/components/ui/alert-dialog"
+} from "@/components/ui/alert-dialog";
+import { toDateSafe } from '@/lib/utils';
+import { format } from 'date-fns';
 
 export default function PublicQuotePage({ params }: { params: { quoteId: string } }) {
     const { firestore, user } = useFirebase();
@@ -43,14 +45,18 @@ export default function PublicQuotePage({ params }: { params: { quoteId: string 
         }
     }, []);
 
-    const fromJSON = (key: string, value: any) => {
-        if (key === 'estimateDate' || key === 'validUntilDate' || key === 'signedAt' || key === 'timestamp') {
-            return value?.toDate ? value.toDate() : (value ? new Date(value) : value);
+    const loadedQuote = useMemo(() => {
+        if (!quote) return null;
+        const processed: any = {};
+        for (const key in quote) {
+            if (Object.prototype.hasOwnProperty.call(quote, key)) {
+                const value = (quote as any)[key];
+                processed[key] = toDateSafe(value) || value;
+            }
         }
-        return value;
-    };
+        return processed as Quote;
+    }, [quote]);
     
-    const loadedQuote = quote ? JSON.parse(JSON.stringify(quote), fromJSON) as Quote : null;
     const isSigned = !!loadedQuote?.clientSignature;
     const isDeclined = loadedQuote?.status === 'rejected';
     const isOwner = user && loadedQuote && user.uid === loadedQuote.userId;

@@ -9,7 +9,7 @@ import type { Invoice, Client } from '@/lib/types';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 import { DollarSign, Clock, AlertTriangle, Users, ArrowLeft } from 'lucide-react';
-import { format, subYears, eachMonthOfInterval, startOfYear, isValid, isAfter } from 'date-fns';
+import { format, subYears, eachMonthOfInterval, startOfYear, isAfter } from 'date-fns';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -17,6 +17,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
+import { toDateSafe } from '@/lib/utils';
 
 
 const currencySymbols: { [key: string]: string } = {
@@ -24,14 +25,8 @@ const currencySymbols: { [key: string]: string } = {
 };
 
 const safeFormat = (date: any, formatString: string) => {
-    if (!date) return 'N/A';
-    try {
-        const d = date.toDate ? date.toDate() : new Date(date);
-        if (!isValid(d)) return "Invalid Date";
-        return format(d, formatString);
-    } catch (e) {
-        return "Invalid Date";
-    }
+    const d = toDateSafe(date);
+    return d ? format(d, formatString) : "Invalid Date";
 }
 
 export default function AnalyticsPage() {
@@ -81,8 +76,8 @@ export default function AnalyticsPage() {
     const now = new Date();
     
     const paidInvoicesWithDate = analyticsData.paidInvoices.filter(invoice => {
-        const invoiceDate = invoice.invoiceDate ? (invoice.invoiceDate as any).toDate ? (invoice.invoiceDate as any).toDate() : new Date(invoice.invoiceDate) : null;
-        return invoiceDate && isValid(invoiceDate);
+        const invoiceDate = toDateSafe(invoice.invoiceDate);
+        return !!invoiceDate;
     });
 
     if (revenueRange === 'yearly') {
@@ -91,7 +86,7 @@ export default function AnalyticsPage() {
         const dataMap = new Map(months.map(d => [format(d, 'MMM'), { name: format(d, 'MMM'), revenue: 0 }]));
 
         paidInvoicesWithDate.forEach(invoice => {
-            const invoiceDate = (invoice.invoiceDate as any).toDate();
+            const invoiceDate = toDateSafe(invoice.invoiceDate)!;
             if (isAfter(invoiceDate, start)) {
                 const monthKey = format(invoiceDate, 'MMM');
                 if (dataMap.has(monthKey)) {
@@ -105,7 +100,7 @@ export default function AnalyticsPage() {
         const dataMap = new Map(last12Months.map(d => [format(d, 'yyyy-MMM'), { name: format(d, 'MMM yy'), revenue: 0 }]));
 
         paidInvoicesWithDate.forEach(invoice => {
-            const invoiceDate = (invoice.invoiceDate as any).toDate();
+            const invoiceDate = toDateSafe(invoice.invoiceDate)!;
              if (isAfter(invoiceDate, subYears(now,1))) {
                 const monthKey = format(invoiceDate, 'yyyy-MMM');
                 if (dataMap.has(monthKey)) {

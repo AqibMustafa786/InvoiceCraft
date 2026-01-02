@@ -26,7 +26,7 @@ import {
 import { FilePlus2, Edit, Trash2, Filter, X, MoreHorizontal, FileText, Share2, DollarSign, Clock, FileWarning, Files, CheckCircle, FileQuestion, Users, Percent, AreaChart, Package, History, Shield, XCircle } from "lucide-react";
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { format, isValid, isWithinInterval } from 'date-fns';
+import { format, isWithinInterval } from 'date-fns';
 import { FilterSheet, type DashboardFilters } from '@/components/dashboard/filter-sheet';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
@@ -40,6 +40,7 @@ import { motion } from 'framer-motion';
 import { KpiDetailsModal } from '@/components/dashboard/kpi-details-modal';
 import { HistoryModal } from '@/components/dashboard/history-modal';
 import { ClientFormDialog } from '@/components/dashboard/client-form-dialog';
+import { toDateSafe } from '@/lib/utils';
 
 const INVOICES_COLLECTION = 'invoices';
 const ESTIMATES_COLLECTION = 'estimates';
@@ -281,7 +282,12 @@ export default function DashboardPage() {
     };
 
     const handleHistoryClick = (auditLog?: AuditLogEntry[]) => {
-        const sortedLog = (auditLog || []).sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+        const sortedLog = (auditLog || []).sort((a, b) => {
+            const dateA = toDateSafe(a.timestamp);
+            const dateB = toDateSafe(b.timestamp);
+            if (!dateA || !dateB) return 0;
+            return dateB.getTime() - dateA.getTime();
+        });
         setHistoryModalState({ isOpen: true, auditLog: sortedLog });
     };
 
@@ -467,26 +473,7 @@ export default function DashboardPage() {
     const resetFilters = useCallback(() => {
         setFilters(initialFilters);
     }, []);
-
-    const toDateSafe = (value: any): Date | null => {
-        if (!value) return null;
-        if (value instanceof Date) return value;
-        if (value.toDate && typeof value.toDate === 'function') {
-            return value.toDate();
-        }
-        const d = new Date(value);
-        return isValid(d) ? d : null;
-    };
     
-    const normalizeAuditLog = (log: any): AuditLogEntry[] => {
-        if (!log) return [];
-        const entries = Array.isArray(log) ? log : Object.values(log);
-        return entries.map(entry => ({
-            ...entry,
-            timestamp: toDateSafe(entry.timestamp)
-        }));
-    };
-
     const allDocuments = useMemo(() => {
         const allDocs: DocumentType[] = [...(invoices || []), ...(estimates || []), ...(quotes || []), ...(insuranceDocs || [])];
         
@@ -504,7 +491,8 @@ export default function DashboardPage() {
             });
 
             if (newDoc.auditLog) {
-                newDoc.auditLog = normalizeAuditLog(newDoc.auditLog);
+                const entries = Array.isArray(newDoc.auditLog) ? newDoc.auditLog : Object.values(newDoc.auditLog);
+                newDoc.auditLog = entries.map(entry => ({...entry, timestamp: toDateSafe((entry as any).timestamp) }));
             }
              if(!newDoc.documentType && 'policyNumber' in newDoc) {
                 newDoc.documentType = 'insurance';
@@ -512,10 +500,10 @@ export default function DashboardPage() {
 
             return newDoc as DocumentType;
         }).sort((a, b) => {
-            const dateA = (a as any).updatedAt || (a as any).createdAt;
-            const dateB = (b as any).updatedAt || (b as any).createdAt;
-            if (!dateA || !isValid(dateA)) return 1;
-            if (!dateB || !isValid(dateB)) return -1;
+            const dateA = toDateSafe((a as any).updatedAt) || toDateSafe((a as any).createdAt);
+            const dateB = toDateSafe((b as any).updatedAt) || toDateSafe((b as any).createdAt);
+            if (!dateA) return 1;
+            if (!dateB) return -1;
             return dateB.getTime() - dateA.getTime();
         });
     }, [invoices, estimates, quotes, insuranceDocs]);

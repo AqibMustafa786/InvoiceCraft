@@ -16,7 +16,7 @@ import { Mail, Phone, Edit, ArrowLeft, DollarSign, Clock, FileWarning, Files, XC
 import Link from 'next/link';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { format, subYears, eachMonthOfInterval, startOfMonth, isValid, subDays, eachDayOfInterval, startOfYear, isAfter } from 'date-fns';
+import { format, subYears, eachMonthOfInterval, startOfMonth, subDays, eachDayOfInterval, startOfYear, isAfter } from 'date-fns';
 import { Badge } from '@/components/ui/badge';
 import { ChartContainer, ChartTooltip, ChartTooltipContent, type ChartConfig, ChartLegend, ChartLegendContent } from '@/components/ui/chart';
 import { ClientFormDialog } from '@/components/dashboard/client-form-dialog';
@@ -38,6 +38,7 @@ import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTr
 import { ClientInvoicePreview } from '@/components/invoice-preview';
 import { motion } from 'framer-motion';
 import { useFirebase, useMemoFirebase } from '@/firebase/provider';
+import { toDateSafe } from '@/lib/utils';
 
 
 const currencySymbols: { [key: string]: string } = {
@@ -86,8 +87,8 @@ function ClientCharts({ documents }: { documents: DocumentType[] }) {
     const now = new Date();
 
     const paidInvoices = invoiceData.filter(invoice => {
-        const invoiceDate = invoice.invoiceDate ? new Date(invoice.invoiceDate) : null;
-        return invoice.status === 'paid' && invoiceDate && isValid(invoiceDate);
+        const invoiceDate = toDateSafe(invoice.invoiceDate);
+        return invoice.status === 'paid' && !!invoiceDate;
     });
 
     switch (revenueRange) {
@@ -97,7 +98,7 @@ function ClientCharts({ documents }: { documents: DocumentType[] }) {
             const dataMap = new Map(months.map(d => [format(d, 'yyyy-MMM'), { name: format(d, 'MMM'), revenue: 0 }]));
 
             paidInvoices.forEach(invoice => {
-                const invoiceDate = new Date(invoice.invoiceDate);
+                const invoiceDate = toDateSafe(invoice.invoiceDate)!;
                 if (isAfter(invoiceDate, start)) {
                     const monthKey = format(invoiceDate, 'yyyy-MMM');
                     if (dataMap.has(monthKey)) {
@@ -114,7 +115,7 @@ function ClientCharts({ documents }: { documents: DocumentType[] }) {
             const dataMap = new Map(days.map(d => [format(d, 'yyyy-MM-dd'), { name: format(d, 'd MMM'), revenue: 0 }]));
 
             paidInvoices.forEach(invoice => {
-                const invoiceDate = new Date(invoice.invoiceDate);
+                const invoiceDate = toDateSafe(invoice.invoiceDate)!;
                 if (isAfter(invoiceDate, start)) {
                     const dayKey = format(invoiceDate, 'yyyy-MM-dd');
                     if (dataMap.has(dayKey)) {
@@ -131,7 +132,7 @@ function ClientCharts({ documents }: { documents: DocumentType[] }) {
             const dataMap = new Map(last12Months.map(d => [format(d, 'yyyy-MMM'), { name: format(d, 'MMM yy'), revenue: 0 }]));
 
             paidInvoices.forEach(invoice => {
-                const invoiceDate = new Date(invoice.invoiceDate);
+                const invoiceDate = toDateSafe(invoice.invoiceDate)!;
                 if (isAfter(invoiceDate, subYears(now, 1))) {
                   const monthKey = format(invoiceDate, 'yyyy-MMM');
                   if (dataMap.has(monthKey)) {
@@ -212,14 +213,8 @@ function ClientCharts({ documents }: { documents: DocumentType[] }) {
 }
 
 const safeFormat = (date: any, formatString: string) => {
-    if (!date) return 'N/A';
-    try {
-        const d = date.toDate ? date.toDate() : new Date(date);
-        if (!isValid(d)) return "Invalid Date";
-        return format(d, formatString);
-    } catch (e) {
-        return "Invalid Date";
-    }
+    const d = toDateSafe(date);
+    return d ? format(d, formatString) : 'N/A';
 }
 
 const processData = (data: any): any => {
@@ -228,13 +223,7 @@ const processData = (data: any): any => {
     for (const key in data) {
         if (Object.prototype.hasOwnProperty.call(data, key)) {
             const value = data[key];
-            if (value && typeof value === 'object' && value.toDate) { // Firestore Timestamp check
-                processed[key] = value.toDate();
-            } else if (value && typeof value === 'object' && !Array.isArray(value)) {
-                processed[key] = processData(value); // Recurse for nested objects
-            } else {
-                processed[key] = value;
-            }
+            processed[key] = toDateSafe(value) || (typeof value === 'object' && !Array.isArray(value) && value !== null ? processData(value) : value);
         }
     }
     return processed;
@@ -353,8 +342,9 @@ export default function ClientPage() {
       return;
     }
     const sortedLog = (auditLog || []).sort((a, b) => {
-        const dateA = a.timestamp?.toDate ? a.timestamp.toDate() : new Date(a.timestamp);
-        const dateB = b.timestamp?.toDate ? b.timestamp.toDate() : new Date(b.timestamp);
+        const dateA = toDateSafe(a.timestamp);
+        const dateB = toDateSafe(b.timestamp);
+        if (!dateA || !dateB) return 0;
         return dateB.getTime() - dateA.getTime();
     });
     setHistoryModalState({ isOpen: true, auditLog: sortedLog });
@@ -631,5 +621,4 @@ export default function ClientPage() {
     </motion.div>
   );
 }
-
 
