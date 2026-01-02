@@ -13,6 +13,7 @@ import React, { useEffect, useState } from 'react';
 import { useTheme } from 'next-themes';
 import dynamic from 'next/dynamic';
 import { StackedCarousel } from '@/components/templates/stacked-carousel';
+import { Badge } from '@/components/ui/badge';
 
 const AIChatbot = dynamic(() => import('@/components/ai-chatbot').then(mod => mod.AIChatbot), { ssr: false });
 
