@@ -246,20 +246,17 @@ export default function DashboardPage() {
 
     const invoicesQuery = useMemoFirebase(() => {
         if (!firestore || !companyId) return null;
-        let q = query(collection(firestore, 'companies', companyId, INVOICES_COLLECTION));
-        return q;
+        return query(collection(firestore, 'companies', companyId, INVOICES_COLLECTION));
     }, [firestore, companyId]);
 
     const estimatesQuery = useMemoFirebase(() => {
         if (!firestore || !companyId) return null;
-        let q = query(collection(firestore, 'companies', companyId, ESTIMATES_COLLECTION));
-        return q;
+        return query(collection(firestore, 'companies', companyId, ESTIMATES_COLLECTION));
     }, [firestore, companyId]);
 
     const quotesQuery = useMemoFirebase(() => {
         if (!firestore || !companyId) return null;
-        let q = query(collection(firestore, 'companies', companyId, QUOTES_COLLECTION));
-        return q;
+        return query(collection(firestore, 'companies', companyId, QUOTES_COLLECTION));
     }, [firestore, companyId]);
 
     const insuranceQuery = useMemoFirebase(() => {
