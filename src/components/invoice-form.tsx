@@ -1060,7 +1060,7 @@ export function InvoiceForm({ invoice, setInvoice, accentColor, setAccentColor, 
             <div key={item.id} className="grid grid-cols-1 md:grid-cols-[1fr_90px_110px_120px_auto] gap-x-4 gap-y-2 items-center border-b pb-4">
               <div className="space-y-2 md:col-span-1">
                 <Label htmlFor={`itemName-${index}`} className="md:hidden">Item Name</Label>
-                <Input id={`itemName-${index}`} value={item.name} onChange={(e) => handleItemChange(index, 'name', e.target.value)} />
+                <Textarea id={`itemName-${index}`} value={item.name} onChange={(e) => handleItemChange(index, 'name', e.target.value)} className="h-10 min-h-10"/>
               </div>
               <div className="grid grid-cols-2 md:contents gap-4">
                 <div className="space-y-2">
@@ -1186,6 +1186,7 @@ export function InvoiceForm({ invoice, setInvoice, accentColor, setAccentColor, 
 
     
     
+
 
 
 
