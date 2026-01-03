@@ -116,14 +116,14 @@ const getInitialEstimate = (): Omit<Estimate, 'userId' | 'companyId'> => ({
     projectLocation: '',
   },
   
-  lineItems: [{ ...getInitialLineItem(), name: 'Sample Service (e.g., Website Development)', unitPrice: 1500 }],
+  lineItems: [{ ...getInitialLineItem(), name: 'Sample Service (e.g., Website Development)', unitPrice: 0 }],
 
   summary: {
-    subtotal: 1500,
+    subtotal: 0,
     taxPercentage: 8.25,
-    taxAmount: 123.75,
+    taxAmount: 0,
     discount: 0,
-    grandTotal: 1623.75,
+    grandTotal: 0,
     shippingCost: 0,
   },
 
