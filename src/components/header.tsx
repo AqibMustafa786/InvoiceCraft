@@ -158,10 +158,10 @@ export function Header() {
                             <Link href={link.href} key={link.href}>
                               <div className="flex items-start gap-4 p-3 rounded-lg transition-colors hover:bg-muted/50">
                                 <div className="p-2 bg-primary/10 text-primary rounded-md">
-                                  {React.cloneElement(link.icon, {className: 'h-6 w-6'})}
+                                  {React.cloneElement(link.icon, {className: 'h-5 w-5'})}
                                 </div>
                                 <div className="flex-1">
-                                  <p className="font-semibold text-foreground">{link.label}</p>
+                                  <p className="font-semibold text-sm text-foreground">{link.label}</p>
                                   <p className="text-xs text-muted-foreground">{link.description}</p>
                                 </div>
                               </div>
