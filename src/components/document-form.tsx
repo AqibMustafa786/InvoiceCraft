@@ -1193,8 +1193,8 @@ export function DocumentForm({ document, setDocument, accentColor, setAccentColo
               </div>
             </div>
 
-            <div className="hidden md:grid md:grid-cols-[1fr_90px_110px_60px_120px_auto] gap-x-4 text-sm font-medium text-muted-foreground items-center">
-                <Label>Item Name / Description</Label>
+            <div className="hidden md:grid md:grid-cols-[1fr_80px_100px_50px_110px_auto] gap-x-4 text-sm font-medium text-muted-foreground items-center">
+                <Label>Item Name</Label>
                 <Label>Quantity</Label>
                 <Label>Unit Price</Label>
                 <Label className="text-center">Taxable</Label>
@@ -1202,19 +1202,19 @@ export function DocumentForm({ document, setDocument, accentColor, setAccentColo
                 <span></span>
             </div>
             {document.lineItems.map((item, index) => (
-                <div key={item.id} className="grid grid-cols-1 md:grid-cols-[1fr_90px_110px_60px_120px_auto] gap-x-4 gap-y-2 items-center border-b pb-4">
+                <div key={item.id} className="grid grid-cols-1 md:grid-cols-[1fr_80px_100px_50px_110px_auto] gap-x-4 gap-y-2 items-center border-b pb-4">
                     <div className="space-y-2 md:col-span-1">
-                        <Label htmlFor={`itemName-${index}`} className="md:hidden">Item Name / Description</Label>
+                        <Label htmlFor={`itemName-${index}`} className="md:hidden">Item Name</Label>
                         <Textarea id={`itemName-${index}`} value={item.name} onChange={(e) => handleItemChange(index, 'name', e.target.value)} className="h-10 min-h-10"/>
                     </div>
                      <div className="grid grid-cols-3 md:contents gap-4">
                         <div className="space-y-2">
                             <Label htmlFor={`itemQuantity-${index}`} className="md:hidden">Quantity</Label>
-                            <Input id={`itemQuantity-${index}`} type="number" value={item.quantity} onChange={(e) => handleItemChange(index, 'quantity', parseFloat(e.target.value) || 0)} className="w-full" />
+                            <Input id={`itemQuantity-${index}`} type="number" value={item.quantity} onChange={(e) => handleItemChange(index, 'quantity', parseFloat(e.target.value) || 0)} className="w-full h-10" />
                         </div>
                         <div className="space-y-2">
                             <Label htmlFor={`itemRate-${index}`} className="md:hidden">Unit Price</Label>
-                            <Input id={`itemRate-${index}`} type="number" value={item.unitPrice} onChange={(e) => handleItemChange(index, 'unitPrice', parseFloat(e.target.value) || 0)} className="w-full" />
+                            <Input id={`itemRate-${index}`} type="number" value={item.unitPrice} onChange={(e) => handleItemChange(index, 'unitPrice', parseFloat(e.target.value) || 0)} className="w-full h-10" />
                         </div>
                         <div className="flex items-center justify-center h-10">
                             <Checkbox id={`itemTaxable-${index}`} checked={item.taxable} onCheckedChange={(checked) => handleItemChange(index, 'taxable', !!checked)} />
@@ -1324,6 +1324,7 @@ export function DocumentForm({ document, setDocument, accentColor, setAccentColo
     
 
     
+
 
 
 
