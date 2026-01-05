@@ -17,7 +17,7 @@ import { doc, serverTimestamp, Timestamp, collection, addDoc, getDoc, setDoc, ge
 import { setDocumentNonBlocking } from '@/firebase/non-blocking-updates';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useDoc } from '@/firebase/firestore/use-doc';
-import { sendDocument } from '@/app/actions';
+import { sendDocumentByEmail } from '@/app/actions';
 import { DocumentTemplateSelector } from '@/components/document-template-selector';
 import {
   DropdownMenu,
@@ -577,7 +577,7 @@ export default function CreateEstimatePage() {
     try {
       handleSaveDraft();
 
-      const result = await sendDocument({ docId: document.id, docType: 'estimate' });
+      const result = await sendDocumentByEmail({ docId: document.id, docType: 'estimate' });
       
       if (result.success) {
         toast({

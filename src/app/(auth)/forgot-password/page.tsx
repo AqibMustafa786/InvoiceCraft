@@ -1,4 +1,3 @@
-
 'use client';
 
 import Link from 'next/link';
@@ -10,7 +9,7 @@ import * as z from 'zod';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { useToast } from '@/hooks/use-toast';
 import { useState } from 'react';
-import { sendPasswordResetEmailFlow } from '@/ai/flows/send-password-reset-flow';
+import { sendPasswordReset } from '@/app/actions';
 
 const forgotPasswordSchema = z.object({
     email: z.string().email({ message: "Invalid email address." }),
@@ -32,7 +31,7 @@ export default function ForgotPasswordPage() {
     const onSubmit = async (data: ForgotPasswordFormValues) => {
         setIsLoading(true);
         try {
-            const result = await sendPasswordResetEmailFlow({ email: data.email });
+            const result = await sendPasswordReset(data.email);
             if (result.success) {
                  toast({
                     title: "Password Reset Email Sent",

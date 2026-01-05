@@ -1,10 +1,6 @@
+import '@/ai/genkit';
 
-'use server';
-/**
- * @fileoverview A flow that sends a document (quote or estimate) to a client via email.
- */
-import '@/ai/genkit'; // Side-effect import to configure genkit
-import { defineFlow } from 'genkit/flow';
+import { defineFlow } from '@genkit-ai/flow';
 import { z } from 'zod';
 import { getFirebase } from '@/firebase';
 import { doc, getDoc, collection, query, where, getDocs } from 'firebase/firestore';
@@ -23,9 +19,6 @@ async function findDocument(docId: string, docType: 'quote' | 'estimate'): Promi
     const { firestore } = getFirebase();
     const collectionName = docType === 'quote' ? 'quotes' : 'estimates';
     
-    // Firestore collection group queries are powerful but can be less performant.
-    // For this app's structure, we query within each company. A real-world, large-scale
-    // app might have a separate root collection for public-facing documents.
     const companiesRef = collection(firestore, 'companies');
     const companiesSnapshot = await getDocs(companiesRef);
 
@@ -37,7 +30,6 @@ async function findDocument(docId: string, docType: 'quote' | 'estimate'): Promi
         }
     }
     
-    // Fallback to collectionGroup query if not found, though less efficient
     const collectionGroupRef = collection(firestore, collectionName);
     const q = query(collectionGroupRef, where('id', '==', docId));
     const querySnapshot = await getDocs(q);
@@ -64,7 +56,6 @@ export const sendDocumentFlow = defineFlow(
         throw new Error(`Document with ID ${docId} not found.`);
       }
 
-      // Generate PDF in memory
       const pdfBuffer = await renderToBuffer(PDFDocument({ data: document }));
       const pdfBase64 = pdfBuffer.toString('base64');
       
@@ -99,8 +90,3 @@ export const sendDocumentFlow = defineFlow(
     }
   }
 );
-
-
-export async function sendDocumentByEmail(input: z.infer<typeof SendDocumentSchema>) {
-    return await sendDocumentFlow(input);
-}
