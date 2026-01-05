@@ -7,13 +7,15 @@ import { motion } from 'framer-motion';
 import Image from 'next/image';
 import {
   FileText, FilePlus, Shield,
-  LayoutDashboard, Edit, Bot, Share2, Palette, ArrowRight, XCircle, Clock, AlertCircle, CheckCircle, Search, FileClock
+  LayoutDashboard, Edit, Bot, Share2, Palette, ArrowRight, XCircle, Clock, AlertCircle, CheckCircle, Search, FileClock,
+  HardHat, Code, Store, Car, Camera, Building, Scale, HeartPulse
 } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { useTheme } from 'next-themes';
 import dynamic from 'next/dynamic';
-import { StackedCarousel } from '@/components/templates/stacked-carousel';
 import { Badge } from '@/components/ui/badge';
+import { Carousel, CarouselContent, CarouselItem } from '@/components/ui/carousel';
+import Autoplay from 'embla-carousel-autoplay';
 
 const AIChatbot = dynamic(() => import('@/components/ai-chatbot').then(mod => mod.AIChatbot), { ssr: false });
 
@@ -81,6 +83,65 @@ const solutions = [
   { text: "Deep customization for professional branding", icon: <CheckCircle className="h-5 w-5 text-primary" /> },
   { text: "A full, versioned audit trail for every document", icon: <FileClock className="h-5 w-5 text-primary" /> },
   { text: "Clear, itemized billing for faster payments", icon: <CheckCircle className="h-5 w-5 text-primary" /> },
+];
+
+const featuredTemplates = [
+  {
+    name: "Construction",
+    count: 6,
+    imageUrl: "https://picsum.photos/seed/construction-template/600/800",
+    imageHint: "construction site",
+    icon: <HardHat />,
+  },
+  {
+    name: "IT & Freelance",
+    count: 5,
+    imageUrl: "https://picsum.photos/seed/freelance-desk/600/800",
+    imageHint: "creative desk",
+    icon: <Code />,
+  },
+  {
+    name: "Retail",
+    count: 3,
+    imageUrl: "https://picsum.photos/seed/retail-store/600/800",
+    imageHint: "retail store",
+    icon: <Store />,
+  },
+  {
+    name: "Auto Repair",
+    count: 6,
+    imageUrl: "https://picsum.photos/seed/auto-repair/600/800",
+    imageHint: "car engine",
+    icon: <Car />,
+  },
+  {
+    name: "Photography",
+    count: 5,
+    imageUrl: "https://picsum.photos/seed/photography-gear/600/800",
+    imageHint: "camera gear",
+    icon: <Camera />,
+  },
+  {
+    name: "Real Estate",
+    count: 5,
+    imageUrl: "https://picsum.photos/seed/modern-house/600/800",
+    imageHint: "modern house",
+    icon: <Building />,
+  },
+  {
+    name: "Legal Services",
+    count: 5,
+    imageUrl: "https://picsum.photos/seed/law-books/600/800",
+    imageHint: "law books",
+    icon: <Scale />,
+  },
+  {
+    name: "Medical",
+    count: 5,
+    imageUrl: "https://picsum.photos/seed/medical-tools/600/800",
+    imageHint: "medical tools",
+    icon: <HeartPulse />,
+  }
 ];
 
 
@@ -283,10 +344,70 @@ export default function HomePage() {
             </div>
         </section>
 
-        <StackedCarousel />
+        <section className="py-20 md:py-28">
+          <div className="container px-4 mx-auto md:px-6">
+            <div className="text-center max-w-2xl mx-auto mb-12">
+              <h2 className="text-4xl md:text-5xl font-bold font-headline">Explore Our Modern Templates</h2>
+              <p className="mt-4 text-muted-foreground">Professionally designed templates for any industry. Customizable to fit your brand.</p>
+            </div>
+             <motion.div 
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              viewport={{ once: true, amount: 0.2 }}
+              transition={{ duration: 0.5 }}
+            >
+              <Carousel
+                  opts={{
+                    align: "start",
+                    loop: true,
+                    slidesToScroll: 1,
+                  }}
+                  plugins={[
+                    Autoplay({
+                      delay: 3000,
+                      stopOnInteraction: true,
+                    }),
+                  ]}
+                  className="w-full"
+                >
+                <CarouselContent>
+                  {featuredTemplates.map((template, index) => (
+                    <CarouselItem key={index} className="sm:basis-1/2 md:basis-1/3 lg:basis-1/4">
+                       <motion.div
+                          className="relative overflow-hidden rounded-xl shadow-lg group h-96"
+                          whileHover={{ y: -8 }}
+                        >
+                          <Image 
+                            src={template.imageUrl}
+                            alt={`${template.name} template`}
+                            fill
+                            sizes="(max-width: 768px) 100vw, 740px"
+                            className="w-full h-full object-cover transition-transform duration-500 ease-in-out group-hover:scale-110"
+                            data-ai-hint={template.imageHint}
+                          />
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"></div>
+                          <motion.div 
+                            className="absolute bottom-0 left-0 p-6 text-white"
+                          >
+                            <div className="flex items-center gap-3 mb-2 opacity-80">
+                              {React.cloneElement(template.icon, { className: "h-5 w-5" })}
+                              <span className="text-sm font-medium tracking-wider uppercase">{template.count} Templates</span>
+                            </div>
+                            <h3 className="text-3xl font-bold font-headline">{template.name}</h3>
+                          </motion.div>
+                        </motion.div>
+                    </CarouselItem>
+                  ))}
+                </CarouselContent>
+              </Carousel>
+            </motion.div>
+          </div>
+        </section>
 
         <AIChatbot />
       </main>
     </div>
   );
 }
+
+    
