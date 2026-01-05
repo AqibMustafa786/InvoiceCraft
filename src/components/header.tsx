@@ -78,7 +78,7 @@ export function Header() {
     }
 
     return (
-        <header className="sticky top-0 z-50 w-full">
+        <header className="sticky top-4 z-50 w-full">
             <CommandDialog open={open} onOpenChange={setOpen}>
               <DialogTitle className="sr-only">Search</DialogTitle>
               <CommandInput placeholder="Type a command or search..." />
@@ -101,7 +101,7 @@ export function Header() {
               </CommandList>
             </CommandDialog>
 
-            <div className="container flex h-16 items-center">
+            <div className="container flex h-14 items-center">
                 {/* Mobile: Hamburger Menu */}
                  <div className="md:hidden">
                     <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
@@ -114,8 +114,8 @@ export function Header() {
                         <SheetContent side="left" className="flex w-full flex-col p-0 sm:max-w-xs">
                             <SheetHeader className="p-6 pb-4">
                                 <SheetTitle>
-                                     <Link href="/" className="flex items-center gap-2 text-2xl font-bold text-primary" onClick={() => setIsSheetOpen(false)}>
-                                        <FileText className="h-6 w-6" />
+                                     <Link href="/" className="flex items-center gap-2 text-2xl font-bold" onClick={() => setIsSheetOpen(false)}>
+                                        <FileText className="h-6 w-6 text-primary" />
                                         Invoice<span className="font-light">Craft</span>
                                     </Link>
                                 </SheetTitle>
@@ -145,8 +145,8 @@ export function Header() {
                 </div>
                  {/* Mobile: Centered Logo */}
                 <div className="flex md:hidden flex-1 justify-center">
-                    <Link href="/" className="flex items-center gap-2 text-xl font-bold text-primary">
-                        <FileText className="h-6 w-6" />
+                    <Link href="/" className="flex items-center gap-2 text-xl font-bold">
+                        <FileText className="h-6 w-6 text-primary" />
                         Invoice<span className="font-light">Craft</span>
                     </Link>
                 </div>
@@ -159,13 +159,13 @@ export function Header() {
                 </div>
 
                 {/* Desktop: Centered Navigation */}
-                <nav className="hidden md:flex absolute left-1/2 -translate-x-1/2 items-center justify-center rounded-full bg-zinc-800/30 px-2 py-1 backdrop-blur-sm">
+                <nav className="hidden md:flex absolute left-1/2 -translate-x-1/2 items-center justify-center rounded-full bg-background/70 px-2 py-1 backdrop-blur-md">
                     {mainNavLinks.map(link => (
                         <NavLink key={link.href} href={link.href} label={link.label} />
                     ))}
                      <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" className="relative block px-3 py-2 transition text-sm font-medium text-muted-foreground hover:text-primary-foreground">
+                            <Button variant="ghost" className="relative flex items-center gap-1 px-3 py-2 transition text-sm font-medium text-muted-foreground hover:bg-transparent hover:text-primary-foreground">
                                 Tools <ChevronDown className="h-4 w-4" />
                             </Button>
                         </DropdownMenuTrigger>
@@ -196,3 +196,4 @@ export function Header() {
         </header>
     );
 }
+
