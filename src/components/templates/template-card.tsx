@@ -37,16 +37,16 @@ export function TemplateCard({ template, onPreview }: TemplateCardProps) {
   return (
     <motion.div
       variants={itemVariants}
-      whileHover={{ y: -8, scale: 1.03 }}
-      transition={{ type: 'spring', stiffness: 300 }}
-      className="group relative block overflow-hidden rounded-xl border bg-card shadow-sm"
+      whileHover={{ y: -5 }}
+      transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+      className="group relative block overflow-hidden rounded-lg border bg-card shadow-sm"
     >
       <div className="relative aspect-[3/4] overflow-hidden">
         <Image
           src={template.thumbnailUrl}
           alt={`Thumbnail for ${template.name} template`}
           fill
-          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+          sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, (max-width: 1024px) 25vw, (max-width: 1280px) 20vw, 16vw"
           className="object-cover object-top transition-transform duration-500 ease-in-out group-hover:scale-105"
         />
         <div 
@@ -54,23 +54,23 @@ export function TemplateCard({ template, onPreview }: TemplateCardProps) {
           className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100"
         ></div>
         <div className="absolute inset-0 flex items-center justify-center opacity-0 transition-opacity duration-300 group-hover:opacity-100">
-          <Button onClick={() => onPreview(template)} variant="secondary">
+          <Button onClick={() => onPreview(template)} variant="secondary" size="sm">
             <Eye className="mr-2 h-4 w-4" />
             Preview
           </Button>
         </div>
       </div>
-      <div className="p-4 bg-card">
-        <div className="flex items-center justify-between">
-          <h3 className="font-semibold text-card-foreground">{template.name}</h3>
+      <div className="p-3 bg-card">
+        <div className="flex items-start justify-between gap-1">
+          <h3 className="font-semibold text-xs text-card-foreground leading-tight">{template.name}</h3>
           <Badge 
             variant="outline" 
-            className={cn("text-xs", toolColors[template.toolType] || 'border')}
+            className={cn("text-[10px] shrink-0", toolColors[template.toolType] || 'border')}
           >
             {template.toolType}
           </Badge>
         </div>
-        <p className="text-xs text-muted-foreground mt-1">{template.category}</p>
+        <p className="text-[11px] text-muted-foreground mt-0.5">{template.category}</p>
       </div>
     </motion.div>
   );
