@@ -1,14 +1,16 @@
 'use server';
 
-import { genkit } from 'genkit';
+import { genkit, Ai } from '@genkit-ai/ai';
 import { googleAI } from '@genkit-ai/googleai';
+import { genkitNext } from '@genkit-ai/next';
 
-export const ai = genkit({
+export const ai: Ai = genkit({
   plugins: [
     googleAI({
       apiVersion: 'v1beta',
     }),
+    genkitNext(),
   ],
-  logSinks: [],
+  logSinks: [genkitNext()],
   enableTracing: true,
 });

@@ -1,57 +1,74 @@
 
-'use server';
-/**
- * @fileoverview A flow that sends a document (quote or estimate) to a client via email.
- */
-import '@/ai/genkit'; // Side-effect import to configure genkit
-import { ai } from '@/ai/genkit';
-import { z } from 'genkit';
+import '@/ai/genkit';
+
+import { defineFlow } from '@genkit-ai/flow';
+import { z } from 'zod';
 import { getFirebase } from '@/firebase';
-import { doc, getDoc, collection, query, where, getDocs } from 'firebase/firestore';
-import { PDFDocument } from '@/components/pdf/document-pdf';
+import { doc, getDoc, collection, getDocs, query, where } from 'firebase/firestore';
 import { renderToBuffer } from '@react-pdf/renderer';
+import { PDFDocument } from '@/components/pdf/document-pdf';
 import { sendEmail } from '@/ai/flows/send-email-flow';
 import type { Estimate, Quote } from '@/lib/types';
-
 
 export const SendDocumentSchema = z.object({
   docId: z.string(),
   docType: z.enum(['quote', 'estimate']),
 });
 
-async function findDocument(docId: string, docType: 'quote' | 'estimate'): Promise<Quote | Estimate | null> {
-    const { firestore } = getFirebase();
-    const collectionGroupRef = collection(firestore, docType === 'quote' ? 'quotes' : 'estimates');
-    const q = query(collectionGroupRef, where('id', '==', docId));
+async function findDocument(
+  docId: string,
+  docType: 'quote' | 'estimate'
+): Promise<Quote | Estimate | null> {
+  const { firestore } = getFirebase();
+  const collectionName = docType === 'quote' ? 'quotes' : 'estimates';
 
-    const querySnapshot = await getDocs(q);
+  const companiesSnapshot = await getDocs(collection(firestore, 'companies'));
 
-    if (!querySnapshot.empty) {
-        const docSnap = querySnapshot.docs[0];
-        return { id: docSnap.id, ...docSnap.data() } as Quote | Estimate;
+  for (const companyDoc of companiesSnapshot.docs) {
+    const ref = doc(
+      firestore,
+      'companies',
+      companyDoc.id,
+      collectionName,
+      docId
+    );
+    const snap = await getDoc(ref);
+    if (snap.exists()) {
+      return { id: snap.id, ...snap.data() } as Quote | Estimate;
     }
-    
-    return null;
+  }
+
+  const q = query(
+    collection(firestore, collectionName),
+    where('id', '==', docId)
+  );
+  const snapshot = await getDocs(q);
+
+  if (!snapshot.empty) {
+    const docSnap = snapshot.docs[0];
+    return { id: docSnap.id, ...docSnap.data() } as Quote | Estimate;
+  }
+
+  return null;
 }
 
-export const sendDocumentFlow = ai.defineFlow(
+export const sendDocumentFlow = defineFlow(
   {
     name: 'sendDocumentFlow',
     inputSchema: SendDocumentSchema,
-    outputSchema: z.object({ success: z.boolean(), message: z.string() }),
+    outputSchema: z.object({
+      success: z.boolean(),
+      message: z.string(),
+    }),
   },
   async ({ docId, docType }) => {
     try {
       const document = await findDocument(docId, docType);
-      
-      if (!document) {
-        throw new Error(`Document with ID ${docId} not found.`);
-      }
+      if (!document) throw new Error('Document not found');
 
-      // Generate PDF in memory
       const pdfBuffer = await renderToBuffer(PDFDocument({ data: document }));
       const pdfBase64 = pdfBuffer.toString('base64');
-      
+
       const docTypeTitle = docType === 'quote' ? 'Quote' : 'Estimate';
       const docNumber = 'estimateNumber' in document ? document.estimateNumber : 'N/A';
 
@@ -78,13 +95,7 @@ export const sendDocumentFlow = ai.defineFlow(
 
       return { success: true, message: 'Email sent successfully.' };
     } catch (error: any) {
-      console.error('Failed to send document email:', error);
-      return { success: false, message: error.message || 'An unknown error occurred.' };
+      return { success: false, message: error.message };
     }
   }
 );
-
-
-export async function sendDocumentByEmail(input: z.infer<typeof SendDocumentSchema>) {
-    return await sendDocumentFlow(input);
-}
