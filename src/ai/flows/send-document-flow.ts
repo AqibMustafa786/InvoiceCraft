@@ -1,6 +1,5 @@
-import '@/ai/genkit';
 
-import { defineFlow } from '@genkit-ai/flow';
+import { ai } from '@/ai/genkit';
 import { z } from 'zod';
 import { getFirebase } from '@/firebase';
 import { doc, getDoc, collection, query, where, getDocs } from 'firebase/firestore';
@@ -42,7 +41,7 @@ async function findDocument(docId: string, docType: 'quote' | 'estimate'): Promi
     return null;
 }
 
-export const sendDocumentFlow = defineFlow(
+export const sendDocumentFlow = ai.defineFlow(
   {
     name: 'sendDocumentFlow',
     inputSchema: SendDocumentSchema,
