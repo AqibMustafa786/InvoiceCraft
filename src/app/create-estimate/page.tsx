@@ -451,84 +451,85 @@ export default function CreateEstimatePage() {
   };
   
     const handleSaveDraft = () => {
-    if (!document || !firestore || !user || !userProfile?.companyId || !originalDocument) {
-         toast({
-          title: "Cannot Save Draft",
-          description: "You must be logged in to save a draft.",
-          variant: "destructive",
-        });
-        return;
-    }
+    setTimeout(() => {
+      if (!document || !firestore || !user || !userProfile?.companyId || !originalDocument) {
+          toast({
+            title: "Cannot Save Draft",
+            description: "You must be logged in to save a draft.",
+            variant: "destructive",
+          });
+          return;
+      }
 
-    const companyId = userProfile.companyId;
-    const isNew = !searchParams.get('draftId');
-    const newId = isNew ? generateNewId(document) : document.id;
+      const companyId = userProfile.companyId;
+      const isNew = !searchParams.get('draftId');
+      const newId = isNew ? generateNewId(document) : document.id;
 
-    const changes = diff(originalDocument, document);
-    const existingLog = normalizeAuditLog(document.auditLog);
-    
-    let updatedAuditLog: AuditLogEntry[] = [...existingLog];
+      const changes = diff(originalDocument, document);
+      const existingLog = normalizeAuditLog(document.auditLog);
+      
+      let updatedAuditLog: AuditLogEntry[] = [...existingLog];
 
-    if (changes.length > 0) {
-        const newVersion = (existingLog[existingLog.length - 1]?.version || 0) + 1;
-        const newAuditLogEntry: AuditLogEntry = {
-            id: crypto.randomUUID(),
-            action: 'updated',
-            timestamp: new Date(),
-            user: { name: user.displayName || user.email, email: user.email },
-            version: newVersion,
-            changes: changes,
-        };
-        updatedAuditLog.push(newAuditLogEntry);
-    }
-    
+      if (changes.length > 0) {
+          const newVersion = (existingLog[existingLog.length - 1]?.version || 0) + 1;
+          const newAuditLogEntry: AuditLogEntry = {
+              id: crypto.randomUUID(),
+              action: 'updated',
+              timestamp: new Date(),
+              user: { name: user.displayName || user.email, email: user.email },
+              version: newVersion,
+              changes: changes,
+          };
+          updatedAuditLog.push(newAuditLogEntry);
+      }
+      
+      const safeTimestamp = (value: any): Timestamp | null => {
+          if (!value) return null;
+          if (value instanceof Timestamp) return value;
+          const d = value.toDate ? value.toDate() : new Date(value);
+          return isValid(d) ? Timestamp.fromDate(d) : null;
+      };
 
-    const safeTimestamp = (value: any): Timestamp | null => {
-        if (!value) return null;
-        if (value instanceof Timestamp) return value;
-        const d = value.toDate ? value.toDate() : new Date(value);
-        return isValid(d) ? Timestamp.fromDate(d) : null;
-    };
+      const draftToSave: any = {
+        ...document,
+        id: newId,
+        userId: user.uid, 
+        companyId: companyId,
+        client: {
+          ...document.client,
+          clientId: document.client.clientId, // Ensure clientId is saved
+        },
+        updatedAt: Timestamp.now(),
+        auditLog: updatedAuditLog.map(log => ({ ...log, timestamp: safeTimestamp(log.timestamp) })),
+        estimateDate: safeTimestamp(document.estimateDate),
+        validUntilDate: safeTimestamp(document.validUntilDate),
+        createdAt: safeTimestamp(document.createdAt) || Timestamp.now(),
+      };
 
-    const draftToSave: any = {
-      ...document,
-      id: newId,
-      userId: user.uid, 
-      companyId: companyId,
-      client: {
-        ...document.client,
-        clientId: document.client.clientId, // Ensure clientId is saved
-      },
-      updatedAt: Timestamp.now(),
-      auditLog: updatedAuditLog.map(log => ({ ...log, timestamp: safeTimestamp(log.timestamp) })),
-      estimateDate: safeTimestamp(document.estimateDate),
-      validUntilDate: safeTimestamp(document.validUntilDate),
-      createdAt: safeTimestamp(document.createdAt) || Timestamp.now(),
-    };
+      if (document.homeRemodeling) {
+        draftToSave.homeRemodeling = { ...document.homeRemodeling };
+        const start = safeTimestamp(document.homeRemodeling.expectedStartDate);
+        if(start) draftToSave.homeRemodeling.expectedStartDate = start;
+        const end = safeTimestamp(document.homeRemodeling.expectedCompletionDate);
+        if(end) draftToSave.homeRemodeling.expectedCompletionDate = end;
+      }
+      
+      const finalDocRef = doc(firestore, 'companies', companyId, ESTIMATES_COLLECTION, newId);
+      setDocumentNonBlocking(finalDocRef, draftToSave, { merge: true });
 
-    if (document.homeRemodeling) {
-      draftToSave.homeRemodeling = { ...document.homeRemodeling };
-      const start = safeTimestamp(document.homeRemodeling.expectedStartDate);
-      if(start) draftToSave.homeRemodeling.expectedStartDate = start;
-      const end = safeTimestamp(document.homeRemodeling.expectedCompletionDate);
-      if(end) draftToSave.homeRemodeling.expectedCompletionDate = end;
-    }
-    
-    const finalDocRef = doc(firestore, 'companies', companyId, ESTIMATES_COLLECTION, newId);
-    setDocumentNonBlocking(finalDocRef, draftToSave, { merge: true });
+      toast({
+        title: "Estimate Draft Saved",
+        description: "Your estimate draft has been saved online.",
+      });
 
-    toast({
-      title: "Estimate Draft Saved",
-      description: "Your estimate draft has been saved online.",
-    });
+      const updatedDocState = { ...document, id: newId, auditLog: updatedAuditLog };
+      setDocument(updatedDocState);
+      setOriginalDocument(JSON.parse(JSON.stringify(updatedDocState)));
 
-    const updatedDocState = { ...document, id: newId, auditLog: updatedAuditLog };
-    setDocument(updatedDocState);
-    setOriginalDocument(JSON.parse(JSON.stringify(updatedDocState)));
-
-    if (isNew) {
-      router.push(`/create-estimate?draftId=${newId}`, { scroll: false });
-    }
+      if (isNew) {
+        router.push(`/create-estimate?draftId=${newId}`, { scroll: false });
+      }
+    }, 0);
   };
 
 
@@ -574,29 +575,32 @@ export default function CreateEstimatePage() {
     }
     
     setIsSendingEmail(true);
-    try {
-      handleSaveDraft();
 
-      const result = await sendDocumentByEmail({ docId: document.id, docType: 'estimate' });
-      
-      if (result.success) {
+    setTimeout(async () => {
+      try {
+        handleSaveDraft();
+
+        const result = await sendDocumentByEmail({ docId: document.id, docType: 'estimate' });
+        
+        if (result.success) {
+          toast({
+            title: "Email Sent",
+            description: "The estimate has been successfully sent to the client.",
+          });
+        } else {
+          throw new Error(result.message || 'An unknown error occurred.');
+        }
+      } catch (error: any) {
+        console.error("Failed to send email:", error);
         toast({
-          title: "Email Sent",
-          description: "The estimate has been successfully sent to the client.",
+          title: "Email Failed",
+          description: error.message || "Could not send the email. Please try again.",
+          variant: "destructive",
         });
-      } else {
-        throw new Error(result.message || 'An unknown error occurred.');
+      } finally {
+        setIsSendingEmail(false);
       }
-    } catch (error: any) {
-      console.error("Failed to send email:", error);
-      toast({
-        title: "Email Failed",
-        description: error.message || "Could not send the email. Please try again.",
-        variant: "destructive",
-      });
-    } finally {
-      setIsSendingEmail(false);
-    }
+    }, 0);
   };
 
   if (!processedDocument) {
