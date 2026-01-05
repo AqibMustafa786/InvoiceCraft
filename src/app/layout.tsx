@@ -10,7 +10,7 @@ import { Header } from '@/components/header';
 import { FirebaseClientProvider } from '@/firebase';
 import { AuthProvider } from '@/context/auth-provider';
 import { SplashScreenProvider } from '@/context/splash-screen-provider';
-import { SpeedInsights } from "@vercel/speed-insights/next"
+import { SpeedInsights } from '@vercel/speed-insights/next';
 
 const inter = Inter({
   subsets: ['latin'],
