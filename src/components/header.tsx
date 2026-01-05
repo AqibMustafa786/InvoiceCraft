@@ -159,13 +159,13 @@ export function Header() {
                 </div>
 
                 {/* Desktop: Centered Navigation */}
-                <nav className="hidden md:flex absolute left-1/2 -translate-x-1/2 items-center justify-center rounded-full bg-background/70 px-2 py-1 backdrop-blur-md">
+                <nav className="hidden md:flex absolute left-1/2 -translate-x-1/2 items-center justify-center rounded-full border bg-background/70 px-2 py-1 backdrop-blur-md">
                     {mainNavLinks.map(link => (
                         <NavLink key={link.href} href={link.href} label={link.label} />
                     ))}
                      <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" className="relative flex items-center gap-1 px-3 py-2 transition text-sm font-medium text-muted-foreground hover:bg-transparent hover:text-primary-foreground">
+                           <Button variant="ghost" className="relative flex items-center gap-1 px-3 py-2 transition text-sm font-medium text-muted-foreground hover:bg-transparent hover:text-primary-foreground">
                                 Tools <ChevronDown className="h-4 w-4" />
                             </Button>
                         </DropdownMenuTrigger>
@@ -196,4 +196,3 @@ export function Header() {
         </header>
     );
 }
-
