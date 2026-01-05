@@ -1,8 +1,9 @@
 
 'use server';
 
+import '@/ai/genkit'; // Side-effect import to configure genkit
 import { ai } from '@/ai/genkit';
-import { z } from 'genkit';
+import { z } from 'zod';
 import { getAuth, sendPasswordResetEmail } from 'firebase/auth';
 import { getFirebase } from '@/firebase';
 
