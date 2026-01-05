@@ -71,7 +71,10 @@ export function AuthNav({ isMobile = false }: AuthNavProps) {
 
         // --- DESKTOP-SPECIFIC VIEW ---
         return (
-            <div className="hidden md:block">
+             <div className="flex items-center gap-2">
+                <Button asChild variant={'ghost'} className="px-4">
+                    <Link href="/dashboard">Dashboard</Link>
+                </Button>
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                         <Button variant="ghost" className="relative h-10 w-10 rounded-full">
@@ -121,7 +124,7 @@ export function AuthNav({ isMobile = false }: AuthNavProps) {
     // --- Logged-out user view ---
     return (
         <div className={`flex items-center gap-2 ${isMobile ? 'w-full flex-col' : 'hidden md:flex'}`}>
-             <Button asChild variant={'ghost'} className={isMobile ? 'w-full' : ''}>
+             <Button asChild variant={'ghost'} className={`px-4 ${isMobile ? 'w-full' : ''}`}>
                 <Link href="/login">Log in</Link>
             </Button>
             <Button asChild variant="secondary" className={`transition-transform hover:scale-105 ${isMobile ? 'w-full' : ''}`}>
