@@ -13,7 +13,7 @@ import { createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, Gi
 import { useRouter } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
 import { useState } from 'react';
-import { Github, Eye, EyeOff } from 'lucide-react';
+import { Eye, EyeOff } from 'lucide-react';
 import { createProfileAndCompany } from '@/firebase/auth-helpers';
 
 const signupSchema = z.object({
@@ -191,7 +191,7 @@ export default function SignupPage() {
                 </div>
             </div>
              <div className="grid grid-cols-3 gap-3">
-                <Button variant="outline" className="h-12" onClick={() => onSocialLogin('github')} disabled={isLoading}><Github className="h-5 w-5" /></Button>
+                <Button variant="outline" className="h-12" onClick={() => onSocialLogin('github')} disabled={isLoading}><svg className="h-5 w-5" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"></path></svg></Button>
                 <Button variant="outline" className="h-12" onClick={() => onSocialLogin('google')} disabled={isLoading}><svg className="h-5 w-5" viewBox="0 0 24 24"><path fill="currentColor" d="M21.35,11.1H12.18V13.83H18.69C18.36,17.64 15.19,19.27 12.19,19.27C8.36,19.27 5,16.25 5,12C5,7.75 8.36,4.73 12.19,4.73C15.28,4.73 17.04,6.84 17.04,6.84L19,4.88C19,4.88 16.7,3 12.19,3C6.42,3 2,7.42 2,12C2,16.58 6.42,21 12.19,21C18.1,21 22,16.25 22,11.53C22,11.31 21.68,11.1 21.35,11.1V11.1Z" /></svg></Button>
                 <Button variant="outline" className="h-12" onClick={() => onSocialLogin('facebook')} disabled={isLoading}><svg className="h-5 w-5" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2.04C6.5 2.04 2 6.53 2 12.06C2 17.06 5.66 21.21 10.44 21.96V14.96H7.9V12.06H10.44V9.85C10.44 7.34 11.93 5.96 14.22 5.96C15.31 5.96 16.45 6.15 16.45 6.15V8.62H15.19C13.95 8.62 13.56 9.39 13.56 10.18V12.06H16.34L15.89 14.96H13.56V21.96A10 10 0 0 0 22 12.06C22 6.53 17.5 2.04 12 2.04Z" /></svg></Button>
             </div>
