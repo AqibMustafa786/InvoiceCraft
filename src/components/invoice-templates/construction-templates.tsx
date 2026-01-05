@@ -1,4 +1,3 @@
-
 'use client';
 
 import React from 'react';
@@ -330,3 +329,4 @@ export const ConstructionTemplate6: React.FC<PageProps> = (props) => <Constructi
     
 
     
+```
