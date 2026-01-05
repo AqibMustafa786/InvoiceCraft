@@ -1,7 +1,7 @@
 
 import '@/ai/genkit'; // side-effect import
 
-import { defineFlow } from '@genkit-ai/flow';
+import { defineFlow } from 'genkit/flow';
 import { z } from 'zod';
 import { sendPasswordResetEmail } from 'firebase/auth';
 import { getFirebase } from '@/firebase';

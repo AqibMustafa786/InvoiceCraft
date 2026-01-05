@@ -4,7 +4,7 @@
  * @fileoverview A flow that sends a document (quote or estimate) to a client via email.
  */
 import '@/ai/genkit'; // Side-effect import to configure genkit
-import { defineFlow } from '@genkit-ai/flow';
+import { defineFlow } from 'genkit/flow';
 import { z } from 'zod';
 import { getFirebase } from '@/firebase';
 import { doc, getDoc, collection, query, where, getDocs } from 'firebase/firestore';
