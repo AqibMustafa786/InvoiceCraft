@@ -515,7 +515,7 @@ export function DocumentForm({ document, setDocument, accentColor, setAccentColo
                             </div>
                         </div>
                     ) : (
-                        <Button asChild variant="outline" className="w-full" disabled={isUploading}>
+                        <Button asChild variant="outline" size="sm" className="w-full" disabled={isUploading}>
                             <label htmlFor="logo-upload" className="cursor-pointer flex items-center justify-center gap-2">
                                 {isUploading ? <Loader2 className="h-4 w-4 animate-spin" /> : <ImageUp className="h-4 w-4" />}
                                 {isUploading ? 'Uploading...' : 'Upload Logo'}
@@ -528,14 +528,14 @@ export function DocumentForm({ document, setDocument, accentColor, setAccentColo
                 <div className="space-y-2">
                     <Label htmlFor="accentColor">Accent Color</Label>
                     <div className="relative flex items-center">
-                        <Palette className="absolute left-3 h-5 w-5 text-muted-foreground" />
+                        <Palette className="absolute left-3 h-4 w-4 text-muted-foreground" />
                         <Input 
                             id="accentColor"
                             type="text" 
                             value={accentColorInput} 
                             onChange={(e) => setAccentColorInput(e.target.value)}
                             onBlur={(e) => setAccentColor(e.target.value)}
-                            className="pl-10"
+                            className="pl-9 h-9"
                             placeholder="hsl(260 85% 66%)"
                         />
                         <input 
@@ -545,21 +545,21 @@ export function DocumentForm({ document, setDocument, accentColor, setAccentColo
                                 setAccentColor(e.target.value);
                                 setAccentColorInput(e.target.value);
                             }}
-                            className="absolute right-1 top-1/2 -translate-y-1/2 h-8 w-8 p-1 rounded-md cursor-pointer bg-transparent border-none appearance-none"
+                            className="absolute right-1 top-1/2 -translate-y-1/2 h-7 w-8 p-1 rounded-md cursor-pointer bg-transparent border-none appearance-none"
                         />
                     </div>
                 </div>
                  <div className="space-y-2">
                     <Label htmlFor="backgroundColor">Background Color</Label>
                     <div className="relative flex items-center">
-                        <PaintBucket className="absolute left-3 h-5 w-5 text-muted-foreground" />
+                        <PaintBucket className="absolute left-3 h-4 w-4 text-muted-foreground" />
                         <Input 
                             id="backgroundColor"
                             type="text" 
                             value={bgColorInput} 
                             onChange={(e) => setBgColorInput(e.target.value)}
                             onBlur={(e) => setBackgroundColor(e.target.value)}
-                            className="pl-10"
+                            className="pl-9 h-9"
                             placeholder="#FFFFFF"
                         />
                         <input 
@@ -569,21 +569,21 @@ export function DocumentForm({ document, setDocument, accentColor, setAccentColo
                                 setBackgroundColor(e.target.value);
                                 setDocument(prev => ({...prev, backgroundColor: e.target.value }));
                             }}
-                            className="absolute right-1 top-1/2 -translate-y-1/2 h-8 w-8 p-1 rounded-md cursor-pointer bg-transparent border-none appearance-none"
+                            className="absolute right-1 top-1/2 -translate-y-1/2 h-7 w-8 p-1 rounded-md cursor-pointer bg-transparent border-none appearance-none"
                         />
                     </div>
                 </div>
                  <div className="space-y-2">
                     <Label htmlFor="textColor">Text Color</Label>
                     <div className="relative flex items-center">
-                        <Paintbrush className="absolute left-3 h-5 w-5 text-muted-foreground" />
+                        <Paintbrush className="absolute left-3 h-4 w-4 text-muted-foreground" />
                         <Input 
                             id="textColor"
                             type="text" 
                             value={textColorInput} 
                             onChange={(e) => setTextColorInput(e.target.value)}
                             onBlur={(e) => setTextColor(e.target.value)}
-                            className="pl-10"
+                            className="pl-9 h-9"
                             placeholder="#374151"
                         />
                         <input 
@@ -593,14 +593,14 @@ export function DocumentForm({ document, setDocument, accentColor, setAccentColo
                                 setTextColor(e.target.value);
                                 setDocument(prev => ({...prev, textColor: e.target.value }));
                             }}
-                            className="absolute right-1 top-1/2 -translate-y-1/2 h-8 w-8 p-1 rounded-md cursor-pointer bg-transparent border-none appearance-none"
+                            className="absolute right-1 top-1/2 -translate-y-1/2 h-7 w-8 p-1 rounded-md cursor-pointer bg-transparent border-none appearance-none"
                         />
                     </div>
                 </div>
                  <div className="space-y-2">
                     <Label htmlFor="fontFamily">Font Family</Label>
                     <Select value={document.fontFamily} onValueChange={(value) => setDocument(p => ({...p, fontFamily: value}))}>
-                        <SelectTrigger id="fontFamily">
+                        <SelectTrigger id="fontFamily" className="h-9">
                             <SelectValue placeholder="Select font" />
                         </SelectTrigger>
                         <SelectContent>
@@ -611,7 +611,7 @@ export function DocumentForm({ document, setDocument, accentColor, setAccentColo
                 <div className="space-y-2">
                     <Label htmlFor="language">Language</Label>
                     <Select value={document.language} onValueChange={handleLanguageChange}>
-                        <SelectTrigger id="language">
+                        <SelectTrigger id="language" className="h-9">
                             <SelectValue placeholder="Select language" />
                         </SelectTrigger>
                         <SelectContent>
@@ -1324,6 +1324,7 @@ export function DocumentForm({ document, setDocument, accentColor, setAccentColo
     
 
     
+
 
 
 

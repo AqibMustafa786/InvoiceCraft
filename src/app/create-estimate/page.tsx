@@ -624,7 +624,7 @@ export default function CreateEstimatePage() {
       <div className="container mx-auto p-4 md:px-6 md:py-8">
         <div className="flex flex-col md:flex-row justify-between md:items-center gap-4 mb-8">
           <div>
-            <h1 className="text-2xl font-bold font-headline">Create Estimate</h1>
+            <h1 className="text-xl font-bold font-headline">Create Estimate</h1>
             <p className="text-sm text-muted-foreground">Fill out the form to generate your professional estimate.</p>
           </div>
           <div className="flex w-full md:w-auto items-center gap-2">
@@ -664,7 +664,7 @@ export default function CreateEstimatePage() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             <div className="lg:col-span-1 order-2 lg:order-1">
               <div className="space-y-6">
-                <h2 className="text-2xl font-bold font-headline mb-4 text-center lg:text-left">Fill in Details</h2>
+                <h2 className="text-xl font-bold font-headline mb-4 text-center lg:text-left">Fill in Details</h2>
                 <DocumentForm 
                   document={document} 
                   setDocument={setDocument} 
@@ -703,7 +703,7 @@ export default function CreateEstimatePage() {
                       </SheetContent>
                   </Sheet>
                   <div>
-                    <h2 className="text-2xl font-bold font-headline mb-4">Live Preview</h2>
+                    <h2 className="text-xl font-bold font-headline mb-4">Live Preview</h2>
                     <ClientDocumentPreview document={processedDocument} accentColor={accentColor} backgroundColor={backgroundColor} textColor={textColor} />
                   </div>
               </div>
