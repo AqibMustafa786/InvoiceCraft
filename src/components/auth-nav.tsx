@@ -125,9 +125,9 @@ export function AuthNav({ isMobile = false }: AuthNavProps) {
     return (
         <div className={`flex items-center gap-2 ${isMobile ? 'w-full flex-col' : ''}`}>
              <Button asChild variant={'ghost'} className={`px-4 ${isMobile ? 'w-full' : ''}`}>
-                <Link href="/login">Log in</Link>
+                <Link href="/login">Login</Link>
             </Button>
-            <Button asChild variant="secondary" className={`transition-transform hover:scale-105 ${isMobile ? 'w-full' : ''}`}>
+            <Button asChild className={`transition-transform hover:scale-105 ${isMobile ? 'w-full' : ''}`}>
                 <Link href="/signup">Get Started</Link>
             </Button>
         </div>

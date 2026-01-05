@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
-import { Menu, Search, ChevronDown, FileText, Gem, Home, Shield, FilePlus, Tag, Book, X as XIcon, Database } from 'lucide-react';
+import { Menu, Search, ChevronDown, FileText, Gem, Shield, FilePlus, Tag, Book, X as XIcon, DraftingCompass, FileQuestion } from 'lucide-react';
 import { ModeToggle } from '@/components/mode-toggle';
 import { cn } from '@/lib/utils';
 import { motion } from 'framer-motion';
@@ -25,8 +25,13 @@ const mainNavLinks = [
     { href: "/features", label: "Features", icon: <Gem /> },
     { href: "/pricing", label: "Pricing", icon: <Tag /> },
     { href: "/templates", label: "Templates", icon: <Book /> },
-    { href: "/#", label: "Resources", icon: <Book /> },
-    { href: "/#", label: "Docs", icon: <FileText /> },
+]
+
+const toolsNavLinks = [
+    { href: "/create-invoice", label: "Invoice", icon: <FileText className="h-4 w-4" /> },
+    { href: "/create-estimate", label: "Estimate", icon: <DraftingCompass className="h-4 w-4" /> },
+    { href: "/create-quote", label: "Quote", icon: <FileQuestion className="h-4 w-4" /> },
+    { href: "/create-insurance", label: "Insurance", icon: <Shield className="h-4 w-4" /> },
 ]
 
 function NavLink({ href, label, isActive }: { href: string, label: string, isActive: boolean }) {
@@ -35,7 +40,7 @@ function NavLink({ href, label, isActive }: { href: string, label: string, isAct
             href={href}
             className={cn(
                 "relative block px-3 py-2 transition text-sm font-medium",
-                isActive ? "text-primary-foreground" : "text-muted-foreground hover:text-primary-foreground"
+                isActive ? "text-foreground" : "text-muted-foreground hover:text-foreground"
             )}
         >
             {label}
@@ -72,6 +77,28 @@ export function Header() {
 
     return (
         <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur-sm">
+            <CommandDialog open={open} onOpenChange={setOpen}>
+              <DialogTitle className="sr-only">Search</DialogTitle>
+              <CommandInput placeholder="Type a command or search..." />
+              <CommandList>
+                <CommandEmpty>No results found.</CommandEmpty>
+                <CommandGroup heading="Suggestions">
+                  <CommandItem onSelect={() => runCommand(() => router.push('/create-invoice'))}>
+                    <FileText className="mr-2 h-4 w-4" />
+                    <span>Create Invoice</span>
+                  </CommandItem>
+                  <CommandItem onSelect={() => runCommand(() => router.push('/create-estimate'))}>
+                    <FilePlus className="mr-2 h-4 w-4" />
+                    <span>Create Estimate</span>
+                  </CommandItem>
+                   <CommandItem onSelect={() => runCommand(() => router.push('/dashboard'))}>
+                    <LayoutDashboard className="mr-2 h-4 w-4" />
+                    <span>Go to Dashboard</span>
+                  </CommandItem>
+                </CommandGroup>
+              </CommandList>
+            </CommandDialog>
+
             <div className="container flex h-16 items-center">
                 {/* Mobile: Hamburger Menu */}
                  <div className="md:hidden">
@@ -85,25 +112,24 @@ export function Header() {
                         <SheetContent side="left" className="flex w-full flex-col p-0 sm:max-w-xs">
                             <SheetHeader className="p-6 pb-4">
                                 <SheetTitle>
-                                     <Link href="/" className="flex items-center gap-2" onClick={() => setIsSheetOpen(false)}>
-                                        <Database className="h-6 w-6" />
-                                        <span className="text-xl font-bold">evervault</span>
+                                     <Link href="/" className="flex items-center gap-2 text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent" onClick={() => setIsSheetOpen(false)}>
+                                        InvoiceCraft
                                     </Link>
                                 </SheetTitle>
                             </SheetHeader>
                             <ScrollArea className="flex-grow my-2 px-6">
                                 <nav className="grid gap-2 text-lg font-medium">
-                                    {[...mainNavLinks].map(link => (
+                                    {[...mainNavLinks, ...toolsNavLinks].map(link => (
                                         <Link
                                             key={link.href}
                                             href={link.href}
                                             className={cn(
-                                                "block py-2 transition-colors",
+                                                "flex items-center gap-3 py-2 transition-colors",
                                                 pathname === link.href ? "text-primary font-semibold" : "text-muted-foreground hover:text-primary"
                                             )}
                                             onClick={() => setIsSheetOpen(false)}
                                         >
-                                            {link.label}
+                                            {link.icon} {link.label}
                                         </Link>
                                     ))}
                                 </nav>
@@ -114,30 +140,45 @@ export function Header() {
                         </SheetContent>
                     </Sheet>
                 </div>
-                {/* Mobile: Centered Logo */}
-                <div className="flex md:hidden flex-1 justify-center">
-                    <Link href="/" className="flex items-center gap-2">
-                        <Database className="h-6 w-6" />
-                        <span className="text-xl font-bold">evervault</span>
-                    </Link>
-                </div>
+
                 {/* Desktop: Logo */}
-                <div className="mr-auto hidden md:flex">
-                     <Link href="/" className="flex items-center gap-2">
-                        <Database className="h-6 w-6" />
-                        <span className="text-xl font-bold">evervault</span>
+                <div className="mr-6 hidden md:flex">
+                     <Link href="/" className="flex items-center gap-2 text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent">
+                        InvoiceCraft
                     </Link>
                 </div>
 
 
-                {/* Desktop: Centered Navigation */}
-                <nav className="hidden md:flex absolute left-1/2 -translate-x-1/2 items-center justify-center rounded-full border bg-zinc-800/30 px-2 py-1 backdrop-blur-sm">
+                {/* Desktop: Main Navigation */}
+                <nav className="hidden md:flex items-center gap-6 text-sm">
                     {mainNavLinks.map(link => (
                         <NavLink key={link.href} href={link.href} label={link.label} isActive={pathname === link.href} />
                     ))}
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" className="flex items-center gap-1 px-3 py-2 text-sm font-medium text-muted-foreground hover:text-foreground">
+                                Tools <ChevronDown className="h-4 w-4" />
+                            </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent>
+                            {toolsNavLinks.map(link => (
+                                <DropdownMenuItem key={link.href} asChild>
+                                    <Link href={link.href} className="flex items-center gap-2">
+                                        {link.icon}
+                                        {link.label}
+                                    </Link>
+                                </DropdownMenuItem>
+                            ))}
+                        </DropdownMenuContent>
+                    </DropdownMenu>
                 </nav>
 
-                <div className="flex flex-1 md:flex-initial items-center justify-end gap-4">
+                <div className="flex flex-1 items-center justify-end gap-2">
+                     <Button variant="ghost" size="icon" onClick={() => setOpen(true)}>
+                        <Search className="h-4 w-4" />
+                        <span className="sr-only">Search</span>
+                    </Button>
+                    <ModeToggle />
                     <div className="hidden md:block">
                         <AuthNav />
                     </div>
