@@ -1,3 +1,5 @@
+
+'use server';
 /**
  * @fileoverview A flow that sends a document (quote or estimate) to a client via email.
  */
@@ -19,9 +21,25 @@ export const SendDocumentSchema = z.object({
 
 async function findDocument(docId: string, docType: 'quote' | 'estimate'): Promise<Quote | Estimate | null> {
     const { firestore } = getFirebase();
-    const collectionGroupRef = collection(firestore, docType === 'quote' ? 'quotes' : 'estimates');
-    const q = query(collectionGroupRef, where('id', '==', docId));
+    const collectionName = docType === 'quote' ? 'quotes' : 'estimates';
+    
+    // Firestore collection group queries are powerful but can be less performant.
+    // For this app's structure, we query within each company. A real-world, large-scale
+    // app might have a separate root collection for public-facing documents.
+    const companiesRef = collection(firestore, 'companies');
+    const companiesSnapshot = await getDocs(companiesRef);
 
+    for (const companyDoc of companiesSnapshot.docs) {
+        const docRef = doc(firestore, 'companies', companyDoc.id, collectionName, docId);
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+             return { id: docSnap.id, ...docSnap.data() } as Quote | Estimate;
+        }
+    }
+    
+    // Fallback to collectionGroup query if not found, though less efficient
+    const collectionGroupRef = collection(firestore, collectionName);
+    const q = query(collectionGroupRef, where('id', '==', docId));
     const querySnapshot = await getDocs(q);
 
     if (!querySnapshot.empty) {
@@ -81,3 +99,8 @@ export const sendDocumentFlow = defineFlow(
     }
   }
 );
+
+
+export async function sendDocumentByEmail(input: z.infer<typeof SendDocumentSchema>) {
+    return await sendDocumentFlow(input);
+}
