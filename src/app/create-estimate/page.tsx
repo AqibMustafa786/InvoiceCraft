@@ -624,7 +624,7 @@ export default function CreateEstimatePage() {
       <div className="container mx-auto p-4 md:px-6 md:py-8">
         <div className="flex flex-col md:flex-row justify-between md:items-center gap-4 mb-8">
           <div>
-            <h1 className="text-xl font-bold font-headline">Create Estimate</h1>
+            <h1 className="text-2xl font-bold font-headline">Create Estimate</h1>
             <p className="text-sm text-muted-foreground">Fill out the form to generate your professional estimate.</p>
           </div>
           <div className="flex w-full md:w-auto items-center gap-2">
@@ -636,7 +636,7 @@ export default function CreateEstimatePage() {
             </Button>
             <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                    <Button variant="outline" size="icon" className="shrink-0 h-9 w-9">
+                    <Button variant="outline" size="sm" className="shrink-0 h-9 w-9 px-0">
                         <MoreVertical className="h-4 w-4" />
                     </Button>
                 </DropdownMenuTrigger>
@@ -714,3 +714,4 @@ export default function CreateEstimatePage() {
     </>
   );
 }
+
