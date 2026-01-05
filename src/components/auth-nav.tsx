@@ -123,7 +123,7 @@ export function AuthNav({ isMobile = false }: AuthNavProps) {
     
     // --- Logged-out user view ---
     return (
-        <div className={`flex items-center gap-2 ${isMobile ? 'w-full flex-col' : 'hidden md:flex'}`}>
+        <div className={`flex items-center gap-2 ${isMobile ? 'w-full flex-col' : ''}`}>
              <Button asChild variant={'ghost'} className={`px-4 ${isMobile ? 'w-full' : ''}`}>
                 <Link href="/login">Log in</Link>
             </Button>
