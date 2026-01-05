@@ -6,15 +6,13 @@ import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 import {
-  FileText, FilePlus, Shield, HardHat, Code, Store, Car, Camera, Building, Scale, HeartPulse,
-  LayoutDashboard, Edit, Bot, Share2, Palette, ArrowRight, XCircle, Clock, AlertCircle, CheckCircle, Search, FileClock
+  FileText, FilePlus, Shield,
+  LayoutDashboard, Edit, Bot, Brush, Cloud, Share2, Palette, ArrowRight, XCircle, Clock, AlertCircle, CheckCircle, Search, FileClock, Mouse
 } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { useTheme } from 'next-themes';
 import dynamic from 'next/dynamic';
 import { Badge } from '@/components/ui/badge';
-import { Carousel, CarouselContent, CarouselItem } from '@/components/ui/carousel';
-import Autoplay from "embla-carousel-autoplay";
 
 const AIChatbot = dynamic(() => import('@/components/ai-chatbot').then(mod => mod.AIChatbot), { ssr: false });
 
@@ -82,65 +80,6 @@ const solutions = [
   { text: "Deep customization for professional branding", icon: <CheckCircle className="h-5 w-5 text-primary" /> },
   { text: "A full, versioned audit trail for every document", icon: <FileClock className="h-5 w-5 text-primary" /> },
   { text: "Clear, itemized billing for faster payments", icon: <CheckCircle className="h-5 w-5 text-primary" /> },
-];
-
-const featuredTemplates = [
-  {
-    name: "Construction",
-    count: 6,
-    imageUrl: "https://picsum.photos/seed/construction-template/600/800",
-    imageHint: "construction site",
-    icon: <HardHat />,
-  },
-  {
-    name: "IT & Freelance",
-    count: 5,
-    imageUrl: "https://picsum.photos/seed/freelance-desk/600/800",
-    imageHint: "creative desk",
-    icon: <Code />,
-  },
-  {
-    name: "Retail",
-    count: 3,
-    imageUrl: "https://picsum.photos/seed/retail-store/600/800",
-    imageHint: "retail store",
-    icon: <Store />,
-  },
-  {
-    name: "Auto Repair",
-    count: 6,
-    imageUrl: "https://picsum.photos/seed/auto-repair/600/800",
-    imageHint: "car engine",
-    icon: <Car />,
-  },
-  {
-    name: "Photography",
-    count: 5,
-    imageUrl: "https://picsum.photos/seed/photography-gear/600/800",
-    imageHint: "camera gear",
-    icon: <Camera />,
-  },
-  {
-    name: "Real Estate",
-    count: 5,
-    imageUrl: "https://picsum.photos/seed/modern-house/600/800",
-    imageHint: "modern house",
-    icon: <Building />,
-  },
-  {
-    name: "Legal Services",
-    count: 5,
-    imageUrl: "https://picsum.photos/seed/law-books/600/800",
-    imageHint: "law books",
-    icon: <Scale />,
-  },
-  {
-    name: "Medical",
-    count: 5,
-    imageUrl: "https://picsum.photos/seed/medical-tools/600/800",
-    imageHint: "medical tools",
-    icon: <HeartPulse />,
-  }
 ];
 
 
@@ -361,50 +300,74 @@ export default function HomePage() {
             </div>
         </section>
 
-        <section className="py-20 md:py-28 bg-gray-900 text-white">
-          <div className="container px-4 mx-auto md:px-6">
-            <motion.div
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, amount: 0.2 }}
-              variants={containerVariants}
-              className="text-center max-w-2xl mx-auto mb-12"
-            >
-              <motion.h2 variants={itemVariants} className="text-4xl md:text-5xl font-bold font-headline">Explore Our Modern Templates</motion.h2>
-              <motion.p variants={itemVariants} className="mt-4 text-gray-400">Professionally designed templates for any industry. Customizable to fit your brand.</motion.p>
-            </motion.div>
-            
-            <motion.div 
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, amount: 0.2 }}
-              variants={containerVariants}
-              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"
-            >
-              {[1, 2, 3, 4].map((i) => (
-                <motion.div
-                  key={i}
-                  variants={itemVariants}
-                  whileHover={{ y: -8, scale: 1.03 }}
-                  transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                  className="group"
-                >
-                  <div className="relative overflow-hidden rounded-xl shadow-lg aspect-[3/4]">
-                    <Image 
-                      src={`https://picsum.photos/seed/${i + 10}/600/800`}
-                      alt={`Template showcase ${i}`}
-                      fill
-                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-                      className="object-cover transition-transform duration-500 ease-in-out group-hover:scale-110"
-                      data-ai-hint="template design"
-                    />
-                    <div className="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition-colors"></div>
-                  </div>
-                </motion.div>
-              ))}
-            </motion.div>
+        <section className="relative overflow-hidden bg-background py-20 md:py-28 text-foreground">
+          <div className="absolute inset-0 z-0 opacity-5">
+              <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+                  <defs>
+                      <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+                          <path d="M 40 0 L 0 0 0 40" fill="none" stroke="hsl(var(--foreground))" strokeWidth="0.2"/>
+                      </pattern>
+                  </defs>
+                  <rect width="100%" height="100%" fill="url(#grid)" />
+              </svg>
+          </div>
+          <div className="absolute inset-0 bg-gradient-to-b from-background via-background/80 to-background z-10"></div>
+          
+          <div className="container relative z-20 px-4 mx-auto md:px-6">
+             <div className="grid lg:grid-cols-2 gap-12 items-center">
+                <div className="max-w-lg">
+                    <p className="text-sm font-bold tracking-wider uppercase text-primary">Discipline Will Take You Places</p>
+                    <h2 className="text-4xl md:text-5xl font-bold font-headline mt-2">Design Smarter, <br/>Not Harder.</h2>
+                    <p className="mt-4 text-muted-foreground">Stop wrestling with generic templates. InvoiceCraft gives you the power to create beautiful, branded documents that reflect the quality of your work. Impress clients and get paid faster.</p>
+                     <div className="mt-8 flex gap-4">
+                        <Button size="lg" asChild>
+                            <Link href="/templates">Browse Templates</Link>
+                        </Button>
+                         <Button size="lg" variant="outline">
+                            Learn More
+                        </Button>
+                    </div>
+                </div>
+                <div className="relative h-[400px] w-full">
+                     {/* Layered browser windows */}
+                     <motion.div 
+                        initial={{x: 20, y: 20, rotate: 5}} 
+                        whileInView={{x:0, y:0, rotate: 0}} 
+                        transition={{type: 'spring', stiffness: 100}} 
+                        className="absolute top-0 left-0 w-full h-full p-2 border bg-card/80 backdrop-blur-sm rounded-lg shadow-lg"
+                      >
+                         <div className="h-full w-full rounded bg-muted"></div>
+                     </motion.div>
+                      <motion.div 
+                        initial={{x: -20, y: -20, rotate: -5}} 
+                        whileInView={{x:0, y:0, rotate: 0}} 
+                        transition={{type: 'spring', stiffness: 100, delay: 0.1}} 
+                        className="absolute top-0 left-0 w-full h-full p-2 border bg-card/80 backdrop-blur-sm rounded-lg shadow-2xl"
+                      >
+                         <div className="h-full w-full rounded bg-muted-foreground/10"></div>
+                     </motion.div>
+                     <motion.div 
+                        initial={{scale: 0.9, opacity: 0}}
+                        whileInView={{scale: 1, opacity: 1}}
+                        transition={{delay: 0.2, duration: 0.5}}
+                        className="absolute top-0 left-0 w-full h-full p-2 border bg-card/90 backdrop-blur-md rounded-lg shadow-2xl"
+                      >
+                          <div className="flex items-center gap-1.5 p-2 border-b">
+                              <div className="w-3 h-3 rounded-full bg-red-500"></div>
+                              <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
+                              <div className="w-3 h-3 rounded-full bg-green-500"></div>
+                          </div>
+                          <div className="p-4">
+                              <div className="w-3/4 h-4 rounded-full bg-primary/20 mb-4"></div>
+                              <div className="w-1/2 h-3 rounded-full bg-muted-foreground/20 mb-2"></div>
+                              <div className="w-3/4 h-3 rounded-full bg-muted-foreground/20"></div>
+                          </div>
+                     </motion.div>
+                </div>
+             </div>
           </div>
         </section>
+
 
         <AIChatbot />
       </main>
