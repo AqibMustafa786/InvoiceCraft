@@ -99,7 +99,7 @@ export function Header() {
               </CommandList>
             </CommandDialog>
 
-            <div className="container flex h-16 items-center bg-background/70 backdrop-blur-md rounded-2xl border">
+            <div className="container flex h-16 items-center bg-background/70 backdrop-blur-md rounded-2xl">
                 {/* Mobile: Hamburger Menu */}
                  <div className="md:hidden">
                     <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
