@@ -8,7 +8,7 @@ export default function AuthLayout({
   children: React.ReactNode
 }) {
   return (
-    <div className="min-h-screen grid grid-cols-1 lg:grid-cols-2">
+    <div className="min-h-screen grid grid-cols-1 lg:grid-cols-[45vw_1fr]">
       <main className="flex items-center justify-center p-8 lg:p-12">
         <div className="w-full max-w-md">
            <Link href="/" className="text-3xl font-bold text-foreground mb-8 block">InvoiceCraft</Link>
