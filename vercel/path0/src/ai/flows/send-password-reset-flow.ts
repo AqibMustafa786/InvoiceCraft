@@ -1,0 +1,32 @@
+
+'use server';
+
+import '@/ai/genkit'; // Side-effect import to configure genkit
+import { ai } from '@/ai/genkit';
+import { z } from 'genkit';
+import { getAuth, sendPasswordResetEmail } from 'firebase/auth';
+import { getFirebase } from '@/firebase';
+
+export const sendPasswordResetEmailSchema = z.object({
+  email: z.string().email(),
+});
+
+export const sendPasswordResetEmailFlow = ai.defineFlow(
+  {
+    name: 'sendPasswordResetEmailFlow',
+    inputSchema: sendPasswordResetEmailSchema,
+    outputSchema: z.object({ success: z.boolean(), message: z.string() }),
+  },
+  async ({ email }) => {
+    try {
+      const { auth } = getFirebase();
+      await sendPasswordResetEmail(auth, email);
+      return { success: true, message: 'Password reset email sent successfully.' };
+    } catch (error: any) {
+      console.error('Error sending password reset email:', error);
+      // Don't reveal if the user exists or not for security reasons.
+      // Always return a generic success message.
+      return { success: true, message: 'If an account with that email exists, a reset link has been sent.' };
+    }
+  }
+);
