@@ -7,12 +7,13 @@ import { motion } from 'framer-motion';
 import Image from 'next/image';
 import {
   FileText, FilePlus, Shield,
-  LayoutDashboard, Edit, Bot, Brush, Cloud, Share2, Palette, ArrowRight, XCircle, Clock, AlertCircle, CheckCircle, Search, FileClock, Mouse
+  LayoutDashboard, Edit, Bot, Share2, Palette, ArrowRight, XCircle, Clock, AlertCircle, CheckCircle, Search, FileClock, Mouse
 } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { useTheme } from 'next-themes';
 import dynamic from 'next/dynamic';
 import { Badge } from '@/components/ui/badge';
+import { StackedCarousel } from '@/components/templates/stacked-carousel';
 
 const AIChatbot = dynamic(() => import('@/components/ai-chatbot').then(mod => mod.AIChatbot), { ssr: false });
 
@@ -214,33 +215,43 @@ export default function HomePage() {
             </div>
         </section>
         
-         <section className="py-20 md:py-28 text-foreground">
-             <div className="container px-4 mx-auto md:px-6">
-                <div className="text-center max-w-2xl mx-auto mb-12">
-                    <h2 className="text-4xl md:text-5xl font-bold font-headline">Features That Power Your Business</h2>
-                    <p className="mt-4 text-muted-foreground">InvoiceCraft is packed with powerful, intuitive features designed to save you time, make you look professional, and help you get paid faster.</p>
-                </div>
-                 <div 
-                    className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto"
-                  >
-                    {homePageFeatures.map((feature, index) => (
-                        <div key={index}>
-                             <motion.div whileHover={{ y: -8, scale: 1.02 }} transition={{ type: "spring", stiffness: 300 }} className="h-full">
-                                <div className="border bg-card/80 shadow-lg hover:shadow-primary/20 transition-all duration-300 h-full p-6 flex flex-col items-center text-center rounded-xl">
+        <section className="py-20 md:py-28 text-foreground">
+             <div className="container mx-auto px-4 md:px-6">
+                <div className="grid lg:grid-cols-2 gap-12 items-center">
+                    <motion.div
+                        className="max-w-md"
+                        initial={{ opacity: 0, x: -20 }}
+                        whileInView={{ opacity: 1, x: 0 }}
+                        transition={{ duration: 0.5, ease: 'easeOut' }}
+                        viewport={{ once: true, amount: 0.3 }}
+                    >
+                        <h2 className="text-4xl md:text-5xl font-bold font-headline">Features That Power Your Business</h2>
+                        <p className="mt-4 text-muted-foreground">
+                            InvoiceCraft is packed with powerful, intuitive features designed to save you time, make you look professional, and help you get paid faster.
+                        </p>
+                        <Button asChild size="lg" className="mt-8">
+                            <Link href="/features">
+                                Explore All Features <ArrowRight className="ml-2 h-5 w-5" />
+                            </Link>
+                        </Button>
+                    </motion.div>
+                    <motion.div 
+                        className="grid grid-cols-1 sm:grid-cols-2 gap-6"
+                        variants={containerVariants}
+                        initial="hidden"
+                        whileInView="visible"
+                        viewport={{ once: true, amount: 0.2 }}
+                    >
+                        {homePageFeatures.map((feature, index) => (
+                            <motion.div key={index} variants={itemVariants}>
+                                <div className="border bg-card/80 backdrop-blur-sm shadow-lg hover:shadow-primary/20 transition-all duration-300 h-full p-6 flex flex-col rounded-xl">
                                     {React.cloneElement(feature.icon, { className: "h-8 w-8 text-primary" })}
                                     <h3 className="text-xl font-semibold mt-4 mb-2">{feature.name}</h3>
                                     <p className="text-muted-foreground text-sm flex-1">{feature.description}</p>
                                 </div>
                             </motion.div>
-                        </div>
-                    ))}
-                </div>
-                <div className="text-center mt-12">
-                    <Button asChild size="lg">
-                        <Link href="/features">
-                            Explore More Features <ArrowRight className="ml-2 h-5 w-5" />
-                        </Link>
-                    </Button>
+                        ))}
+                    </motion.div>
                 </div>
             </div>
         </section>
@@ -368,6 +379,7 @@ export default function HomePage() {
           </div>
         </section>
 
+        <StackedCarousel />
 
         <AIChatbot />
       </main>
