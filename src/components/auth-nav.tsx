@@ -42,7 +42,7 @@ export function AuthNav({ isMobile = false }: AuthNavProps) {
 
     if (!isClient) {
         // Return a placeholder to prevent layout shift during server render
-        return <div className="h-10 w-24" />; 
+        return <div className="h-10 w-40" />; 
     }
 
     if (user) {
@@ -121,10 +121,10 @@ export function AuthNav({ isMobile = false }: AuthNavProps) {
     // --- Logged-out user view ---
     return (
         <div className={`flex items-center gap-2 ${isMobile ? 'w-full flex-col' : 'hidden md:flex'}`}>
-             <Button asChild variant={isMobile ? 'outline' : 'ghost'} className={isMobile ? 'w-full' : ''}>
-                <Link href="/login">Login</Link>
+             <Button asChild variant={'ghost'} className={isMobile ? 'w-full' : ''}>
+                <Link href="/login">Log in</Link>
             </Button>
-            <Button asChild className={`transition-transform hover:scale-105 ${isMobile ? 'w-full' : ''}`}>
+            <Button asChild variant="secondary" className={`transition-transform hover:scale-105 ${isMobile ? 'w-full' : ''}`}>
                 <Link href="/signup">Get Started</Link>
             </Button>
         </div>
