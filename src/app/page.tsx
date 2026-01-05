@@ -15,7 +15,7 @@ import { useTheme } from 'next-themes';
 import dynamic from 'next/dynamic';
 import { Badge } from '@/components/ui/badge';
 import { Carousel, CarouselContent, CarouselItem } from '@/components/ui/carousel';
-import Autoplay from 'embla-carousel-autoplay';
+import Autoplay from "embla-carousel-autoplay";
 
 const AIChatbot = dynamic(() => import('@/components/ai-chatbot').then(mod => mod.AIChatbot), { ssr: false });
 
@@ -409,5 +409,3 @@ export default function HomePage() {
     </div>
   );
 }
-
-    
