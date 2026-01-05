@@ -1,10 +1,8 @@
-
-'use server';
 /**
  * @fileoverview A flow that sends a document (quote or estimate) to a client via email.
  */
 import '@/ai/genkit'; // Side-effect import to configure genkit
-import { ai } from '@/ai/genkit';
+import { defineFlow } from '@genkit-ai/flow';
 import { z } from 'zod';
 import { getFirebase } from '@/firebase';
 import { doc, getDoc, collection, query, where, getDocs } from 'firebase/firestore';
@@ -34,7 +32,7 @@ async function findDocument(docId: string, docType: 'quote' | 'estimate'): Promi
     return null;
 }
 
-export const sendDocumentFlow = ai.defineFlow(
+export const sendDocumentFlow = defineFlow(
   {
     name: 'sendDocumentFlow',
     inputSchema: SendDocumentSchema,
@@ -83,8 +81,3 @@ export const sendDocumentFlow = ai.defineFlow(
     }
   }
 );
-
-
-export async function sendDocumentByEmail(input: z.infer<typeof SendDocumentSchema>) {
-    return await sendDocumentFlow(input);
-}
