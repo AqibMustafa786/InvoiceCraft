@@ -9,7 +9,6 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/co
 import { Menu, Search, ChevronDown, FileText, Gem, Shield, FilePlus, Tag, Book, X as XIcon, DraftingCompass, FileQuestion, LayoutDashboard } from 'lucide-react';
 import { ModeToggle } from '@/components/mode-toggle';
 import { cn } from '@/lib/utils';
-import { motion } from 'framer-motion';
 import { AuthNav } from './auth-nav'; 
 import { CommandDialog, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from './ui/command';
 import { DialogTitle } from './ui/dialog';
@@ -34,13 +33,16 @@ const toolsNavLinks = [
     { href: "/create-insurance", label: "Insurance", icon: <Shield className="h-4 w-4" /> },
 ]
 
-function NavLink({ href, label, isActive }: { href: string, label: string, isActive: boolean }) {
+function NavLink({ href, label }: { href: string, label: string }) {
+    const pathname = usePathname();
+    const isActive = pathname === href;
+
     return (
         <Link
             href={href}
             className={cn(
-                "relative block px-3 py-2 transition text-sm font-medium",
-                isActive ? "text-primary-foreground" : "text-muted-foreground hover:text-primary-foreground"
+                "px-3 py-2 transition-colors text-sm font-medium",
+                isActive ? "text-primary" : "text-muted-foreground hover:text-foreground"
             )}
         >
             {label}
@@ -76,7 +78,7 @@ export function Header() {
     }
 
     return (
-        <header className="sticky top-4 z-50 w-full">
+        <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/90 backdrop-blur-sm">
             <CommandDialog open={open} onOpenChange={setOpen}>
               <DialogTitle className="sr-only">Search</DialogTitle>
               <CommandInput placeholder="Type a command or search..." />
@@ -99,7 +101,7 @@ export function Header() {
               </CommandList>
             </CommandDialog>
 
-            <div className="container flex h-16 items-center bg-background/70 backdrop-blur-md rounded-2xl">
+            <div className="container flex h-16 items-center">
                 {/* Mobile: Hamburger Menu */}
                  <div className="md:hidden">
                     <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
@@ -112,8 +114,9 @@ export function Header() {
                         <SheetContent side="left" className="flex w-full flex-col p-0 sm:max-w-xs">
                             <SheetHeader className="p-6 pb-4">
                                 <SheetTitle>
-                                     <Link href="/" className="flex items-center gap-2 text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent" onClick={() => setIsSheetOpen(false)}>
-                                        InvoiceCraft
+                                     <Link href="/" className="flex items-center gap-2 text-2xl font-bold text-primary" onClick={() => setIsSheetOpen(false)}>
+                                        <FileText className="h-6 w-6" />
+                                        Invoice<span className="font-light">Craft</span>
                                     </Link>
                                 </SheetTitle>
                             </SheetHeader>
@@ -129,7 +132,7 @@ export function Header() {
                                             )}
                                             onClick={() => setIsSheetOpen(false)}
                                         >
-                                            {link.icon} {link.label}
+                                            {React.cloneElement(link.icon, { className: "h-5 w-5" })} {link.label}
                                         </Link>
                                     ))}
                                 </nav>
@@ -141,46 +144,37 @@ export function Header() {
                     </Sheet>
                 </div>
 
-                {/* Mobile: Centered Logo */}
-                <div className="flex md:hidden flex-1 justify-center">
-                    <Link href="/" className="flex items-center gap-2 text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent">
-                        <FileText className="h-6 w-6 text-primary" />
-                        InvoiceCraft
+                {/* Desktop: Logo and Main Nav */}
+                <div className="mr-auto hidden md:flex items-center gap-6">
+                     <Link href="/" className="flex items-center gap-2 text-xl font-bold text-primary">
+                        <FileText className="h-6 w-6" />
+                        Invoice<span className="font-light">Craft</span>
                     </Link>
+                     <nav className="flex items-center gap-2">
+                         {mainNavLinks.map(link => (
+                            <NavLink key={link.href} href={link.href} label={link.label} />
+                        ))}
+                         <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                                <Button variant="ghost" className="flex items-center gap-1 px-3 py-2 text-sm font-medium text-muted-foreground hover:text-foreground">
+                                    Tools <ChevronDown className="h-4 w-4" />
+                                </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent>
+                                {toolsNavLinks.map(link => (
+                                    <DropdownMenuItem key={link.href} asChild>
+                                        <Link href={link.href} className="flex items-center gap-2">
+                                            {link.icon}
+                                            {link.label}
+                                        </Link>
+                                    </DropdownMenuItem>
+                                ))}
+                            </DropdownMenuContent>
+                        </DropdownMenu>
+                    </nav>
                 </div>
 
-                {/* Desktop: Logo */}
-                <div className="mr-auto hidden md:flex">
-                     <Link href="/" className="flex items-center gap-2 text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent">
-                        <FileText className="h-6 w-6 text-primary" />
-                        InvoiceCraft
-                    </Link>
-                </div>
-
-                {/* Desktop: Centered Navigation */}
-                <nav className="hidden md:flex absolute left-1/2 -translate-x-1/2 items-center justify-center rounded-full border bg-zinc-100/30 dark:bg-zinc-800/30 px-2 py-1 backdrop-blur-sm">
-                     {mainNavLinks.map(link => (
-                        <NavLink key={link.href} href={link.href} label={link.label} isActive={pathname === link.href} />
-                    ))}
-                     <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" className="flex items-center gap-1 px-3 py-2 text-sm font-medium text-muted-foreground hover:text-foreground">
-                                Tools <ChevronDown className="h-4 w-4" />
-                            </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent>
-                            {toolsNavLinks.map(link => (
-                                <DropdownMenuItem key={link.href} asChild>
-                                    <Link href={link.href} className="flex items-center gap-2">
-                                        {link.icon}
-                                        {link.label}
-                                    </Link>
-                                </DropdownMenuItem>
-                            ))}
-                        </DropdownMenuContent>
-                    </DropdownMenu>
-                </nav>
-
+                {/* Right side controls */}
                 <div className="flex flex-1 md:flex-initial items-center justify-end gap-2">
                      <Button variant="ghost" size="icon" onClick={() => setOpen(true)} className="hidden md:inline-flex">
                         <Search className="h-4 w-4" />

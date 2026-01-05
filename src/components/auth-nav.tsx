@@ -72,16 +72,16 @@ export function AuthNav({ isMobile = false }: AuthNavProps) {
         // --- DESKTOP-SPECIFIC VIEW ---
         return (
              <div className="flex items-center gap-2">
-                <Button asChild variant={'secondary'}>
+                <Button asChild variant={'secondary'} size="sm">
                     <Link href="/dashboard">Dashboard</Link>
                 </Button>
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" className="relative h-10 w-10 rounded-full">
-                            <Avatar className="h-10 w-10">
+                        <Button variant="ghost" className="relative h-9 w-9 rounded-full">
+                            <Avatar className="h-9 w-9">
                                 <AvatarImage src={user.photoURL || undefined} alt={user.displayName || user.email || 'User'} />
                                 <AvatarFallback>
-                                    <UserIcon className="h-6 w-6" />
+                                    <UserIcon className="h-5 w-5" />
                                 </AvatarFallback>
                             </Avatar>
                         </Button>
