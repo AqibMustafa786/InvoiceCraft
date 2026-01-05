@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
-import { Menu, Search, ChevronDown, FileText, Gem, Shield, FilePlus, Tag, Book, X as XIcon, DraftingCompass, FileQuestion } from 'lucide-react';
+import { Menu, Search, ChevronDown, FileText, Gem, Shield, FilePlus, Tag, Book, X as XIcon, DraftingCompass, FileQuestion, LayoutDashboard } from 'lucide-react';
 import { ModeToggle } from '@/components/mode-toggle';
 import { cn } from '@/lib/utils';
 import { motion } from 'framer-motion';
