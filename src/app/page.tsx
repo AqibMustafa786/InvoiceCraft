@@ -6,9 +6,8 @@ import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 import {
-  FileText, FilePlus, Shield,
-  LayoutDashboard, Edit, Bot, Share2, Palette, ArrowRight, XCircle, Clock, AlertCircle, CheckCircle, Search, FileClock,
-  HardHat, Code, Store, Car, Camera, Building, Scale, HeartPulse
+  FileText, FilePlus, Shield, HardHat, Code, Store, Car, Camera, Building, Scale, HeartPulse,
+  LayoutDashboard, Edit, Bot, Share2, Palette, ArrowRight, XCircle, Clock, AlertCircle, CheckCircle, Search, FileClock
 } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { useTheme } from 'next-themes';
@@ -154,6 +153,24 @@ export default function HomePage() {
   }, []);
 
   const heroImageSrc = '/home/invocie.png';
+  
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+      },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+    },
+  };
 
   return (
     <div className="flex flex-col min-h-dvh">
@@ -344,62 +361,47 @@ export default function HomePage() {
             </div>
         </section>
 
-        <section className="py-20 md:py-28">
+        <section className="py-20 md:py-28 bg-gray-900 text-white">
           <div className="container px-4 mx-auto md:px-6">
-            <div className="text-center max-w-2xl mx-auto mb-12">
-              <h2 className="text-4xl md:text-5xl font-bold font-headline">Explore Our Modern Templates</h2>
-              <p className="mt-4 text-muted-foreground">Professionally designed templates for any industry. Customizable to fit your brand.</p>
-            </div>
-             <motion.div 
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
+            <motion.div
+              initial="hidden"
+              whileInView="visible"
               viewport={{ once: true, amount: 0.2 }}
-              transition={{ duration: 0.5 }}
+              variants={containerVariants}
+              className="text-center max-w-2xl mx-auto mb-12"
             >
-              <Carousel
-                  opts={{
-                    align: "start",
-                    loop: true,
-                    slidesToScroll: 1,
-                  }}
-                  plugins={[
-                    Autoplay({
-                      delay: 3000,
-                      stopOnInteraction: true,
-                    }),
-                  ]}
-                  className="w-full"
+              <motion.h2 variants={itemVariants} className="text-4xl md:text-5xl font-bold font-headline">Explore Our Modern Templates</motion.h2>
+              <motion.p variants={itemVariants} className="mt-4 text-gray-400">Professionally designed templates for any industry. Customizable to fit your brand.</motion.p>
+            </motion.div>
+            
+            <motion.div 
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, amount: 0.2 }}
+              variants={containerVariants}
+              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"
+            >
+              {[1, 2, 3, 4].map((i) => (
+                <motion.div
+                  key={i}
+                  variants={itemVariants}
+                  whileHover={{ y: -8, scale: 1.03 }}
+                  transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                  className="group"
                 >
-                <CarouselContent>
-                  {featuredTemplates.map((template, index) => (
-                    <CarouselItem key={index} className="sm:basis-1/2 md:basis-1/3 lg:basis-1/4">
-                       <motion.div
-                          className="relative overflow-hidden rounded-xl shadow-lg group h-96"
-                          whileHover={{ y: -8 }}
-                        >
-                          <Image 
-                            src={template.imageUrl}
-                            alt={`${template.name} template`}
-                            fill
-                            sizes="(max-width: 768px) 100vw, 740px"
-                            className="w-full h-full object-cover transition-transform duration-500 ease-in-out group-hover:scale-110"
-                            data-ai-hint={template.imageHint}
-                          />
-                          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"></div>
-                          <motion.div 
-                            className="absolute bottom-0 left-0 p-6 text-white"
-                          >
-                            <div className="flex items-center gap-3 mb-2 opacity-80">
-                              {React.cloneElement(template.icon, { className: "h-5 w-5" })}
-                              <span className="text-sm font-medium tracking-wider uppercase">{template.count} Templates</span>
-                            </div>
-                            <h3 className="text-3xl font-bold font-headline">{template.name}</h3>
-                          </motion.div>
-                        </motion.div>
-                    </CarouselItem>
-                  ))}
-                </CarouselContent>
-              </Carousel>
+                  <div className="relative overflow-hidden rounded-xl shadow-lg aspect-[3/4]">
+                    <Image 
+                      src={`https://picsum.photos/seed/${i + 10}/600/800`}
+                      alt={`Template showcase ${i}`}
+                      fill
+                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+                      className="object-cover transition-transform duration-500 ease-in-out group-hover:scale-110"
+                      data-ai-hint="template design"
+                    />
+                    <div className="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition-colors"></div>
+                  </div>
+                </motion.div>
+              ))}
             </motion.div>
           </div>
         </section>
