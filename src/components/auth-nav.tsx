@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { User as UserIcon, LogOut, LayoutDashboard, CreditCard } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 interface AuthNavProps {
     isMobile?: boolean;
@@ -72,10 +73,7 @@ export function AuthNav({ isMobile = false }: AuthNavProps) {
         // --- DESKTOP-SPECIFIC VIEW ---
         return (
              <div className="flex items-center gap-2">
-                <Button asChild variant={'secondary'} size="sm">
-                    <Link href="/dashboard">Dashboard</Link>
-                </Button>
-                <DropdownMenu>
+                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                         <Button variant="ghost" className="relative h-9 w-9 rounded-full">
                             <Avatar className="h-9 w-9">
@@ -123,11 +121,11 @@ export function AuthNav({ isMobile = false }: AuthNavProps) {
     
     // --- Logged-out user view ---
     return (
-        <div className={`flex items-center gap-2 ${isMobile ? 'w-full flex-col' : ''}`}>
-             <Button asChild variant={'ghost'} className={`px-4 ${isMobile ? 'w-full' : ''}`}>
-                <Link href="/login">Login</Link>
+        <div className={cn("flex items-center gap-1", isMobile ? "w-full flex-col gap-2" : "")}>
+             <Button asChild variant="ghost" size="sm" className={cn(isMobile ? "w-full" : "text-muted-foreground hover:text-primary-foreground")}>
+                <Link href="/login">Log In</Link>
             </Button>
-            <Button asChild className={`transition-transform hover:scale-105 ${isMobile ? 'w-full' : ''}`}>
+            <Button asChild size="sm" variant="secondary" className={cn("bg-primary text-primary-foreground", isMobile ? "w-full" : "")}>
                 <Link href="/signup">Get Started</Link>
             </Button>
         </div>

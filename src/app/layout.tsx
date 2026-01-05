@@ -44,7 +44,7 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body
         className={cn(
-          'min-h-screen bg-background font-body antialiased',
+          'min-h-screen font-body antialiased',
           inter.variable,
           poppins.variable,
           roboto.variable
@@ -59,7 +59,7 @@ export default function RootLayout({
                 disableTransitionOnChange
               >
               <SplashScreenProvider>
-                <div className="app-main-container relative flex min-h-dvh flex-col">
+                <div className="app-main-container relative flex min-h-dvh flex-col bg-background">
                   <Header />
                   <main className="flex-1">
                       {children}
