@@ -17,7 +17,7 @@ import { doc, serverTimestamp, Timestamp } from 'firebase/firestore';
 import { setDocumentNonBlocking } from '@/firebase/non-blocking-updates';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useDoc } from '@/firebase/firestore/use-doc';
-import { sendDocumentByEmail } from '@/ai/flows/send-document-flow';
+import { sendDocumentByEmail } from '@/app/actions';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -290,20 +290,20 @@ export default function CreateQuotePage() {
       <div className="container mx-auto p-4 md:px-6 md:py-8">
         <div className="flex flex-col md:flex-row justify-between md:items-center gap-4 mb-8">
           <div>
-            <h1 className="text-3xl font-bold font-headline">Create Quote</h1>
-            <p className="text-muted-foreground">Fill out the form to generate your professional quote.</p>
+            <h1 className="text-2xl font-bold font-headline">Create Quote</h1>
+            <p className="text-sm text-muted-foreground">Fill out the form to generate your professional quote.</p>
           </div>
           {/* Actions Buttons */}
           <div className="flex w-full md:w-auto items-center gap-2">
-            <Button onClick={handleSaveDraft} className="w-full md:w-auto">
+            <Button size="sm" onClick={handleSaveDraft} className="w-full md:w-auto">
                 <Edit className="mr-2 h-4 w-4" /> Save Draft
             </Button>
-            <Button onClick={handlePrint} variant="outline" className="w-full md:w-auto">
+            <Button size="sm" onClick={handlePrint} variant="outline" className="w-full md:w-auto">
                 <Printer className="mr-2 h-4 w-4" /> Save as PDF
             </Button>
             <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                    <Button variant="outline" size="icon" className="shrink-0">
+                    <Button variant="outline" size="icon" className="shrink-0 h-9 w-9">
                         <MoreVertical className="h-4 w-4" />
                     </Button>
                 </DropdownMenuTrigger>
@@ -328,9 +328,9 @@ export default function CreateQuotePage() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
-          <div className="lg:col-span-3">
-            <div className="space-y-12">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <div className="lg:col-span-1">
+            <div className="space-y-6">
               <div>
                 <h2 className="text-2xl font-bold font-headline mb-4 text-center lg:text-left">Fill in Details</h2>
                 <DocumentForm 
@@ -348,7 +348,7 @@ export default function CreateQuotePage() {
               </div>
             </div>
           </div>
-          <div className="lg:col-span-2">
+          <div className="lg:col-span-1">
             <div className="sticky top-24">
                 <h2 className="text-2xl font-bold font-headline mb-6">Live Preview</h2>
                 <ClientDocumentPreview document={document} accentColor={accentColor} />
@@ -363,4 +363,5 @@ export default function CreateQuotePage() {
     
 
     
+
 

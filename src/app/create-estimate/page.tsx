@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import { useState, useEffect, useCallback, useMemo } from 'react';
@@ -623,19 +624,19 @@ export default function CreateEstimatePage() {
       <div className="container mx-auto p-4 md:px-6 md:py-8">
         <div className="flex flex-col md:flex-row justify-between md:items-center gap-4 mb-8">
           <div>
-            <h1 className="text-3xl font-bold font-headline">Create Estimate</h1>
-            <p className="text-muted-foreground">Fill out the form to generate your professional estimate.</p>
+            <h1 className="text-2xl font-bold font-headline">Create Estimate</h1>
+            <p className="text-sm text-muted-foreground">Fill out the form to generate your professional estimate.</p>
           </div>
           <div className="flex w-full md:w-auto items-center gap-2">
-            <Button onClick={handleSaveDraft} className="w-full md:w-auto" disabled={!document}>
+            <Button size="sm" onClick={handleSaveDraft} className="w-full md:w-auto" disabled={!document}>
                 <Edit className="mr-2 h-4 w-4" /> Save Draft
             </Button>
-            <Button onClick={handlePrint} variant="outline" className="w-full md:w-auto" disabled={!document}>
+            <Button size="sm" onClick={handlePrint} variant="outline" className="w-full md:w-auto" disabled={!document}>
                 <Printer className="mr-2 h-4 w-4" /> Save as PDF
             </Button>
             <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                    <Button variant="outline" size="icon" className="shrink-0">
+                    <Button variant="outline" size="icon" className="shrink-0 h-9 w-9">
                         <MoreVertical className="h-4 w-4" />
                     </Button>
                 </DropdownMenuTrigger>

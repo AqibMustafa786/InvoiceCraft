@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import { useState, useEffect, useCallback, useMemo, ChangeEvent } from 'react';
@@ -727,24 +728,24 @@ export default function CreateInvoicePage() {
       <div className="container mx-auto p-4 md:p-8">
         <div className="flex flex-col md:flex-row justify-between md:items-center gap-4 mb-8">
           <div>
-            <h1 className="text-3xl font-bold font-headline">Create Invoice</h1>
-            <p className="text-muted-foreground">Select a template, then fill out the form to generate your invoice.</p>
+            <h1 className="text-2xl font-bold font-headline">Create Invoice</h1>
+            <p className="text-sm text-muted-foreground">Select a template, then fill out the form to generate your invoice.</p>
           </div>
           <div className="flex w-full md:w-auto items-center gap-2">
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.98 }}>
-              <Button onClick={handleSaveDraft} className="w-full md:w-auto">
+              <Button size="sm" onClick={handleSaveDraft} className="w-full md:w-auto">
                   <Edit className="mr-2 h-4 w-4" /> Save Draft
               </Button>
             </motion.div>
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.98 }}>
-              <Button onClick={handlePrint} variant="outline" className="w-full md:w-auto">
+              <Button size="sm" onClick={handlePrint} variant="outline" className="w-full md:w-auto">
                   <Printer className="mr-2 h-4 w-4" /> Save as PDF
               </Button>
             </motion.div>
             <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                    <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.95 }}>
-                    <Button variant="outline" size="icon" className="shrink-0">
+                    <Button variant="outline" size="icon" className="shrink-0 h-9 w-9">
                         <MoreVertical className="h-4 w-4" />
                     </Button>
                    </motion.div>
