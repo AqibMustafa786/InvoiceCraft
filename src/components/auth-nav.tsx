@@ -72,7 +72,7 @@ export function AuthNav({ isMobile = false }: AuthNavProps) {
         // --- DESKTOP-SPECIFIC VIEW ---
         return (
              <div className="flex items-center gap-2">
-                <Button asChild variant={'ghost'} className="px-4">
+                <Button asChild variant={'secondary'}>
                     <Link href="/dashboard">Dashboard</Link>
                 </Button>
                 <DropdownMenu>

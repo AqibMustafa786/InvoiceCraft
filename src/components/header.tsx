@@ -40,7 +40,7 @@ function NavLink({ href, label, isActive }: { href: string, label: string, isAct
             href={href}
             className={cn(
                 "relative block px-3 py-2 transition text-sm font-medium",
-                isActive ? "text-foreground" : "text-muted-foreground hover:text-foreground"
+                isActive ? "text-primary-foreground" : "text-muted-foreground hover:text-primary-foreground"
             )}
         >
             {label}
@@ -76,7 +76,7 @@ export function Header() {
     }
 
     return (
-        <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur-sm">
+        <header className="sticky top-4 z-50 w-full">
             <CommandDialog open={open} onOpenChange={setOpen}>
               <DialogTitle className="sr-only">Search</DialogTitle>
               <CommandInput placeholder="Type a command or search..." />
@@ -99,7 +99,7 @@ export function Header() {
               </CommandList>
             </CommandDialog>
 
-            <div className="container flex h-16 items-center">
+            <div className="container flex h-16 items-center bg-background/70 backdrop-blur-md rounded-2xl border">
                 {/* Mobile: Hamburger Menu */}
                  <div className="md:hidden">
                     <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
@@ -141,20 +141,28 @@ export function Header() {
                     </Sheet>
                 </div>
 
-                {/* Desktop: Logo */}
-                <div className="mr-6 hidden md:flex">
-                     <Link href="/" className="flex items-center gap-2 text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent">
+                {/* Mobile: Centered Logo */}
+                <div className="flex md:hidden flex-1 justify-center">
+                    <Link href="/" className="flex items-center gap-2 text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent">
+                        <FileText className="h-6 w-6 text-primary" />
                         InvoiceCraft
                     </Link>
                 </div>
 
+                {/* Desktop: Logo */}
+                <div className="mr-auto hidden md:flex">
+                     <Link href="/" className="flex items-center gap-2 text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent">
+                        <FileText className="h-6 w-6 text-primary" />
+                        InvoiceCraft
+                    </Link>
+                </div>
 
-                {/* Desktop: Main Navigation */}
-                <nav className="hidden md:flex items-center gap-6 text-sm">
-                    {mainNavLinks.map(link => (
+                {/* Desktop: Centered Navigation */}
+                <nav className="hidden md:flex absolute left-1/2 -translate-x-1/2 items-center justify-center rounded-full border bg-zinc-100/30 dark:bg-zinc-800/30 px-2 py-1 backdrop-blur-sm">
+                     {mainNavLinks.map(link => (
                         <NavLink key={link.href} href={link.href} label={link.label} isActive={pathname === link.href} />
                     ))}
-                    <DropdownMenu>
+                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                             <Button variant="ghost" className="flex items-center gap-1 px-3 py-2 text-sm font-medium text-muted-foreground hover:text-foreground">
                                 Tools <ChevronDown className="h-4 w-4" />
@@ -173,8 +181,8 @@ export function Header() {
                     </DropdownMenu>
                 </nav>
 
-                <div className="flex flex-1 items-center justify-end gap-2">
-                     <Button variant="ghost" size="icon" onClick={() => setOpen(true)}>
+                <div className="flex flex-1 md:flex-initial items-center justify-end gap-2">
+                     <Button variant="ghost" size="icon" onClick={() => setOpen(true)} className="hidden md:inline-flex">
                         <Search className="h-4 w-4" />
                         <span className="sr-only">Search</span>
                     </Button>
