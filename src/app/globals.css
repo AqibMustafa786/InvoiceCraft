@@ -18,7 +18,7 @@
     --primary: 221 44% 48%; /* Deep Blue */
     --primary-foreground: 210 40% 98%;
  
-    --secondary: 0 0% 100%; /* White */
+    --secondary: 210 40% 96.1%;
     --secondary-foreground: 222.2 47.4% 11.2%;
  
     --muted: 210 40% 96.1%;
@@ -47,11 +47,11 @@
   }
  
   .dark {
-    --background-hsl: 220 40% 5%; /* Very dark blue, almost black */
+    --background-hsl: 222.2 84% 4.9%;
     --background: hsl(var(--background-hsl));
-    --foreground: 210 40% 98%; /* White */
+    --foreground: 210 40% 98%;
  
-    --card: 222.2 84% 8%;
+    --card: 222.2 84% 8%; /* Slightly lighter than background */
     --card-foreground: 210 40% 98%;
  
     --popover: 222.2 84% 4.9%;
@@ -60,13 +60,13 @@
     --primary: 210 90% 60%; /* Lighter blue for dark mode */
     --primary-foreground: 210 40% 98%;
  
-    --secondary: 0 0% 100%; /* White */
-    --secondary-foreground: 222.2 47.4% 11.2%; /* Dark text for white button */
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
  
     --muted: 217.2 32.6% 17.5%;
     --muted-foreground: 215 20.2% 65.1%;
  
-    --accent: 40 95% 55%;
+    --accent: 40 95% 55%; /* Brighter Orange */
     --accent-foreground: 210 40% 98%;
  
     --destructive: 0 62.8% 30.6%;
