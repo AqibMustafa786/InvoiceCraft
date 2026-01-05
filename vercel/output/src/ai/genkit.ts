@@ -1,4 +1,3 @@
-
 'use server';
 
 import { genkit, Ai } from '@genkit-ai/ai';
