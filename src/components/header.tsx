@@ -42,7 +42,7 @@ function NavLink({ href, label }: { href: string, label: string }) {
             href={href}
             className={cn(
                 "relative block px-3 py-2 transition text-sm font-medium",
-                isActive ? "text-primary-foreground" : "text-muted-foreground hover:text-primary-foreground"
+                isActive ? "text-primary" : "text-muted-foreground hover:text-primary"
             )}
         >
             {label}
@@ -165,7 +165,7 @@ export function Header() {
                     ))}
                      <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                           <Button variant="ghost" className="relative flex items-center gap-1 px-3 py-2 transition text-sm font-medium text-muted-foreground hover:bg-transparent hover:text-primary-foreground">
+                           <Button variant="ghost" className="relative flex items-center gap-1 px-3 py-2 transition text-sm font-medium text-muted-foreground hover:bg-transparent hover:text-primary">
                                 Tools <ChevronDown className="h-4 w-4" />
                             </Button>
                         </DropdownMenuTrigger>
