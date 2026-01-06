@@ -411,7 +411,7 @@ export default function HomePage() {
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-16 md:gap-8 relative">
                     {testimonials.map((testimonial, index) => (
-                        <div key={index} className="relative pt-12">
+                        <div key={index} className="relative pt-12 flex flex-col">
                              <div className="absolute top-0 left-1/2 -translate-x-1/2">
                                 <Image 
                                     src={testimonial.avatar} 
@@ -421,10 +421,12 @@ export default function HomePage() {
                                     className="rounded-full border-4 border-gray-800 shadow-lg"
                                 />
                             </div>
-                            <div className="bg-white/5 border border-white/10 rounded-2xl p-8 pt-16 text-center backdrop-blur-sm">
-                                <p className="text-gray-300 text-sm mb-6 leading-relaxed">"{testimonial.quote}"</p>
-                                <h4 className="font-bold text-lg text-primary">{testimonial.name}</h4>
-                                <p className="text-xs text-gray-400">{testimonial.role}</p>
+                            <div className="bg-white/5 border border-white/10 rounded-2xl p-8 pt-16 text-center backdrop-blur-sm flex-grow flex flex-col">
+                                <p className="text-gray-300 text-sm leading-relaxed flex-grow">"{testimonial.quote}"</p>
+                                <div className="mt-6">
+                                    <h4 className="font-bold text-lg text-primary">{testimonial.name}</h4>
+                                    <p className="text-xs text-gray-400">{testimonial.role}</p>
+                                </div>
                             </div>
                         </div>
                     ))}
