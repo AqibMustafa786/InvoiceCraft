@@ -3,10 +3,8 @@
 'use client';
 
 import { useState, useLayoutEffect, useRef, useEffect, FC, useMemo } from 'react';
-import type { Estimate, Quote } from '@/lib/types';
+import type { Estimate, Quote, LineItem } from '@/lib/types';
 import { Card, CardContent } from '@/components/ui/card';
-import Image from 'next/image';
-import { format, isValid } from 'date-fns';
 import { GenericTemplate1, GenericTemplate2, GenericTemplate3, GenericTemplate4, GenericTemplate5 } from './document-templates/generic-templates';
 import { ConstructionTemplate1, ConstructionTemplate2, ConstructionTemplate3, ConstructionTemplate4, ConstructionTemplate5 } from './document-templates/construction-templates';
 import { RemodelingTemplate1, RemodelingTemplate2, RemodelingTemplate3, RemodelingTemplate4, RemodelingTemplate5 } from './document-templates/remodeling-templates';
@@ -27,7 +25,6 @@ import { RealEstateTemplate1, RealEstateTemplate2, RealEstateTemplate3, RealEsta
 import { TransportationTemplate1, TransportationTemplate2, TransportationTemplate3, TransportationTemplate4, TransportationTemplate5 } from './document-templates/transportation-templates';
 import { RentalTemplate1, RentalTemplate2, RentalTemplate3, RentalTemplate4, RentalTemplate5 } from './document-templates/rental-templates';
 import locales from '@/lib/locales';
-
 
 // --- PROPS ---
 interface DocumentPreviewProps {
@@ -53,21 +50,6 @@ interface PageProps extends CommonTemplateProps {
     totalPages: number;
     summary: (Estimate | Quote)['summary'];
     style: React.CSSProperties;
-}
-
-const currencySymbols: { [key: string]: string } = {
-    USD: '$',
-    EUR: '€',
-    GBP: '£',
-    JPY: '¥',
-    PKR: '₨',
-};
-
-const safeFormat = (date: Date | string | number | undefined | null, formatString: string) => {
-    if (!date) return 'N/A';
-    const d = new Date(date);
-    if (!isValid(d)) return "Invalid Date";
-    return format(d, formatString);
 }
 
 const templates: { [key: string]: FC<PageProps> } = {

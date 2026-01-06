@@ -307,30 +307,40 @@ export default function CreateEstimatePage() {
   const { data: remoteDraft, isLoading: isDraftLoading } = useDoc<Estimate>(docRef);
   const { data: prefillClient, isLoading: isClientLoading } = useDoc<Client>(clientRef);
 
-  const computeSummary = useCallback((est: Estimate | Quote): Estimate | Quote => {
-    const subtotal = est.lineItems.reduce((acc, item) => acc + (toNumberSafe(item.quantity)) * (toNumberSafe(item.unitPrice)), 0);
-    const taxableTotal = est.lineItems.filter(i => i.taxable !== false).reduce((s, i) => s + ((toNumberSafe(i.quantity)) * (toNumberSafe(i.unitPrice))), 0);
-    const taxPercentage = toNumberSafe(est.summary.taxPercentage);
-    const taxAmount = taxableTotal * (taxPercentage / 100);
-    const discountAmount = toNumberSafe(est.summary.discount);
-    const shippingCost = toNumberSafe(est.summary.shippingCost);
-    const grandTotal = subtotal + taxAmount - discountAmount + shippingCost;
+  useEffect(() => {
+    if (!document) return;
 
-    return {
-        ...est,
-        summary: {
-            ...est.summary,
-            subtotal,
-            taxAmount,
-            grandTotal,
+    const computeSummary = () => {
+        const subtotal = document.lineItems.reduce((acc, item) => acc + (toNumberSafe(item.quantity)) * (toNumberSafe(item.unitPrice)), 0);
+        const taxableTotal = document.lineItems.filter(i => i.taxable !== false).reduce((s, i) => s + ((toNumberSafe(i.quantity)) * (toNumberSafe(i.unitPrice))), 0);
+        const taxPercentage = toNumberSafe(document.summary.taxPercentage);
+        const taxAmount = taxableTotal * (taxPercentage / 100);
+        const discountAmount = toNumberSafe(document.summary.discount);
+        const shippingCost = toNumberSafe(document.summary.shippingCost);
+        const grandTotal = subtotal + taxAmount - discountAmount + shippingCost;
+
+        if (
+            document.summary.subtotal !== subtotal ||
+            document.summary.taxAmount !== taxAmount ||
+            document.summary.grandTotal !== grandTotal
+        ) {
+            setDocument(prev => {
+                if (!prev) return null;
+                return {
+                    ...prev,
+                    summary: {
+                        ...prev.summary,
+                        subtotal,
+                        taxAmount,
+                        grandTotal,
+                    }
+                };
+            });
         }
     };
-  }, []);
+    computeSummary();
+}, [document?.lineItems, document?.summary.taxPercentage, document?.summary.discount, document?.summary.shippingCost]);
 
-  const processedDocument = useMemo(() => {
-    if (!document) return null;
-    return computeSummary(document);
-  }, [document, computeSummary]);
 
   useEffect(() => {
     if (isAuthLoading || (draftId && isDraftLoading) || (prefillClientId && isClientLoading)) return;
@@ -604,7 +614,7 @@ export default function CreateEstimatePage() {
     }, 0);
   };
 
-  if (!processedDocument) {
+  if (!document) {
     return (
         <div className="grid grid-cols-1 lg:grid-cols-2 lg:gap-8">
             <div className="lg:col-span-1 space-y-4">
@@ -704,14 +714,15 @@ export default function CreateEstimatePage() {
                   </Sheet>
                   <div>
                     <h2 className="text-xl font-bold font-headline mb-4">Live Preview</h2>
-                    <ClientDocumentPreview document={processedDocument} accentColor={accentColor} backgroundColor={backgroundColor} textColor={textColor} />
+                    <ClientDocumentPreview document={document} accentColor={accentColor} backgroundColor={backgroundColor} textColor={textColor} />
                   </div>
               </div>
             </div>
         </div>
       </div>
-      {processedDocument && <PrintableDocument doc={processedDocument} accentColor={accentColor} backgroundColor={backgroundColor} textColor={textColor} />}
+      {document && <PrintableDocument doc={document} accentColor={accentColor} backgroundColor={backgroundColor} textColor={textColor} />}
     </>
   );
 }
+
 

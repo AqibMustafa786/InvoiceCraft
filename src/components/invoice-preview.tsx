@@ -69,6 +69,7 @@ import {
 import {
   RentalTemplate1, RentalTemplate2, RentalTemplate3, RentalTemplate4, RentalTemplate5
 } from './invoice-templates/rental-templates';
+import { toNumberSafe } from '@/lib/utils';
 
 
 // --- PROPS ---

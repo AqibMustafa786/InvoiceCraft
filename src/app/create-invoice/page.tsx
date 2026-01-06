@@ -376,31 +376,40 @@ export default function CreateInvoicePage() {
   const { data: prefillClient, isLoading: isClientLoading } = useDoc<Client>(clientRef);
   const { data: companyData, isLoading: isCompanyLoading } = useDoc(companyDocRef);
 
-  const computeSummary = useCallback((inv: Invoice): Invoice => {
-    const subtotal = inv.lineItems.reduce((acc, item) => acc + (toNumberSafe(item.quantity)) * (toNumberSafe(item.unitPrice)), 0);
-    const taxableTotal = inv.lineItems.filter(i => i.taxable !== false).reduce((s, i) => s + ((toNumberSafe(i.quantity)) * (toNumberSafe(i.unitPrice))), 0);
-    const taxPercentage = toNumberSafe(inv.summary.taxPercentage);
-    const taxAmount = taxableTotal * (taxPercentage / 100);
-    const discountAmount = toNumberSafe(inv.summary.discount);
-    const shippingCost = toNumberSafe(inv.summary.shippingCost);
-    const grandTotal = subtotal + taxAmount - discountAmount + shippingCost;
+  useEffect(() => {
+    if (!invoice) return;
 
-    return {
-        ...inv,
-        summary: {
-            ...inv.summary,
-            subtotal,
-            taxAmount,
-            grandTotal,
+    const computeSummary = () => {
+        const subtotal = invoice.lineItems.reduce((acc, item) => acc + (toNumberSafe(item.quantity)) * (toNumberSafe(item.unitPrice)), 0);
+        const taxableTotal = invoice.lineItems.filter(i => i.taxable !== false).reduce((s, i) => s + ((toNumberSafe(i.quantity)) * (toNumberSafe(i.unitPrice))), 0);
+        const taxPercentage = toNumberSafe(invoice.summary.taxPercentage);
+        const taxAmount = taxableTotal * (taxPercentage / 100);
+        const discountAmount = toNumberSafe(invoice.summary.discount);
+        const shippingCost = toNumberSafe(invoice.summary.shippingCost);
+        const grandTotal = subtotal + taxAmount - discountAmount + shippingCost;
+        
+        if (
+            invoice.summary.subtotal !== subtotal ||
+            invoice.summary.taxAmount !== taxAmount ||
+            invoice.summary.grandTotal !== grandTotal
+        ) {
+            setInvoice(prev => {
+                if (!prev) return null;
+                return {
+                    ...prev,
+                    summary: {
+                        ...prev.summary,
+                        subtotal,
+                        taxAmount,
+                        grandTotal,
+                    }
+                };
+            });
         }
     };
-  }, []);
-
-  const processedInvoice = useMemo(() => {
-    if (!invoice) return null;
-    return computeSummary(invoice);
-  }, [invoice, computeSummary]);
-
+    computeSummary();
+  }, [invoice?.lineItems, invoice?.summary.taxPercentage, invoice?.summary.discount, invoice?.summary.shippingCost]);
+  
   useEffect(() => {
     if (isAuthLoading || (draftId && isDraftLoading) || (prefillClientId && isClientLoading) || isCompanyLoading) return;
     if (!user || !userProfile) {
@@ -715,7 +724,7 @@ export default function CreateInvoicePage() {
   };
 
 
-  if (!processedInvoice || (draftId && isDraftLoading) || isAuthLoading || isCompanyLoading) {
+  if (!invoice || (draftId && isDraftLoading) || isAuthLoading || isCompanyLoading) {
     return (
         <div className="container mx-auto p-4 md:p-8 space-y-8">
             <div className="flex justify-between items-center">
@@ -836,16 +845,17 @@ export default function CreateInvoicePage() {
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ duration: 0.2 }}
                   >
-                    <ClientInvoicePreview invoice={processedInvoice} accentColor={accentColor} backgroundColor={backgroundColor} textColor={textColor} />
+                    <ClientInvoicePreview invoice={invoice} accentColor={accentColor} backgroundColor={backgroundColor} textColor={textColor} />
                   </motion.div>
                 </div>
             </div>
           </div>
         </div>
       </div>
-      {processedInvoice && <PrintableInvoice doc={processedInvoice} accentColor={accentColor} backgroundColor={backgroundColor} textColor={textColor} />}
+      {invoice && <PrintableInvoice doc={invoice} accentColor={accentColor} backgroundColor={backgroundColor} textColor={textColor} />}
     </>
   );
 }
+
 
 
