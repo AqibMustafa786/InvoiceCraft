@@ -138,7 +138,7 @@ const ItemsTable: FC<{ items: LineItem[], t: any, currencySymbol: string, accent
                 <tr key={item.id} className="border-b" data-element="table-row">
                 <td className="p-3 align-top">
                     <p className="font-medium whitespace-pre-line">{item.name || <span className="text-gray-400">{t.itemDescription}</span>}</p>
-                    {item.description && <p className="text-xs text-muted-foreground whitespace-pre-line break-words">{item.description}</p>}
+                    {item.description && <p className="text-xs text-muted-foreground whitespace-pre-line" style={{ wordBreak: 'break-all' }}>{item.description}</p>}
                 </td>
                 <td className="p-3 text-center align-top tabular-nums">{item.quantity}</td>
                 <td className="p-3 text-right align-top tabular-nums">{currencySymbol}{(item.unitPrice || 0).toFixed(2)}</td>
@@ -643,7 +643,7 @@ const InvoicePreviewInternal: FC<InvoicePreviewProps> = ({ invoice, accentColor,
   
   const serializedInvoice = useMemo(() => JSON.stringify(invoice), [invoice]);
 
-  const t = locales[invoice.language as keyof typeof locales] || locales.en;
+  const t = locales[invoice.language as keyof locales] || locales.en;
   
   const subtotal = invoice.lineItems.reduce((acc, item) => acc + item.quantity * ((item as any).unitPrice || 0), 0);
   const taxAmount = (subtotal * invoice.summary.taxPercentage) / 100;
