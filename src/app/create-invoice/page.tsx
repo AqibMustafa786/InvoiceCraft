@@ -728,7 +728,7 @@ export default function CreateInvoicePage() {
       <div className="container mx-auto p-4 md:p-8">
         <div className="flex flex-col md:flex-row justify-between md:items-center gap-4 mb-8">
           <div>
-            <h1 className="text-2xl font-bold font-headline">Create Invoice</h1>
+            <h1 className="text-xl font-bold font-headline">Create Invoice</h1>
             <p className="text-sm text-muted-foreground">Select a template, then fill out the form to generate your invoice.</p>
           </div>
           <div className="flex w-full md:w-auto items-center gap-2">
