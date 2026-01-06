@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import React from 'react';
@@ -91,7 +92,10 @@ export const GenericTemplate1: React.FC<TemplateProps> = ({ document, pageItems,
                     <tbody>
                         {pageItems.map(item => (
                             <tr key={item.id} className="border-b border-gray-200">
-                                <td className="p-2 align-top whitespace-pre-line">{item.name}</td>
+                                <td className="p-2 align-top">
+                                    <p className="font-medium whitespace-pre-line">{item.name}</p>
+                                    {item.description && <p className="text-xs text-gray-500 whitespace-pre-line break-words">{item.description}</p>}
+                                </td>
                                 <td className="p-2 align-top text-right">{item.quantity}</td>
                                 <td className="p-2 align-top text-right">{currencySymbol}{item.unitPrice.toFixed(2)}</td>
                                 <td className="p-2 align-top text-right">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</td>
@@ -179,7 +183,10 @@ export const GenericTemplate2: React.FC<TemplateProps> = ({ document, pageItems,
                         <tbody>
                             {pageItems.map(item => (
                                 <tr key={item.id} className="border-b border-gray-200">
-                                    <td className="py-2 align-top whitespace-pre-line">{item.name}</td>
+                                    <td className="py-2 align-top">
+                                        <p className="font-medium whitespace-pre-line">{item.name}</p>
+                                        {item.description && <p className="text-xs text-gray-500 whitespace-pre-line break-words">{item.description}</p>}
+                                    </td>
                                     <td className="py-2 align-top text-center">{item.quantity}</td>
                                     <td className="py-2 align-top text-right">{currencySymbol}{item.unitPrice.toFixed(2)}</td>
                                     <td className="py-2 align-top text-right">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</td>
@@ -261,7 +268,10 @@ export const GenericTemplate3: React.FC<TemplateProps> = ({ document, pageItems,
                     <tbody>
                         {pageItems.map(item => (
                             <tr key={item.id}>
-                                <td className="p-2 border-b border-gray-200 whitespace-pre-line">{item.name}</td>
+                                <td className="p-2 border-b border-gray-200">
+                                    <p className="font-medium whitespace-pre-line">{item.name}</p>
+                                    {item.description && <p className="text-xs text-gray-500 whitespace-pre-line break-words">{item.description}</p>}
+                                </td>
                                 <td className="p-2 border-b border-gray-200 text-center">{item.quantity}</td>
                                 <td className="p-2 border-b border-gray-200 text-right">{currencySymbol}{item.unitPrice.toFixed(2)}</td>
                                 <td className="p-2 border-b border-gray-200 text-right">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</td>
@@ -336,7 +346,10 @@ export const GenericTemplate4: React.FC<TemplateProps> = ({ document, pageItems,
                         <tbody>
                             {pageItems.map(item => (
                                 <tr key={item.id} className="border-b border-gray-200">
-                                    <td className="py-2 align-top whitespace-pre-line">{item.name}</td>
+                                    <td className="py-2 align-top">
+                                        <p className="font-medium whitespace-pre-line">{item.name}</p>
+                                        {item.description && <p className="text-xs text-gray-500 whitespace-pre-line break-words">{item.description}</p>}
+                                    </td>
                                     <td className="py-2 align-top text-center">{item.quantity}</td>
                                     <td className="py-2 align-top text-right">{currencySymbol}{item.unitPrice.toFixed(2)}</td>
                                     <td className="py-2 align-top text-right font-medium">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</td>
@@ -350,15 +363,19 @@ export const GenericTemplate4: React.FC<TemplateProps> = ({ document, pageItems,
                          <div className="flex justify-end">
                             <div className="w-1/2 text-sm">
                                 <div className="flex justify-between p-2 bg-gray-50 rounded-t-lg"><span>{(t.subtotal || 'Subtotal')}:</span><span className="font-medium">{currencySymbol}{summary.subtotal.toFixed(2)}</span></div>
-                                 {summary.discount > 0 && <div className="flex justify-between p-2 text-red-600"><span>{(t.discount || 'Discount')}:</span><span className="font-medium">-{currencySymbol}{summary.discount.toFixed(2)}</span></div>}
+                                {summary.discount > 0 && <div className="flex justify-between p-2 text-red-600"><span>{(t.discount || 'Discount')}:</span><span className="font-medium">-{currencySymbol}{summary.discount.toFixed(2)}</span></div>}
                                 {summary.shippingCost > 0 && <div className="flex justify-between p-2"><span>{(t.shipping || 'Shipping/Extra')}:</span><span className="font-medium">{currencySymbol}{summary.shippingCost.toFixed(2)}</span></div>}
                                 <div className="flex justify-between p-2"><span>{(t.tax || 'Tax')} ({summary.taxPercentage}%):</span><span className="font-medium">{currencySymbol}{summary.taxAmount.toFixed(2)}</span></div>
                                 <div className="flex justify-between p-3 bg-gray-800 text-white rounded-b-lg font-bold text-base"><span>{(t.total || 'Total')}:</span><span>{currencySymbol}{summary.grandTotal.toFixed(2)}</span></div>
                             </div>
                         </div>
-                        <div className="flex justify-between items-end mt-4">
+                        <div className="mt-8 text-xs">
+                           <p className="font-bold uppercase tracking-wider mb-2">{(t.paymentScheduleAndTerms || 'Payment Schedule &amp; Terms')}</p>
+                           <p className="whitespace-pre-line" style={{ color: textColor || '#6B7280' }}>{document.termsAndConditions}</p>
+                        </div>
+                        <div className="flex justify-between mt-8">
                             <SignatureDisplay signature={document.business.ownerSignature} label={(t.authorizedSignature || 'Authorized Signature')} />
-                            <SignatureDisplay signature={document.clientSignature} label={(t.clientSignature || 'Client Signature')} />
+                            <SignatureDisplay signature={document.clientSignature} label={(t.clientApproval || 'Client Approval')} />
                         </div>
                     </footer>
                 )}
@@ -421,7 +438,10 @@ export const GenericTemplate5: React.FC<TemplateProps> = ({ document, pageItems,
                     <tbody>
                         {pageItems.map(item => (
                             <tr key={item.id} className="border-b">
-                                <td className="p-3 align-top whitespace-pre-line">{item.name}</td>
+                                <td className="p-3 align-top">
+                                    <p className="font-medium whitespace-pre-line">{item.name}</p>
+                                    {item.description && <p className="text-xs text-gray-500 whitespace-pre-line break-words">{item.description}</p>}
+                                </td>
                                 <td className="p-3 align-top text-center">{item.quantity}</td>
                                 <td className="p-3 align-top text-right">{currencySymbol}{item.unitPrice.toFixed(2)}</td>
                                 <td className="p-3 align-top text-right font-bold">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</td>

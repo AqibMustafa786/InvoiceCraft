@@ -138,7 +138,7 @@ const ItemsTable: FC<{ items: LineItem[], t: any, currencySymbol: string, accent
                 <tr key={item.id} className="border-b" data-element="table-row">
                 <td className="p-3 align-top">
                     <p className="font-medium whitespace-pre-line">{item.name || <span className="text-gray-400">{t.itemDescription}</span>}</p>
-                    {item.description && <p className="text-xs text-muted-foreground whitespace-pre-line">{item.description}</p>}
+                    {item.description && <p className="text-xs text-muted-foreground whitespace-pre-line break-words">{item.description}</p>}
                 </td>
                 <td className="p-3 text-center align-top tabular-nums">{item.quantity}</td>
                 <td className="p-3 text-right align-top tabular-nums">{currencySymbol}{(item.unitPrice || 0).toFixed(2)}</td>
@@ -637,7 +637,7 @@ const AVAILABLE_HEIGHT = PAGE_HEIGHT - PAGE_PADDING;
 
 
 const InvoicePreviewInternal: FC<InvoicePreviewProps> = ({ invoice, accentColor, backgroundColor, textColor, id = 'invoice-preview', isPrint = false }) => {
-  const [paginatedItems, setPaginatedItems] = useState<LineItem[][]>([]);
+  const [paginatedItems, setPaginatedItems] = useState<LineItem[][]>([invoice?.lineItems || []]);
   const [needsRemeasure, setNeedsRemeasure] = useState(true);
   const containerRef = useRef<HTMLDivElement>(null);
   
