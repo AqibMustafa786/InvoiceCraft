@@ -11,12 +11,12 @@ import { motion, AnimatePresence } from 'framer-motion';
 const carouselData = allTemplates
   .filter(t => [
     'modern', 
-    'construction-1', 
-    'it-1', 
-    'usa-claim-default', 
+    'minimalist',
+    'it-2', 
     'elegant', 
-    'plumbing-1',
-    'photography-1'
+    'plumbing-2',
+    'photography-2',
+    'creative'
   ].includes(t.id))
   .map(t => ({
     src: t.thumbnailUrl,
