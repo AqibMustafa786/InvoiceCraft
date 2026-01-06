@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import { ChangeEvent, Dispatch, SetStateAction, useState, useEffect } from 'react';
@@ -725,6 +726,20 @@ export function InvoiceForm({ invoice, setInvoice, accentColor, setAccentColor, 
               </CardContent>
           </Card>
       )}
+
+      {invoice.category === "Photography" && invoice.photography && (
+          <Card className="bg-card/50 backdrop-blur-sm shadow-lg hover:shadow-primary/20 transition-shadow duration-300">
+              <CardHeader><CardTitle className="text-base flex items-center gap-2"><Camera className="h-4 w-4" />Photography Details</CardTitle></CardHeader>
+              <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  <div className="space-y-2"><Label className="text-xs">Event Type</Label><Input name="eventType" value={invoice.photography.eventType} onChange={(e) => handleCategoryDataChange('photography', e)} className="text-xs h-9"/></div>
+                  <div className="space-y-2"><Label className="text-xs">Shoot Date</Label><DatePicker date={invoice.photography.shootDate} setDate={(date) => handleDateChange('photography', 'shootDate', date)} className="h-9 text-xs"/></div>
+                  <div className="space-y-2"><Label className="text-xs">Hours of Coverage</Label><Input name="hoursOfCoverage" type="number" value={invoice.photography.hoursOfCoverage ?? ''} onChange={(e) => handleCategoryDataChange('photography', e)} className="text-xs h-9"/></div>
+                  <div className="space-y-2"><Label className="text-xs">Package Selected</Label><Input name="packageSelected" value={invoice.photography.packageSelected} onChange={(e) => handleCategoryDataChange('photography', e)} className="text-xs h-9"/></div>
+                  <div className="space-y-2"><Label className="text-xs">Edited Photos Count</Label><Input name="editedPhotosCount" type="number" value={invoice.photography.editedPhotosCount ?? ''} onChange={(e) => handleCategoryDataChange('photography', e)} className="text-xs h-9"/></div>
+                  <div className="space-y-2"><Label className="text-xs">RAW Files Cost</Label><Input name="rawFilesCost" type="number" value={invoice.photography.rawFilesCost ?? ''} onChange={(e) => handleCategoryDataChange('photography', e)} className="text-xs h-9"/></div>
+              </CardContent>
+          </Card>
+      )}
       
       <Card className="bg-card/50 backdrop-blur-sm shadow-lg hover:shadow-primary/20 transition-shadow duration-300">
         <CardHeader>
@@ -935,4 +950,4 @@ export function InvoiceForm({ invoice, setInvoice, accentColor, setAccentColor, 
     </div>
   );
 }
-    
+
