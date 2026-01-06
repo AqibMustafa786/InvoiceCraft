@@ -136,10 +136,13 @@ const ItemsTable: FC<{ items: LineItem[], t: any, currencySymbol: string, accent
             <tbody>
             {items.map(item => (
                 <tr key={item.id} className="border-b" data-element="table-row">
-                <td className="p-3 whitespace-pre-line">{item.name || <span className="text-gray-400">{t.itemDescription}</span>}</td>
-                <td className="p-3 text-center tabular-nums">{item.quantity}</td>
-                <td className="p-3 text-right tabular-nums">{currencySymbol}{(item.unitPrice || 0).toFixed(2)}</td>
-                <td className="p-3 text-right tabular-nums font-medium">{currencySymbol}{(item.quantity * (item.unitPrice || 0)).toFixed(2)}</td>
+                <td className="p-3 align-top">
+                    <p className="font-medium whitespace-pre-line">{item.name || <span className="text-gray-400">{t.itemDescription}</span>}</p>
+                    {item.description && <p className="text-xs text-muted-foreground whitespace-pre-line">{item.description}</p>}
+                </td>
+                <td className="p-3 text-center align-top tabular-nums">{item.quantity}</td>
+                <td className="p-3 text-right align-top tabular-nums">{currencySymbol}{(item.unitPrice || 0).toFixed(2)}</td>
+                <td className="p-3 text-right align-top tabular-nums font-medium">{currencySymbol}{(item.quantity * (item.unitPrice || 0)).toFixed(2)}</td>
                 </tr>
             ))}
             </tbody>
