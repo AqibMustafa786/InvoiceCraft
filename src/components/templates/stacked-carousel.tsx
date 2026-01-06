@@ -12,10 +12,12 @@ const carouselData = allTemplates
     'modern', 
     'minimalist',
     'elegant', 
-    'plumbing-2',
     'creative',
     'retail-1',
     'legal-2',
+    'construction-1',
+    'plumbing-2',
+    'it-3',
   ].includes(t.id))
   .map(t => ({
     src: t.thumbnailUrl,
