@@ -772,7 +772,7 @@ export default function CreateInvoicePage() {
             className="lg:col-span-1 order-2 lg:order-1"
           >
              <div className="space-y-6">
-                <h2 className="text-2xl font-bold font-headline mb-4 text-center lg:text-left">Fill in Details</h2>
+                <h2 className="text-xl font-bold font-headline mb-4 text-center lg:text-left">Fill in Details</h2>
                 <InvoiceForm 
                   invoice={invoice} 
                   setInvoice={setInvoice} 
@@ -812,7 +812,7 @@ export default function CreateInvoicePage() {
                     </SheetContent>
                 </Sheet>
                 <div>
-                  <h2 className="text-2xl font-bold font-headline mb-4">Live Preview</h2>
+                  <h2 className="text-xl font-bold font-headline mb-4">Live Preview</h2>
                   <motion.div
                     key={serializedInvoice}
                     initial={{ opacity: 0.8, scale: 0.995 }}
@@ -830,3 +830,4 @@ export default function CreateInvoicePage() {
     </>
   );
 }
+
