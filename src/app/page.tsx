@@ -1,9 +1,8 @@
-
 'use client';
 
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
 import {
   FileText, FilePlus, Shield,
@@ -107,11 +106,20 @@ const testimonials = [
 
 export default function HomePage() {
   const [mounted, setMounted] = useState(false);
+  const [currentTestimonialIndex, setCurrentTestimonialIndex] = useState(0);
   const { theme } = useTheme();
 
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  const nextTestimonial = () => {
+    setCurrentTestimonialIndex((prevIndex) => (prevIndex + 1) % testimonials.length);
+  };
+
+  const prevTestimonial = () => {
+    setCurrentTestimonialIndex((prevIndex) => (prevIndex - 1 + testimonials.length) % testimonials.length);
+  };
 
   const heroImageSrc = '/home/invocie.png';
   
@@ -131,6 +139,12 @@ export default function HomePage() {
       opacity: 1,
       y: 0,
     },
+  };
+
+  const testimonialVariants = {
+    hidden: { opacity: 0, x: 20 },
+    visible: { opacity: 1, x: 0 },
+    exit: { opacity: 0, x: -20 },
   };
 
   return (
@@ -409,33 +423,43 @@ export default function HomePage() {
                     <h2 className="text-4xl md:text-5xl font-bold font-headline mt-2 text-primary">What Our Customers Say</h2>
                     <p className="mt-4 text-gray-400">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc vulputate libero et velit interdum, ac aliquet odio mattis.</p>
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-16 md:gap-8 relative">
-                    {testimonials.map((testimonial, index) => (
-                        <div key={index} className="relative pt-12 flex flex-col">
-                             <div className="absolute top-0 left-1/2 -translate-x-1/2">
-                                <Image 
-                                    src={testimonial.avatar} 
-                                    alt={testimonial.name}
-                                    width={80} 
-                                    height={80} 
-                                    className="rounded-full border-4 border-gray-800 shadow-lg"
-                                />
-                            </div>
-                            <div className="bg-white/5 border border-white/10 rounded-2xl p-8 pt-16 text-center backdrop-blur-sm flex-grow flex flex-col">
-                                <p className="text-gray-300 text-sm leading-relaxed flex-grow">"{testimonial.quote}"</p>
-                                <div className="mt-6">
-                                    <h4 className="font-bold text-lg text-primary">{testimonial.name}</h4>
-                                    <p className="text-xs text-gray-400">{testimonial.role}</p>
+                <div className="relative min-h-[350px]">
+                    <AnimatePresence mode="wait">
+                        <motion.div
+                            key={currentTestimonialIndex}
+                            variants={testimonialVariants}
+                            initial="hidden"
+                            animate="visible"
+                            exit="exit"
+                            transition={{ duration: 0.5, ease: "easeInOut" }}
+                            className="absolute inset-0 flex items-center justify-center"
+                        >
+                            <div className="relative pt-12 flex flex-col w-full max-w-md">
+                                <div className="absolute top-0 left-1/2 -translate-x-1/2">
+                                    <Image 
+                                        src={testimonials[currentTestimonialIndex].avatar} 
+                                        alt={testimonials[currentTestimonialIndex].name}
+                                        width={80} 
+                                        height={80} 
+                                        className="rounded-full border-4 border-gray-800 shadow-lg"
+                                    />
+                                </div>
+                                <div className="bg-white/5 border border-white/10 rounded-2xl p-8 pt-16 text-center backdrop-blur-sm flex-grow flex flex-col">
+                                    <p className="text-gray-300 text-sm leading-relaxed flex-grow">"{testimonials[currentTestimonialIndex].quote}"</p>
+                                    <div className="mt-6">
+                                        <h4 className="font-bold text-lg text-primary">{testimonials[currentTestimonialIndex].name}</h4>
+                                        <p className="text-xs text-gray-400">{testimonials[currentTestimonialIndex].role}</p>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    ))}
+                        </motion.div>
+                    </AnimatePresence>
                 </div>
                  <div className="flex justify-center gap-4 mt-12">
-                    <Button size="icon" variant="outline" className="bg-white/10 border-white/20 text-white hover:bg-white/20 rounded-full">
+                    <Button size="icon" variant="outline" className="bg-white/10 border-white/20 text-white hover:bg-white/20 rounded-full" onClick={prevTestimonial}>
                         <ChevronLeft className="h-5 w-5" />
                     </Button>
-                    <Button size="icon" variant="outline" className="bg-white/10 border-white/20 text-white hover:bg-white/20 rounded-full">
+                    <Button size="icon" variant="outline" className="bg-white/10 border-white/20 text-white hover:bg-white/20 rounded-full" onClick={nextTestimonial}>
                         <ChevronRight className="h-5 w-5" />
                     </Button>
                 </div>
