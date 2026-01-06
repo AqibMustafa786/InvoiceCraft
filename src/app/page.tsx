@@ -1,4 +1,3 @@
-
 'use client';
 
 import Link from 'next/link';
@@ -88,39 +87,100 @@ const testimonials = [
     quote: "InvoiceCraft has revolutionized how I handle my billing. I'm saving hours every week and getting paid faster than ever.",
     name: 'Jane Doe',
     role: 'Freelance Designer',
-    avatar: 'https://picsum.photos/seed/picsum/100/100'
+    avatar: 'https://picsum.photos/seed/woman1/100/100'
   },
   {
     quote: "The templates are stunning and so easy to customize. My clients always comment on how professional my invoices look.",
     name: 'John Smith',
     role: 'Small Business Owner',
-    avatar: 'https://picsum.photos/seed/picsum/100/100'
+    avatar: 'https://picsum.photos/seed/man1/100/100'
   },
   {
     quote: "I love the dashboard feature. Seeing all my documents in one place and tracking their status is a game-changer for my freelance business.",
     name: 'Emily White',
     role: 'Finance Manager',
-    avatar: 'https://picsum.photos/seed/picsum/100/100'
+    avatar: 'https://picsum.photos/seed/woman2/100/100'
+  },
+   {
+    quote: "The best invoicing tool I've used. Simple, fast, and the AI features are surprisingly helpful.",
+    name: 'Michael Brown',
+    role: 'Tech Consultant',
+    avatar: 'https://picsum.photos/seed/man2/100/100'
+  },
+  {
+    quote: "As a contractor, I need to create estimates on the go. InvoiceCraft's mobile interface is fantastic for that.",
+    name: 'David Wilson',
+    role: 'General Contractor',
+    avatar: 'https://picsum.photos/seed/man3/100/100'
+  },
+  {
+    quote: "The ability to create professional insurance documents has been a huge plus for my agency.",
+    name: 'Sarah Johnson',
+    role: 'Insurance Agent',
+    avatar: 'https://picsum.photos/seed/woman3/100/100'
+  },
+    {
+    quote: "Managing client information and seeing their entire document history in one place is incredibly efficient.",
+    name: 'Chris Lee',
+    role: 'Agency Director',
+    avatar: 'https://picsum.photos/seed/man4/100/100'
+  },
+  {
+    quote: "I was up and running in minutes. The learning curve is practically non-existent, but the features are powerful.",
+    name: 'Jessica Martinez',
+    role: 'Photographer',
+    avatar: 'https://picsum.photos/seed/woman4/100/100'
+  },
+  {
+    quote: "The shareable links for quotes have streamlined my approval process. Clients love the simplicity.",
+    name: 'Robert Garcia',
+    role: 'Marketing Specialist',
+    avatar: 'https://picsum.photos/seed/man5/100/100'
   }
 ];
 
 
 export default function HomePage() {
   const [mounted, setMounted] = useState(false);
-  const [currentTestimonialIndex, setCurrentTestimonialIndex] = useState(0);
+  const [testimonialPage, setTestimonialPage] = useState(0);
   const { theme } = useTheme();
+  
+  const testimonialsPerPage = 3;
+  const numPages = Math.ceil(testimonials.length / testimonialsPerPage);
+
+  const paginate = (newPage: number) => {
+    setTestimonialPage(newPage);
+  };
+  
+  const nextTestimonials = () => {
+    setTestimonialPage((prevPage) => (prevPage + 1) % numPages);
+  };
+
+  const prevTestimonials = () => {
+    setTestimonialPage((prevPage) => (prevPage - 1 + numPages) % numPages);
+  };
+  
+  const variants = {
+    enter: (direction: number) => ({
+      x: direction > 0 ? 1000 : -1000,
+      opacity: 0
+    }),
+    center: {
+      zIndex: 1,
+      x: 0,
+      opacity: 1
+    },
+    exit: (direction: number) => ({
+      zIndex: 0,
+      x: direction < 0 ? 1000 : -1000,
+      opacity: 0
+    })
+  };
+
 
   useEffect(() => {
     setMounted(true);
   }, []);
-
-  const nextTestimonial = () => {
-    setCurrentTestimonialIndex((prevIndex) => (prevIndex + 1) % testimonials.length);
-  };
-
-  const prevTestimonial = () => {
-    setCurrentTestimonialIndex((prevIndex) => (prevIndex - 1 + testimonials.length) % testimonials.length);
-  };
 
   const heroImageSrc = '/home/invocie.png';
   
@@ -140,12 +200,6 @@ export default function HomePage() {
       opacity: 1,
       y: 0,
     },
-  };
-
-  const testimonialVariants = {
-    hidden: { opacity: 0, x: 20 },
-    visible: { opacity: 1, x: 0 },
-    exit: { opacity: 0, x: -20 },
   };
 
   return (
@@ -387,45 +441,51 @@ export default function HomePage() {
                 <div className="text-center max-w-2xl mx-auto mb-16">
                     <p className="text-sm font-bold tracking-wider uppercase text-gray-400">TESTIMONIALS</p>
                     <h2 className="text-4xl md:text-5xl font-bold font-headline mt-2 text-primary">What Our Customers Say</h2>
-                    <p className="mt-4 text-gray-400">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc vulputate libero et velit interdum, ac aliquet odio mattis.</p>
+                    <p className="mt-4 text-gray-400">Trusted by thousands of businesses worldwide.</p>
                 </div>
                 <div className="relative min-h-[350px]">
-                    <AnimatePresence mode="wait">
-                        <motion.div
-                            key={currentTestimonialIndex}
-                            variants={testimonialVariants}
-                            initial="hidden"
-                            animate="visible"
-                            exit="exit"
-                            transition={{ duration: 0.5, ease: "easeInOut" }}
-                            className="absolute inset-0 flex items-center justify-center"
-                        >
-                            <div className="relative pt-12 flex flex-col w-full max-w-md">
+                    <AnimatePresence initial={false} custom={testimonialPage}>
+                      <motion.div
+                        key={testimonialPage}
+                        custom={testimonialPage}
+                        variants={variants}
+                        initial="enter"
+                        animate="center"
+                        exit="exit"
+                        transition={{
+                          x: { type: "spring", stiffness: 300, damping: 30 },
+                          opacity: { duration: 0.2 }
+                        }}
+                        className="absolute w-full grid grid-cols-1 md:grid-cols-3 gap-8"
+                      >
+                        {testimonials.slice(testimonialPage * testimonialsPerPage, testimonialPage * testimonialsPerPage + testimonialsPerPage).map((testimonial, index) => (
+                           <div key={index} className="relative pt-12 flex flex-col w-full">
                                 <div className="absolute top-0 left-1/2 -translate-x-1/2">
                                     <Image 
-                                        src={testimonials[currentTestimonialIndex].avatar} 
-                                        alt={testimonials[currentTestimonialIndex].name}
+                                        src={testimonial.avatar} 
+                                        alt={testimonial.name}
                                         width={80} 
                                         height={80} 
                                         className="rounded-full border-4 border-gray-800 shadow-lg"
                                     />
                                 </div>
                                 <div className="bg-white/5 border border-white/10 rounded-2xl p-8 pt-16 text-center flex flex-col flex-grow">
-                                    <p className="text-gray-300 text-sm leading-relaxed flex-grow">"{testimonials[currentTestimonialIndex].quote}"</p>
+                                    <p className="text-gray-300 text-sm leading-relaxed flex-grow">"{testimonial.quote}"</p>
                                     <div className="mt-6">
-                                        <h4 className="font-bold text-lg text-primary">{testimonials[currentTestimonialIndex].name}</h4>
-                                        <p className="text-xs text-gray-400">{testimonials[currentTestimonialIndex].role}</p>
+                                        <h4 className="font-bold text-lg text-primary">{testimonial.name}</h4>
+                                        <p className="text-xs text-gray-400">{testimonial.role}</p>
                                     </div>
                                 </div>
                             </div>
-                        </motion.div>
+                        ))}
+                      </motion.div>
                     </AnimatePresence>
                 </div>
                  <div className="flex justify-center gap-4 mt-12">
-                    <Button size="icon" variant="outline" className="bg-white/10 border-white/20 text-white hover:bg-white/20 rounded-full" onClick={prevTestimonial}>
+                    <Button size="icon" variant="outline" className="bg-white/10 border-white/20 text-white hover:bg-white/20 rounded-full" onClick={prevTestimonials}>
                         <ChevronLeft className="h-5 w-5" />
                     </Button>
-                    <Button size="icon" variant="outline" className="bg-white/10 border-white/20 text-white hover:bg-white/20 rounded-full" onClick={nextTestimonial}>
+                    <Button size="icon" variant="outline" className="bg-white/10 border-white/20 text-white hover:bg-white/20 rounded-full" onClick={nextTestimonials}>
                         <ChevronRight className="h-5 w-5" />
                     </Button>
                 </div>
