@@ -1,5 +1,4 @@
 
-
 'use client';
 
 import { ChangeEvent, Dispatch, SetStateAction, useState, useEffect } from 'react';
@@ -655,7 +654,7 @@ export function InvoiceForm({ invoice, setInvoice, accentColor, setAccentColor, 
           </div>
           <div className="space-y-2">
             <Label className="text-xs">Due Date</Label>
-            <DatePicker date={invoice.dueDate} setDate={(date) => setInvoice(p => ({ ...p, dueDate: date! }))} className="h-9 text-xs" />
+            <DatePicker date={invoice.dueDate} setDate={(date) => setInvoice(p => ({ ...p, dueDate: date! }))} className="h-9 text-xs"/>
           </div>
            <div className="space-y-2">
                 <Label htmlFor="currency" className="text-xs">Currency</Label>
@@ -693,6 +692,39 @@ export function InvoiceForm({ invoice, setInvoice, accentColor, setAccentColor, 
         </CardContent>
       </Card>
       
+      {invoice.category === "Construction" && invoice.construction && (
+          <Card className="bg-card/50 backdrop-blur-sm shadow-lg hover:shadow-primary/20 transition-shadow duration-300">
+              <CardHeader><CardTitle className="text-base flex items-center gap-2"><HardHat className="h-4 w-4" />Construction Details</CardTitle></CardHeader>
+              <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  <div className="space-y-2"><Label className="text-xs">Job Site Address</Label><Input name="jobSiteAddress" value={invoice.construction.jobSiteAddress} onChange={(e) => handleCategoryDataChange('construction', e)} className="text-xs h-9"/></div>
+                  <div className="space-y-2"><Label className="text-xs">Permit Number</Label><Input name="permitNumber" value={invoice.construction.permitNumber} onChange={(e) => handleCategoryDataChange('construction', e)} className="text-xs h-9"/></div>
+                  <div className="space-y-2"><Label className="text-xs">Labor Rate (/hr)</Label><Input name="laborRate" type="number" value={invoice.construction.laborRate ?? ''} onChange={(e) => handleCategoryDataChange('construction', e)} className="text-xs h-9"/></div>
+                  <div className="space-y-2"><Label className="text-xs">Equipment Rental Fees</Label><Input name="equipmentRentalFees" type="number" value={invoice.construction.equipmentRentalFees ?? ''} onChange={(e) => handleCategoryDataChange('construction', e)} className="text-xs h-9"/></div>
+                  <div className="space-y-2"><Label className="text-xs">Waste Disposal Fee</Label><Input name="wasteDisposalFee" type="number" value={invoice.construction.wasteDisposalFee ?? ''} onChange={(e) => handleCategoryDataChange('construction', e)} className="text-xs h-9"/></div>
+                  <div className="space-y-2"><Label className="text-xs">Project Start Date</Label><DatePicker date={invoice.construction.projectStartDate} setDate={(date) => handleDateChange('construction', 'projectStartDate', date)} className="h-9 text-xs"/></div>
+                  <div className="space-y-2"><Label className="text-xs">Project End Date</Label><DatePicker date={invoice.construction.projectEndDate} setDate={(date) => handleDateChange('construction', 'projectEndDate', date)} className="h-9 text-xs"/></div>
+              </CardContent>
+          </Card>
+      )}
+
+      {invoice.category === "Auto Repair" && invoice.autoRepair && (
+          <Card className="bg-card/50 backdrop-blur-sm shadow-lg hover:shadow-primary/20 transition-shadow duration-300">
+              <CardHeader><CardTitle className="text-base flex items-center gap-2"><Car className="h-4 w-4" />Auto Repair Details</CardTitle></CardHeader>
+              <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  <div className="space-y-2"><Label className="text-xs">Vehicle Make</Label><Input name="vehicleMake" value={invoice.autoRepair.vehicleMake} onChange={(e) => handleCategoryDataChange('autoRepair', e)} className="text-xs h-9"/></div>
+                  <div className="space-y-2"><Label className="text-xs">Vehicle Model</Label><Input name="vehicleModel" value={invoice.autoRepair.vehicleModel} onChange={(e) => handleCategoryDataChange('autoRepair', e)} className="text-xs h-9"/></div>
+                  <div className="space-y-2"><Label className="text-xs">Vehicle Year</Label><Input name="year" type="number" value={invoice.autoRepair.year ?? ''} onChange={(e) => handleCategoryDataChange('autoRepair', e)} className="text-xs h-9"/></div>
+                  <div className="space-y-2"><Label className="text-xs">License Plate</Label><Input name="licensePlate" value={invoice.autoRepair.licensePlate} onChange={(e) => handleCategoryDataChange('autoRepair', e)} className="text-xs h-9"/></div>
+                  <div className="space-y-2"><Label className="text-xs">VIN</Label><Input name="vin" value={invoice.autoRepair.vin} onChange={(e) => handleCategoryDataChange('autoRepair', e)} className="text-xs h-9"/></div>
+                  <div className="space-y-2"><Label className="text-xs">Odometer</Label><Input name="odometer" type="number" value={invoice.autoRepair.odometer ?? ''} onChange={(e) => handleCategoryDataChange('autoRepair', e)} className="text-xs h-9"/></div>
+                  <div className="space-y-2"><Label className="text-xs">Labor Hours</Label><Input name="laborHours" type="number" value={invoice.autoRepair.laborHours ?? ''} onChange={(e) => handleCategoryDataChange('autoRepair', e)} className="text-xs h-9"/></div>
+                  <div className="space-y-2"><Label className="text-xs">Labor Rate (/hr)</Label><Input name="laborRate" type="number" value={invoice.autoRepair.laborRate ?? ''} onChange={(e) => handleCategoryDataChange('autoRepair', e)} className="text-xs h-9"/></div>
+                  <div className="space-y-2"><Label className="text-xs">Diagnostic Fee</Label><Input name="diagnosticFee" type="number" value={invoice.autoRepair.diagnosticFee ?? ''} onChange={(e) => handleCategoryDataChange('autoRepair', e)} className="text-xs h-9"/></div>
+                  <div className="space-y-2"><Label className="text-xs">Shop Supply Fee</Label><Input name="shopSupplyFee" type="number" value={invoice.autoRepair.shopSupplyFee ?? ''} onChange={(e) => handleCategoryDataChange('autoRepair', e)} className="text-xs h-9"/></div>
+                  <div className="space-y-2"><Label className="text-xs">Towing Fee</Label><Input name="towingFee" type="number" value={invoice.autoRepair.towingFee ?? ''} onChange={(e) => handleCategoryDataChange('autoRepair', e)} className="text-xs h-9"/></div>
+              </CardContent>
+          </Card>
+      )}
       
       <Card className="bg-card/50 backdrop-blur-sm shadow-lg hover:shadow-primary/20 transition-shadow duration-300">
         <CardHeader>
@@ -903,22 +935,4 @@ export function InvoiceForm({ invoice, setInvoice, accentColor, setAccentColor, 
     </div>
   );
 }
-
-
-
-
-
-
-
     
-    
-
-
-
-
-
-
-
-
-
-
