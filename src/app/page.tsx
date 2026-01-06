@@ -88,19 +88,19 @@ const testimonials = [
     quote: "InvoiceCraft has revolutionized how I handle my billing. I'm saving hours every week and getting paid faster than ever.",
     name: 'Jane Doe',
     role: 'Freelance Designer',
-    avatar: 'https://picsum.photos/seed/1/100/100'
+    avatar: 'https://picsum.photos/seed/picsum/100/100'
   },
   {
     quote: "The templates are stunning and so easy to customize. My clients always comment on how professional my invoices look.",
     name: 'John Smith',
     role: 'Small Business Owner',
-    avatar: 'https://picsum.photos/seed/2/100/100'
+    avatar: 'https://picsum.photos/seed/picsum/100/100'
   },
   {
     quote: "I love the dashboard feature. Seeing all my documents in one place and tracking their status is a game-changer for my freelance business.",
     name: 'Emily White',
     role: 'Finance Manager',
-    avatar: 'https://picsum.photos/seed/3/100/100'
+    avatar: 'https://picsum.photos/seed/picsum/100/100'
   }
 ];
 
