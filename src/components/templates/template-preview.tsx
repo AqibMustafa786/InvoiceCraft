@@ -74,7 +74,7 @@ export function TemplatePreview({ template, isOpen, onClose }: TemplatePreviewPr
                     </div>
                      <div className="space-y-2">
                         <h3 className="font-semibold text-lg">Description</h3>
-                        <p className="text-sm text-muted-foreground">{template.description}</p>
+                        <p className="text-sm text-muted-foreground" style={{wordBreak: 'break-word'}}>{template.description}</p>
                     </div>
                  </div>
             </ScrollArea>
