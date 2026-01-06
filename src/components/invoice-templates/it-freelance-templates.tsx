@@ -1,5 +1,4 @@
 
-
 'use client';
 
 import React from 'react';
@@ -118,7 +117,7 @@ export const ITTemplate1: React.FC<PageProps> = (props) => {
                     <tbody>
                         {pageItems.map(item => (
                             <tr key={item.id} className="border-b border-gray-100">
-                                <td className="py-2 align-top whitespace-pre-line">{item.name}</td>
+                                <td className="py-2 align-top"><p className="font-medium whitespace-pre-line">{item.name}</p>{item.description && <p className="text-gray-500 text-xs whitespace-pre-wrap break-words">{item.description}</p>}</td>
                                 <td className="py-2 align-top text-center">{item.quantity}</td>
                                 <td className="py-2 align-top text-right">{currencySymbol}{item.unitPrice.toFixed(2)}</td>
                                 <td className="py-2 align-top text-right">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</td>
@@ -212,7 +211,7 @@ export const ITTemplate2: React.FC<PageProps> = (props) => {
                     <tbody>
                         {pageItems.map(item => (
                             <tr key={item.id} className="border-b border-gray-800">
-                                <td className="py-2 align-top whitespace-pre-line">{item.name}</td>
+                                <td className="py-2 align-top"><p className="font-medium whitespace-pre-line">{item.name}</p>{item.description && <p className="text-gray-400 text-xs whitespace-pre-wrap break-words">{item.description}</p>}</td>
                                 <td className="py-2 align-top text-center">{item.quantity}</td>
                                 <td className="py-2 align-top text-right">{currencySymbol}{item.unitPrice.toFixed(2)}</td>
                                 <td className="py-2 align-top text-right">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</td>
@@ -292,7 +291,7 @@ export const ITTemplate3: React.FC<PageProps> = (props) => {
                     <tbody>
                         {pageItems.map(item => (
                             <tr key={item.id}>
-                                <td className="p-2 border-b border-gray-100 whitespace-pre-line">{item.name}</td>
+                                <td className="p-2 border-b border-gray-100"><p className="font-medium whitespace-pre-line">{item.name}</p>{item.description && <p className="text-gray-500 text-xs whitespace-pre-wrap break-words">{item.description}</p>}</td>
                                 <td className="p-2 border-b border-gray-100 text-center">{item.quantity}</td>
                                 <td className="p-2 border-b border-gray-100 text-right">{currencySymbol}{item.unitPrice.toFixed(2)}</td>
                                 <td className="p-2 border-b border-gray-100 text-right">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</td>
@@ -376,7 +375,7 @@ export const ITTemplate4: React.FC<PageProps> = (props) => {
                         <tbody>
                             {pageItems.map(item => (
                                 <tr key={item.id} className="border-b border-gray-100">
-                                    <td className="py-2 align-top whitespace-pre-line">{item.name}</td>
+                                    <td className="py-2 align-top"><p className="font-medium whitespace-pre-line">{item.name}</p>{item.description && <p className="text-gray-500 text-xs whitespace-pre-wrap break-words">{item.description}</p>}</td>
                                     <td className="py-2 align-top text-center">{item.quantity}</td>
                                     <td className="py-2 align-top text-right">{currencySymbol}{item.unitPrice.toFixed(2)}</td>
                                     <td className="py-2 align-top text-right font-medium">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</td>
@@ -438,7 +437,7 @@ export const ITTemplate5: React.FC<PageProps> = (props) => {
                     <tbody>
                         {pageItems.map(item => (
                             <tr key={item.id} className="border-b border-gray-100">
-                                <td className="py-2 align-top whitespace-pre-line">{item.name}</td>
+                                <td className="py-2 align-top"><p className="font-medium whitespace-pre-line">{item.name}</p>{item.description && <p className="text-gray-500 text-xs whitespace-pre-wrap break-words">{item.description}</p>}</td>
                                 <td className="py-2 align-top text-center">{item.quantity}</td>
                                 <td className="py-2 align-top text-right">{currencySymbol}{item.unitPrice.toFixed(2)}</td>
                                 <td className="py-2 align-top text-right font-semibold">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</td>
@@ -464,3 +463,5 @@ export const ITTemplate5: React.FC<PageProps> = (props) => {
         </div>
     );
 };
+
+    

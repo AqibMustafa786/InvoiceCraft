@@ -110,7 +110,7 @@ export const ConstructionTemplate1: React.FC<PageProps> = (props) => {
                         <thead><tr className="bg-gray-200"><th className="p-1 font-bold w-1/4">{(t.quantity || 'QTY').toUpperCase()}</th><th className="p-1 font-bold w-1/2">{(t.material || 'MATERIAL').toUpperCase()}</th><th className="p-1 font-bold text-right w-1/4">{(t.total || 'TOTAL').toUpperCase()}</th></tr></thead>
                         <tbody>
                             {pageItems.filter(i => !(i.name || '').toLowerCase().includes('labor')).map(item => (
-                                <tr key={item.id} className="border-b"><td className="p-1">{item.quantity}</td><td className="p-1">{item.name}</td><td className="p-1 text-right">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</td></tr>
+                                <tr key={item.id} className="border-b"><td className="p-1">{item.quantity}</td><td className="p-1">{item.name}{item.description && <p className="text-gray-500 text-xs whitespace-pre-wrap break-words">{item.description}</p>}</td><td className="p-1 text-right">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</td></tr>
                             ))}
                         </tbody>
                         <tfoot><tr><td colSpan={2} className="p-1 text-right font-bold">{(t.totalMaterials || 'TOTAL MATERIALS').toUpperCase()}</td><td className="p-1 text-right font-bold">{currencySymbol}{totalMaterials.toFixed(2)}</td></tr></tfoot>
@@ -123,7 +123,7 @@ export const ConstructionTemplate1: React.FC<PageProps> = (props) => {
                         <thead><tr className="bg-gray-200"><th className="p-1 font-bold w-1/2">{(t.labor || 'LABOR').toUpperCase()}</th><th className="p-1 font-bold text-right w-1/4">{(t.hours || 'HRS').toUpperCase()}</th><th className="p-1 font-bold text-right w-1/4">{(t.amount || 'AMOUNT').toUpperCase()}</th></tr></thead>
                         <tbody>
                             {pageItems.filter(i => (i.name || '').toLowerCase().includes('labor')).map(item => (
-                                <tr key={item.id} className="border-b"><td className="p-1">{item.name}</td><td className="p-1 text-right">{item.quantity}</td><td className="p-1 text-right">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</td></tr>
+                                <tr key={item.id} className="border-b"><td className="p-1">{item.name}{item.description && <p className="text-gray-500 text-xs whitespace-pre-wrap break-words">{item.description}</p>}</td><td className="p-1 text-right">{item.quantity}</td><td className="p-1 text-right">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</td></tr>
                             ))}
                         </tbody>
                         <tfoot><tr><td colSpan={2} className="p-1 text-right font-bold">{(t.totalLabor || 'TOTAL LABOR').toUpperCase()}</td><td className="p-1 text-right font-bold">{currencySymbol}{totalLabor.toFixed(2)}</td></tr></tfoot>
@@ -212,7 +212,7 @@ export const ConstructionTemplate2: React.FC<PageProps> = (props) => {
                         <tbody>
                             {pageItems.map(item => (
                                 <tr key={item.id} className="border-b border-gray-200">
-                                    <td className="py-2 align-top whitespace-pre-line">{item.name}</td>
+                                    <td className="py-2 align-top"><p className="font-medium whitespace-pre-line">{item.name}</p>{item.description && <p className="text-gray-500 text-xs whitespace-pre-wrap break-words">{item.description}</p>}</td>
                                     <td className="py-2 align-top text-center">{item.quantity}</td>
                                     <td className="py-2 align-top text-right">{currencySymbol}{item.unitPrice.toFixed(2)}</td>
                                     <td className="py-2 align-top text-right">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</td>
@@ -286,7 +286,7 @@ export const ConstructionTemplate3: React.FC<PageProps> = (props) => {
                     <tbody>
                         {pageItems.map(item => (
                             <tr key={item.id} className="border-b">
-                                <td className="p-2 align-top whitespace-pre-line">{item.name}</td>
+                                <td className="p-2 align-top"><p className="font-medium whitespace-pre-line">{item.name}</p>{item.description && <p className="text-gray-500 text-xs whitespace-pre-wrap break-words">{item.description}</p>}</td>
                                 <td className="p-2 align-top text-center">{item.quantity}</td>
                                 <td className="p-2 align-top text-right">{currencySymbol}{item.unitPrice.toFixed(2)}</td>
                                 <td className="p-2 align-top text-right font-semibold">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</td>
@@ -325,3 +325,6 @@ export const ConstructionTemplate3: React.FC<PageProps> = (props) => {
 export const ConstructionTemplate4: React.FC<PageProps> = (props) => <ConstructionTemplate1 {...props} />;
 export const ConstructionTemplate5: React.FC<PageProps> = (props) => <ConstructionTemplate2 {...props} />;
 export const ConstructionTemplate6: React.FC<PageProps> = (props) => <ConstructionTemplate3 {...props} />;
+
+
+    
