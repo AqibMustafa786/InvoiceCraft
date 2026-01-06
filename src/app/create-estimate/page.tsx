@@ -33,7 +33,7 @@ import { toNumberSafe, toDateSafe } from '@/lib/utils';
 const ESTIMATES_COLLECTION = 'estimates';
 const CLIENTS_COLLECTION = 'clients';
 
-const getInitialLineItem = (): LineItem => ({ id: crypto.randomUUID(), name: '', quantity: 1, unitPrice: 0, taxable: false });
+const getInitialLineItem = (): LineItem => ({ id: crypto.randomUUID(), name: '', description: '', quantity: 1, unitPrice: 0, taxable: false });
 
 const normalizeAuditLog = (auditLog: any): AuditLogEntry[] => {
   if (Array.isArray(auditLog)) return auditLog;
@@ -117,7 +117,7 @@ const getInitialEstimate = (): Omit<Estimate, 'userId' | 'companyId'> => ({
     projectLocation: '',
   },
   
-  lineItems: [{ ...getInitialLineItem(), name: 'Sample Service (e.g., Website Development)', unitPrice: 0 }],
+  lineItems: [{ ...getInitialLineItem(), name: 'Website Development', description: 'Sample Service (e.g., Website Development)', unitPrice: 0 }],
 
   summary: {
     subtotal: 0,
@@ -307,39 +307,21 @@ export default function CreateEstimatePage() {
   const { data: remoteDraft, isLoading: isDraftLoading } = useDoc<Estimate>(docRef);
   const { data: prefillClient, isLoading: isClientLoading } = useDoc<Client>(clientRef);
 
-  useEffect(() => {
-    if (!document) return;
-
-    const computeSummary = () => {
-        const subtotal = document.lineItems.reduce((acc, item) => acc + (toNumberSafe(item.quantity)) * (toNumberSafe(item.unitPrice)), 0);
-        const taxableTotal = document.lineItems.filter(i => i.taxable !== false).reduce((s, i) => s + ((toNumberSafe(i.quantity)) * (toNumberSafe(i.unitPrice))), 0);
-        const taxPercentage = toNumberSafe(document.summary.taxPercentage);
-        const taxAmount = taxableTotal * (taxPercentage / 100);
-        const discountAmount = toNumberSafe(document.summary.discount);
-        const shippingCost = toNumberSafe(document.summary.shippingCost);
-        const grandTotal = subtotal + taxAmount - discountAmount + shippingCost;
-
-        if (
-            document.summary.subtotal !== subtotal ||
-            document.summary.taxAmount !== taxAmount ||
-            document.summary.grandTotal !== grandTotal
-        ) {
-            setDocument(prev => {
-                if (!prev) return null;
-                return {
-                    ...prev,
-                    summary: {
-                        ...prev.summary,
-                        subtotal,
-                        taxAmount,
-                        grandTotal,
-                    }
-                };
-            });
-        }
+  const processedDocument = useMemo(() => {
+    if (!document) return null;
+    const subtotal = document.lineItems.reduce((acc, item) => acc + (toNumberSafe(item.quantity)) * (toNumberSafe(item.unitPrice)), 0);
+    const taxableTotal = document.lineItems.filter(i => i.taxable !== false).reduce((s, i) => s + ((toNumberSafe(i.quantity)) * (toNumberSafe(i.unitPrice))), 0);
+    const taxPercentage = toNumberSafe(document.summary.taxPercentage);
+    const taxAmount = taxableTotal * (taxPercentage / 100);
+    const discountAmount = toNumberSafe(document.summary.discount);
+    const shippingCost = toNumberSafe(document.summary.shippingCost);
+    const grandTotal = subtotal + taxAmount - discountAmount + shippingCost;
+    
+    return {
+      ...document,
+      summary: { ...document.summary, subtotal, taxAmount, grandTotal }
     };
-    computeSummary();
-}, [document?.lineItems, document?.summary.taxPercentage, document?.summary.discount, document?.summary.shippingCost]);
+  }, [document]);
 
 
   useEffect(() => {
@@ -614,7 +596,7 @@ export default function CreateEstimatePage() {
     }, 0);
   };
 
-  if (!document) {
+  if (!processedDocument) {
     return (
         <div className="grid grid-cols-1 lg:grid-cols-2 lg:gap-8">
             <div className="lg:col-span-1 space-y-4">
@@ -676,7 +658,7 @@ export default function CreateEstimatePage() {
               <div className="space-y-6">
                 <h2 className="text-xl font-bold font-headline mb-4 text-center lg:text-left">Fill in Details</h2>
                 <DocumentForm 
-                  document={document} 
+                  document={document!} 
                   setDocument={setDocument} 
                   accentColor={accentColor}
                   setAccentColor={setAccentColor}
@@ -704,25 +686,26 @@ export default function CreateEstimatePage() {
                           </SheetHeader>
                           <div className="py-4">
                               <DocumentTemplateSelector 
-                                  selectedTemplate={document.template}
+                                  selectedTemplate={document!.template}
                                   onSelectTemplate={(template) => setDocument(prev => prev ? ({...prev, template}) : null)}
                                   documentType="estimate"
-                                  category={document.category}
+                                  category={document!.category}
                               />
                           </div>
                       </SheetContent>
                   </Sheet>
                   <div>
                     <h2 className="text-xl font-bold font-headline mb-4">Live Preview</h2>
-                    <ClientDocumentPreview document={document} accentColor={accentColor} backgroundColor={backgroundColor} textColor={textColor} />
+                    <ClientDocumentPreview document={processedDocument} accentColor={accentColor} backgroundColor={backgroundColor} textColor={textColor} />
                   </div>
               </div>
             </div>
         </div>
       </div>
-      {document && <PrintableDocument doc={document} accentColor={accentColor} backgroundColor={backgroundColor} textColor={textColor} />}
+      {processedDocument && <PrintableDocument doc={processedDocument} accentColor={accentColor} backgroundColor={backgroundColor} textColor={textColor} />}
     </>
   );
 }
+
 
 

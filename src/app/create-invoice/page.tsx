@@ -33,7 +33,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 const INVOICES_COLLECTION = 'invoices';
 const CLIENTS_COLLECTION = 'clients';
 
-const getInitialLineItem = (): LineItem => ({ id: crypto.randomUUID(), name: '', quantity: 1, unitPrice: 0, taxable: false });
+const getInitialLineItem = (): LineItem => ({ id: crypto.randomUUID(), name: '', description: '', quantity: 1, unitPrice: 0, taxable: false });
 
 const normalizeAuditLog = (auditLog: any): AuditLogEntry[] => {
   if (!auditLog) return [];
@@ -117,7 +117,7 @@ const getInitialInvoice = (): Omit<Invoice, 'userId' | 'companyId'> => ({
     shippingAddress: ''
   },
   
-  lineItems: [{ ...getInitialLineItem(), name: 'Sample Service (e.g., Website Development)', unitPrice: 0 }],
+  lineItems: [{ ...getInitialLineItem(), name: 'Website Development', description: 'Sample Service (e.g., Website Development)', unitPrice: 0 }],
 
   summary: {
     subtotal: 0,
@@ -375,41 +375,29 @@ export default function CreateInvoicePage() {
   const { data: remoteDraft, isLoading: isDraftLoading } = useDoc<Invoice>(docRef);
   const { data: prefillClient, isLoading: isClientLoading } = useDoc<Client>(clientRef);
   const { data: companyData, isLoading: isCompanyLoading } = useDoc(companyDocRef);
-
-  useEffect(() => {
-    if (!invoice) return;
-
-    const computeSummary = () => {
-        const subtotal = invoice.lineItems.reduce((acc, item) => acc + (toNumberSafe(item.quantity)) * (toNumberSafe(item.unitPrice)), 0);
-        const taxableTotal = invoice.lineItems.filter(i => i.taxable !== false).reduce((s, i) => s + ((toNumberSafe(i.quantity)) * (toNumberSafe(i.unitPrice))), 0);
-        const taxPercentage = toNumberSafe(invoice.summary.taxPercentage);
-        const taxAmount = taxableTotal * (taxPercentage / 100);
-        const discountAmount = toNumberSafe(invoice.summary.discount);
-        const shippingCost = toNumberSafe(invoice.summary.shippingCost);
-        const grandTotal = subtotal + taxAmount - discountAmount + shippingCost;
-        
-        if (
-            invoice.summary.subtotal !== subtotal ||
-            invoice.summary.taxAmount !== taxAmount ||
-            invoice.summary.grandTotal !== grandTotal
-        ) {
-            setInvoice(prev => {
-                if (!prev) return null;
-                return {
-                    ...prev,
-                    summary: {
-                        ...prev.summary,
-                        subtotal,
-                        taxAmount,
-                        grandTotal,
-                    }
-                };
-            });
-        }
-    };
-    computeSummary();
-  }, [invoice?.lineItems, invoice?.summary.taxPercentage, invoice?.summary.discount, invoice?.summary.shippingCost]);
   
+  const processedInvoice = useMemo(() => {
+    if (!invoice) return null;
+
+    const subtotal = invoice.lineItems.reduce((acc, item) => acc + (toNumberSafe(item.quantity)) * (toNumberSafe(item.unitPrice)), 0);
+    const taxableTotal = invoice.lineItems.filter(i => i.taxable !== false).reduce((s, i) => s + ((toNumberSafe(i.quantity)) * (toNumberSafe(i.unitPrice))), 0);
+    const taxPercentage = toNumberSafe(invoice.summary.taxPercentage);
+    const taxAmount = taxableTotal * (taxPercentage / 100);
+    const discountAmount = toNumberSafe(invoice.summary.discount);
+    const shippingCost = toNumberSafe(invoice.summary.shippingCost);
+    const grandTotal = subtotal + taxAmount - discountAmount + shippingCost;
+    
+    return {
+      ...invoice,
+      summary: {
+        ...invoice.summary,
+        subtotal,
+        taxAmount,
+        grandTotal,
+      }
+    };
+  }, [invoice]);
+
   useEffect(() => {
     if (isAuthLoading || (draftId && isDraftLoading) || (prefillClientId && isClientLoading) || isCompanyLoading) return;
     if (!user || !userProfile) {
@@ -845,17 +833,18 @@ export default function CreateInvoicePage() {
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ duration: 0.2 }}
                   >
-                    <ClientInvoicePreview invoice={invoice} accentColor={accentColor} backgroundColor={backgroundColor} textColor={textColor} />
+                    <ClientInvoicePreview invoice={processedInvoice!} accentColor={accentColor} backgroundColor={backgroundColor} textColor={textColor} />
                   </motion.div>
                 </div>
             </div>
           </div>
         </div>
       </div>
-      {invoice && <PrintableInvoice doc={invoice} accentColor={accentColor} backgroundColor={backgroundColor} textColor={textColor} />}
+      {processedInvoice && <PrintableInvoice doc={processedInvoice} accentColor={accentColor} backgroundColor={backgroundColor} textColor={textColor} />}
     </>
   );
 }
+
 
 
 
