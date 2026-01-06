@@ -437,7 +437,7 @@ const UsaTemplatePage: FC<PageProps> = ({ pageItems, pageIndex, totalPages, ...c
     const { business, client } = invoice;
 
     return (
-        <div className={`invoice-page ${pageIndex < totalPages - 1 ? "page-break" : ""}`} style={{fontFamily: invoice.fontFamily, fontSize: `${invoice.fontSize}px`, backgroundColor: commonProps.backgroundColor, color: commonProps.textColor }}>
+        <div className={`invoice-page font-sans text-gray-800 ${pageIndex < totalPages - 1 ? "page-break" : ""}`} style={{fontFamily: invoice.fontFamily, fontSize: `${invoice.fontSize}px`, backgroundColor: commonProps.backgroundColor, color: commonProps.textColor }}>
             <div className="p-8 m-4 border-2" style={{ borderColor: accentColor }}>
                 <header className="grid grid-cols-2 gap-10 mb-8" data-element="header">
                      <div>
@@ -651,7 +651,7 @@ const InvoicePreviewInternal: FC<InvoicePreviewProps> = ({ invoice, accentColor,
   useEffect(() => {
     setNeedsRemeasure(true);
     setPaginatedItems([invoice.lineItems]);
-  }, [serializedInvoice, invoice.lineItems]);
+  }, [serializedInvoice]);
 
 
   const previewStyle = {

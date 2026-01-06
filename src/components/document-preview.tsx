@@ -182,7 +182,7 @@ const DocumentPreviewInternal: FC<DocumentPreviewProps> = ({ document, accentCol
   useEffect(() => {
     setNeedsRemeasure(true);
     setPaginatedItems([document.lineItems]);
-  }, [serializedDocument, document.lineItems]);
+  }, [serializedDocument]);
   
   const previewStyle = {
       color: document?.textColor || '#374151',
