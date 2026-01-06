@@ -2,7 +2,7 @@
 
 'use client';
 
-import { useState, useLayoutEffect, useRef, useEffect, FC } from 'react';
+import { useState, useLayoutEffect, useRef, useEffect, FC, useMemo } from 'react';
 import type { Estimate, Quote } from '@/lib/types';
 import { Card, CardContent } from '@/components/ui/card';
 import Image from 'next/image';
@@ -176,10 +176,13 @@ const DocumentPreviewInternal: FC<DocumentPreviewProps> = ({ document, accentCol
   const containerRef = useRef<HTMLDivElement>(null);
   
   const t = locales[document.language as keyof typeof locales] || locales.en;
+  
+  const serializedDocument = useMemo(() => JSON.stringify(document), [document]);
 
   useEffect(() => {
     setNeedsRemeasure(true);
-  }, [document]);
+    setPaginatedItems([document.lineItems]);
+  }, [serializedDocument, document.lineItems]);
   
   const previewStyle = {
       color: document?.textColor || '#374151',
@@ -287,7 +290,7 @@ const DocumentPreviewInternal: FC<DocumentPreviewProps> = ({ document, accentCol
     const timer = setTimeout(measureAndPaginate, 100);
     return () => clearTimeout(timer);
 
-  }, [document, isPrint, needsRemeasure, TemplateComponent]);
+  }, [serializedDocument, isPrint, needsRemeasure, TemplateComponent, document]);
 
 
   if (!document || !TemplateComponent) {

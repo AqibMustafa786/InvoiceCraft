@@ -1,7 +1,8 @@
 
+
 'use client';
 
-import { useState, useLayoutEffect, useRef, useEffect, FC } from 'react';
+import { useState, useLayoutEffect, useRef, useEffect, FC, useMemo } from 'react';
 import type { Invoice, LineItem } from '@/lib/types';
 import { Card, CardContent } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
@@ -635,6 +636,8 @@ const InvoicePreviewInternal: FC<InvoicePreviewProps> = ({ invoice, accentColor,
   const [paginatedItems, setPaginatedItems] = useState<LineItem[][]>([]);
   const [needsRemeasure, setNeedsRemeasure] = useState(true);
   const containerRef = useRef<HTMLDivElement>(null);
+  
+  const serializedInvoice = useMemo(() => JSON.stringify(invoice), [invoice]);
 
   const t = locales[invoice.language as keyof typeof locales] || locales.en;
   
@@ -648,7 +651,7 @@ const InvoicePreviewInternal: FC<InvoicePreviewProps> = ({ invoice, accentColor,
   useEffect(() => {
     setNeedsRemeasure(true);
     setPaginatedItems([invoice.lineItems]);
-  }, [invoice, accentColor, t]);
+  }, [serializedInvoice, invoice.lineItems]);
 
 
   const previewStyle = {
@@ -748,7 +751,7 @@ const InvoicePreviewInternal: FC<InvoicePreviewProps> = ({ invoice, accentColor,
     const timer = setTimeout(measureAndPaginate, 50);
     return () => clearTimeout(timer);
 
-  }, [invoice.lineItems, isPrint, needsRemeasure, TemplateComponent, invoice]);
+  }, [serializedInvoice, isPrint, needsRemeasure, TemplateComponent, invoice]);
 
 
   const commonProps: Omit<PageProps, 'pageItems' | 'pageIndex' | 'totalPages'> = {
@@ -818,5 +821,3 @@ export const ClientInvoicePreview: FC<InvoicePreviewProps> = (props) => {
 
 
 export { InvoicePreviewInternal as InvoicePreview };
-
-    
