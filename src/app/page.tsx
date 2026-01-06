@@ -6,7 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
 import {
   FileText, FilePlus, Shield,
-  LayoutDashboard, Edit, Bot, Share2, Palette, ArrowRight, XCircle, Clock, AlertCircle, CheckCircle, Search, FileClock, ChevronLeft, ChevronRight
+  LayoutDashboard, Edit, Bot, Share2, Palette, ArrowRight, XCircle, Clock, AlertCircle, CheckCircle, Search, FileClock, ChevronLeft, ChevronRight, Star
 } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { useTheme } from 'next-themes';
@@ -455,6 +455,11 @@ export default function HomePage() {
                                     />
                                 </div>
                                 <div className="bg-white/5 border border-white/10 rounded-2xl p-8 pt-16 text-center flex flex-col flex-grow">
+                                    <div className="flex justify-center mb-4 text-yellow-400">
+                                      {[...Array(5)].map((_, i) => (
+                                        <Star key={i} className="h-5 w-5 fill-current" />
+                                      ))}
+                                    </div>
                                     <p className="text-gray-300 text-sm leading-relaxed flex-grow">"{testimonial.quote}"</p>
                                     <div className="mt-6">
                                         <h4 className="font-bold text-lg text-primary">{testimonial.name}</h4>
