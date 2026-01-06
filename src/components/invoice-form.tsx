@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import { ChangeEvent, Dispatch, SetStateAction, useState, useEffect } from 'react';
@@ -37,7 +38,7 @@ import {
 
 interface InvoiceFormProps {
   invoice: Invoice;
-  setInvoice: Dispatch<SetStateAction<Invoice>>;
+  setInvoice: Dispatch<React.SetStateAction<Invoice>>;
   accentColor: string;
   setAccentColor: Dispatch<SetStateAction<string>>;
   backgroundColor: string;
@@ -1028,19 +1029,19 @@ export function InvoiceForm({ invoice, setInvoice, accentColor, setAccentColor, 
               </div>
             </div>
 
-          <div className="hidden md:grid md:grid-cols-[1fr_2fr_80px_100px_100px_auto] gap-x-4 text-xs font-medium text-muted-foreground items-center">
+          <div className="hidden md:grid md:grid-cols-[1fr_1.5fr_60px_100px_100px_auto] gap-x-4 text-xs font-medium text-muted-foreground items-center">
             <Label>Item</Label>
             <Label>Description</Label>
-            <Label>Quantity</Label>
+            <Label>Qty</Label>
             <Label>Unit Price</Label>
-            <Label>Subtotal</Label>
+            <Label className="text-right">Subtotal</Label>
             <span></span>
           </div>
           {invoice.lineItems.map((item, index) => (
-            <div key={item.id} className="grid grid-cols-1 md:grid-cols-[1fr_2fr_80px_100px_100px_auto] gap-x-4 gap-y-2 items-start border-b pb-3">
+            <div key={item.id} className="grid grid-cols-1 md:grid-cols-[1fr_1.5fr_60px_100px_100px_auto] gap-x-4 gap-y-2 items-start border-b pb-3">
               <div className="space-y-2">
                  <Label htmlFor={`itemName-${index}`} className="text-xs md:hidden">Item</Label>
-                <Input id={`itemName-${index}`} placeholder="Item name" value={item.name} onChange={(e) => handleItemChange(index, 'name', e.target.value)} className="h-9 text-xs"/>
+                <Input id={`itemName-${index}`} placeholder="Item" value={item.name} onChange={(e) => handleItemChange(index, 'name', e.target.value)} className="h-9 text-xs"/>
               </div>
               <div className="space-y-2">
                 <Label htmlFor={`itemDescription-${index}`} className="text-xs md:hidden">Description</Label>
@@ -1048,7 +1049,7 @@ export function InvoiceForm({ invoice, setInvoice, accentColor, setAccentColor, 
               </div>
               <div className="grid grid-cols-2 md:contents gap-3">
                 <div className="space-y-2">
-                  <Label htmlFor={`itemQuantity-${index}`} className="text-xs md:hidden">Quantity</Label>
+                  <Label htmlFor={`itemQuantity-${index}`} className="text-xs md:hidden">Qty</Label>
                   <Input id={`itemQuantity-${index}`} type="number" value={item.quantity} onChange={(e) => handleItemChange(index, 'quantity', parseFloat(e.target.value) || 0)} className="w-full h-9 text-xs" />
                 </div>
                 <div className="space-y-2">
@@ -1057,7 +1058,7 @@ export function InvoiceForm({ invoice, setInvoice, accentColor, setAccentColor, 
                 </div>
               </div>
 
-              <div className="flex items-center h-9">
+              <div className="flex items-center h-9 justify-end">
                 <p className="font-medium tabular-nums text-sm">{currencySymbol}{(item.quantity * (item.unitPrice || 0)).toFixed(2)}</p>
               </div>
               <div className="flex items-center h-9 justify-end">
