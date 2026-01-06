@@ -1,3 +1,4 @@
+
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
@@ -62,7 +63,7 @@ export function StackedCarousel() {
 
           return (
             <motion.div
-              key={i}
+              key={card.src}
               className="absolute h-full w-full rounded-2xl shadow-2xl overflow-hidden"
               initial={{ y: 50, opacity: 0, scale: 0.9 }}
               animate={{ y, scale, zIndex, opacity }}
