@@ -427,7 +427,6 @@ export default function CreateInvoicePage() {
         return processed;
     };
 
-
     if (draftId && remoteDraft) {
        const baseInvoice = getInitialInvoice();
        const loadedDraft = processData(remoteDraft);
@@ -848,4 +847,5 @@ export default function CreateInvoicePage() {
     </>
   );
 }
+
 

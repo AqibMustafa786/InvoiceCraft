@@ -164,7 +164,7 @@ const CustomSelect = ({ value, onValueChange, options, placeholder, name }: { va
             )}
         </div>
     );
-};
+}
 
 
 export function InvoiceForm({ invoice, setInvoice, accentColor, setAccentColor, backgroundColor, setBackgroundColor, textColor, setTextColor, toast, onLogoUpload, isUploading }: InvoiceFormProps) {
@@ -1019,4 +1019,5 @@ export function InvoiceForm({ invoice, setInvoice, accentColor, setAccentColor, 
     </div>
   );
 }
+
 
