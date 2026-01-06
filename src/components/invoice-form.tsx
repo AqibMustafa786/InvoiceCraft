@@ -1,5 +1,4 @@
 
-
 'use client';
 
 import { ChangeEvent, Dispatch, SetStateAction, useState, useEffect } from 'react';
@@ -10,7 +9,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { DatePicker } from '@/components/ui/datepicker';
-import { ImageUp, Plus, Trash2, Palette, X, Mail, Truck, Hash, Wallet, Phone, Globe, Briefcase, Award, User, FileText, Building, Pencil, Type, Package, Hammer, Ruler, ListTree, CheckSquare, Sparkles, Calendar, TextQuote, Wind, Thermometer, Wrench, Zap, Trees, Droplets, Car, Code, DraftingCompass, PaintBucket, Paintbrush, Receipt, Scale, Hospital, HeartPulse, HardHat, Save, Loader2 } from 'lucide-react';
+import { ImageUp, Plus, Trash2, Palette, X, Mail, Truck, Hash, Wallet, Phone, Globe, Briefcase, Award, User, FileText, Building, Pencil, Type, Package, Hammer, Ruler, ListTree, CheckSquare, Sparkles, Calendar, TextQuote, Wind, Thermometer, Wrench, Zap, Trees, Droplets, Car, Code, DraftingCompass, PaintBucket, Paintbrush, Receipt, Scale, Hospital, HeartPulse, HardHat, Save, Loader2, Camera } from 'lucide-react';
 import Image from 'next/image';
 import {
   Select,
@@ -139,7 +138,7 @@ const CustomSelect = ({ value, onValueChange, options, placeholder, name }: { va
     const handleOtherInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setOtherValue(e.target.value);
         onValueChange(name, e.target.value);
-    }
+    };
 
     return (
         <div className="space-y-2">
@@ -740,6 +739,75 @@ export function InvoiceForm({ invoice, setInvoice, accentColor, setAccentColor, 
               </CardContent>
           </Card>
       )}
+
+      {invoice.category === "Real Estate / Property Management" && invoice.realEstate && (
+          <Card className="bg-card/50 backdrop-blur-sm shadow-lg hover:shadow-primary/20 transition-shadow duration-300">
+              <CardHeader><CardTitle className="text-base flex items-center gap-2"><Building className="h-4 w-4" />Real Estate Details</CardTitle></CardHeader>
+              <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  <div className="space-y-2"><Label className="text-xs">Property Address</Label><Input name="propertyAddress" value={invoice.realEstate.propertyAddress} onChange={(e) => handleCategoryDataChange('realEstate', e)} className="text-xs h-9"/></div>
+                  <div className="space-y-2"><Label className="text-xs">Unit Number</Label><Input name="unitNumber" value={invoice.realEstate.unitNumber} onChange={(e) => handleCategoryDataChange('realEstate', e)} className="text-xs h-9"/></div>
+                  <div className="space-y-2"><Label className="text-xs">Lease Term</Label><Input name="leaseTerm" value={invoice.realEstate.leaseTerm} onChange={(e) => handleCategoryDataChange('realEstate', e)} className="text-xs h-9"/></div>
+                  <div className="space-y-2"><Label className="text-xs">Tenant Name</Label><Input name="tenantName" value={invoice.realEstate.tenantName} onChange={(e) => handleCategoryDataChange('realEstate', e)} className="text-xs h-9"/></div>
+                  <div className="space-y-2"><Label className="text-xs">Monthly Rent</Label><Input name="monthlyRent" type="number" value={invoice.realEstate.monthlyRent ?? ''} onChange={(e) => handleCategoryDataChange('realEstate', e)} className="text-xs h-9"/></div>
+                  <div className="space-y-2"><Label className="text-xs">Cleaning Fee</Label><Input name="cleaningFee" type="number" value={invoice.realEstate.cleaningFee ?? ''} onChange={(e) => handleCategoryDataChange('realEstate', e)} className="text-xs h-9"/></div>
+                  <div className="space-y-2"><Label className="text-xs">Maintenance Fee</Label><Input name="maintenanceFee" type="number" value={invoice.realEstate.maintenanceFee ?? ''} onChange={(e) => handleCategoryDataChange('realEstate', e)} className="text-xs h-9"/></div>
+                  <div className="space-y-2"><Label className="text-xs">Late Fee</Label><Input name="lateFee" type="number" value={invoice.realEstate.lateFee ?? ''} onChange={(e) => handleCategoryDataChange('realEstate', e)} className="text-xs h-9"/></div>
+                  <div className="space-y-2"><Label className="text-xs">HOA Charges</Label><Input name="hoaCharges" type="number" value={invoice.realEstate.hoaCharges ?? ''} onChange={(e) => handleCategoryDataChange('realEstate', e)} className="text-xs h-9"/></div>
+                  <div className="space-y-2"><Label className="text-xs">Utility Charges</Label><Input name="utilityCharges" type="number" value={invoice.realEstate.utilityCharges ?? ''} onChange={(e) => handleCategoryDataChange('realEstate', e)} className="text-xs h-9"/></div>
+              </CardContent>
+          </Card>
+      )}
+
+      {invoice.category === "Transportation / Trucking" && invoice.transportation && (
+          <Card className="bg-card/50 backdrop-blur-sm shadow-lg hover:shadow-primary/20 transition-shadow duration-300">
+              <CardHeader><CardTitle className="text-base flex items-center gap-2"><Truck className="h-4 w-4" />Transportation Details</CardTitle></CardHeader>
+              <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  <div className="space-y-2"><Label className="text-xs">Pickup Location</Label><Input name="pickupLocation" value={invoice.transportation.pickupLocation} onChange={(e) => handleCategoryDataChange('transportation', e)} className="text-xs h-9"/></div>
+                  <div className="space-y-2"><Label className="text-xs">Dropoff Location</Label><Input name="dropoffLocation" value={invoice.transportation.dropoffLocation} onChange={(e) => handleCategoryDataChange('transportation', e)} className="text-xs h-9"/></div>
+                  <div className="space-y-2"><Label className="text-xs">Miles Driven</Label><Input name="milesDriven" type="number" value={invoice.transportation.milesDriven ?? ''} onChange={(e) => handleCategoryDataChange('transportation', e)} className="text-xs h-9"/></div>
+                  <div className="space-y-2"><Label className="text-xs">Rate per Mile</Label><Input name="ratePerMile" type="number" value={invoice.transportation.ratePerMile ?? ''} onChange={(e) => handleCategoryDataChange('transportation', e)} className="text-xs h-9"/></div>
+                  <div className="space-y-2"><Label className="text-xs">Weight</Label><Input name="weight" type="number" value={invoice.transportation.weight ?? ''} onChange={(e) => handleCategoryDataChange('transportation', e)} className="text-xs h-9"/></div>
+                  <div className="space-y-2"><Label className="text-xs">Load Type</Label><Input name="loadType" value={invoice.transportation.loadType} onChange={(e) => handleCategoryDataChange('transportation', e)} className="text-xs h-9"/></div>
+                  <div className="space-y-2"><Label className="text-xs">Fuel Surcharge</Label><Input name="fuelSurcharge" type="number" value={invoice.transportation.fuelSurcharge ?? ''} onChange={(e) => handleCategoryDataChange('transportation', e)} className="text-xs h-9"/></div>
+                  <div className="space-y-2"><Label className="text-xs">Toll Charges</Label><Input name="tollCharges" type="number" value={invoice.transportation.tollCharges ?? ''} onChange={(e) => handleCategoryDataChange('transportation', e)} className="text-xs h-9"/></div>
+                  <div className="space-y-2"><Label className="text-xs">Detention Fee</Label><Input name="detentionFee" type="number" value={invoice.transportation.detentionFee ?? ''} onChange={(e) => handleCategoryDataChange('transportation', e)} className="text-xs h-9"/></div>
+              </CardContent>
+          </Card>
+      )}
+
+      {invoice.category === "IT Services / Tech Support" && invoice.itServices && (
+          <Card className="bg-card/50 backdrop-blur-sm shadow-lg hover:shadow-primary/20 transition-shadow duration-300">
+              <CardHeader><CardTitle className="text-base flex items-center gap-2"><Code className="h-4 w-4" />IT Service Details</CardTitle></CardHeader>
+              <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  <div className="space-y-2"><Label className="text-xs">Service Type</Label><Input name="serviceType" value={invoice.itServices.serviceType} onChange={(e) => handleCategoryDataChange('itServices', e)} className="text-xs h-9"/></div>
+                  <div className="space-y-2"><Label className="text-xs">Hourly Rate</Label><Input name="hourlyRate" type="number" value={invoice.itServices.hourlyRate ?? ''} onChange={(e) => handleCategoryDataChange('itServices', e)} className="text-xs h-9"/></div>
+                  <div className="space-y-2"><Label className="text-xs">Hours Worked</Label><Input name="hoursWorked" type="number" value={invoice.itServices.hoursWorked ?? ''} onChange={(e) => handleCategoryDataChange('itServices', e)} className="text-xs h-9"/></div>
+                  <div className="space-y-2"><Label className="text-xs">Device Type</Label><Input name="deviceType" value={invoice.itServices.deviceType} onChange={(e) => handleCategoryDataChange('itServices', e)} className="text-xs h-9"/></div>
+                  <div className="space-y-2"><Label className="text-xs">Serial Number</Label><Input name="serialNumber" value={invoice.itServices.serialNumber} onChange={(e) => handleCategoryDataChange('itServices', e)} className="text-xs h-9"/></div>
+                  <div className="space-y-2"><Label className="text-xs">Hardware Replacement Cost</Label><Input name="hardwareReplacementCost" type="number" value={invoice.itServices.hardwareReplacementCost ?? ''} onChange={(e) => handleCategoryDataChange('itServices', e)} className="text-xs h-9"/></div>
+                  <div className="space-y-2"><Label className="text-xs">Monthly Maintenance Fee</Label><Input name="monthlyMaintenanceFee" type="number" value={invoice.itServices.monthlyMaintenanceFee ?? ''} onChange={(e) => handleCategoryDataChange('itServices', e)} className="text-xs h-9"/></div>
+              </CardContent>
+          </Card>
+      )}
+
+      {invoice.category === "Rental / Property" && invoice.rental && (
+          <Card className="bg-card/50 backdrop-blur-sm shadow-lg hover:shadow-primary/20 transition-shadow duration-300">
+              <CardHeader><CardTitle className="text-base flex items-center gap-2"><Building className="h-4 w-4" />Rental Details</CardTitle></CardHeader>
+              <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  <div className="space-y-2 md:col-span-2"><Label className="text-xs">Rental Item Name</Label><Input name="rentalItemName" value={invoice.rental.rentalItemName} onChange={(e) => handleCategoryDataChange('rental', e)} className="text-xs h-9"/></div>
+                  <div className="space-y-2"><Label className="text-xs">Rental Start Date</Label><DatePicker date={invoice.rental.rentalStartDate} setDate={(date) => handleDateChange('rental', 'rentalStartDate', date)} className="h-9 text-xs"/></div>
+                  <div className="space-y-2"><Label className="text-xs">Rental End Date</Label><DatePicker date={invoice.rental.rentalEndDate} setDate={(date) => handleDateChange('rental', 'rentalEndDate', date)} className="h-9 text-xs"/></div>
+                  <div className="space-y-2"><Label className="text-xs">Daily Rate</Label><Input name="dailyRate" type="number" value={invoice.rental.dailyRate ?? ''} onChange={(e) => handleCategoryDataChange('rental', e)} className="text-xs h-9"/></div>
+                  <div className="space-y-2"><Label className="text-xs">Hourly Rate</Label><Input name="hourlyRate" type="number" value={invoice.rental.hourlyRate ?? ''} onChange={(e) => handleCategoryDataChange('rental', e)} className="text-xs h-9"/></div>
+                  <div className="space-y-2"><Label className="text-xs">Number of Days</Label><Input name="numberOfDays" type="number" value={invoice.rental.numberOfDays ?? ''} onChange={(e) => handleCategoryDataChange('rental', e)} className="text-xs h-9"/></div>
+                  <div className="space-y-2"><Label className="text-xs">Number of Hours</Label><Input name="numberOfHours" type="number" value={invoice.rental.numberOfHours ?? ''} onChange={(e) => handleCategoryDataChange('rental', e)} className="text-xs h-9"/></div>
+                  <div className="space-y-2"><Label className="text-xs">Security Deposit</Label><Input name="securityDeposit" type="number" value={invoice.rental.securityDeposit ?? ''} onChange={(e) => handleCategoryDataChange('rental', e)} className="text-xs h-9"/></div>
+                  <div className="space-y-2"><Label className="text-xs">Damage Charges</Label><Input name="damageCharges" type="number" value={invoice.rental.damageCharges ?? ''} onChange={(e) => handleCategoryDataChange('rental', e)} className="text-xs h-9"/></div>
+                  <div className="space-y-2"><Label className="text-xs">Delivery Fee</Label><Input name="deliveryFee" type="number" value={invoice.rental.deliveryFee ?? ''} onChange={(e) => handleCategoryDataChange('rental', e)} className="text-xs h-9"/></div>
+                  <div className="space-y-2"><Label className="text-xs">Pickup Fee</Label><Input name="pickupFee" type="number" value={invoice.rental.pickupFee ?? ''} onChange={(e) => handleCategoryDataChange('rental', e)} className="text-xs h-9"/></div>
+              </CardContent>
+          </Card>
+      )}
       
       <Card className="bg-card/50 backdrop-blur-sm shadow-lg hover:shadow-primary/20 transition-shadow duration-300">
         <CardHeader>
@@ -895,7 +963,7 @@ export function InvoiceForm({ invoice, setInvoice, accentColor, setAccentColor, 
             </div>
             <div className="space-y-2">
               <Label htmlFor="shippingCost" className="text-xs">Shipping Cost</Label>
-              <div className="relative flex items-center">
+                <div className="relative flex items-center">
                   <Truck className="absolute left-3 h-4 w-4 text-muted-foreground" />
                   <Input id="shippingCost" name="summary.shippingCost" type="number" value={invoice.summary.shippingCost} onChange={handleNumberChange} className="pl-9 h-9 text-xs"/>
               </div>
@@ -950,4 +1018,3 @@ export function InvoiceForm({ invoice, setInvoice, accentColor, setAccentColor, 
     </div>
   );
 }
-
