@@ -7,7 +7,7 @@ import { motion } from 'framer-motion';
 import Image from 'next/image';
 import {
   FileText, FilePlus, Shield,
-  LayoutDashboard, Edit, Bot, Share2, Palette, ArrowRight, XCircle, Clock, AlertCircle, CheckCircle, Search, FileClock, Mouse
+  LayoutDashboard, Edit, Bot, Share2, Palette, ArrowRight, XCircle, Clock, AlertCircle, CheckCircle, Search, FileClock, ChevronLeft, ChevronRight
 } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { useTheme } from 'next-themes';
@@ -81,6 +81,27 @@ const solutions = [
   { text: "Deep customization for professional branding", icon: <CheckCircle className="h-5 w-5 text-primary" /> },
   { text: "A full, versioned audit trail for every document", icon: <FileClock className="h-5 w-5 text-primary" /> },
   { text: "Clear, itemized billing for faster payments", icon: <CheckCircle className="h-5 w-5 text-primary" /> },
+];
+
+const testimonials = [
+  {
+    quote: "InvoiceCraft has revolutionized how I handle my billing. I'm saving hours every week and getting paid faster than ever.",
+    name: 'Mike Torello',
+    role: 'Executive Engineer',
+    avatar: 'https://picsum.photos/seed/mike/100/100'
+  },
+  {
+    quote: "The templates are stunning and so easy to customize. My clients always comment on how professional my invoices look.",
+    name: 'Rick Wright',
+    role: 'Executive Engineer',
+    avatar: 'https://picsum.photos/seed/rick/100/100'
+  },
+  {
+    quote: "I love the dashboard feature. Seeing all my documents in one place and tracking their status is a game-changer for my freelance business.",
+    name: 'Devon Miles',
+    role: 'Executive Engineer',
+    avatar: 'https://picsum.photos/seed/devon/100/100'
+  }
 ];
 
 
@@ -377,6 +398,46 @@ export default function HomePage() {
                 </div>
              </div>
           </div>
+        </section>
+
+        <section className="py-20 md:py-28 bg-gray-900 text-white overflow-hidden">
+            <div className="container px-4 mx-auto md:px-6 relative">
+                 <div className="absolute top-0 left-0 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-primary/20 rounded-full blur-3xl"></div>
+                 <div className="absolute bottom-0 right-0 translate-x-1/2 translate-y-1/2 w-96 h-96 bg-accent/20 rounded-full blur-3xl"></div>
+                <div className="text-center max-w-2xl mx-auto mb-16">
+                    <p className="text-sm font-bold tracking-wider uppercase text-gray-400">TESTIMONIALS</p>
+                    <h2 className="text-4xl md:text-5xl font-bold font-headline mt-2 text-primary">What Our Customers Say</h2>
+                    <p className="mt-4 text-gray-400">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc vulputate libero et velit interdum, ac aliquet odio mattis.</p>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-16 md:gap-8 relative">
+                    {testimonials.map((testimonial, index) => (
+                        <div key={index} className="relative pt-12">
+                             <div className="absolute top-0 left-1/2 -translate-x-1/2">
+                                <Image 
+                                    src={testimonial.avatar} 
+                                    alt={testimonial.name}
+                                    width={80} 
+                                    height={80} 
+                                    className="rounded-full border-4 border-gray-800 shadow-lg"
+                                />
+                            </div>
+                            <div className="bg-white/5 border border-white/10 rounded-2xl p-8 pt-16 text-center backdrop-blur-sm">
+                                <p className="text-gray-300 text-sm mb-6 leading-relaxed">"{testimonial.quote}"</p>
+                                <h4 className="font-bold text-lg text-primary">{testimonial.name}</h4>
+                                <p className="text-xs text-gray-400">{testimonial.role}</p>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+                 <div className="flex justify-center gap-4 mt-12">
+                    <Button size="icon" variant="outline" className="bg-white/10 border-white/20 text-white hover:bg-white/20 rounded-full">
+                        <ChevronLeft className="h-5 w-5" />
+                    </Button>
+                    <Button size="icon" variant="outline" className="bg-white/10 border-white/20 text-white hover:bg-white/20 rounded-full">
+                        <ChevronRight className="h-5 w-5" />
+                    </Button>
+                </div>
+            </div>
         </section>
 
         <StackedCarousel />
