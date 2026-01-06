@@ -293,7 +293,7 @@ export function InvoiceForm({ invoice, setInvoice, accentColor, setAccentColor, 
     }
     setInvoice(prev => ({
       ...prev,
-      lineItems: [...prev.lineItems, { id: crypto.randomUUID(), name: '', quantity: 1, unitPrice: 0, taxable: false }],
+      lineItems: [...prev.lineItems, { id: crypto.randomUUID(), name: '', description: '', quantity: 1, unitPrice: 0, taxable: false }],
     }));
   };
   
@@ -313,6 +313,7 @@ export function InvoiceForm({ invoice, setInvoice, accentColor, setAccentColor, 
     const newItems = Array.from({ length: count }, () => ({
       id: crypto.randomUUID(),
       name: '',
+      description: '',
       quantity: 1,
       unitPrice: 0,
       taxable: false,
@@ -1028,7 +1029,8 @@ export function InvoiceForm({ invoice, setInvoice, accentColor, setAccentColor, 
               </div>
             </div>
 
-          <div className="hidden md:grid md:grid-cols-[1fr_80px_100px_100px_auto] gap-x-4 text-xs font-medium text-muted-foreground items-center">
+          <div className="hidden md:grid md:grid-cols-[1fr_1fr_80px_100px_100px_auto] gap-x-4 text-xs font-medium text-muted-foreground items-center">
+            <Label>Item</Label>
             <Label>Description</Label>
             <Label>Quantity</Label>
             <Label>Unit Price</Label>
@@ -1036,10 +1038,14 @@ export function InvoiceForm({ invoice, setInvoice, accentColor, setAccentColor, 
             <span></span>
           </div>
           {invoice.lineItems.map((item, index) => (
-            <div key={item.id} className="grid grid-cols-1 md:grid-cols-[1fr_80px_100px_100px_auto] gap-x-4 gap-y-2 items-center border-b pb-3">
-              <div className="space-y-2 md:col-span-1">
-                <Label htmlFor={`itemName-${index}`} className="text-xs md:hidden">Description</Label>
-                <Textarea id={`itemName-${index}`} value={item.name} onChange={(e) => handleItemChange(index, 'name', e.target.value)} className="h-9 min-h-9 text-xs"/>
+            <div key={item.id} className="grid grid-cols-1 md:grid-cols-[1fr_1fr_80px_100px_100px_auto] gap-x-4 gap-y-2 items-start border-b pb-3">
+              <div className="space-y-2">
+                 <Label htmlFor={`itemName-${index}`} className="text-xs md:hidden">Item</Label>
+                <Input id={`itemName-${index}`} placeholder="Item name" value={item.name} onChange={(e) => handleItemChange(index, 'name', e.target.value)} className="h-9 text-xs"/>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor={`itemDescription-${index}`} className="text-xs md:hidden">Description</Label>
+                <Textarea id={`itemDescription-${index}`} placeholder="Additional details" value={item.description} onChange={(e) => handleItemChange(index, 'description', e.target.value)} className="h-9 min-h-9 text-xs"/>
               </div>
               <div className="grid grid-cols-2 md:contents gap-3">
                 <div className="space-y-2">
@@ -1156,6 +1162,7 @@ export function InvoiceForm({ invoice, setInvoice, accentColor, setAccentColor, 
     </div>
   );
 }
+
 
 
 
