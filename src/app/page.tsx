@@ -88,19 +88,19 @@ const testimonials = [
     quote: "InvoiceCraft has revolutionized how I handle my billing. I'm saving hours every week and getting paid faster than ever.",
     name: 'Jane Doe',
     role: 'Freelance Designer',
-    avatar: 'https://picsum.photos/seed/jane/100/100'
+    avatar: 'https://picsum.photos/seed/1/100/100'
   },
   {
     quote: "The templates are stunning and so easy to customize. My clients always comment on how professional my invoices look.",
     name: 'John Smith',
     role: 'Small Business Owner',
-    avatar: 'https://picsum.photos/seed/john/100/100'
+    avatar: 'https://picsum.photos/seed/2/100/100'
   },
   {
     quote: "I love the dashboard feature. Seeing all my documents in one place and tracking their status is a game-changer for my freelance business.",
     name: 'Emily White',
     role: 'Finance Manager',
-    avatar: 'https://picsum.photos/seed/emily/100/100'
+    avatar: 'https://picsum.photos/seed/3/100/100'
   }
 ];
 
@@ -375,42 +375,7 @@ export default function HomePage() {
                         </Button>
                     </div>
                 </div>
-                <div className="relative h-[400px] w-full">
-                     {/* Layered browser windows */}
-                     <motion.div 
-                        initial={{x: 20, y: 20, rotate: 5}} 
-                        whileInView={{x:0, y:0, rotate: 0}} 
-                        transition={{type: 'spring', stiffness: 100}} 
-                        className="absolute top-0 left-0 w-full h-full p-2 border bg-card/80 backdrop-blur-sm rounded-lg shadow-lg"
-                      >
-                         <div className="h-full w-full rounded bg-muted"></div>
-                     </motion.div>
-                      <motion.div 
-                        initial={{x: -20, y: -20, rotate: -5}} 
-                        whileInView={{x:0, y:0, rotate: 0}} 
-                        transition={{type: 'spring', stiffness: 100, delay: 0.1}} 
-                        className="absolute top-0 left-0 w-full h-full p-2 border bg-card/80 backdrop-blur-sm rounded-lg shadow-2xl"
-                      >
-                         <div className="h-full w-full rounded bg-muted-foreground/10"></div>
-                     </motion.div>
-                     <motion.div 
-                        initial={{scale: 0.9, opacity: 0}}
-                        whileInView={{scale: 1, opacity: 1}}
-                        transition={{delay: 0.2, duration: 0.5}}
-                        className="absolute top-0 left-0 w-full h-full p-2 border bg-card/90 backdrop-blur-md rounded-lg shadow-2xl"
-                      >
-                          <div className="flex items-center gap-1.5 p-2 border-b">
-                              <div className="w-3 h-3 rounded-full bg-red-500"></div>
-                              <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
-                              <div className="w-3 h-3 rounded-full bg-green-500"></div>
-                          </div>
-                          <div className="p-4">
-                              <div className="w-3/4 h-4 rounded-full bg-primary/20 mb-4"></div>
-                              <div className="w-1/2 h-3 rounded-full bg-muted-foreground/20 mb-2"></div>
-                              <div className="w-3/4 h-3 rounded-full bg-muted-foreground/20"></div>
-                          </div>
-                     </motion.div>
-                </div>
+                 <StackedCarousel />
              </div>
           </div>
         </section>
