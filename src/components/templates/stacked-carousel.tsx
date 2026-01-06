@@ -1,3 +1,4 @@
+
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
@@ -13,11 +14,11 @@ const carouselData = allTemplates
     'minimalist',
     'elegant', 
     'creative',
-    'retail-1',
-    'legal-2',
-    'construction-1',
+    'construction-2',
     'plumbing-2',
     'it-3',
+    'legal-1',
+    'medical-2',
   ].includes(t.id))
   .map(t => ({
     src: t.thumbnailUrl,
