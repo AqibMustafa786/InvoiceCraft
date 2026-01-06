@@ -1,5 +1,4 @@
 
-
 'use client';
 
 import { ChangeEvent, Dispatch, SetStateAction, useState, useEffect } from 'react';
@@ -1029,7 +1028,7 @@ export function InvoiceForm({ invoice, setInvoice, accentColor, setAccentColor, 
               </div>
             </div>
 
-          <div className="hidden md:grid md:grid-cols-[1.5fr_2fr_60px_100px_100px_auto] gap-x-4 text-xs font-medium text-muted-foreground items-center">
+          <div className="hidden md:grid md:grid-cols-[2fr_3fr_60px_100px_100px_auto] gap-x-4 text-xs font-medium text-muted-foreground items-center">
             <Label>Item</Label>
             <Label>Description</Label>
             <Label>Qty</Label>
@@ -1038,7 +1037,7 @@ export function InvoiceForm({ invoice, setInvoice, accentColor, setAccentColor, 
             <span></span>
           </div>
           {invoice.lineItems.map((item, index) => (
-            <div key={item.id} className="grid grid-cols-1 md:grid-cols-[1.5fr_2fr_60px_100px_100px_auto] gap-x-4 gap-y-2 items-start border-b pb-3">
+            <div key={item.id} className="grid grid-cols-1 md:grid-cols-[2fr_3fr_60px_100px_100px_auto] gap-x-4 gap-y-2 items-start border-b pb-3">
               <div className="space-y-2">
                  <Label htmlFor={`itemName-${index}`} className="text-xs md:hidden">Item</Label>
                 <Input id={`itemName-${index}`} placeholder="Item" value={item.name} onChange={(e) => handleItemChange(index, 'name', e.target.value)} className="h-9 text-xs"/>
