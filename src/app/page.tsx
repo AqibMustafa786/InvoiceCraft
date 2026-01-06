@@ -1,3 +1,4 @@
+
 'use client';
 
 import Link from 'next/link';
@@ -444,7 +445,7 @@ export default function HomePage() {
                                         className="rounded-full border-4 border-gray-800 shadow-lg"
                                     />
                                 </div>
-                                <div className="bg-white/5 border border-white/10 rounded-2xl p-8 pt-16 text-center backdrop-blur-sm flex-grow flex flex-col">
+                                <div className="bg-white/5 border border-white/10 rounded-2xl p-8 pt-16 text-center flex-grow flex flex-col">
                                     <p className="text-gray-300 text-sm leading-relaxed flex-grow">"{testimonials[currentTestimonialIndex].quote}"</p>
                                     <div className="mt-6">
                                         <h4 className="font-bold text-lg text-primary">{testimonials[currentTestimonialIndex].name}</h4>
@@ -465,8 +466,6 @@ export default function HomePage() {
                 </div>
             </div>
         </section>
-
-        <StackedCarousel />
 
         <AIChatbot />
       </main>
