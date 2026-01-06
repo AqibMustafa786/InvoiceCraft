@@ -1,9 +1,10 @@
-
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 import { allTemplates } from '@/lib/template-data';
+import { cn } from '@/lib/utils';
+import { motion, AnimatePresence } from 'framer-motion';
 
 // Select a diverse set of templates to showcase
 const carouselData = allTemplates
@@ -23,88 +24,64 @@ const carouselData = allTemplates
   }));
 
 export function StackedCarousel() {
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const carouselRef = useRef<HTMLDivElement>(null);
-  const intervalRef = useRef<NodeJS.Timeout | null>(null);
-
-  const updateCarousel = () => {
-    if (!carouselRef.current) return;
-    const cards = carouselRef.current.querySelectorAll('.carousel-card');
-    
-    if (cards.length === 0) return;
-
-    cards.forEach((card, index) => {
-      card.className = 'carousel-card hidden'; // Reset classes
-
-      const totalCards = cards.length;
-      if (index === currentIndex) {
-        card.classList.add('active');
-      } else if (index === (currentIndex - 1 + totalCards) % totalCards) {
-        card.classList.add('prev');
-      } else if (index === (currentIndex + 1) % totalCards) {
-        card.classList.add('next');
-      }
-    });
-  };
-
-  const nextCard = () => {
-    setCurrentIndex((prevIndex) => (prevIndex + 1) % carouselData.length);
-  };
-
-  const prevCard = () => {
-    setCurrentIndex((prevIndex) => (prevIndex - 1 + carouselData.length) % carouselData.length);
-  };
-
-  const startAutoSlide = () => {
-    stopAutoSlide(); // Clear any existing interval
-    intervalRef.current = setInterval(nextCard, 4500);
-  };
-
-  const stopAutoSlide = () => {
-    if (intervalRef.current) {
-      clearInterval(intervalRef.current);
-    }
-  };
+  const [index, setIndex] = useState(0);
 
   useEffect(() => {
-    updateCarousel();
-  }, [currentIndex]);
+    const interval = setInterval(() => {
+      setIndex((prevIndex) => (prevIndex + 1) % carouselData.length);
+    }, 3000);
 
-  useEffect(() => {
-    startAutoSlide();
-    // Initial update in case the component re-renders
-    const timer = setTimeout(updateCarousel, 10);
-    
-    return () => {
-      stopAutoSlide();
-      clearTimeout(timer);
-    };
+    return () => clearInterval(interval);
   }, []);
 
   return (
-    <section className="template-showcase">
-      <h2>Invoice Templates</h2>
-      <p className="subtitle">
-        Professionally designed templates for your business
-      </p>
+    <div className="relative h-[500px] w-full max-w-lg mx-auto">
+      <AnimatePresence initial={false}>
+        {carouselData.map((card, i) => {
+          const position = (i - index + carouselData.length) % carouselData.length;
+          
+          let y = 0;
+          let scale = 1;
+          let zIndex = 0;
+          let opacity = 0;
 
-      <div 
-        className="carousel" 
-        ref={carouselRef}
-        onMouseEnter={stopAutoSlide}
-        onMouseLeave={startAutoSlide}
-      >
-        {carouselData.map((item, index) => (
-          <div className="carousel-card" key={index}>
-            <Image src={item.src} alt={item.alt} data-ai-hint={item.hint} fill priority={index < 3} sizes="(max-width: 768px) 100vw, 740px" />
-          </div>
-        ))}
-      </div>
+          if (position === 0) { // Active card
+            y = 0;
+            scale = 1;
+            zIndex = carouselData.length;
+            opacity = 1;
+          } else if (position < 4) { // Cards behind
+            y = position * -30;
+            scale = 1 - position * 0.05;
+            zIndex = carouselData.length - position;
+            opacity = 1;
+          } else { // Hidden cards
+             y = 100;
+             opacity = 0;
+          }
 
-      <div className="controls">
-        <button id="prev" onClick={prevCard}>‹</button>
-        <button id="next" onClick={nextCard}>›</button>
-      </div>
-    </section>
+          return (
+            <motion.div
+              key={i}
+              className="absolute h-full w-full rounded-2xl shadow-2xl overflow-hidden"
+              initial={{ y: 50, opacity: 0, scale: 0.9 }}
+              animate={{ y, scale, zIndex, opacity }}
+              exit={{ y: -50, opacity: 0, scale: 0.9 }}
+              transition={{ type: 'spring', stiffness: 200, damping: 25 }}
+            >
+              <Image
+                src={card.src}
+                alt={card.alt}
+                data-ai-hint={card.hint}
+                fill
+                priority={i < 3}
+                sizes="(max-width: 768px) 100vw, 512px"
+                className="object-cover object-top"
+              />
+            </motion.div>
+          );
+        })}
+      </AnimatePresence>
+    </div>
   );
 }
