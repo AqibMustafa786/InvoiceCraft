@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import { ChangeEvent, Dispatch, SetStateAction, useState, useEffect } from 'react';
@@ -138,7 +139,7 @@ const CustomSelect = ({ value, onValueChange, options, placeholder, name }: { va
     const handleOtherInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setOtherValue(e.target.value);
         onValueChange(name, e.target.value);
-    };
+    }
 
     return (
         <div className="space-y-2">
@@ -1018,3 +1019,4 @@ export function InvoiceForm({ invoice, setInvoice, accentColor, setAccentColor, 
     </div>
   );
 }
+

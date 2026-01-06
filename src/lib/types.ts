@@ -301,22 +301,6 @@ export interface Invoice {
   userId: string;
   companyId: string;
   clientId?: string;
-  // Deprecated fields - will be removed in a future step
-  companyName: string;
-  companyAddress: string;
-  companyPhone: string;
-  clientName: string;
-  clientAddress: string;
-  clientEmail: string;
-  items: LineItem[];
-  tax: number;
-  discount: number;
-  shippingCost: number;
-  shippingAddress: string;
-  poNumber: string;
-  trackingNumber: string;
-  // End deprecated fields
-
   business: BusinessInfo;
   client: ClientInfo;
   invoiceNumber: string;
@@ -338,6 +322,7 @@ export interface Invoice {
   createdAt?: any;
   updatedAt?: any;
   amountPaid?: number;
+  poNumber: string;
   auditLog: AuditLogEntry[];
 
   // Category specific data
