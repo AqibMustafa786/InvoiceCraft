@@ -419,14 +419,14 @@ export default function HomePage() {
           </div>
         </section>
 
-        <section className="py-20 md:py-28 bg-gray-900 text-white overflow-hidden">
+        <section className="py-20 md:py-28 bg-card text-card-foreground overflow-hidden">
             <div className="container px-4 mx-auto md:px-6 relative">
                  <div className="absolute top-0 left-0 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-primary/20 rounded-full blur-3xl"></div>
                  <div className="absolute bottom-0 right-0 translate-x-1/2 translate-y-1/2 w-96 h-96 bg-accent/20 rounded-full blur-3xl"></div>
                 <div className="text-center max-w-2xl mx-auto mb-16">
-                    <p className="text-sm font-bold tracking-wider uppercase text-gray-400">TESTIMONIALS</p>
+                    <p className="text-sm font-bold tracking-wider uppercase text-muted-foreground">TESTIMONIALS</p>
                     <h2 className="text-4xl md:text-5xl font-bold font-headline mt-2 text-primary">What Our Customers Say</h2>
-                    <p className="mt-4 text-gray-400">Trusted by thousands of businesses worldwide.</p>
+                    <p className="mt-4 text-muted-foreground">Trusted by thousands of businesses worldwide.</p>
                 </div>
                 <div className="relative min-h-[350px]" style={{ perspective: '1000px' }}>
                     <AnimatePresence initial={false} custom={direction}>
@@ -451,19 +451,19 @@ export default function HomePage() {
                                         alt={testimonial.name}
                                         width={80} 
                                         height={80} 
-                                        className="rounded-full border-4 border-gray-800 shadow-lg"
+                                        className="rounded-full border-4 border-background shadow-lg"
                                     />
                                 </div>
-                                <div className="bg-white/5 border border-white/10 rounded-2xl p-8 pt-16 text-center flex flex-col flex-grow">
+                                <div className="bg-background/80 border border-border/50 rounded-2xl p-8 pt-16 text-center flex flex-col flex-grow">
                                     <div className="flex justify-center mb-4 text-yellow-400">
                                       {[...Array(5)].map((_, i) => (
                                         <Star key={i} className="h-5 w-5 fill-current" />
                                       ))}
                                     </div>
-                                    <p className="text-gray-300 text-sm leading-relaxed flex-grow">"{testimonial.quote}"</p>
+                                    <p className="text-muted-foreground text-sm leading-relaxed flex-grow">"{testimonial.quote}"</p>
                                     <div className="mt-6">
                                         <h4 className="font-bold text-lg text-primary">{testimonial.name}</h4>
-                                        <p className="text-xs text-gray-400">{testimonial.role}</p>
+                                        <p className="text-xs text-muted-foreground">{testimonial.role}</p>
                                     </div>
                                 </div>
                             </div>
@@ -472,10 +472,10 @@ export default function HomePage() {
                     </AnimatePresence>
                 </div>
                  <div className="flex justify-center gap-4 mt-12">
-                    <Button size="icon" variant="outline" className="bg-white/10 border-white/20 text-white hover:bg-white/20 rounded-full" onClick={prevTestimonials}>
+                    <Button size="icon" variant="outline" className="bg-background/50 border-border text-foreground hover:bg-accent rounded-full" onClick={prevTestimonials}>
                         <ChevronLeft className="h-5 w-5" />
                     </Button>
-                    <Button size="icon" variant="outline" className="bg-white/10 border-white/20 text-white hover:bg-white/20 rounded-full" onClick={nextTestimonials}>
+                    <Button size="icon" variant="outline" className="bg-background/50 border-border text-foreground hover:bg-accent rounded-full" onClick={nextTestimonials}>
                         <ChevronRight className="h-5 w-5" />
                     </Button>
                 </div>
