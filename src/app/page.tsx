@@ -119,61 +119,46 @@ const testimonials = [
     role: 'Insurance Agent',
     avatar: 'https://picsum.photos/seed/woman3/100/100'
   },
-    {
-    quote: "Managing client information and seeing their entire document history in one place is incredibly efficient.",
-    name: 'Chris Lee',
-    role: 'Agency Director',
-    avatar: 'https://picsum.photos/seed/man4/100/100'
-  },
-  {
-    quote: "I was up and running in minutes. The learning curve is practically non-existent, but the features are powerful.",
-    name: 'Jessica Martinez',
-    role: 'Photographer',
-    avatar: 'https://picsum.photos/seed/woman4/100/100'
-  },
-  {
-    quote: "The shareable links for quotes have streamlined my approval process. Clients love the simplicity.",
-    name: 'Robert Garcia',
-    role: 'Marketing Specialist',
-    avatar: 'https://picsum.photos/seed/man5/100/100'
-  }
 ];
 
 
 export default function HomePage() {
   const [mounted, setMounted] = useState(false);
-  const [testimonialPage, setTestimonialPage] = useState(0);
+  const [[page, direction], setPage] = useState([0, 0]);
   const { theme } = useTheme();
   
   const testimonialsPerPage = 3;
   const numPages = Math.ceil(testimonials.length / testimonialsPerPage);
 
-  const paginate = (newPage: number) => {
-    setTestimonialPage(newPage);
+  const paginate = (newDirection: number) => {
+    setPage([page + newDirection, newDirection]);
   };
   
   const nextTestimonials = () => {
-    setTestimonialPage((prevPage) => (prevPage + 1) % numPages);
+    paginate(1);
   };
 
   const prevTestimonials = () => {
-    setTestimonialPage((prevPage) => (prevPage - 1 + numPages) % numPages);
+    paginate(-1);
   };
   
+  const testimonialIndex = ((page % numPages) + numPages) % numPages;
+
   const variants = {
     enter: (direction: number) => ({
-      x: direction > 0 ? 1000 : -1000,
-      opacity: 0
+      rotateY: direction > 0 ? -180 : 180,
+      opacity: 0,
+      scale: 0.8,
     }),
     center: {
-      zIndex: 1,
-      x: 0,
-      opacity: 1
+      rotateY: 0,
+      opacity: 1,
+      scale: 1,
     },
     exit: (direction: number) => ({
-      zIndex: 0,
-      x: direction < 0 ? 1000 : -1000,
-      opacity: 0
+      rotateY: direction < 0 ? -180 : 180,
+      opacity: 0,
+      scale: 0.8
     })
   };
 
@@ -443,22 +428,22 @@ export default function HomePage() {
                     <h2 className="text-4xl md:text-5xl font-bold font-headline mt-2 text-primary">What Our Customers Say</h2>
                     <p className="mt-4 text-gray-400">Trusted by thousands of businesses worldwide.</p>
                 </div>
-                <div className="relative min-h-[350px]">
-                    <AnimatePresence initial={false} custom={testimonialPage}>
+                <div className="relative min-h-[350px]" style={{ perspective: '1000px' }}>
+                    <AnimatePresence initial={false} custom={direction}>
                       <motion.div
-                        key={testimonialPage}
-                        custom={testimonialPage}
+                        key={page}
+                        custom={direction}
                         variants={variants}
                         initial="enter"
                         animate="center"
                         exit="exit"
                         transition={{
-                          x: { type: "spring", stiffness: 300, damping: 30 },
-                          opacity: { duration: 0.2 }
+                          rotateY: { type: "spring", stiffness: 300, damping: 30 },
+                          opacity: { duration: 0.3 }
                         }}
                         className="absolute w-full grid grid-cols-1 md:grid-cols-3 gap-8"
                       >
-                        {testimonials.slice(testimonialPage * testimonialsPerPage, testimonialPage * testimonialsPerPage + testimonialsPerPage).map((testimonial, index) => (
+                        {testimonials.slice(testimonialIndex * testimonialsPerPage, testimonialIndex * testimonialsPerPage + testimonialsPerPage).map((testimonial, index) => (
                            <div key={index} className="relative pt-12 flex flex-col w-full">
                                 <div className="absolute top-0 left-1/2 -translate-x-1/2">
                                     <Image 
