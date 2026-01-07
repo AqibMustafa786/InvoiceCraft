@@ -415,9 +415,8 @@ export default function ClientPage() {
         </AlertDialog>
 
        <motion.div variants={itemVariants} className="flex justify-between items-start">
-         <Button variant="outline" onClick={() => router.push('/dashboard?tab=clients')}>
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Back to All Clients
+         <Button variant="outline" size="icon" onClick={() => router.push('/dashboard?tab=clients')}>
+            <ArrowLeft className="h-4 w-4" />
         </Button>
        </motion.div>
       <motion.div variants={itemVariants} className="grid gap-6 lg:grid-cols-3">
@@ -621,6 +620,7 @@ export default function ClientPage() {
     </motion.div>
   );
 }
+
 
 
 
