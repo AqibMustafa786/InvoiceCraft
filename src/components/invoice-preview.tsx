@@ -69,7 +69,7 @@ import {
 import {
   RentalTemplate1, RentalTemplate2, RentalTemplate3, RentalTemplate4, RentalTemplate5
 } from './invoice-templates/rental-templates';
-import { toNumberSafe } from '@/lib/utils';
+import { toNumberSafe, toDateSafe } from '@/lib/utils';
 
 
 // --- PROPS ---
@@ -112,9 +112,8 @@ const currencySymbols: { [key: string]: string } = {
 
 const safeFormat = (date: Date | string | number | null | undefined, formatString: string) => {
     if (!date) return "N/A";
-    const d = new Date(date);
-    if (!isValid(d)) return "Invalid Date";
-    return format(d, formatString);
+    const d = toDateSafe(date);
+    return isValid(d) ? format(d, formatString) : "Invalid Date";
 }
 
 // --- SHARED COMPONENTS ---
@@ -253,9 +252,9 @@ const DefaultTemplatePage: FC<PageProps> = ({ pageItems, pageIndex, totalPages, 
                     </div>
                     <div className="text-right space-y-1">
                         <p className="text-sm font-semibold text-gray-500">{((t.invoiceDate as string) || 'Invoice Date').toUpperCase()}</p>
-                        <p>{safeFormat(new Date(invoice.invoiceDate || new Date()), 'MMMM d, yyyy')}</p>
+                        <p>{safeFormat(invoice.invoiceDate, 'MMMM d, yyyy')}</p>
                         <p className="text-sm font-semibold text-gray-500 mt-2">{((t.dueDate as string) || 'Due Date').toUpperCase()}</p>
-                        <p>{safeFormat(new Date(invoice.dueDate || new Date()), 'MMMM d, yyyy')}</p>
+                        <p>{safeFormat(invoice.dueDate, 'MMMM d, yyyy')}</p>
                     </div>
                 </section>
                 <ItemsTable items={pageItems} {...commonProps} />
@@ -307,11 +306,11 @@ const ModernTemplatePage: FC<PageProps> = ({ pageItems, pageIndex, totalPages, .
                 </div>
                 <div className="space-y-1 text-right">
                     <p className="font-bold">Date</p>
-                    <p>{safeFormat(new Date(invoice.invoiceDate || new Date()), 'MM/dd/yyyy')}</p>
+                    <p>{safeFormat(invoice.invoiceDate, 'MM/dd/yyyy')}</p>
                 </div>
                 <div className="space-y-1 text-right">
                     <p className="font-bold">Due Date</p>
-                    <p>{safeFormat(new Date(invoice.dueDate || new Date()), 'MM/dd/yyyy')}</p>
+                    <p>{safeFormat(invoice.dueDate, 'MM/dd/yyyy')}</p>
                 </div>
                  <div className="space-y-1 text-right">
                     <p className="font-bold">PO #</p>
@@ -352,7 +351,7 @@ const MinimalistTemplatePage: FC<PageProps> = ({ pageItems, pageIndex, totalPage
                 </div>
                 <div className="space-y-1">
                     <p className="text-gray-500 uppercase tracking-widest">Date</p>
-                    <p className="font-medium">{safeFormat(new Date(invoice.invoiceDate || new Date()), 'yyyy-MM-dd')}</p>
+                    <p className="font-medium">{safeFormat(invoice.invoiceDate, 'yyyy-MM-dd')}</p>
                 </div>
                  <div className="space-y-1 col-span-2">
                     <p className="text-gray-500 uppercase tracking-widest">Shipping Address</p>
@@ -424,7 +423,7 @@ const ElegantTemplatePage: FC<PageProps> = ({ pageItems, pageIndex, totalPages, 
                 </div>
                 <div className="text-right">
                     <p><span className="font-bold">Invoice Number:</span> {invoice.invoiceNumber}</p>
-                    <p><span className="font-bold">Date of Issue:</span> {safeFormat(new Date(invoice.invoiceDate || new Date()), 'MMMM dd, yyyy')}</p>
+                    <p><span className="font-bold">Date of Issue:</span> {safeFormat(invoice.invoiceDate, 'MMMM dd, yyyy')}</p>
                     <p><span className="font-bold">PO Number:</span> {invoice.poNumber || 'N/A'}</p>
                 </div>
             </section>
@@ -456,7 +455,7 @@ const UsaTemplatePage: FC<PageProps> = ({ pageItems, pageIndex, totalPages, ...c
                         <h2 className="text-4xl font-bold">INVOICE</h2>
                         <div className="mt-4 text-xs space-y-1">
                             <p><span className="font-bold text-gray-500">Invoice #:</span> {invoice.invoiceNumber}</p>
-                            <p><span className="font-bold text-gray-500">Date:</span> {safeFormat(new Date(invoice.invoiceDate || new Date()), 'M/d/yyyy')}</p>
+                            <p><span className="font-bold text-gray-500">Date:</span> {safeFormat(invoice.invoiceDate, 'M/d/yyyy')}</p>
                         </div>
                     </div>
                 </header>
@@ -655,7 +654,7 @@ const InvoicePreviewInternal: FC<InvoicePreviewProps> = ({ invoice, accentColor,
   useEffect(() => {
     setNeedsRemeasure(true);
     setPaginatedItems([invoice.lineItems]);
-  }, [serializedInvoice]);
+  }, [serializedInvoice, invoice.lineItems]);
 
 
   const previewStyle = {
@@ -811,7 +810,18 @@ export const ClientInvoicePreview: FC<InvoicePreviewProps> = (props) => {
         setIsClient(true);
     }, []);
 
-    if (!isClient || !props.invoice) {
+    const processedInvoice = useMemo(() => {
+      if (!props.invoice) return null;
+      // Deep copy and process dates
+      const newInvoice = JSON.parse(JSON.stringify(props.invoice));
+      newInvoice.invoiceDate = toDateSafe(newInvoice.invoiceDate);
+      newInvoice.dueDate = toDateSafe(newInvoice.dueDate);
+      // Process any other date fields here if necessary
+      return newInvoice;
+    }, [props.invoice]);
+    
+
+    if (!isClient || !processedInvoice) {
         return (
             <Card id={props.id} className="w-full shadow-lg rounded-xl overflow-hidden print-hide">
                 <CardContent className="p-8 text-center text-muted-foreground">
@@ -820,7 +830,7 @@ export const ClientInvoicePreview: FC<InvoicePreviewProps> = (props) => {
             </Card>
         );
     }
-    return <InvoicePreviewInternal {...props} />;
+    return <InvoicePreviewInternal {...props} invoice={processedInvoice} />;
 }
 
 
