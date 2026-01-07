@@ -40,6 +40,7 @@ import { KpiDetailsModal } from '@/components/dashboard/kpi-details-modal';
 import { HistoryModal } from '@/components/dashboard/history-modal';
 import { ClientFormDialog } from '@/components/dashboard/client-form-dialog';
 import { toDateSafe, toNumberSafe } from '@/lib/utils';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
 const INVOICES_COLLECTION = 'invoices';
 const ESTIMATES_COLLECTION = 'estimates';
@@ -794,7 +795,15 @@ export default function DashboardPage() {
                                     className="cursor-pointer"
                                     onClick={() => router.push(`/dashboard/clients/${client.id}`)}
                                 >
-                                    <TableCell className="font-medium text-xs">{client.name}</TableCell>
+                                    <TableCell className="font-medium text-xs">
+                                        <div className="flex items-center gap-3">
+                                            <Avatar className="h-8 w-8">
+                                                <AvatarImage src={client.avatarUrl || ''} alt={client.name} />
+                                                <AvatarFallback>{client.name.charAt(0)}</AvatarFallback>
+                                            </Avatar>
+                                            <span>{client.name}</span>
+                                        </div>
+                                    </TableCell>
                                     <TableCell className="text-xs hidden sm:table-cell">{client.companyName}</TableCell>
                                     <TableCell className="text-xs hidden md:table-cell">{client.email}</TableCell>
                                     <TableCell className="text-right">
@@ -983,3 +992,4 @@ export default function DashboardPage() {
         </>
     );
 }
+
