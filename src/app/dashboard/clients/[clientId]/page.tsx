@@ -486,12 +486,11 @@ export default function ClientPage() {
         </motion.div>
       </motion.div>
       
-      <motion.div variants={itemVariants}>
-          <ClientDashboardStats documents={allDocuments} />
-      </motion.div>
-       
-       <motion.div variants={itemVariants}>
-        <Card className="bg-card/50 backdrop-blur-sm shadow-lg">
+      <motion.div variants={itemVariants} className="grid lg:grid-cols-3 gap-6">
+          <div className="lg:col-span-2">
+              <ClientDashboardStats documents={allDocuments} />
+          </div>
+          <Card className="bg-card/50 backdrop-blur-sm shadow-lg">
             <CardHeader>
                 <CardTitle className="text-base">Quick Actions</CardTitle>
             </CardHeader>
@@ -514,7 +513,7 @@ export default function ClientPage() {
                 </Button>
             </CardContent>
         </Card>
-       </motion.div>
+      </motion.div>
       
       <motion.div variants={itemVariants}>
       <Tabs defaultValue="invoices">
