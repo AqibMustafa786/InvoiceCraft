@@ -1,3 +1,4 @@
+
 'use client';
 
 import Link from 'next/link';
@@ -154,11 +155,21 @@ export default function HomePage() {
       rotateY: 0,
       opacity: 1,
       scale: 1,
+      transition: {
+        rotateY: { duration: 0.5 },
+        opacity: { duration: 0.2, delay: 0.15 },
+        scale: { duration: 0.5 }
+      }
     },
     exit: (direction: number) => ({
       rotateY: direction < 0 ? -180 : 180,
       opacity: 0,
-      scale: 0.8
+      scale: 0.8,
+      transition: {
+        rotateY: { duration: 0.5 },
+        opacity: { duration: 0.2 },
+        scale: { duration: 0.5 }
+      }
     })
   };
 
@@ -437,10 +448,6 @@ export default function HomePage() {
                         initial="enter"
                         animate="center"
                         exit="exit"
-                        transition={{
-                          rotateY: { type: "spring", stiffness: 300, damping: 30 },
-                          opacity: { duration: 0.3 }
-                        }}
                         className="absolute w-full grid grid-cols-1 md:grid-cols-3 gap-8"
                       >
                         {testimonials.slice(testimonialIndex * testimonialsPerPage, testimonialIndex * testimonialsPerPage + testimonialsPerPage).map((testimonial, index) => (
