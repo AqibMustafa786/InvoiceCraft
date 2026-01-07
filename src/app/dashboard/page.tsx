@@ -247,18 +247,18 @@ const ClientStatsGrid: React.FC<ClientStatsGridProps> = ({ clients, invoices }) 
     const symbol = currencySymbols[currency] || '$';
 
     return (
-        <motion.div className="grid gap-2 grid-cols-2 md:grid-cols-4 lg:grid-cols-4" variants={pageVariants}>
+        <motion.div className="grid gap-2 grid-cols-2 md:grid-cols-2 lg:grid-cols-4" variants={pageVariants}>
             <motion.div variants={pageVariants}>
-                <Card className="bg-card/50 backdrop-blur-sm shadow-sm"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1"><CardTitle className="text-xs font-medium">Total Clients</CardTitle><Users className="h-3 w-3 text-muted-foreground" /></CardHeader><CardContent><div className="text-xl font-bold">{stats.totalClients}</div></CardContent></Card>
+                <Card className="bg-card/50 backdrop-blur-sm shadow-sm h-full"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1"><CardTitle className="text-xs font-medium">Total Clients</CardTitle><Users className="h-3 w-3 text-muted-foreground" /></CardHeader><CardContent><div className="text-xl font-bold">{stats.totalClients}</div></CardContent></Card>
             </motion.div>
              <motion.div variants={pageVariants}>
-                <Card className="bg-card/50 backdrop-blur-sm shadow-sm"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1"><CardTitle className="text-xs font-medium">Total Client Revenue</CardTitle><DollarSign className="h-3 w-3 text-muted-foreground" /></CardHeader><CardContent><div className="text-xl font-bold">{symbol}{stats.totalRevenue.toFixed(2)}</div></CardContent></Card>
+                <Card className="bg-card/50 backdrop-blur-sm shadow-sm h-full"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1"><CardTitle className="text-xs font-medium">Total Client Revenue</CardTitle><DollarSign className="h-3 w-3 text-muted-foreground" /></CardHeader><CardContent><div className="text-xl font-bold">{symbol}{stats.totalRevenue.toFixed(2)}</div></CardContent></Card>
             </motion.div>
             <motion.div variants={pageVariants}>
-                <Card className="bg-card/50 backdrop-blur-sm shadow-sm"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1"><CardTitle className="text-xs font-medium">Active Clients</CardTitle><CheckCircle className="h-3 w-3 text-muted-foreground" /></CardHeader><CardContent><div className="text-xl font-bold">{stats.activeClients}</div></CardContent></Card>
+                <Card className="bg-card/50 backdrop-blur-sm shadow-sm h-full"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1"><CardTitle className="text-xs font-medium">Active Clients</CardTitle><CheckCircle className="h-3 w-3 text-muted-foreground" /></CardHeader><CardContent><div className="text-xl font-bold">{stats.activeClients}</div></CardContent></Card>
             </motion.div>
-            <motion.div variants={pageVariants}>
-                <Card className="bg-card/50 backdrop-blur-sm shadow-sm"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1"><CardTitle className="text-xs font-medium">Avg. Revenue / Client</CardTitle><AreaChart className="h-3 w-3 text-muted-foreground" /></CardHeader><CardContent><div className="text-xl font-bold">{symbol}{stats.avgRevenue.toFixed(2)}</div></CardContent></Card>
+             <motion.div variants={pageVariants}>
+                <Card className="bg-card/50 backdrop-blur-sm shadow-sm h-full"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1"><CardTitle className="text-xs font-medium">Avg. Revenue / Client</CardTitle><AreaChart className="h-3 w-3 text-muted-foreground" /></CardHeader><CardContent><div className="text-xl font-bold">{symbol}{stats.avgRevenue.toFixed(2)}</div></CardContent></Card>
             </motion.div>
         </motion.div>
     );
@@ -890,6 +890,8 @@ export default function DashboardPage() {
             </div>
         )
     }
+    
+    const title = activeTab.charAt(0).toUpperCase() + activeTab.slice(1);
 
     return (
         <>
@@ -940,7 +942,7 @@ export default function DashboardPage() {
                         <CardHeader className='pb-4'>
                             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                                 <motion.div variants={pageVariants}>
-                                    <h1 className="text-xl font-bold font-headline">Dashboard</h1>
+                                    <h1 className="text-xl font-bold font-headline">{title}</h1>
                                     <p className="text-xs text-muted-foreground">An overview of your financial documents and activities.</p>
                                 </motion.div>
                                  <div className="flex items-center gap-2 w-full sm:w-auto">
@@ -984,9 +986,9 @@ export default function DashboardPage() {
                             </CardContent>
                         ) : (
                              <CardContent className="pt-0">
-                                <div className="flex justify-between items-center mb-4">
+                                <div className="flex justify-between items-start gap-4 mb-4 flex-col sm:flex-row sm:items-center">
                                   <ClientStatsGrid clients={clients || []} invoices={invoices || []} />
-                                  <Button size="sm" className='rounded-full' onClick={handleAddClient}><Users className="mr-2 h-4 w-4"/>Add Client</Button>
+                                  <Button size="sm" className='rounded-full self-start sm:self-center' onClick={handleAddClient}><Users className="mr-2 h-4 w-4"/>Add Client</Button>
                                 </div>
                             </CardContent>
                         )}
@@ -1036,3 +1038,4 @@ export default function DashboardPage() {
         </>
     );
 }
+
