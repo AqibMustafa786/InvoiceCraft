@@ -408,14 +408,17 @@ export default function CreateInvoicePage() {
     let initialInvoice: Invoice;
 
     const processData = (data: any): any => {
+        if (!data) return null;
         const processed: any = {};
         for (const key in data) {
             if (Object.prototype.hasOwnProperty.call(data, key)) {
                 const value = data[key];
-                if (value && typeof value === 'object' && value.toDate) { // Firestore Timestamp check
-                    processed[key] = toDateSafe(value);
-                } else if (value && typeof value === 'object' && !Array.isArray(value)) {
-                    processed[key] = processData(value); // Recurse for nested objects
+                 if (value && typeof value === 'object' && !Array.isArray(value)) {
+                    if(value.toDate) { // Is it a Firestore Timestamp?
+                        processed[key] = value.toDate();
+                    } else {
+                        processed[key] = processData(value); // Recurse for nested objects
+                    }
                 } else {
                     processed[key] = value;
                 }
@@ -844,7 +847,4 @@ export default function CreateInvoicePage() {
     </>
   );
 }
-
-
-
 

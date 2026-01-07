@@ -36,11 +36,12 @@ const CLIENTS_COLLECTION = 'clients';
 const getInitialLineItem = (): LineItem => ({ id: crypto.randomUUID(), name: '', description: '', quantity: 1, unitPrice: 0, taxable: false });
 
 const normalizeAuditLog = (auditLog: any): AuditLogEntry[] => {
-  if (Array.isArray(auditLog)) return auditLog;
-  if (auditLog && typeof auditLog === 'object') {
-    return Object.values(auditLog);
-  }
-  return [];
+  if (!auditLog) return [];
+  const entries = Array.isArray(auditLog) ? auditLog : Object.values(auditLog);
+  return entries.map(entry => ({
+      ...entry,
+      timestamp: toDateSafe(entry.timestamp)
+  }));
 };
 
 const diff = (original: any, updated: any): string[] => {
@@ -306,7 +307,7 @@ export default function CreateEstimatePage() {
 
   const { data: remoteDraft, isLoading: isDraftLoading } = useDoc<Estimate>(docRef);
   const { data: prefillClient, isLoading: isClientLoading } = useDoc<Client>(clientRef);
-
+  
   const processedDocument = useMemo(() => {
     if (!document) return null;
     const subtotal = document.lineItems.reduce((acc, item) => acc + (toNumberSafe(item.quantity)) * (toNumberSafe(item.unitPrice)), 0);
@@ -706,6 +707,4 @@ export default function CreateEstimatePage() {
     </>
   );
 }
-
-
 
