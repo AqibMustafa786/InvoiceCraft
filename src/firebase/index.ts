@@ -1,9 +1,11 @@
+
 'use client';
 
 import { firebaseConfig } from '@/firebase/config';
 import { initializeApp, getApps, getApp, FirebaseApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore'
+import { sendDocumentByEmail as sendDocumentAction } from '@/app/actions';
 
 let firebaseApp: FirebaseApp;
 let auth: ReturnType<typeof getAuth>;
@@ -35,6 +37,10 @@ export function getFirebase() {
   return { firebaseApp, auth, firestore };
 }
 
+// Re-export the server action
+export const sendDocumentByEmail = sendDocumentAction;
+
+
 export * from './provider';
 export * from './client-provider';
 export * from './firestore/use-collection';
@@ -43,3 +49,4 @@ export * from './non-blocking-updates';
 export * from './non-blocking-login';
 export * from './errors';
 export * from './error-emitter';
+

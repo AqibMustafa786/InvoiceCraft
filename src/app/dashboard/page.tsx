@@ -22,7 +22,7 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { FilePlus2, Edit, Trash2, Filter, X, MoreHorizontal, FileText, Share2, DollarSign, Clock, FileWarning, Files, CheckCircle, FileQuestion, Users, Percent, AreaChart, Package, History, Shield, XCircle } from "lucide-react";
+import { FilePlus2, Edit, Trash2, Filter, X, MoreHorizontal, FileText, Share2, DollarSign, Clock, FileWarning, Files, CheckCircle, FileQuestion, Users, Percent, AreaChart, Package, History, Shield, XCircle, Mail, Loader2 } from "lucide-react";
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { format, isWithinInterval } from 'date-fns';
@@ -33,7 +33,7 @@ import { useFirebase, useMemoFirebase } from '@/firebase/provider';
 import { useCollection } from '@/firebase/firestore/use-collection';
 import { useAuth } from '@/context/auth-provider';
 import { collection, doc, setDoc, query, Timestamp, where } from 'firebase/firestore';
-import { deleteDocumentNonBlocking, updateDocumentNonBlocking } from '@/firebase';
+import { deleteDocumentNonBlocking, updateDocumentNonBlocking, sendDocumentByEmail } from '@/firebase';
 import { Skeleton } from '@/components/ui/skeleton';
 import { motion } from 'framer-motion';
 import { KpiDetailsModal } from '@/components/dashboard/kpi-details-modal';
@@ -229,6 +229,7 @@ export default function DashboardPage() {
     const [editingClient, setEditingClient] = useState<Client | null>(null);
     const [modalState, setModalState] = useState<{ isOpen: boolean; title: string; data: DocumentType[] }>({ isOpen: false, title: '', data: [] });
     const [historyModalState, setHistoryModalState] = useState<{ isOpen: boolean, auditLog: AuditLogEntry[]}>({isOpen: false, auditLog: []});
+    const [isSendingEmail, setIsSendingEmail] = useState<string | null>(null);
     const { toast } = useToast();
     const { firestore } = useFirebase();
     const { user, userProfile, isLoading: isAuthLoading } = useAuth();
@@ -461,6 +462,29 @@ export default function DashboardPage() {
         });
     };
 
+    const handleEmail = async (docId: string, docType: 'invoice' | 'estimate' | 'quote') => {
+        setIsSendingEmail(docId);
+        try {
+            const result = await sendDocumentByEmail({ docId, docType: docType as 'estimate' | 'quote' });
+            if (result.success) {
+                toast({
+                    title: "Email Sent!",
+                    description: `The ${docType} has been sent to the client.`,
+                });
+            } else {
+                throw new Error(result.message);
+            }
+        } catch (error: any) {
+            toast({
+                title: "Email Failed",
+                description: error.message || `Could not send the ${docType}.`,
+                variant: "destructive",
+            });
+        } finally {
+            setIsSendingEmail(null);
+        }
+    };
+
     const resetFilters = useCallback(() => {
         setFilters(initialFilters);
     }, []);
@@ -687,6 +711,12 @@ export default function DashboardPage() {
                                                 <span className="text-xs">Edit</span>
                                             </Link>
                                         </DropdownMenuItem>
+                                        {(docType === 'invoice' || docType === 'estimate' || docType === 'quote') && (
+                                            <DropdownMenuItem onClick={() => handleEmail(doc.id, docType)} disabled={isSendingEmail === doc.id} className="cursor-pointer">
+                                                {isSendingEmail === doc.id ? <Loader2 className="mr-2 h-3.5 w-3.5 animate-spin" /> : <Mail className="mr-2 h-3.5 w-3.5" />}
+                                                <span className="text-xs">Send Email</span>
+                                            </DropdownMenuItem>
+                                        )}
                                         {(docType === 'estimate' || docType === 'quote') && (
                                             <>
                                                 <DropdownMenuItem onClick={() => handleShare(doc.id, doc.documentType as 'estimate' | 'quote')} className="cursor-pointer">

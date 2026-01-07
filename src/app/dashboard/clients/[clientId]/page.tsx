@@ -4,7 +4,7 @@
 
 import { useMemo, useState } from 'react';
 import { useAuth } from '@/context/auth-provider';
-import { useCollection, useDoc, deleteDocumentNonBlocking, updateDocumentNonBlocking } from '@/firebase';
+import { useCollection, useDoc, deleteDocumentNonBlocking, updateDocumentNonBlocking, sendDocumentByEmail } from '@/firebase';
 import { collection, query, where, doc } from 'firebase/firestore';
 import type { Client, Estimate, Invoice, Quote, InsuranceDocument, AuditLogEntry, DocumentStatus } from '@/lib/types';
 import { useParams, useRouter } from 'next/navigation';
@@ -12,7 +12,7 @@ import { Bar, BarChart, CartesianGrid, Legend, Pie, PieChart, ResponsiveContaine
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Mail, Phone, Edit, ArrowLeft, DollarSign, Clock, FileWarning, Files, XCircle, FilePlus2, FileText, Shield, Trash2, History, MoreHorizontal, Eye } from 'lucide-react';
+import { Mail, Phone, Edit, ArrowLeft, DollarSign, Clock, FileWarning, Files, XCircle, FilePlus2, FileText, Shield, Trash2, History, MoreHorizontal, Eye, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -250,6 +250,7 @@ export default function ClientPage() {
   const [isClientDialogOpen, setIsClientDialogOpen] = useState(false);
   const [historyModalState, setHistoryModalState] = useState<{ isOpen: boolean, auditLog: AuditLogEntry[]}>({isOpen: false, auditLog: []});
   const [deleteCandidate, setDeleteCandidate] = useState<{ id: string; collection: string } | null>(null);
+  const [isSendingEmail, setIsSendingEmail] = useState<string | null>(null);
 
   const companyId = userProfile?.companyId;
 
@@ -370,6 +371,29 @@ export default function ClientPage() {
             title: "Status Updated",
             description: `Document status changed to "${newStatus}".`,
         });
+    };
+
+    const handleEmail = async (docId: string, docType: 'invoice' | 'estimate' | 'quote') => {
+        setIsSendingEmail(docId);
+        try {
+            const result = await sendDocumentByEmail({ docId, docType: docType as 'estimate' | 'quote' });
+            if (result.success) {
+                toast({
+                    title: "Email Sent!",
+                    description: `The ${docType} has been sent to the client.`,
+                });
+            } else {
+                throw new Error(result.message);
+            }
+        } catch (error: any) {
+            toast({
+                title: "Email Failed",
+                description: error.message || `Could not send the ${docType}.`,
+                variant: "destructive",
+            });
+        } finally {
+            setIsSendingEmail(null);
+        }
     };
 
 
@@ -581,6 +605,10 @@ export default function ClientPage() {
                                               <span className="text-xs">Edit</span>
                                           </Link>
                                         </DropdownMenuItem>
+                                        <DropdownMenuItem onClick={() => handleEmail(inv.id, 'invoice')} disabled={isSendingEmail === inv.id} className="cursor-pointer">
+                                            {isSendingEmail === inv.id ? <Loader2 className="mr-2 h-3.5 w-3.5 animate-spin" /> : <Mail className="mr-2 h-3.5 w-3.5" />}
+                                            <span className="text-xs">Send Email</span>
+                                        </DropdownMenuItem>
                                         <DropdownMenuItem onClick={() => setDeleteCandidate({id: inv.id, collection: 'invoices'})} className="text-destructive cursor-pointer">
                                             <Trash2 className="mr-2 h-3.5 w-3.5" />
                                             <span className="text-xs">Delete</span>
@@ -620,8 +648,3 @@ export default function ClientPage() {
     </motion.div>
   );
 }
-
-
-
-
-

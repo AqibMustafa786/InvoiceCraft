@@ -1,4 +1,5 @@
 
+
 import { ai } from '@/ai/genkit';
 import { z } from 'zod';
 import { getFirebase } from '@/firebase';
@@ -6,17 +7,17 @@ import { doc, getDoc, collection, query, where, getDocs } from 'firebase/firesto
 import { PDFDocument } from '@/components/pdf/document-pdf';
 import { renderToBuffer } from '@react-pdf/renderer';
 import { sendEmail } from '@/ai/flows/send-email-flow';
-import type { Estimate, Quote } from '@/lib/types';
+import type { Estimate, Quote, Invoice } from '@/lib/types';
 
 
 export const SendDocumentSchema = z.object({
   docId: z.string(),
-  docType: z.enum(['quote', 'estimate']),
+  docType: z.enum(['quote', 'estimate', 'invoice']),
 });
 
-async function findDocument(docId: string, docType: 'quote' | 'estimate'): Promise<Quote | Estimate | null> {
+async function findDocument(docId: string, docType: 'quote' | 'estimate' | 'invoice'): Promise<Quote | Estimate | Invoice | null> {
     const { firestore } = getFirebase();
-    const collectionName = docType === 'quote' ? 'quotes' : 'estimates';
+    const collectionName = docType === 'quote' ? 'quotes' : docType === 'estimate' ? 'estimates' : 'invoices';
     
     const companiesRef = collection(firestore, 'companies');
     const companiesSnapshot = await getDocs(companiesRef);
@@ -25,7 +26,7 @@ async function findDocument(docId: string, docType: 'quote' | 'estimate'): Promi
         const docRef = doc(firestore, 'companies', companyDoc.id, collectionName, docId);
         const docSnap = await getDoc(docRef);
         if (docSnap.exists()) {
-             return { id: docSnap.id, ...docSnap.data() } as Quote | Estimate;
+             return { id: docSnap.id, ...docSnap.data() } as Quote | Estimate | Invoice;
         }
     }
     
@@ -35,7 +36,7 @@ async function findDocument(docId: string, docType: 'quote' | 'estimate'): Promi
 
     if (!querySnapshot.empty) {
         const docSnap = querySnapshot.docs[0];
-        return { id: docSnap.id, ...docSnap.data() } as Quote | Estimate;
+        return { id: docSnap.id, ...docSnap.data() } as Quote | Estimate | Invoice;
     }
     
     return null;
@@ -58,19 +59,25 @@ export const sendDocumentFlow = ai.defineFlow(
       const pdfBuffer = await renderToBuffer(PDFDocument({ data: document }));
       const pdfBase64 = pdfBuffer.toString('base64');
       
-      const docTypeTitle = docType === 'quote' ? 'Quote' : 'Estimate';
-      const docNumber = 'estimateNumber' in document ? document.estimateNumber : 'N/A';
+      const docTypeTitle = docType.charAt(0).toUpperCase() + docType.slice(1);
+      const docNumber = 'estimateNumber' in document ? document.estimateNumber : 'invoiceNumber' in document ? document.invoiceNumber : 'N/A';
 
       await sendEmail({
         to: document.client.email,
         subject: `Your ${docTypeTitle} from ${document.business.name} (#${docNumber})`,
         html: `
-          <p>Hello ${document.client.name},</p>
-          <p>Please find your ${docTypeTitle} from ${document.business.name} attached to this email.</p>
-          <p>You can also view it online by clicking the link below:</p>
-          <p><a href="https://invoicecraft.app/${docType}/${docId}">View ${docTypeTitle} Online</a></p>
-          <p>Thank you!</p>
-          <p>${document.business.name}</p>
+          <div style="font-family: Arial, sans-serif; line-height: 1.6;">
+            <p>Hello ${document.client.name},</p>
+            <p>Please find your ${docTypeTitle.toLowerCase()} from <strong>${document.business.name}</strong> attached to this email.</p>
+            <p>You can also view it online by clicking the link below:</p>
+            <p style="margin: 20px 0;">
+              <a href="https://invoicecraft.app/${docType}/${docId}" style="background-color: #007bff; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">
+                View ${docTypeTitle} Online
+              </a>
+            </p>
+            <p>Thank you!</p>
+            <p><em>${document.business.name}</em></p>
+          </div>
         `,
         attachments: [
           {
