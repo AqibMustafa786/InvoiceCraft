@@ -36,7 +36,7 @@ export default function DashboardLayout({
 
   // Don't apply this layout to nested client pages like /dashboard/clients/[clientId]
   if (pathname.startsWith('/dashboard/clients/') || pathname.startsWith('/dashboard/analytics')) {
-    return <main className="px-4 py-8 md:px-8">{children}</main>
+    return <main>{children}</main>
   }
   
   const sidebarVariants = {
