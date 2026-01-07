@@ -482,10 +482,14 @@ export default function ClientPage() {
           </CardContent>
         </Card>
         <motion.div variants={itemVariants} className="lg:col-span-2 space-y-6">
-            <ClientDashboardStats documents={allDocuments} />
+            <ClientCharts documents={allDocuments} />
         </motion.div>
       </motion.div>
       
+      <motion.div variants={itemVariants}>
+          <ClientDashboardStats documents={allDocuments} />
+      </motion.div>
+       
        <motion.div variants={itemVariants}>
         <Card className="bg-card/50 backdrop-blur-sm shadow-lg">
             <CardHeader>
@@ -512,10 +516,6 @@ export default function ClientPage() {
         </Card>
        </motion.div>
       
-      <motion.div variants={itemVariants}>
-        <ClientCharts documents={allDocuments} />
-      </motion.div>
-
       <motion.div variants={itemVariants}>
       <Tabs defaultValue="invoices">
         <TabsList>
