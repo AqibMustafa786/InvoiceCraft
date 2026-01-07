@@ -943,7 +943,6 @@ export default function DashboardPage() {
                             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                                 <motion.div variants={pageVariants}>
                                     <h1 className="text-xl font-bold font-headline">{title}</h1>
-                                    <p className="text-xs text-muted-foreground">An overview of your financial documents and activities.</p>
                                 </motion.div>
                                  <div className="flex items-center gap-2 w-full sm:w-auto">
                                     <Button variant="outline" size="sm" className='rounded-full flex-1 sm:flex-none' onClick={() => setIsFilterSheetOpen(true)}>
@@ -985,7 +984,7 @@ export default function DashboardPage() {
                                 </Button>
                             </CardContent>
                         ) : (
-                             <CardContent className="pt-0">
+                            <CardContent className="pt-0">
                                 <div className="flex justify-between items-start gap-4 mb-4 flex-col sm:flex-row sm:items-center">
                                   <ClientStatsGrid clients={clients || []} invoices={invoices || []} />
                                   <Button size="sm" className='rounded-full self-start sm:self-center' onClick={handleAddClient}><Users className="mr-2 h-4 w-4"/>Add Client</Button>
