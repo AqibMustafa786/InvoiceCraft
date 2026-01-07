@@ -183,7 +183,7 @@ function ClientCharts({ documents }: { documents: DocumentType[] }) {
             </div>
         </CardHeader>
         <CardContent>
-          <ChartContainer config={chartConfig} className="h-[250px] w-full">
+          <ChartContainer config={chartConfig} className="h-[200px] w-full">
             <BarChart data={revenueData}>
               <CartesianGrid vertical={false} />
               <XAxis dataKey="name" tickLine={false} tickMargin={10} axisLine={false} />
@@ -199,10 +199,10 @@ function ClientCharts({ documents }: { documents: DocumentType[] }) {
           <CardTitle>Invoice Status Breakdown</CardTitle>
         </CardHeader>
         <CardContent>
-          <ChartContainer config={chartConfig} className="h-[250px] w-full">
+          <ChartContainer config={chartConfig} className="h-[200px] w-full">
             <PieChart>
               <Tooltip cursor={false} content={<ChartTooltipContent hideLabel />} />
-              <Pie data={statusBreakdown} dataKey="value" nameKey="name" innerRadius={60} />
+              <Pie data={statusBreakdown} dataKey="value" nameKey="name" innerRadius={50} />
               <ChartLegend content={<ChartLegendContent />} />
             </PieChart>
           </ChartContainer>
@@ -621,5 +621,6 @@ export default function ClientPage() {
     </motion.div>
   );
 }
+
 
 
