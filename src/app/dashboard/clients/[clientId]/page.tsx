@@ -71,10 +71,10 @@ function ClientDashboardStats({ documents }: { documents: DocumentType[] }) {
 
   return (
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-      <Card className="bg-card/50 backdrop-blur-sm shadow-lg transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-1"><CardHeader className="flex flex-row items-center justify-between space-y-0 p-3 pb-2"><CardTitle className="text-sm font-medium">Total Revenue</CardTitle><DollarSign className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent className="p-3 pt-0"><div className="text-2xl font-bold">{symbol}{stats.totalRevenue.toFixed(2)}</div></CardContent></Card>
-      <Card className="bg-card/50 backdrop-blur-sm shadow-lg transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-1"><CardHeader className="flex flex-row items-center justify-between space-y-0 p-3 pb-2"><CardTitle className="text-sm font-medium">Pending Amount</CardTitle><Clock className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent className="p-3 pt-0"><div className="text-2xl font-bold">{symbol}{stats.pendingAmount.toFixed(2)}</div></CardContent></Card>
-      <Card className="bg-card/50 backdrop-blur-sm shadow-lg transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-1"><CardHeader className="flex flex-row items-center justify-between space-y-0 p-3 pb-2"><CardTitle className="text-sm font-medium">Overdue Amount</CardTitle><FileWarning className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent className="p-3 pt-0"><div className="text-2xl font-bold">{symbol}{stats.overdueAmount.toFixed(2)}</div></CardContent></Card>
-      <Card className="bg-card/50 backdrop-blur-sm shadow-lg transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-1"><CardHeader className="flex flex-row items-center justify-between space-y-0 p-3 pb-2"><CardTitle className="text-sm font-medium">Total Invoices</CardTitle><Files className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent className="p-3 pt-0"><div className="text-2xl font-bold">{stats.totalInvoices}</div></CardContent></Card>
+      <Card className="bg-card/50 backdrop-blur-sm shadow-lg transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-1"><CardHeader className="flex flex-row items-center justify-between space-y-0 p-3 pb-0"><CardTitle className="text-sm font-medium">Total Revenue</CardTitle><DollarSign className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent className="p-3 pt-0"><div className="text-2xl font-bold">{symbol}{stats.totalRevenue.toFixed(2)}</div></CardContent></Card>
+      <Card className="bg-card/50 backdrop-blur-sm shadow-lg transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-1"><CardHeader className="flex flex-row items-center justify-between space-y-0 p-3 pb-0"><CardTitle className="text-sm font-medium">Pending</CardTitle><Clock className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent className="p-3 pt-0"><div className="text-2xl font-bold">{symbol}{stats.pendingAmount.toFixed(2)}</div></CardContent></Card>
+      <Card className="bg-card/50 backdrop-blur-sm shadow-lg transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-1"><CardHeader className="flex flex-row items-center justify-between space-y-0 p-3 pb-0"><CardTitle className="text-sm font-medium">Overdue</CardTitle><FileWarning className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent className="p-3 pt-0"><div className="text-2xl font-bold">{symbol}{stats.overdueAmount.toFixed(2)}</div></CardContent></Card>
+      <Card className="bg-card/50 backdrop-blur-sm shadow-lg transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-1"><CardHeader className="flex flex-row items-center justify-between space-y-0 p-3 pb-0"><CardTitle className="text-sm font-medium">Total Invoices</CardTitle><Files className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent className="p-3 pt-0"><div className="text-2xl font-bold">{stats.totalInvoices}</div></CardContent></Card>
     </div>
   );
 }
@@ -440,16 +440,19 @@ export default function ClientPage() {
             </AlertDialogContent>
         </AlertDialog>
 
-      <motion.div variants={itemVariants}>
-        <Button variant="outline" size="icon" onClick={() => router.push('/dashboard?tab=clients')}>
-            <ArrowLeft className="h-4 w-4" />
-            <span className="sr-only">Back to Clients</span>
-        </Button>
-      </motion.div>
-      <motion.div variants={itemVariants} className="grid lg:grid-cols-3 gap-6">
+        <motion.div variants={itemVariants}>
+            <button 
+                onClick={() => router.push('/dashboard?tab=clients')}
+                className="flex items-center justify-center h-8 w-8 rounded-full hover:bg-muted transition-colors"
+            >
+                <ArrowLeft className="h-4 w-4" />
+                <span className="sr-only">Back to Clients</span>
+            </button>
+        </motion.div>
+      <div className="grid lg:grid-cols-3 gap-6">
         <div className="lg:col-span-1">
             <Card className="bg-card/50 backdrop-blur-sm shadow-lg h-full">
-            <CardHeader className="flex flex-row items-center gap-4 space-y-0 p-3">
+            <CardHeader className="flex flex-row items-center gap-4 space-y-0 p-4">
                 <Avatar className="h-10 w-10">
                     <AvatarImage src={client.avatarUrl || ''} alt={client.name} />
                     <AvatarFallback>{client.name.charAt(0)}</AvatarFallback>
@@ -459,10 +462,10 @@ export default function ClientPage() {
                     <CardDescription className="text-xs">{client.companyName}</CardDescription>
                 </div>
             </CardHeader>
-            <CardContent className="space-y-1 text-xs p-3 pt-0">
+            <CardContent className="space-y-2 text-xs p-4 pt-0">
                 <div className="flex items-center gap-2"><Mail className="h-3.5 w-3.5 text-muted-foreground" /><a href={`mailto:${client.email}`} className="hover:underline">{client.email}</a></div>
                 <div className="flex items-center gap-2"><Phone className="h-3.5 w-3.5 text-muted-foreground" /><span>{client.phone}</span></div>
-                <div className="pt-1 flex gap-2">
+                <div className="pt-2 flex gap-2">
                     <Button size="sm" className="flex-1 h-8 text-xs" onClick={() => setIsClientDialogOpen(true)}><Edit className="mr-2 h-3.5 w-3.5" /> Edit</Button>
                     <Button size="icon" variant="outline" className="h-8 w-8" onClick={() => handleHistoryClick(client.auditLog)}><History className="h-3.5 w-3.5" /></Button>
                     <AlertDialog>
@@ -489,14 +492,14 @@ export default function ClientPage() {
         <motion.div variants={itemVariants} className="lg:col-span-2 space-y-6">
             <ClientCharts documents={allDocuments} />
         </motion.div>
-      </motion.div>
+      </div>
       
-      <motion.div variants={itemVariants} className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2">
               <ClientDashboardStats documents={allDocuments} />
           </div>
           <Card className="bg-card/50 backdrop-blur-sm shadow-lg flex flex-col justify-center">
-            <CardHeader className="p-3 pb-2">
+            <CardHeader className="p-3 pb-0">
                 <CardTitle className="text-base">Quick Actions</CardTitle>
             </CardHeader>
             <CardContent className="p-3 flex flex-wrap items-center gap-2">
@@ -518,7 +521,7 @@ export default function ClientPage() {
                 </Button>
             </CardContent>
         </Card>
-      </motion.div>
+      </div>
       
       <motion.div variants={itemVariants}>
       <Tabs defaultValue="invoices">
@@ -652,6 +655,7 @@ export default function ClientPage() {
     </motion.div>
   );
 }
+
 
 
 
