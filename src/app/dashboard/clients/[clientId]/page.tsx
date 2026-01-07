@@ -440,11 +440,7 @@ export default function ClientPage() {
             </AlertDialogContent>
         </AlertDialog>
 
-       <motion.div variants={itemVariants} className="flex justify-between items-start">
-         <Button variant="outline" size="icon" onClick={() => router.push('/dashboard?tab=clients')}>
-            <ArrowLeft className="h-4 w-4" />
-        </Button>
-       </motion.div>
+       <motion.div variants={itemVariants} className="mt-0" />
       <motion.div variants={itemVariants} className="grid gap-6 lg:grid-cols-3">
         <div className="lg:col-span-1">
             <Card className="bg-card/50 backdrop-blur-sm shadow-lg">
@@ -651,4 +647,5 @@ export default function ClientPage() {
     </motion.div>
   );
 }
+
 
