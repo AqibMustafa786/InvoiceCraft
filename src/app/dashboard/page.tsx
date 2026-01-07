@@ -1,5 +1,4 @@
 
-
 'use client';
 
 import { useState, useMemo, useCallback } from 'react';
@@ -34,7 +33,7 @@ import { useFirebase, useMemoFirebase } from '@/firebase/provider';
 import { useCollection } from '@/firebase/firestore/use-collection';
 import { useAuth } from '@/context/auth-provider';
 import { collection, doc, setDoc, query, Timestamp, where } from 'firebase/firestore';
-import { deleteDocumentNonBlocking, updateDocumentNonBlocking, sendDocumentByEmail } from '@/firebase';
+import { deleteDocumentNonBlocking, updateDocumentNonBlocking } from '@/firebase';
 import { Skeleton } from '@/components/ui/skeleton';
 import { motion } from 'framer-motion';
 import { KpiDetailsModal } from '@/components/dashboard/kpi-details-modal';
@@ -42,6 +41,8 @@ import { HistoryModal } from '@/components/dashboard/history-modal';
 import { ClientFormDialog } from '@/components/dashboard/client-form-dialog';
 import { toDateSafe, toNumberSafe } from '@/lib/utils';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { sendDocumentByEmail } from '@/app/actions';
+
 
 const INVOICES_COLLECTION = 'invoices';
 const ESTIMATES_COLLECTION = 'estimates';
@@ -257,7 +258,7 @@ const ClientStatsGrid: React.FC<ClientStatsGridProps> = ({ clients, invoices }) 
                 <Card className="bg-card/50 backdrop-blur-sm shadow-sm"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1"><CardTitle className="text-xs font-medium">Active Clients</CardTitle><CheckCircle className="h-3 w-3 text-muted-foreground" /></CardHeader><CardContent><div className="text-xl font-bold">{stats.activeClients}</div></CardContent></Card>
             </motion.div>
             <motion.div variants={pageVariants}>
-                <Card className="bg-card/50 backdrop-blur-sm shadow-sm"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1"><CardTitle className="text-xs font-medium">Avg. Revenue</CardTitle><AreaChart className="h-3 w-3 text-muted-foreground" /></CardHeader><CardContent><div className="text-xl font-bold">{symbol}{stats.avgRevenue.toFixed(2)}</div></CardContent></Card>
+                <Card className="bg-card/50 backdrop-blur-sm shadow-sm"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1"><CardTitle className="text-xs font-medium">Avg. Revenue / Client</CardTitle><AreaChart className="h-3 w-3 text-muted-foreground" /></CardHeader><CardContent><div className="text-xl font-bold">{symbol}{stats.avgRevenue.toFixed(2)}</div></CardContent></Card>
             </motion.div>
         </motion.div>
     );
@@ -983,7 +984,10 @@ export default function DashboardPage() {
                             </CardContent>
                         ) : (
                              <CardContent className="pt-0">
-                                <ClientStatsGrid clients={clients || []} invoices={invoices || []} />
+                                <div className="flex justify-between items-center mb-4">
+                                  <ClientStatsGrid clients={clients || []} invoices={invoices || []} />
+                                  <Button size="sm" className='rounded-full' onClick={handleAddClient}><Users className="mr-2 h-4 w-4"/>Add Client</Button>
+                                </div>
                             </CardContent>
                         )}
                     </Card>
@@ -1026,22 +1030,9 @@ export default function DashboardPage() {
                             </CardContent>
                         </Card>
                     )}
-                    {activeTab === 'clients' && (
-                         <Card className='bg-card/50 backdrop-blur-sm'>
-                           <CardHeader>
-                                <div className="flex justify-between items-center">
-                                    <CardTitle className="text-base">Clients</CardTitle>
-                                     <Button size="sm" className='rounded-full' onClick={handleAddClient}><Users className="mr-2 h-4 w-4"/>Add Client</Button>
-                                </div>
-                                <CardDescription className="text-xs">A list of all your clients.</CardDescription>
-                            </CardHeader>
-                            {renderClientsTable()}
-                         </Card>
-                    )}
+                    {activeTab === 'clients' && renderClientsTable()}
                 </motion.div>
             </motion.div>
         </>
     );
 }
-
-```
