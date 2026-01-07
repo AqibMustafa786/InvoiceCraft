@@ -140,6 +140,7 @@
       "properties": {
         "id": { "type": "string" },
         "companyId": { "type": "string" },
+        "clientId": { "type": "string", "description": "The ID of the client this invoice belongs to." },
         "userId": { "type": "string" },
         "companyName": { "type": "string" },
         "clientName": { "type": "string" },
@@ -147,7 +148,7 @@
         "totalAmount": { "type": "number" },
         "status": { "type": "string", "enum": ["draft", "sent", "paid", "overdue"] }
       },
-      "required": ["id", "companyId", "userId", "companyName", "clientName", "invoiceDate", "totalAmount", "status"]
+      "required": ["id", "companyId", "clientId", "userId", "companyName", "clientName", "invoiceDate", "totalAmount", "status"]
     },
     "Estimate": {
       "title": "Estimate",
@@ -156,6 +157,7 @@
       "properties": {
         "id": { "type": "string" },
         "companyId": { "type": "string" },
+        "clientId": { "type": "string", "description": "The ID of the client this estimate belongs to." },
         "userId": { "type": "string" },
         "estimateNumber": { "type": "string" },
         "status": { "type": "string", "enum": ["draft", "sent", "accepted", "rejected", "expired"] },
@@ -167,7 +169,7 @@
         "lineItems": { "type": "array", "items": { "$ref": "#/entities/LineItem" } },
         "summary": { "$ref": "#/entities/EstimateSummary" }
       },
-      "required": ["id", "companyId", "userId", "estimateNumber", "status", "estimateDate", "business", "client", "lineItems", "summary"]
+      "required": ["id", "companyId", "clientId", "userId", "estimateNumber", "status", "estimateDate", "business", "client", "lineItems", "summary"]
     },
     "LineItem": {
       "title": "LineItem",
@@ -316,5 +318,3 @@
     ]
   }
 }
-
-    
