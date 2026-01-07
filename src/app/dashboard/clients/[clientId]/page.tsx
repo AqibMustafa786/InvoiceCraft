@@ -4,7 +4,7 @@
 
 import { useMemo, useState } from 'react';
 import { useAuth } from '@/context/auth-provider';
-import { useCollection, useDoc, deleteDocumentNonBlocking, updateDocumentNonBlocking, sendDocumentByEmail } from '@/firebase';
+import { useCollection, useDoc, deleteDocumentNonBlocking, updateDocumentNonBlocking } from '@/firebase';
 import { collection, query, where, doc } from 'firebase/firestore';
 import type { Client, Estimate, Invoice, Quote, InsuranceDocument, AuditLogEntry, DocumentStatus } from '@/lib/types';
 import { useParams, useRouter } from 'next/navigation';
@@ -39,6 +39,7 @@ import { ClientInvoicePreview } from '@/components/invoice-preview';
 import { motion } from 'framer-motion';
 import { useFirebase, useMemoFirebase } from '@/firebase/provider';
 import { toDateSafe, toNumberSafe } from '@/lib/utils';
+import { sendDocumentByEmail } from '@/app/actions';
 
 
 const currencySymbols: { [key: string]: string } = {
@@ -374,13 +375,14 @@ export default function ClientPage() {
     };
 
     const handleEmail = async (docId: string, docType: 'invoice' | 'estimate' | 'quote') => {
+        if (!client) return;
         setIsSendingEmail(docId);
         try {
-            const result = await sendDocumentByEmail({ docId, docType: docType as 'estimate' | 'quote' });
+            const result = await sendDocumentByEmail({ docId, docType });
             if (result.success) {
                 toast({
                     title: "Email Sent!",
-                    description: `The ${docType} has been sent to the client.`,
+                    description: `The ${docType} has been sent to ${client.name}.`,
                 });
             } else {
                 throw new Error(result.message);
@@ -446,18 +448,18 @@ export default function ClientPage() {
       <motion.div variants={itemVariants} className="grid gap-6 lg:grid-cols-3">
         <Card className="lg:col-span-1 bg-card/50 backdrop-blur-sm shadow-lg">
           <CardHeader className="flex flex-row items-center gap-4 space-y-0 p-4">
-             <Avatar className="h-16 w-16">
+             <Avatar className="h-12 w-12">
                 <AvatarImage src={client.avatarUrl || ''} alt={client.name} />
                 <AvatarFallback>{client.name.charAt(0)}</AvatarFallback>
              </Avatar>
              <div className="flex-1">
-                <CardTitle className="text-xl">{client.name}</CardTitle>
+                <CardTitle className="text-lg">{client.name}</CardTitle>
                 <CardDescription>{client.companyName}</CardDescription>
              </div>
           </CardHeader>
           <CardContent className="space-y-2 text-sm p-4 pt-0">
-            <div className="flex items-center gap-2"><Mail className="h-4 w-4 text-muted-foreground" /><a href={`mailto:${client.email}`} className="hover:underline">{client.email}</a></div>
-            <div className="flex items-center gap-2"><Phone className="h-4 w-4 text-muted-foreground" /><span>{client.phone}</span></div>
+            <div className="flex items-center gap-2 text-xs"><Mail className="h-3.5 w-3.5 text-muted-foreground" /><a href={`mailto:${client.email}`} className="hover:underline">{client.email}</a></div>
+            <div className="flex items-center gap-2 text-xs"><Phone className="h-3.5 w-3.5 text-muted-foreground" /><span>{client.phone}</span></div>
             <div className="pt-2 flex gap-2">
                 <Button size="sm" className="flex-1" onClick={() => setIsClientDialogOpen(true)}><Edit className="mr-2 h-4 w-4" /> Edit Client</Button>
                  <Button size="icon" variant="outline" onClick={() => handleHistoryClick(client.auditLog)}><History className="h-4 w-4" /></Button>
@@ -490,8 +492,8 @@ export default function ClientPage() {
           <div className="lg:col-span-2">
               <ClientDashboardStats documents={allDocuments} />
           </div>
-          <Card className="bg-card/50 backdrop-blur-sm shadow-lg">
-            <CardHeader>
+          <Card className="bg-card/50 backdrop-blur-sm shadow-lg flex flex-col justify-center">
+            <CardHeader className="pb-2">
                 <CardTitle className="text-base">Quick Actions</CardTitle>
             </CardHeader>
             <CardContent className="flex flex-wrap items-center gap-2">
@@ -647,3 +649,4 @@ export default function ClientPage() {
     </motion.div>
   );
 }
+
