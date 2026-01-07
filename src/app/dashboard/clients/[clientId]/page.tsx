@@ -421,20 +421,20 @@ export default function ClientPage() {
        </motion.div>
       <motion.div variants={itemVariants} className="grid gap-6 lg:grid-cols-3">
         <Card className="lg:col-span-1 bg-card/50 backdrop-blur-sm shadow-lg">
-          <CardHeader className="flex flex-row items-start gap-4 space-y-0">
-             <Avatar className="h-20 w-20">
+          <CardHeader className="flex flex-row items-center gap-4 space-y-0 p-4">
+             <Avatar className="h-16 w-16">
                 <AvatarImage src={client.avatarUrl || ''} alt={client.name} />
                 <AvatarFallback>{client.name.charAt(0)}</AvatarFallback>
              </Avatar>
              <div className="flex-1">
-                <CardTitle className="text-2xl">{client.name}</CardTitle>
+                <CardTitle className="text-xl">{client.name}</CardTitle>
                 <CardDescription>{client.companyName}</CardDescription>
              </div>
           </CardHeader>
-          <CardContent className="space-y-3 text-sm">
+          <CardContent className="space-y-2 text-sm p-4 pt-0">
             <div className="flex items-center gap-2"><Mail className="h-4 w-4 text-muted-foreground" /><a href={`mailto:${client.email}`} className="hover:underline">{client.email}</a></div>
             <div className="flex items-center gap-2"><Phone className="h-4 w-4 text-muted-foreground" /><span>{client.phone}</span></div>
-            <div className="pt-4 flex gap-2">
+            <div className="pt-2 flex gap-2">
                 <Button size="sm" className="flex-1" onClick={() => setIsClientDialogOpen(true)}><Edit className="mr-2 h-4 w-4" /> Edit Client</Button>
                  <Button size="icon" variant="outline" onClick={() => handleHistoryClick(client.auditLog)}><History className="h-4 w-4" /></Button>
                 <AlertDialog>
@@ -620,6 +620,7 @@ export default function ClientPage() {
     </motion.div>
   );
 }
+
 
 
 
