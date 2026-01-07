@@ -71,10 +71,10 @@ function ClientDashboardStats({ documents }: { documents: DocumentType[] }) {
 
   return (
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-      <Card className="bg-card/50 backdrop-blur-sm shadow-lg transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-1"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Total Revenue</CardTitle><DollarSign className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent><div className="text-2xl font-bold">{symbol}{stats.totalRevenue.toFixed(2)}</div></CardContent></Card>
-      <Card className="bg-card/50 backdrop-blur-sm shadow-lg transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-1"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Pending Amount</CardTitle><Clock className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent><div className="text-2xl font-bold">{symbol}{stats.pendingAmount.toFixed(2)}</div></CardContent></Card>
-      <Card className="bg-card/50 backdrop-blur-sm shadow-lg transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-1"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Overdue Amount</CardTitle><FileWarning className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent><div className="text-2xl font-bold">{symbol}{stats.overdueAmount.toFixed(2)}</div></CardContent></Card>
-      <Card className="bg-card/50 backdrop-blur-sm shadow-lg transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-1"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Total Invoices</CardTitle><Files className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent><div className="text-2xl font-bold">{stats.totalInvoices}</div></CardContent></Card>
+      <Card className="bg-card/50 backdrop-blur-sm shadow-lg transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-1"><CardHeader className="flex flex-row items-center justify-between space-y-0 p-3 pb-2"><CardTitle className="text-sm font-medium">Total Revenue</CardTitle><DollarSign className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent className="p-3 pt-0"><div className="text-2xl font-bold">{symbol}{stats.totalRevenue.toFixed(2)}</div></CardContent></Card>
+      <Card className="bg-card/50 backdrop-blur-sm shadow-lg transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-1"><CardHeader className="flex flex-row items-center justify-between space-y-0 p-3 pb-2"><CardTitle className="text-sm font-medium">Pending Amount</CardTitle><Clock className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent className="p-3 pt-0"><div className="text-2xl font-bold">{symbol}{stats.pendingAmount.toFixed(2)}</div></CardContent></Card>
+      <Card className="bg-card/50 backdrop-blur-sm shadow-lg transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-1"><CardHeader className="flex flex-row items-center justify-between space-y-0 p-3 pb-2"><CardTitle className="text-sm font-medium">Overdue Amount</CardTitle><FileWarning className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent className="p-3 pt-0"><div className="text-2xl font-bold">{symbol}{stats.overdueAmount.toFixed(2)}</div></CardContent></Card>
+      <Card className="bg-card/50 backdrop-blur-sm shadow-lg transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-1"><CardHeader className="flex flex-row items-center justify-between space-y-0 p-3 pb-2"><CardTitle className="text-sm font-medium">Total Invoices</CardTitle><Files className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent className="p-3 pt-0"><div className="text-2xl font-bold">{stats.totalInvoices}</div></CardContent></Card>
     </div>
   );
 }
@@ -187,8 +187,8 @@ function ClientCharts({ documents }: { documents: DocumentType[] }) {
           <ChartContainer config={chartConfig} className="h-[200px] w-full">
             <BarChart data={revenueData}>
               <CartesianGrid vertical={false} />
-              <XAxis dataKey="name" tickLine={false} tickMargin={10} axisLine={false} />
-              <YAxis tickLine={false} axisLine={false} tickFormatter={(value) => `$${value / 1000}k`} />
+              <XAxis dataKey="name" tickLine={false} tickMargin={10} axisLine={false} fontSize={12} />
+              <YAxis tickLine={false} axisLine={false} tickFormatter={(value) => `$${value / 1000}k`} fontSize={12} />
               <Tooltip cursor={false} content={<ChartTooltipContent indicator="dot" />} />
               <Bar dataKey="revenue" fill="var(--color-revenue)" radius={4} />
             </BarChart>
@@ -204,7 +204,7 @@ function ClientCharts({ documents }: { documents: DocumentType[] }) {
             <PieChart>
               <Tooltip cursor={false} content={<ChartTooltipContent hideLabel />} />
               <Pie data={statusBreakdown} dataKey="value" nameKey="name" innerRadius={50} />
-              <ChartLegend content={<ChartLegendContent />} />
+              <ChartLegend content={<ChartLegendContent nameKey="name" />} />
             </PieChart>
           </ChartContainer>
         </CardContent>
@@ -446,43 +446,45 @@ export default function ClientPage() {
         </Button>
        </motion.div>
       <motion.div variants={itemVariants} className="grid gap-6 lg:grid-cols-3">
-        <Card className="lg:col-span-1 bg-card/50 backdrop-blur-sm shadow-lg">
-          <CardHeader className="flex flex-row items-center gap-4 space-y-0 p-4">
-             <Avatar className="h-12 w-12">
-                <AvatarImage src={client.avatarUrl || ''} alt={client.name} />
-                <AvatarFallback>{client.name.charAt(0)}</AvatarFallback>
-             </Avatar>
-             <div className="flex-1">
-                <CardTitle className="text-lg">{client.name}</CardTitle>
-                <CardDescription>{client.companyName}</CardDescription>
-             </div>
-          </CardHeader>
-          <CardContent className="space-y-2 text-sm p-4 pt-0">
-            <div className="flex items-center gap-2 text-xs"><Mail className="h-3.5 w-3.5 text-muted-foreground" /><a href={`mailto:${client.email}`} className="hover:underline">{client.email}</a></div>
-            <div className="flex items-center gap-2 text-xs"><Phone className="h-3.5 w-3.5 text-muted-foreground" /><span>{client.phone}</span></div>
-            <div className="pt-2 flex gap-2">
-                <Button size="sm" className="flex-1" onClick={() => setIsClientDialogOpen(true)}><Edit className="mr-2 h-4 w-4" /> Edit Client</Button>
-                 <Button size="icon" variant="outline" onClick={() => handleHistoryClick(client.auditLog)}><History className="h-4 w-4" /></Button>
-                <AlertDialog>
-                    <AlertDialogTrigger asChild>
-                        <Button size="icon" variant="destructive"><Trash2 className="h-4 w-4"/></Button>
-                    </AlertDialogTrigger>
-                    <AlertDialogContent>
-                        <AlertDialogHeader>
-                            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-                            <AlertDialogDescription>
-                                This will permanently delete the client. This action cannot be undone. Associated documents will NOT be deleted.
-                            </AlertDialogDescription>
-                        </AlertDialogHeader>
-                        <AlertDialogFooter>
-                            <AlertDialogCancel>Cancel</AlertDialogCancel>
-                            <AlertDialogAction onClick={handleDeleteClient} className="bg-destructive hover:bg-destructive/90">Delete Client</AlertDialogAction>
-                        </AlertDialogFooter>
-                    </AlertDialogContent>
-                </AlertDialog>
-            </div>
-          </CardContent>
-        </Card>
+        <div className="lg:col-span-1">
+            <Card className="bg-card/50 backdrop-blur-sm shadow-lg">
+            <CardHeader className="flex flex-row items-center gap-4 space-y-0 p-4">
+                <Avatar className="h-12 w-12">
+                    <AvatarImage src={client.avatarUrl || ''} alt={client.name} />
+                    <AvatarFallback>{client.name.charAt(0)}</AvatarFallback>
+                </Avatar>
+                <div className="flex-1">
+                    <CardTitle className="text-lg">{client.name}</CardTitle>
+                    <CardDescription>{client.companyName}</CardDescription>
+                </div>
+            </CardHeader>
+            <CardContent className="space-y-2 text-sm p-4 pt-0">
+                <div className="flex items-center gap-2 text-xs"><Mail className="h-3.5 w-3.5 text-muted-foreground" /><a href={`mailto:${client.email}`} className="hover:underline">{client.email}</a></div>
+                <div className="flex items-center gap-2 text-xs"><Phone className="h-3.5 w-3.5 text-muted-foreground" /><span>{client.phone}</span></div>
+                <div className="pt-2 flex gap-2">
+                    <Button size="sm" className="flex-1" onClick={() => setIsClientDialogOpen(true)}><Edit className="mr-2 h-4 w-4" /> Edit</Button>
+                    <Button size="icon" variant="outline" onClick={() => handleHistoryClick(client.auditLog)}><History className="h-4 w-4" /></Button>
+                    <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                            <Button size="icon" variant="destructive"><Trash2 className="h-4 w-4"/></Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                            <AlertDialogHeader>
+                                <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                                <AlertDialogDescription>
+                                    This will permanently delete the client. This action cannot be undone. Associated documents will NOT be deleted.
+                                </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                <AlertDialogAction onClick={handleDeleteClient} className="bg-destructive hover:bg-destructive/90">Delete Client</AlertDialogAction>
+                            </AlertDialogFooter>
+                        </AlertDialogContent>
+                    </AlertDialog>
+                </div>
+            </CardContent>
+            </Card>
+        </div>
         <motion.div variants={itemVariants} className="lg:col-span-2 space-y-6">
             <ClientCharts documents={allDocuments} />
         </motion.div>
@@ -493,10 +495,10 @@ export default function ClientPage() {
               <ClientDashboardStats documents={allDocuments} />
           </div>
           <Card className="bg-card/50 backdrop-blur-sm shadow-lg flex flex-col justify-center">
-            <CardHeader className="pb-2">
+            <CardHeader className="p-3 pb-2">
                 <CardTitle className="text-base">Quick Actions</CardTitle>
             </CardHeader>
-            <CardContent className="flex flex-wrap items-center gap-2">
+            <CardContent className="p-3 flex flex-wrap items-center gap-2">
                 <Button size="sm" onClick={() => handleCreateDocument('invoice')} variant="outline" className="rounded-full">
                     <FilePlus2 className="mr-2 h-3 w-3" />
                     New Invoice
