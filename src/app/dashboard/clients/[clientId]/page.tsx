@@ -409,7 +409,7 @@ export default function ClientPage() {
   
   return (
     <motion.div 
-      className="space-y-6"
+      className="space-y-4"
       variants={pageVariants}
       initial="hidden"
       animate="visible"
@@ -440,29 +440,34 @@ export default function ClientPage() {
             </AlertDialogContent>
         </AlertDialog>
 
-       <motion.div variants={itemVariants} className="mt-0" />
-      <motion.div variants={itemVariants} className="grid gap-6 lg:grid-cols-3">
+      <motion.div variants={itemVariants}>
+        <Button variant="outline" size="icon" onClick={() => router.push('/dashboard?tab=clients')}>
+            <ArrowLeft className="h-4 w-4" />
+            <span className="sr-only">Back to Clients</span>
+        </Button>
+      </motion.div>
+      <motion.div variants={itemVariants} className="grid lg:grid-cols-3 gap-6">
         <div className="lg:col-span-1">
-            <Card className="bg-card/50 backdrop-blur-sm shadow-lg">
-            <CardHeader className="flex flex-row items-center gap-4 space-y-0 p-4">
-                <Avatar className="h-12 w-12">
+            <Card className="bg-card/50 backdrop-blur-sm shadow-lg h-full">
+            <CardHeader className="flex flex-row items-center gap-4 space-y-0 p-3">
+                <Avatar className="h-10 w-10">
                     <AvatarImage src={client.avatarUrl || ''} alt={client.name} />
                     <AvatarFallback>{client.name.charAt(0)}</AvatarFallback>
                 </Avatar>
                 <div className="flex-1">
-                    <CardTitle className="text-lg">{client.name}</CardTitle>
-                    <CardDescription>{client.companyName}</CardDescription>
+                    <CardTitle className="text-base">{client.name}</CardTitle>
+                    <CardDescription className="text-xs">{client.companyName}</CardDescription>
                 </div>
             </CardHeader>
-            <CardContent className="space-y-2 text-sm p-4 pt-0">
-                <div className="flex items-center gap-2 text-xs"><Mail className="h-3.5 w-3.5 text-muted-foreground" /><a href={`mailto:${client.email}`} className="hover:underline">{client.email}</a></div>
-                <div className="flex items-center gap-2 text-xs"><Phone className="h-3.5 w-3.5 text-muted-foreground" /><span>{client.phone}</span></div>
-                <div className="pt-2 flex gap-2">
-                    <Button size="sm" className="flex-1" onClick={() => setIsClientDialogOpen(true)}><Edit className="mr-2 h-4 w-4" /> Edit</Button>
-                    <Button size="icon" variant="outline" onClick={() => handleHistoryClick(client.auditLog)}><History className="h-4 w-4" /></Button>
+            <CardContent className="space-y-1 text-xs p-3 pt-0">
+                <div className="flex items-center gap-2"><Mail className="h-3.5 w-3.5 text-muted-foreground" /><a href={`mailto:${client.email}`} className="hover:underline">{client.email}</a></div>
+                <div className="flex items-center gap-2"><Phone className="h-3.5 w-3.5 text-muted-foreground" /><span>{client.phone}</span></div>
+                <div className="pt-1 flex gap-2">
+                    <Button size="sm" className="flex-1 h-8 text-xs" onClick={() => setIsClientDialogOpen(true)}><Edit className="mr-2 h-3.5 w-3.5" /> Edit</Button>
+                    <Button size="icon" variant="outline" className="h-8 w-8" onClick={() => handleHistoryClick(client.auditLog)}><History className="h-3.5 w-3.5" /></Button>
                     <AlertDialog>
                         <AlertDialogTrigger asChild>
-                            <Button size="icon" variant="destructive"><Trash2 className="h-4 w-4"/></Button>
+                            <Button size="icon" variant="destructive" className="h-8 w-8"><Trash2 className="h-3.5 w-3.5"/></Button>
                         </AlertDialogTrigger>
                         <AlertDialogContent>
                             <AlertDialogHeader>
@@ -486,7 +491,7 @@ export default function ClientPage() {
         </motion.div>
       </motion.div>
       
-      <motion.div variants={itemVariants} className="grid lg:grid-cols-3 gap-6">
+      <motion.div variants={itemVariants} className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2">
               <ClientDashboardStats documents={allDocuments} />
           </div>
@@ -647,5 +652,6 @@ export default function ClientPage() {
     </motion.div>
   );
 }
+
 
 
