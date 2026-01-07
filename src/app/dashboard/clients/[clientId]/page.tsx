@@ -12,7 +12,7 @@ import { Bar, BarChart, CartesianGrid, Legend, Pie, PieChart, ResponsiveContaine
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Mail, Phone, Edit, ArrowLeft, DollarSign, Clock, FileWarning, Files, XCircle, FilePlus2, FileText, Shield, Trash2, History, MoreHorizontal, Eye, Loader2 } from 'lucide-react';
+import { Mail, Phone, Edit, ArrowLeft, DollarSign, Clock, FileWarning, Files, XCircle, FilePlus2, FileText, Shield, Trash2, History, MoreHorizontal, Eye, Loader2, MapPin, Globe, Hash } from 'lucide-react';
 import Link from 'next/link';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -408,12 +408,7 @@ export default function ClientPage() {
   }
   
   return (
-    <motion.div 
-      className="space-y-4"
-      variants={pageVariants}
-      initial="hidden"
-      animate="visible"
-    >
+    <div className="space-y-4">
        <ClientFormDialog
             open={isClientDialogOpen}
             onOpenChange={setIsClientDialogOpen}
@@ -453,7 +448,7 @@ export default function ClientPage() {
         <div className="lg:col-span-1">
             <Card className="bg-card/50 backdrop-blur-sm shadow-lg h-full">
             <CardHeader className="flex flex-row items-center gap-4 space-y-0 p-4">
-                <Avatar className="h-10 w-10">
+                <Avatar className="h-12 w-12">
                     <AvatarImage src={client.avatarUrl || ''} alt={client.name} />
                     <AvatarFallback>{client.name.charAt(0)}</AvatarFallback>
                 </Avatar>
@@ -462,9 +457,13 @@ export default function ClientPage() {
                     <CardDescription className="text-xs">{client.companyName}</CardDescription>
                 </div>
             </CardHeader>
-            <CardContent className="space-y-2 text-xs p-4 pt-0">
+            <CardContent className="space-y-3 text-xs p-4 pt-0">
                 <div className="flex items-center gap-2"><Mail className="h-3.5 w-3.5 text-muted-foreground" /><a href={`mailto:${client.email}`} className="hover:underline">{client.email}</a></div>
                 <div className="flex items-center gap-2"><Phone className="h-3.5 w-3.5 text-muted-foreground" /><span>{client.phone}</span></div>
+                <div className="flex items-start gap-2"><MapPin className="h-3.5 w-3.5 text-muted-foreground mt-0.5 flex-shrink-0" /><span className="whitespace-pre-line">{client.address}</span></div>
+                {client.website && <div className="flex items-center gap-2"><Globe className="h-3.5 w-3.5 text-muted-foreground" /><a href={client.website} target="_blank" rel="noopener noreferrer" className="hover:underline truncate">{client.website}</a></div>}
+                {client.taxId && <div className="flex items-center gap-2"><Hash className="h-3.5 w-3.5 text-muted-foreground" /><span>Tax ID: {client.taxId}</span></div>}
+                
                 <div className="pt-2 flex gap-2">
                     <Button size="sm" className="flex-1 h-8 text-xs" onClick={() => setIsClientDialogOpen(true)}><Edit className="mr-2 h-3.5 w-3.5" /> Edit</Button>
                     <Button size="icon" variant="outline" className="h-8 w-8" onClick={() => handleHistoryClick(client.auditLog)}><History className="h-3.5 w-3.5" /></Button>
@@ -494,11 +493,11 @@ export default function ClientPage() {
         </motion.div>
       </div>
       
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <div className="lg:col-span-2">
+      <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
+          <div className="lg:col-span-4">
               <ClientDashboardStats documents={allDocuments} />
           </div>
-          <Card className="bg-card/50 backdrop-blur-sm shadow-lg flex flex-col justify-center">
+          <Card className="bg-card/50 backdrop-blur-sm shadow-lg flex flex-col justify-center lg:col-span-1">
             <CardHeader className="p-3 pb-0">
                 <CardTitle className="text-base">Quick Actions</CardTitle>
             </CardHeader>
@@ -652,9 +651,10 @@ export default function ClientPage() {
         </TabsContent>
       </Tabs>
       </motion.div>
-    </motion.div>
+    </div>
   );
 }
+
 
 
 
