@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import { useState, useMemo, useCallback } from 'react';
@@ -236,8 +237,9 @@ const ClientStatsGrid: React.FC<ClientStatsGridProps> = ({ clients, invoices }) 
         });
         
         const activeClients = Object.keys(clientRevenue).length;
+        const avgRevenue = activeClients > 0 ? totalRevenue / activeClients : 0;
 
-        return { totalClients, totalRevenue, activeClients };
+        return { totalClients, totalRevenue, activeClients, avgRevenue };
     }, [clients, invoices]);
 
     const currency = invoices?.[0]?.currency || 'USD';
@@ -246,36 +248,16 @@ const ClientStatsGrid: React.FC<ClientStatsGridProps> = ({ clients, invoices }) 
     return (
         <motion.div className="grid gap-2 grid-cols-2 md:grid-cols-4 lg:grid-cols-4" variants={pageVariants}>
             <motion.div variants={pageVariants}>
-                <Card className="bg-card/50 backdrop-blur-sm shadow-sm">
-                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1">
-                        <CardTitle className="text-xs font-medium">Total Clients</CardTitle>
-                        <Users className="h-3 w-3 text-muted-foreground" />
-                    </CardHeader>
-                    <CardContent><div className="text-xl font-bold">{stats.totalClients}</div></CardContent>
-                </Card>
+                <Card className="bg-card/50 backdrop-blur-sm shadow-sm"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1"><CardTitle className="text-xs font-medium">Total Clients</CardTitle><Users className="h-3 w-3 text-muted-foreground" /></CardHeader><CardContent><div className="text-xl font-bold">{stats.totalClients}</div></CardContent></Card>
             </motion.div>
              <motion.div variants={pageVariants}>
-                <Card className="bg-card/50 backdrop-blur-sm shadow-sm">
-                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1">
-                        <CardTitle className="text-xs font-medium">Total Client Revenue</CardTitle>
-                        <DollarSign className="h-3 w-3 text-muted-foreground" />
-                    </CardHeader>
-                    <CardContent><div className="text-xl font-bold">{symbol}{stats.totalRevenue.toFixed(2)}</div></CardContent>
-                </Card>
+                <Card className="bg-card/50 backdrop-blur-sm shadow-sm"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1"><CardTitle className="text-xs font-medium">Total Client Revenue</CardTitle><DollarSign className="h-3 w-3 text-muted-foreground" /></CardHeader><CardContent><div className="text-xl font-bold">{symbol}{stats.totalRevenue.toFixed(2)}</div></CardContent></Card>
             </motion.div>
             <motion.div variants={pageVariants}>
-                <Card className="bg-card/50 backdrop-blur-sm shadow-sm">
-                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1">
-                        <CardTitle className="text-xs font-medium">Active Clients</CardTitle>
-                        <CheckCircle className="h-3 w-3 text-muted-foreground" />
-                    </CardHeader>
-                    <CardContent><div className="text-xl font-bold">{stats.activeClients}</div></CardContent>
-                </Card>
+                <Card className="bg-card/50 backdrop-blur-sm shadow-sm"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1"><CardTitle className="text-xs font-medium">Active Clients</CardTitle><CheckCircle className="h-3 w-3 text-muted-foreground" /></CardHeader><CardContent><div className="text-xl font-bold">{stats.activeClients}</div></CardContent></Card>
             </motion.div>
             <motion.div variants={pageVariants}>
-                <Button size="sm" className='rounded-full h-full w-full text-base' onClick={() => {
-                    // Logic to add a new client will be handled by the main component
-                }}><Users className="mr-2 h-4 w-4"/>Add New Client</Button>
+                <Card className="bg-card/50 backdrop-blur-sm shadow-sm"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1"><CardTitle className="text-xs font-medium">Avg. Revenue</CardTitle><AreaChart className="h-3 w-3 text-muted-foreground" /></CardHeader><CardContent><div className="text-xl font-bold">{symbol}{stats.avgRevenue.toFixed(2)}</div></CardContent></Card>
             </motion.div>
         </motion.div>
     );
@@ -976,12 +958,8 @@ export default function DashboardPage() {
                                 </div>
                             </div>
                         </CardHeader>
-                        {activeTab === 'clients' ? (
-                            <CardContent>
-                                <ClientStatsGrid clients={clients || []} invoices={invoices || []} />
-                            </CardContent>
-                        ) : (
-                           <CardContent className="flex flex-wrap items-center gap-2 pt-0">
+                        {activeTab !== 'clients' ? (
+                            <CardContent className="flex flex-wrap items-center gap-2 pt-0">
                                 <Button size="sm" onClick={handleAddClient} variant="outline" className="rounded-full">
                                     <Users className="mr-2 h-3 w-3" />
                                     Add Client
@@ -1002,6 +980,10 @@ export default function DashboardPage() {
                                     <Shield className="mr-2 h-3 w-3" />
                                     New Insurance Doc
                                 </Button>
+                            </CardContent>
+                        ) : (
+                             <CardContent className="pt-0">
+                                <ClientStatsGrid clients={clients || []} invoices={invoices || []} />
                             </CardContent>
                         )}
                     </Card>
@@ -1044,9 +1026,22 @@ export default function DashboardPage() {
                             </CardContent>
                         </Card>
                     )}
-                    {activeTab === 'clients' && renderClientsTable()}
+                    {activeTab === 'clients' && (
+                         <Card className='bg-card/50 backdrop-blur-sm'>
+                           <CardHeader>
+                                <div className="flex justify-between items-center">
+                                    <CardTitle className="text-base">Clients</CardTitle>
+                                     <Button size="sm" className='rounded-full' onClick={handleAddClient}><Users className="mr-2 h-4 w-4"/>Add Client</Button>
+                                </div>
+                                <CardDescription className="text-xs">A list of all your clients.</CardDescription>
+                            </CardHeader>
+                            {renderClientsTable()}
+                         </Card>
+                    )}
                 </motion.div>
             </motion.div>
         </>
     );
 }
+
+```
