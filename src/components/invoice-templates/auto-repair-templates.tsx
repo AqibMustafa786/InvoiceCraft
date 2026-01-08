@@ -39,7 +39,7 @@ const SignatureDisplay = ({ signature, label }: { signature: any, label: string 
     )
 }
 
-const AutoRepairDetails: React.FC<{ invoice: Invoice, t: any }> = ({ invoice, t }) => {
+export const AutoRepairDetails: React.FC<{ invoice: Invoice, t: any }> = ({ invoice, t }) => {
     if (!invoice.autoRepair) return null;
     const { autoRepair } = invoice;
     return (
@@ -260,7 +260,7 @@ export const AutoRepairTemplate3: React.FC<PageProps> = (props) => {
 
 // Template 4: Pro Service
 export const AutoRepairTemplate4: React.FC<PageProps> = (props) => {
-    const { invoice, pageItems, pageIndex, totalPages, balanceDue, currencySymbol, t, accentColor } = props;
+    const { invoice, pageItems, pageIndex, totalPages, total, balanceDue, currencySymbol, t, accentColor } = props;
     const { business, client } = invoice;
     return (
         <div className={`flex ${pageIndex < totalPages - 1 ? 'page-break-after' : ''}`} style={{ minHeight: '1056px', backgroundColor: props.backgroundColor, color: props.textColor }}>
@@ -301,6 +301,7 @@ export const AutoRepairTemplate4: React.FC<PageProps> = (props) => {
                 </main>
                 {pageIndex === totalPages - 1 && (
                 <footer className="mt-auto pt-8">
+                     <p className="flex justify-end font-bold text-lg mt-2"><span>Total:</span><span className="ml-4">{currencySymbol}{total.toFixed(2)}</span></p>
                      {business.ownerSignature && (
                         <div className="mt-8 flex justify-end">
                             <SignatureDisplay signature={business.ownerSignature} label="Authorized Signature" />
