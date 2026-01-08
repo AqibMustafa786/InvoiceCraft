@@ -225,10 +225,9 @@ const DashboardStatsGrid: React.FC<DashboardStatsGridProps> = ({ documents, docT
 interface ClientStatsGridProps {
     clients: Client[];
     invoices: Invoice[];
-    onAddClient: () => void;
 }
 
-const ClientStatsGrid: React.FC<ClientStatsGridProps> = ({ clients, invoices, onAddClient }) => {
+const ClientStatsGrid: React.FC<ClientStatsGridProps> = ({ clients, invoices }) => {
     const stats = useMemo(() => {
         const totalClients = clients.length;
         const totalRevenue = invoices.filter(i => i.status === 'paid').reduce((acc, i) => acc + (toNumberSafe(i.summary?.grandTotal)), 0);
@@ -650,6 +649,16 @@ export default function DashboardPage() {
     
     const isLoading = isAuthLoading || isLoadingInvoices || isLoadingEstimates || isLoadingQuotes || isLoadingInsurance;
 
+    const clientBalances = useMemo(() => {
+        if (!clients || !invoices) return {};
+        const balances: Record<string, number> = {};
+        clients.forEach(client => {
+            const clientInvoices = invoices.filter(inv => inv.client.clientId === client.id && (inv.status === 'sent' || inv.status === 'overdue' || inv.status === 'partially-paid'));
+            balances[client.id] = clientInvoices.reduce((acc, inv) => acc + (toNumberSafe(inv.summary.grandTotal) - toNumberSafe(inv.amountPaid)), 0);
+        });
+        return balances;
+    }, [clients, invoices]);
+
     const renderDocumentsTable = (docs: DocumentType[], docType: 'invoice' | 'estimate' | 'quote' | 'insurance') => (
         <div className="overflow-x-auto">
             <Table>
@@ -797,16 +806,6 @@ export default function DashboardPage() {
     );
     
     const renderClientsTable = () => {
-        const clientBalances = useMemo(() => {
-            if (!clients || !invoices) return {};
-            const balances: Record<string, number> = {};
-            clients.forEach(client => {
-                const clientInvoices = invoices.filter(inv => inv.client.clientId === client.id && (inv.status === 'sent' || inv.status === 'overdue' || inv.status === 'partially-paid'));
-                balances[client.id] = clientInvoices.reduce((acc, inv) => acc + (toNumberSafe(inv.summary.grandTotal) - toNumberSafe(inv.amountPaid)), 0);
-            });
-            return balances;
-        }, [clients, invoices]);
-        
         const currency = invoices?.[0]?.currency || 'USD';
         const symbol = currencySymbols[currency] || '$';
 
@@ -968,17 +967,13 @@ export default function DashboardPage() {
                                         </Button>
                                     )}
                                      {activeTab === 'clients' && (
-                                        <Button size="sm" className='rounded-full' onClick={handleAddClient}><Users className="mr-2 h-4 w-4"/>Add Client</Button>
+                                        <Button size="sm" className='rounded-full' onClick={handleAddClient}><Users className="mr-2 h-4 w-4"/>Add New Client</Button>
                                     )}
                                 </div>
                             </div>
                         </CardHeader>
                         {activeTab !== 'clients' ? (
                             <CardContent className="flex flex-wrap items-center gap-2 pt-0">
-                                <Button size="sm" onClick={handleAddClient} variant="outline" className="rounded-full">
-                                    <Users className="mr-2 h-3 w-3" />
-                                    Add Client
-                                </Button>
                                 <Button size="sm" onClick={handleCreateInvoice} variant="outline" className="rounded-full">
                                     <FilePlus2 className="mr-2 h-3 w-3" />
                                     New Invoice
@@ -998,7 +993,7 @@ export default function DashboardPage() {
                             </CardContent>
                         ) : (
                             <CardContent className="pt-0">
-                                <ClientStatsGrid clients={clients || []} invoices={invoices || []} onAddClient={handleAddClient} />
+                                <ClientStatsGrid clients={clients || []} invoices={invoices || []} />
                             </CardContent>
                         )}
                     </Card>
