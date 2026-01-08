@@ -60,7 +60,7 @@ export const ITServiceDetails: React.FC<{ invoice: Invoice, t: any }> = ({ invoi
 };
 
 
-// Template 1: Tech Corporate
+// Template 1: Tech Corporate (Based on user image)
 export const ITTemplate1: React.FC<PageProps> = (props) => {
     const { invoice, pageItems, pageIndex, totalPages, subtotal, taxAmount, discountAmount, total, balanceDue, currencySymbol, t } = props;
     const { business, client } = invoice;
@@ -140,7 +140,7 @@ export const ITTemplate1: React.FC<PageProps> = (props) => {
                             {client.companyName && <p><span className="text-gray-600 w-20 inline-block">{t.company || 'Company'}:</span> <span className="font-semibold">{client.companyName}</span></p>}
                             <p><span className="text-gray-600 w-20 inline-block">{t.address || 'ADDRESS'}:</span> <span className="font-semibold whitespace-pre-line">{client.address}</span></p>
                             <p><span className="text-gray-600 w-20 inline-block">{t.contact || 'CONTACT'}:</span> <span className="font-semibold">{client.phone}</span></p>
-                            <p><span className="text-gray-600 w-20 inline-block">{t.email || 'EMAIL'}:</span> <span className="font-semibold">{client.email}</p>
+                            <p><span className="text-gray-600 w-20 inline-block">{t.email || 'EMAIL'}:</span> <span className="font-semibold">{client.email}</span></p>
                         </div>
                     </div>
                      <div className="text-right">
@@ -384,6 +384,12 @@ export const ITTemplate4: React.FC<PageProps> = (props) => {
                         </tbody>
                     </table>
                 </main>
+                 {pageIndex === totalPages - 1 && (
+                    <div className="text-xs mt-auto pt-8">
+                        <p className="font-bold text-gray-500">PAYMENT TERMS</p>
+                        <p>{invoice.paymentInstructions}</p>
+                    </div>
+                 )}
             </div>
         </div>
     );
@@ -419,6 +425,7 @@ export const ITTemplate5: React.FC<PageProps> = (props) => {
                 <div className="text-right">
                     <p className="text-gray-500">{(t.invoice || 'Invoice')} <span className="font-mono text-black">#{invoice.invoiceNumber}</span></p>
                     <p className="text-gray-500">{(t.date || 'Date')}: <span className="font-mono text-black">{safeFormat(invoice.invoiceDate, 'dd.MM.yyyy')}</span></p>
+                    <p className="text-gray-500">{(t.dueDate || 'Due')}: <span className="font-mono text-black">{safeFormat(invoice.dueDate, 'dd.MM.yyyy')}</span></p>
                 </div>
             </section>
             
@@ -452,7 +459,7 @@ export const ITTemplate5: React.FC<PageProps> = (props) => {
                     <div className="w-1/3 text-sm space-y-1">
                         <p className="flex justify-between"><span>{(t.subtotal || 'Subtotal')}</span><span className="font-mono">{currencySymbol}{subtotal.toFixed(2)}</span></p>
                         <p className="flex justify-between"><span>{(t.tax || 'Tax')}</span><span className="font-mono">{currencySymbol}{taxAmount.toFixed(2)}</span></p>
-                        {(props.invoice.amountPaid || 0) > 0 && <p className="flex justify-between text-green-600"><span>{(t.amountPaid || 'Amount Paid')}</span><span className="font-mono">-{currencySymbol}{(props.invoice.amountPaid || 0).toFixed(2)}</span></p>}
+                        {(invoice.amountPaid || 0) > 0 && <p className="flex justify-between text-green-600"><span>{(t.amountPaid || 'Amount Paid')}</span><span className="font-mono">-{currencySymbol}{(invoice.amountPaid || 0).toFixed(2)}</span></p>}
                         <p className="flex justify-between font-bold text-lg mt-2 pt-2 border-t-2 border-black">
                             <span>{(t.balanceDue || 'Balance Due')}</span>
                             <span className="font-mono">{currencySymbol}{balanceDue.toFixed(2)}</span>

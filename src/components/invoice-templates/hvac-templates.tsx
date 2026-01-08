@@ -48,9 +48,9 @@ export const HvacDetails: React.FC<{ invoice: Invoice, t: any }> = ({ invoice, t
             <p className="font-bold text-gray-500 mb-2 border-b">{t.hvacSpecifications || 'HVAC Specifications'}</p>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-x-4 gap-y-1">
                 <p><span className="font-semibold text-gray-600">{t.unitType || 'Unit Type'}:</span> {hvac.unitType}</p>
-                <p><span className="font-semibold text-gray-600">{t.modelNo || 'Model #')}:</span> {hvac.modelNumber}</p>
-                <p><span className="font-semibold text-gray-600">{t.refrigerant || 'Refrigerant')}:</span> {hvac.refrigerantType}</p>
-                {hvac.maintenanceFee && <p><span className="font-semibold text-gray-600">{t.maintenanceFee || 'Maintenance Fee')}:</span> ${hvac.maintenanceFee.toFixed(2)}</p>}
+                <p><span className="font-semibold text-gray-600">{t.modelNo || 'Model #'}:</span> {hvac.modelNumber}</p>
+                <p><span className="font-semibold text-gray-600">{t.refrigerant || 'Refrigerant'}:</span> {hvac.refrigerantType}</p>
+                {hvac.maintenanceFee && <p><span className="font-semibold text-gray-600">{t.maintenanceFee || 'Maintenance Fee'}:</span> ${hvac.maintenanceFee.toFixed(2)}</p>}
             </div>
         </section>
     );
@@ -194,7 +194,7 @@ export const HVACTemplate2: React.FC<PageProps> = (props) => {
                 </div>
             </section>
             
-             <HvacDetails invoice={invoice} t={t}/>
+             <HvacDetails invoice={invoice} t={t} />
 
             <main className="flex-grow">
                  <table className="w-full text-left text-xs">
@@ -227,12 +227,12 @@ export const HVACTemplate2: React.FC<PageProps> = (props) => {
                             {discountAmount > 0 && <div className="flex justify-between p-1 text-red-500"><span>{(t.discount || 'Discount')}:</span><span>-{currencySymbol}{discountAmount.toFixed(2)}</span></div>}
                              {invoice.summary.shippingCost > 0 && <div className="flex justify-between p-1"><span>{(t.shipping || 'Shipping')}:</span><span>{currencySymbol}{invoice.summary.shippingCost.toFixed(2)}</span></div>}
                             <div className="flex justify-between p-1"><span>{(t.tax || 'Tax')}:</span><span className="">{currencySymbol}{taxAmount.toFixed(2)}</span></div>
-                            <div className="flex justify-between font-bold text-base mt-2 pt-2 border-t-2" style={{ borderColor: accentColor }}><span style={{ color: accentColor }}>Total:</span><span>{currencySymbol}{total.toFixed(2)}</span></div>
-                             {(invoice.amountPaid || 0) > 0 && <div className="flex justify-between p-1 text-green-600"><span>Amount Paid:</span><span>-{currencySymbol}{(invoice.amountPaid || 0).toFixed(2)}</span></div>}
+                            <div className="flex justify-between font-bold"><span>{(t.total || 'Total')}:</span><span>{currencySymbol}{total.toFixed(2)}</span></div>
+                            {(invoice.amountPaid || 0) > 0 && <div className="flex justify-between text-green-600"><span>Amount Paid:</span><span>-{currencySymbol}{(invoice.amountPaid || 0).toFixed(2)}</span></div>}
                              <div className="flex justify-between font-bold text-lg mt-1 pt-1 border-t-2" style={{ borderColor: accentColor }}><span style={{ color: accentColor }}>Balance Due:</span><span>{currencySymbol}{balanceDue.toFixed(2)}</span></div>
                         </div>
                     </div>
-                    <div className="mt-8 text-xs">
+                    <div className="text-xs mt-8">
                         <p className="font-bold tracking-wider">{(t.termsAndConditions || 'TERMS & CONDITIONS')}</p>
                         <p className="whitespace-pre-line">{invoice.paymentInstructions}</p>
                     </div>
@@ -247,7 +247,7 @@ export const HVACTemplate2: React.FC<PageProps> = (props) => {
 
 // Template 3: Clean & Grid-based
 export const HVACTemplate3: React.FC<PageProps> = (props) => {
-    const { invoice, pageItems, pageIndex, totalPages, subtotal, taxAmount, discountAmount, total, balanceDue, t, currencySymbol, accentColor, textColor } = props;
+    const { invoice, pageItems, pageIndex, totalPages, subtotal, taxAmount, discountAmount, total, balanceDue, t, currencySymbol, textColor } = props;
     const { business, client } = invoice;
     const docTitle = (t.invoice || 'Invoice');
 
@@ -270,7 +270,7 @@ export const HVACTemplate3: React.FC<PageProps> = (props) => {
                 <div><p className="font-bold">{(t.details || 'Details')}:</p><p>{(t.date || 'Date')}: {safeFormat(invoice.invoiceDate, 'MM-dd-yyyy')}<br/>Due: {safeFormat(invoice.dueDate, 'MM-dd-yyyy')}<br/>PO: {invoice.poNumber}</p></div>
             </section>
             
-             <HvacDetails invoice={invoice} t={t}/>
+             <HvacDetails invoice={invoice} t={t} />
 
             <main className="flex-grow">
                 <table className="w-full text-left text-xs">
@@ -324,4 +324,3 @@ export const HVACTemplate3: React.FC<PageProps> = (props) => {
 export const HVACTemplate4: React.FC<PageProps> = (props) => <HVACTemplate1 {...props} />;
 export const HVACTemplate5: React.FC<PageProps> = (props) => <HVACTemplate2 {...props} />;
 export const HVACTemplate6: React.FC<PageProps> = (props) => <HVACTemplate3 {...props} />;
-
