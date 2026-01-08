@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import { useState, useMemo, useCallback } from 'react';
@@ -224,9 +225,10 @@ const DashboardStatsGrid: React.FC<DashboardStatsGridProps> = ({ documents, docT
 interface ClientStatsGridProps {
     clients: Client[];
     invoices: Invoice[];
+    onAddClient: () => void;
 }
 
-const ClientStatsGrid: React.FC<ClientStatsGridProps> = ({ clients, invoices }) => {
+const ClientStatsGrid: React.FC<ClientStatsGridProps> = ({ clients, invoices, onAddClient }) => {
     const stats = useMemo(() => {
         const totalClients = clients.length;
         const totalRevenue = invoices.filter(i => i.status === 'paid').reduce((acc, i) => acc + (toNumberSafe(i.summary?.grandTotal)), 0);
@@ -247,20 +249,12 @@ const ClientStatsGrid: React.FC<ClientStatsGridProps> = ({ clients, invoices }) 
     const symbol = currencySymbols[currency] || '$';
 
     return (
-        <motion.div className="grid gap-2 grid-cols-2 md:grid-cols-2 lg:grid-cols-4" variants={pageVariants}>
-            <motion.div variants={pageVariants}>
-                <Card className="bg-card/50 backdrop-blur-sm shadow-sm h-full"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1"><CardTitle className="text-xs font-medium">Total Clients</CardTitle><Users className="h-3 w-3 text-muted-foreground" /></CardHeader><CardContent><div className="text-xl font-bold">{stats.totalClients}</div><p className="text-xs text-muted-foreground">&nbsp;</p></CardContent></Card>
-            </motion.div>
-             <motion.div variants={pageVariants}>
-                <Card className="bg-card/50 backdrop-blur-sm shadow-sm h-full"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1"><CardTitle className="text-xs font-medium">Total Client Revenue</CardTitle><DollarSign className="h-3 w-3 text-muted-foreground" /></CardHeader><CardContent><div className="text-xl font-bold">{symbol}{stats.totalRevenue.toFixed(2)}</div><p className="text-xs text-muted-foreground">&nbsp;</p></CardContent></Card>
-            </motion.div>
-            <motion.div variants={pageVariants}>
-                <Card className="bg-card/50 backdrop-blur-sm shadow-sm h-full"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1"><CardTitle className="text-xs font-medium">Active Clients</CardTitle><CheckCircle className="h-3 w-3 text-muted-foreground" /></CardHeader><CardContent><div className="text-xl font-bold">{stats.activeClients}</div><p className="text-xs text-muted-foreground">&nbsp;</p></CardContent></Card>
-            </motion.div>
-             <motion.div variants={pageVariants}>
-                <Card className="bg-card/50 backdrop-blur-sm shadow-sm h-full"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1"><CardTitle className="text-xs font-medium">Avg. Revenue / Client</CardTitle><AreaChart className="h-3 w-3 text-muted-foreground" /></CardHeader><CardContent><div className="text-xl font-bold">{symbol}{stats.avgRevenue.toFixed(2)}</div><p className="text-xs text-muted-foreground">&nbsp;</p></CardContent></Card>
-            </motion.div>
-        </motion.div>
+        <div className="grid gap-4 grid-cols-2 md:grid-cols-2 lg:grid-cols-4">
+             <Card className="bg-card/50 backdrop-blur-sm shadow-sm h-full"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1"><CardTitle className="text-xs font-medium">Total Clients</CardTitle><Users className="h-3 w-3 text-muted-foreground" /></CardHeader><CardContent><div className="text-xl font-bold">{stats.totalClients}</div><p className="text-xs text-muted-foreground">&nbsp;</p></CardContent></Card>
+            <Card className="bg-card/50 backdrop-blur-sm shadow-sm h-full"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1"><CardTitle className="text-xs font-medium">Total Client Revenue</CardTitle><DollarSign className="h-3 w-3 text-muted-foreground" /></CardHeader><CardContent><div className="text-xl font-bold">{symbol}{stats.totalRevenue.toFixed(2)}</div><p className="text-xs text-muted-foreground">&nbsp;</p></CardContent></Card>
+            <Card className="bg-card/50 backdrop-blur-sm shadow-sm h-full"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1"><CardTitle className="text-xs font-medium">Active Clients</CardTitle><CheckCircle className="h-3 w-3 text-muted-foreground" /></CardHeader><CardContent><div className="text-xl font-bold">{stats.activeClients}</div><p className="text-xs text-muted-foreground">&nbsp;</p></CardContent></Card>
+            <Card className="bg-card/50 backdrop-blur-sm shadow-sm h-full"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1"><CardTitle className="text-xs font-medium">Avg. Revenue / Client</CardTitle><AreaChart className="h-3 w-3 text-muted-foreground" /></CardHeader><CardContent><div className="text-xl font-bold">{symbol}{stats.avgRevenue.toFixed(2)}</div><p className="text-xs text-muted-foreground">&nbsp;</p></CardContent></Card>
+        </div>
     );
 };
 
@@ -802,66 +796,83 @@ export default function DashboardPage() {
         </div>
     );
     
-    const renderClientsTable = () => (
-        <Card className='bg-card/50 backdrop-blur-sm'>
-            <CardContent>
-                <div className="overflow-x-auto">
-                    <Table>
-                        <TableHeader>
-                            <TableRow>
-                                <TableHead className="text-xs">Name</TableHead>
-                                <TableHead className="text-xs hidden sm:table-cell">Company</TableHead>
-                                <TableHead className="text-xs hidden md:table-cell">Email</TableHead>
-                                <TableHead className="text-right text-xs">Actions</TableHead>
-                            </TableRow>
-                        </TableHeader>
-                        <motion.tbody
-                          variants={tableContainerVariants}
-                          initial="hidden"
-                          animate="visible"
-                          as={TableBody}
-                        >
-                            {isLoadingClients ? (
-                                 <TableRow><TableCell colSpan={4} className="text-center h-24">Loading clients...</TableCell></TableRow>
-                            ) : filteredClients && filteredClients.length > 0 ? filteredClients.map((client) => (
-                                <motion.tr
-                                    as={TableRow}
-                                    key={client.id}
-                                    variants={tableRowVariants}
-                                    className="cursor-pointer"
-                                    onClick={() => router.push(`/dashboard/clients/${client.id}`)}
-                                >
-                                    <TableCell className="font-medium text-xs">
-                                        <div className="flex items-center gap-3">
-                                            <Avatar className="h-8 w-8">
-                                                <AvatarImage src={client.avatarUrl || ''} alt={client.name} />
-                                                <AvatarFallback>{client.name.charAt(0)}</AvatarFallback>
-                                            </Avatar>
-                                            <span>{client.name}</span>
-                                        </div>
-                                    </TableCell>
-                                    <TableCell className="text-xs hidden sm:table-cell">{client.companyName}</TableCell>
-                                    <TableCell className="text-xs hidden md:table-cell">{client.email}</TableCell>
-                                    <TableCell className="text-right">
-                                         <Button variant="ghost" size="sm">View</Button>
-                                    </TableCell>
-                                </motion.tr>
-                            )) : (
-                                <TableRow><TableCell colSpan={4} className="text-center h-24">No clients found.</TableCell></TableRow>
-                            )}
-                        </motion.tbody>
-                    </Table>
-                </div>
-            </CardContent>
-         </Card>
-    );
+    const renderClientsTable = () => {
+        const clientBalances = useMemo(() => {
+            if (!clients || !invoices) return {};
+            const balances: Record<string, number> = {};
+            clients.forEach(client => {
+                const clientInvoices = invoices.filter(inv => inv.client.clientId === client.id && (inv.status === 'sent' || inv.status === 'overdue' || inv.status === 'partially-paid'));
+                balances[client.id] = clientInvoices.reduce((acc, inv) => acc + (toNumberSafe(inv.summary.grandTotal) - toNumberSafe(inv.amountPaid)), 0);
+            });
+            return balances;
+        }, [clients, invoices]);
+        
+        const currency = invoices?.[0]?.currency || 'USD';
+        const symbol = currencySymbols[currency] || '$';
+
+        return (
+            <Card className='bg-card/50 backdrop-blur-sm'>
+                <CardContent>
+                    <div className="overflow-x-auto">
+                        <Table>
+                            <TableHeader>
+                                <TableRow>
+                                    <TableHead className="text-xs">Name</TableHead>
+                                    <TableHead className="text-xs hidden sm:table-cell">Company</TableHead>
+                                    <TableHead className="text-xs hidden md:table-cell">Email</TableHead>
+                                    <TableHead className="text-xs hidden lg:table-cell">Total Balance</TableHead>
+                                    <TableHead className="text-right text-xs">Actions</TableHead>
+                                </TableRow>
+                            </TableHeader>
+                            <motion.tbody
+                            variants={tableContainerVariants}
+                            initial="hidden"
+                            animate="visible"
+                            as={TableBody}
+                            >
+                                {isLoadingClients ? (
+                                    <TableRow><TableCell colSpan={5} className="text-center h-24">Loading clients...</TableCell></TableRow>
+                                ) : filteredClients && filteredClients.length > 0 ? filteredClients.map((client) => (
+                                    <motion.tr
+                                        as={TableRow}
+                                        key={client.id}
+                                        variants={tableRowVariants}
+                                        className="cursor-pointer"
+                                        onClick={() => router.push(`/dashboard/clients/${client.id}`)}
+                                    >
+                                        <TableCell className="font-medium text-xs">
+                                            <div className="flex items-center gap-3">
+                                                <Avatar className="h-8 w-8">
+                                                    <AvatarImage src={client.avatarUrl || ''} alt={client.name} />
+                                                    <AvatarFallback>{client.name.charAt(0)}</AvatarFallback>
+                                                </Avatar>
+                                                <span>{client.name}</span>
+                                            </div>
+                                        </TableCell>
+                                        <TableCell className="text-xs hidden sm:table-cell">{client.companyName}</TableCell>
+                                        <TableCell className="text-xs hidden md:table-cell">{client.email}</TableCell>
+                                        <TableCell className="text-xs hidden lg:table-cell">{symbol}{(clientBalances[client.id] || 0).toFixed(2)}</TableCell>
+                                        <TableCell className="text-right">
+                                            <Button variant="ghost" size="sm">View</Button>
+                                        </TableCell>
+                                    </motion.tr>
+                                )) : (
+                                    <TableRow><TableCell colSpan={5} className="text-center h-24">No clients found.</TableCell></TableRow>
+                                )}
+                            </motion.tbody>
+                        </Table>
+                    </div>
+                </CardContent>
+            </Card>
+        )
+    };
 
     if (isLoading) {
         return (
             <div className="space-y-4">
                  <div className="flex justify-between items-center mb-4 gap-4 flex-wrap">
                     <div>
-                        <Skeleton className="h-8 w-48 mb-1" />
+                        <Skeleton className="h-8 w-48" />
                     </div>
                     <div className="flex gap-2">
                         <Skeleton className="h-9 w-32 rounded-full" />
@@ -956,6 +967,9 @@ export default function DashboardPage() {
                                             <X className="h-4 w-4" />
                                         </Button>
                                     )}
+                                     {activeTab === 'clients' && (
+                                        <Button size="sm" className='rounded-full' onClick={handleAddClient}><Users className="mr-2 h-4 w-4"/>Add Client</Button>
+                                    )}
                                 </div>
                             </div>
                         </CardHeader>
@@ -984,10 +998,7 @@ export default function DashboardPage() {
                             </CardContent>
                         ) : (
                             <CardContent className="pt-0">
-                                <div className="flex justify-between items-start gap-4 mb-4 flex-col sm:flex-row sm:items-center">
-                                  <ClientStatsGrid clients={clients || []} invoices={invoices || []} />
-                                  <Button size="sm" className='rounded-full self-start sm:self-center' onClick={handleAddClient}><Users className="mr-2 h-4 w-4"/>Add Client</Button>
-                                </div>
+                                <ClientStatsGrid clients={clients || []} invoices={invoices || []} onAddClient={handleAddClient} />
                             </CardContent>
                         )}
                     </Card>
