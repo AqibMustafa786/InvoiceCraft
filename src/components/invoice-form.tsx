@@ -1,15 +1,16 @@
 
+
 'use client';
 
 import { ChangeEvent, Dispatch, SetStateAction, useState, useEffect } from 'react';
-import type { Invoice, LineItem, InvoiceCategory } from '@/lib/types';
+import type { Invoice, LineItem, InvoiceCategory, CustomField } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { DatePicker } from '@/components/ui/datepicker';
-import { ImageUp, Plus, Trash2, Palette, X, Mail, Truck, Hash, Wallet, Phone, Globe, Briefcase, Award, User, FileText, Building, Pencil, Type, Package, Hammer, Ruler, ListTree, CheckSquare, Sparkles, Calendar, TextQuote, Wind, Thermometer, Wrench, Zap, Trees, Droplets, Car, Code, DraftingCompass, PaintBucket, Paintbrush, Receipt, Scale, Hospital, HeartPulse, HardHat, Save, Loader2, Camera } from 'lucide-react';
+import { ImageUp, Plus, Trash2, Palette, X, Mail, Truck, Hash, Wallet, Phone, Globe, Briefcase, Award, User, FileText, Building, Pencil, Type, Package, Hammer, Ruler, ListTree, CheckSquare, Sparkles, Calendar, TextQuote, Wind, Thermometer, Wrench, Zap, Trees, Droplets, Car, Code, DraftingCompass, PaintBucket, Paintbrush, Receipt, Scale, Hospital, HeartPulse, HardHat, Save, Loader2, Camera, MoreVertical, PlusCircle } from 'lucide-react';
 import Image from 'next/image';
 import {
   Select,
@@ -33,6 +34,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from './ui/collapsible';
 
 
 interface InvoiceFormProps {
@@ -398,6 +400,26 @@ export function InvoiceForm({ invoice, setInvoice, accentColor, setAccentColor, 
     localStorage.setItem('lineItemPresets', JSON.stringify(updatedPresets));
     toast({ title: 'Preset Deleted', description: `"${selectedPreset}" has been deleted.` });
     setSelectedPreset(''); // Clear selection
+  };
+
+  const handleCustomFieldChange = (index: number, field: 'label' | 'value', value: string) => {
+    const newFields = [...(invoice.customFields || [])];
+    newFields[index] = { ...newFields[index], [field]: value };
+    setInvoice(prev => ({ ...prev, customFields: newFields }));
+  };
+
+  const addCustomField = () => {
+    setInvoice(prev => ({
+      ...prev,
+      customFields: [...(prev.customFields || []), { id: crypto.randomUUID(), label: '', value: '' }]
+    }));
+  };
+
+  const removeCustomField = (index: number) => {
+    setInvoice(prev => ({
+      ...prev,
+      customFields: (prev.customFields || []).filter((_, i) => i !== index)
+    }));
   };
 
   const currencySymbol = currencies.find(c => c.value === invoice.currency)?.label.split(' ')[1] || '$';
@@ -946,6 +968,47 @@ export function InvoiceForm({ invoice, setInvoice, accentColor, setAccentColor, 
               </CardContent>
           </Card>
       )}
+
+      <Collapsible>
+        <CollapsibleTrigger asChild>
+          <Button variant="link" className="text-muted-foreground p-0 h-auto">
+            <MoreVertical className="h-4 w-4 mr-2"/>
+            More Options
+          </Button>
+        </CollapsibleTrigger>
+        <CollapsibleContent>
+            <Card className="bg-card/50 backdrop-blur-sm shadow-lg mt-2">
+              <CardHeader>
+                <CardTitle className="text-base">Advanced Fields</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                 {(invoice.customFields || []).map((field, index) => (
+                   <div key={field.id} className="grid grid-cols-[1fr_2fr_auto] gap-2 items-center">
+                      <Input 
+                        placeholder="Label (e.g. 'Project ID')" 
+                        value={field.label}
+                        onChange={(e) => handleCustomFieldChange(index, 'label', e.target.value)}
+                        className="h-9 text-xs"
+                      />
+                       <Input 
+                        placeholder="Value" 
+                        value={field.value}
+                        onChange={(e) => handleCustomFieldChange(index, 'value', e.target.value)}
+                        className="h-9 text-xs"
+                      />
+                      <Button variant="ghost" size="icon" onClick={() => removeCustomField(index)} className="h-8 w-8">
+                        <Trash2 className="h-4 w-4 text-destructive"/>
+                      </Button>
+                   </div>
+                 ))}
+                 <Button variant="outline" size="sm" onClick={addCustomField} className="text-xs">
+                    <PlusCircle className="h-4 w-4 mr-2"/>
+                    Add Custom Field
+                 </Button>
+              </CardContent>
+            </Card>
+        </CollapsibleContent>
+      </Collapsible>
       
       <Card className="bg-card/50 backdrop-blur-sm shadow-lg hover:shadow-primary/20 transition-shadow duration-300">
         <CardHeader>

@@ -4,6 +4,12 @@
 
 import { z } from 'zod';
 
+export interface CustomField {
+  id: string;
+  label: string;
+  value: string;
+}
+
 export interface LineItem {
   id: string;
   name: string;
@@ -324,6 +330,7 @@ export interface Invoice {
   amountPaid?: number;
   poNumber: string;
   auditLog: AuditLogEntry[];
+  customFields?: CustomField[];
 
   // Category specific data
   construction?: ConstructionInfo;
@@ -409,6 +416,7 @@ export interface Estimate {
   
   clientSignature?: SignatureInfo;
   auditLog: AuditLogEntry[];
+  customFields?: CustomField[];
 
   fontFamily?: string;
   fontSize?: number;

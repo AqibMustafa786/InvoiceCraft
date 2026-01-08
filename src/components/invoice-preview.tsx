@@ -3,7 +3,7 @@
 'use client';
 
 import { useState, useLayoutEffect, useRef, useEffect, FC, useMemo } from 'react';
-import type { Invoice, LineItem } from '@/lib/types';
+import type { Invoice, LineItem, CustomField } from '@/lib/types';
 import { Card, CardContent } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import Image from 'next/image';
@@ -117,6 +117,20 @@ const safeFormat = (date: Date | string | number | null | undefined, formatStrin
 }
 
 // --- SHARED COMPONENTS ---
+const CustomFieldsPreview: FC<{fields?: CustomField[]}> = ({ fields }) => {
+  if (!fields || fields.length === 0) return null;
+  return (
+    <section className="my-4 text-xs" data-element="custom-fields">
+      <p className="font-bold text-gray-500 mb-2 border-b">Additional Information</p>
+      <div className="grid grid-cols-2 gap-x-4 gap-y-1">
+        {fields.map(field => (
+          field.label && <p key={field.id}><span className="font-semibold text-gray-600">{field.label}:</span> {field.value}</p>
+        ))}
+      </div>
+    </section>
+  )
+}
+
 const ItemsTable: FC<{ items: LineItem[], t: any, currencySymbol: string, accentColor?: string, headerStyle?: 'filled' | 'underline' }> = ({ items, t, currencySymbol, accentColor, headerStyle = 'filled' }) => (
     <section>
         <table className="w-full text-left">
@@ -257,6 +271,7 @@ const DefaultTemplatePage: FC<PageProps> = ({ pageItems, pageIndex, totalPages, 
                         <p>{safeFormat(invoice.dueDate, 'MMMM d, yyyy')}</p>
                     </div>
                 </section>
+                <CustomFieldsPreview fields={invoice.customFields} />
                 <ItemsTable items={pageItems} {...commonProps} />
             </div>
             {pageIndex === totalPages - 1 && <InvoiceFooter {...commonProps} />}
@@ -317,6 +332,7 @@ const ModernTemplatePage: FC<PageProps> = ({ pageItems, pageIndex, totalPages, .
                     <p>{invoice.poNumber || 'N/A'}</p>
                 </div>
             </section>
+            <CustomFieldsPreview fields={invoice.customFields} />
             <ItemsTable items={pageItems} {...commonProps} accentColor={accentColor} />
         </div>
         {pageIndex === totalPages - 1 && <InvoiceFooter {...commonProps} />}
@@ -362,6 +378,7 @@ const MinimalistTemplatePage: FC<PageProps> = ({ pageItems, pageIndex, totalPage
                     <p className="font-medium">{invoice.poNumber || 'N/A'}</p>
                 </div>
             </section>
+            <CustomFieldsPreview fields={invoice.customFields} />
             <ItemsTable items={pageItems} {...commonProps} headerStyle="underline" />
         </div>
         {pageIndex === totalPages - 1 && <InvoiceFooter {...commonProps} />}
@@ -395,6 +412,7 @@ const CreativeTemplatePage: FC<PageProps> = ({ pageItems, pageIndex, totalPages,
                 <p>{client.phone}</p>
                 <p>{client.email}</p>
             </section>
+            <CustomFieldsPreview fields={invoice.customFields} />
             <ItemsTable items={pageItems} {...commonProps} accentColor={accentColor} />
         </div>
         {pageIndex === totalPages - 1 && <InvoiceFooter {...commonProps} />}
@@ -412,7 +430,7 @@ const ElegantTemplatePage: FC<PageProps> = ({ pageItems, pageIndex, totalPages, 
             <header data-element="header" className="text-center mb-16">
                 {business.logoUrl && <Image src={business.logoUrl} alt="logo" width={100} height={50} className="mx-auto mb-4 object-contain" />}
                 <h1 className="text-4xl font-bold tracking-tight">{business.name}</h1>
-                <p className="text-xs text-gray-500 mt-2 tracking-widest">{business.address} | {business.phone}</p>
+                <p className="text-xs text-gray-500 mt-2 tracking-widest whitespace-pre-line">{business.address} | {business.phone}</p>
             </header>
             <div className="w-full h-px bg-gray-300 mb-10"></div>
             <section data-element="meta" className="flex justify-between items-center mb-10 text-sm">
@@ -427,6 +445,7 @@ const ElegantTemplatePage: FC<PageProps> = ({ pageItems, pageIndex, totalPages, 
                     <p><span className="font-bold">PO Number:</span> {invoice.poNumber || 'N/A'}</p>
                 </div>
             </section>
+            <CustomFieldsPreview fields={invoice.customFields} />
             <ItemsTable items={pageItems} {...commonProps} headerStyle="underline" />
         </div>
         {pageIndex === totalPages - 1 && <InvoiceFooter {...commonProps} />}
@@ -467,6 +486,7 @@ const UsaTemplatePage: FC<PageProps> = ({ pageItems, pageIndex, totalPages, ...c
                         <span className="font-bold text-gray-600">PO Number:</span><span className="font-medium">{invoice.poNumber || 'N/A'}</span>
                     </div>
                 </section>
+                <CustomFieldsPreview fields={invoice.customFields} />
                 <main>
                     <table className="w-full border-collapse border text-sm" data-element="items-table">
                         <thead data-element="table-header">
