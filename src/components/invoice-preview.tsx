@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useLayoutEffect, useRef, useEffect, FC, useMemo } from 'react';
@@ -69,6 +68,24 @@ import {
   RentalTemplate1, RentalTemplate2, RentalTemplate3, RentalTemplate4, RentalTemplate5
 } from './invoice-templates/rental-templates';
 import { toNumberSafe, toDateSafe } from '@/lib/utils';
+import { ConstructionDetails } from './invoice-templates/construction-templates';
+import { PlumbingDetails } from './invoice-templates/plumbing-templates';
+import { ElectricalDetails } from './invoice-templates/electrical-templates';
+import { HvacDetails } from './invoice-templates/hvac-templates';
+import { RoofingDetails } from './invoice-templates/roofing-templates';
+import { LandscapingDetails } from './invoice-templates/landscaping-templates';
+import { CleaningDetails } from './invoice-templates/cleaning-templates';
+import { AutoRepairDetails } from './invoice-templates/auto-repair-templates';
+import { ITServiceDetails } from './invoice-templates/it-freelance-templates';
+import { ConsultingDetails } from './invoice-templates/consulting-templates';
+import { LegalDetails } from './invoice-templates/legal-templates';
+import { MedicalDetails } from './invoice-templates/medical-templates';
+import { EcommerceDetails } from './invoice-templates/ecommerce-templates';
+import { RetailDetails } from './invoice-templates/retail-templates';
+import { PhotographyDetails } from './invoice-templates/photography-templates';
+import { RealEstateDetails } from './invoice-templates/real-estate-templates';
+import { TransportationDetails } from './invoice-templates/transportation-templates';
+import { RentalDetails } from './invoice-templates/rental-templates';
 
 
 // --- PROPS ---
@@ -128,6 +145,33 @@ const CustomFieldsPreview: FC<{fields?: CustomField[]}> = ({ fields }) => {
       </div>
     </section>
   )
+}
+
+const CategorySpecificDetails: FC<{ invoice: Invoice, t: any }> = ({ invoice, t }) => {
+    const category = invoice.category;
+
+    switch(category) {
+        case 'Construction': return <ConstructionDetails invoice={invoice} t={t} />;
+        case 'Plumbing': return <PlumbingDetails invoice={invoice} t={t} />;
+        case 'Electrical Services': return <ElectricalDetails invoice={invoice} t={t} />;
+        case 'HVAC Services': return <HvacDetails invoice={invoice} t={t} />;
+        case 'Roofing': return <RoofingDetails invoice={invoice} t={t} />;
+        case 'Landscaping & Lawn Care': return <LandscapingDetails invoice={invoice} t={t} />;
+        case 'Cleaning Services': return <CleaningDetails invoice={invoice} t={t} />;
+        case 'Auto Repair': return <AutoRepairDetails invoice={invoice} t={t} />;
+        case 'IT Services / Tech Support': return <ITServiceDetails invoice={invoice} t={t} />;
+        case 'Freelance / Agency': return <ITServiceDetails invoice={invoice} t={t} />; // Re-using IT for freelance
+        case 'Consulting': return <ConsultingDetails invoice={invoice} t={t} />;
+        case 'Legal Services': return <LegalDetails invoice={invoice} t={t} />;
+        case 'Medical / Healthcare': return <MedicalDetails invoice={invoice} t={t} />;
+        case 'E-commerce / Online Store': return <EcommerceDetails invoice={invoice} t={t} />;
+        case 'Retail / Wholesale': return <RetailDetails invoice={invoice} t={t} />;
+        case 'Photography': return <PhotographyDetails invoice={invoice} t={t} />;
+        case 'Real Estate / Property Management': return <RealEstateDetails invoice={invoice} t={t} />;
+        case 'Transportation / Trucking': return <TransportationDetails invoice={invoice} t={t} />;
+        case 'Rental / Property': return <RentalDetails invoice={invoice} t={t} />;
+        default: return null;
+    }
 }
 
 const ItemsTable: FC<{ items: LineItem[], t: any, currencySymbol: string, accentColor?: string, headerStyle?: 'filled' | 'underline' }> = ({ items, t, currencySymbol, accentColor, headerStyle = 'filled' }) => (
@@ -271,6 +315,7 @@ const DefaultTemplatePage: FC<PageProps> = ({ pageItems, pageIndex, totalPages, 
                     </div>
                 </section>
                 <CustomFieldsPreview fields={invoice.customFields} />
+                <CategorySpecificDetails invoice={invoice} t={t} />
                 <ItemsTable items={pageItems} {...commonProps} />
             </div>
             {pageIndex === totalPages - 1 && <InvoiceFooter {...commonProps} />}
@@ -332,6 +377,7 @@ const ModernTemplatePage: FC<PageProps> = ({ pageItems, pageIndex, totalPages, .
                 </div>
             </section>
             <CustomFieldsPreview fields={invoice.customFields} />
+            <CategorySpecificDetails invoice={invoice} t={t} />
             <ItemsTable items={pageItems} {...commonProps} accentColor={accentColor} />
         </div>
         {pageIndex === totalPages - 1 && <InvoiceFooter {...commonProps} />}
@@ -378,6 +424,7 @@ const MinimalistTemplatePage: FC<PageProps> = ({ pageItems, pageIndex, totalPage
                 </div>
             </section>
             <CustomFieldsPreview fields={invoice.customFields} />
+            <CategorySpecificDetails invoice={invoice} t={t} />
             <ItemsTable items={pageItems} {...commonProps} headerStyle="underline" />
         </div>
         {pageIndex === totalPages - 1 && <InvoiceFooter {...commonProps} />}
@@ -412,6 +459,7 @@ const CreativeTemplatePage: FC<PageProps> = ({ pageItems, pageIndex, totalPages,
                 <p>{client.email}</p>
             </section>
             <CustomFieldsPreview fields={invoice.customFields} />
+            <CategorySpecificDetails invoice={invoice} t={t} />
             <ItemsTable items={pageItems} {...commonProps} accentColor={accentColor} />
         </div>
         {pageIndex === totalPages - 1 && <InvoiceFooter {...commonProps} />}
@@ -445,6 +493,7 @@ const ElegantTemplatePage: FC<PageProps> = ({ pageItems, pageIndex, totalPages, 
                 </div>
             </section>
             <CustomFieldsPreview fields={invoice.customFields} />
+            <CategorySpecificDetails invoice={invoice} t={t} />
             <ItemsTable items={pageItems} {...commonProps} headerStyle="underline" />
         </div>
         {pageIndex === totalPages - 1 && <InvoiceFooter {...commonProps} />}
@@ -486,6 +535,7 @@ const UsaTemplatePage: FC<PageProps> = ({ pageItems, pageIndex, totalPages, ...c
                     </div>
                 </section>
                 <CustomFieldsPreview fields={invoice.customFields} />
+                <CategorySpecificDetails invoice={invoice} t={t} />
                 <main>
                     <table className="w-full border-collapse border text-sm" data-element="items-table">
                         <thead data-element="table-header">
@@ -672,7 +722,6 @@ const InvoicePreviewInternal: FC<InvoicePreviewProps> = ({ invoice, accentColor,
 
   useEffect(() => {
     setNeedsRemeasure(true);
-    // This state update is now controlled by the parent component's re-render
   }, [serializedInvoice]);
 
 

@@ -1,8 +1,7 @@
-
 'use client';
 
 import { useState, useLayoutEffect, useRef, useEffect, FC, useMemo } from 'react';
-import type { Estimate, Quote, LineItem } from '@/lib/types';
+import type { Estimate, Quote, LineItem, CustomField } from '@/lib/types';
 import { Card, CardContent } from '@/components/ui/card';
 import { GenericTemplate1, GenericTemplate2, GenericTemplate3, GenericTemplate4, GenericTemplate5 } from './document-templates/generic-templates';
 import { ConstructionTemplate1, ConstructionTemplate2, ConstructionTemplate3, ConstructionTemplate4, ConstructionTemplate5 } from './document-templates/construction-templates';
@@ -24,6 +23,25 @@ import { RealEstateTemplate1, RealEstateTemplate2, RealEstateTemplate3, RealEsta
 import { TransportationTemplate1, TransportationTemplate2, TransportationTemplate3, TransportationTemplate4, TransportationTemplate5 } from './document-templates/transportation-templates';
 import { RentalTemplate1, RentalTemplate2, RentalTemplate3, RentalTemplate4, RentalTemplate5 } from './document-templates/rental-templates';
 import locales from '@/lib/locales';
+
+import { RemodelingDetails } from './document-templates/remodeling-templates';
+import { RoofingDetails } from './document-templates/roofing-templates';
+import { HvacDetails } from './document-templates/hvac-templates';
+import { PlumbingDetails } from './document-templates/plumbing-templates';
+import { ElectricalDetails } from './document-templates/electrical-templates';
+import { LandscapingDetails } from './document-templates/landscaping-templates';
+import { CleaningDetails } from './document-templates/cleaning-templates';
+import { AutoRepairDetails } from './document-templates/auto-repair-templates';
+import { ConstructionDetails } from './document-templates/construction-templates';
+import { ITFreelanceDetails } from './document-templates/it-freelance-templates';
+import { ConsultingDetails } from './document-templates/consulting-templates';
+import { LegalDetails } from './document-templates/legal-templates';
+import { MedicalDetails } from './document-templates/medical-templates';
+import { RetailDetails } from './document-templates/retail-templates';
+import { PhotographyDetails } from './document-templates/photography-templates';
+import { RealEstateDetails } from './document-templates/real-estate-templates';
+import { TransportationDetails } from './document-templates/transportation-templates';
+import { RentalDetails } from './document-templates/rental-templates';
 
 // --- PROPS ---
 interface DocumentPreviewProps {
@@ -149,6 +167,25 @@ const templates: { [key: string]: FC<PageProps> } = {
 const PAGE_HEIGHT = 1056; // 11 inches at 96 DPI for Letter size
 const PAGE_PADDING = 80; // 40px top + 40px bottom
 const AVAILABLE_HEIGHT = PAGE_HEIGHT - PAGE_PADDING;
+
+const CategorySpecificDetails: FC<{ document: Estimate | Quote, t: any }> = ({ document, t }) => {
+    const category = document.category;
+
+    switch(category) {
+        case 'Construction Estimate': return <ConstructionDetails document={document} t={t} textColor={document.textColor || '#000'}/>;
+        case 'Home Remodeling / Renovation': return <RemodelingDetails document={document} t={t} textColor={document.textColor || '#000'}/>;
+        case 'Roofing Estimate': return <RoofingDetails document={document} t={t} />;
+        case 'HVAC (Air Conditioning / Heating)': return <HvacDetails document={document} t={t} textColor={document.textColor || '#000'} />;
+        case 'Plumbing Estimate': return <PlumbingDetails document={document} t={t} />;
+        case 'Electrical Estimate': return <ElectricalDetails document={document} t={t} textColor={document.textColor || '#000'} />;
+        case 'Landscaping Estimate': return <LandscapingDetails document={document} t={t} />;
+        case 'Cleaning Estimate': return <CleaningDetails document={document} t={t} textColor={document.textColor || '#000'} />;
+        case 'Auto Repair Estimate': return <AutoRepairDetails document={document} t={t} textColor={document.textColor || '#000'} />;
+        case 'IT / Freelance Estimate': return <ITFreelanceDetails document={document} t={t} />;
+        // Add more cases here as you create more detail components
+        default: return null;
+    }
+}
 
 
 const DocumentPreviewInternal: FC<DocumentPreviewProps> = ({ document, accentColor, backgroundColor, textColor, id = 'document-preview', isPrint = false }) => {

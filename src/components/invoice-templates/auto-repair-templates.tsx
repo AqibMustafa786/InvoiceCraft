@@ -1,5 +1,3 @@
-
-
 'use client';
 
 import React from 'react';
@@ -334,6 +332,7 @@ export const AutoRepairTemplate5: React.FC<PageProps> = (props) => {
                 <div className="text-right">
                   <p><strong>Invoice #:</strong> {invoice.invoiceNumber}</p>
                   <p><strong>Date:</strong> {safeFormat(invoice.invoiceDate, 'yyyy-MM-dd')}</p>
+                  <p><strong>Due:</strong> {safeFormat(invoice.dueDate, 'yyyy-MM-dd')}</p>
                 </div>
             </section>
             <AutoRepairDetails invoice={invoice} t={t} />
