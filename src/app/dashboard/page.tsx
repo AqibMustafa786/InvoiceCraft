@@ -248,8 +248,8 @@ const ClientStatsGrid: React.FC<ClientStatsGridProps> = ({ clients, invoices }) 
     const symbol = currencySymbols[currency] || '$';
 
     return (
-        <div className="grid gap-4 grid-cols-2 md:grid-cols-2 lg:grid-cols-4">
-             <Card className="bg-card/50 backdrop-blur-sm shadow-sm h-full"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1"><CardTitle className="text-xs font-medium">Total Clients</CardTitle><Users className="h-3 w-3 text-muted-foreground" /></CardHeader><CardContent><div className="text-xl font-bold">{stats.totalClients}</div><p className="text-xs text-muted-foreground">&nbsp;</p></CardContent></Card>
+        <div className="grid gap-2 md:grid-cols-2 lg:grid-cols-4 mb-4">
+            <Card className="bg-card/50 backdrop-blur-sm shadow-sm h-full"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1"><CardTitle className="text-xs font-medium">Total Clients</CardTitle><Users className="h-3 w-3 text-muted-foreground" /></CardHeader><CardContent><div className="text-xl font-bold">{stats.totalClients}</div><p className="text-xs text-muted-foreground">&nbsp;</p></CardContent></Card>
             <Card className="bg-card/50 backdrop-blur-sm shadow-sm h-full"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1"><CardTitle className="text-xs font-medium">Total Client Revenue</CardTitle><DollarSign className="h-3 w-3 text-muted-foreground" /></CardHeader><CardContent><div className="text-xl font-bold">{symbol}{stats.totalRevenue.toFixed(2)}</div><p className="text-xs text-muted-foreground">&nbsp;</p></CardContent></Card>
             <Card className="bg-card/50 backdrop-blur-sm shadow-sm h-full"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1"><CardTitle className="text-xs font-medium">Active Clients</CardTitle><CheckCircle className="h-3 w-3 text-muted-foreground" /></CardHeader><CardContent><div className="text-xl font-bold">{stats.activeClients}</div><p className="text-xs text-muted-foreground">&nbsp;</p></CardContent></Card>
             <Card className="bg-card/50 backdrop-blur-sm shadow-sm h-full"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1"><CardTitle className="text-xs font-medium">Avg. Revenue / Client</CardTitle><AreaChart className="h-3 w-3 text-muted-foreground" /></CardHeader><CardContent><div className="text-xl font-bold">{symbol}{stats.avgRevenue.toFixed(2)}</div><p className="text-xs text-muted-foreground">&nbsp;</p></CardContent></Card>
@@ -649,14 +649,15 @@ export default function DashboardPage() {
     
     const isLoading = isAuthLoading || isLoadingInvoices || isLoadingEstimates || isLoadingQuotes || isLoadingInsurance;
 
-    const clientBalances = useMemo(() => {
+    const clientRevenues = useMemo(() => {
         if (!clients || !invoices) return {};
-        const balances: Record<string, number> = {};
+        const revenues: Record<string, number> = {};
+        const paidInvoices = invoices.filter(inv => inv.status === 'paid');
         clients.forEach(client => {
-            const clientInvoices = invoices.filter(inv => inv.client.clientId === client.id && (inv.status === 'sent' || inv.status === 'overdue' || inv.status === 'partially-paid'));
-            balances[client.id] = clientInvoices.reduce((acc, inv) => acc + (toNumberSafe(inv.summary.grandTotal) - toNumberSafe(inv.amountPaid)), 0);
+            const clientInvoices = paidInvoices.filter(inv => inv.client.clientId === client.id);
+            revenues[client.id] = clientInvoices.reduce((acc, inv) => acc + (toNumberSafe(inv.summary.grandTotal)), 0);
         });
-        return balances;
+        return revenues;
     }, [clients, invoices]);
 
     const renderDocumentsTable = (docs: DocumentType[], docType: 'invoice' | 'estimate' | 'quote' | 'insurance') => (
@@ -811,6 +812,15 @@ export default function DashboardPage() {
 
         return (
             <Card className='bg-card/50 backdrop-blur-sm'>
+                <CardHeader>
+                    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                        <div>
+                            <CardTitle className="text-base">Clients</CardTitle>
+                            <CardDescription className="text-xs">A list of all your clients.</CardDescription>
+                        </div>
+                         <Button size="sm" className='rounded-full' onClick={handleAddClient}><Users className="mr-2 h-4 w-4"/>Add New Client</Button>
+                    </div>
+                </CardHeader>
                 <CardContent>
                     <div className="overflow-x-auto">
                         <Table>
@@ -819,7 +829,7 @@ export default function DashboardPage() {
                                     <TableHead className="text-xs">Name</TableHead>
                                     <TableHead className="text-xs hidden sm:table-cell">Company</TableHead>
                                     <TableHead className="text-xs hidden md:table-cell">Email</TableHead>
-                                    <TableHead className="text-xs hidden lg:table-cell">Total Balance</TableHead>
+                                    <TableHead className="text-xs hidden lg:table-cell">Total Revenue</TableHead>
                                     <TableHead className="text-right text-xs">Actions</TableHead>
                                 </TableRow>
                             </TableHeader>
@@ -850,7 +860,7 @@ export default function DashboardPage() {
                                         </TableCell>
                                         <TableCell className="text-xs hidden sm:table-cell">{client.companyName}</TableCell>
                                         <TableCell className="text-xs hidden md:table-cell">{client.email}</TableCell>
-                                        <TableCell className="text-xs hidden lg:table-cell">{symbol}{(clientBalances[client.id] || 0).toFixed(2)}</TableCell>
+                                        <TableCell className="text-xs hidden lg:table-cell">{symbol}{(clientRevenues[client.id] || 0).toFixed(2)}</TableCell>
                                         <TableCell className="text-right">
                                             <Button variant="ghost" size="sm">View</Button>
                                         </TableCell>
