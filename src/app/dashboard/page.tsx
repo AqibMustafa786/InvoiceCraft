@@ -248,7 +248,7 @@ const ClientStatsGrid: React.FC<ClientStatsGridProps> = ({ clients, invoices }) 
     const symbol = currencySymbols[currency] || '$';
 
     return (
-        <div className="grid gap-2 md:grid-cols-2 lg:grid-cols-4 mb-4">
+        <div className="grid gap-2 grid-cols-2 md:grid-cols-2 lg:grid-cols-4 mb-4">
             <Card className="bg-card/50 backdrop-blur-sm shadow-sm h-full"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1"><CardTitle className="text-xs font-medium">Total Clients</CardTitle><Users className="h-3 w-3 text-muted-foreground" /></CardHeader><CardContent><div className="text-xl font-bold">{stats.totalClients}</div><p className="text-xs text-muted-foreground">&nbsp;</p></CardContent></Card>
             <Card className="bg-card/50 backdrop-blur-sm shadow-sm h-full"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1"><CardTitle className="text-xs font-medium">Total Client Revenue</CardTitle><DollarSign className="h-3 w-3 text-muted-foreground" /></CardHeader><CardContent><div className="text-xl font-bold">{symbol}{stats.totalRevenue.toFixed(2)}</div><p className="text-xs text-muted-foreground">&nbsp;</p></CardContent></Card>
             <Card className="bg-card/50 backdrop-blur-sm shadow-sm h-full"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1"><CardTitle className="text-xs font-medium">Active Clients</CardTitle><CheckCircle className="h-3 w-3 text-muted-foreground" /></CardHeader><CardContent><div className="text-xl font-bold">{stats.activeClients}</div><p className="text-xs text-muted-foreground">&nbsp;</p></CardContent></Card>
@@ -603,6 +603,17 @@ export default function DashboardPage() {
         });
     }, [allDocuments, filters, calculateTotal]);
 
+    const clientRevenues = useMemo(() => {
+        if (!clients || !invoices) return {};
+        const revenues: Record<string, number> = {};
+        const paidInvoices = invoices.filter(inv => inv.status === 'paid');
+        clients.forEach(client => {
+            const clientInvoices = paidInvoices.filter(inv => inv.client.clientId === client.id);
+            revenues[client.id] = clientInvoices.reduce((acc, inv) => acc + (toNumberSafe(inv.summary.grandTotal)), 0);
+        });
+        return revenues;
+    }, [clients, invoices]);
+
     const filteredClients = useMemo(() => {
         if (!clients) return [];
         if (!filters.clientName) return clients;
@@ -648,17 +659,6 @@ export default function DashboardPage() {
     };
     
     const isLoading = isAuthLoading || isLoadingInvoices || isLoadingEstimates || isLoadingQuotes || isLoadingInsurance;
-
-    const clientRevenues = useMemo(() => {
-        if (!clients || !invoices) return {};
-        const revenues: Record<string, number> = {};
-        const paidInvoices = invoices.filter(inv => inv.status === 'paid');
-        clients.forEach(client => {
-            const clientInvoices = paidInvoices.filter(inv => inv.client.clientId === client.id);
-            revenues[client.id] = clientInvoices.reduce((acc, inv) => acc + (toNumberSafe(inv.summary.grandTotal)), 0);
-        });
-        return revenues;
-    }, [clients, invoices]);
 
     const renderDocumentsTable = (docs: DocumentType[], docType: 'invoice' | 'estimate' | 'quote' | 'insurance') => (
         <div className="overflow-x-auto">
@@ -816,9 +816,7 @@ export default function DashboardPage() {
                     <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                         <div>
                             <CardTitle className="text-base">Clients</CardTitle>
-                            <CardDescription className="text-xs">A list of all your clients.</CardDescription>
                         </div>
-                         <Button size="sm" className='rounded-full' onClick={handleAddClient}><Users className="mr-2 h-4 w-4"/>Add New Client</Button>
                     </div>
                 </CardHeader>
                 <CardContent>
