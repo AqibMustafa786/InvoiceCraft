@@ -1,5 +1,4 @@
 
-
 'use client';
 
 import { useState, useLayoutEffect, useRef, useEffect, FC, useMemo } from 'react';
@@ -163,7 +162,6 @@ const DocumentPreviewInternal: FC<DocumentPreviewProps> = ({ document, accentCol
 
   useEffect(() => {
     setNeedsRemeasure(true);
-    setPaginatedItems([document.lineItems]);
   }, [serializedDocument]);
   
   const previewStyle = {

@@ -1,5 +1,4 @@
 
-
 'use client';
 
 import { useState, useLayoutEffect, useRef, useEffect, FC, useMemo } from 'react';
@@ -359,7 +358,7 @@ const MinimalistTemplatePage: FC<PageProps> = ({ pageItems, pageIndex, totalPage
                     <p className="text-gray-500 uppercase tracking-widest">Billed To</p>
                     <p className="font-medium">{client.name}</p>
                     {client.companyName && <p>{client.companyName}</p>}
-                    <p>{client.address}</p>
+                    <p className="whitespace-pre-line">{client.address}</p>
                 </div>
                 <div className="space-y-1">
                     <p className="text-gray-500 uppercase tracking-widest">Invoice #</p>
@@ -673,8 +672,8 @@ const InvoicePreviewInternal: FC<InvoicePreviewProps> = ({ invoice, accentColor,
 
   useEffect(() => {
     setNeedsRemeasure(true);
-    setPaginatedItems([invoice.lineItems]);
-  }, [serializedInvoice, invoice.lineItems]);
+    // This state update is now controlled by the parent component's re-render
+  }, [serializedInvoice]);
 
 
   const previewStyle = {
