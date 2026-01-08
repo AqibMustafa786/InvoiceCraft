@@ -40,7 +40,7 @@ const SignatureDisplay = ({ signature, label }: { signature: any, label: string 
     )
 }
 
-const ConstructionDetails: React.FC<{ invoice: Invoice, t: any }> = ({ invoice, t }) => {
+export const ConstructionDetails: React.FC<{ invoice: Invoice, t: any }> = ({ invoice, t }) => {
     if (!invoice.construction) return null;
     const { construction } = invoice;
     return (
@@ -123,7 +123,7 @@ export const ConstructionTemplate1: React.FC<PageProps> = (props) => {
                         <thead><tr className="bg-gray-200"><th className="p-1 font-bold w-1/2">{(t.labor || 'LABOR').toUpperCase()}</th><th className="p-1 font-bold text-right w-1/4">{(t.hours || 'HRS').toUpperCase()}</th><th className="p-1 font-bold text-right w-1/4">{(t.amount || 'AMOUNT').toUpperCase()}</th></tr></thead>
                         <tbody>
                             {pageItems.filter(i => (i.name || '').toLowerCase().includes('labor')).map(item => (
-                                <tr key={item.id} className="border-b"><td className="p-1">{item.name}{item.description && <p className="text-gray-500 text-xs whitespace-pre-wrap break-words">{item.description}</p>}</td><td className="p-1 text-right">{item.quantity}</td><td className="p-1 text-right">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</td></tr>
+                                <tr key={item.id} className="border-b"><td className="p-1">{item.name}</td><td className="p-1 text-right">{item.quantity}</td><td className="p-1 text-right">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</td></tr>
                             ))}
                         </tbody>
                         <tfoot><tr><td colSpan={2} className="p-1 text-right font-bold">{(t.totalLabor || 'TOTAL LABOR').toUpperCase()}</td><td className="p-1 text-right font-bold">{currencySymbol}{totalLabor.toFixed(2)}</td></tr></tfoot>
@@ -325,6 +325,5 @@ export const ConstructionTemplate3: React.FC<PageProps> = (props) => {
 export const ConstructionTemplate4: React.FC<PageProps> = (props) => <ConstructionTemplate1 {...props} />;
 export const ConstructionTemplate5: React.FC<PageProps> = (props) => <ConstructionTemplate2 {...props} />;
 export const ConstructionTemplate6: React.FC<PageProps> = (props) => <ConstructionTemplate3 {...props} />;
-
 
     

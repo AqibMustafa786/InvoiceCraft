@@ -40,7 +40,7 @@ const SignatureDisplay = ({ signature, label }: { signature: any, label: string 
     )
 }
 
-const RetailDetails: React.FC<{ invoice: Invoice, t: any }> = ({ invoice, t }) => {
+export const RetailDetails: React.FC<{ invoice: Invoice, t: any }> = ({ invoice, t }) => {
     if (!invoice.retail) return null;
     const { retail } = invoice;
     return (
@@ -73,10 +73,7 @@ export const RetailTemplate1: React.FC<PageProps> = (props) => {
                         {business.logoUrl && <Image src={business.logoUrl} alt="Logo" width={100} height={50} className="object-contain mb-2"/>}
                         <h1 className="text-xl font-bold">{business.name}</h1>
                         <p className="text-xs whitespace-pre-line">{business.address}</p>
-                        <p className="text-xs">{business.phone} | {business.email}</p>
-                        {business.website && <p className="text-xs">{business.website}</p>}
-                        {business.licenseNumber && <p className="text-xs">Lic #: {business.licenseNumber}</p>}
-                        {business.taxId && <p className="text-xs">Tax ID: {business.taxId}</p>}
+                        <p className="text-xs">{business.phone} | {business.website}</p>
                     </div>
                     <div className="text-right">
                         <h2 className="text-3xl font-bold text-gray-700">{docTitle}</h2>
@@ -90,13 +87,11 @@ export const RetailTemplate1: React.FC<PageProps> = (props) => {
                         <p className="font-bold">Bill To:</p>
                         <p>{client.name}</p>
                         <p className="whitespace-pre-line">{client.address}</p>
-                        <p>{client.phone}</p>
-                        <p>{client.email}</p>
                     </div>
                      <div>
                         <p className="font-bold">Ship To:</p>
-                        <p>{client.shippingAddress ? client.name : ''}</p>
-                        <p className="whitespace-pre-line">{client.shippingAddress || client.address}</p>
+                        <p>{invoice.client.shippingAddress ? client.name : ''}</p>
+                        <p className="whitespace-pre-line">{invoice.client.shippingAddress || client.address}</p>
                     </div>
                 </section>
                 <section className="text-xs mb-4">
@@ -164,8 +159,8 @@ export const RetailTemplate1: React.FC<PageProps> = (props) => {
                                 <tbody>
                                     <tr><td className="text-right pr-4">SUBTOTAL</td><td className="text-right p-1 border">{currencySymbol}{subtotal.toFixed(2)}</td></tr>
                                     {discountAmount > 0 && <tr><td className="text-right pr-4 text-red-600">DISCOUNT</td><td className="text-right p-1 border text-red-600">-{currencySymbol}{discountAmount.toFixed(2)}</td></tr>}
-                                    {invoice.summary.shippingCost > 0 && <tr><td className="text-right pr-4">SHIPPING</td><td className="text-right p-1 border">{currencySymbol}{invoice.summary.shippingCost.toFixed(2)}</td></tr>}
                                     <tr><td className="text-right pr-4">TAX ({invoice.summary.taxPercentage}%)</td><td className="text-right p-1 border">{currencySymbol}{taxAmount.toFixed(2)}</td></tr>
+                                    <tr><td className="text-right pr-4">SHIPPING</td><td className="text-right p-1 border">{invoice.summary.shippingCost > 0 ? currencySymbol + invoice.summary.shippingCost.toFixed(2) : '-'}</td></tr>
                                     <tr className="font-bold"><td className="text-right pr-4">TOTAL</td><td className="text-right p-1 border">{currencySymbol}{total.toFixed(2)}</td></tr>
                                     {(invoice.amountPaid || 0) > 0 && <tr className="font-bold text-green-600"><td className="text-right pr-4">PAID</td><td className="text-right p-1 border">-{currencySymbol}{(invoice.amountPaid || 0).toFixed(2)}</td></tr>}
                                     <tr className="font-bold"><td className="text-right pr-4">BALANCE DUE</td><td className="text-right p-1 border">{currencySymbol}{balanceDue.toFixed(2)}</td></tr>

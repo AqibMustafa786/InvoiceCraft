@@ -1,5 +1,4 @@
 
-
 'use client';
 
 import React from 'react';
@@ -41,7 +40,7 @@ const SignatureDisplay = ({ signature, label }: { signature: any, label: string 
     )
 }
 
-const ElectricalDetails: React.FC<{ invoice: Invoice, t: any }> = ({ invoice, t }) => {
+export const ElectricalDetails: React.FC<{ invoice: Invoice, t: any }> = ({ invoice, t }) => {
     if (!invoice.electrical) return null;
     const { electrical } = invoice;
     return (
@@ -61,6 +60,7 @@ const ElectricalDetails: React.FC<{ invoice: Invoice, t: any }> = ({ invoice, t 
 export const ElectricalTemplate1: React.FC<PageProps> = (props) => {
     const { invoice, pageItems, pageIndex, totalPages, subtotal, taxAmount, discountAmount, total, balanceDue, currencySymbol, accentColor, t } = props;
     const { business, client } = invoice;
+    const docTitle = (t.invoice || 'INVOICE').toUpperCase();
 
     return (
         <div className={`p-10 bg-white font-sans text-gray-800 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: 'Arial, sans-serif', fontSize: '10pt', minHeight: '1056px', color: props.textColor, backgroundColor: props.backgroundColor }}>
@@ -70,7 +70,7 @@ export const ElectricalTemplate1: React.FC<PageProps> = (props) => {
                     <p className="text-xs whitespace-pre-line">{business.address}</p>
                 </div>
                 <div className="text-right">
-                    <h2 className="text-2xl font-extrabold" style={{ color: accentColor }}>INVOICE</h2>
+                    <h2 className="text-2xl font-extrabold" style={{ color: accentColor }}>{docTitle}</h2>
                 </div>
             </header>
 
@@ -144,9 +144,8 @@ export const ElectricalTemplate1: React.FC<PageProps> = (props) => {
 
 // Template 2: Circuit
 export const ElectricalTemplate2: React.FC<PageProps> = (props) => {
-    const { invoice, pageItems, pageIndex, totalPages, subtotal, taxAmount, discountAmount, balanceDue, currencySymbol, accentColor, t } = props;
+    const { invoice, pageItems, pageIndex, totalPages, subtotal, taxAmount, discountAmount, total, balanceDue, currencySymbol, accentColor, t } = props;
     const { business, client } = invoice;
-    const docTitle = (t.invoice || 'INVOICE').toUpperCase();
 
     return (
         <div className={`p-10 bg-white font-sans text-gray-800 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: 'Verdana, sans-serif', fontSize: '9.5pt', minHeight: '1056px', color: props.textColor, backgroundColor: props.backgroundColor }}>
@@ -155,7 +154,7 @@ export const ElectricalTemplate2: React.FC<PageProps> = (props) => {
                 <h1 className="text-4xl font-bold">{business.name}</h1>
                 <p className="text-xs whitespace-pre-line">{business.address} • {business.phone}</p>
                 <div className="mt-4">
-                    <h2 className="text-3xl font-bold" style={{ color: accentColor }}>{docTitle}</h2>
+                    <h2 className="text-3xl font-bold" style={{ color: accentColor }}>{(t.invoice || 'INVOICE').toUpperCase()}</h2>
                 </div>
             </header>
 
@@ -179,7 +178,7 @@ export const ElectricalTemplate2: React.FC<PageProps> = (props) => {
                 </div>
             </section>
             
-            <ElectricalDetails invoice={invoice} t={t}/>
+            <ElectricalDetails invoice={invoice} t={t} />
 
             <main className="flex-grow">
                  <table className="w-full text-left text-sm">
@@ -327,8 +326,6 @@ export const ElectricalTemplate4: React.FC<PageProps> = (props) => {
                     <div>
                         <h1 className="text-3xl font-bold">{business.name}</h1>
                         <p className="text-xs whitespace-pre-line">{business.address}</p>
-                        <p className="text-xs">{business.website}</p>
-                        <p className="text-xs">Lic#: {business.licenseNumber}</p>
                     </div>
                     <div className="text-right">
                         <h2 className="text-2xl font-bold text-gray-400">{docTitle}</h2>
@@ -336,18 +333,8 @@ export const ElectricalTemplate4: React.FC<PageProps> = (props) => {
                     </div>
                 </header>
                  <section className="grid grid-cols-2 gap-4 mb-8 text-xs">
-                    <div>
-                        <p className="font-bold">CLIENT:</p>
-                        <p>{client.name}</p>
-                        {client.companyName && <p>{client.companyName}</p>}
-                        <p>{client.address}</p>
-                    </div>
-                    <div className="text-right">
-                        <p className="font-bold">DATE:</p>
-                        <p>{safeFormat(invoice.invoiceDate, 'yyyy-MM-dd')}</p>
-                        <p className="font-bold mt-2">DUE DATE:</p>
-                        <p>{safeFormat(invoice.dueDate, 'yyyy-MM-dd')}</p>
-                    </div>
+                    <div><p className="font-bold">CLIENT:</p><p>{client.name}, {client.address}</p></div>
+                    <div className="text-right"><p className="font-bold">DATE:</p><p>{safeFormat(invoice.invoiceDate, 'yyyy-MM-dd')}</p></div>
                 </section>
 
                 <ElectricalDetails invoice={invoice} t={t} />
@@ -382,7 +369,7 @@ export const ElectricalTemplate4: React.FC<PageProps> = (props) => {
                                 {discountAmount > 0 && <div className="flex justify-between text-red-500"><span>Discount:</span><span>-{currencySymbol}{discountAmount.toFixed(2)}</span></div>}
                                 {invoice.summary.shippingCost > 0 && <div className="flex justify-between"><span>Shipping/Extra:</span><span>{currencySymbol}{invoice.summary.shippingCost.toFixed(2)}</span></div>}
                                 <div className="flex justify-between"><span>Tax:</span><span>{currencySymbol}{taxAmount.toFixed(2)}</span></div>
-                                <div className="flex justify-between font-bold"><span>Total:</span><span>{currencySymbol}{total.toFixed(2)}</span></div>
+                                <div className="flex justify-between"><span>Total:</span><span>{currencySymbol}{total.toFixed(2)}</span></div>
                                 {(invoice.amountPaid || 0) > 0 && <div className="flex justify-between text-green-600"><span>Paid:</span><span>-{currencySymbol}{(invoice.amountPaid || 0).toFixed(2)}</span></div>}
                                 <div className="flex justify-between font-bold text-lg mt-2 pt-2 border-t-2 border-black"><span>Balance Due:</span><span>{currencySymbol}{balanceDue.toFixed(2)}</span></div>
                             </div>
@@ -405,12 +392,12 @@ export const ElectricalTemplate5: React.FC<PageProps> = (props) => {
             <header className="grid grid-cols-2 gap-4 mb-10">
                 <div>
                     <h1 className="text-4xl font-extrabold" style={{color: accentColor}}>{business.name}</h1>
-                    <p className="text-xs">{business.address}</p>
+                    <p className="text-xs whitespace-pre-line">{business.address}</p>
                      {business.website && <p className="text-xs">{business.website}</p>}
                 </div>
                  <div className="text-right">
                      <p className="text-3xl font-bold">{docTitle}</p>
-                     <p className="text-sm">#{invoice.invoiceNumber}</p>
+                     <p className="text-sm text-gray-500">#{invoice.invoiceNumber}</p>
                 </div>
             </header>
 
@@ -419,6 +406,7 @@ export const ElectricalTemplate5: React.FC<PageProps> = (props) => {
                  <p className="font-semibold">{client.companyName || 'N/A'}</p>
                  <p>{client.address}</p>
                  <p className="mt-2"><span className="font-bold">Due Date:</span> {safeFormat(invoice.dueDate, 'MMM d, yyyy')}</p>
+                 {invoice.poNumber && <p><span className="font-bold">PO #:</span> {invoice.poNumber}</p>}
             </section>
             
             <ElectricalDetails invoice={invoice} t={t} />
@@ -455,7 +443,7 @@ export const ElectricalTemplate5: React.FC<PageProps> = (props) => {
                             {invoice.summary.shippingCost > 0 && <div className="flex justify-between p-1"><span>Shipping/Extra</span><span>{currencySymbol}{invoice.summary.shippingCost.toFixed(2)}</span></div>}
                              <div className="flex justify-between p-1"><span>Tax</span><span>{currencySymbol}{taxAmount.toFixed(2)}</span></div>
                              <div className="flex justify-between p-1 font-bold"><span>Total</span><span>{currencySymbol}{total.toFixed(2)}</span></div>
-                             {(invoice.amountPaid || 0) > 0 && <div className="flex justify-between p-1 text-green-600 font-bold"><span>Paid</span><span>-{currencySymbol}{(invoice.amountPaid || 0).toFixed(2)}</span></div>}
+                             {(invoice.amountPaid || 0) > 0 && <div className="flex justify-between p-1 text-green-600 font-bold"><span>Amount Paid</span><span>-{currencySymbol}{(invoice.amountPaid || 0).toFixed(2)}</span></div>}
                              <div className="flex justify-between p-2 mt-2 border-t-2 border-black font-bold text-lg"><span>Balance Due</span><span>{currencySymbol}{balanceDue.toFixed(2)}</span></div>
                         </div>
                     </div>
@@ -472,8 +460,10 @@ export const ElectricalTemplate5: React.FC<PageProps> = (props) => {
     );
 };
 
+
 export const ElectricalTemplate6: React.FC<PageProps> = (props) => <ElectricalTemplate1 {...props} />;
 export const ElectricalTemplate7: React.FC<PageProps> = (props) => <ElectricalTemplate2 {...props} />;
 export const ElectricalTemplate8: React.FC<PageProps> = (props) => <ElectricalTemplate3 {...props} />;
 export const ElectricalTemplate9: React.FC<PageProps> = (props) => <ElectricalTemplate4 {...props} />;
 export const ElectricalTemplate10: React.FC<PageProps> = (props) => <ElectricalTemplate5 {...props} />;
+

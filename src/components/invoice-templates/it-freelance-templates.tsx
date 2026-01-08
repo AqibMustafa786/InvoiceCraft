@@ -40,7 +40,7 @@ const SignatureDisplay = ({ signature, label }: { signature: any, label: string 
     )
 }
 
-const ITServiceDetails: React.FC<{ invoice: Invoice, t: any }> = ({ invoice, t }) => {
+export const ITServiceDetails: React.FC<{ invoice: Invoice, t: any }> = ({ invoice, t }) => {
     if (!invoice.itServices) return null;
     const { itServices } = invoice;
     return (
@@ -140,7 +140,7 @@ export const ITTemplate1: React.FC<PageProps> = (props) => {
                             {client.companyName && <p><span className="text-gray-600 w-20 inline-block">{t.company || 'Company'}:</span> <span className="font-semibold">{client.companyName}</span></p>}
                             <p><span className="text-gray-600 w-20 inline-block">{t.address || 'ADDRESS'}:</span> <span className="font-semibold whitespace-pre-line">{client.address}</span></p>
                             <p><span className="text-gray-600 w-20 inline-block">{t.contact || 'CONTACT'}:</span> <span className="font-semibold">{client.phone}</span></p>
-                            <p><span className="text-gray-600 w-20 inline-block">{t.email || 'EMAIL'}:</span> <span className="font-semibold">{client.email}</span></p>
+                            <p><span className="text-gray-600 w-20 inline-block">{t.email || 'EMAIL'}:</span> <span className="font-semibold">{client.email}</p>
                         </div>
                     </div>
                      <div className="text-right">
@@ -173,8 +173,8 @@ export const ITTemplate2: React.FC<PageProps> = (props) => {
                 </div>
                 <div className="text-right">
                     <h2 className="text-3xl font-light text-gray-400">{docTitle}</h2>
-                    <p className="text-xs text-gray-500">{invoice.licenseNumber && `Lic#: ${invoice.licenseNumber}`}</p>
-                    <p className="text-xs text-gray-500">{invoice.business.taxId && `Tax ID: ${invoice.business.taxId}`}</p>
+                    <p className="text-xs text-gray-500">{business.licenseNumber && `Lic#: ${business.licenseNumber}`}</p>
+                    <p className="text-xs text-gray-500">{business.taxId && `Tax ID: ${business.taxId}`}</p>
                 </div>
             </header>
 
@@ -276,7 +276,7 @@ export const ITTemplate3: React.FC<PageProps> = (props) => {
                 <div><p className="font-bold text-gray-500 mb-1">{(t.project || 'Project')}</p><p>{invoice.freelance?.projectName || 'N/A'}</p></div>
             </section>
             
-            <ITServiceDetails invoice={invoice} t={t}/>
+            <ITServiceDetails invoice={invoice} t={t} />
 
             <main className="flex-grow">
                  <table className="w-full text-left text-xs">
@@ -334,7 +334,7 @@ export const ITTemplate4: React.FC<PageProps> = (props) => {
         <div className={`bg-white font-sans text-gray-800 flex ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ minHeight: '1056px', backgroundColor: props.backgroundColor, color: props.textColor }}>
             <div className="w-1/3 p-8 text-white flex flex-col" style={{ backgroundColor: accentColor || '#1D4ED8' }}>
                  {business.logoUrl && <Image src={business.logoUrl} alt="Logo" width={80} height={40} className="object-contain mb-4 filter invert brightness-0"/>}
-                <h1 className="text-4xl font-bold mb-10">{docTitle}</h1>
+                <h1 className="text-3xl font-bold mb-10">{docTitle}</h1>
                 <div className="text-sm space-y-6 flex-grow">
                     <div>
                         <p className="font-bold opacity-80 mb-1">{(t.client || 'CLIENT').toUpperCase()}</p>

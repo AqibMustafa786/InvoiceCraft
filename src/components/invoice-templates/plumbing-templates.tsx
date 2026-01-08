@@ -40,7 +40,7 @@ const SignatureDisplay = ({ signature, label }: { signature: any, label: string 
     )
 }
 
-const PlumbingDetails: React.FC<{ invoice: Invoice, t: any }> = ({ invoice, t }) => {
+export const PlumbingDetails: React.FC<{ invoice: Invoice, t: any }> = ({ invoice, t }) => {
     if (!invoice.plumbing) return null;
     const { plumbing } = invoice;
     return (
@@ -70,8 +70,8 @@ export const PlumbingTemplate1: React.FC<PageProps> = (props) => {
                 </div>
                 <div className="text-right">
                     <h2 className="text-4xl font-bold">{(t.invoice || 'INVOICE').toUpperCase()}</h2>
-                    <p className="text-xs text-gray-500">#{invoice.invoiceNumber}</p>
-                    {invoice.poNumber && <p className="text-xs text-gray-500">PO #: {invoice.poNumber}</p>}
+                    <p className="text-xs">#{invoice.invoiceNumber}</p>
+                    {invoice.poNumber && <p className="text-xs">PO #: {invoice.poNumber}</p>}
                 </div>
             </header>
 
@@ -189,8 +189,6 @@ export const PlumbingTemplate2: React.FC<PageProps> = (props) => {
                     <p>{client.name}</p>
                     {client.companyName && <p>{client.companyName}</p>}
                     <p className="whitespace-pre-line">{client.address}</p>
-                    <p>{client.email}</p>
-                    <p>{client.phone}</p>
                 </div>
                 <div><p className="font-bold text-gray-500">PROJECT</p><p>{client.projectLocation || 'N/A'}</p></div>
                 <div className="text-right">
@@ -276,8 +274,6 @@ export const PlumbingTemplate3: React.FC<PageProps> = (props) => {
                     <p>{client.name}</p>
                     {client.companyName && <p>{client.companyName}</p>}
                     <p>{client.address}</p>
-                    <p>{client.email}</p>
-                    <p>{client.phone}</p>
                 </div>
                 <div className="text-right">
                     <p><span className="font-bold">Date:</span> {safeFormat(invoice.invoiceDate, 'yyyy-MM-dd')}</p>
@@ -442,7 +438,7 @@ export const PlumbingTemplate5: React.FC<PageProps> = (props) => {
 
             <section className="mb-8 p-4 bg-white shadow-sm rounded-md text-xs">
                  <p className="font-bold text-gray-500 mb-2">PROJECT FOR: {client.name}</p>
-                 <p>{client.address}</p>
+                 <p className="whitespace-pre-line">{client.address}</p>
                  {client.companyName && <p>{client.companyName}</p>}
                  <p className="mt-2"><span className="font-bold">Due Date:</span> {safeFormat(invoice.dueDate, 'MMM d, yyyy')}</p>
                  {invoice.poNumber && <p><span className="font-bold">PO #:</span> {invoice.poNumber}</p>}
@@ -481,8 +477,8 @@ export const PlumbingTemplate5: React.FC<PageProps> = (props) => {
                              {discountAmount > 0 && <div className="flex justify-between p-1"><span>Discount</span><span className="text-red-500">-{currencySymbol}{discountAmount.toFixed(2)}</span></div>}
                             {invoice.summary.shippingCost > 0 && <div className="flex justify-between p-1"><span>Shipping/Extra</span><span>{currencySymbol}{invoice.summary.shippingCost.toFixed(2)}</span></div>}
                              <div className="flex justify-between p-1"><span>Tax</span><span>{currencySymbol}{taxAmount.toFixed(2)}</span></div>
-                              <div className="flex justify-between p-1"><span>Total</span><span>{currencySymbol}{total.toFixed(2)}</span></div>
-                             {(invoice.amountPaid || 0) > 0 && <div className="flex justify-between p-1 text-green-600"><span>Amount Paid</span><span>-{currencySymbol}{(invoice.amountPaid || 0).toFixed(2)}</span></div>}
+                             <div className="flex justify-between p-1 font-bold"><span>Total</span><span>{currencySymbol}{total.toFixed(2)}</span></div>
+                             {(invoice.amountPaid || 0) > 0 && <div className="flex justify-between p-1 text-green-600 font-bold"><span>Amount Paid</span><span>-{currencySymbol}{(invoice.amountPaid || 0).toFixed(2)}</span></div>}
                              <div className="flex justify-between p-2 mt-2 border-t-2 border-black font-bold text-lg"><span>Balance Due</span><span>{currencySymbol}{balanceDue.toFixed(2)}</span></div>
                         </div>
                     </div>
@@ -505,3 +501,4 @@ export const PlumbingTemplate7: React.FC<PageProps> = (props) => <PlumbingTempla
 export const PlumbingTemplate8: React.FC<PageProps> = (props) => <PlumbingTemplate3 {...props} />;
 export const PlumbingTemplate9: React.FC<PageProps> = (props) => <PlumbingTemplate4 {...props} />;
 export const PlumbingTemplate10: React.FC<PageProps> = (props) => <PlumbingTemplate5 {...props} />;
+
