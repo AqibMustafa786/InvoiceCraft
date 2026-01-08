@@ -1,5 +1,3 @@
-
-
 'use client';
 
 import { useState, useMemo, useCallback } from 'react';
@@ -180,27 +178,27 @@ const DashboardStatsGrid: React.FC<DashboardStatsGridProps> = ({ documents, docT
     if (docType === 'invoice') {
         const s = stats as any;
         return (
-            <motion.div className="grid gap-2 grid-cols-2 md:grid-cols-4 lg:grid-cols-4 mb-4" variants={pageVariants}>
-                <motion.div variants={pageVariants}><Card as="button" onClick={() => onKpiClick('Total Revenue', s.paidInvoices)} className="text-left w-full bg-card/50 backdrop-blur-sm shadow-sm transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-0.5"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1"><CardTitle className="text-xs font-medium">Total Revenue</CardTitle><DollarSign className="h-3 w-3 text-muted-foreground" /></CardHeader><CardContent><div className="text-xl font-bold">{formatCurrency(s.totalRevenue)}</div><p className="text-xs text-muted-foreground">{s.paidCount} paid invoices</p></CardContent></Card></motion.div>
-                <motion.div variants={pageVariants}><Card as="button" onClick={() => onKpiClick('Pending Invoices', s.outstandingInvoices)} className="text-left w-full bg-card/50 backdrop-blur-sm shadow-sm transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-0.5"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1"><CardTitle className="text-xs font-medium">Pending</CardTitle><Clock className="h-3 w-3 text-muted-foreground" /></CardHeader><CardContent><div className="text-xl font-bold">{formatCurrency(s.outstanding)}</div><p className="text-xs text-muted-foreground">&nbsp;</p></CardContent></Card></motion.div>
-                <motion.div variants={pageVariants}><Card as="button" onClick={() => onKpiClick('Overdue Invoices', s.overdueInvoices)} className="text-left w-full bg-card/50 backdrop-blur-sm shadow-sm transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-0.5"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1"><CardTitle className="text-xs font-medium">Overdue</CardTitle><FileWarning className="h-3 w-3 text-muted-foreground" /></CardHeader><CardContent><div className="text-xl font-bold">{formatCurrency(s.overdue)}</div><p className="text-xs text-muted-foreground">&nbsp;</p></CardContent></Card></motion.div>
-                <motion.div variants={pageVariants}><Card className="bg-card/50 backdrop-blur-sm shadow-sm transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-0.5"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1"><CardTitle className="text-xs font-medium">Total Invoiced</CardTitle><Files className="h-3 w-3 text-muted-foreground" /></CardHeader><CardContent><div className="text-xl font-bold">{formatCurrency(s.totalInvoiced)}</div><p className="text-xs text-muted-foreground">&nbsp;</p></CardContent></Card></motion.div>
-                <motion.div variants={pageVariants} className="col-span-2 sm:col-span-1"><Card className="bg-card/50 backdrop-blur-sm shadow-sm transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-0.5"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1"><CardTitle className="text-xs font-medium">Avg. Invoice Value</CardTitle><AreaChart className="h-3 w-3 text-muted-foreground" /></CardHeader><CardContent><div className="text-xl font-bold">{formatCurrency(s.avgInvoiceValue)}</div><p className="text-xs text-muted-foreground">&nbsp;</p></CardContent></Card></motion.div>
-                <motion.div variants={pageVariants} className="col-span-2 sm:col-span-1"><Card className="bg-card/50 backdrop-blur-sm shadow-sm transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-0.5"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1"><CardTitle className="text-xs font-medium">Unique Clients</CardTitle><Users className="h-3 w-3 text-muted-foreground" /></CardHeader><CardContent><div className="text-xl font-bold">{s.uniqueClients}</div><p className="text-xs text-muted-foreground">&nbsp;</p></CardContent></Card></motion.div>
-                <motion.div variants={pageVariants} className="col-span-2 md:col-span-1"><Card className="bg-card/50 backdrop-blur-sm shadow-sm transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-0.5"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1"><CardTitle className="text-xs font-medium">Most Used Category</CardTitle><Package className="h-3 w-3 text-muted-foreground" /></CardHeader><CardContent><div className="text-lg font-bold">{s.mostUsedCategory || 'N/A'}</div><p className="text-xs text-muted-foreground">&nbsp;</p></CardContent></Card></motion.div>
-                <motion.div variants={pageVariants} className="col-span-2 md:col-span-1"><Card as="button" onClick={() => onKpiClick('Draft Invoices', s.draftInvoices)} className="text-left w-full bg-card/50 backdrop-blur-sm shadow-sm transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-0.5"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1"><CardTitle className="text-xs font-medium">Drafts</CardTitle><FileText className="h-3 w-3 text-muted-foreground" /></CardHeader><CardContent><div className="text-xl font-bold">{s.drafts}</div><p className="text-xs text-muted-foreground">&nbsp;</p></CardContent></Card></motion.div>
+            <motion.div className="grid gap-2 grid-cols-2 md:grid-cols-4 lg:grid-cols-4" variants={pageVariants}>
+                <motion.div variants={pageVariants}><Card as="button" onClick={() => onKpiClick('Total Revenue', s.paidInvoices)} className="text-left w-full bg-card/50 backdrop-blur-sm shadow-sm transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-0.5 h-full"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1"><CardTitle className="text-xs font-medium">Total Revenue</CardTitle><DollarSign className="h-3 w-3 text-muted-foreground" /></CardHeader><CardContent><div className="text-xl font-bold">{formatCurrency(s.totalRevenue)}</div><p className="text-xs text-muted-foreground">{s.paidCount} paid invoices</p></CardContent></Card></motion.div>
+                <motion.div variants={pageVariants}><Card as="button" onClick={() => onKpiClick('Pending Invoices', s.outstandingInvoices)} className="text-left w-full bg-card/50 backdrop-blur-sm shadow-sm transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-0.5 h-full"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1"><CardTitle className="text-xs font-medium">Pending</CardTitle><Clock className="h-3 w-3 text-muted-foreground" /></CardHeader><CardContent><div className="text-xl font-bold">{formatCurrency(s.outstanding)}</div><p className="text-xs text-muted-foreground">&nbsp;</p></CardContent></Card></motion.div>
+                <motion.div variants={pageVariants}><Card as="button" onClick={() => onKpiClick('Overdue Invoices', s.overdueInvoices)} className="text-left w-full bg-card/50 backdrop-blur-sm shadow-sm transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-0.5 h-full"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1"><CardTitle className="text-xs font-medium">Overdue</CardTitle><FileWarning className="h-3 w-3 text-muted-foreground" /></CardHeader><CardContent><div className="text-xl font-bold">{formatCurrency(s.overdue)}</div><p className="text-xs text-muted-foreground">&nbsp;</p></CardContent></Card></motion.div>
+                <motion.div variants={pageVariants}><Card className="bg-card/50 backdrop-blur-sm shadow-sm transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-0.5 h-full"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1"><CardTitle className="text-xs font-medium">Total Invoiced</CardTitle><Files className="h-3 w-3 text-muted-foreground" /></CardHeader><CardContent><div className="text-xl font-bold">{formatCurrency(s.totalInvoiced)}</div><p className="text-xs text-muted-foreground">&nbsp;</p></CardContent></Card></motion.div>
+                <motion.div variants={pageVariants} className="col-span-2 sm:col-span-1"><Card className="bg-card/50 backdrop-blur-sm shadow-sm transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-0.5 h-full"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1"><CardTitle className="text-xs font-medium">Avg. Invoice Value</CardTitle><AreaChart className="h-3 w-3 text-muted-foreground" /></CardHeader><CardContent><div className="text-xl font-bold">{formatCurrency(s.avgInvoiceValue)}</div><p className="text-xs text-muted-foreground">&nbsp;</p></CardContent></Card></motion.div>
+                <motion.div variants={pageVariants} className="col-span-2 sm:col-span-1"><Card className="bg-card/50 backdrop-blur-sm shadow-sm transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-0.5 h-full"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1"><CardTitle className="text-xs font-medium">Unique Clients</CardTitle><Users className="h-3 w-3 text-muted-foreground" /></CardHeader><CardContent><div className="text-xl font-bold">{s.uniqueClients}</div><p className="text-xs text-muted-foreground">&nbsp;</p></CardContent></Card></motion.div>
+                <motion.div variants={pageVariants} className="col-span-2 md:col-span-1"><Card className="bg-card/50 backdrop-blur-sm shadow-sm transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-0.5 h-full"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1"><CardTitle className="text-xs font-medium">Most Used Category</CardTitle><Package className="h-3 w-3 text-muted-foreground" /></CardHeader><CardContent><div className="text-lg font-bold">{s.mostUsedCategory || 'N/A'}</div><p className="text-xs text-muted-foreground">&nbsp;</p></CardContent></Card></motion.div>
+                <motion.div variants={pageVariants} className="col-span-2 md:col-span-1"><Card as="button" onClick={() => onKpiClick('Draft Invoices', s.draftInvoices)} className="text-left w-full bg-card/50 backdrop-blur-sm shadow-sm transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-0.5 h-full"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1"><CardTitle className="text-xs font-medium">Drafts</CardTitle><FileText className="h-3 w-3 text-muted-foreground" /></CardHeader><CardContent><div className="text-xl font-bold">{s.drafts}</div><p className="text-xs text-muted-foreground">&nbsp;</p></CardContent></Card></motion.div>
             </motion.div>
         );
     } else if (docType === 'insurance') {
         const s = stats as any;
         return (
-            <motion.div className="grid gap-2 grid-cols-2 md:grid-cols-4 lg:grid-cols-4 mb-4" variants={pageVariants}>
-                 <motion.div variants={pageVariants}><Card className="bg-card/50 backdrop-blur-sm shadow-sm transition-all duration-300 hover:shadow-primary/20 hover-translate-y-0.5"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1"><CardTitle className="text-xs font-medium">Total Policies</CardTitle><Shield className="h-3 w-3 text-muted-foreground" /></CardHeader><CardContent><div className="text-xl font-bold">{s.totalPolicies}</div><p className="text-xs text-muted-foreground">&nbsp;</p></CardContent></Card></motion.div>
-                 <motion.div variants={pageVariants}><Card className="bg-card/50 backdrop-blur-sm shadow-sm transition-all duration-300 hover:shadow-primary/20 hover-translate-y-0.5"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1"><CardTitle className="text-xs font-medium">Active Policies</CardTitle><CheckCircle className="h-3 w-3 text-muted-foreground" /></CardHeader><CardContent><div className="text-xl font-bold">{s.activePolicies}</div><p className="text-xs text-muted-foreground">&nbsp;</p></CardContent></Card></motion.div>
-                 <motion.div variants={pageVariants}><Card className="bg-card/50 backdrop-blur-sm shadow-sm transition-all duration-300 hover:shadow-primary/20 hover-translate-y-0.5"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1"><CardTitle className="text-xs font-medium">Expired Policies</CardTitle><FileWarning className="h-3 w-3 text-muted-foreground" /></CardHeader><CardContent><div className="text-xl font-bold">{s.expiredPolicies}</div><p className="text-xs text-muted-foreground">&nbsp;</p></CardContent></Card></motion.div>
-                 <motion.div variants={pageVariants}><Card className="bg-card/50 backdrop-blur-sm shadow-sm transition-all duration-300 hover:shadow-primary/20 hover-translate-y-0.5"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1"><CardTitle className="text-xs font-medium">Draft Policies</CardTitle><FileText className="h-3 w-3 text-muted-foreground" /></CardHeader><CardContent><div className="text-xl font-bold">{s.draftPolicies}</div><p className="text-xs text-muted-foreground">&nbsp;</p></CardContent></Card></motion.div>
-                 <motion.div variants={pageVariants} className="col-span-2 sm:col-span-1"><Card className="bg-card/50 backdrop-blur-sm shadow-sm transition-all duration-300 hover:shadow-primary/20 hover-translate-y-0.5"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1"><CardTitle className="text-xs font-medium">Insured Clients</CardTitle><Users className="h-3 w-3 text-muted-foreground" /></CardHeader><CardContent><div className="text-xl font-bold">{s.insuredClients}</div><p className="text-xs text-muted-foreground">&nbsp;</p></CardContent></Card></motion.div>
-                 <motion.div variants={pageVariants} className="col-span-2 sm:col-span-1"><Card className="bg-card/50 backdrop-blur-sm shadow-sm transition-all duration-300 hover:shadow-primary/20 hover-translate-y-0.5"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1"><CardTitle className="text-xs font-medium">Top Policy Type</CardTitle><Package className="h-3 w-3 text-muted-foreground" /></CardHeader><CardContent><div className="text-lg font-bold">{s.mostUsedPolicyType}</div><p className="text-xs text-muted-foreground">&nbsp;</p></CardContent></Card></motion.div>
+            <motion.div className="grid gap-2 grid-cols-2 md:grid-cols-4 lg:grid-cols-4" variants={pageVariants}>
+                 <motion.div variants={pageVariants}><Card className="bg-card/50 backdrop-blur-sm shadow-sm transition-all duration-300 hover:shadow-primary/20 hover-translate-y-0.5 h-full"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1"><CardTitle className="text-xs font-medium">Total Policies</CardTitle><Shield className="h-3 w-3 text-muted-foreground" /></CardHeader><CardContent><div className="text-xl font-bold">{s.totalPolicies}</div><p className="text-xs text-muted-foreground">&nbsp;</p></CardContent></Card></motion.div>
+                 <motion.div variants={pageVariants}><Card className="bg-card/50 backdrop-blur-sm shadow-sm transition-all duration-300 hover:shadow-primary/20 hover-translate-y-0.5 h-full"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1"><CardTitle className="text-xs font-medium">Active Policies</CardTitle><CheckCircle className="h-3 w-3 text-muted-foreground" /></CardHeader><CardContent><div className="text-xl font-bold">{s.activePolicies}</div><p className="text-xs text-muted-foreground">&nbsp;</p></CardContent></Card></motion.div>
+                 <motion.div variants={pageVariants}><Card className="bg-card/50 backdrop-blur-sm shadow-sm transition-all duration-300 hover:shadow-primary/20 hover-translate-y-0.5 h-full"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1"><CardTitle className="text-xs font-medium">Expired Policies</CardTitle><FileWarning className="h-3 w-3 text-muted-foreground" /></CardHeader><CardContent><div className="text-xl font-bold">{s.expiredPolicies}</div><p className="text-xs text-muted-foreground">&nbsp;</p></CardContent></Card></motion.div>
+                 <motion.div variants={pageVariants}><Card className="bg-card/50 backdrop-blur-sm shadow-sm transition-all duration-300 hover:shadow-primary/20 hover-translate-y-0.5 h-full"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1"><CardTitle className="text-xs font-medium">Draft Policies</CardTitle><FileText className="h-3 w-3 text-muted-foreground" /></CardHeader><CardContent><div className="text-xl font-bold">{s.draftPolicies}</div><p className="text-xs text-muted-foreground">&nbsp;</p></CardContent></Card></motion.div>
+                 <motion.div variants={pageVariants} className="col-span-2 sm:col-span-1"><Card className="bg-card/50 backdrop-blur-sm shadow-sm transition-all duration-300 hover:shadow-primary/20 hover-translate-y-0.5 h-full"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1"><CardTitle className="text-xs font-medium">Insured Clients</CardTitle><Users className="h-3 w-3 text-muted-foreground" /></CardHeader><CardContent><div className="text-xl font-bold">{s.insuredClients}</div><p className="text-xs text-muted-foreground">&nbsp;</p></CardContent></Card></motion.div>
+                 <motion.div variants={pageVariants} className="col-span-2 sm:col-span-1"><Card className="bg-card/50 backdrop-blur-sm shadow-sm transition-all duration-300 hover:shadow-primary/20 hover-translate-y-0.5 h-full"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1"><CardTitle className="text-xs font-medium">Top Policy Type</CardTitle><Package className="h-3 w-3 text-muted-foreground" /></CardHeader><CardContent><div className="text-lg font-bold">{s.mostUsedPolicyType}</div><p className="text-xs text-muted-foreground">&nbsp;</p></CardContent></Card></motion.div>
             </motion.div>
         )
     }
@@ -208,15 +206,15 @@ const DashboardStatsGrid: React.FC<DashboardStatsGridProps> = ({ documents, docT
         const s = stats as any;
         const docTypeCap = docType.charAt(0).toUpperCase() + docType.slice(1);
         return (
-             <motion.div className="grid gap-2 grid-cols-2 md:grid-cols-4 lg:grid-cols-4 mb-4" variants={pageVariants}>
-                <motion.div variants={pageVariants}><Card className="bg-card/50 backdrop-blur-sm shadow-sm transition-all duration-300 hover:shadow-primary/20 hover-translate-y-0.5"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1"><CardTitle className="text-xs font-medium">Total {docTypeCap}s</CardTitle><Files className="h-3 w-3 text-muted-foreground" /></CardHeader><CardContent><div className="text-xl font-bold">{s.totalCount}</div><p className="text-xs text-muted-foreground">&nbsp;</p></CardContent></Card></motion.div>
-                <motion.div variants={pageVariants}><Card className="bg-card/50 backdrop-blur-sm shadow-sm transition-all duration-300 hover:shadow-primary/20 hover-translate-y-0.5"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1"><CardTitle className="text-xs font-medium">Accepted</CardTitle><CheckCircle className="h-3 w-3 text-muted-foreground" /></CardHeader><CardContent><div className="text-xl font-bold">{s.acceptedCount}</div><p className="text-xs text-muted-foreground">&nbsp;</p></CardContent></Card></motion.div>
-                <motion.div variants={pageVariants}><Card className="bg-card/50 backdrop-blur-sm shadow-sm transition-all duration-300 hover:shadow-primary/20 hover-translate-y-0.5"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1"><CardTitle className="text-xs font-medium">Rejected</CardTitle><XCircle className="h-3 w-3 text-muted-foreground" /></CardHeader><CardContent><div className="text-xl font-bold">{s.rejectedCount}</div><p className="text-xs text-muted-foreground">&nbsp;</p></CardContent></Card></motion.div>
-                <motion.div variants={pageVariants}><Card className="bg-card/50 backdrop-blur-sm shadow-sm transition-all duration-300 hover:shadow-primary/20 hover-translate-y-0.5"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1"><CardTitle className="text-xs font-medium">Pending Approval</CardTitle><Clock className="h-3 w-3 text-muted-foreground" /></CardHeader><CardContent><div className="text-xl font-bold">{s.pendingCount}</div><p className="text-xs text-muted-foreground">&nbsp;</p></CardContent></Card></motion.div>
-                <motion.div variants={pageVariants} className="col-span-2 sm:col-span-1"><Card className="bg-card/50 backdrop-blur-sm shadow-sm transition-all duration-300 hover:shadow-primary/20 hover-translate-y-0.5"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1"><CardTitle className="text-xs font-medium">Total Estimated Value</CardTitle><DollarSign className="h-3 w-3 text-muted-foreground" /></CardHeader><CardContent><div className="text-xl font-bold">{formatCurrency(s.totalValue)}</div><p className="text-xs text-muted-foreground">&nbsp;</p></CardContent></Card></motion.div>
-                <motion.div variants={pageVariants} className="col-span-2 sm:col-span-1"><Card className="bg-card/50 backdrop-blur-sm shadow-sm transition-all duration-300 hover:shadow-primary/20 hover-translate-y-0.5"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1"><CardTitle className="text-xs font-medium">Conversion Rate</CardTitle><Percent className="h-3 w-3 text-muted-foreground" /></CardHeader><CardContent><div className="text-xl font-bold">{s.conversionRate.toFixed(1)}%</div><p className="text-xs text-muted-foreground">&nbsp;</p></CardContent></Card></motion.div>
-                <motion.div variants={pageVariants} className="col-span-2 md:col-span-1"><Card className="bg-card/50 backdrop-blur-sm shadow-sm transition-all duration-300 hover:shadow-primary/20 hover-translate-y-0.5"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1"><CardTitle className="text-xs font-medium">Avg. {docTypeCap} Value</CardTitle><AreaChart className="h-3 w-3 text-muted-foreground" /></CardHeader><CardContent><div className="text-xl font-bold">{formatCurrency(s.avgValue)}</div><p className="text-xs text-muted-foreground">&nbsp;</p></CardContent></Card></motion.div>
-                <motion.div variants={pageVariants} className="col-span-2 md:col-span-1"><Card as="button" onClick={() => onKpiClick(`Draft ${docTypeCap}s`, s.draftDocs)} className="text-left w-full bg-card/50 backdrop-blur-sm shadow-sm transition-all duration-300 hover:shadow-primary/20 hover-translate-y-0.5"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1"><CardTitle className="text-xs font-medium">Drafts</CardTitle><FileText className="h-3 w-3 text-muted-foreground" /></CardHeader><CardContent><div className="text-xl font-bold">{s.draftCount}</div><p className="text-xs text-muted-foreground">&nbsp;</p></CardContent></Card></motion.div>
+             <motion.div className="grid gap-2 grid-cols-2 md:grid-cols-4 lg:grid-cols-4" variants={pageVariants}>
+                <motion.div variants={pageVariants}><Card className="bg-card/50 backdrop-blur-sm shadow-sm transition-all duration-300 hover:shadow-primary/20 hover-translate-y-0.5 h-full"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1"><CardTitle className="text-xs font-medium">Total {docTypeCap}s</CardTitle><Files className="h-3 w-3 text-muted-foreground" /></CardHeader><CardContent><div className="text-xl font-bold">{s.totalCount}</div><p className="text-xs text-muted-foreground">&nbsp;</p></CardContent></Card></motion.div>
+                <motion.div variants={pageVariants}><Card className="bg-card/50 backdrop-blur-sm shadow-sm transition-all duration-300 hover:shadow-primary/20 hover-translate-y-0.5 h-full"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1"><CardTitle className="text-xs font-medium">Accepted</CardTitle><CheckCircle className="h-3 w-3 text-muted-foreground" /></CardHeader><CardContent><div className="text-xl font-bold">{s.acceptedCount}</div><p className="text-xs text-muted-foreground">&nbsp;</p></CardContent></Card></motion.div>
+                <motion.div variants={pageVariants}><Card className="bg-card/50 backdrop-blur-sm shadow-sm transition-all duration-300 hover:shadow-primary/20 hover-translate-y-0.5 h-full"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1"><CardTitle className="text-xs font-medium">Rejected</CardTitle><XCircle className="h-3 w-3 text-muted-foreground" /></CardHeader><CardContent><div className="text-xl font-bold">{s.rejectedCount}</div><p className="text-xs text-muted-foreground">&nbsp;</p></CardContent></Card></motion.div>
+                <motion.div variants={pageVariants}><Card className="bg-card/50 backdrop-blur-sm shadow-sm transition-all duration-300 hover:shadow-primary/20 hover-translate-y-0.5 h-full"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1"><CardTitle className="text-xs font-medium">Pending Approval</CardTitle><Clock className="h-3 w-3 text-muted-foreground" /></CardHeader><CardContent><div className="text-xl font-bold">{s.pendingCount}</div><p className="text-xs text-muted-foreground">&nbsp;</p></CardContent></Card></motion.div>
+                <motion.div variants={pageVariants} className="col-span-2 sm:col-span-1"><Card className="bg-card/50 backdrop-blur-sm shadow-sm transition-all duration-300 hover:shadow-primary/20 hover-translate-y-0.5 h-full"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1"><CardTitle className="text-xs font-medium">Total Estimated Value</CardTitle><DollarSign className="h-3 w-3 text-muted-foreground" /></CardHeader><CardContent><div className="text-xl font-bold">{formatCurrency(s.totalValue)}</div><p className="text-xs text-muted-foreground">&nbsp;</p></CardContent></Card></motion.div>
+                <motion.div variants={pageVariants} className="col-span-2 sm:col-span-1"><Card className="bg-card/50 backdrop-blur-sm shadow-sm transition-all duration-300 hover:shadow-primary/20 hover-translate-y-0.5 h-full"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1"><CardTitle className="text-xs font-medium">Conversion Rate</CardTitle><Percent className="h-3 w-3 text-muted-foreground" /></CardHeader><CardContent><div className="text-xl font-bold">{s.conversionRate.toFixed(1)}%</div><p className="text-xs text-muted-foreground">&nbsp;</p></CardContent></Card></motion.div>
+                <motion.div variants={pageVariants} className="col-span-2 md:col-span-1"><Card className="bg-card/50 backdrop-blur-sm shadow-sm transition-all duration-300 hover:shadow-primary/20 hover-translate-y-0.5 h-full"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1"><CardTitle className="text-xs font-medium">Avg. {docTypeCap} Value</CardTitle><AreaChart className="h-3 w-3 text-muted-foreground" /></CardHeader><CardContent><div className="text-xl font-bold">{formatCurrency(s.avgValue)}</div><p className="text-xs text-muted-foreground">&nbsp;</p></CardContent></Card></motion.div>
+                <motion.div variants={pageVariants} className="col-span-2 md:col-span-1"><Card as="button" onClick={() => onKpiClick(`Draft ${docTypeCap}s`, s.draftDocs)} className="text-left w-full bg-card/50 backdrop-blur-sm shadow-sm transition-all duration-300 hover:shadow-primary/20 hover-translate-y-0.5 h-full"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1"><CardTitle className="text-xs font-medium">Drafts</CardTitle><FileText className="h-3 w-3 text-muted-foreground" /></CardHeader><CardContent><div className="text-xl font-bold">{s.draftCount}</div><p className="text-xs text-muted-foreground">&nbsp;</p></CardContent></Card></motion.div>
             </motion.div>
         );
     }
@@ -812,22 +810,14 @@ export default function DashboardPage() {
 
         return (
             <Card className='bg-card/50 backdrop-blur-sm'>
-                <CardHeader>
-                    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                        <div>
-                            <CardTitle className="text-base">Clients</CardTitle>
-                        </div>
-                    </div>
-                </CardHeader>
-                <CardContent>
+                <CardContent className="pt-6">
                     <div className="overflow-x-auto">
                         <Table>
                             <TableHeader>
                                 <TableRow>
                                     <TableHead className="text-xs">Name</TableHead>
-                                    <TableHead className="text-xs hidden sm:table-cell">Company</TableHead>
-                                    <TableHead className="text-xs hidden md:table-cell">Email</TableHead>
-                                    <TableHead className="text-xs hidden lg:table-cell">Total Revenue</TableHead>
+                                    <TableHead className="text-xs hidden sm:table-cell">Email</TableHead>
+                                    <TableHead className="text-xs hidden md:table-cell">Total Revenue</TableHead>
                                     <TableHead className="text-right text-xs">Actions</TableHead>
                                 </TableRow>
                             </TableHeader>
@@ -838,7 +828,7 @@ export default function DashboardPage() {
                             as={TableBody}
                             >
                                 {isLoadingClients ? (
-                                    <TableRow><TableCell colSpan={5} className="text-center h-24">Loading clients...</TableCell></TableRow>
+                                    <TableRow><TableCell colSpan={4} className="text-center h-24">Loading clients...</TableCell></TableRow>
                                 ) : filteredClients && filteredClients.length > 0 ? filteredClients.map((client) => (
                                     <motion.tr
                                         as={TableRow}
@@ -856,15 +846,14 @@ export default function DashboardPage() {
                                                 <span>{client.name}</span>
                                             </div>
                                         </TableCell>
-                                        <TableCell className="text-xs hidden sm:table-cell">{client.companyName}</TableCell>
-                                        <TableCell className="text-xs hidden md:table-cell">{client.email}</TableCell>
-                                        <TableCell className="text-xs hidden lg:table-cell">{symbol}{(clientRevenues[client.id] || 0).toFixed(2)}</TableCell>
+                                        <TableCell className="text-xs hidden sm:table-cell">{client.email}</TableCell>
+                                        <TableCell className="text-xs hidden md:table-cell">{symbol}{(clientRevenues[client.id] || 0).toFixed(2)}</TableCell>
                                         <TableCell className="text-right">
-                                            <Button variant="ghost" size="sm">View</Button>
+                                             <Button variant="ghost" size="sm">View</Button>
                                         </TableCell>
                                     </motion.tr>
                                 )) : (
-                                    <TableRow><TableCell colSpan={5} className="text-center h-24">No clients found.</TableCell></TableRow>
+                                    <TableRow><TableCell colSpan={4} className="text-center h-24">No clients found.</TableCell></TableRow>
                                 )}
                             </motion.tbody>
                         </Table>
@@ -974,76 +963,45 @@ export default function DashboardPage() {
                                             <X className="h-4 w-4" />
                                         </Button>
                                     )}
-                                     {activeTab === 'clients' && (
+                                    {activeTab === 'clients' ? (
                                         <Button size="sm" className='rounded-full' onClick={handleAddClient}><Users className="mr-2 h-4 w-4"/>Add New Client</Button>
+                                    ) : (
+                                        <DropdownMenu>
+                                            <DropdownMenuTrigger asChild>
+                                                <Button size="sm" className='rounded-full'><FilePlus2 className="mr-2 h-4 w-4"/> New Document</Button>
+                                            </DropdownMenuTrigger>
+                                            <DropdownMenuContent align="end">
+                                                <DropdownMenuItem onClick={handleCreateInvoice}><FileText className="mr-2 h-4 w-4"/> New Invoice</DropdownMenuItem>
+                                                <DropdownMenuItem onClick={handleCreateEstimate}><FileQuestion className="mr-2 h-4 w-4"/> New Estimate</DropdownMenuItem>
+                                                <DropdownMenuItem onClick={handleCreateQuote}><FileText className="mr-2 h-4 w-4"/> New Quote</DropdownMenuItem>
+                                                <DropdownMenuItem onClick={() => router.push('/create-insurance')}><Shield className="mr-2 h-4 w-4"/> New Insurance Doc</DropdownMenuItem>
+                                            </DropdownMenuContent>
+                                        </DropdownMenu>
                                     )}
                                 </div>
                             </div>
                         </CardHeader>
-                        {activeTab !== 'clients' ? (
-                            <CardContent className="flex flex-wrap items-center gap-2 pt-0">
-                                <Button size="sm" onClick={handleCreateInvoice} variant="outline" className="rounded-full">
-                                    <FilePlus2 className="mr-2 h-3 w-3" />
-                                    New Invoice
-                                </Button>
-                                 <Button size="sm" onClick={handleCreateEstimate} variant="outline" className="rounded-full">
-                                    <FilePlus2 className="mr-2 h-3 w-3" />
-                                    New Estimate
-                                </Button>
-                                 <Button size="sm" onClick={handleCreateQuote} variant="outline" className="rounded-full">
-                                    <FileText className="mr-2 h-3 w-3" />
-                                    New Quote
-                                </Button>
-                                 <Button size="sm" onClick={() => router.push('/create-insurance')} variant="outline" className="rounded-full">
-                                    <Shield className="mr-2 h-3 w-3" />
-                                    New Insurance Doc
-                                </Button>
-                            </CardContent>
-                        ) : (
-                            <CardContent className="pt-0">
-                                <ClientStatsGrid clients={clients || []} invoices={invoices || []} />
+                        {activeTab !== 'clients' && (
+                            <CardContent>
+                                {activeTab === 'invoices' && <DashboardStatsGrid documents={filteredInvoices} docType="invoice" onKpiClick={handleKpiClick} />}
+                                {activeTab === 'estimates' && <DashboardStatsGrid documents={filteredEstimates} docType="estimate" onKpiClick={handleKpiClick} />}
+                                {activeTab === 'quotes' && <DashboardStatsGrid documents={filteredQuotes} docType="quote" onKpiClick={handleKpiClick} />}
+                                {activeTab === 'insurance' && <DashboardStatsGrid documents={filteredInsurance} docType="insurance" onKpiClick={handleKpiClick} />}
                             </CardContent>
                         )}
+                         {activeTab === 'clients' && (
+                             <CardContent>
+                                <ClientStatsGrid clients={clients || []} invoices={invoices || []} />
+                             </CardContent>
+                         )}
                     </Card>
                 </motion.div>
                 
                 <motion.div initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.3, delay: 0.1 }}>
-                    {activeTab === 'invoices' && (
-                        <Card className='bg-card/50 backdrop-blur-sm'>
-                            <CardHeader><CardTitle className="text-base">Invoices</CardTitle></CardHeader>
-                            <CardContent className="pt-0">
-                                <DashboardStatsGrid documents={filteredInvoices} docType="invoice" onKpiClick={handleKpiClick} />
-                                {renderDocumentsTable(filteredInvoices, 'invoice')}
-                            </CardContent>
-                        </Card>
-                    )}
-                    {activeTab === 'estimates' && (
-                        <Card className='bg-card/50 backdrop-blur-sm'>
-                            <CardHeader><CardTitle className="text-base">Estimates</CardTitle></CardHeader>
-                            <CardContent className="pt-0">
-                                <DashboardStatsGrid documents={filteredEstimates} docType="estimate" onKpiClick={handleKpiClick} />
-                                {renderDocumentsTable(filteredEstimates, 'estimate')}
-                            </CardContent>
-                        </Card>
-                    )}
-                    {activeTab === 'quotes' && (
-                        <Card className='bg-card/50 backdrop-blur-sm'>
-                           <CardHeader><CardTitle className="text-base">Quotes</CardTitle></CardHeader>
-                            <CardContent className="pt-0">
-                                <DashboardStatsGrid documents={filteredQuotes} docType="quote" onKpiClick={handleKpiClick} />
-                                {renderDocumentsTable(filteredQuotes, 'quote')}
-                            </CardContent>
-                        </Card>
-                    )}
-                     {activeTab === 'insurance' && (
-                        <Card className='bg-card/50 backdrop-blur-sm'>
-                             <CardHeader><CardTitle className="text-base">Insurance</CardTitle></CardHeader>
-                            <CardContent className="pt-0">
-                                <DashboardStatsGrid documents={filteredInsurance} docType="insurance" onKpiClick={handleKpiClick} />
-                                {renderDocumentsTable(filteredInsurance, 'insurance')}
-                            </CardContent>
-                        </Card>
-                    )}
+                    {activeTab === 'invoices' && <Card className='bg-card/50 backdrop-blur-sm'><CardContent className="pt-6">{renderDocumentsTable(filteredInvoices, 'invoice')}</CardContent></Card>}
+                    {activeTab === 'estimates' && <Card className='bg-card/50 backdrop-blur-sm'><CardContent className="pt-6">{renderDocumentsTable(filteredEstimates, 'estimate')}</CardContent></Card>}
+                    {activeTab === 'quotes' && <Card className='bg-card/50 backdrop-blur-sm'><CardContent className="pt-6">{renderDocumentsTable(filteredQuotes, 'quote')}</CardContent></Card>}
+                    {activeTab === 'insurance' && <Card className='bg-card/50 backdrop-blur-sm'><CardContent className="pt-6">{renderDocumentsTable(filteredInsurance, 'insurance')}</CardContent></Card>}
                     {activeTab === 'clients' && renderClientsTable()}
                 </motion.div>
             </motion.div>
