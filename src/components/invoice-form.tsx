@@ -73,6 +73,11 @@ interface Preset {
   items: Omit<LineItem, 'id'>[];
 }
 
+interface CustomFieldPreset {
+  name: string;
+  fields: Omit<CustomField, 'id'>[];
+}
+
 const currencies = [
     { value: 'USD', label: 'USD ($)' },
     { value: 'EUR', label: 'EUR (€)' },
@@ -449,10 +454,16 @@ export function InvoiceForm({ invoice, setInvoice, accentColor, setAccentColor, 
   const [bgColorInput, setBgColorInput] = useState(backgroundColor);
   const [textColorInput, setTextColorInput] = useState(textColor);
   const [isSignatureDialogOpen, setIsSignatureDialogOpen] = useState(false);
+  
   const [presets, setPresets] = useState<Preset[]>([]);
   const [selectedPreset, setSelectedPreset] = useState<string>('');
   const [isSavePresetOpen, setIsSavePresetOpen] = useState(false);
   const [newPresetName, setNewPresetName] = useState('');
+
+  const [customFieldPresets, setCustomFieldPresets] = useState<CustomFieldPreset[]>([]);
+  const [selectedCustomFieldPreset, setSelectedCustomFieldPreset] = useState<string>('');
+  const [isSaveCustomFieldPresetOpen, setIsSaveCustomFieldPresetOpen] = useState(false);
+  const [newCustomFieldPresetName, setNewCustomFieldPresetName] = useState('');
 
   // Load presets from localStorage on mount
   useEffect(() => {
@@ -460,6 +471,10 @@ export function InvoiceForm({ invoice, setInvoice, accentColor, setAccentColor, 
       const savedPresets = localStorage.getItem('lineItemPresets');
       if (savedPresets) {
         setPresets(JSON.parse(savedPresets));
+      }
+      const savedCustomFieldPresets = localStorage.getItem('customFieldPresets');
+      if (savedCustomFieldPresets) {
+        setCustomFieldPresets(JSON.parse(savedCustomFieldPresets));
       }
     } catch (error) {
       console.error("Could not load presets from localStorage", error);
@@ -696,6 +711,43 @@ export function InvoiceForm({ invoice, setInvoice, accentColor, setAccentColor, 
       customFields: (prev.customFields || []).filter((_, i) => i !== index)
     }));
   };
+
+  const handleSaveCustomFieldPreset = () => {
+    if (!newCustomFieldPresetName.trim()) {
+      toast({ title: 'Preset Name Required', description: 'Please enter a name for the custom field preset.', variant: 'destructive' });
+      return;
+    }
+    const newPreset: CustomFieldPreset = {
+      name: newCustomFieldPresetName.trim(),
+      fields: (invoice.customFields || []).map(({ id, ...field }) => field),
+    };
+    const updatedPresets = [...customFieldPresets, newPreset];
+    setCustomFieldPresets(updatedPresets);
+    localStorage.setItem('customFieldPresets', JSON.stringify(updatedPresets));
+    toast({ title: 'Custom Field Preset Saved', description: `"${newPreset.name}" has been saved.` });
+    setIsSaveCustomFieldPresetOpen(false);
+    setNewCustomFieldPresetName('');
+  };
+
+  const handleLoadCustomFieldPreset = () => {
+    if (!selectedCustomFieldPreset) return;
+    const preset = customFieldPresets.find(p => p.name === selectedCustomFieldPreset);
+    if (preset) {
+      const newFields = preset.fields.map(field => ({ ...field, id: crypto.randomUUID() }));
+      setInvoice(prev => ({ ...prev, customFields: [...(prev.customFields || []), ...newFields] }));
+      toast({ title: 'Custom Field Preset Loaded', description: `Fields from "${selectedCustomFieldPreset}" have been added.` });
+    }
+  };
+
+  const handleDeleteCustomFieldPreset = () => {
+    if (!selectedCustomFieldPreset) return;
+    const updatedPresets = customFieldPresets.filter(p => p.name !== selectedCustomFieldPreset);
+    setCustomFieldPresets(updatedPresets);
+    localStorage.setItem('customFieldPresets', JSON.stringify(updatedPresets));
+    toast({ title: 'Custom Field Preset Deleted', description: `"${selectedCustomFieldPreset}" has been deleted.` });
+    setSelectedCustomFieldPreset('');
+  };
+
 
   const currencySymbol = currencies.find(c => c.value === invoice.currency)?.label.split(' ')[1] || '$';
 
@@ -997,46 +1049,81 @@ export function InvoiceForm({ invoice, setInvoice, accentColor, setAccentColor, 
         handleDateChange={handleDateChange}
       />
       
-      <Collapsible>
-        <CollapsibleTrigger asChild>
-          <Button variant="link" className="text-muted-foreground p-0 h-auto">
-            <MoreVertical className="h-4 w-4 mr-2"/>
-            More Options
-          </Button>
-        </CollapsibleTrigger>
-        <CollapsibleContent>
-            <Card className="bg-card/50 backdrop-blur-sm shadow-lg mt-2">
-              <CardHeader>
-                <CardTitle className="text-base">Advanced Fields</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                 {(invoice.customFields || []).map((field, index) => (
-                   <div key={field.id} className="grid grid-cols-[1fr_2fr_auto] gap-2 items-center">
-                      <Input 
-                        placeholder="Label (e.g. 'Project ID')" 
-                        value={field.label}
-                        onChange={(e) => handleCustomFieldChange(index, 'label', e.target.value)}
-                        className="h-9 text-xs"
-                      />
-                       <Input 
-                        placeholder="Value" 
-                        value={field.value}
-                        onChange={(e) => handleCustomFieldChange(index, 'value', e.target.value)}
-                        className="h-9 text-xs"
-                      />
-                      <Button variant="ghost" size="icon" onClick={() => removeCustomField(index)} className="h-8 w-8">
-                        <Trash2 className="h-4 w-4 text-destructive"/>
-                      </Button>
-                   </div>
-                 ))}
-                 <Button variant="outline" size="sm" onClick={addCustomField} className="text-xs">
-                    <PlusCircle className="h-4 w-4 mr-2"/>
-                    Add Custom Field
-                 </Button>
-              </CardContent>
-            </Card>
-        </CollapsibleContent>
-      </Collapsible>
+       <Card className="bg-card/50 backdrop-blur-sm shadow-lg">
+          <CardHeader>
+            <CardTitle className="text-base">Advanced Fields</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+             <div className="p-3 border rounded-lg bg-background/50 space-y-3">
+              <Label className="font-semibold text-sm">Custom Field Presets</Label>
+              <div className="flex flex-wrap items-end gap-2">
+                <div className="flex-grow space-y-2">
+                    <Label htmlFor="cf-preset-select" className="text-xs text-muted-foreground">Load a saved group of fields</Label>
+                    <Select value={selectedCustomFieldPreset} onValueChange={setSelectedCustomFieldPreset} disabled={customFieldPresets.length === 0}>
+                        <SelectTrigger id="cf-preset-select" className="h-9 text-xs">
+                            <SelectValue placeholder="Select a preset..." />
+                        </SelectTrigger>
+                        <SelectContent>
+                            {customFieldPresets.map((p, index) => <SelectItem key={`${p.name}-${index}`} value={p.name}>{p.name}</SelectItem>)}
+                        </SelectContent>
+                    </Select>
+                </div>
+                 <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                      <Button variant="secondary" size="sm" disabled={!selectedCustomFieldPreset} className="text-xs">Load Preset</Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                      <AlertDialogHeader><AlertDialogTitle>Add fields from preset?</AlertDialogTitle><AlertDialogDescription>This will add the fields to your current list.</AlertDialogDescription></AlertDialogHeader>
+                      <AlertDialogFooter><AlertDialogCancel>Cancel</AlertDialogCancel><AlertDialogAction onClick={handleLoadCustomFieldPreset}>Load</AlertDialogAction></AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+                 <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <Button variant="destructive" size="sm" disabled={!selectedCustomFieldPreset} className="text-xs"><Trash2 className="mr-2 h-3 w-3" />Delete</Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                      <AlertDialogHeader><AlertDialogTitle>Delete this preset?</AlertDialogTitle><AlertDialogDescription>This will permanently delete the "{selectedCustomFieldPreset}" preset. This action cannot be undone.</AlertDialogDescription></AlertDialogHeader>
+                      <AlertDialogFooter><AlertDialogCancel>Cancel</AlertDialogCancel><AlertDialogAction onClick={handleDeleteCustomFieldPreset}>Delete</AlertDialogAction></AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+                 <Dialog open={isSaveCustomFieldPresetOpen} onOpenChange={setIsSaveCustomFieldPresetOpen}>
+                  <DialogTrigger asChild>
+                    <Button variant="outline" size="sm" className="text-xs" disabled={(invoice.customFields || []).length === 0}><Save className="mr-2 h-3 w-3" /> Save as Preset</Button>
+                  </DialogTrigger>
+                  <DialogContent>
+                      <DialogHeader><DialogTitle>Save Custom Field Preset</DialogTitle><DialogDescription>Save the current custom fields for future use.</DialogDescription></DialogHeader>
+                      <div className="space-y-2"><Label htmlFor="cf-preset-name">Preset Name</Label><Input id="cf-preset-name" value={newCustomFieldPresetName} onChange={(e) => setNewCustomFieldPresetName(e.target.value)} placeholder="e.g., Standard Project Info"/></div>
+                      <DialogFooter><DialogClose asChild><Button variant="ghost">Cancel</Button></DialogClose><Button onClick={handleSaveCustomFieldPreset}>Save Preset</Button></DialogFooter>
+                  </DialogContent>
+                </Dialog>
+              </div>
+            </div>
+
+             {(invoice.customFields || []).map((field, index) => (
+               <div key={field.id} className="grid grid-cols-[1fr_2fr_auto] gap-2 items-center">
+                  <Input 
+                    placeholder="Label (e.g. 'Project ID')" 
+                    value={field.label}
+                    onChange={(e) => handleCustomFieldChange(index, 'label', e.target.value)}
+                    className="h-9 text-xs"
+                  />
+                   <Input 
+                    placeholder="Value" 
+                    value={field.value}
+                    onChange={(e) => handleCustomFieldChange(index, 'value', e.target.value)}
+                    className="h-9 text-xs"
+                  />
+                  <Button variant="ghost" size="icon" onClick={() => removeCustomField(index)} className="h-8 w-8">
+                    <Trash2 className="h-4 w-4 text-destructive"/>
+                  </Button>
+               </div>
+             ))}
+             <Button variant="outline" size="sm" onClick={addCustomField} className="text-xs">
+                <PlusCircle className="h-4 w-4 mr-2"/>
+                Add Custom Field
+             </Button>
+          </CardContent>
+        </Card>
 
       <Card className="bg-card/50 backdrop-blur-sm shadow-lg hover:shadow-primary/20 transition-shadow duration-300">
         <CardHeader>
@@ -1097,7 +1184,7 @@ export function InvoiceForm({ invoice, setInvoice, accentColor, setAccentColor, 
 
                 <Dialog open={isSavePresetOpen} onOpenChange={setIsSavePresetOpen}>
                   <DialogTrigger asChild>
-                    <Button variant="outline" size="sm" className="text-xs"><Save className="mr-2 h-3 w-3" /> Save as Preset</Button>
+                    <Button variant="outline" size="sm" className="text-xs" disabled={invoice.lineItems.length === 0}><Save className="mr-2 h-3 w-3" /> Save as Preset</Button>
                   </DialogTrigger>
                   <DialogContent>
                       <DialogHeader>
