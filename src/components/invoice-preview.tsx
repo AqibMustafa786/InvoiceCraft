@@ -83,7 +83,9 @@ const CustomFieldsPreview: FC<{fields?: CustomField[]}> = ({ fields }) => {
       <p className="font-bold text-gray-500 mb-2 border-b">Additional Information</p>
       <div className="grid grid-cols-2 gap-x-4 gap-y-1">
         {fields.map(field => (
-          field.label && <p key={field.id}><span className="font-semibold text-gray-600">{field.label}:</span> {field.value}</p>
+          field.label && field.value && (
+            <p key={field.id}><span className="font-semibold text-gray-600">{field.label}:</span> {field.value}</p>
+          )
         ))}
       </div>
     </section>
@@ -229,7 +231,6 @@ const DefaultTemplatePage: FC<PageProps> = ({ pageItems, pageIndex, totalPages, 
                         <p>{safeFormat(invoice.dueDate, 'MMMM d, yyyy')}</p>
                     </div>
                 </section>
-                <CustomFieldsPreview fields={invoice.customFields} />
                 <CategorySpecificDetails invoice={invoice} t={t} />
                 <ItemsTable items={pageItems} {...commonProps} />
             </div>
@@ -291,7 +292,6 @@ const ModernTemplatePage: FC<PageProps> = ({ pageItems, pageIndex, totalPages, .
                     <p>{invoice.poNumber || 'N/A'}</p>
                 </div>
             </section>
-            <CustomFieldsPreview fields={invoice.customFields} />
             <CategorySpecificDetails invoice={invoice} t={t} />
             <ItemsTable items={pageItems} {...commonProps} accentColor={accentColor} />
         </div>
@@ -338,7 +338,6 @@ const MinimalistTemplatePage: FC<PageProps> = ({ pageItems, pageIndex, totalPage
                     <p className="font-medium">{invoice.poNumber || 'N/A'}</p>
                 </div>
             </section>
-            <CustomFieldsPreview fields={invoice.customFields} />
             <CategorySpecificDetails invoice={invoice} t={t} />
             <ItemsTable items={pageItems} {...commonProps} headerStyle="underline" />
         </div>
@@ -373,7 +372,6 @@ const CreativeTemplatePage: FC<PageProps> = ({ pageItems, pageIndex, totalPages,
                 <p>{client.phone}</p>
                 <p>{client.email}</p>
             </section>
-            <CustomFieldsPreview fields={invoice.customFields} />
             <CategorySpecificDetails invoice={invoice} t={t} />
             <ItemsTable items={pageItems} {...commonProps} accentColor={accentColor} />
         </div>
@@ -407,7 +405,6 @@ const ElegantTemplatePage: FC<PageProps> = ({ pageItems, pageIndex, totalPages, 
                     <p><span className="font-bold">PO Number:</span> {invoice.poNumber || 'N/A'}</p>
                 </div>
             </section>
-            <CustomFieldsPreview fields={invoice.customFields} />
             <CategorySpecificDetails invoice={invoice} t={t} />
             <ItemsTable items={pageItems} {...commonProps} headerStyle="underline" />
         </div>
@@ -449,7 +446,6 @@ const UsaTemplatePage: FC<PageProps> = ({ pageItems, pageIndex, totalPages, ...c
                         {invoice.poNumber && <p className="mt-2"><span className="font-bold">PO #: </span>{invoice.poNumber}</p>}
                     </div>
                 </section>
-                <CustomFieldsPreview fields={invoice.customFields} />
                 <CategorySpecificDetails invoice={invoice} t={t} />
                 <main>
                     <table className="w-full border-collapse border text-sm" data-element="items-table">
