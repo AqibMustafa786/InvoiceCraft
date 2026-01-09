@@ -1,3 +1,5 @@
+
+
 'use client';
 
 import { useState, useLayoutEffect, useRef, useEffect, FC, useMemo } from 'react';
@@ -459,7 +461,7 @@ const ElegantTemplatePage: FC<PageProps> = ({ pageItems, pageIndex, totalPages, 
 
 // --- TEMPLATE: USA ---
 const UsaTemplatePage: FC<PageProps> = ({ pageItems, pageIndex, totalPages, ...commonProps }) => {
-    const { invoice, accentColor, total, subtotal, currencySymbol } = commonProps;
+    const { invoice, t, accentColor, total, subtotal, currencySymbol } = commonProps;
     const { business, client } = invoice;
 
     return (
@@ -678,6 +680,7 @@ const InvoicePreviewInternal: FC<InvoicePreviewProps> = ({ invoice, accentColor,
 
   useEffect(() => {
     setNeedsRemeasure(true);
+    // Don't set paginated items here to avoid loops. It's handled in the useLayoutEffect.
   }, [serializedInvoice]);
 
 
