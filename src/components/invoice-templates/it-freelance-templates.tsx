@@ -41,20 +41,40 @@ const SignatureDisplay = ({ signature, label }: { signature: any, label: string 
 }
 
 export const ITServiceDetails: React.FC<{ invoice: Invoice, t: any }> = ({ invoice, t }) => {
-    if (!invoice.itServices) return null;
-    const { itServices } = invoice;
-    return (
-        <section className="my-4 text-xs">
-            <p className="font-bold text-gray-500 mb-2 border-b">{t.itServiceDetails || 'IT Service Details'}</p>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-x-4 gap-y-1">
-                <p><span className="font-semibold text-gray-600">{t.serviceType || 'Service Type'}:</span> {itServices.serviceType}</p>
-                {itServices.hourlyRate && <p><span className="font-semibold text-gray-600">{t.hourlyRate || 'Hourly Rate'}:</span> ${itServices.hourlyRate.toFixed(2)}</p>}
-                {itServices.hoursWorked && <p><span className="font-semibold text-gray-600">{t.hoursWorked || 'Hours Worked'}:</span> {itServices.hoursWorked}</p>}
-                <p><span className="font-semibold text-gray-600">{t.deviceType || 'Device Type'}:</span> {itServices.deviceType}</p>
-                <p><span className="font-semibold text-gray-600">{t.serialNumber || 'Serial #'}:</span> {itServices.serialNumber}</p>
-                {itServices.hardwareReplacementCost && <p><span className="font-semibold text-gray-600">{t.hardwareCost || 'Hardware Cost'}:</span> ${itServices.hardwareReplacementCost.toFixed(2)}</p>}
-                {itServices.monthlyMaintenanceFee && <p><span className="font-semibold text-gray-600">{t.maintenanceFee || 'Maintenance Fee'}:</span> ${itServices.monthlyMaintenanceFee.toFixed(2)}</p>}
-            </div>
-        </section>
-    );
+    if (!invoice.itServices && !invoice.freelance) return null;
+    const details = invoice.itServices || invoice.freelance;
+    
+    if (invoice.category === 'IT Services / Tech Support' && invoice.itServices) {
+        return (
+            <section className="my-4 text-xs">
+                <p className="font-bold text-gray-500 mb-2 border-b">{t.itServiceDetails || 'IT Service Details'}</p>
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-x-4 gap-y-1">
+                    <p><span className="font-semibold text-gray-600">{t.serviceType || 'Service Type'}:</span> {invoice.itServices.serviceType}</p>
+                    {invoice.itServices.hourlyRate && <p><span className="font-semibold text-gray-600">{t.hourlyRate || 'Hourly Rate'}:</span> ${invoice.itServices.hourlyRate.toFixed(2)}</p>}
+                    {invoice.itServices.hoursWorked && <p><span className="font-semibold text-gray-600">{t.hoursWorked || 'Hours Worked'}:</span> {invoice.itServices.hoursWorked}</p>}
+                    <p><span className="font-semibold text-gray-600">{t.deviceType || 'Device Type'}:</span> {invoice.itServices.deviceType}</p>
+                    <p><span className="font-semibold text-gray-600">{t.serialNumber || 'Serial #'}:</span> {invoice.itServices.serialNumber}</p>
+                    {invoice.itServices.hardwareReplacementCost && <p><span className="font-semibold text-gray-600">{t.hardwareCost || 'Hardware Cost'}:</span> ${invoice.itServices.hardwareReplacementCost.toFixed(2)}</p>}
+                    {invoice.itServices.monthlyMaintenanceFee && <p><span className="font-semibold text-gray-600">{t.maintenanceFee || 'Maintenance Fee'}:</span> ${invoice.itServices.monthlyMaintenanceFee.toFixed(2)}</p>}
+                </div>
+            </section>
+        );
+    }
+
+    if (invoice.category === 'Freelance / Agency' && invoice.freelance) {
+         return (
+            <section className="my-4 text-xs">
+                <p className="font-bold text-gray-500 mb-2 border-b">{t.projectSpecifications || 'Project Specifications'}</p>
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-x-4 gap-y-1">
+                    <p className="col-span-full"><span className="font-semibold text-gray-600">{t.projectName || 'Project'}:</span> {invoice.freelance.projectName}</p>
+                    {invoice.freelance.hourlyRate && <p><span className="font-semibold text-gray-600">{t.hourlyRate || 'Hourly Rate'}:</span> ${invoice.freelance.hourlyRate.toFixed(2)}</p>}
+                    {invoice.freelance.fixedRate && <p><span className="font-semibold text-gray-600">{t.fixedRate || 'Fixed Rate'}:</span> ${invoice.freelance.fixedRate.toFixed(2)}</p>}
+                    {invoice.freelance.hoursLogged && <p><span className="font-semibold text-gray-600">{t.hoursLogged || 'Hours Logged'}:</span> {invoice.freelance.hoursLogged}</p>}
+                    <p className="col-span-full"><span className="font-semibold text-gray-600">{t.milestone || 'Milestone'}:</span> {invoice.freelance.milestoneDescription}</p>
+                </div>
+            </section>
+        );
+    }
+    
+    return null;
 };
