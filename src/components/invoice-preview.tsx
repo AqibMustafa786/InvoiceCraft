@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useLayoutEffect, useRef, useEffect, FC, useMemo } from 'react';
@@ -641,6 +642,7 @@ const InvoicePreviewInternal: FC<InvoicePreviewProps> = ({ invoice, accentColor,
       const tempRoot = document.createElement('div');
       tempRoot.style.position = 'absolute';
       tempRoot.style.left = '-9999px';
+      tempRoot.style.width = `${container.clientWidth}px`;
       document.body.appendChild(tempRoot);
 
       Promise.resolve().then(() => {
@@ -648,7 +650,6 @@ const InvoicePreviewInternal: FC<InvoicePreviewProps> = ({ invoice, accentColor,
         tempRoot.appendChild(tempContainer);
         
         const header = tempContainer.querySelector('[data-element="header"]') as HTMLElement;
-        const clientDetails = tempContainer.querySelector('[data-element="client-details"]') as HTMLElement;
         const tableHeader = tempContainer.querySelector('[data-element="table-header"]') as HTMLElement;
         const footer = tempContainer.querySelector('[data-element="footer"]') as HTMLElement;
         const allRows = Array.from(tempContainer.querySelectorAll('[data-element="table-row"]')) as HTMLElement[];
@@ -658,54 +659,37 @@ const InvoicePreviewInternal: FC<InvoicePreviewProps> = ({ invoice, accentColor,
             return;
         }
 
-        let headerHeight = header.offsetHeight + (clientDetails?.offsetHeight || 0);
+        const headerHeight = header.offsetHeight;
         const tableHeaderHeight = tableHeader.offsetHeight;
         const footerHeight = footer?.offsetHeight || 0;
+        
+        // Use a consistent header height for all pages in pagination calculation
+        const pageHeaderHeight = header.offsetHeight + 
+                               (tempContainer.querySelector('[data-element="client-details"]')?.clientHeight || 0) + 
+                               (tempContainer.querySelector('[data-element="invoice-meta"]')?.clientHeight || 0) + 20; // 20 for margins
 
-        let currentPage = 0;
-        let currentPageHeight = headerHeight;
-        let newPages: LineItem[][] = [[]];
+        const firstPageAvailableHeight = AVAILABLE_HEIGHT - pageHeaderHeight - footerHeight;
+        const subsequentPageAvailableHeight = AVAILABLE_HEIGHT - pageHeaderHeight - tableHeaderHeight - footerHeight;
+
+        let currentPageItems: LineItem[] = [];
+        const pages: LineItem[][] = [currentPageItems];
+        let currentHeight = 0;
 
         allRows.forEach((row, index) => {
             const itemHeight = row.offsetHeight;
-            let pageHeightForCurrentItem = currentPageHeight + (newPages[currentPage].length === 0 ? tableHeaderHeight : 0) + itemHeight;
-            
-            let isLastItem = index === allRows.length - 1;
-            if (isLastItem) {
-                pageHeightForCurrentItem += footerHeight;
-            }
+            const availableHeight = pages.length === 1 ? firstPageAvailableHeight : subsequentPageAvailableHeight;
 
-            if (pageHeightForCurrentItem > AVAILABLE_HEIGHT) {
-                currentPage++;
-                newPages[currentPage] = [];
-                currentPageHeight = headerHeight + tableHeaderHeight; 
+            if (currentHeight + itemHeight > availableHeight) {
+                currentPageItems = [invoice.lineItems[index]];
+                pages.push(currentPageItems);
+                currentHeight = itemHeight;
+            } else {
+                currentPageItems.push(invoice.lineItems[index]);
+                currentHeight += itemHeight;
             }
-            
-            if (newPages[currentPage].length === 0) { 
-                currentPageHeight += tableHeaderHeight;
-            }
-
-            newPages[currentPage].push(invoice.lineItems[index]);
-            currentPageHeight += itemHeight;
         });
         
-        const lastPageItemHeight = (newPages[currentPage] || []).reduce((total, item) => {
-            if (!item) return total;
-            const itemIndex = invoice.lineItems.findIndex(i => i.id === item.id);
-            return total + (allRows[itemIndex]?.offsetHeight || 0);
-        }, 0);
-
-        const lastPageContentHeight = headerHeight + tableHeaderHeight + lastPageItemHeight + footerHeight;
-
-        if (lastPageContentHeight > AVAILABLE_HEIGHT && newPages[currentPage].length > 0) {
-             const lastItem = newPages[currentPage].pop();
-             if (lastItem) {
-                currentPage++;
-                newPages[currentPage] = [lastItem];
-             }
-        }
-        
-        setPaginatedItems(newPages.length > 0 ? newPages.filter(p => p.length > 0) : [[]]);
+        setPaginatedItems(pages.filter(p => p.length > 0));
         setNeedsRemeasure(false);
         document.body.removeChild(tempRoot);
       });
