@@ -28,7 +28,7 @@ import { TransportationTemplate1, TransportationTemplate2, TransportationTemplat
 import { RentalTemplate1, RentalTemplate2, RentalTemplate3, RentalTemplate4, RentalTemplate5 } from './invoice-templates/rental-templates';
 import { toNumberSafe, toDateSafe } from '@/lib/utils';
 import { CategorySpecificDetails } from './invoice-templates/category-specific-details';
-import { GenericTemplate1, GenericTemplate2, GenericTemplate3, GenericTemplate4, GenericTemplate5 } from './document-templates/generic-templates';
+import { GenericTemplate1, GenericTemplate2, GenericTemplate3, GenericTemplate4, GenericTemplate5 } from '../document-templates/generic-templates';
 
 
 // --- PROPS ---
@@ -83,7 +83,7 @@ const CustomFieldsPreview: FC<{fields?: CustomField[]}> = ({ fields }) => {
 
 const ItemsTable: FC<{ items: LineItem[], t: any, currencySymbol: string, accentColor?: string, headerStyle?: 'filled' | 'underline' }> = ({ items, t, currencySymbol, accentColor, headerStyle = 'filled' }) => (
     <section>
-        <table className="w-full text-left">
+        <table className="w-full text-left" style={{ pageBreakInside: 'auto' }}>
             <thead 
               data-element="table-header"
               style={headerStyle === 'filled' ? {backgroundColor: accentColor, color: 'white'} : {}} 
@@ -98,7 +98,7 @@ const ItemsTable: FC<{ items: LineItem[], t: any, currencySymbol: string, accent
             </thead>
             <tbody>
             {items.map(item => (
-                <tr key={item.id} className="border-b" data-element="table-row">
+                <tr key={item.id} className="border-b" data-element="table-row" style={{ pageBreakInside: 'avoid' }}>
                 <td className="p-3 align-top">
                     <p className="font-medium whitespace-pre-line">{item.name || <span className="text-gray-400">{t.itemDescription}</span>}</p>
                     {item.description && <p className="text-xs text-muted-foreground whitespace-pre-line" style={{ wordBreak: 'break-all' }}>{item.description}</p>}
@@ -446,15 +446,9 @@ const UsaTemplatePage: FC<PageProps> = ({ pageItems, pageIndex, totalPages, ...c
                         </thead>
                         <tbody>
                             {pageItems?.filter(Boolean).map((item) => (
-                                <tr key={item.id} data-element="table-row">
+                                <tr key={item.id} data-element="table-row" style={{ pageBreakInside: 'avoid' }}>
                                     <td className="border p-2 align-top h-8 whitespace-pre-line">{item.name}{item.description && `\n${item.description}`}</td>
                                     <td className="border p-2 text-right align-top">{currencySymbol}{(item.quantity * ((item as any).unitPrice || 0)).toFixed(2)}</td>
-                                </tr>
-                            ))}
-                             {[...Array(Math.max(0, 10 - (pageItems?.length || 0)))].map((_, i) => (
-                                <tr key={`blank-${i}`}>
-                                    <td className="border p-2 h-8"></td>
-                                    <td className="border p-2"></td>
                                 </tr>
                             ))}
                         </tbody>
@@ -603,88 +597,89 @@ const InvoicePreviewInternal: FC<InvoicePreviewProps> = ({ invoice, accentColor,
 
   const TemplateComponent = getTemplateComponent();
   
-  useLayoutEffect(() => {
-    if (!isPrint || !containerRef.current || !needsRemeasure) return;
-  
+   useLayoutEffect(() => {
+    if (!isPrint || !needsRemeasure) return;
+
     const measureAndPaginate = () => {
       const container = containerRef.current;
-      if (!container) return;
-  
+      if (!container || !document.body.contains(container)) {
+        // If container isn't in the DOM yet, retry.
+        requestAnimationFrame(measureAndPaginate);
+        return;
+      }
+
+      // Clone just the first page for measurement purposes
+      const firstPage = container.querySelector('[data-element="page-container"]');
+      if (!firstPage) return;
+
       const tempRoot = document.createElement('div');
       tempRoot.style.position = 'absolute';
       tempRoot.style.left = '-9999px';
       tempRoot.style.width = `${container.clientWidth}px`;
       document.body.appendChild(tempRoot);
-  
-      const tempContainer = container.cloneNode(true) as HTMLElement;
-      tempRoot.appendChild(tempContainer);
-  
-      // Use requestAnimationFrame to ensure styles are applied
-      requestAnimationFrame(() => {
-        try {
-          const header = tempContainer.querySelector('[data-element="header"]') as HTMLElement;
-          const clientDetails = tempContainer.querySelector('[data-element="client-details"]') as HTMLElement;
-          const invoiceMeta = tempContainer.querySelector('[data-element="invoice-meta"]') as HTMLElement;
-          const tableHeader = tempContainer.querySelector('[data-element="table-header"]') as HTMLElement;
-          const footerContent = tempContainer.querySelector('[data-element="footer-content"]') as HTMLElement;
-          const allRows = Array.from(tempContainer.querySelectorAll('[data-element="table-row"]')) as HTMLElement[];
-  
-          if (!header || !tableHeader || allRows.length === 0) {
-            setPaginatedItems([invoice.lineItems]);
-            setNeedsRemeasure(false);
-            return;
-          }
-  
-          const headerHeight = header.offsetHeight + (clientDetails?.offsetHeight || 0) + (invoiceMeta?.offsetHeight || 0);
-          const tableHeaderHeight = tableHeader.offsetHeight;
-          const footerHeight = footerContent?.offsetHeight || 150; // Estimate footer height
-  
-          const firstPageAvailableHeight = PAGE_HEIGHT - PAGE_PADDING_TOP - PAGE_PADDING_BOTTOM - headerHeight - tableHeaderHeight;
-          const subsequentPageAvailableHeight = PAGE_HEIGHT - PAGE_PADDING_TOP - PAGE_PADDING_BOTTOM - headerHeight - tableHeaderHeight;
-          
-          let currentPageItems: LineItem[] = [];
-          const pages: LineItem[][] = [currentPageItems];
-          let currentHeight = 0;
-          
-          allRows.forEach((row, index) => {
-            const itemHeight = row.offsetHeight;
-            const isFirstPage = pages.length === 1;
-            const availableHeight = isFirstPage ? firstPageAvailableHeight : subsequentPageAvailableHeight;
-  
-            if (currentHeight + itemHeight > availableHeight) {
-                // Before creating a new page, check if the footer can fit on the current page
-                if (isFirstPage && currentHeight + footerHeight <= firstPageAvailableHeight) {
-                    // It fits, so we don't break yet, just continue and let the footer render
-                } else if (!isFirstPage && currentHeight + footerHeight <= subsequentPageAvailableHeight) {
-                   // It fits, so we don't break yet
-                }
-                else {
-                    // It doesn't fit, create a new page
-                    currentPageItems = [invoice.lineItems[index]];
-                    pages.push(currentPageItems);
-                    currentHeight = itemHeight;
-                    return; // Continue to next item
-                }
-            }
+
+      try {
+        const tempContainer = firstPage.cloneNode(true) as HTMLElement;
+        tempRoot.appendChild(tempContainer);
+        
+        // Let browser render the cloned content
+        requestAnimationFrame(() => {
+            const header = tempContainer.querySelector('[data-element="header"]') as HTMLElement;
+            const clientDetails = tempContainer.querySelector('[data-element="client-details"]') as HTMLElement;
+            const invoiceMeta = tempContainer.querySelector('[data-element="invoice-meta"]') as HTMLElement;
+            const categoryDetails = tempContainer.querySelector('[data-element="category-details"]') as HTMLElement;
+            const tableHeader = tempContainer.querySelector('[data-element="table-header"]') as HTMLElement;
+            const allRows = Array.from(tempContainer.querySelectorAll('[data-element="table-row"]')) as HTMLElement[];
             
-            currentPageItems.push(invoice.lineItems[index]);
-            currentHeight += itemHeight;
-          });
-          
-          setPaginatedItems(pages.filter(p => p.length > 0));
-        } finally {
-            setNeedsRemeasure(false);
-            if (document.body.contains(tempRoot)) {
-                document.body.removeChild(tempRoot);
+            if (!header || !tableHeader || allRows.length === 0) {
+              setNeedsRemeasure(false);
+              document.body.removeChild(tempRoot);
+              return;
             }
-        }
-      });
+
+            const headerHeight = header.offsetHeight + (clientDetails?.offsetHeight || 0) + (invoiceMeta?.offsetHeight || 0) + (categoryDetails?.offsetHeight || 0);
+            const tableHeaderHeight = tableHeader.offsetHeight;
+            const footerHeight = 250; // Estimate footer height
+
+            const firstPageAvailableHeight = PAGE_HEIGHT - PAGE_PADDING_TOP - PAGE_PADDING_BOTTOM - headerHeight - tableHeaderHeight;
+            const subsequentPageAvailableHeight = PAGE_HEIGHT - PAGE_PADDING_TOP - PAGE_PADDING_BOTTOM - headerHeight - tableHeaderHeight;
+
+            let pages: LineItem[][] = [];
+            let currentPageItems: LineItem[] = [];
+            let currentHeight = 0;
+
+            allRows.forEach((row, index) => {
+                const itemHeight = row.offsetHeight;
+                const isFirstPage = pages.length === 0;
+                const availableHeight = isFirstPage ? firstPageAvailableHeight : subsequentPageAvailableHeight;
+                
+                if (currentHeight + itemHeight > availableHeight) {
+                    pages.push(currentPageItems);
+                    currentPageItems = [];
+                    currentHeight = 0;
+                }
+                
+                currentPageItems.push(invoice.lineItems[index]);
+                currentHeight += itemHeight;
+            });
+
+            pages.push(currentPageItems);
+
+            setPaginatedItems(pages.filter(p => p.length > 0));
+            setNeedsRemeasure(false);
+        });
+
+      } finally {
+        // Clean up asynchronously to be safe
+        setTimeout(() => {
+          if (document.body.contains(tempRoot)) {
+            document.body.removeChild(tempRoot);
+          }
+        }, 100);
+      }
     };
-  
-    // Debounce the measurement to avoid excessive re-renders
-    const timer = setTimeout(measureAndPaginate, 150);
-    return () => clearTimeout(timer);
-  
+
+    measureAndPaginate();
   }, [serializedInvoice, isPrint, needsRemeasure, TemplateComponent, invoice]);
 
 
@@ -708,7 +703,7 @@ const InvoicePreviewInternal: FC<InvoicePreviewProps> = ({ invoice, accentColor,
     return (
       <div id={id} ref={containerRef}>
         {itemsToRender.map((pageItems, pageIndex) => (
-          <div key={pageIndex} className={pageIndex < itemsToRender.length - 1 ? "page-break-after" : ""}>
+          <div key={pageIndex} data-element="page-container" className={pageIndex < itemsToRender.length - 1 ? "page-break-after" : ""}>
              <TemplateComponent
                 {...commonProps}
                 pageItems={pageItems}
@@ -725,12 +720,14 @@ const InvoicePreviewInternal: FC<InvoicePreviewProps> = ({ invoice, accentColor,
   return (
     <Card id={id} className="w-full shadow-lg rounded-xl overflow-hidden print-hide hover:shadow-primary/20 transition-shadow" style={{backgroundColor: backgroundColor}}>
       <CardContent className="p-0" style={{color: textColor}}>
-          <TemplateComponent
-            {...commonProps}
-            pageItems={invoice.lineItems}
-            pageIndex={0}
-            totalPages={1}
-          />
+          <div data-element="page-container">
+            <TemplateComponent
+              {...commonProps}
+              pageItems={invoice.lineItems}
+              pageIndex={0}
+              totalPages={1}
+            />
+          </div>
       </CardContent>
     </Card>
   );
