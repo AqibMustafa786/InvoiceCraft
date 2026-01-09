@@ -143,7 +143,7 @@ export const allTemplates: Template[] = [
   {
     id: 'plumbing-5',
     name: 'Bold Grid Plumbing',
-    thumbnailUrl: '/templates/invoicepagetemplates/BoldGridPlumbing.png',
+    thumbnailUrl: '/templates/invoicepagetemplates/plumbing5.png',
     category: 'Plumbing',
     toolType: 'Invoice',
     description: 'A bold, grid-based layout for clear and organized billing.',
