@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useLayoutEffect, useRef, useEffect, FC, useMemo } from 'react';
@@ -638,64 +637,71 @@ const InvoicePreviewInternal: FC<InvoicePreviewProps> = ({ invoice, accentColor,
     if (!isPrint || !containerRef.current || !needsRemeasure) return;
 
     const measureAndPaginate = () => {
-      const container = containerRef.current!;
-      const tempRoot = document.createElement('div');
-      tempRoot.style.position = 'absolute';
-      tempRoot.style.left = '-9999px';
-      tempRoot.style.width = `${container.clientWidth}px`;
-      document.body.appendChild(tempRoot);
+        const container = containerRef.current;
+        if (!container) return;
 
-      Promise.resolve().then(() => {
-        const tempContainer = container.cloneNode(true) as HTMLElement;
-        tempRoot.appendChild(tempContainer);
-        
-        const header = tempContainer.querySelector('[data-element="header"]') as HTMLElement;
-        const tableHeader = tempContainer.querySelector('[data-element="table-header"]') as HTMLElement;
-        const footer = tempContainer.querySelector('[data-element="footer"]') as HTMLElement;
-        const allRows = Array.from(tempContainer.querySelectorAll('[data-element="table-row"]')) as HTMLElement[];
-        
-        if (!header || !tableHeader || allRows.length === 0) {
-            document.body.removeChild(tempRoot);
-            return;
-        }
+        const tempRoot = document.createElement('div');
+        tempRoot.style.position = 'absolute';
+        tempRoot.style.left = '-9999px';
+        tempRoot.style.width = `${container.clientWidth}px`;
+        document.body.appendChild(tempRoot);
 
-        const headerHeight = header.offsetHeight;
-        const tableHeaderHeight = tableHeader.offsetHeight;
-        const footerHeight = footer?.offsetHeight || 0;
-        
-        // Use a consistent header height for all pages in pagination calculation
-        const pageHeaderHeight = header.offsetHeight + 
-                               (tempContainer.querySelector('[data-element="client-details"]')?.clientHeight || 0) + 
-                               (tempContainer.querySelector('[data-element="invoice-meta"]')?.clientHeight || 0) + 20; // 20 for margins
+        Promise.resolve().then(() => {
+            const tempContainer = container.cloneNode(true) as HTMLElement;
+            tempRoot.appendChild(tempContainer);
+            
+            const header = tempContainer.querySelector('[data-element="header"]') as HTMLElement;
+            const tableHeader = tempContainer.querySelector('[data-element="table-header"]') as HTMLElement;
+            const footer = tempContainer.querySelector('[data-element="footer"]') as HTMLElement;
+            const allRows = Array.from(tempContainer.querySelectorAll('[data-element="table-row"]')) as HTMLElement[];
+            
+            if (!header || !tableHeader || allRows.length === 0) {
+                if (document.body.contains(tempRoot)) {
+                    document.body.removeChild(tempRoot);
+                }
+                return;
+            }
 
-        const firstPageAvailableHeight = AVAILABLE_HEIGHT - pageHeaderHeight - footerHeight;
-        const subsequentPageAvailableHeight = AVAILABLE_HEIGHT - pageHeaderHeight - tableHeaderHeight - footerHeight;
+            const headerHeight = header.offsetHeight;
+            const clientDetailsHeight = (tempContainer.querySelector('[data-element="client-details"]') as HTMLElement)?.offsetHeight || 0;
+            const metaHeight = (tempContainer.querySelector('[data-element="invoice-meta"]') as HTMLElement)?.offsetHeight || 0;
+            const tableHeaderHeight = tableHeader.offsetHeight;
+            const footerHeight = footer?.offsetHeight || 0;
 
-        let currentPageItems: LineItem[] = [];
-        const pages: LineItem[][] = [currentPageItems];
-        let currentHeight = 0;
+            const firstPageHeaderTotalHeight = headerHeight + clientDetailsHeight + metaHeight + 40; // Approx margins
+            const subsequentPageHeaderTotalHeight = headerHeight + 20; // Approx margins
 
-        allRows.forEach((row, index) => {
-            const itemHeight = row.offsetHeight;
-            const availableHeight = pages.length === 1 ? firstPageAvailableHeight : subsequentPageAvailableHeight;
+            const firstPageAvailableHeight = AVAILABLE_HEIGHT - firstPageHeaderTotalHeight - tableHeaderHeight - footerHeight;
+            const subsequentPageAvailableHeight = AVAILABLE_HEIGHT - subsequentPageHeaderTotalHeight - tableHeaderHeight - footerHeight;
+            
+            let currentPageItems: LineItem[] = [];
+            const pages: LineItem[][] = [currentPageItems];
+            let currentHeight = 0;
 
-            if (currentHeight + itemHeight > availableHeight) {
-                currentPageItems = [invoice.lineItems[index]];
-                pages.push(currentPageItems);
-                currentHeight = itemHeight;
-            } else {
-                currentPageItems.push(invoice.lineItems[index]);
-                currentHeight += itemHeight;
+            allRows.forEach((row, index) => {
+                const itemHeight = row.offsetHeight;
+                const isFirstPage = pages.length === 1;
+                const availableHeight = isFirstPage ? firstPageAvailableHeight : subsequentPageAvailableHeight;
+                
+                if (currentHeight + itemHeight > availableHeight) {
+                    currentPageItems = [invoice.lineItems[index]];
+                    pages.push(currentPageItems);
+                    currentHeight = itemHeight;
+                } else {
+                    currentPageItems.push(invoice.lineItems[index]);
+                    currentHeight += itemHeight;
+                }
+            });
+            
+            setPaginatedItems(pages.filter(p => p.length > 0));
+            setNeedsRemeasure(false);
+            if (document.body.contains(tempRoot)) {
+                document.body.removeChild(tempRoot);
             }
         });
-        
-        setPaginatedItems(pages.filter(p => p.length > 0));
-        setNeedsRemeasure(false);
-        document.body.removeChild(tempRoot);
-      });
     };
     
-    const timer = setTimeout(measureAndPaginate, 50);
+    const timer = setTimeout(measureAndPaginate, 100);
     return () => clearTimeout(timer);
 
   }, [serializedInvoice, isPrint, needsRemeasure, TemplateComponent, invoice]);
