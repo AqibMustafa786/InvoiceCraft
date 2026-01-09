@@ -39,7 +39,8 @@ export function TemplateCard({ template, onPreview }: TemplateCardProps) {
       variants={itemVariants}
       whileHover={{ y: -5 }}
       transition={{ type: 'spring', stiffness: 300, damping: 20 }}
-      className="group relative block overflow-hidden rounded-lg border bg-card shadow-sm"
+      className="group relative block overflow-hidden rounded-lg border bg-card shadow-sm cursor-pointer"
+      onClick={() => onPreview(template)}
     >
       <div className="relative aspect-[3/4] overflow-hidden">
         <Image
@@ -54,9 +55,9 @@ export function TemplateCard({ template, onPreview }: TemplateCardProps) {
           className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100"
         ></div>
         <div className="absolute inset-0 flex items-center justify-center opacity-0 transition-opacity duration-300 group-hover:opacity-100">
-          <Button onClick={() => onPreview(template)} variant="secondary" size="sm">
+          <Button variant="secondary" size="sm" className="pointer-events-none">
             <Eye className="mr-2 h-4 w-4" />
-            Preview
+            Select
           </Button>
         </div>
       </div>
