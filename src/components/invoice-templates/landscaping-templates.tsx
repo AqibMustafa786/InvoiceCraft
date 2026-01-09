@@ -1,3 +1,4 @@
+
 'use client';
 
 import React from 'react';
@@ -44,7 +45,7 @@ export const LandscapingDetails: React.FC<{ invoice: Invoice, t: any }> = ({ inv
     const { landscaping } = invoice;
     return (
         <section className="my-4 text-xs">
-            <p className="font-bold text-gray-500 mb-2 border-b">{(t.landscapingSpecifics || 'Landscaping Specifics')}</p>
+            <p className="font-bold text-gray-500 mb-2 border-b">{t.landscapingSpecifics || 'Landscaping Specifics'}</p>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-x-4 gap-y-1">
                 <p className="col-span-full"><span className="font-semibold text-gray-600">{(t.service || 'Service')}:</span> {landscaping.serviceType}</p>
                 {landscaping.lawnSquareFootage && <p><span className="font-semibold text-gray-600">{(t.lawnSqFt || 'Lawn Sq Ft')}:</span> {landscaping.lawnSquareFootage}</p>}
