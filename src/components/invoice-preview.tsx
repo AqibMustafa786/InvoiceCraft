@@ -28,6 +28,7 @@ import { TransportationTemplate1, TransportationTemplate2, TransportationTemplat
 import { RentalTemplate1, RentalTemplate2, RentalTemplate3, RentalTemplate4, RentalTemplate5 } from './invoice-templates/rental-templates';
 import { toNumberSafe, toDateSafe } from '@/lib/utils';
 import { CategorySpecificDetails } from './invoice-templates/category-specific-details';
+import { GenericTemplate1, GenericTemplate2, GenericTemplate3, GenericTemplate4, GenericTemplate5 } from './document-templates/generic-templates';
 
 
 // --- PROPS ---
@@ -440,12 +441,12 @@ const UsaTemplatePage: FC<PageProps> = ({ pageItems, pageIndex, totalPages, ...c
                         </div>
                     </div>
                 </header>
-                 <section className="mb-6 text-xs" data-element="client-details">
-                    <div className="grid grid-cols-[max-content_1fr] gap-x-4 gap-y-1 p-3 bg-gray-50 rounded-md">
-                        <span className="font-bold text-gray-600">Billed To:</span><span className="font-medium">{client.name}</span>
-                        {client.companyName && <><span className="font-bold text-gray-600">Company:</span><span className="font-medium">{client.companyName}</span></>}
-                        <span className="font-bold text-gray-600">Address:</span><span className="whitespace-pre-line font-medium">{client.address}</span>
-                        <span className="font-bold text-gray-600">PO Number:</span><span className="font-medium">{invoice.poNumber || 'N/A'}</span>
+                 <section className="mb-8 text-xs" data-element="client-details">
+                    <div className="p-3 bg-gray-50 rounded-md">
+                        <p className="font-bold text-gray-600 border-b mb-1">Bill To</p>
+                        <p>{client.name}</p>
+                        <p>{client.address}</p>
+                        {invoice.poNumber && <p className="mt-2"><span className="font-bold">PO #: </span>{invoice.poNumber}</p>}
                     </div>
                 </section>
                 <CustomFieldsPreview fields={invoice.customFields} />
