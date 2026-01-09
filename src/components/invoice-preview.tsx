@@ -257,7 +257,6 @@ const DefaultTemplatePage: FC<PageProps> = ({ pageItems, pageIndex, totalPages, 
                         {client.phone && <p className="text-sm">{client.phone}</p>}
                         {client.email && <p className="text-sm">{client.email}</p>}
                         {client.shippingAddress && <p className="text-sm mt-2"><span className="font-bold">Ship To:</span><br/>{client.shippingAddress}</p>}
-                        {client.projectLocation && <p className="text-sm mt-2"><span className="font-bold">Project Location:</span><br/>{client.projectLocation}</p>}
                     </div>
                     <div className="text-right space-y-1">
                         <p className="text-sm font-semibold text-gray-500">{((t.invoiceDate as string) || 'Invoice Date').toUpperCase()}</p>
