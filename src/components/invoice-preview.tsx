@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useLayoutEffect, useRef, useEffect, FC, useMemo } from 'react';
@@ -78,18 +77,7 @@ const safeFormat = (date: Date | string | number | null | undefined, formatStrin
 // --- SHARED COMPONENTS ---
 const CustomFieldsPreview: FC<{fields?: CustomField[]}> = ({ fields }) => {
   if (!fields || fields.length === 0) return null;
-  return (
-    <section className="my-4 text-xs" data-element="custom-fields">
-      <p className="font-bold text-gray-500 mb-2 border-b">Additional Information</p>
-      <div className="grid grid-cols-2 gap-x-4 gap-y-1">
-        {fields.map(field => (
-          field.label && field.value && (
-            <p key={field.id}><span className="font-semibold text-gray-600">{field.label}:</span> {field.value}</p>
-          )
-        ))}
-      </div>
-    </section>
-  )
+  return null;
 }
 
 const ItemsTable: FC<{ items: LineItem[], t: any, currencySymbol: string, accentColor?: string, headerStyle?: 'filled' | 'underline' }> = ({ items, t, currencySymbol, accentColor, headerStyle = 'filled' }) => (
@@ -458,7 +446,7 @@ const UsaTemplatePage: FC<PageProps> = ({ pageItems, pageIndex, totalPages, ...c
                         <tbody>
                             {pageItems?.filter(Boolean).map((item) => (
                                 <tr key={item.id} data-element="table-row">
-                                    <td className="border p-2 align-top h-8 whitespace-pre-line pl-6">{item.name}</td>
+                                    <td className="border p-2 align-top h-8 whitespace-pre-line">{item.name}{item.description && `\n${item.description}`}</td>
                                     <td className="border p-2 text-right align-top">{currencySymbol}{(item.quantity * ((item as any).unitPrice || 0)).toFixed(2)}</td>
                                 </tr>
                             ))}
@@ -563,7 +551,7 @@ const templates: Record<string, FC<PageProps>> = {
   'it-3': ITTemplate3,
   'it-4': ITTemplate4,
   'it-5': ITTemplate5,
-  'freelance-1': ITTemplate1, // Reusing IT template for freelance
+  'freelance-1': ITTemplate1,
   'consulting-1': ConsultingTemplate1,
   'consulting-2': ConsultingTemplate2,
   'consulting-3': ConsultingTemplate3,

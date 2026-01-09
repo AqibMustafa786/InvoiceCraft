@@ -103,6 +103,15 @@ export const allTemplates: Template[] = [
     description: 'Features a colored side panel for a touch of branding while keeping the main content area clean.',
     useCases: ['General Contractors', 'Commercial Construction'],
   },
+  {
+    id: 'construction-5',
+    name: 'Bold Grid',
+    thumbnailUrl: '/templates/invoicepagetemplates/construction5.png',
+    category: 'Construction',
+    toolType: 'Invoice',
+    description: 'A grid-based layout for clear construction invoices.',
+    useCases: ['Construction', 'Building', 'Contracting'],
+  },
    // --- Plumbing Invoice Templates ---
   {
     id: 'plumbing-1',
