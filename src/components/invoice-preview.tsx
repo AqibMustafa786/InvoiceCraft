@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useLayoutEffect, useRef, useEffect, FC, useMemo } from 'react';
@@ -115,7 +116,7 @@ const ItemsTable: FC<{ items: LineItem[], t: any, currencySymbol: string, accent
 const InvoiceFooter: FC<{
     invoice: Invoice, t: any, subtotal: number, taxAmount: number, discountAmount: number, total: number, currencySymbol: string, accentColor: string, balanceDue: number
 }> = ({ invoice, t, subtotal, taxAmount, discountAmount, total, currencySymbol, accentColor, balanceDue }) => (
-    <div className="avoid-page-break">
+    <div className="avoid-page-break" data-element="footer-content">
         <section className="flex justify-end mt-8">
             <div className="w-full max-w-xs space-y-2">
                 <div className="flex justify-between text-sm">
@@ -178,7 +179,7 @@ const DefaultTemplatePage: FC<PageProps> = ({ pageItems, pageIndex, totalPages, 
     const { invoice, t, currencySymbol, accentColor } = commonProps;
     const { business, client } = invoice;
     return (
-        <div className={`p-8 md:p-10 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{minHeight: '1056px', fontFamily: invoice.fontFamily, fontSize: `${invoice.fontSize}px`, backgroundColor: commonProps.backgroundColor, color: commonProps.textColor }}>
+        <div className={`p-8 md:p-10 flex flex-col`} style={{minHeight: '1056px', fontFamily: invoice.fontFamily, fontSize: `${invoice.fontSize}px`, backgroundColor: commonProps.backgroundColor, color: commonProps.textColor }}>
             <div data-element="page-content" className="flex-grow">
                 <header className="flex justify-between items-start mb-10" data-element="header">
                     <div>
@@ -232,7 +233,7 @@ const ModernTemplatePage: FC<PageProps> = ({ pageItems, pageIndex, totalPages, .
     const { invoice, t, currencySymbol, accentColor } = commonProps;
     const { business, client } = invoice;
     return (
-     <div className={`p-8 md:p-10 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{minHeight: '1056px', fontFamily: invoice.fontFamily, fontSize: `${invoice.fontSize}px`, backgroundColor: commonProps.backgroundColor, color: commonProps.textColor }}>
+     <div className={`p-8 md:p-10 flex flex-col`} style={{minHeight: '1056px', fontFamily: invoice.fontFamily, fontSize: `${invoice.fontSize}px`, backgroundColor: commonProps.backgroundColor, color: commonProps.textColor }}>
         <div data-element="page-content" className="flex-grow">
             <div className="flex justify-between items-center pb-4 border-b-4" style={{borderColor: accentColor}} data-element="header">
                  <div>
@@ -293,7 +294,7 @@ const MinimalistTemplatePage: FC<PageProps> = ({ pageItems, pageIndex, totalPage
     const { invoice, t } = commonProps;
     const { business, client } = invoice;
     return (
-    <div className={`p-12 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{minHeight: '1056px', fontFamily: invoice.fontFamily, fontSize: `${invoice.fontSize}px`, backgroundColor: commonProps.backgroundColor, color: commonProps.textColor }}>
+    <div className={`p-12 flex flex-col`} style={{minHeight: '1056px', fontFamily: invoice.fontFamily, fontSize: `${invoice.fontSize}px`, backgroundColor: commonProps.backgroundColor, color: commonProps.textColor }}>
         <div data-element="page-content" className="flex-grow">
             <header data-element="header" className="mb-12">
                 <div className="flex justify-between items-start">
@@ -339,7 +340,7 @@ const CreativeTemplatePage: FC<PageProps> = ({ pageItems, pageIndex, totalPages,
     const { invoice, t, accentColor } = commonProps;
     const { business, client } = invoice;
     return (
-    <div className={`p-8 relative flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{minHeight: '1056px', fontFamily: invoice.fontFamily, fontSize: `${invoice.fontSize}px`, backgroundColor: commonProps.backgroundColor, color: commonProps.textColor }}>
+    <div className={`p-8 relative flex flex-col`} style={{minHeight: '1056px', fontFamily: invoice.fontFamily, fontSize: `${invoice.fontSize}px`, backgroundColor: commonProps.backgroundColor, color: commonProps.textColor }}>
         <div className="absolute top-0 left-0 w-full h-48" style={{backgroundColor: accentColor, opacity: 0.1}}></div>
         <div data-element="page-content" className="flex-grow z-10">
             <header data-element="header" className="flex justify-between items-center mb-12">
@@ -373,7 +374,7 @@ const ElegantTemplatePage: FC<PageProps> = ({ pageItems, pageIndex, totalPages, 
     const { invoice, t } = commonProps;
     const { business, client } = invoice;
     return (
-    <div className={`p-10 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{minHeight: '1056px', fontFamily: invoice.fontFamily, fontSize: `${invoice.fontSize}px`, backgroundColor: commonProps.backgroundColor, color: commonProps.textColor }}>
+    <div className={`p-10 flex flex-col`} style={{minHeight: '1056px', fontFamily: invoice.fontFamily, fontSize: `${invoice.fontSize}px`, backgroundColor: commonProps.backgroundColor, color: commonProps.textColor }}>
         <div data-element="page-content" className="flex-grow">
             <header data-element="header" className="text-center mb-16">
                 {business.logoUrl && <Image src={business.logoUrl} alt="logo" width={100} height={50} className="mx-auto mb-4 object-contain" />}
@@ -381,7 +382,7 @@ const ElegantTemplatePage: FC<PageProps> = ({ pageItems, pageIndex, totalPages, 
                 <p className="text-xs text-gray-500 mt-2 tracking-widest whitespace-pre-line">{business.address} | {business.phone}</p>
             </header>
             <div className="w-full h-px bg-gray-300 mb-10"></div>
-            <section data-element="meta" className="flex justify-between items-center mb-10 text-sm">
+            <section data-element="client-details" className="flex justify-between items-center mb-10 text-sm">
                 <div>
                     <p className="font-bold">Billed to: {client.name}</p>
                     {client.companyName && <p>{client.companyName}</p>}
@@ -407,7 +408,7 @@ const UsaTemplatePage: FC<PageProps> = ({ pageItems, pageIndex, totalPages, ...c
     const { business, client } = invoice;
 
     return (
-        <div className={`invoice-page font-sans text-gray-800 ${pageIndex < totalPages - 1 ? "page-break" : ""}`} style={{fontFamily: invoice.fontFamily, fontSize: `${invoice.fontSize}px`, backgroundColor: commonProps.backgroundColor, color: commonProps.textColor }}>
+        <div className={`invoice-page font-sans text-gray-800`} style={{fontFamily: invoice.fontFamily, fontSize: `${invoice.fontSize}px`, backgroundColor: commonProps.backgroundColor, color: commonProps.textColor }}>
             <div className="p-8 m-4 border-2" style={{ borderColor: accentColor }}>
                 <header className="grid grid-cols-2 gap-10 mb-8" data-element="header">
                      <div>
@@ -458,41 +459,10 @@ const UsaTemplatePage: FC<PageProps> = ({ pageItems, pageIndex, totalPages, ...c
                             ))}
                         </tbody>
                          <tfoot className="text-sm font-medium">
-                            <tr>
-                                <td className="border p-2 text-right font-bold">Subtotal</td>
-                                <td className="border p-2 text-right">{currencySymbol}{subtotal.toFixed(2)}</td>
-                            </tr>
-                            {invoice.summary.taxPercentage > 0 && <tr>
-                                <td className="border p-2 text-right font-bold">Tax ({invoice.summary.taxPercentage}%)</td>
-                                <td className="border p-2 text-right">{currencySymbol}{commonProps.taxAmount.toFixed(2)}</td>
-                            </tr>}
-                            {invoice.summary.discount > 0 && <tr>
-                                <td className="border p-2 text-right font-bold">Discount ({invoice.summary.discount}%)</td>
-                                <td className="border p-2 text-right text-red-600">-{currencySymbol}{commonProps.discountAmount.toFixed(2)}</td>
-                            </tr>}
-                             {(invoice.amountPaid || 0) > 0 && <tr>
-                                <td className="border p-2 text-right font-bold">Amount Paid</td>
-                                <td className="border p-2 text-right text-green-600">-{currencySymbol}{(invoice.amountPaid || 0).toFixed(2)}</td>
-                            </tr>}
-                            <tr className="bg-gray-100 font-bold text-base">
-                                <td className="border p-2 text-right">Total Due</td>
-                                <td className="border p-2 text-right">{currencySymbol}{commonProps.balanceDue.toFixed(2)}</td>
-                            </tr>
+                           {pageIndex === totalPages - 1 && <InvoiceFooter {...commonProps} />}
                         </tfoot>
                     </table>
                 </main>
-                {invoice.paymentInstructions && (
-                    <footer className="mt-8 text-xs" data-element="footer">
-                        <p className="font-bold">Notes:</p>
-                        <p className="text-gray-600 whitespace-pre-line">{invoice.paymentInstructions}</p>
-                    </footer>
-                )}
-                 {invoice.business.ownerSignature && (
-                    <div className="mt-8">
-                        <p className="text-sm font-semibold text-gray-500">Authorized Signature</p>
-                        <Image src={invoice.business.ownerSignature.image} alt="Owner Signature" width={150} height={75} />
-                    </div>
-                )}
             </div>
         </div>
     );
@@ -591,9 +561,9 @@ const templates: Record<string, FC<PageProps>> = {
   'rental-5': RentalTemplate5,
 };
 
-const PAGE_HEIGHT = 1056; // 11 inches at 96 DPI for Letter size
-const PAGE_PADDING = 80; // 40px top + 40px bottom
-const AVAILABLE_HEIGHT = PAGE_HEIGHT - PAGE_PADDING;
+const PAGE_HEIGHT = 1056;
+const PAGE_PADDING_TOP = 80;
+const PAGE_PADDING_BOTTOM = 80;
 
 
 const InvoicePreviewInternal: FC<InvoicePreviewProps> = ({ invoice, accentColor, backgroundColor, textColor, id = 'invoice-preview', isPrint = false }) => {
@@ -635,75 +605,86 @@ const InvoicePreviewInternal: FC<InvoicePreviewProps> = ({ invoice, accentColor,
   
   useLayoutEffect(() => {
     if (!isPrint || !containerRef.current || !needsRemeasure) return;
-
+  
     const measureAndPaginate = () => {
-        const container = containerRef.current;
-        if (!container) return;
-
-        const tempRoot = document.createElement('div');
-        tempRoot.style.position = 'absolute';
-        tempRoot.style.left = '-9999px';
-        tempRoot.style.width = `${container.clientWidth}px`;
-        document.body.appendChild(tempRoot);
-
-        Promise.resolve().then(() => {
-            const tempContainer = container.cloneNode(true) as HTMLElement;
-            tempRoot.appendChild(tempContainer);
-            
-            const header = tempContainer.querySelector('[data-element="header"]') as HTMLElement;
-            const tableHeader = tempContainer.querySelector('[data-element="table-header"]') as HTMLElement;
-            const footer = tempContainer.querySelector('[data-element="footer"]') as HTMLElement;
-            const allRows = Array.from(tempContainer.querySelectorAll('[data-element="table-row"]')) as HTMLElement[];
-            
-            if (!header || !tableHeader || allRows.length === 0) {
-                if (document.body.contains(tempRoot)) {
-                    document.body.removeChild(tempRoot);
+      const container = containerRef.current;
+      if (!container) return;
+  
+      const tempRoot = document.createElement('div');
+      tempRoot.style.position = 'absolute';
+      tempRoot.style.left = '-9999px';
+      tempRoot.style.width = `${container.clientWidth}px`;
+      document.body.appendChild(tempRoot);
+  
+      const tempContainer = container.cloneNode(true) as HTMLElement;
+      tempRoot.appendChild(tempContainer);
+  
+      // Use requestAnimationFrame to ensure styles are applied
+      requestAnimationFrame(() => {
+        try {
+          const header = tempContainer.querySelector('[data-element="header"]') as HTMLElement;
+          const clientDetails = tempContainer.querySelector('[data-element="client-details"]') as HTMLElement;
+          const invoiceMeta = tempContainer.querySelector('[data-element="invoice-meta"]') as HTMLElement;
+          const tableHeader = tempContainer.querySelector('[data-element="table-header"]') as HTMLElement;
+          const footerContent = tempContainer.querySelector('[data-element="footer-content"]') as HTMLElement;
+          const allRows = Array.from(tempContainer.querySelectorAll('[data-element="table-row"]')) as HTMLElement[];
+  
+          if (!header || !tableHeader || allRows.length === 0) {
+            setPaginatedItems([invoice.lineItems]);
+            setNeedsRemeasure(false);
+            return;
+          }
+  
+          const headerHeight = header.offsetHeight + (clientDetails?.offsetHeight || 0) + (invoiceMeta?.offsetHeight || 0);
+          const tableHeaderHeight = tableHeader.offsetHeight;
+          const footerHeight = footerContent?.offsetHeight || 150; // Estimate footer height
+  
+          const firstPageAvailableHeight = PAGE_HEIGHT - PAGE_PADDING_TOP - PAGE_PADDING_BOTTOM - headerHeight - tableHeaderHeight;
+          const subsequentPageAvailableHeight = PAGE_HEIGHT - PAGE_PADDING_TOP - PAGE_PADDING_BOTTOM - headerHeight - tableHeaderHeight;
+          
+          let currentPageItems: LineItem[] = [];
+          const pages: LineItem[][] = [currentPageItems];
+          let currentHeight = 0;
+          
+          allRows.forEach((row, index) => {
+            const itemHeight = row.offsetHeight;
+            const isFirstPage = pages.length === 1;
+            const availableHeight = isFirstPage ? firstPageAvailableHeight : subsequentPageAvailableHeight;
+  
+            if (currentHeight + itemHeight > availableHeight) {
+                // Before creating a new page, check if the footer can fit on the current page
+                if (isFirstPage && currentHeight + footerHeight <= firstPageAvailableHeight) {
+                    // It fits, so we don't break yet, just continue and let the footer render
+                } else if (!isFirstPage && currentHeight + footerHeight <= subsequentPageAvailableHeight) {
+                   // It fits, so we don't break yet
                 }
-                return;
-            }
-
-            const headerHeight = header.offsetHeight;
-            const clientDetailsHeight = (tempContainer.querySelector('[data-element="client-details"]') as HTMLElement)?.offsetHeight || 0;
-            const metaHeight = (tempContainer.querySelector('[data-element="invoice-meta"]') as HTMLElement)?.offsetHeight || 0;
-            const tableHeaderHeight = tableHeader.offsetHeight;
-            const footerHeight = footer?.offsetHeight || 0;
-
-            const firstPageHeaderTotalHeight = headerHeight + clientDetailsHeight + metaHeight + 40; // Approx margins
-            const subsequentPageHeaderTotalHeight = headerHeight + 20; // Approx margins
-
-            const firstPageAvailableHeight = AVAILABLE_HEIGHT - firstPageHeaderTotalHeight - tableHeaderHeight - footerHeight;
-            const subsequentPageAvailableHeight = AVAILABLE_HEIGHT - subsequentPageHeaderTotalHeight - tableHeaderHeight - footerHeight;
-            
-            let currentPageItems: LineItem[] = [];
-            const pages: LineItem[][] = [currentPageItems];
-            let currentHeight = 0;
-
-            allRows.forEach((row, index) => {
-                const itemHeight = row.offsetHeight;
-                const isFirstPage = pages.length === 1;
-                const availableHeight = isFirstPage ? firstPageAvailableHeight : subsequentPageAvailableHeight;
-                
-                if (currentHeight + itemHeight > availableHeight) {
+                else {
+                    // It doesn't fit, create a new page
                     currentPageItems = [invoice.lineItems[index]];
                     pages.push(currentPageItems);
                     currentHeight = itemHeight;
-                } else {
-                    currentPageItems.push(invoice.lineItems[index]);
-                    currentHeight += itemHeight;
+                    return; // Continue to next item
                 }
-            });
+            }
             
-            setPaginatedItems(pages.filter(p => p.length > 0));
+            currentPageItems.push(invoice.lineItems[index]);
+            currentHeight += itemHeight;
+          });
+          
+          setPaginatedItems(pages.filter(p => p.length > 0));
+        } finally {
             setNeedsRemeasure(false);
             if (document.body.contains(tempRoot)) {
                 document.body.removeChild(tempRoot);
             }
-        });
+        }
+      });
     };
-    
-    const timer = setTimeout(measureAndPaginate, 100);
+  
+    // Debounce the measurement to avoid excessive re-renders
+    const timer = setTimeout(measureAndPaginate, 150);
     return () => clearTimeout(timer);
-
+  
   }, [serializedInvoice, isPrint, needsRemeasure, TemplateComponent, invoice]);
 
 
@@ -722,18 +703,19 @@ const InvoicePreviewInternal: FC<InvoicePreviewProps> = ({ invoice, accentColor,
   };
   
   if (isPrint) {
-    const itemsToRender = needsRemeasure ? [invoice.lineItems] : paginatedItems;
+    const itemsToRender = needsRemeasure ? [invoice.lineItems] : (paginatedItems.length > 0 ? paginatedItems : [[]]);
     
     return (
       <div id={id} ref={containerRef}>
         {itemsToRender.map((pageItems, pageIndex) => (
-          <TemplateComponent
-            key={pageIndex}
-            {...commonProps}
-            pageItems={pageItems}
-            pageIndex={pageIndex}
-            totalPages={itemsToRender.length}
-          />
+          <div key={pageIndex} className={pageIndex < itemsToRender.length - 1 ? "page-break-after" : ""}>
+             <TemplateComponent
+                {...commonProps}
+                pageItems={pageItems}
+                pageIndex={pageIndex}
+                totalPages={itemsToRender.length}
+              />
+          </div>
         ))}
       </div>
     );
