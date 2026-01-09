@@ -8,60 +8,24 @@ import { Separator } from '@/components/ui/separator';
 import Image from 'next/image';
 import { format, isValid } from 'date-fns';
 import locales from '@/lib/locales';
-import {
-  ConstructionTemplate1, ConstructionTemplate2, ConstructionTemplate3, ConstructionTemplate4, ConstructionTemplate5
-} from './invoice-templates/construction-templates';
-import {
-  PlumbingTemplate1, PlumbingTemplate2, PlumbingTemplate3, PlumbingTemplate4, PlumbingTemplate5
-} from './invoice-templates/plumbing-templates';
-import {
-  ElectricalTemplate1, ElectricalTemplate2, ElectricalTemplate3, ElectricalTemplate4, ElectricalTemplate5
-} from './invoice-templates/electrical-templates';
-import {
-  HVACTemplate1, HVACTemplate2, HVACTemplate3, HVACTemplate4, HVACTemplate5
-} from './invoice-templates/hvac-templates';
-import {
-  RoofingTemplate1, RoofingTemplate2, RoofingTemplate3, RoofingTemplate4, RoofingTemplate5
-} from './invoice-templates/roofing-templates';
-import {
-  LandscapingTemplate1, LandscapingTemplate2, LandscapingTemplate3, LandscapingTemplate4, LandscapingTemplate5
-} from './invoice-templates/landscaping-templates';
-import {
-  CleaningTemplate1, CleaningTemplate2, CleaningTemplate3, CleaningTemplate4, CleaningTemplate5
-} from './invoice-templates/cleaning-templates';
-import {
-  AutoRepairTemplate1, AutoRepairTemplate2, AutoRepairTemplate3, AutoRepairTemplate4, AutoRepairTemplate5
-} from './invoice-templates/auto-repair-templates';
-import {
-    ITTemplate1, ITTemplate2, ITTemplate3, ITTemplate4, ITTemplate5
-} from './invoice-templates/it-freelance-templates';
-import {
-  ConsultingTemplate1, ConsultingTemplate2, ConsultingTemplate3, ConsultingTemplate4, ConsultingTemplate5
-} from './invoice-templates/consulting-templates';
-import {
-  LegalTemplate1, LegalTemplate2, LegalTemplate3, LegalTemplate4, LegalTemplate5
-} from './invoice-templates/legal-templates';
-import {
-  MedicalTemplate1, MedicalTemplate2, MedicalTemplate3, MedicalTemplate4, MedicalTemplate5
-} from './invoice-templates/medical-templates';
-import {
-  EcommerceTemplate1
-} from './invoice-templates/ecommerce-templates';
-import {
-  RetailTemplate1
-} from './invoice-templates/retail-templates';
-import {
-  PhotographyTemplate1, PhotographyTemplate2, PhotographyTemplate3, PhotographyTemplate4, PhotographyTemplate5
-} from './invoice-templates/photography-templates';
-import {
-  RealEstateTemplate1, RealEstateTemplate2, RealEstateTemplate3, RealEstateTemplate4, RealEstateTemplate5
-} from './invoice-templates/real-estate-templates';
-import {
-  TransportationTemplate1, TransportationTemplate2, TransportationTemplate3, TransportationTemplate4, TransportationTemplate5
-} from './invoice-templates/transportation-templates';
-import {
-  RentalTemplate1, RentalTemplate2, RentalTemplate3, RentalTemplate4, RentalTemplate5
-} from './invoice-templates/rental-templates';
+import { ConstructionTemplate1, ConstructionTemplate2, ConstructionTemplate3, ConstructionTemplate4, ConstructionTemplate5 } from './invoice-templates/construction-templates';
+import { PlumbingTemplate1, PlumbingTemplate2, PlumbingTemplate3, PlumbingTemplate4, PlumbingTemplate5 } from './invoice-templates/plumbing-templates';
+import { ElectricalTemplate1, ElectricalTemplate2, ElectricalTemplate3, ElectricalTemplate4, ElectricalTemplate5 } from './invoice-templates/electrical-templates';
+import { HVACTemplate1, HVACTemplate2, HVACTemplate3, HVACTemplate4, HVACTemplate5 } from './invoice-templates/hvac-templates';
+import { RoofingTemplate1, RoofingTemplate2, RoofingTemplate3, RoofingTemplate4, RoofingTemplate5 } from './invoice-templates/roofing-templates';
+import { LandscapingTemplate1, LandscapingTemplate2, LandscapingTemplate3, LandscapingTemplate4, LandscapingTemplate5 } from './invoice-templates/landscaping-templates';
+import { CleaningTemplate1, CleaningTemplate2, CleaningTemplate3, CleaningTemplate4, CleaningTemplate5 } from './invoice-templates/cleaning-templates';
+import { AutoRepairTemplate1, AutoRepairTemplate2, AutoRepairTemplate3, AutoRepairTemplate4, AutoRepairTemplate5 } from './invoice-templates/auto-repair-templates';
+import { ITTemplate1, ITTemplate2, ITTemplate3, ITTemplate4, ITTemplate5 } from './invoice-templates/it-freelance-templates';
+import { ConsultingTemplate1, ConsultingTemplate2, ConsultingTemplate3, ConsultingTemplate4, ConsultingTemplate5 } from './invoice-templates/consulting-templates';
+import { LegalTemplate1, LegalTemplate2, LegalTemplate3, LegalTemplate4, LegalTemplate5 } from './invoice-templates/legal-templates';
+import { MedicalTemplate1, MedicalTemplate2, MedicalTemplate3, MedicalTemplate4, MedicalTemplate5 } from './invoice-templates/medical-templates';
+import { EcommerceTemplate1 } from './invoice-templates/ecommerce-templates';
+import { RetailTemplate1 } from './invoice-templates/retail-templates';
+import { PhotographyTemplate1, PhotographyTemplate2, PhotographyTemplate3, PhotographyTemplate4, PhotographyTemplate5 } from './invoice-templates/photography-templates';
+import { RealEstateTemplate1, RealEstateTemplate2, RealEstateTemplate3, RealEstateTemplate4, RealEstateTemplate5 } from './invoice-templates/real-estate-templates';
+import { TransportationTemplate1, TransportationTemplate2, TransportationTemplate3, TransportationTemplate4, TransportationTemplate5 } from './invoice-templates/transportation-templates';
+import { RentalTemplate1, RentalTemplate2, RentalTemplate3, RentalTemplate4, RentalTemplate5 } from './invoice-templates/rental-templates';
 import { toNumberSafe, toDateSafe } from '@/lib/utils';
 import { CategorySpecificDetails } from './invoice-templates/category-specific-details';
 
@@ -602,6 +566,7 @@ const templates: Record<string, FC<PageProps>> = {
   'it-3': ITTemplate3,
   'it-4': ITTemplate4,
   'it-5': ITTemplate5,
+  'freelance-1': ITTemplate1, // Reusing IT template for freelance
   'consulting-1': ConsultingTemplate1,
   'consulting-2': ConsultingTemplate2,
   'consulting-3': ConsultingTemplate3,
@@ -640,7 +605,6 @@ const templates: Record<string, FC<PageProps>> = {
   'rental-4': RentalTemplate4,
   'rental-5': RentalTemplate5,
 };
-
 
 const PAGE_HEIGHT = 1056; // 11 inches at 96 DPI for Letter size
 const PAGE_PADDING = 80; // 40px top + 40px bottom

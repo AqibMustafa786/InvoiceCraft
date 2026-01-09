@@ -70,7 +70,7 @@ export const allTemplates: Template[] = [
   {
     id: 'construction-1',
     name: 'Foundation',
-    thumbnailUrl: '/templates/invoicepagetemplates/FoundationInvoicetemplate.png',
+    thumbnailUrl: '/templates/invoicepagetemplates/construction1.png',
     category: 'Construction',
     toolType: 'Invoice',
     description: 'A detailed and professional template for construction projects, outlining labor and materials separately.',
@@ -79,7 +79,7 @@ export const allTemplates: Template[] = [
    {
     id: 'construction-2',
     name: 'Modern Dark',
-    thumbnailUrl: '/templates/invoicepagetemplates/Moderndark.png',
+    thumbnailUrl: '/templates/invoicepagetemplates/construction2.png',
     category: 'Construction',
     toolType: 'Invoice',
     description: 'A sleek, dark-themed template for construction companies wanting a modern and bold look.',
@@ -88,7 +88,7 @@ export const allTemplates: Template[] = [
   {
     id: 'construction-3',
     name: 'Minimalist',
-    thumbnailUrl: '/templates/invoicepagetemplates/Minimalist.png',
+    thumbnailUrl: '/templates/invoicepagetemplates/construction3.png',
     category: 'Construction',
     toolType: 'Invoice',
     description: 'A clean and minimal design that focuses on the core details of the construction job.',
@@ -97,7 +97,7 @@ export const allTemplates: Template[] = [
   {
     id: 'construction-4',
     name: 'Side Accent',
-    thumbnailUrl: '/templates/invoicepagetemplates/SideAccent.png',
+    thumbnailUrl: '/templates/invoicepagetemplates/construction4.png',
     category: 'Construction',
     toolType: 'Invoice',
     description: 'Features a colored side panel for a touch of branding while keeping the main content area clean.',
@@ -281,7 +281,7 @@ export const allTemplates: Template[] = [
   {
     id: 'roofing-5',
     name: 'Ridge Side',
-    thumbnailUrl: '/templates/invoicepagetemplates/Roofing3.png',
+    thumbnailUrl: '/templates/invoicepagetemplates/Roofing5.png',
     category: 'Roofing',
     toolType: 'Invoice',
     description: 'A bold, clear template with a side panel for detailed project information.',
