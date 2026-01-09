@@ -142,7 +142,7 @@ export const allTemplates: Template[] = [
   },
   {
     id: 'plumbing-5',
-    name: 'Bold Grid',
+    name: 'Bold Grid Plumbing',
     thumbnailUrl: '/templates/invoicepagetemplates/BoldGridPlumbing.png',
     category: 'Plumbing',
     toolType: 'Invoice',
@@ -280,7 +280,7 @@ export const allTemplates: Template[] = [
   },
   {
     id: 'roofing-5',
-    name: 'Ridge',
+    name: 'Ridge Side',
     thumbnailUrl: '/templates/invoicepagetemplates/Roofing3.png',
     category: 'Roofing',
     toolType: 'Invoice',
