@@ -76,9 +76,22 @@ const safeFormat = (date: Date | string | number | null | undefined, formatStrin
 }
 
 // --- SHARED COMPONENTS ---
-const CustomFieldsPreview: FC<{fields?: CustomField[]}> = ({ fields }) => {
-  if (!fields || fields.length === 0) return null;
-  return null;
+const CustomFieldsPreview: FC<{fields?: CustomField[], textColor?: string}> = ({ fields, textColor }) => {
+  const validFields = fields?.filter(f => f.label && f.value) || [];
+  if (validFields.length === 0) return null;
+  
+  return (
+    <section className="my-4 text-xs" style={{color: textColor}}>
+        <p className="font-bold text-gray-500 mb-2 border-b">Additional Information</p>
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-x-4 gap-y-1">
+            {validFields.map(field => (
+                <p key={field.id}>
+                    <span className="font-semibold text-gray-600">{field.label}:</span> {field.value}
+                </p>
+            ))}
+        </div>
+    </section>
+  );
 }
 
 const ItemsTable: FC<{ items: LineItem[], t: any, currencySymbol: string, accentColor?: string, headerStyle?: 'filled' | 'underline' }> = ({ items, t, currencySymbol, accentColor, headerStyle = 'filled' }) => (
@@ -221,6 +234,7 @@ const DefaultTemplatePage: FC<PageProps> = ({ pageItems, pageIndex, totalPages, 
                     </div>
                 </section>
                 <CategorySpecificDetails invoice={invoice} t={t} />
+                <CustomFieldsPreview fields={invoice.customFields} textColor={commonProps.textColor} />
                 <ItemsTable items={pageItems} {...commonProps} />
             </div>
             {pageIndex === totalPages - 1 && <InvoiceFooter {...commonProps} />}
@@ -282,6 +296,7 @@ const ModernTemplatePage: FC<PageProps> = ({ pageItems, pageIndex, totalPages, .
                 </div>
             </section>
             <CategorySpecificDetails invoice={invoice} t={t} />
+            <CustomFieldsPreview fields={invoice.customFields} textColor={commonProps.textColor} />
             <ItemsTable items={pageItems} {...commonProps} accentColor={accentColor} />
         </div>
         {pageIndex === totalPages - 1 && <InvoiceFooter {...commonProps} />}
@@ -328,6 +343,7 @@ const MinimalistTemplatePage: FC<PageProps> = ({ pageItems, pageIndex, totalPage
                 </div>
             </section>
             <CategorySpecificDetails invoice={invoice} t={t} />
+            <CustomFieldsPreview fields={invoice.customFields} textColor={commonProps.textColor} />
             <ItemsTable items={pageItems} {...commonProps} headerStyle="underline" />
         </div>
         {pageIndex === totalPages - 1 && <InvoiceFooter {...commonProps} />}
@@ -362,6 +378,7 @@ const CreativeTemplatePage: FC<PageProps> = ({ pageItems, pageIndex, totalPages,
                 <p>{client.email}</p>
             </section>
             <CategorySpecificDetails invoice={invoice} t={t} />
+            <CustomFieldsPreview fields={invoice.customFields} textColor={commonProps.textColor} />
             <ItemsTable items={pageItems} {...commonProps} accentColor={accentColor} />
         </div>
         {pageIndex === totalPages - 1 && <InvoiceFooter {...commonProps} />}
@@ -395,6 +412,7 @@ const ElegantTemplatePage: FC<PageProps> = ({ pageItems, pageIndex, totalPages, 
                 </div>
             </section>
             <CategorySpecificDetails invoice={invoice} t={t} />
+            <CustomFieldsPreview fields={invoice.customFields} textColor={commonProps.textColor} />
             <ItemsTable items={pageItems} {...commonProps} headerStyle="underline" />
         </div>
         {pageIndex === totalPages - 1 && <InvoiceFooter {...commonProps} />}
@@ -436,6 +454,7 @@ const UsaTemplatePage: FC<PageProps> = ({ pageItems, pageIndex, totalPages, ...c
                     </div>
                 </section>
                 <CategorySpecificDetails invoice={invoice} t={t} />
+                <CustomFieldsPreview fields={invoice.customFields} textColor={commonProps.textColor} />
                 <main>
                     <table className="w-full border-collapse border text-sm" data-element="items-table">
                         <thead data-element="table-header">
