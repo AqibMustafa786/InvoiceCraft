@@ -1,3 +1,4 @@
+
 'use client';
 
 import React from 'react';
@@ -24,8 +25,13 @@ export const RetailDetails: React.FC<{ invoice: Invoice, t: any }> = ({ invoice,
     if (!invoice.retail) return null;
     const { retail } = invoice;
     const hasDetails = Object.values(retail).some(val => val !== null && val !== '');
-    if (!hasDetails) return null;
-
+    if (!hasDetails) {
+        return (
+            <section className="my-4 text-xs">
+                <p className="font-bold text-gray-500 mb-2 border-b">{t.productDetails || 'Product Details'}</p>
+            </section>
+        );
+    }
     return (
         <section className="my-4 text-xs">
             <p className="font-bold text-gray-500 mb-2 border-b">{t.productDetails || 'Product Details'}</p>

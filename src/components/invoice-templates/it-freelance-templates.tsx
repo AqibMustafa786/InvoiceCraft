@@ -1,3 +1,4 @@
+
 'use client';
 
 import React from 'react';
@@ -25,7 +26,13 @@ export const ITServiceDetails: React.FC<{ invoice: Invoice, t: any }> = ({ invoi
     
     if (invoice.category === 'IT Services / Tech Support' && invoice.itServices) {
         const hasDetails = Object.values(invoice.itServices).some(val => val !== null && val !== '');
-        if (!hasDetails) return null;
+        if (!hasDetails) {
+            return (
+                <section className="my-4 text-xs">
+                    <p className="font-bold text-gray-500 mb-2 border-b">{t.itServiceDetails || 'IT Service Details'}</p>
+                </section>
+            );
+        }
 
         return (
             <section className="my-4 text-xs">
@@ -45,7 +52,13 @@ export const ITServiceDetails: React.FC<{ invoice: Invoice, t: any }> = ({ invoi
 
     if (invoice.category === 'Freelance / Agency' && invoice.freelance) {
          const hasDetails = Object.values(invoice.freelance).some(val => val !== null && val !== '');
-         if (!hasDetails) return null;
+         if (!hasDetails) {
+            return (
+                <section className="my-4 text-xs">
+                    <p className="font-bold text-gray-500 mb-2 border-b">{t.projectSpecifications || 'Project Specifications'}</p>
+                </section>
+            );
+         }
 
          return (
             <section className="my-4 text-xs">

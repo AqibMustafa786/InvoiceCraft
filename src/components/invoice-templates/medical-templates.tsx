@@ -1,3 +1,4 @@
+
 'use client';
 
 import React from 'react';
@@ -32,7 +33,13 @@ export const MedicalDetails: React.FC<{ invoice: Invoice, t: any }> = ({ invoice
     if (!invoice.medical) return null;
     const { medical } = invoice;
     const hasDetails = Object.values(medical).some(val => val !== null && val !== '');
-    if (!hasDetails) return null;
+    if (!hasDetails) {
+        return (
+            <section className="my-4 text-xs">
+                <p className="font-bold text-gray-500 mb-2 border-b">{t.patientInformation || 'Patient Information'}</p>
+            </section>
+        )
+    }
 
     return (
         <section className="my-4 text-xs">
