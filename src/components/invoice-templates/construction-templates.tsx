@@ -42,10 +42,13 @@ const SignatureDisplay = ({ signature, label }: { signature: any, label: string 
 }
 
 export const ConstructionDetails: React.FC<{ invoice: Invoice, t: any }> = ({ invoice, t }) => {
+    if (!invoice.construction) return null;
+
     const { construction, customFields } = invoice;
-    const hasConstructionDetails = construction && Object.values(construction).some(val => val !== null && val !== '');
+    const hasConstructionDetails = construction && Object.values(construction).some(val => val !== null && val !== '' && val !== 0);
     const hasCustomFields = customFields && customFields.length > 0 && customFields.some(f => f.label && f.value);
 
+    // If there are no details to show, don't render the section at all.
     if (!hasConstructionDetails && !hasCustomFields) {
         return null;
     }
@@ -56,8 +59,8 @@ export const ConstructionDetails: React.FC<{ invoice: Invoice, t: any }> = ({ in
             <div className="grid grid-cols-2 md:grid-cols-3 gap-x-4 gap-y-1">
                 {hasConstructionDetails && (
                     <>
-                        <p><span className="font-semibold text-gray-600">{t.jobSite || 'Job Site'}:</span> {construction.jobSiteAddress}</p>
-                        <p><span className="font-semibold text-gray-600">{t.permitNumber || 'Permit #'}:</span> {construction.permitNumber}</p>
+                        {construction.jobSiteAddress && <p><span className="font-semibold text-gray-600">{t.jobSite || 'Job Site'}:</span> {construction.jobSiteAddress}</p>}
+                        {construction.permitNumber && <p><span className="font-semibold text-gray-600">{t.permitNumber || 'Permit #'}:</span> {construction.permitNumber}</p>}
                         {construction.laborRate && <p><span className="font-semibold text-gray-600">{t.laborRate || 'Labor Rate'}:</span> ${construction.laborRate}/hr</p>}
                         {construction.equipmentRentalFees && <p><span className="font-semibold text-gray-600">{t.equipmentFees || 'Equipment Fees'}:</span> ${construction.equipmentRentalFees}</p>}
                         {construction.wasteDisposalFee && <p><span className="font-semibold text-gray-600">{t.disposalFee || 'Disposal Fee'}:</span> ${construction.wasteDisposalFee}</p>}
@@ -172,7 +175,7 @@ export const ConstructionTemplate2: React.FC<PageProps> = (props) => {
     const { invoice, pageItems, pageIndex, totalPages, subtotal, taxAmount, discountAmount, total, balanceDue, t, currencySymbol, textColor } = props;
     const { business, client } = invoice;
     return (
-        <div className={`p-0 font-sans text-gray-800 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: invoice.fontFamily, fontSize: `${invoice.fontSize}pt`, minHeight: '1056px', backgroundColor: props.backgroundColor, color: props.textColor }}>
+        <div className={`p-0 font-sans text-gray-800 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ minHeight: '1056px', backgroundColor: props.backgroundColor, color: props.textColor }}>
             <header className="p-10 text-white flex justify-between items-start" style={{ backgroundColor: '#1F2937' }}>
                 <div>
                      {business.logoUrl ? (
@@ -300,10 +303,7 @@ export const ConstructionTemplate3: React.FC<PageProps> = (props) => {
                     <tbody>
                         {pageItems.map(item => (
                             <tr key={item.id} className="border-b">
-                                <td className="p-2 align-top">
-                                    <p className="font-medium whitespace-pre-line">{item.name}</p>
-                                    {item.description && <p className="text-xs text-gray-500 whitespace-pre-line" style={{ wordBreak: 'break-all' }}>{item.description}</p>}
-                                </td>
+                                <td className="p-2 align-top whitespace-pre-line">{item.name}</td>
                                 <td className="p-2 align-top text-center">{item.quantity}</td>
                                 <td className="p-2 align-top text-right">{currencySymbol}{item.unitPrice.toFixed(2)}</td>
                                 <td className="p-2 align-top text-right font-semibold">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</td>
@@ -342,5 +342,3 @@ export const ConstructionTemplate3: React.FC<PageProps> = (props) => {
 export const ConstructionTemplate4: React.FC<PageProps> = (props) => <ConstructionTemplate1 {...props} />;
 export const ConstructionTemplate5: React.FC<PageProps> = (props) => <ConstructionTemplate2 {...props} />;
 export const ConstructionTemplate6: React.FC<PageProps> = (props) => <ConstructionTemplate3 {...props} />;
-
-    

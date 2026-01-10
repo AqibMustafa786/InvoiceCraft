@@ -1,3 +1,4 @@
+
 'use client';
 
 import type { Invoice } from '@/lib/types';
@@ -31,25 +32,44 @@ export const CategorySpecificDetails: FC<{ invoice: Invoice, t: any }> = ({ invo
     const category = invoice.category;
 
     switch(category) {
-        case 'Construction': return <ConstructionDetails invoice={invoice} t={t} />;
-        case 'Plumbing': return <PlumbingDetails invoice={invoice} t={t} />;
-        case 'Electrical Services': return <ElectricalDetails invoice={invoice} t={t} />;
-        case 'HVAC Services': return <HvacDetails invoice={invoice} t={t} />;
-        case 'Roofing': return <RoofingDetails invoice={invoice} t={t} />;
-        case 'Landscaping & Lawn Care': return <LandscapingDetails invoice={invoice} t={t} />;
-        case 'Cleaning Services': return <CleaningDetails invoice={invoice} t={t} />;
-        case 'Auto Repair': return <AutoRepairDetails invoice={invoice} t={t} />;
-        case 'IT Services / Tech Support': return <ITServiceDetails invoice={invoice} t={t} />;
-        case 'Freelance / Agency': return <ITServiceDetails invoice={invoice} t={t} />;
-        case 'Consulting': return <ConsultingDetails invoice={invoice} t={t} />;
-        case 'Legal Services': return <LegalDetails invoice={invoice} t={t} />;
-        case 'Medical / Healthcare': return <MedicalDetails invoice={invoice} t={t} />;
-        case 'E-commerce / Online Store': return <EcommerceDetails invoice={invoice} t={t} />;
-        case 'Retail / Wholesale': return <RetailDetails invoice={invoice} t={t} />;
-        case 'Photography': return <PhotographyDetails invoice={invoice} t={t} />;
-        case 'Real Estate / Property Management': return <RealEstateDetails invoice={invoice} t={t} />;
-        case 'Transportation / Trucking': return <TransportationDetails invoice={invoice} t={t} />;
-        case 'Rental / Property': return <RentalDetails invoice={invoice} t={t} />;
+        case 'Construction': 
+            return invoice.construction ? <ConstructionDetails invoice={invoice} t={t} /> : null;
+        case 'Plumbing': 
+            return invoice.plumbing ? <PlumbingDetails invoice={invoice} t={t} /> : null;
+        case 'Electrical Services': 
+            return invoice.electrical ? <ElectricalDetails invoice={invoice} t={t} /> : null;
+        case 'HVAC Services': 
+            return invoice.hvac ? <HvacDetails invoice={invoice} t={t} /> : null;
+        case 'Roofing': 
+            return invoice.roofing ? <RoofingDetails invoice={invoice} t={t} /> : null;
+        case 'Landscaping & Lawn Care': 
+            return invoice.landscaping ? <LandscapingDetails invoice={invoice} t={t} /> : null;
+        case 'Cleaning Services': 
+            return invoice.cleaning ? <CleaningDetails invoice={invoice} t={t} /> : null;
+        case 'Auto Repair': 
+            return invoice.autoRepair ? <AutoRepairDetails invoice={invoice} t={t} /> : null;
+        case 'IT Services / Tech Support': 
+            return invoice.itServices ? <ITServiceDetails invoice={invoice} t={t} /> : null;
+        case 'Freelance / Agency': 
+            return invoice.freelance ? <ITServiceDetails invoice={invoice} t={t} /> : null;
+        case 'Consulting': 
+            return invoice.consulting ? <ConsultingDetails invoice={invoice} t={t} /> : null;
+        case 'Legal Services': 
+            return invoice.legal ? <LegalDetails invoice={invoice} t={t} /> : null;
+        case 'Medical / Healthcare': 
+            return invoice.medical ? <MedicalDetails invoice={invoice} t={t} /> : null;
+        case 'E-commerce / Online Store': 
+            return invoice.ecommerce ? <EcommerceDetails invoice={invoice} t={t} /> : null;
+        case 'Retail / Wholesale': 
+            return invoice.retail ? <RetailDetails invoice={invoice} t={t} /> : null;
+        case 'Photography': 
+            return invoice.photography ? <PhotographyDetails invoice={invoice} t={t} /> : null;
+        case 'Real Estate / Property Management': 
+            return invoice.realEstate ? <RealEstateDetails invoice={invoice} t={t} /> : null;
+        case 'Transportation / Trucking': 
+            return invoice.transportation ? <TransportationDetails invoice={invoice} t={t} /> : null;
+        case 'Rental / Property': 
+            return invoice.rental ? <RentalDetails invoice={invoice} t={t} /> : null;
         default: return null;
     }
 }
