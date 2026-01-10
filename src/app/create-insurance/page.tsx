@@ -3,7 +3,7 @@
 'use client';
 
 import { useState, useEffect, useCallback, useMemo } from 'react';
-import { createPortal } from 'react-dom';
+import ReactDOM from 'react-dom';
 import type { InsuranceDocument, LineItem, AuditLogEntry, Client } from '@/lib/types';
 import { InsuranceForm } from '@/components/insurance-form';
 import { InsurancePreview } from '@/components/insurance-preview';
@@ -198,24 +198,17 @@ const getInitialInsuranceDoc = (): Omit<InsuranceDocument, 'userId' | 'companyId
 
 
 function PrintableInsuranceDoc({ doc, accentColor, backgroundColor, textColor }: { doc: InsuranceDocument, accentColor: string, backgroundColor: string, textColor: string }) {
-    const [container, setContainer] = useState<HTMLElement | null>(null);
-
     useEffect(() => {
-        // This code runs only on the client, after the component has mounted.
-        const el = document.getElementById('print-container');
-        if (el) {
-            setContainer(el);
+        const printRoot = document.getElementById('print-container');
+        if (printRoot) {
+            ReactDOM.render(
+                <InsurancePreview doc={doc} accentColor={accentColor} backgroundColor={backgroundColor} textColor={textColor} id="insurance-preview-print" isPrint={true} />,
+                printRoot
+            );
         }
-    }, []);
+    }, [doc, accentColor, backgroundColor, textColor]);
 
-    if (!container) {
-        return null;
-    }
-
-    return createPortal(
-        <InsurancePreview doc={doc} accentColor={accentColor} backgroundColor={backgroundColor} textColor={textColor} id="insurance-preview-print" isPrint={true} />,
-        container
-    );
+    return null; // This component does not render anything itself
 }
 
 
@@ -602,4 +595,5 @@ export default function CreateInsurancePage() {
     </>
   );
 }
+
 

@@ -3,7 +3,7 @@
 'use client';
 
 import { useState, useEffect, useCallback, useMemo } from 'react';
-import { createPortal } from 'react-dom';
+import ReactDOM from 'react-dom';
 import type { Estimate, LineItem, Quote, AuditLogEntry, Client } from '@/lib/types';
 import { DocumentForm } from '@/components/document-form';
 import { ClientDocumentPreview } from '@/components/document-preview';
@@ -256,25 +256,17 @@ const getInitialEstimate = (): Omit<Estimate, 'userId' | 'companyId'> => ({
 
 
 function PrintableDocument({ doc, accentColor, backgroundColor, textColor }: { doc: Estimate | Quote, accentColor: string, backgroundColor: string, textColor: string }) {
-    const [isMounted, setIsMounted] = useState(false);
-
     useEffect(() => {
-        setIsMounted(true);
-    }, []);
+        const printRoot = document.getElementById('print-container');
+        if (printRoot) {
+            ReactDOM.render(
+                <ClientDocumentPreview document={doc} accentColor={accentColor} backgroundColor={backgroundColor} textColor={textColor} id="estimate-preview-print" isPrint={true} />,
+                printRoot
+            );
+        }
+    }, [doc, accentColor, backgroundColor, textColor]);
 
-    if (!isMounted) {
-        return null;
-    }
-    
-    const printRoot = document.getElementById('print-container');
-    if (!printRoot) {
-        return null;
-    }
-
-    return createPortal(
-        <ClientDocumentPreview document={doc} accentColor={accentColor} backgroundColor={backgroundColor} textColor={textColor} id="estimate-preview-print" isPrint={true} />,
-        printRoot
-    );
+    return null; // This component does not render anything itself
 }
 
 export default function CreateEstimatePage() {
@@ -707,4 +699,5 @@ export default function CreateEstimatePage() {
     </>
   );
 }
+
 

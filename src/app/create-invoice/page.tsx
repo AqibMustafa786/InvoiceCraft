@@ -3,7 +3,7 @@
 'use client';
 
 import { useState, useEffect, useCallback, useMemo, ChangeEvent } from 'react';
-import { createPortal } from 'react-dom';
+import ReactDOM from 'react-dom';
 import type { Invoice, LineItem, AuditLogEntry, Client } from '@/lib/types';
 import { InvoiceForm } from '@/components/invoice-form';
 import { ClientInvoicePreview } from '@/components/invoice-preview';
@@ -319,25 +319,26 @@ const getInitialInvoice = (): Omit<Invoice, 'userId' | 'companyId'> => ({
 
 
 function PrintableInvoice({ doc, accentColor, backgroundColor, textColor }: { doc: Invoice, accentColor: string, backgroundColor: string, textColor: string }) {
-    const [isMounted, setIsMounted] = useState(false);
-
     useEffect(() => {
-        setIsMounted(true);
-    }, []);
+        const printRoot = document.getElementById('print-container');
+        if (printRoot) {
+            ReactDOM.render(
+                <ClientInvoicePreview 
+                    invoice={doc} 
+                    accentColor={accentColor} 
+                    backgroundColor={backgroundColor} 
+                    textColor={textColor} 
+                    id="invoice-preview-print" 
+                    isPrint={true} 
+                />,
+                printRoot
+            );
+        }
+        // No cleanup needed as we want to keep it updated.
+        // ReactDOM.render will efficiently update the existing component.
+    }, [doc, accentColor, backgroundColor, textColor]);
 
-    if (!isMounted) {
-        return null;
-    }
-
-    const printRoot = document.getElementById('print-container');
-    if (!printRoot) {
-        return null;
-    }
-
-    return createPortal(
-        <ClientInvoicePreview invoice={doc} accentColor={accentColor} backgroundColor={backgroundColor} textColor={textColor} id="invoice-preview-print" isPrint={true} />,
-        printRoot
-    );
+    return null; // This component does not render anything itself
 }
 
 export default function CreateInvoicePage() {
@@ -847,4 +848,5 @@ export default function CreateInvoicePage() {
     </>
   );
 }
+
 
