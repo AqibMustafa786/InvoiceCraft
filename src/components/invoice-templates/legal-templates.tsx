@@ -2,8 +2,6 @@
 
 import React from 'react';
 import type { Invoice, LineItem } from '@/lib/types';
-import { format, isValid } from 'date-fns';
-import Image from 'next/image';
 
 interface PageProps {
   invoice: Invoice;
@@ -22,23 +20,6 @@ interface PageProps {
   textColor: string;
 }
 
-const safeFormat = (date: Date | string | number | null | undefined, formatString: string) => {
-    if (!date) return "N/A";
-    const d = new Date(date);
-    if (!isValid(d)) return "Invalid Date";
-    return format(d, formatString);
-}
-
-const SignatureDisplay = ({ signature, label }: { signature: any, label: string }) => {
-    if (!signature?.image) return null;
-    return (
-        <div className="mt-8">
-            <Image src={signature.image} alt={label} width={150} height={75} className="border-b border-gray-400" />
-            <p className="text-xs text-gray-500 pt-1 border-t-2 border-gray-700 w-[150px]">{label}</p>
-        </div>
-    )
-}
-
 export const LegalDetails: React.FC<{ invoice: Invoice, t: any }> = ({ invoice, t }) => {
     if (!invoice.legal) return null;
     const { legal } = invoice;
@@ -49,9 +30,9 @@ export const LegalDetails: React.FC<{ invoice: Invoice, t: any }> = ({ invoice, 
         <section className="my-4 text-xs">
             <p className="font-bold text-gray-500 mb-2 border-b">{t.caseDetails || 'Case Details'}</p>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-x-4 gap-y-1">
-                <p><span className="font-semibold text-gray-600">{t.caseName || 'Case Name'}:</span> {legal.caseName}</p>
-                <p><span className="font-semibold text-gray-600">{t.caseNumber || 'Case #'}:</span> {legal.caseNumber}</p>
-                <p><span className="font-semibold text-gray-600">{t.serviceType || 'Service Type'}:</span> {legal.serviceType}</p>
+                {legal.caseName && <p><span className="font-semibold text-gray-600">{t.caseName || 'Case Name'}:</span> {legal.caseName}</p>}
+                {legal.caseNumber && <p><span className="font-semibold text-gray-600">{t.caseNumber || 'Case #'}:</span> {legal.caseNumber}</p>}
+                {legal.serviceType && <p><span className="font-semibold text-gray-600">{t.serviceType || 'Service Type'}:</span> {legal.serviceType}</p>}
                 {legal.hourlyRate && <p><span className="font-semibold text-gray-600">{t.hourlyRate || 'Rate'}:</span> ${legal.hourlyRate.toFixed(2)}/hr</p>}
                 {legal.hoursWorked && <p><span className="font-semibold text-gray-600">{t.hoursWorked || 'Hours'}:</span> {legal.hoursWorked}</p>}
                 {legal.retainerAmount && <p><span className="font-semibold text-gray-600">{t.retainer || 'Retainer'}:</span> ${legal.retainerAmount.toFixed(2)}</p>}
