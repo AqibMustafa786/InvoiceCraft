@@ -26,7 +26,9 @@ export const EcommerceDetails: React.FC<{ invoice: Invoice, t: any }> = ({ invoi
 
     const { ecommerce } = invoice;
     const hasDetails = Object.values(ecommerce).some(val => val !== null && val !== '');
-
+    
+    // Always render the heading if the ecommerce object exists, even if empty.
+    // The fields inside will only render if they have values.
     return (
         <section className="my-4 text-xs">
             <p className="font-bold text-gray-500 mb-2 border-b">{t.orderDetails || 'Order Details'}</p>

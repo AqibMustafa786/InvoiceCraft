@@ -52,7 +52,8 @@ export const CategorySpecificDetails: FC<{ invoice: Invoice, t: any }> = ({ invo
 
     // A helper function to render the category details and the custom fields without a heading
     const renderDetailsWithCustomFields = (DetailsComponent: React.FC<any> | null) => {
-      const hasCategoryData = invoice[(category.split(" ")[0].toLowerCase() as keyof Invoice)];
+      const categoryKey = category.split(" ")[0].toLowerCase() as keyof Invoice;
+      const hasCategoryData = invoice[categoryKey];
       return (
         <>
             {DetailsComponent && hasCategoryData ? <DetailsComponent {...commonProps} /> : null}
