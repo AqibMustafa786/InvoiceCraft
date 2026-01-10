@@ -767,4 +767,3 @@ export const ClientInvoicePreview: FC<InvoicePreviewProps> = (props) => {
 
 
 export { InvoicePreviewInternal as InvoicePreview };
-
