@@ -45,7 +45,7 @@ export const ConstructionDetails: React.FC<{ invoice: Invoice, t: any }> = ({ in
     if (!invoice.construction) return null;
 
     const { construction } = invoice;
-    const hasDetails = Object.values(construction).some(val => val !== null && val !== '' && val !== 0);
+    const hasDetails = Object.values(construction).some(val => val !== null && val !== '');
 
     return (
         <section className="my-4 text-xs">
