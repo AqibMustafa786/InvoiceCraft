@@ -319,12 +319,15 @@ const getInitialInvoice = (): Omit<Invoice, 'userId' | 'companyId'> => ({
 
 
 function PrintableInvoice({ doc, accentColor, backgroundColor, textColor }: { doc: Invoice, accentColor: string, backgroundColor: string, textColor: string }) {
+    const serializedDoc = JSON.stringify(doc);
+
     useEffect(() => {
         const printRoot = document.getElementById('print-container');
         if (printRoot) {
+            const docToRender = JSON.parse(serializedDoc);
             ReactDOM.render(
                 <ClientInvoicePreview 
-                    invoice={doc} 
+                    invoice={docToRender} 
                     accentColor={accentColor} 
                     backgroundColor={backgroundColor} 
                     textColor={textColor} 
@@ -334,9 +337,7 @@ function PrintableInvoice({ doc, accentColor, backgroundColor, textColor }: { do
                 printRoot
             );
         }
-        // No cleanup needed as we want to keep it updated.
-        // ReactDOM.render will efficiently update the existing component.
-    }, [doc, accentColor, backgroundColor, textColor]);
+    }, [serializedDoc, accentColor, backgroundColor, textColor]);
 
     return null; // This component does not render anything itself
 }
@@ -848,5 +849,6 @@ export default function CreateInvoicePage() {
     </>
   );
 }
+
 
 

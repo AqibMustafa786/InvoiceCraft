@@ -256,15 +256,18 @@ const getInitialEstimate = (): Omit<Estimate, 'userId' | 'companyId'> => ({
 
 
 function PrintableDocument({ doc, accentColor, backgroundColor, textColor }: { doc: Estimate | Quote, accentColor: string, backgroundColor: string, textColor: string }) {
+    const serializedDoc = JSON.stringify(doc);
+
     useEffect(() => {
         const printRoot = document.getElementById('print-container');
         if (printRoot) {
+            const docToRender = JSON.parse(serializedDoc);
             ReactDOM.render(
-                <ClientDocumentPreview document={doc} accentColor={accentColor} backgroundColor={backgroundColor} textColor={textColor} id="estimate-preview-print" isPrint={true} />,
+                <ClientDocumentPreview document={docToRender} accentColor={accentColor} backgroundColor={backgroundColor} textColor={textColor} id="estimate-preview-print" isPrint={true} />,
                 printRoot
             );
         }
-    }, [doc, accentColor, backgroundColor, textColor]);
+    }, [serializedDoc, accentColor, backgroundColor, textColor]);
 
     return null; // This component does not render anything itself
 }
@@ -699,5 +702,6 @@ export default function CreateEstimatePage() {
     </>
   );
 }
+
 
 
