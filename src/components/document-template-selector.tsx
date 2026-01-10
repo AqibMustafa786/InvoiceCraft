@@ -19,7 +19,14 @@ interface DocumentTemplateSelectorProps {
 
 export function DocumentTemplateSelector({ selectedTemplate, onSelectTemplate, documentType }: DocumentTemplateSelectorProps) {
   const filteredTemplates = useMemo(() => {
-    const toolTypeToShow = documentType === 'invoice' ? 'Invoice' : 'Estimate';
+    let toolTypeToShow: 'Invoice' | 'Estimate' | 'Quote';
+    if (documentType === 'invoice') {
+        toolTypeToShow = 'Invoice';
+    } else if (documentType === 'quote') {
+        toolTypeToShow = 'Quote';
+    } else {
+        toolTypeToShow = 'Estimate';
+    }
     return allTemplates.filter(t => t.toolType === toolTypeToShow);
   }, [documentType]);
 
