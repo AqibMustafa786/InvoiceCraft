@@ -76,23 +76,6 @@ const safeFormat = (date: Date | string | number | null | undefined, formatStrin
 }
 
 // --- SHARED COMPONENTS ---
-const CustomFieldsPreview: FC<{fields?: CustomField[], textColor?: string}> = ({ fields, textColor }) => {
-  const validFields = fields?.filter(f => f.label && f.value) || [];
-  if (validFields.length === 0) return null;
-  
-  return (
-    <section className="my-4 text-xs" style={{color: textColor}}>
-        <p className="font-bold text-gray-500 mb-2 border-b">Additional Information</p>
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-x-4 gap-y-1">
-            {validFields.map(field => (
-                <p key={field.id}>
-                    <span className="font-semibold text-gray-600">{field.label}:</span> {field.value}
-                </p>
-            ))}
-        </div>
-    </section>
-  );
-}
 
 const ItemsTable: FC<{ items: LineItem[], t: any, currencySymbol: string, accentColor?: string, headerStyle?: 'filled' | 'underline' }> = ({ items, t, currencySymbol, accentColor, headerStyle = 'filled' }) => (
     <section>
@@ -233,8 +216,9 @@ const DefaultTemplatePage: FC<PageProps> = ({ pageItems, pageIndex, totalPages, 
                         <p>{safeFormat(invoice.dueDate, 'MMMM d, yyyy')}</p>
                     </div>
                 </section>
-                <CategorySpecificDetails invoice={invoice} t={t} />
-                <CustomFieldsPreview fields={invoice.customFields} textColor={commonProps.textColor} />
+                <div data-element="category-details">
+                    <CategorySpecificDetails invoice={invoice} t={t} />
+                </div>
                 <ItemsTable items={pageItems} {...commonProps} />
             </div>
             {pageIndex === totalPages - 1 && <InvoiceFooter {...commonProps} />}
@@ -295,8 +279,9 @@ const ModernTemplatePage: FC<PageProps> = ({ pageItems, pageIndex, totalPages, .
                     <p>{invoice.poNumber || 'N/A'}</p>
                 </div>
             </section>
-            <CategorySpecificDetails invoice={invoice} t={t} />
-            <CustomFieldsPreview fields={invoice.customFields} textColor={commonProps.textColor} />
+             <div data-element="category-details">
+                <CategorySpecificDetails invoice={invoice} t={t} />
+            </div>
             <ItemsTable items={pageItems} {...commonProps} accentColor={accentColor} />
         </div>
         {pageIndex === totalPages - 1 && <InvoiceFooter {...commonProps} />}
@@ -342,8 +327,9 @@ const MinimalistTemplatePage: FC<PageProps> = ({ pageItems, pageIndex, totalPage
                     <p className="font-medium">{invoice.poNumber || 'N/A'}</p>
                 </div>
             </section>
-            <CategorySpecificDetails invoice={invoice} t={t} />
-            <CustomFieldsPreview fields={invoice.customFields} textColor={commonProps.textColor} />
+             <div data-element="category-details">
+                <CategorySpecificDetails invoice={invoice} t={t} />
+            </div>
             <ItemsTable items={pageItems} {...commonProps} headerStyle="underline" />
         </div>
         {pageIndex === totalPages - 1 && <InvoiceFooter {...commonProps} />}
@@ -377,8 +363,9 @@ const CreativeTemplatePage: FC<PageProps> = ({ pageItems, pageIndex, totalPages,
                 <p>{client.phone}</p>
                 <p>{client.email}</p>
             </section>
-            <CategorySpecificDetails invoice={invoice} t={t} />
-            <CustomFieldsPreview fields={invoice.customFields} textColor={commonProps.textColor} />
+             <div data-element="category-details">
+                <CategorySpecificDetails invoice={invoice} t={t} />
+            </div>
             <ItemsTable items={pageItems} {...commonProps} accentColor={accentColor} />
         </div>
         {pageIndex === totalPages - 1 && <InvoiceFooter {...commonProps} />}
@@ -411,8 +398,9 @@ const ElegantTemplatePage: FC<PageProps> = ({ pageItems, pageIndex, totalPages, 
                     <p><span className="font-bold">PO Number:</span> {invoice.poNumber || 'N/A'}</p>
                 </div>
             </section>
-            <CategorySpecificDetails invoice={invoice} t={t} />
-            <CustomFieldsPreview fields={invoice.customFields} textColor={commonProps.textColor} />
+             <div data-element="category-details">
+                <CategorySpecificDetails invoice={invoice} t={t} />
+            </div>
             <ItemsTable items={pageItems} {...commonProps} headerStyle="underline" />
         </div>
         {pageIndex === totalPages - 1 && <InvoiceFooter {...commonProps} />}
@@ -453,8 +441,9 @@ const UsaTemplatePage: FC<PageProps> = ({ pageItems, pageIndex, totalPages, ...c
                         {invoice.poNumber && <p className="mt-2"><span className="font-bold">PO #: </span>{invoice.poNumber}</p>}
                     </div>
                 </section>
-                <CategorySpecificDetails invoice={invoice} t={t} />
-                <CustomFieldsPreview fields={invoice.customFields} textColor={commonProps.textColor} />
+                 <div data-element="category-details">
+                    <CategorySpecificDetails invoice={invoice} t={t} />
+                </div>
                 <main>
                     <table className="w-full border-collapse border text-sm" data-element="items-table">
                         <thead data-element="table-header">
