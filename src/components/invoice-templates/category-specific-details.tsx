@@ -1,4 +1,3 @@
-
 'use client';
 
 import type { Invoice, CustomField } from '@/lib/types';
@@ -52,51 +51,54 @@ export const CategorySpecificDetails: FC<{ invoice: Invoice, t: any }> = ({ invo
     const commonProps = { invoice, t };
 
     // A helper function to render the category details and the custom fields without a heading
-    const renderDetailsWithCustomFields = (DetailsComponent: React.FC<any>) => (
+    const renderDetailsWithCustomFields = (DetailsComponent: React.FC<any> | null) => {
+      const hasCategoryData = invoice[category.split(" ")[0].toLowerCase() as keyof Invoice];
+      return (
         <>
-            <DetailsComponent {...commonProps} />
-            <CustomFieldsPreview fields={invoice.customFields} textColor={invoice.textColor} showHeading={false} />
+            {DetailsComponent && hasCategoryData ? <DetailsComponent {...commonProps} /> : null}
+            <CustomFieldsPreview fields={invoice.customFields} textColor={invoice.textColor} showHeading={!hasCategoryData && (invoice.customFields || []).length > 0} />
         </>
-    );
+      );
+    };
 
     switch(category) {
         case 'Construction': 
-            return invoice.construction ? renderDetailsWithCustomFields(ConstructionDetails) : null;
+            return renderDetailsWithCustomFields(ConstructionDetails);
         case 'Plumbing': 
-            return invoice.plumbing ? renderDetailsWithCustomFields(PlumbingDetails) : null;
+            return renderDetailsWithCustomFields(PlumbingDetails);
         case 'Electrical Services': 
-            return invoice.electrical ? renderDetailsWithCustomFields(ElectricalDetails) : null;
+            return renderDetailsWithCustomFields(ElectricalDetails);
         case 'HVAC Services': 
-            return invoice.hvac ? renderDetailsWithCustomFields(HvacDetails) : null;
+            return renderDetailsWithCustomFields(HvacDetails);
         case 'Roofing': 
-            return invoice.roofing ? renderDetailsWithCustomFields(RoofingDetails) : null;
+            return renderDetailsWithCustomFields(RoofingDetails);
         case 'Landscaping & Lawn Care': 
-            return invoice.landscaping ? renderDetailsWithCustomFields(LandscapingDetails) : null;
+            return renderDetailsWithCustomFields(LandscapingDetails);
         case 'Cleaning Services': 
-            return invoice.cleaning ? renderDetailsWithCustomFields(CleaningDetails) : null;
+            return renderDetailsWithCustomFields(CleaningDetails);
         case 'Auto Repair': 
-            return invoice.autoRepair ? renderDetailsWithCustomFields(AutoRepairDetails) : null;
+            return renderDetailsWithCustomFields(AutoRepairDetails);
         case 'IT Services / Tech Support': 
         case 'Freelance / Agency': 
-            return (invoice.itServices || invoice.freelance) ? renderDetailsWithCustomFields(ITServiceDetails) : null;
+            return renderDetailsWithCustomFields(ITServiceDetails);
         case 'Consulting': 
-            return invoice.consulting ? renderDetailsWithCustomFields(ConsultingDetails) : null;
+            return renderDetailsWithCustomFields(ConsultingDetails);
         case 'Legal Services': 
-            return invoice.legal ? renderDetailsWithCustomFields(LegalDetails) : null;
+            return renderDetailsWithCustomFields(LegalDetails);
         case 'Medical / Healthcare': 
-            return invoice.medical ? renderDetailsWithCustomFields(MedicalDetails) : null;
+            return renderDetailsWithCustomFields(MedicalDetails);
         case 'E-commerce / Online Store': 
-            return invoice.ecommerce ? renderDetailsWithCustomFields(EcommerceDetails) : null;
+            return renderDetailsWithCustomFields(EcommerceDetails);
         case 'Retail / Wholesale': 
-            return invoice.retail ? renderDetailsWithCustomFields(RetailDetails) : null;
+            return renderDetailsWithCustomFields(RetailDetails);
         case 'Photography': 
-            return invoice.photography ? renderDetailsWithCustomFields(PhotographyDetails) : null;
+            return renderDetailsWithCustomFields(PhotographyDetails);
         case 'Real Estate / Property Management': 
-            return invoice.realEstate ? renderDetailsWithCustomFields(RealEstateDetails) : null;
+            return renderDetailsWithCustomFields(RealEstateDetails);
         case 'Transportation / Trucking': 
-            return invoice.transportation ? renderDetailsWithCustomFields(TransportationDetails) : null;
+            return renderDetailsWithCustomFields(TransportationDetails);
         case 'Rental / Property': 
-            return invoice.rental ? renderDetailsWithCustomFields(RentalDetails) : null;
+            return renderDetailsWithCustomFields(RentalDetails);
         case 'General Services':
              return <CustomFieldsPreview fields={invoice.customFields} textColor={invoice.textColor} showHeading={true} />;
         default: 

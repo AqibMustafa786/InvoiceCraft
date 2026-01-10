@@ -23,8 +23,7 @@ interface PageProps {
 export const CleaningDetails: React.FC<{ invoice: Invoice, t: any }> = ({ invoice, t }) => {
     if (!invoice.cleaning) return null;
     const { cleaning } = invoice;
-    const hasDetails = Object.values(cleaning).some(val => val !== null && val !== '' && !(Array.isArray(val) && val.length === 0));
-
+    const hasDetails = Object.values(cleaning).some(val => val !== null && val !== '');
     if (!hasDetails) return null;
 
     return (

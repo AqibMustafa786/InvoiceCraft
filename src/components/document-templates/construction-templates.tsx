@@ -33,22 +33,22 @@ const SignatureDisplay = ({ signature, label }: { signature: any, label: string 
     )
 }
 
-const ConstructionDetails: React.FC<{ document: Estimate; textColor: string; t: any; }> = ({ document, textColor, t }) => {
+export const ConstructionDetails: React.FC<{ document: Estimate; textColor: string; t: any; }> = ({ document, textColor, t }) => {
     if (!document.construction) return null;
-    const { construction } = document;
+    
     return (
          <section className="my-4 text-xs" style={{color: textColor}}>
             <p className="font-bold border-b">{t.constructionDetails || 'Construction Specifics'}</p>
             <div className="grid grid-cols-2 gap-x-4 gap-y-1 mt-2">
-                <p><span className="font-semibold">{t.projectType || 'Project Type'}:</span> {construction.projectType}</p>
-                {construction.squareFootage && <p><span className="font-semibold">{t.sqFt || 'Sq Ft'}:</span> {construction.squareFootage}</p>}
-                <p><span className="font-semibold">{t.lotSize || 'Lot Size'}:</span> {construction.lotSize}</p>
-                <p><span className="font-semibold">{t.buildingType || 'Building Type'}:</span> {construction.buildingType}</p>
-                <p><span className="font-semibold">{t.permit || 'Permit Required'}:</span> {construction.permitRequired ? (t.yes || 'Yes') : (t.no || 'No')}</p>
-                <p><span className="font-semibold">{t.drawings || 'Drawings Provided'}:</span> {construction.architectDrawingsProvided ? (t.yes || 'Yes') : (t.no || 'No')}</p>
-                <p><span className="font-semibold">{t.soilCondition || 'Soil Condition'}:</span> {construction.soilCondition}</p>
-                <p><span className="font-semibold">{t.materialPreference || 'Material Preference'}:</span> {construction.materialPreference}</p>
-                <p><span className="font-semibold">{t.inspection || 'Inspection'}:</span> {construction.inspectionRequired ? (t.yes || 'Yes') : (t.no || 'No')}</p>
+                {document.construction.projectType && <p><span className="font-semibold">{t.projectType || 'Project Type'}:</span> {document.construction.projectType}</p>}
+                {document.construction.squareFootage && <p><span className="font-semibold">{t.sqFt || 'Sq Ft'}:</span> {document.construction.squareFootage}</p>}
+                {document.construction.lotSize && <p><span className="font-semibold">{t.lotSize || 'Lot Size'}:</span> {document.construction.lotSize}</p>}
+                {document.construction.buildingType && <p><span className="font-semibold">{t.buildingType || 'Building Type'}:</span> {document.construction.buildingType}</p>}
+                {document.construction.permitRequired && <p><span className="font-semibold">{t.permit || 'Permit Required'}:</span> {document.construction.permitRequired ? (t.yes || 'Yes') : (t.no || 'No')}</p>}
+                {document.construction.architectDrawingsProvided && <p><span className="font-semibold">{t.drawings || 'Drawings Provided'}:</span> {document.construction.architectDrawingsProvided ? (t.yes || 'Yes') : (t.no || 'No')}</p>}
+                {document.construction.soilCondition && <p><span className="font-semibold">{t.soilCondition || 'Soil Condition'}:</span> {document.construction.soilCondition}</p>}
+                {document.construction.materialPreference && <p><span className="font-semibold">{t.materialPreference || 'Material Preference'}:</span> {document.construction.materialPreference}</p>}
+                {document.construction.inspectionRequired && <p><span className="font-semibold">{t.inspection || 'Inspection'}:</span> {document.construction.inspectionRequired ? (t.yes || 'Yes') : (t.no || 'No')}</p>}
             </div>
         </section>
     );
@@ -134,7 +134,7 @@ export const ConstructionTemplate1: React.FC<TemplateProps> = ({ document, pageI
                         </div>
                     </div>
                     <div className="mt-8 text-xs">
-                        <p className="font-bold mb-1">{(t.termsAndConditions || 'Terms &amp; Conditions')}</p>
+                        <p className="font-bold mb-1">{(t.termsAndConditions || 'Terms & Conditions')}</p>
                         <p className="whitespace-pre-line" style={{ color: textColor || '#6B7280' }}>{document.termsAndConditions.replace(/estimate/gi, docTypeTerm)}</p>
                     </div>
                     <div className="flex justify-between mt-8">
@@ -160,7 +160,7 @@ export const ConstructionTemplate2: React.FC<TemplateProps> = ({ document, pageI
             <header className="p-10 text-white flex justify-between items-start" style={{ backgroundColor: '#1F2937' }}>
                 <div>
                      {business.logoUrl ? (
-                        <Image src={business.logoUrl} alt="Logo" width={120} height={50} />
+                        <Image src={business.logoUrl} alt="Logo" width={120} height={50} className="filter invert brightness-0"/>
                     ) : (
                         <h1 className="text-4xl font-bold">{business.name}</h1>
                     )}
@@ -174,14 +174,15 @@ export const ConstructionTemplate2: React.FC<TemplateProps> = ({ document, pageI
             <div className="p-10 flex-grow flex flex-col" style={{color: textColor}}>
                  <section className="grid grid-cols-2 gap-8 mb-8 text-sm">
                     <div>
-                        <p className="font-bold text-gray-500 mb-1" style={{ color: textColor ? textColor : undefined }}>{(t.clientInformation || 'CLIENT INFORMATION')}</p>
+                        <p className="font-bold text-gray-500 mb-1" style={{color: textColor ? textColor : undefined}}>{(t.clientInformation || 'CLIENT INFORMATION')}</p>
                         <p className="font-bold">{client.name}</p>
+                        {client.companyName && <p>{client.companyName}</p>}
                         <p className="whitespace-pre-line">{client.address}</p>
                         <p>{client.phone}</p>
                         <p>{client.email}</p>
                     </div>
                     <div className="text-right">
-                        <p className="font-bold text-gray-500 mb-1" style={{ color: textColor ? textColor : undefined }}>{(t.projectDetails || 'PROJECT DETAILS')}</p>
+                        <p className="font-bold text-gray-500 mb-1" style={{color: textColor ? textColor : undefined}}>{(t.projectDetails || 'PROJECT DETAILS')}</p>
                         <p>{document.projectTitle}</p>
                         <p className="whitespace-pre-line">{client.projectLocation}</p>
                         <p className="mt-2"><span className="font-bold">{(t.dateIssued || 'Date Issued')}:</span> {safeFormat(document.estimateDate, 'MMM d, yyyy')}</p>
@@ -218,7 +219,7 @@ export const ConstructionTemplate2: React.FC<TemplateProps> = ({ document, pageI
                     <footer className="mt-auto pt-8">
                         <div className="flex justify-between items-start">
                             <div className="w-1/2 text-xs">
-                                <p className="font-bold text-gray-500 mb-2" style={{ color: textColor ? textColor : undefined }}>{(t.termsAndConditions || 'TERMS &amp; CONDITIONS')}</p>
+                                <p className="font-bold text-gray-500 mb-2" style={{ color: textColor ? textColor : undefined }}>{(t.termsAndConditions || 'TERMS & CONDITIONS')}</p>
                                 <p className="whitespace-pre-line" style={{ color: textColor || '#6B7280' }}>{document.termsAndConditions.replace(/estimate/gi, docTypeTerm)}</p>
                                 <div className="flex gap-16 mt-8">
                                     <SignatureDisplay signature={document.business.ownerSignature} label={(t.authorizedSignature || 'Authorized Signature')} />

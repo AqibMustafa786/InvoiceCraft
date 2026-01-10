@@ -24,7 +24,6 @@ export const ElectricalDetails: React.FC<{ invoice: Invoice, t: any }> = ({ invo
     if (!invoice.electrical) return null;
     const { electrical } = invoice;
     const hasDetails = Object.values(electrical).some(val => val !== null && val !== '');
-
     if (!hasDetails) return null;
 
     return (

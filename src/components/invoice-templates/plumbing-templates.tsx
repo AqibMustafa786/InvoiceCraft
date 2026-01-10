@@ -24,6 +24,7 @@ export const PlumbingDetails: React.FC<{ invoice: Invoice, t: any }> = ({ invoic
     if (!invoice.plumbing) return null;
     const { plumbing } = invoice;
     const hasDetails = Object.values(plumbing).some(val => val !== null && val !== '');
+
     if (!hasDetails) return null;
     
     return (

@@ -23,8 +23,9 @@ interface PageProps {
 export const AutoRepairDetails: React.FC<{ invoice: Invoice, t: any }> = ({ invoice, t }) => {
     if (!invoice.autoRepair) return null;
     const { autoRepair } = invoice;
+    
+    // Check if there are any details to display. If not, don't render the section at all.
     const hasDetails = Object.values(autoRepair).some(val => val !== null && val !== '' && !(Array.isArray(val) && val.length === 0));
-
     if (!hasDetails) return null;
     
     return (
