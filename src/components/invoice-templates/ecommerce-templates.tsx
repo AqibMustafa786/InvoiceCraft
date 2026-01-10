@@ -3,8 +3,6 @@
 
 import React from 'react';
 import type { Invoice, LineItem } from '@/lib/types';
-import { format, isValid } from 'date-fns';
-import Image from 'next/image';
 
 interface PageProps {
   invoice: Invoice;
@@ -23,28 +21,12 @@ interface PageProps {
   textColor: string;
 }
 
-const safeFormat = (date: Date | string | number | null | undefined, formatString: string) => {
-    if (!date) return "N/A";
-    const d = new Date(date);
-    if (!isValid(d)) return "Invalid Date";
-    return format(d, formatString);
-}
-
-const SignatureDisplay = ({ signature, label }: { signature: any, label: string }) => {
-    if (!signature?.image) return null;
-    return (
-        <div className="mt-8">
-            <Image src={signature.image} alt={label} width={150} height={75} className="border-b border-gray-400" />
-            <p className="text-xs text-gray-500 pt-1 border-t-2 border-gray-700 w-[150px]">{label}</p>
-        </div>
-    )
-}
-
-
 export const EcommerceDetails: React.FC<{ invoice: Invoice, t: any }> = ({ invoice, t }) => {
     if (!invoice.ecommerce) return null;
+    
     const { ecommerce } = invoice;
-    const hasDetails = Object.values(ecommerce).some(val => val !== null && val !== '');
+    // Check if there are any details to display.
+    const hasDetails = Object.values(ecommerce).some(val => val !== null && val !== '' && val !== 0);
 
     return (
         <section className="my-4 text-xs">
@@ -52,8 +34,9 @@ export const EcommerceDetails: React.FC<{ invoice: Invoice, t: any }> = ({ invoi
             {hasDetails && (
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-x-4 gap-y-1">
                     {ecommerce.orderNumber && <p><span className="font-semibold text-gray-600">{t.orderNumber || 'Order #'}:</span> {ecommerce.orderNumber}</p>}
+                    {ecommerce.sku && <p><span className="font-semibold text-gray-600">{t.sku || 'SKU'}:</span> {ecommerce.sku}</p>}
                     {ecommerce.shippingCarrier && <p><span className="font-semibold text-gray-600">{t.shippingCarrier || 'Carrier'}:</span> {ecommerce.shippingCarrier}</p>}
-                    {ecommerce.trackingId && <p><span className="font-semibold text-gray-600">{t.trackingId || 'Tracking'}:</span> {ecommerce.trackingId}</p>}
+                    {ecommerce.trackingId && <p><span className="font-semibold text-gray-600">{t.trackingId || 'Tracking #'}:</span> {ecommerce.trackingId}</p>}
                 </div>
             )}
         </section>
