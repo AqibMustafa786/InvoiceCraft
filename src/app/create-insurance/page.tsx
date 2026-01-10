@@ -198,17 +198,18 @@ const getInitialInsuranceDoc = (): Omit<InsuranceDocument, 'userId' | 'companyId
 
 
 function PrintableInsuranceDoc({ doc, accentColor, backgroundColor, textColor }: { doc: InsuranceDocument, accentColor: string, backgroundColor: string, textColor: string }) {
-    useEffect(() => {
-        const printRoot = document.getElementById('print-container');
-        if (printRoot) {
-            ReactDOM.render(
-                <InsurancePreview doc={doc} accentColor={accentColor} backgroundColor={backgroundColor} textColor={textColor} id="insurance-preview-print" isPrint={true} />,
-                printRoot
-            );
-        }
-    }, [doc, accentColor, backgroundColor, textColor]);
+    const [container, setContainer] = useState<HTMLElement | null>(null);
 
-    return null; // This component does not render anything itself
+    useEffect(() => {
+        setContainer(document.getElementById('print-container'));
+    }, []);
+
+    if (!container) return null;
+
+    return ReactDOM.createPortal(
+        <InsurancePreview doc={doc} accentColor={accentColor} backgroundColor={backgroundColor} textColor={textColor} id="insurance-preview-print" isPrint={true} />,
+        container
+    );
 }
 
 
@@ -241,6 +242,8 @@ export default function CreateInsurancePage() {
 
   const { data: remoteDraft, isLoading: isDraftLoading } = useDoc<InsuranceDocument>(docRef);
   const { data: prefillClient, isLoading: isClientLoading } = useDoc<Client>(clientRef);
+
+  const serializedDocument = useMemo(() => document ? JSON.stringify(document) : '', [document]);
 
   useEffect(() => {
     if (isAuthLoading || (draftId && isDraftLoading) || (prefillClientId && isClientLoading)) return;
@@ -591,9 +594,10 @@ export default function CreateInsurancePage() {
           </div>
         </div>
       </div>
-      <PrintableInsuranceDoc doc={document} accentColor={accentColor} backgroundColor={backgroundColor} textColor={textColor} />
+      {document && <PrintableInsuranceDoc key={serializedDocument} doc={document} accentColor={accentColor} backgroundColor={backgroundColor} textColor={textColor} />}
     </>
   );
 }
+
 
 

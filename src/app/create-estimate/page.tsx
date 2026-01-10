@@ -256,20 +256,18 @@ const getInitialEstimate = (): Omit<Estimate, 'userId' | 'companyId'> => ({
 
 
 function PrintableDocument({ doc, accentColor, backgroundColor, textColor }: { doc: Estimate | Quote, accentColor: string, backgroundColor: string, textColor: string }) {
-    const serializedDoc = JSON.stringify(doc);
+    const [container, setContainer] = useState<HTMLElement | null>(null);
 
     useEffect(() => {
-        const printRoot = document.getElementById('print-container');
-        if (printRoot) {
-            const docToRender = JSON.parse(serializedDoc);
-            ReactDOM.render(
-                <ClientDocumentPreview document={docToRender} accentColor={accentColor} backgroundColor={backgroundColor} textColor={textColor} id="estimate-preview-print" isPrint={true} />,
-                printRoot
-            );
-        }
-    }, [serializedDoc, accentColor, backgroundColor, textColor]);
+        setContainer(document.getElementById('print-container'));
+    }, []);
 
-    return null; // This component does not render anything itself
+    if (!container) return null;
+
+    return ReactDOM.createPortal(
+        <ClientDocumentPreview document={doc} accentColor={accentColor} backgroundColor={backgroundColor} textColor={textColor} id="estimate-preview-print" isPrint={true} />,
+        container
+    );
 }
 
 export default function CreateEstimatePage() {
@@ -319,6 +317,7 @@ export default function CreateEstimatePage() {
     };
   }, [document]);
 
+  const serializedDocument = useMemo(() => document ? JSON.stringify(document) : '', [document]);
 
   useEffect(() => {
     if (isAuthLoading || (draftId && isDraftLoading) || (prefillClientId && isClientLoading)) return;
@@ -698,10 +697,11 @@ export default function CreateEstimatePage() {
             </div>
         </div>
       </div>
-      {processedDocument && <PrintableDocument doc={processedDocument} accentColor={accentColor} backgroundColor={backgroundColor} textColor={textColor} />}
+      {processedDocument && <PrintableDocument key={serializedDocument} doc={processedDocument} accentColor={accentColor} backgroundColor={backgroundColor} textColor={textColor} />}
     </>
   );
 }
+
 
 
 

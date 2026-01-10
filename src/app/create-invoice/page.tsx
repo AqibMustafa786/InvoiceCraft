@@ -319,27 +319,25 @@ const getInitialInvoice = (): Omit<Invoice, 'userId' | 'companyId'> => ({
 
 
 function PrintableInvoice({ doc, accentColor, backgroundColor, textColor }: { doc: Invoice, accentColor: string, backgroundColor: string, textColor: string }) {
-    const serializedDoc = JSON.stringify(doc);
+    const [container, setContainer] = useState<HTMLElement | null>(null);
 
     useEffect(() => {
-        const printRoot = document.getElementById('print-container');
-        if (printRoot) {
-            const docToRender = JSON.parse(serializedDoc);
-            ReactDOM.render(
-                <ClientInvoicePreview 
-                    invoice={docToRender} 
-                    accentColor={accentColor} 
-                    backgroundColor={backgroundColor} 
-                    textColor={textColor} 
-                    id="invoice-preview-print" 
-                    isPrint={true} 
-                />,
-                printRoot
-            );
-        }
-    }, [serializedDoc, accentColor, backgroundColor, textColor]);
+        setContainer(document.getElementById('print-container'));
+    }, []);
 
-    return null; // This component does not render anything itself
+    if (!container) return null;
+
+    return ReactDOM.createPortal(
+        <ClientInvoicePreview 
+            invoice={doc} 
+            accentColor={accentColor} 
+            backgroundColor={backgroundColor} 
+            textColor={textColor} 
+            id="invoice-preview-print" 
+            isPrint={true} 
+        />,
+        container
+    );
 }
 
 export default function CreateInvoicePage() {
@@ -399,6 +397,8 @@ export default function CreateInvoicePage() {
       }
     };
   }, [invoice]);
+
+  const serializedInvoice = useMemo(() => invoice ? JSON.stringify(invoice) : '', [invoice]);
 
   useEffect(() => {
     if (isAuthLoading || (draftId && isDraftLoading) || (prefillClientId && isClientLoading) || isCompanyLoading) return;
@@ -529,8 +529,6 @@ export default function CreateInvoicePage() {
     }
   }, [draftId, remoteDraft, isDraftLoading, prefillClientId, prefillClient, isClientLoading, user, userProfile, isAuthLoading, companyId, router, firestore, companyData, isCompanyLoading, searchParams]);
   
-  const serializedInvoice = useMemo(() => invoice ? JSON.stringify(invoice) : '', [invoice]);
-
 
   const generateNewId = (doc: Invoice): string => {
     const clientName = doc.client.name.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase();
@@ -845,10 +843,11 @@ export default function CreateInvoicePage() {
           </div>
         </div>
       </div>
-      {processedInvoice && <PrintableInvoice doc={processedInvoice} accentColor={accentColor} backgroundColor={backgroundColor} textColor={textColor} />}
+      {processedInvoice && <PrintableInvoice key={serializedInvoice} doc={processedInvoice} accentColor={accentColor} backgroundColor={backgroundColor} textColor={textColor} />}
     </>
   );
 }
+
 
 
 
