@@ -44,14 +44,18 @@ const SignatureDisplay = ({ signature, label }: { signature: any, label: string 
 const EcommerceDetails: React.FC<{ invoice: Invoice, t: any }> = ({ invoice, t }) => {
     if (!invoice.ecommerce) return null;
     const { ecommerce } = invoice;
+    const hasDetails = Object.values(ecommerce).some(val => val !== null && val !== '');
+
     return (
         <section className="my-4 text-xs">
             <p className="font-bold text-gray-500 mb-2 border-b">{t.orderDetails || 'Order Details'}</p>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-x-4 gap-y-1">
-                <p><span className="font-semibold text-gray-600">{t.orderNumber || 'Order #'}:</span> {ecommerce.orderNumber}</p>
-                <p><span className="font-semibold text-gray-600">{t.shippingCarrier || 'Carrier'}:</span> {ecommerce.shippingCarrier}</p>
-                <p><span className="font-semibold text-gray-600">{t.trackingId || 'Tracking'}:</span> {ecommerce.trackingId}</p>
-            </div>
+            {hasDetails && (
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-x-4 gap-y-1">
+                    {ecommerce.orderNumber && <p><span className="font-semibold text-gray-600">{t.orderNumber || 'Order #'}:</span> {ecommerce.orderNumber}</p>}
+                    {ecommerce.shippingCarrier && <p><span className="font-semibold text-gray-600">{t.shippingCarrier || 'Carrier'}:</span> {ecommerce.shippingCarrier}</p>}
+                    {ecommerce.trackingId && <p><span className="font-semibold text-gray-600">{t.trackingId || 'Tracking'}:</span> {ecommerce.trackingId}</p>}
+                </div>
+            )}
         </section>
     );
 };
