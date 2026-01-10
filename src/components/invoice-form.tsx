@@ -1,5 +1,4 @@
 
-
 'use client';
 
 import { ChangeEvent, Dispatch, SetStateAction, useState, useEffect } from 'react';
@@ -35,25 +34,6 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from './ui/collapsible';
-import { ConstructionDetails } from './invoice-templates/construction-templates';
-import { PlumbingDetails } from './invoice-templates/plumbing-templates';
-import { ElectricalDetails } from './invoice-templates/electrical-templates';
-import { HvacDetails } from './invoice-templates/hvac-templates';
-import { RoofingDetails } from './invoice-templates/roofing-templates';
-import { LandscapingDetails } from './invoice-templates/landscaping-templates';
-import { CleaningDetails } from './invoice-templates/cleaning-templates';
-import { AutoRepairDetails } from './invoice-templates/auto-repair-templates';
-import { ITServiceDetails } from './invoice-templates/it-freelance-templates';
-import { ConsultingDetails } from './invoice-templates/consulting-templates';
-import { LegalDetails } from './invoice-templates/legal-templates';
-import { MedicalDetails } from './invoice-templates/medical-templates';
-import { EcommerceDetails } from './invoice-templates/ecommerce-templates';
-import { RetailDetails } from './invoice-templates/retail-templates';
-import { PhotographyDetails } from './invoice-templates/photography-templates';
-import { RealEstateDetails } from './invoice-templates/real-estate-templates';
-import { TransportationDetails } from './invoice-templates/transportation-templates';
-import { RentalDetails } from './invoice-templates/rental-templates';
-
 
 interface InvoiceFormProps {
   invoice: Invoice;
@@ -373,6 +353,18 @@ const CategorySpecificFormFields: React.FC<{ invoice: Invoice; handleCategoryDat
                         <div className="space-y-2"><Label className="text-xs">Stock Quantity</Label><Input name="stockQuantity" type="number" value={invoice.retail.stockQuantity ?? ''} onChange={(e) => handleCategoryDataChange('retail', e)} className="text-xs h-9"/></div>
                         <div className="space-y-2"><Label className="text-xs">Wholesale Price</Label><Input name="wholesalePrice" type="number" value={invoice.retail.wholesalePrice ?? ''} onChange={(e) => handleCategoryDataChange('retail', e)} className="text-xs h-9"/></div>
                         <div className="space-y-2"><Label className="text-xs">Shipping Pallet Cost</Label><Input name="shippingPalletCost" type="number" value={invoice.retail.shippingPalletCost ?? ''} onChange={(e) => handleCategoryDataChange('retail', e)} className="text-xs h-9"/></div>
+                    </CardContent>
+                </Card>
+            ) : null;
+        case "E-commerce / Online Store":
+            return invoice.ecommerce ? (
+                <Card className="bg-card/50 backdrop-blur-sm shadow-lg">
+                    <CardHeader><CardTitle className="text-base flex items-center gap-2"><Store className="h-4 w-4" />E-commerce Details</CardTitle></CardHeader>
+                    <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        <div className="space-y-2"><Label className="text-xs">Order Number</Label><Input name="orderNumber" value={invoice.ecommerce.orderNumber} onChange={(e) => handleCategoryDataChange('ecommerce', e)} className="text-xs h-9"/></div>
+                        <div className="space-y-2"><Label className="text-xs">SKU</Label><Input name="sku" value={invoice.ecommerce.sku} onChange={(e) => handleCategoryDataChange('ecommerce', e)} className="text-xs h-9"/></div>
+                        <div className="space-y-2"><Label className="text-xs">Shipping Carrier</Label><Input name="shippingCarrier" value={invoice.ecommerce.shippingCarrier} onChange={(e) => handleCategoryDataChange('ecommerce', e)} className="text-xs h-9"/></div>
+                        <div className="space-y-2"><Label className="text-xs">Tracking ID</Label><Input name="trackingId" value={invoice.ecommerce.trackingId} onChange={(e) => handleCategoryDataChange('ecommerce', e)} className="text-xs h-9"/></div>
                     </CardContent>
                 </Card>
             ) : null;
@@ -1343,5 +1335,3 @@ export function InvoiceForm({ invoice, setInvoice, accentColor, setAccentColor, 
     </div>
   );
 }
-
-    
