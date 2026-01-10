@@ -41,7 +41,7 @@ const SignatureDisplay = ({ signature, label }: { signature: any, label: string 
 }
 
 
-const EcommerceDetails: React.FC<{ invoice: Invoice, t: any }> = ({ invoice, t }) => {
+export const EcommerceDetails: React.FC<{ invoice: Invoice, t: any }> = ({ invoice, t }) => {
     if (!invoice.ecommerce) return null;
     const { ecommerce } = invoice;
     const hasDetails = Object.values(ecommerce).some(val => val !== null && val !== '');
