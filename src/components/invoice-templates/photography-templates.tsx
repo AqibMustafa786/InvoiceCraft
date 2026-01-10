@@ -1,4 +1,3 @@
-
 'use client';
 
 import React from 'react';
@@ -42,6 +41,9 @@ const SignatureDisplay = ({ signature, label }: { signature: any, label: string 
 
 export const PhotographyDetails: React.FC<{ invoice: Invoice, t: any }> = ({ invoice, t }) => {
     if (!invoice.photography) return null;
+    const hasDetails = Object.values(invoice.photography).some(val => val !== null && val !== '');
+    if (!hasDetails) return null;
+
     return (
         <section className="my-4 text-xs">
             <p className="font-bold text-gray-400 mb-2 border-b border-gray-600">{(t.sessionDetails || 'SESSION DETAILS').toUpperCase()}</p>

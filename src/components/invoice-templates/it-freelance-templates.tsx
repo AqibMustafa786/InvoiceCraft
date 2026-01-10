@@ -42,9 +42,11 @@ const SignatureDisplay = ({ signature, label }: { signature: any, label: string 
 
 export const ITServiceDetails: React.FC<{ invoice: Invoice, t: any }> = ({ invoice, t }) => {
     if (!invoice.itServices && !invoice.freelance) return null;
-    const details = invoice.itServices || invoice.freelance;
     
     if (invoice.category === 'IT Services / Tech Support' && invoice.itServices) {
+        const hasDetails = Object.values(invoice.itServices).some(val => val !== null && val !== '');
+        if (!hasDetails) return null;
+
         return (
             <section className="my-4 text-xs">
                 <p className="font-bold text-gray-500 mb-2 border-b">{t.itServiceDetails || 'IT Service Details'}</p>
@@ -62,6 +64,9 @@ export const ITServiceDetails: React.FC<{ invoice: Invoice, t: any }> = ({ invoi
     }
 
     if (invoice.category === 'Freelance / Agency' && invoice.freelance) {
+         const hasDetails = Object.values(invoice.freelance).some(val => val !== null && val !== '');
+         if (!hasDetails) return null;
+
          return (
             <section className="my-4 text-xs">
                 <p className="font-bold text-gray-500 mb-2 border-b">{t.projectSpecifications || 'Project Specifications'}</p>

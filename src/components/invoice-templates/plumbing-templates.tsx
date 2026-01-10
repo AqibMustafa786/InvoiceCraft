@@ -42,6 +42,9 @@ const SignatureDisplay = ({ signature, label }: { signature: any, label: string 
 export const PlumbingDetails: React.FC<{ invoice: Invoice, t: any }> = ({ invoice, t }) => {
     if (!invoice.plumbing) return null;
     const { plumbing } = invoice;
+    const hasDetails = Object.values(plumbing).some(val => val !== null && val !== '');
+    if (!hasDetails) return null;
+    
     return (
         <section className="my-4 text-xs">
             <p className="font-bold text-gray-500 mb-2 border-b">{t.plumbingDetails || 'Plumbing Details'}</p>

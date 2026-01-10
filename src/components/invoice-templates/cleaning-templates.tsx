@@ -1,4 +1,3 @@
-
 'use client';
 
 import React from 'react';
@@ -44,6 +43,10 @@ const SignatureDisplay = ({ signature, label }: { signature: any, label: string 
 export const CleaningDetails: React.FC<{ invoice: Invoice, t: any }> = ({ invoice, t }) => {
     if (!invoice.cleaning) return null;
     const { cleaning } = invoice;
+    const hasDetails = Object.values(cleaning).some(val => val !== null && val !== '' && !(Array.isArray(val) && val.length === 0));
+
+    if (!hasDetails) return null;
+
     return (
         <section className="my-4 text-xs">
             <p className="font-bold border-b" >{(t.cleaningSpecifics || 'Cleaning Specifics')}</p>
