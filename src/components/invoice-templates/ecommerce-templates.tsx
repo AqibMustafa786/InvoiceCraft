@@ -23,10 +23,9 @@ interface PageProps {
 
 export const EcommerceDetails: React.FC<{ invoice: Invoice, t: any }> = ({ invoice, t }) => {
     if (!invoice.ecommerce) return null;
-    
+
     const { ecommerce } = invoice;
-    // Check if there are any details to display.
-    const hasDetails = Object.values(ecommerce).some(val => val !== null && val !== '' && val !== 0);
+    const hasDetails = Object.values(ecommerce).some(val => val !== null && val !== '');
 
     return (
         <section className="my-4 text-xs">
