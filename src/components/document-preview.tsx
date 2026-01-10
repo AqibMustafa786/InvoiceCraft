@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useLayoutEffect, useRef, useEffect, FC, useMemo } from 'react';
@@ -193,7 +194,7 @@ const DocumentPreviewInternal: FC<DocumentPreviewProps> = ({ document, accentCol
   const [needsRemeasure, setNeedsRemeasure] = useState(true);
   const containerRef = useRef<HTMLDivElement>(null);
   
-  const t = locales[document.language as keyof typeof locales] || locales.en;
+  const t = locales[document.language as keyof locales] || locales.en;
   
   const serializedDocument = useMemo(() => JSON.stringify(document), [document]);
 
@@ -368,18 +369,13 @@ const DocumentPreviewInternal: FC<DocumentPreviewProps> = ({ document, accentCol
 }
 
 export const ClientDocumentPreview: FC<DocumentPreviewProps> = (props) => {
-  const [isClient, setIsClient] = useState(false);
-  useEffect(() => {
-    setIsClient(true);
-  }, []);
-
-  if (!isClient) {
+  if (!props.document) {
     return (
-        <Card id={props.id} className="w-full shadow-lg rounded-xl overflow-hidden print-hide">
-            <CardContent className="p-8 text-center text-muted-foreground">
-            Loading Preview...
-            </CardContent>
-        </Card>
+      <Card id={props.id} className="w-full shadow-lg rounded-xl overflow-hidden print-hide">
+        <CardContent className="p-8 text-center text-muted-foreground">
+          Loading Preview...
+        </CardContent>
+      </Card>
     );
   }
   return <DocumentPreviewInternal {...props} />;

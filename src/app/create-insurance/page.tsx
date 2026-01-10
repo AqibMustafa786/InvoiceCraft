@@ -197,19 +197,27 @@ const getInitialInsuranceDoc = (): Omit<InsuranceDocument, 'userId' | 'companyId
 });
 
 
-function PrintableInsuranceDoc({ doc, accentColor, backgroundColor, textColor }: { doc: InsuranceDocument, accentColor: string, backgroundColor: string, textColor: string }) {
-    const [container, setContainer] = useState<HTMLElement | null>(null);
+function PrintableInsuranceDoc({ doc }: { doc: InsuranceDocument }) {
+    const serializedData = useMemo(() => JSON.stringify(doc), [doc]);
 
     useEffect(() => {
-        setContainer(document.getElementById('print-container'));
-    }, []);
+        const container = document.getElementById('print-container');
+        if (container) {
+            ReactDOM.render(
+                <InsurancePreview
+                    doc={JSON.parse(serializedData)}
+                    accentColor={doc.accentColor || 'hsl(var(--primary))'}
+                    backgroundColor={doc.backgroundColor || '#FFFFFF'}
+                    textColor={doc.textColor || '#374151'}
+                    id="insurance-preview-print"
+                    isPrint={true}
+                />,
+                container
+            );
+        }
+    }, [serializedData, doc]); // Dependency on serialized data ensures re-render on any change
 
-    if (!container) return null;
-
-    return ReactDOM.createPortal(
-        <InsurancePreview doc={doc} accentColor={accentColor} backgroundColor={backgroundColor} textColor={textColor} id="insurance-preview-print" isPrint={true} />,
-        container
-    );
+    return null; // This component does not render anything itself
 }
 
 
@@ -242,8 +250,6 @@ export default function CreateInsurancePage() {
 
   const { data: remoteDraft, isLoading: isDraftLoading } = useDoc<InsuranceDocument>(docRef);
   const { data: prefillClient, isLoading: isClientLoading } = useDoc<Client>(clientRef);
-
-  const serializedDocument = useMemo(() => document ? JSON.stringify(document) : '', [document]);
 
   useEffect(() => {
     if (isAuthLoading || (draftId && isDraftLoading) || (prefillClientId && isClientLoading)) return;
@@ -594,10 +600,7 @@ export default function CreateInsurancePage() {
           </div>
         </div>
       </div>
-      {document && <PrintableInsuranceDoc key={serializedDocument} doc={document} accentColor={accentColor} backgroundColor={backgroundColor} textColor={textColor} />}
+      {document && <PrintableInsuranceDoc doc={document} />}
     </>
   );
 }
-
-
-

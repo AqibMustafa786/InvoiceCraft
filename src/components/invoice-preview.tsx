@@ -454,7 +454,7 @@ const UsaTemplatePage: FC<PageProps> = ({ pageItems, pageIndex, totalPages, ...c
                         </thead>
                         <tbody>
                             {pageItems?.filter(Boolean).map((item) => (
-                                <tr key={item.id} data-element="table-row" style={{ pageBreakInside: 'avoid' }}>
+                                <tr key={item.id} data-element="table-row">
                                     <td className="border p-2 align-top h-8 whitespace-pre-line">{item.name}{item.description && `\n${item.description}`}</td>
                                     <td className="border p-2 text-right align-top">{currencySymbol}{(item.quantity * ((item as any).unitPrice || 0)).toFixed(2)}</td>
                                 </tr>
@@ -742,23 +742,17 @@ const InvoicePreviewInternal: FC<InvoicePreviewProps> = ({ invoice, accentColor,
 }
 
 export const ClientInvoicePreview: FC<InvoicePreviewProps> = (props) => {
-    const [isClient, setIsClient] = useState(false);
-    useEffect(() => {
-        setIsClient(true);
-    }, []);
-
     const processedInvoice = useMemo(() => {
-      if (!props.invoice) return null;
-      // Deep copy and process dates
-      const newInvoice = JSON.parse(JSON.stringify(props.invoice));
-      newInvoice.invoiceDate = toDateSafe(newInvoice.invoiceDate);
-      newInvoice.dueDate = toDateSafe(newInvoice.dueDate);
-      // Process any other date fields here if necessary
-      return newInvoice;
+        if (!props.invoice) return null;
+        // Deep copy and process dates
+        const newInvoice = JSON.parse(JSON.stringify(props.invoice));
+        newInvoice.invoiceDate = toDateSafe(newInvoice.invoiceDate);
+        newInvoice.dueDate = toDateSafe(newInvoice.dueDate);
+        // Process any other date fields here if necessary
+        return newInvoice;
     }, [props.invoice]);
     
-
-    if (!isClient || !processedInvoice) {
+    if (!processedInvoice) {
         return (
             <Card id={props.id} className="w-full shadow-lg rounded-xl overflow-hidden print-hide">
                 <CardContent className="p-8 text-center text-muted-foreground">

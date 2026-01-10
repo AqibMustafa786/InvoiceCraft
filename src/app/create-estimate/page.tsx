@@ -255,19 +255,27 @@ const getInitialEstimate = (): Omit<Estimate, 'userId' | 'companyId'> => ({
 });
 
 
-function PrintableDocument({ doc, accentColor, backgroundColor, textColor }: { doc: Estimate | Quote, accentColor: string, backgroundColor: string, textColor: string }) {
-    const [container, setContainer] = useState<HTMLElement | null>(null);
+function PrintableDocument({ doc }: { doc: Estimate | Quote }) {
+    const serializedData = useMemo(() => JSON.stringify(doc), [doc]);
 
     useEffect(() => {
-        setContainer(document.getElementById('print-container'));
-    }, []);
+        const container = document.getElementById('print-container');
+        if (container) {
+            ReactDOM.render(
+                <ClientDocumentPreview
+                    document={JSON.parse(serializedData)}
+                    accentColor={doc.accentColor || 'hsl(var(--primary))'}
+                    backgroundColor={doc.backgroundColor || '#FFFFFF'}
+                    textColor={doc.textColor || '#374151'}
+                    id="estimate-preview-print"
+                    isPrint={true}
+                />,
+                container
+            );
+        }
+    }, [serializedData, doc]); // Dependency on serialized data ensures re-render on any change
 
-    if (!container) return null;
-
-    return ReactDOM.createPortal(
-        <ClientDocumentPreview document={doc} accentColor={accentColor} backgroundColor={backgroundColor} textColor={textColor} id="estimate-preview-print" isPrint={true} />,
-        container
-    );
+    return null; // This component does not render anything itself
 }
 
 export default function CreateEstimatePage() {
@@ -316,8 +324,6 @@ export default function CreateEstimatePage() {
       summary: { ...document.summary, subtotal, taxAmount, grandTotal }
     };
   }, [document]);
-
-  const serializedDocument = useMemo(() => document ? JSON.stringify(document) : '', [document]);
 
   useEffect(() => {
     if (isAuthLoading || (draftId && isDraftLoading) || (prefillClientId && isClientLoading)) return;
@@ -697,11 +703,7 @@ export default function CreateEstimatePage() {
             </div>
         </div>
       </div>
-      {processedDocument && <PrintableDocument key={serializedDocument} doc={processedDocument} accentColor={accentColor} backgroundColor={backgroundColor} textColor={textColor} />}
+      {processedDocument && <PrintableDocument doc={processedDocument} />}
     </>
   );
 }
-
-
-
-

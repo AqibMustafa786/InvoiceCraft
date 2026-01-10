@@ -318,26 +318,27 @@ const getInitialInvoice = (): Omit<Invoice, 'userId' | 'companyId'> => ({
 });
 
 
-function PrintableInvoice({ doc, accentColor, backgroundColor, textColor }: { doc: Invoice, accentColor: string, backgroundColor: string, textColor: string }) {
-    const [container, setContainer] = useState<HTMLElement | null>(null);
+function PrintableInvoice({ invoice }: { invoice: Invoice }) {
+    const serializedData = useMemo(() => JSON.stringify(invoice), [invoice]);
 
     useEffect(() => {
-        setContainer(document.getElementById('print-container'));
-    }, []);
+        const container = document.getElementById('print-container');
+        if (container) {
+            ReactDOM.render(
+                <ClientInvoicePreview
+                    invoice={JSON.parse(serializedData)}
+                    accentColor={invoice.accentColor || 'hsl(var(--primary))'}
+                    backgroundColor={invoice.backgroundColor || '#FFFFFF'}
+                    textColor={invoice.textColor || '#374151'}
+                    id="invoice-preview-print"
+                    isPrint={true}
+                />,
+                container
+            );
+        }
+    }, [serializedData, invoice]); // Dependency on serialized data ensures re-render on any change
 
-    if (!container) return null;
-
-    return ReactDOM.createPortal(
-        <ClientInvoicePreview 
-            invoice={doc} 
-            accentColor={accentColor} 
-            backgroundColor={backgroundColor} 
-            textColor={textColor} 
-            id="invoice-preview-print" 
-            isPrint={true} 
-        />,
-        container
-    );
+    return null; // This component does not render anything itself
 }
 
 export default function CreateInvoicePage() {
@@ -397,8 +398,6 @@ export default function CreateInvoicePage() {
       }
     };
   }, [invoice]);
-
-  const serializedInvoice = useMemo(() => invoice ? JSON.stringify(invoice) : '', [invoice]);
 
   useEffect(() => {
     if (isAuthLoading || (draftId && isDraftLoading) || (prefillClientId && isClientLoading) || isCompanyLoading) return;
@@ -831,7 +830,7 @@ export default function CreateInvoicePage() {
                 <div>
                   <h2 className="text-xl font-bold font-headline mb-4">Live Preview</h2>
                   <motion.div
-                    key={serializedInvoice}
+                    key={JSON.stringify(processedInvoice)}
                     initial={{ opacity: 0.8, scale: 0.995 }}
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ duration: 0.2 }}
@@ -843,11 +842,7 @@ export default function CreateInvoicePage() {
           </div>
         </div>
       </div>
-      {processedInvoice && <PrintableInvoice key={serializedInvoice} doc={processedInvoice} accentColor={accentColor} backgroundColor={backgroundColor} textColor={textColor} />}
+      {processedInvoice && <PrintableInvoice invoice={processedInvoice} />}
     </>
   );
 }
-
-
-
-
