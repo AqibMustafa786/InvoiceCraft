@@ -70,7 +70,7 @@ export const allTemplates: Template[] = [
   {
     id: 'construction-1',
     name: 'Foundation',
-    thumbnailUrl: '/templates/invoicepagetemplates/construction1.png',
+    thumbnailUrl: '/templates/invoicepagetemplates/FoundationInvoice.png',
     category: 'Construction',
     toolType: 'Invoice',
     description: 'A detailed and professional template for construction projects, outlining labor and materials separately.',
@@ -79,7 +79,7 @@ export const allTemplates: Template[] = [
    {
     id: 'construction-2',
     name: 'Modern Dark',
-    thumbnailUrl: '/templates/invoicepagetemplates/construction2.png',
+    thumbnailUrl: '/templates/invoicepagetemplates/Moderndark.png',
     category: 'Construction',
     toolType: 'Invoice',
     description: 'A sleek, dark-themed template for construction companies wanting a modern and bold look.',
@@ -88,7 +88,7 @@ export const allTemplates: Template[] = [
   {
     id: 'construction-3',
     name: 'Minimalist',
-    thumbnailUrl: '/templates/invoicepagetemplates/construction3.png',
+    thumbnailUrl: '/templates/invoicepagetemplates/CleanMinimal.png',
     category: 'Construction',
     toolType: 'Invoice',
     description: 'A clean and minimal design that focuses on the core details of the construction job.',
@@ -97,7 +97,7 @@ export const allTemplates: Template[] = [
   {
     id: 'construction-4',
     name: 'Side Accent',
-    thumbnailUrl: '/templates/invoicepagetemplates/construction4.png',
+    thumbnailUrl: '/templates/invoicepagetemplates/SideAccent.png',
     category: 'Construction',
     toolType: 'Invoice',
     description: 'Features a colored side panel for a touch of branding while keeping the main content area clean.',
@@ -106,7 +106,7 @@ export const allTemplates: Template[] = [
   {
     id: 'construction-5',
     name: 'Bold Grid',
-    thumbnailUrl: '/templates/invoicepagetemplates/construction5.png',
+    thumbnailUrl: '/templates/invoicepagetemplates/CleanGrid.png',
     category: 'Construction',
     toolType: 'Invoice',
     description: 'A grid-based layout for clear construction invoices.',
@@ -116,7 +116,7 @@ export const allTemplates: Template[] = [
   {
     id: 'plumbing-1',
     name: 'Direct Flow',
-    thumbnailUrl: '/templates/invoicepagetemplates/plumbing1.png',
+    thumbnailUrl: '/templates/invoicepagetemplates/DirectFlow.png',
     category: 'Plumbing',
     toolType: 'Invoice',
     description: 'A straightforward template for plumbing jobs, clearly listing services and costs.',
@@ -125,7 +125,7 @@ export const allTemplates: Template[] = [
   {
     id: 'plumbing-2',
     name: 'Modern Blue',
-    thumbnailUrl: '/templates/invoicepagetemplates/plumbing2.png',
+    thumbnailUrl: '/templates/invoicepagetemplates/ModernBlue.png',
     category: 'Plumbing',
     toolType: 'Invoice',
     description: 'A clean, modern template with blue accents, ideal for professional plumbing services.',
@@ -143,7 +143,7 @@ export const allTemplates: Template[] = [
   {
     id: 'plumbing-4',
     name: 'Side panel',
-    thumbnailUrl: '/templates/invoicepagetemplates/plumbing4.png',
+    thumbnailUrl: '/templates/invoicepagetemplates/Sidepanel.png',
     category: 'Plumbing',
     toolType: 'Invoice',
     description: 'A stylish template with a side panel for company branding and contact information.',
@@ -162,7 +162,7 @@ export const allTemplates: Template[] = [
   {
     id: 'electrical-1',
     name: 'Voltage',
-    thumbnailUrl: '/templates/invoicepagetemplates/Electrical1.png',
+    thumbnailUrl: '/templates/invoicepagetemplates/Voltage.png',
     category: 'Electrical Services',
     toolType: 'Invoice',
     description: 'A sharp, professional template for electricians and electrical contractors.',
@@ -171,7 +171,7 @@ export const allTemplates: Template[] = [
   {
     id: 'electrical-2',
     name: 'Circuit',
-    thumbnailUrl: '/templates/invoicepagetemplates/Electrical2.png',
+    thumbnailUrl: '/templates/invoicepagetemplates/Circuit.png',
     category: 'Electrical Services',
     toolType: 'Invoice',
     description: 'A modern template with circuit-themed design elements for tech-savvy electricians.',
@@ -180,7 +180,7 @@ export const allTemplates: Template[] = [
   {
     id: 'electrical-3',
     name: 'Spark',
-    thumbnailUrl: '/templates/invoicepagetemplates/Electrical3.png',
+    thumbnailUrl: '/templates/invoicepagetemplates/Spark.png',
     category: 'Electrical Services',
     toolType: 'Invoice',
     description: 'A clean and minimalist template for quick and clear electrical service billing.',
@@ -189,7 +189,7 @@ export const allTemplates: Template[] = [
   {
     id: 'electrical-4',
     name: 'Wired',
-    thumbnailUrl: '/templates/invoicepagetemplates/Electrical4.png',
+    thumbnailUrl: '/templates/invoicepagetemplates/Wired.png',
     category: 'Electrical Services',
     toolType: 'Invoice',
     description: 'A stylish invoice with a side panel accent, great for professional branding.',
@@ -217,7 +217,7 @@ export const allTemplates: Template[] = [
   {
     id: 'hvac-2',
     name: 'Climate Control',
-    thumbnailUrl: '/templates/invoicepagetemplates/HVAC2.png',
+    thumbnailUrl: '/templates/invoicepagetemplates/ClimateControl.png',
     category: 'HVAC Services',
     toolType: 'Invoice',
     description: 'A modern and fresh design for HVAC companies, with cool color accents.',
@@ -226,7 +226,7 @@ export const allTemplates: Template[] = [
   {
     id: 'hvac-3',
     name: 'Coolant',
-    thumbnailUrl: '/templates/invoicepagetemplates/HVAC3.png',
+    thumbnailUrl: '/templates/invoicepagetemplates/Coolant.png',
     category: 'HVAC Services',
     toolType: 'Invoice',
     description: 'A simple, grid-based invoice for clear and straightforward HVAC billing.',
@@ -235,7 +235,7 @@ export const allTemplates: Template[] = [
   {
     id: 'hvac-4',
     name: 'Corporate Blue',
-    thumbnailUrl: '/templates/invoicepagetemplates/HVAC4.png',
+    thumbnailUrl: '/templates/invoicepagetemplates/CorporateBlue.png',
     category: 'HVAC Services',
     toolType: 'Invoice',
     description: 'A professional and corporate-style invoice for commercial HVAC services.',
@@ -254,7 +254,7 @@ export const allTemplates: Template[] = [
   {
     id: 'roofing-1',
     name: 'Gable',
-    thumbnailUrl: '/templates/invoicepagetemplates/Roofing1.png',
+    thumbnailUrl: '/templates/invoicepagetemplates/Gable.png',
     category: 'Roofing',
     toolType: 'Invoice',
     description: 'A comprehensive template for roofing estimates and invoices.',
@@ -263,7 +263,7 @@ export const allTemplates: Template[] = [
   {
     id: 'roofing-2',
     name: 'Pinnacle',
-    thumbnailUrl: '/templates/invoicepagetemplates/Roofing2.png',
+    thumbnailUrl: '/templates/invoicepagetemplates/Pinnacle.png',
     category: 'Roofing',
     toolType: 'Invoice',
     description: 'A clean, professional template ideal for residential roofing projects.',
@@ -272,7 +272,7 @@ export const allTemplates: Template[] = [
   {
     id: 'roofing-3',
     name: 'Ridge',
-    thumbnailUrl: '/templates/invoicepagetemplates/Roofing3.png',
+    thumbnailUrl: '/templates/invoicepagetemplates/Ridge.png',
     category: 'Roofing',
     toolType: 'Invoice',
     description: 'A grid-based, modern template perfect for detailed roofing job breakdowns.',
@@ -281,7 +281,7 @@ export const allTemplates: Template[] = [
   {
     id: 'roofing-4',
     name: 'Shingle',
-    thumbnailUrl: '/templates/invoicepagetemplates/Roofing4.png',
+    thumbnailUrl: '/templates/invoicepagetemplates/Shingle.png',
     category: 'Roofing',
     toolType: 'Invoice',
     description: 'An elegant and clean design for high-end roofing and architectural services.',
