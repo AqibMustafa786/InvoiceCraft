@@ -359,6 +359,22 @@ const CategorySpecificFormFields: React.FC<{ invoice: Invoice; handleCategoryDat
                     </CardContent>
                 </Card>
             ) : null;
+        case "Retail / Wholesale":
+            return invoice.retail ? (
+                <Card className="bg-card/50 backdrop-blur-sm shadow-lg">
+                    <CardHeader><CardTitle className="text-base flex items-center gap-2"><Store className="h-4 w-4" />Retail / Wholesale Details</CardTitle></CardHeader>
+                    <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        <div className="space-y-2"><Label className="text-xs">SKU</Label><Input name="sku" value={invoice.retail.sku} onChange={(e) => handleCategoryDataChange('retail', e)} className="text-xs h-9"/></div>
+                        <div className="space-y-2"><Label className="text-xs">Product Name</Label><Input name="productName" value={invoice.retail.productName} onChange={(e) => handleCategoryDataChange('retail', e)} className="text-xs h-9"/></div>
+                        <div className="space-y-2"><Label className="text-xs">Product Category</Label><Input name="productCategory" value={invoice.retail.productCategory} onChange={(e) => handleCategoryDataChange('retail', e)} className="text-xs h-9"/></div>
+                        <div className="space-y-2"><Label className="text-xs">Unit of Measure</Label><Input name="unitOfMeasure" value={invoice.retail.unitOfMeasure} onChange={(e) => handleCategoryDataChange('retail', e)} className="text-xs h-9"/></div>
+                        <div className="space-y-2"><Label className="text-xs">Batch Number</Label><Input name="batchNumber" value={invoice.retail.batchNumber} onChange={(e) => handleCategoryDataChange('retail', e)} className="text-xs h-9"/></div>
+                        <div className="space-y-2"><Label className="text-xs">Stock Quantity</Label><Input name="stockQuantity" type="number" value={invoice.retail.stockQuantity ?? ''} onChange={(e) => handleCategoryDataChange('retail', e)} className="text-xs h-9"/></div>
+                        <div className="space-y-2"><Label className="text-xs">Wholesale Price</Label><Input name="wholesalePrice" type="number" value={invoice.retail.wholesalePrice ?? ''} onChange={(e) => handleCategoryDataChange('retail', e)} className="text-xs h-9"/></div>
+                        <div className="space-y-2"><Label className="text-xs">Shipping Pallet Cost</Label><Input name="shippingPalletCost" type="number" value={invoice.retail.shippingPalletCost ?? ''} onChange={(e) => handleCategoryDataChange('retail', e)} className="text-xs h-9"/></div>
+                    </CardContent>
+                </Card>
+            ) : null;
         case "Photography":
             return invoice.photography ? (
                 <Card className="bg-card/50 backdrop-blur-sm shadow-lg">
@@ -1157,10 +1173,7 @@ export function InvoiceForm({ invoice, setInvoice, accentColor, setAccentColor, 
                               This will add the items from the preset to your current list, not replace them.
                           </AlertDialogDescription>
                       </AlertDialogHeader>
-                      <AlertDialogFooter>
-                          <AlertDialogCancel>Cancel</AlertDialogCancel>
-                          <AlertDialogAction onClick={handleLoadPreset}>Load</AlertDialogAction>
-                      </AlertDialogFooter>
+                      <AlertDialogFooter><AlertDialogCancel>Cancel</AlertDialogCancel><AlertDialogAction onClick={handleLoadPreset}>Load</AlertDialogAction></AlertDialogFooter>
                   </AlertDialogContent>
                 </AlertDialog>
 
@@ -1175,10 +1188,7 @@ export function InvoiceForm({ invoice, setInvoice, accentColor, setAccentColor, 
                               This will permanently delete the "{selectedPreset}" preset. This action cannot be undone.
                           </AlertDialogDescription>
                       </AlertDialogHeader>
-                      <AlertDialogFooter>
-                          <AlertDialogCancel>Cancel</AlertDialogCancel>
-                          <AlertDialogAction onClick={handleDeletePreset}>Delete</AlertDialogAction>
-                      </AlertDialogFooter>
+                      <AlertDialogFooter><AlertDialogCancel>Cancel</AlertDialogCancel><AlertDialogAction onClick={handleDeletePreset}>Delete</AlertDialogAction></AlertDialogFooter>
                   </AlertDialogContent>
                 </AlertDialog>
 
@@ -1193,14 +1203,8 @@ export function InvoiceForm({ invoice, setInvoice, accentColor, setAccentColor, 
                               Save the current set of line items for quick use in the future.
                           </DialogDescription>
                       </DialogHeader>
-                      <div className="space-y-2">
-                          <Label htmlFor="preset-name">Preset Name</Label>
-                          <Input id="preset-name" value={newPresetName} onChange={(e) => setNewPresetName(e.target.value)} placeholder="e.g., Standard Website Package"/>
-                      </div>
-                      <DialogFooter>
-                          <DialogClose asChild><Button variant="ghost">Cancel</Button></DialogClose>
-                          <Button onClick={handleSavePreset}>Save Preset</Button>
-                      </DialogFooter>
+                      <div className="space-y-2"><Label htmlFor="preset-name">Preset Name</Label><Input id="preset-name" value={newPresetName} onChange={(e) => setNewPresetName(e.target.value)} placeholder="e.g., Standard Website Package"/></div>
+                      <DialogFooter><DialogClose asChild><Button variant="ghost">Cancel</Button></DialogClose><Button onClick={handleSavePreset}>Save Preset</Button></DialogFooter>
                   </DialogContent>
                 </Dialog>
               </div>
