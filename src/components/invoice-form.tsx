@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import { ChangeEvent, Dispatch, SetStateAction, useState, useEffect } from 'react';
@@ -9,7 +10,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { DatePicker } from '@/components/ui/datepicker';
-import { ImageUp, Plus, Trash2, Palette, X, Mail, Truck, Hash, Wallet, Phone, Globe, Briefcase, Award, User, FileText, Building, Pencil, Type, Package, Hammer, Ruler, ListTree, CheckSquare, Sparkles, Calendar, TextQuote, Wind, Thermometer, Wrench, Zap, Trees, Droplets, Car, Code, DraftingCompass, PaintBucket, Paintbrush, Receipt, Scale, Hospital, HeartPulse, HardHat, Save, Loader2, Camera, MoreVertical, PlusCircle } from 'lucide-react';
+import { ImageUp, Plus, Trash2, Palette, X, Mail, Truck, Hash, Wallet, Phone, Globe, Briefcase, Award, User, FileText, Building, Pencil, Type, Package, Hammer, Ruler, ListTree, CheckSquare, Sparkles, Calendar, TextQuote, Wind, Thermometer, Wrench, Zap, Trees, Droplets, Car, Code, DraftingCompass, PaintBucket, Paintbrush, Receipt, Scale, Hospital, HeartPulse, HardHat, Save, Loader2, Camera, MoreVertical, PlusCircle, Store } from 'lucide-react';
 import Image from 'next/image';
 import {
   Select,
@@ -461,8 +462,7 @@ const CategorySpecificFormFields: React.FC<{ invoice: Invoice; handleCategoryDat
         default:
             return null;
     }
-}
-
+};
 
 export function InvoiceForm({ invoice, setInvoice, accentColor, setAccentColor, backgroundColor, setBackgroundColor, textColor, setTextColor, toast, onLogoUpload, isUploading }: InvoiceFormProps) {
   const [bulkAddCount, setBulkAddCount] = useState(10);
@@ -1235,7 +1235,7 @@ export function InvoiceForm({ invoice, setInvoice, accentColor, setAccentColor, 
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor={`itemRate-${index}`} className="text-xs md:hidden">Unit Price</Label>
-                  <Input id={`itemRate-${index}`} type="number" value={item.unitPrice || 0} onChange={(e) => handleItemChange(index, 'unitPrice', parseFloat(e.target.value) || 0)} className="w-full h-9 text-xs" />
+                  <Input id={`itemRate-${index}`} type="number" value={invoice.lineItems[index].unitPrice || 0} onChange={(e) => handleItemChange(index, 'unitPrice', parseFloat(e.target.value) || 0)} className="w-full h-9 text-xs" />
                 </div>
               </div>
 
@@ -1343,3 +1343,5 @@ export function InvoiceForm({ invoice, setInvoice, accentColor, setAccentColor, 
     </div>
   );
 }
+
+    
