@@ -22,13 +22,15 @@ interface PageProps {
 }
 
 export const EcommerceDetails: React.FC<{ invoice: Invoice, t: any }> = ({ invoice, t }) => {
-    if (!invoice.ecommerce) return null;
+    // Render the heading if the ecommerce object exists, even if its fields are empty.
+    if (!invoice.ecommerce) {
+      return null;
+    }
 
     const { ecommerce } = invoice;
+    // Check if there are any actual values in the details object to display.
     const hasDetails = Object.values(ecommerce).some(val => val !== null && val !== '');
-    
-    // Always render the heading if the ecommerce object exists, even if empty.
-    // The fields inside will only render if they have values.
+
     return (
         <section className="my-4 text-xs">
             <p className="font-bold text-gray-500 mb-2 border-b">{t.orderDetails || 'Order Details'}</p>

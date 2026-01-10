@@ -1,3 +1,4 @@
+
 'use client';
 
 import type { Invoice, CustomField } from '@/lib/types';
@@ -53,7 +54,7 @@ export const CategorySpecificDetails: FC<{ invoice: Invoice, t: any }> = ({ invo
     // A helper function to render the category details and the custom fields without a heading
     const renderDetailsWithCustomFields = (DetailsComponent: React.FC<any> | null) => {
       const categoryKey = category.split(" ")[0].toLowerCase() as keyof Invoice;
-      const hasCategoryData = invoice[categoryKey];
+      const hasCategoryData = invoice[categoryKey] && Object.values(invoice[categoryKey] as any).some(val => val !== null && val !== '');
       return (
         <>
             {DetailsComponent && hasCategoryData ? <DetailsComponent {...commonProps} /> : null}
