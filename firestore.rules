@@ -48,21 +48,17 @@ service cloud.firestore {
       // Nested collections within a company
       match /invoices/{invoiceId} {
           allow read, update, delete: if belongsToCompany(companyId);
-          allow create: if belongsToCompany(companyId) && 
-                        (getUserData().plan == 'business' || list(/databases/$(database)/documents/companies/$(companyId)/invoices,).size() < 5);
+          allow create: if belongsToCompany(companyId);
       }
       
       match /quotes/{quoteId} {
           allow get: if true; // Publicly readable for sharing
-          allow list, update, delete: if belongsToCompany(companyId);
-           allow create: if belongsToCompany(companyId) && getUserData().plan == 'business';
+          allow list, create, update, delete: if belongsToCompany(companyId);
       }
 
       match /estimates/{estimateId} {
           allow read: if resource.data.isPublic == true || belongsToCompany(companyId);
-          allow list, update, delete: if belongsToCompany(companyId);
-          allow create: if belongsToCompany(companyId) && 
-                        (getUserData().plan == 'business' || list(/databases/$(database)/documents/companies/$(companyId)/estimates,).size() < 3);
+          allow list, create, update, delete: if belongsToCompany(companyId);
       }
       
       // Tighter rules for user management within a company
@@ -92,5 +88,3 @@ service cloud.firestore {
     }
   }
 }
-
-    
