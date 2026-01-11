@@ -9,10 +9,10 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { useFirebase } from '@/firebase';
-import { signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, GithubAuthProvider, FacebookAuthProvider } from 'firebase/auth';
+import { signInWithEmailAndPassword, signInWithPopup, signInWithRedirect, GoogleAuthProvider, GithubAuthProvider, FacebookAuthProvider, getRedirectResult } from 'firebase/auth';
 import { useRouter } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Eye, EyeOff } from 'lucide-react';
 import { createProfileAndCompany } from '@/firebase/auth-helpers';
 
@@ -37,6 +37,32 @@ export default function LoginPage() {
             password: "",
         },
     });
+
+     useEffect(() => {
+        if (!auth) return;
+        getRedirectResult(auth)
+            .then(async (result) => {
+                if (result) {
+                    setIsLoading(true);
+                    await createProfileAndCompany(result.user);
+                    toast({
+                        title: "Login Successful",
+                        description: `Welcome, ${result.user.displayName}!`,
+                    });
+                    router.push('/dashboard');
+                }
+            })
+            .catch((error) => {
+                 toast({
+                    variant: "destructive",
+                    title: "Login Failed",
+                    description: error.message || "Failed to sign in after redirect.",
+                });
+            })
+            .finally(() => {
+                setIsLoading(false);
+            });
+    }, [auth, router, toast]);
 
     const onSubmit = async (data: LoginFormValues) => {
         setIsLoading(true);
@@ -63,40 +89,52 @@ export default function LoginPage() {
     
     const onSocialLogin = async (providerName: 'google' | 'github' | 'facebook') => {
         setIsLoading(true);
+        if (!auth) {
+            toast({ title: "Error", description: "Authentication service is not available.", variant: "destructive"});
+            setIsLoading(false);
+            return;
+        }
+        
+        let provider;
+        if (providerName === 'google') {
+            provider = new GoogleAuthProvider();
+        } else if (providerName === 'github') {
+            provider = new GithubAuthProvider();
+        } else {
+            provider = new FacebookAuthProvider();
+        }
+
         try {
-            if (!auth) {
-                throw new Error("Authentication service is not available.");
-            }
-            
-            let provider;
-            if (providerName === 'google') {
-                provider = new GoogleAuthProvider();
-            } else if (providerName === 'github') {
-                provider = new GithubAuthProvider();
-            } else {
-                provider = new FacebookAuthProvider();
-            }
-
             const userCredential = await signInWithPopup(auth, provider);
-            
-            // This will handle new user profile creation if they don't exist
             await createProfileAndCompany(userCredential.user);
-
             toast({
                 title: "Login Successful",
                 description: `Welcome, ${userCredential.user.displayName}!`,
             });
             router.push('/dashboard');
-            
         } catch (error: any) {
-             toast({
-                variant: "destructive",
-                title: "Login Failed",
-                description: error.message || `Failed to sign in with ${providerName}.`,
-            });
-        } finally {
-            setIsLoading(false);
-        }
+            // If popup fails (e.g., blocked), try redirect method
+            if (error.code === 'auth/popup-closed-by-user' || error.code === 'auth/cancelled-popup-request') {
+                 try {
+                    await signInWithRedirect(auth, provider);
+                    // The page will redirect, and the result will be handled by the useEffect hook.
+                } catch (redirectError: any) {
+                    toast({
+                        variant: "destructive",
+                        title: "Login Failed",
+                        description: redirectError.message || `Failed to sign in with ${providerName}.`,
+                    });
+                    setIsLoading(false);
+                }
+            } else {
+                 toast({
+                    variant: "destructive",
+                    title: "Login Failed",
+                    description: error.message || `Failed to sign in with ${providerName}.`,
+                });
+                setIsLoading(false);
+            }
+        } 
     };
 
     return (
