@@ -14,7 +14,7 @@ import { useRouter } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
 import { useState, useEffect } from 'react';
 import { Eye, EyeOff } from 'lucide-react';
-import { createProfileAndCompany } from '@/firebase/auth-helpers';
+import { bootstrapUser } from '@/firebase/auth-helpers';
 
 const loginSchema = z.object({
     email: z.string().email({ message: "Invalid email address." }),
@@ -44,7 +44,7 @@ export default function LoginPage() {
             .then(async (result) => {
                 if (result) {
                     setIsLoading(true);
-                    await createProfileAndCompany(result.user);
+                    await bootstrapUser(result.user);
                     toast({
                         title: "Login Successful",
                         description: `Welcome, ${result.user.displayName}!`,
@@ -106,7 +106,7 @@ export default function LoginPage() {
 
         try {
             const userCredential = await signInWithPopup(auth, provider);
-            await createProfileAndCompany(userCredential.user);
+            await bootstrapUser(userCredential.user);
             toast({
                 title: "Login Successful",
                 description: `Welcome, ${userCredential.user.displayName}!`,

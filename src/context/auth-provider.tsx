@@ -7,6 +7,7 @@ import { useFirebase } from '@/firebase/provider';
 import { usePathname, useRouter } from 'next/navigation';
 import { Skeleton } from '@/components/ui/skeleton';
 import { doc, getDoc } from 'firebase/firestore';
+import { bootstrapUser } from '@/firebase/auth-helpers';
 
 interface UserProfile {
   companyId: string;
@@ -37,12 +38,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       setUser(firebaseUser);
       if (firebaseUser && firestore) {
+        // Bootstrap user on first login or if data is missing
+        await bootstrapUser(firebaseUser);
+
         const userDocRef = doc(firestore, 'users', firebaseUser.uid);
         try {
           const docSnap = await getDoc(userDocRef);
           if (docSnap.exists()) {
             setUserProfile(docSnap.data() as UserProfile);
           } else {
+            // This case should be rare after bootstrapping, but good to have
             console.warn("User profile not found in Firestore for UID:", firebaseUser.uid);
             setUserProfile(null);
           }

@@ -14,7 +14,7 @@ import { useRouter } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
 import { useState, useEffect } from 'react';
 import { Eye, EyeOff } from 'lucide-react';
-import { createProfileAndCompany } from '@/firebase/auth-helpers';
+import { bootstrapUser } from '@/firebase/auth-helpers';
 
 const signupSchema = z.object({
     name: z.string().min(2, { message: "Name must be at least 2 characters." }),
@@ -46,7 +46,7 @@ export default function SignupPage() {
             .then(async (result) => {
                 if (result) {
                     setIsLoading(true);
-                    await createProfileAndCompany(result.user);
+                    await bootstrapUser(result.user);
                     toast({
                         title: "Sign-in Successful",
                         description: `Welcome, ${result.user.displayName}!`,
@@ -74,7 +74,7 @@ export default function SignupPage() {
             }
             const userCredential = await createUserWithEmailAndPassword(auth, data.email, data.password);
             
-            await createProfileAndCompany(userCredential.user, data.name);
+            await bootstrapUser(userCredential.user, data.name);
 
             toast({
                 title: "Account Created!",
@@ -111,7 +111,7 @@ export default function SignupPage() {
 
         try {
             const userCredential = await signInWithPopup(auth, provider);
-            await createProfileAndCompany(userCredential.user);
+            await bootstrapUser(userCredential.user);
             toast({
                 title: "Sign-in Successful",
                 description: `Welcome, ${userCredential.user.displayName}!`,

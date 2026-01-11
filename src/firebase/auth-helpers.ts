@@ -11,7 +11,7 @@ import { getFirebase } from '@/firebase';
  * @param user The Firebase User object.
  * @param displayName The name to use for the user and their company.
  */
-export const createProfileAndCompany = async (user: User, displayName?: string | null) => {
+export const bootstrapUser = async (user: User, displayName?: string | null) => {
     if (!user) throw new Error("User object is null.");
     
     // Get firestore instance inside the function
