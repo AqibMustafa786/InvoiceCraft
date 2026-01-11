@@ -1,6 +1,7 @@
+
 'use client';
 
-import { useState, useMemo, useCallback } from 'react';
+import { useState, useMemo, useCallback, Suspense } from 'react';
 import type { Invoice, Estimate, DocumentStatus, Quote, AuditLogEntry, Client, InsuranceDocument } from '@/lib/types';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -256,7 +257,7 @@ const ClientStatsGrid: React.FC<ClientStatsGridProps> = ({ clients, invoices }) 
 };
 
 
-export default function DashboardPage() {
+function DashboardPageContent() {
     const searchParams = useSearchParams();
     const activeTab = searchParams.get('tab') || 'invoices';
     const [deleteCandidate, setDeleteCandidate] = useState<{ id: string; collection: string } | null>(null);
@@ -1006,5 +1007,13 @@ export default function DashboardPage() {
                 </motion.div>
             </motion.div>
         </>
+    );
+}
+
+export default function DashboardPage() {
+    return (
+        <Suspense fallback={<div>Loading...</div>}>
+            <DashboardPageContent />
+        </Suspense>
     );
 }

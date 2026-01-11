@@ -2,13 +2,12 @@
 'use client';
 
 import Link from "next/link";
-import { usePathname, useSearchParams } from "next/navigation";
+import { usePathname, useSearchParams, useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { FileText, Users, FileQuestion, FilePlus, Home, Tag, Gem, CreditCard, LogOut, Shield, AreaChart } from "lucide-react";
 import { useAuth } from "@/context/auth-provider";
-import { useRouter } from "next/navigation";
 import { signOut } from "firebase/auth";
 import { useFirebase } from "@/firebase";
 import { motion, AnimatePresence } from 'framer-motion';
@@ -35,17 +34,17 @@ interface SidebarNavProps {
 export function SidebarNav({ isSidebarOpen }: SidebarNavProps) {
     const pathname = usePathname();
     const searchParams = useSearchParams();
+    const router = useRouter();
     const activeTab = searchParams.get('tab') || 'invoices';
     
-    const { user, userProfile } = useAuth();
     const { auth } = useFirebase();
-    const router = useRouter();
 
-    const handleLogout = async () => {
-        if (auth) {
-            await signOut(auth);
+    const handleNavClick = (tab: string, href: string) => {
+        if (href.startsWith('/dashboard?')) {
+          router.push(href, { scroll: false });
+        } else {
+          router.push(href);
         }
-        router.push('/login');
     };
 
     const linkVariants = {
@@ -78,11 +77,11 @@ export function SidebarNav({ isSidebarOpen }: SidebarNavProps) {
                                 return (
                                    <Button 
                                       key={item.href}
-                                      asChild
+                                      onClick={() => handleNavClick(item.tab, item.href)}
                                       variant={isActive ? "secondary" : "ghost"} 
                                       className={cn("w-full justify-start text-xs h-8", isActive && "text-primary", !isSidebarOpen && "justify-center")}
                                     >
-                                      <Link href={item.href} title={item.label}>
+                                      <Link href={item.href} title={item.label} className="flex items-center w-full">
                                          <item.icon className={cn("h-3.5 w-3.5", isSidebarOpen && "mr-2")} />
                                          <AnimatePresence>
                                             {isSidebarOpen && (
