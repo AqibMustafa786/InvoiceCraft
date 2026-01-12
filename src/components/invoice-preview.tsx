@@ -8,7 +8,7 @@ import { Separator } from '@/components/ui/separator';
 import Image from 'next/image';
 import { format, isValid } from 'date-fns';
 import locales from '@/lib/locales';
-import { ConstructionTemplate1, ConstructionTemplate2, ConstructionTemplate3, ConstructionTemplate4, ConstructionTemplate5 } from './invoice-templates/construction-templates';
+import { ConstructionTemplate1, ConstructionTemplate2, ConstructionTemplate3, ConstructionTemplate4, ConstructionTemplate5, ConstructionTemplate6 } from './invoice-templates/construction-templates';
 import { PlumbingTemplate1, PlumbingTemplate2, PlumbingTemplate3, PlumbingTemplate4, PlumbingTemplate5 } from './invoice-templates/plumbing-templates';
 import { ElectricalTemplate1, ElectricalTemplate2, ElectricalTemplate3, ElectricalTemplate4, ElectricalTemplate5 } from './invoice-templates/electrical-templates';
 import { HVACTemplate1, HVACTemplate2, HVACTemplate3, HVACTemplate4, HVACTemplate5 } from './invoice-templates/hvac-templates';
