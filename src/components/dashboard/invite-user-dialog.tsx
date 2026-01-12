@@ -108,7 +108,7 @@ export function InviteUserDialog({ open, onOpenChange, onUserInvited }: InviteUs
         </DialogHeader>
         
         <Form {...form}>
-          <form className="space-y-4 py-4" onSubmit={form.handleSubmit(onSubmit)}>
+          <form className="space-y-3" onSubmit={form.handleSubmit(onSubmit)}>
              <FormField control={form.control} name="name" render={({ field }) => (
                 <FormItem><FormLabel>Full Name</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
               )} />
