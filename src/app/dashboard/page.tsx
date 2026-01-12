@@ -49,6 +49,7 @@ const INVOICES_COLLECTION = 'invoices';
 const ESTIMATES_COLLECTION = 'estimates';
 const QUOTES_COLLECTION = 'quotes';
 const CLIENTS_COLLECTION = 'clients';
+const USERS_COLLECTION = 'users';
 const INSURANCE_COLLECTION = 'insurance';
 
 const initialFilters: DashboardFilters = {
@@ -284,6 +285,11 @@ function DashboardPageContent() {
         return query(collection(firestore, 'companies', companyId, CLIENTS_COLLECTION));
     }, [firestore, companyId]);
 
+    const usersQuery = useMemoFirebase(() => {
+        if (!firestore || !companyId) return null;
+        return query(collection(firestore, 'companies', companyId, USERS_COLLECTION));
+    }, [firestore, companyId]);
+
     const invoicesQuery = useMemoFirebase(() => {
         if (!firestore || !companyId) return null;
         return query(collection(firestore, 'companies', companyId, INVOICES_COLLECTION));
@@ -306,6 +312,7 @@ function DashboardPageContent() {
 
 
     const { data: clients, isLoading: isLoadingClients, refetch: refetchClients } = useCollection<Client>(clientsQuery);
+    const { data: users, isLoading: isLoadingUsers, refetch: refetchUsers } = useCollection<any>(usersQuery);
     const { data: invoices, isLoading: isLoadingInvoices } = useCollection<Invoice>(invoicesQuery);
     const { data: estimates, isLoading: isLoadingEstimates } = useCollection<Estimate>(estimatesQuery);
     const { data: quotes, isLoading: isLoadingQuotes } = useCollection<Quote>(quotesQuery);
@@ -659,7 +666,7 @@ function DashboardPageContent() {
         }
     };
     
-    const isLoading = isAuthLoading || isLoadingInvoices || isLoadingEstimates || isLoadingQuotes || isLoadingInsurance;
+    const isLoading = isAuthLoading || isLoadingInvoices || isLoadingEstimates || isLoadingQuotes || isLoadingInsurance || isLoadingUsers;
 
     const renderDocumentsTable = (docs: DocumentType[], docType: 'invoice' | 'estimate' | 'quote' | 'insurance') => (
         <div className="overflow-x-auto">
@@ -816,12 +823,11 @@ function DashboardPageContent() {
                 <CardHeader>
                     <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                         <div>
-                            <CardTitle className="text-base">Clients &amp; Users</CardTitle>
-                            <CardDescription className="text-xs">A list of all clients and invited users in your company.</CardDescription>
+                            <CardTitle className="text-base">Clients</CardTitle>
+                            <CardDescription className="text-xs">A list of all clients in your company.</CardDescription>
                         </div>
                         <div className="flex gap-2">
-                             <Button size="sm" className='rounded-full' onClick={handleAddClient} variant="outline"><Users className="mr-2 h-4 w-4"/>Add Client</Button>
-                             <Button size="sm" className='rounded-full' onClick={() => setIsInviteUserDialogOpen(true)}><UserPlus className="mr-2 h-4 w-4"/>Invite User</Button>
+                             <Button size="sm" className='rounded-full' onClick={handleAddClient} variant="outline"><UserPlus className="mr-2 h-4 w-4"/>Add Client</Button>
                         </div>
                     </div>
                 </CardHeader>
@@ -877,6 +883,55 @@ function DashboardPageContent() {
             </Card>
         )
     };
+    
+    const renderUsersTable = () => (
+        <Card className='bg-card/50 backdrop-blur-sm'>
+            <CardHeader>
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                    <div>
+                        <CardTitle className="text-base">Users</CardTitle>
+                        <CardDescription className="text-xs">A list of all users in your company.</CardDescription>
+                    </div>
+                    <Button size="sm" className='rounded-full' onClick={() => setIsInviteUserDialogOpen(true)}><UserPlus className="mr-2 h-4 w-4"/>Invite User</Button>
+                </div>
+            </CardHeader>
+            <CardContent className="pt-0">
+                <div className="overflow-x-auto">
+                    <Table>
+                        <TableHeader>
+                            <TableRow>
+                                <TableHead className="text-xs">Name</TableHead>
+                                <TableHead className="text-xs hidden sm:table-cell">Email</TableHead>
+                                <TableHead className="text-xs hidden md:table-cell">Role</TableHead>
+                                <TableHead className="text-right text-xs">Actions</TableHead>
+                            </TableRow>
+                        </TableHeader>
+                        <motion.tbody
+                            variants={tableContainerVariants}
+                            initial="hidden"
+                            animate="visible"
+                            as={TableBody}
+                        >
+                            {isLoadingUsers ? (
+                                <TableRow><TableCell colSpan={4} className="text-center h-24">Loading users...</TableCell></TableRow>
+                            ) : users && users.length > 0 ? users.map((user) => (
+                                <motion.tr as={TableRow} key={user.uid} variants={tableRowVariants}>
+                                    <TableCell className="font-medium text-xs">{user.name}</TableCell>
+                                    <TableCell className="text-xs hidden sm:table-cell">{user.email}</TableCell>
+                                    <TableCell className="text-xs hidden md:table-cell capitalize"><Badge variant="outline">{user.role}</Badge></TableCell>
+                                    <TableCell className="text-right">
+                                        <Button variant="ghost" size="sm">Edit</Button>
+                                    </TableCell>
+                                </motion.tr>
+                            )) : (
+                                <TableRow><TableCell colSpan={4} className="text-center h-24">No users found.</TableCell></TableRow>
+                            )}
+                        </motion.tbody>
+                    </Table>
+                </div>
+            </CardContent>
+        </Card>
+    );
 
     if (isLoading) {
         return (
@@ -938,7 +993,7 @@ function DashboardPageContent() {
                 open={isInviteUserDialogOpen}
                 onOpenChange={setIsInviteUserDialogOpen}
                 onUserInvited={() => {
-                    // You might want to refetch users/clients here if they are displayed in the same list
+                    refetchUsers();
                 }}
             />
             <motion.div className="space-y-4" variants={pageVariants} initial="hidden" animate="visible">
@@ -1001,7 +1056,7 @@ function DashboardPageContent() {
                                 </div>
                             </div>
                         </CardHeader>
-                        {activeTab !== 'clients' && (
+                        {activeTab !== 'clients' && activeTab !== 'users' && (
                             <CardContent>
                                 {activeTab === 'invoices' && <DashboardStatsGrid documents={filteredInvoices} docType="invoice" onKpiClick={handleKpiClick} />}
                                 {activeTab === 'estimates' && <DashboardStatsGrid documents={filteredEstimates} docType="estimate" onKpiClick={handleKpiClick} />}
@@ -1023,6 +1078,7 @@ function DashboardPageContent() {
                     {activeTab === 'quotes' && <Card className='bg-card/50 backdrop-blur-sm'><CardContent className="pt-6">{renderDocumentsTable(filteredQuotes, 'quote')}</CardContent></Card>}
                     {activeTab === 'insurance' && <Card className='bg-card/50 backdrop-blur-sm'><CardContent className="pt-6">{renderDocumentsTable(filteredInsurance, 'insurance')}</CardContent></Card>}
                     {activeTab === 'clients' && renderClientsTable()}
+                    {activeTab === 'users' && renderUsersTable()}
                 </motion.div>
             </motion.div>
         </>
