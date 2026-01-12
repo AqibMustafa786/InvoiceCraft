@@ -19,6 +19,11 @@
           "type": "string",
           "description": "User's display name."
         },
+        "avatarUrl": {
+            "type": "string",
+            "format": "uri",
+            "description": "URL of the user's profile picture."
+        },
         "phone": {
           "type": "string",
           "description": "User's phone number."
@@ -43,7 +48,7 @@
         "status": {
             "type": "string",
             "description": "The current status of the user.",
-            "enum": ["active", "pending", "disabled"]
+            "enum": ["active", "pending_invitation", "disabled"]
         },
         "plan": {
             "type": "string",
