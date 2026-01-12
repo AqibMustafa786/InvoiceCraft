@@ -1,5 +1,4 @@
 
-
 'use client';
 
 import { useState, useEffect, ChangeEvent } from 'react';
@@ -22,6 +21,7 @@ import { Label } from '../ui/label';
 
 
 const inviteUserSchema = z.object({
+  uid: z.string().optional(), // Add uid to the schema
   name: z.string().min(1, { message: "Full name is required." }),
   email: z.string().email({ message: "Invalid email format." }),
   role: z.enum(['admin', 'staff', 'viewer'], { required_error: "Please select a role." }),
@@ -70,6 +70,7 @@ export function InviteUserDialog({ open, onOpenChange, onUserInvited, user: edit
         setAvatarPreview(editingUser.avatarUrl);
       } else {
         form.reset({
+          uid: undefined,
           name: '',
           email: '',
           role: 'staff',
@@ -124,13 +125,12 @@ export function InviteUserDialog({ open, onOpenChange, onUserInvited, user: edit
       if (isNewUser) {
         // In a real app, this would trigger a backend function to send an invite email.
         // For now, we'll simulate by creating a placeholder user document.
-        // The user would then sign up with this email and be associated with the company.
-        
         const newUserId = `invited_${data.email.replace(/[^a-zA-Z0-9]/g, '')}`;
         const newUserRef = doc(firestore, 'companies', userProfile.companyId, 'users', newUserId);
 
         await setDoc(newUserRef, {
           ...data,
+          uid: newUserId, // Ensure the UID is set for pending users too
           avatarUrl: avatarPreview || '',
           status: 'pending_invitation', // A status to indicate the user hasn't signed up yet
           createdAt: serverTimestamp(),
@@ -143,9 +143,14 @@ export function InviteUserDialog({ open, onOpenChange, onUserInvited, user: edit
 
       } else {
         // This is an existing user, so we update their document
-        const userRef = doc(firestore, 'companies', userProfile.companyId, 'users', editingUser.uid);
+        if (!data.uid) {
+             throw new Error("Cannot update employee without a User ID.");
+        }
+        const userRef = doc(firestore, 'companies', userProfile.companyId, 'users', data.uid);
+        // Exclude uid and email from the update payload
+        const { uid, email, ...updateData } = data;
         await updateDoc(userRef, {
-            ...data,
+            ...updateData,
             avatarUrl: avatarPreview || '',
         });
          toast({
@@ -156,9 +161,9 @@ export function InviteUserDialog({ open, onOpenChange, onUserInvited, user: edit
 
       onUserInvited();
       onOpenChange(false);
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error saving user: ", error);
-      toast({ title: "Error", description: `Failed to ${isNewUser ? 'send invitation' : 'update employee'}.`, variant: "destructive" });
+      toast({ title: "Error", description: error.message || `Failed to ${isNewUser ? 'send invitation' : 'update employee'}.`, variant: "destructive" });
     } finally {
       setIsSaving(false);
     }
@@ -177,6 +182,9 @@ export function InviteUserDialog({ open, onOpenChange, onUserInvited, user: edit
         <ScrollArea className="max-h-[65vh] pr-6 -mr-6">
         <Form {...form}>
           <form className="space-y-4 px-1" onSubmit={form.handleSubmit(onSubmit)}>
+             {/* Hidden UID field */}
+            <input type="hidden" {...form.register('uid')} />
+
             <div className="flex items-center gap-4">
                   <Avatar className="h-20 w-20">
                     <AvatarImage src={avatarPreview || ''} />
@@ -193,7 +201,7 @@ export function InviteUserDialog({ open, onOpenChange, onUserInvited, user: edit
                     <Input id="avatar-upload" type="file" className="sr-only" onChange={handleAvatarUpload} accept="image/*" />
                   </div>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-2">
               <FormField control={form.control} name="name" render={({ field }) => (
                   <FormItem><FormLabel>Full Name</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
                 )} />
