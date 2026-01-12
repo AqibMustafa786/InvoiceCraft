@@ -961,7 +961,7 @@ function DashboardPageContent() {
                                                     <Edit className="mr-2 h-3.5 w-3.5" />
                                                     <span className="text-xs">Edit</span>
                                                 </DropdownMenuItem>
-                                                <DropdownMenuItem onClick={() => setDeleteCandidate({id: user.uid, collection: 'users'})} className="text-destructive cursor-pointer">
+                                                <DropdownMenuItem onClick={() => setDeleteCandidate({id: user.uid, collection: USERS_COLLECTION})} className="text-destructive cursor-pointer">
                                                     <Trash2 className="mr-2 h-3.5 w-3.5" />
                                                     <span className="text-xs">Delete</span>
                                                 </DropdownMenuItem>
@@ -1139,6 +1139,8 @@ export default function DashboardPage() {
         </Suspense>
     );
 }
+
+
 
 
 
