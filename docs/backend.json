@@ -19,6 +19,18 @@
           "type": "string",
           "description": "User's display name."
         },
+        "phone": {
+          "type": "string",
+          "description": "User's phone number."
+        },
+        "position": {
+            "type": "string",
+            "description": "The user's position or job title within the company."
+        },
+        "designation": {
+            "type": "string",
+            "description": "The user's official designation."
+        },
         "companyId": {
           "type": "string",
           "description": "Reference to the Company the user belongs to."
@@ -27,6 +39,11 @@
             "type": "string",
             "description": "The user's role within their company.",
             "enum": ["admin", "staff", "viewer"]
+        },
+        "status": {
+            "type": "string",
+            "description": "The current status of the user.",
+            "enum": ["active", "pending", "disabled"]
         },
         "plan": {
             "type": "string",

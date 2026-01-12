@@ -19,6 +19,9 @@ const inviteUserSchema = z.object({
   name: z.string().min(1, { message: "Full name is required." }),
   email: z.string().email({ message: "Invalid email format." }),
   role: z.enum(['admin', 'staff', 'viewer'], { required_error: "Please select a role." }),
+  position: z.string().optional(),
+  designation: z.string().optional(),
+  phone: z.string().optional(),
 });
 
 type InviteUserFormValues = z.infer<typeof inviteUserSchema>;
@@ -41,6 +44,9 @@ export function InviteUserDialog({ open, onOpenChange, onUserInvited }: InviteUs
       name: '',
       email: '',
       role: 'staff',
+      position: '',
+      designation: '',
+      phone: '',
     }
   });
 
@@ -70,7 +76,10 @@ export function InviteUserDialog({ open, onOpenChange, onUserInvited }: InviteUs
         name: data.name,
         email: data.email,
         role: data.role,
-        status: 'pending_invitation', // A status to indicate the user hasn't signed up yet
+        position: data.position,
+        designation: data.designation,
+        phone: data.phone,
+        status: 'pending', // A status to indicate the user hasn't signed up yet
         createdAt: serverTimestamp(),
       });
 
@@ -106,9 +115,18 @@ export function InviteUserDialog({ open, onOpenChange, onUserInvited }: InviteUs
               <FormField control={form.control} name="email" render={({ field }) => (
                 <FormItem><FormLabel>Email Address</FormLabel><FormControl><Input type="email" {...field} /></FormControl><FormMessage /></FormItem>
               )} />
+               <FormField control={form.control} name="phone" render={({ field }) => (
+                <FormItem><FormLabel>Phone</FormLabel><FormControl><Input type="tel" {...field} /></FormControl><FormMessage /></FormItem>
+              )} />
+              <FormField control={form.control} name="position" render={({ field }) => (
+                <FormItem><FormLabel>Position</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
+              )} />
+               <FormField control={form.control} name="designation" render={({ field }) => (
+                <FormItem><FormLabel>Designation</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
+              )} />
                <FormField control={form.control} name="role" render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Role</FormLabel>
+                  <FormLabel>App Role</FormLabel>
                   <Select onValueChange={field.onChange} defaultValue={field.value}>
                     <FormControl>
                       <SelectTrigger>

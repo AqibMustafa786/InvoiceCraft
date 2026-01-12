@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useMemo, useCallback, Suspense } from 'react';
@@ -901,8 +900,12 @@ function DashboardPageContent() {
                         <TableHeader>
                             <TableRow>
                                 <TableHead className="text-xs">Name</TableHead>
+                                <TableHead className="text-xs hidden md:table-cell">Position</TableHead>
                                 <TableHead className="text-xs hidden sm:table-cell">Email</TableHead>
-                                <TableHead className="text-xs hidden md:table-cell">Role</TableHead>
+                                <TableHead className="text-xs hidden lg:table-cell">Phone</TableHead>
+                                <TableHead className="text-xs hidden lg:table-cell">Designation</TableHead>
+                                <TableHead className="text-xs">App Role</TableHead>
+                                <TableHead className="text-xs hidden md:table-cell">Status</TableHead>
                                 <TableHead className="text-right text-xs">Actions</TableHead>
                             </TableRow>
                         </TableHeader>
@@ -913,18 +916,22 @@ function DashboardPageContent() {
                             as={TableBody}
                         >
                             {isLoadingUsers ? (
-                                <TableRow><TableCell colSpan={4} className="text-center h-24">Loading users...</TableCell></TableRow>
+                                <TableRow><TableCell colSpan={8} className="text-center h-24">Loading users...</TableCell></TableRow>
                             ) : users && users.length > 0 ? users.map((user) => (
                                 <motion.tr as={TableRow} key={user.uid} variants={tableRowVariants}>
                                     <TableCell className="font-medium text-xs">{user.name}</TableCell>
+                                    <TableCell className="text-xs hidden md:table-cell">{user.position || '-'}</TableCell>
                                     <TableCell className="text-xs hidden sm:table-cell">{user.email}</TableCell>
-                                    <TableCell className="text-xs hidden md:table-cell capitalize"><Badge variant="outline">{user.role}</Badge></TableCell>
+                                    <TableCell className="text-xs hidden lg:table-cell">{user.phone || '-'}</TableCell>
+                                    <TableCell className="text-xs hidden lg:table-cell">{user.designation || '-'}</TableCell>
+                                    <TableCell className="text-xs capitalize"><Badge variant="outline">{user.role}</Badge></TableCell>
+                                    <TableCell className="text-xs hidden md:table-cell capitalize"><Badge variant={user.status === 'active' ? 'success' : 'secondary'}>{user.status}</Badge></TableCell>
                                     <TableCell className="text-right">
                                         <Button variant="ghost" size="sm">Edit</Button>
                                     </TableCell>
                                 </motion.tr>
                             )) : (
-                                <TableRow><TableCell colSpan={4} className="text-center h-24">No users found.</TableCell></TableRow>
+                                <TableRow><TableCell colSpan={8} className="text-center h-24">No users found.</TableCell></TableRow>
                             )}
                         </motion.tbody>
                     </Table>
