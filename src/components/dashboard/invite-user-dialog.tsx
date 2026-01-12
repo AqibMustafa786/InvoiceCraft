@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import { useState, useEffect, ChangeEvent } from 'react';
@@ -149,10 +150,16 @@ export function InviteUserDialog({ open, onOpenChange, onUserInvited, user: edit
         const userRef = doc(firestore, 'companies', userProfile.companyId, 'users', data.uid);
         // Exclude uid and email from the update payload
         const { uid, email, ...updateData } = data;
-        await updateDoc(userRef, {
-            ...updateData,
-            avatarUrl: avatarPreview || '',
-        });
+        
+        const payloadToUpdate = {
+          ...updateData,
+          avatarUrl: avatarPreview || '',
+          position: updateData.position || '',
+          designation: updateData.designation || '',
+          phone: updateData.phone || '',
+        };
+
+        await updateDoc(userRef, payloadToUpdate);
          toast({
           title: "Employee Updated",
           description: `${data.name}'s details have been updated.`,
@@ -181,7 +188,7 @@ export function InviteUserDialog({ open, onOpenChange, onUserInvited, user: edit
         
         <ScrollArea className="max-h-[65vh] pr-6 -mr-6">
         <Form {...form}>
-          <form className="space-y-4 px-1" onSubmit={form.handleSubmit(onSubmit)}>
+          <form className="space-y-2 px-1" onSubmit={form.handleSubmit(onSubmit)}>
              {/* Hidden UID field */}
             <input type="hidden" {...form.register('uid')} />
 
