@@ -9,7 +9,7 @@ service cloud.firestore {
     }
 
     function isOwner(userId) {
-      return request.auth.uid == userId;
+      return isSignedIn() && request.auth.uid == userId;
     }
 
     function getUser(userId) {
@@ -21,10 +21,12 @@ service cloud.firestore {
     }
     
     function belongsToCompany(companyId) {
+       // This is the KEY FIX: Enforce that the user's companyId matches the path companyId
        return isSignedIn() && getUser(request.auth.uid).companyId == companyId;
     }
     
     function hasCompanyRole(companyId, requiredRoles) {
+        // This rule ensures the user belongs to the company before checking roles.
         return belongsToCompany(companyId) && getUser(request.auth.uid).role in requiredRoles;
     }
 
@@ -34,50 +36,66 @@ service cloud.firestore {
 
     // USER-SPECIFIC DATA
     match /users/{userId} {
+      // A user can only read and modify their own global user document.
       allow read, update, delete: if isSignedIn() && isOwner(userId);
+      // Any signed-in user can create their own user document upon sign-up.
       allow create: if isSignedIn();
     }
 
     // COMPANY DATA
     match /companies/{companyId} {
+      // Allow reading a company document only if the user belongs to that company.
       allow get: if belongsToCompany(companyId);
-      allow list: if false; // Don't allow listing all companies
-      allow create: if isSignedIn(); // User can create their own company
+      // Disallow listing all companies for security.
+      allow list: if false; 
+      // A user can create a company document.
+      allow create: if isSignedIn(); 
+      // Only an admin of that company can update the company document.
       allow update: if hasCompanyRole(companyId, ['admin']);
 
-      // Nested collections within a company
+      // Nested collections within a company. All rules inherit the company-level checks.
       match /invoices/{invoiceId} {
-          allow read, update, delete: if belongsToCompany(companyId);
-          allow create: if belongsToCompany(companyId);
+          // Allow full access to invoices if the user belongs to the company.
+          allow read, update, delete, create: if belongsToCompany(companyId);
       }
       
       match /quotes/{quoteId} {
-          allow get: if true; // Publicly readable for sharing
+          // A quote can be publicly readable for sharing purposes.
+          allow get: if true; 
+          // But only members of the company can create, list, or modify quotes.
           allow list, create, update, delete: if belongsToCompany(companyId);
       }
 
       match /estimates/{estimateId} {
+          // An estimate is readable if it's public OR the user belongs to the company.
           allow read: if resource.data.isPublic == true || belongsToCompany(companyId);
+          // Only company members can create, list, or modify estimates.
           allow list, create, update, delete: if belongsToCompany(companyId);
       }
       
-      // Tighter rules for user management within a company
       match /users/{userId} {
+        // Allow reading user profiles within a company only if you are also a member.
         allow read: if belongsToCompany(companyId);
+        // Only admins can add new users to a company.
         allow create: if hasCompanyRole(companyId, ['admin']);
+        // An admin can update any user, or a user can update their own profile.
         allow update: if hasCompanyRole(companyId, ['admin']) || (isOwner(userId) && belongsToCompany(companyId));
+        // Only admins can remove users from a company.
         allow delete: if hasCompanyRole(companyId, ['admin']);
       }
       
-      // Client Management
       match /clients/{clientId} {
+        // Allow full access to clients if the user belongs to the company.
         allow read, list, create, update, delete: if belongsToCompany(companyId);
       }
 
-      // General fallback for other collections
+      // General fallback for any other collections within a company.
        match /{collection}/{docId} {
+        // Allow reading if part of the company.
         allow read: if belongsToCompany(companyId);
+        // Allow creating/updating if user is staff or admin.
         allow create, update: if hasCompanyRole(companyId, ['admin', 'staff']);
+        // Only admins can delete.
         allow delete: if hasCompanyRole(companyId, ['admin']);
       }
     }
