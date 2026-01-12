@@ -144,10 +144,10 @@ export function InviteUserDialog({ open, onOpenChange, onUserInvited, user: edit
 
       } else {
         // This is an existing user, so we update their document
-        if (!data.uid) {
+        if (!editingUser?.uid) {
              throw new Error("Cannot update employee without a User ID.");
         }
-        const userRef = doc(firestore, 'companies', userProfile.companyId, 'users', data.uid);
+        const userRef = doc(firestore, 'companies', userProfile.companyId, 'users', editingUser.uid);
         // Exclude uid and email from the update payload
         const { uid, email, ...updateData } = data;
         
@@ -260,3 +260,4 @@ export function InviteUserDialog({ open, onOpenChange, onUserInvited, user: edit
     </Dialog>
   );
 }
+
