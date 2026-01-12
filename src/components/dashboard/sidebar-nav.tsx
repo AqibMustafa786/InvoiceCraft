@@ -1,3 +1,4 @@
+
 'use client';
 
 import Link from "next/link";
@@ -5,7 +6,7 @@ import { usePathname, useSearchParams, useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { FileText, Users, FileQuestion, FilePlus, Home, Tag, Gem, CreditCard, LogOut, Shield, AreaChart } from "lucide-react";
+import { FileText, Users, FileQuestion, FilePlus, Home, Tag, Gem, CreditCard, LogOut, Shield, AreaChart, Edit } from "lucide-react";
 import { useAuth } from "@/context/auth-provider";
 import { signOut } from "firebase/auth";
 import { useFirebase } from "@/firebase";
@@ -17,7 +18,7 @@ const dashboardNavItems = [
     { href: "/dashboard?tab=quotes", tab: "quotes", label: "Quotes", icon: FilePlus },
     { href: "/dashboard?tab=insurance", tab: "insurance", label: "Insurance", icon: Shield },
     { href: "/dashboard?tab=clients", tab: "clients", label: "Clients", icon: Users },
-    { href: "/dashboard?tab=users", tab: "users", label: "Users", icon: Users },
+    { href: "/dashboard?tab=users", tab: "users", label: "Employees", icon: Users },
     { href: "/dashboard/analytics", tab: "analytics", label: "Analytics", icon: AreaChart },
 ];
 

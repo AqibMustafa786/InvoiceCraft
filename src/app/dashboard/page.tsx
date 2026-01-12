@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useMemo, useCallback, Suspense } from 'react';
@@ -230,12 +231,12 @@ interface ClientStatsGridProps {
 const ClientStatsGrid: React.FC<ClientStatsGridProps> = ({ clients, invoices }) => {
     const stats = useMemo(() => {
         const totalClients = clients.length;
-        const totalRevenue = invoices.filter(i => i.status === 'paid').reduce((acc, i) => acc + (toNumberSafe(i.summary?.grandTotal)), 0);
+        const totalRevenue = invoices.filter(i => i.status === 'paid').reduce((acc, i) => acc + (toNumberSafe(i.summary.grandTotal)), 0);
         
         const clientRevenue: Record<string, number> = {};
         invoices.filter(i => i.status === 'paid').forEach(invoice => {
             const clientId = (invoice.client as any).clientId || invoice.client.name;
-            clientRevenue[clientId] = (clientRevenue[clientId] || 0) + (toNumberSafe(invoice.summary?.grandTotal));
+            clientRevenue[clientId] = (clientRevenue[clientId] || 0) + (toNumberSafe(invoice.summary.grandTotal));
         });
         
         const activeClients = Object.keys(clientRevenue).length;
@@ -888,8 +889,8 @@ function DashboardPageContent() {
             <CardHeader>
                 <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                     <div>
-                        <CardTitle className="text-base">Users</CardTitle>
-                        <CardDescription className="text-xs">A list of all users in your company.</CardDescription>
+                        <CardTitle className="text-base">Employees</CardTitle>
+                        <CardDescription className="text-xs">A list of all employees in your company.</CardDescription>
                     </div>
                     <Button size="sm" className='rounded-full' onClick={() => setIsInviteUserDialogOpen(true)}><UserPlus className="mr-2 h-4 w-4"/>Invite User</Button>
                 </div>
@@ -927,7 +928,9 @@ function DashboardPageContent() {
                                     <TableCell className="text-xs capitalize"><Badge variant="outline">{user.role}</Badge></TableCell>
                                     <TableCell className="text-xs hidden md:table-cell capitalize"><Badge variant={user.status === 'active' ? 'success' : 'secondary'}>{user.status}</Badge></TableCell>
                                     <TableCell className="text-right">
-                                        <Button variant="ghost" size="sm">Edit</Button>
+                                        <Button variant="ghost" size="icon" className="h-8 w-8">
+                                            <Edit className="h-4 w-4" />
+                                        </Button>
                                     </TableCell>
                                 </motion.tr>
                             )) : (
