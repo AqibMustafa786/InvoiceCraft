@@ -28,7 +28,7 @@ import { TransportationTemplate1, TransportationTemplate2, TransportationTemplat
 import { RentalTemplate1, RentalTemplate2, RentalTemplate3, RentalTemplate4, RentalTemplate5 } from './invoice-templates/rental-templates';
 import { toNumberSafe, toDateSafe } from '@/lib/utils';
 import { CategorySpecificDetails } from './invoice-templates/category-specific-details';
-import { GenericTemplate1, GenericTemplate2, GenericTemplate3, GenericTemplate4, GenericTemplate5 } from '../document-templates/generic-templates';
+import { GenericTemplate1, GenericTemplate2, GenericTemplate3, GenericTemplate4, GenericTemplate5 } from './document-templates/generic-templates';
 
 
 // --- PROPS ---
