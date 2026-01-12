@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import { useState, useMemo, useCallback, Suspense } from 'react';
@@ -855,8 +856,6 @@ function DashboardPageContent() {
                                         as={TableRow}
                                         key={client.id}
                                         variants={tableRowVariants}
-                                        className="cursor-pointer"
-                                        onClick={() => router.push(`/dashboard/clients/${client.id}`)}
                                     >
                                         <TableCell className="font-medium text-xs">
                                             <div className="flex items-center gap-3">
@@ -870,7 +869,7 @@ function DashboardPageContent() {
                                         <TableCell className="text-xs hidden sm:table-cell">{client.email}</TableCell>
                                         <TableCell className="text-xs hidden md:table-cell">{symbol}{(clientRevenues[client.id] || 0).toFixed(2)}</TableCell>
                                         <TableCell className="text-right">
-                                             <Button variant="ghost" size="sm">View</Button>
+                                             <Button variant="ghost" size="sm" onClick={() => router.push(`/dashboard/clients/${client.id}`)}>View</Button>
                                         </TableCell>
                                     </motion.tr>
                                 )) : (
@@ -1102,3 +1101,4 @@ export default function DashboardPage() {
         </Suspense>
     );
 }
+
