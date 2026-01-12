@@ -838,6 +838,7 @@ function DashboardPageContent() {
                             <TableHeader>
                                 <TableRow>
                                     <TableHead className="text-xs">Name</TableHead>
+                                    <TableHead className="text-xs hidden sm:table-cell">Company</TableHead>
                                     <TableHead className="text-xs hidden sm:table-cell">Email</TableHead>
                                     <TableHead className="text-xs hidden md:table-cell">Total Revenue</TableHead>
                                     <TableHead className="text-right text-xs">Actions</TableHead>
@@ -850,7 +851,7 @@ function DashboardPageContent() {
                             as={TableBody}
                             >
                                 {isLoadingClients ? (
-                                    <TableRow><TableCell colSpan={4} className="text-center h-24">Loading clients...</TableCell></TableRow>
+                                    <TableRow><TableCell colSpan={5} className="text-center h-24">Loading clients...</TableCell></TableRow>
                                 ) : filteredClients && filteredClients.length > 0 ? filteredClients.map((client) => (
                                     <motion.tr
                                         as={TableRow}
@@ -866,6 +867,7 @@ function DashboardPageContent() {
                                                 <span>{client.name}</span>
                                             </div>
                                         </TableCell>
+                                        <TableCell className="text-xs hidden sm:table-cell">{client.companyName}</TableCell>
                                         <TableCell className="text-xs hidden sm:table-cell">{client.email}</TableCell>
                                         <TableCell className="text-xs hidden md:table-cell">{symbol}{(clientRevenues[client.id] || 0).toFixed(2)}</TableCell>
                                         <TableCell className="text-right">
@@ -873,7 +875,7 @@ function DashboardPageContent() {
                                         </TableCell>
                                     </motion.tr>
                                 )) : (
-                                    <TableRow><TableCell colSpan={4} className="text-center h-24">No clients found.</TableCell></TableRow>
+                                    <TableRow><TableCell colSpan={5} className="text-center h-24">No clients found.</TableCell></TableRow>
                                 )}
                             </motion.tbody>
                         </Table>
