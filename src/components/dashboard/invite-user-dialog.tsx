@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import { useState, useEffect, ChangeEvent } from 'react';
@@ -12,8 +13,8 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/context/auth-provider';
 import { useFirebase } from '@/firebase';
-import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
-import { Save, Loader2, Send, UploadCloud } from 'lucide-react';
+import { doc, setDoc, serverTimestamp, updateDoc } from 'firebase/firestore';
+import { Loader2, Send, UploadCloud } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { ScrollArea } from '../ui/scroll-area';
@@ -36,15 +37,18 @@ interface InviteUserDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onUserInvited: () => void;
+  user?: any; // The user object to edit
 }
 
-export function InviteUserDialog({ open, onOpenChange, onUserInvited }: InviteUserDialogProps) {
+export function InviteUserDialog({ open, onOpenChange, onUserInvited, user: editingUser }: InviteUserDialogProps) {
   const { userProfile } = useAuth();
   const { firestore } = useFirebase();
   const { toast } = useToast();
   const [isSaving, setIsSaving] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
-  const [avatarPreview, setAvatarPreview] = useState<string | undefined>(undefined);
+  const [avatarPreview, setAvatarPreview] = useState<string | undefined>(editingUser?.avatarUrl);
+
+  const isNewUser = !editingUser;
 
   const form = useForm<InviteUserFormValues>({
     resolver: zodResolver(inviteUserSchema),
@@ -61,10 +65,23 @@ export function InviteUserDialog({ open, onOpenChange, onUserInvited }: InviteUs
 
   useEffect(() => {
     if (open) {
-      form.reset();
-      setAvatarPreview(undefined);
+      if (editingUser) {
+        form.reset(editingUser);
+        setAvatarPreview(editingUser.avatarUrl);
+      } else {
+        form.reset({
+          name: '',
+          email: '',
+          role: 'staff',
+          position: '',
+          designation: '',
+          phone: '',
+          avatarUrl: '',
+        });
+        setAvatarPreview(undefined);
+      }
     }
-  }, [open, form]);
+  }, [editingUser, open, form]);
 
   const handleAvatarUpload = async (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -98,35 +115,50 @@ export function InviteUserDialog({ open, onOpenChange, onUserInvited }: InviteUs
   const onSubmit = async (data: InviteUserFormValues) => {
     setIsSaving(true);
     if (!firestore || !userProfile?.companyId) {
-      toast({ title: "Error", description: "Cannot invite user. Company not identified.", variant: "destructive" });
+      toast({ title: "Error", description: "Cannot save user. Company not identified.", variant: "destructive" });
       setIsSaving(false);
       return;
     }
 
     try {
-      // In a real app, this would trigger a backend function to send an invite email.
-      // For now, we'll simulate by creating a placeholder user document.
-      // The user would then sign up with this email and be associated with the company.
-      
-      const newUserId = `invited_${data.email.replace(/[^a-zA-Z0-9]/g, '')}`;
-      const newUserRef = doc(firestore, 'companies', userProfile.companyId, 'users', newUserId);
+      if (isNewUser) {
+        // In a real app, this would trigger a backend function to send an invite email.
+        // For now, we'll simulate by creating a placeholder user document.
+        // The user would then sign up with this email and be associated with the company.
+        
+        const newUserId = `invited_${data.email.replace(/[^a-zA-Z0-9]/g, '')}`;
+        const newUserRef = doc(firestore, 'companies', userProfile.companyId, 'users', newUserId);
 
-      await setDoc(newUserRef, {
-        ...data,
-        avatarUrl: avatarPreview || '',
-        status: 'pending_invitation', // A status to indicate the user hasn't signed up yet
-        createdAt: serverTimestamp(),
-      });
+        await setDoc(newUserRef, {
+          ...data,
+          avatarUrl: avatarPreview || '',
+          status: 'pending_invitation', // A status to indicate the user hasn't signed up yet
+          createdAt: serverTimestamp(),
+        });
+        
+        toast({
+          title: "Invitation Sent (Simulated)",
+          description: `${data.name} has been invited to join your company.`,
+        });
 
-      toast({
-        title: "Invitation Sent (Simulated)",
-        description: `${data.name} has been invited to join your company.`,
-      });
+      } else {
+        // This is an existing user, so we update their document
+        const userRef = doc(firestore, 'companies', userProfile.companyId, 'users', editingUser.uid);
+        await updateDoc(userRef, {
+            ...data,
+            avatarUrl: avatarPreview || '',
+        });
+         toast({
+          title: "Employee Updated",
+          description: `${data.name}'s details have been updated.`,
+        });
+      }
+
       onUserInvited();
       onOpenChange(false);
     } catch (error) {
-      console.error("Error inviting user: ", error);
-      toast({ title: "Error", description: "Failed to send invitation.", variant: "destructive" });
+      console.error("Error saving user: ", error);
+      toast({ title: "Error", description: `Failed to ${isNewUser ? 'send invitation' : 'update employee'}.`, variant: "destructive" });
     } finally {
       setIsSaving(false);
     }
@@ -136,9 +168,9 @@ export function InviteUserDialog({ open, onOpenChange, onUserInvited }: InviteUs
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-xl bg-card/95 backdrop-blur-sm">
         <DialogHeader>
-          <DialogTitle className="text-xl">Invite New Employee</DialogTitle>
+          <DialogTitle className="text-xl">{isNewUser ? 'Invite New Employee' : `Edit ${editingUser?.name}`}</DialogTitle>
           <DialogDescription>
-            Enter the employee's details to send them an invitation to join your company.
+            {isNewUser ? 'Enter the employee\'s details to send them an invitation.' : 'Update the details for this employee.'}
           </DialogDescription>
         </DialogHeader>
         
@@ -166,7 +198,7 @@ export function InviteUserDialog({ open, onOpenChange, onUserInvited }: InviteUs
                   <FormItem><FormLabel>Full Name</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
                 )} />
                 <FormField control={form.control} name="email" render={({ field }) => (
-                  <FormItem><FormLabel>Email Address</FormLabel><FormControl><Input type="email" {...field} /></FormControl><FormMessage /></FormItem>
+                  <FormItem><FormLabel>Email Address</FormLabel><FormControl><Input type="email" {...field} disabled={!isNewUser} /></FormControl><FormMessage /></FormItem>
                 )} />
                  <FormField control={form.control} name="phone" render={({ field }) => (
                   <FormItem><FormLabel>Phone</FormLabel><FormControl><Input type="tel" {...field} /></FormControl><FormMessage /></FormItem>
@@ -206,7 +238,7 @@ export function InviteUserDialog({ open, onOpenChange, onUserInvited }: InviteUs
           </DialogClose>
           <Button type="submit" disabled={isSaving} onClick={form.handleSubmit(onSubmit)}>
             {isSaving ? <Loader2 className="mr-2 h-4 w-4 animate-spin"/> : <Send className="mr-2 h-4 w-4" />}
-            {isSaving ? 'Sending...' : 'Send Invitation'}
+            {isSaving ? (isNewUser ? 'Sending...' : 'Saving...') : (isNewUser ? 'Send Invitation' : 'Save Changes')}
           </Button>
         </DialogFooter>
       </DialogContent>

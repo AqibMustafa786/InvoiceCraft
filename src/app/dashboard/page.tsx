@@ -23,7 +23,7 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { FilePlus2, Edit, Trash2, Filter, X, MoreHorizontal, FileText, Share2, DollarSign, Clock, FileWarning, Files, CheckCircle, FileQuestion, Users, Percent, AreaChart, Package, History, Shield, XCircle, Mail, Loader2, UserPlus } from "lucide-react";
+import { FilePlus2, Edit, Trash2, Filter, X, MoreHorizontal, FileText, Share2, DollarSign, Clock, FileWarning, Files, CheckCircle, FileQuestion, Users, Percent, AreaChart, Package, History, Shield, XCircle, Mail, Loader2, UserPlus, Eye } from "lucide-react";
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { format, isWithinInterval } from 'date-fns';
@@ -269,6 +269,7 @@ function DashboardPageContent() {
     const [isClientDialogOpen, setIsClientDialogOpen] = useState(false);
     const [isInviteUserDialogOpen, setIsInviteUserDialogOpen] = useState(false);
     const [editingClient, setEditingClient] = useState<Client | null>(null);
+    const [editingUser, setEditingUser] = useState<any | null>(null);
     const [modalState, setModalState] = useState<{ isOpen: boolean; title: string; data: DocumentType[] }>({ isOpen: false, title: '', data: [] });
     const [historyModalState, setHistoryModalState] = useState<{ isOpen: boolean, auditLog: AuditLogEntry[]}>({isOpen: false, auditLog: []});
     const [isSendingEmail, setIsSendingEmail] = useState<string | null>(null);
@@ -378,6 +379,11 @@ function DashboardPageContent() {
     const handleAddClient = () => {
         setEditingClient(null);
         setIsClientDialogOpen(true);
+    };
+
+    const handleEditUser = (user: any) => {
+        setEditingUser(user);
+        setIsInviteUserDialogOpen(true);
     };
     
      const handleDeleteClient = (clientId: string) => {
@@ -929,9 +935,30 @@ function DashboardPageContent() {
                                     <TableCell className="text-xs capitalize"><Badge variant="outline">{user.role}</Badge></TableCell>
                                     <TableCell className="text-xs hidden md:table-cell capitalize"><Badge variant={user.status === 'active' ? 'success' : 'secondary'}>{user.status}</Badge></TableCell>
                                     <TableCell className="text-right">
-                                        <Button variant="ghost" size="icon" className="h-8 w-8">
-                                            <Edit className="h-4 w-4" />
-                                        </Button>
+                                         <DropdownMenu>
+                                            <DropdownMenuTrigger asChild>
+                                                <Button variant="ghost" size="icon" className="rounded-full h-7 w-7">
+                                                    <MoreHorizontal className="h-3.5 w-3.5" />
+                                                    <span className="sr-only">More actions</span>
+                                                </Button>
+                                            </DropdownMenuTrigger>
+                                            <DropdownMenuContent align="end">
+                                                <DropdownMenuItem asChild>
+                                                    <Link href={`/dashboard/employees/${user.uid}`} className="cursor-pointer">
+                                                        <Eye className="mr-2 h-3.5 w-3.5" />
+                                                        <span className="text-xs">View</span>
+                                                    </Link>
+                                                </DropdownMenuItem>
+                                                <DropdownMenuItem onClick={() => handleEditUser(user)} className="cursor-pointer">
+                                                    <Edit className="mr-2 h-3.5 w-3.5" />
+                                                    <span className="text-xs">Edit</span>
+                                                </DropdownMenuItem>
+                                                <DropdownMenuItem onClick={() => setDeleteCandidate({id: user.uid, collection: 'users'})} className="text-destructive cursor-pointer">
+                                                    <Trash2 className="mr-2 h-3.5 w-3.5" />
+                                                    <span className="text-xs">Delete</span>
+                                                </DropdownMenuItem>
+                                            </DropdownMenuContent>
+                                        </DropdownMenu>
                                     </TableCell>
                                 </motion.tr>
                             )) : (
@@ -1003,6 +1030,7 @@ function DashboardPageContent() {
              <InviteUserDialog
                 open={isInviteUserDialogOpen}
                 onOpenChange={setIsInviteUserDialogOpen}
+                user={editingUser}
                 onUserInvited={() => {
                     refetchUsers();
                 }}
@@ -1103,4 +1131,5 @@ export default function DashboardPage() {
         </Suspense>
     );
 }
+
 
