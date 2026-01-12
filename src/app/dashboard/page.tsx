@@ -22,7 +22,7 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { FilePlus2, Edit, Trash2, Filter, X, MoreHorizontal, FileText, Share2, DollarSign, Clock, FileWarning, Files, CheckCircle, FileQuestion, Users, Percent, AreaChart, Package, History, Shield, XCircle, Mail, Loader2 } from "lucide-react";
+import { FilePlus2, Edit, Trash2, Filter, X, MoreHorizontal, FileText, Share2, DollarSign, Clock, FileWarning, Files, CheckCircle, FileQuestion, Users, Percent, AreaChart, Package, History, Shield, XCircle, Mail, Loader2, UserPlus } from "lucide-react";
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { format, isWithinInterval } from 'date-fns';
@@ -42,6 +42,7 @@ import { ClientFormDialog } from '@/components/dashboard/client-form-dialog';
 import { toDateSafe, toNumberSafe } from '@/lib/utils';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { sendDocumentByEmail } from '@/app/actions';
+import { InviteUserDialog } from '@/components/dashboard/invite-user-dialog';
 
 
 const INVOICES_COLLECTION = 'invoices';
@@ -215,7 +216,7 @@ const DashboardStatsGrid: React.FC<DashboardStatsGridProps> = ({ documents, docT
                 <motion.div variants={pageVariants} className="col-span-2 sm:col-span-1"><Card className="bg-card/50 backdrop-blur-sm shadow-sm transition-all duration-300 hover:shadow-primary/20 hover-translate-y-0.5 h-full"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1"><CardTitle className="text-xs font-medium">Total Estimated Value</CardTitle><DollarSign className="h-3 w-3 text-muted-foreground" /></CardHeader><CardContent><div className="text-xl font-bold">{formatCurrency(s.totalValue)}</div><p className="text-xs text-muted-foreground">&nbsp;</p></CardContent></Card></motion.div>
                 <motion.div variants={pageVariants} className="col-span-2 sm:col-span-1"><Card className="bg-card/50 backdrop-blur-sm shadow-sm transition-all duration-300 hover:shadow-primary/20 hover-translate-y-0.5 h-full"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1"><CardTitle className="text-xs font-medium">Conversion Rate</CardTitle><Percent className="h-3 w-3 text-muted-foreground" /></CardHeader><CardContent><div className="text-xl font-bold">{s.conversionRate.toFixed(1)}%</div><p className="text-xs text-muted-foreground">&nbsp;</p></CardContent></Card></motion.div>
                 <motion.div variants={pageVariants} className="col-span-2 md:col-span-1"><Card className="bg-card/50 backdrop-blur-sm shadow-sm transition-all duration-300 hover:shadow-primary/20 hover-translate-y-0.5 h-full"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1"><CardTitle className="text-xs font-medium">Avg. {docTypeCap} Value</CardTitle><AreaChart className="h-3 w-3 text-muted-foreground" /></CardHeader><CardContent><div className="text-xl font-bold">{formatCurrency(s.avgValue)}</div><p className="text-xs text-muted-foreground">&nbsp;</p></CardContent></Card></motion.div>
-                <motion.div variants={pageVariants} className="col-span-2 md:col-span-1"><Card as="button" onClick={() => onKpiClick(`Draft ${docTypeCap}s`, s.draftDocs)} className="text-left w-full bg-card/50 backdrop-blur-sm shadow-sm transition-all duration-300 hover:shadow-primary/20 hover-translate-y-0.5 h-full"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1"><CardTitle className="text-xs font-medium">Drafts</CardTitle><FileText className="h-3 w-3 text-muted-foreground" /></CardHeader><CardContent><div className="text-xl font-bold">{s.draftCount}</div><p className="text-xs text-muted-foreground">&nbsp;</p></CardContent></Card></motion.div>
+                <motion.div variants={pageVariants} className="col-span-2 md:col-span-1"><Card as="button" onClick={() => onKpiClick(`Draft ${docTypeCap}s`, s.draftDocs)} className="text-left w-full bg-card/50 backdrop-blur-sm shadow-sm transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-0.5 h-full"><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1"><CardTitle className="text-xs font-medium">Drafts</CardTitle><FileText className="h-3 w-3 text-muted-foreground" /></CardHeader><CardContent><div className="text-xl font-bold">{s.draftCount}</div><p className="text-xs text-muted-foreground">&nbsp;</p></CardContent></Card></motion.div>
             </motion.div>
         );
     }
@@ -264,6 +265,7 @@ function DashboardPageContent() {
     const [filters, setFilters] = useState<DashboardFilters>(initialFilters);
     const [isFilterSheetOpen, setIsFilterSheetOpen] = useState(false);
     const [isClientDialogOpen, setIsClientDialogOpen] = useState(false);
+    const [isInviteUserDialogOpen, setIsInviteUserDialogOpen] = useState(false);
     const [editingClient, setEditingClient] = useState<Client | null>(null);
     const [modalState, setModalState] = useState<{ isOpen: boolean; title: string; data: DocumentType[] }>({ isOpen: false, title: '', data: [] });
     const [historyModalState, setHistoryModalState] = useState<{ isOpen: boolean, auditLog: AuditLogEntry[]}>({isOpen: false, auditLog: []});
@@ -303,7 +305,7 @@ function DashboardPageContent() {
     }, [firestore, companyId]);
 
 
-    const { data: clients, isLoading: isLoadingClients } = useCollection<Client>(clientsQuery);
+    const { data: clients, isLoading: isLoadingClients, refetch: refetchClients } = useCollection<Client>(clientsQuery);
     const { data: invoices, isLoading: isLoadingInvoices } = useCollection<Invoice>(invoicesQuery);
     const { data: estimates, isLoading: isLoadingEstimates } = useCollection<Estimate>(estimatesQuery);
     const { data: quotes, isLoading: isLoadingQuotes } = useCollection<Quote>(quotesQuery);
@@ -811,7 +813,19 @@ function DashboardPageContent() {
 
         return (
             <Card className='bg-card/50 backdrop-blur-sm'>
-                <CardContent className="pt-6">
+                <CardHeader>
+                    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                        <div>
+                            <CardTitle className="text-base">Clients &amp; Users</CardTitle>
+                            <CardDescription className="text-xs">A list of all clients and invited users in your company.</CardDescription>
+                        </div>
+                        <div className="flex gap-2">
+                             <Button size="sm" className='rounded-full' onClick={handleAddClient} variant="outline"><Users className="mr-2 h-4 w-4"/>Add Client</Button>
+                             <Button size="sm" className='rounded-full' onClick={() => setIsInviteUserDialogOpen(true)}><UserPlus className="mr-2 h-4 w-4"/>Invite User</Button>
+                        </div>
+                    </div>
+                </CardHeader>
+                <CardContent className="pt-0">
                     <div className="overflow-x-auto">
                         <Table>
                             <TableHeader>
@@ -918,7 +932,14 @@ function DashboardPageContent() {
                 open={isClientDialogOpen}
                 onOpenChange={setIsClientDialogOpen}
                 client={editingClient}
-                onSave={() => setIsClientDialogOpen(false)}
+                onSave={() => refetchClients()}
+            />
+             <InviteUserDialog
+                open={isInviteUserDialogOpen}
+                onOpenChange={setIsInviteUserDialogOpen}
+                onUserInvited={() => {
+                    // You might want to refetch users/clients here if they are displayed in the same list
+                }}
             />
             <motion.div className="space-y-4" variants={pageVariants} initial="hidden" animate="visible">
                 <FilterSheet
@@ -964,9 +985,7 @@ function DashboardPageContent() {
                                             <X className="h-4 w-4" />
                                         </Button>
                                     )}
-                                    {activeTab === 'clients' ? (
-                                        <Button size="sm" className='rounded-full' onClick={handleAddClient}><Users className="mr-2 h-4 w-4"/>Add New Client</Button>
-                                    ) : (
+                                    {activeTab === 'clients' ? null : (
                                         <DropdownMenu>
                                             <DropdownMenuTrigger asChild>
                                                 <Button size="sm" className='rounded-full'><FilePlus2 className="mr-2 h-4 w-4"/> New Document</Button>
