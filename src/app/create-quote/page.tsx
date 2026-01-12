@@ -303,7 +303,7 @@ export default function CreateQuotePage() {
             </Button>
             <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                    <Button variant="outline" size="icon" className="shrink-0 h-9 w-9">
+                    <Button variant="outline" size="sm" className="shrink-0 h-9 w-9 px-0">
                         <MoreVertical className="h-4 w-4" />
                     </Button>
                 </DropdownMenuTrigger>
@@ -365,3 +365,6 @@ export default function CreateQuotePage() {
     
 
 
+
+
+    
