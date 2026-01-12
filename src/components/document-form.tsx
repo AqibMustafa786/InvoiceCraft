@@ -46,7 +46,7 @@ import { RadioGroup, RadioGroupItem } from './ui/radio-group';
 
 interface DocumentFormProps {
   document: Estimate | Quote;
-  setDocument: Dispatch<SetStateAction<Estimate | Quote>>;
+  setDocument: Dispatch<React.SetStateAction<Estimate | Quote>>;
   accentColor: string;
   setAccentColor: Dispatch<SetStateAction<string>>;
   backgroundColor: string;
@@ -140,7 +140,7 @@ const CustomSelect = ({ value, onValueChange, options, placeholder, name }: { va
     const handleSelectChange = (newValue: string) => {
         if (newValue === 'Other') {
             setIsOther(true);
-            onValueChange(name, otherValue);
+            // Don't call onValueChange here immediately, let the input do it
         } else {
             setIsOther(false);
             onValueChange(name, newValue);
@@ -154,7 +154,7 @@ const CustomSelect = ({ value, onValueChange, options, placeholder, name }: { va
 
     return (
         <div className="space-y-2">
-            <Select value={isOther ? 'Other' : value} onValueChange={handleSelectChange}>
+            <Select value={isOther ? 'Other' : (value || '')} onValueChange={handleSelectChange}>
                 <SelectTrigger>
                     <SelectValue placeholder={placeholder} />
                 </SelectTrigger>
