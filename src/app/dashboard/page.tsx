@@ -927,7 +927,15 @@ function DashboardPageContent() {
                                 <TableRow><TableCell colSpan={8} className="text-center h-24">Loading users...</TableCell></TableRow>
                             ) : users && users.length > 0 ? users.map((user) => (
                                 <motion.tr as={TableRow} key={user.uid} variants={tableRowVariants}>
-                                    <TableCell className="font-medium text-xs">{user.name}</TableCell>
+                                    <TableCell className="font-medium text-xs">
+                                      <div className="flex items-center gap-3">
+                                          <Avatar className="h-8 w-8">
+                                              <AvatarImage src={user.avatarUrl || ''} alt={user.name} />
+                                              <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
+                                          </Avatar>
+                                          <span>{user.name}</span>
+                                      </div>
+                                    </TableCell>
                                     <TableCell className="text-xs hidden md:table-cell">{user.position || '-'}</TableCell>
                                     <TableCell className="text-xs hidden sm:table-cell">{user.email}</TableCell>
                                     <TableCell className="text-xs hidden lg:table-cell">{user.phone || '-'}</TableCell>
@@ -1131,5 +1139,6 @@ export default function DashboardPage() {
         </Suspense>
     );
 }
+
 
 
