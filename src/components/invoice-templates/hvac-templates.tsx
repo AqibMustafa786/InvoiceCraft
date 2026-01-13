@@ -1,3 +1,4 @@
+
 'use client';
 
 import React from 'react';
@@ -70,7 +71,8 @@ export const HvacDetails: React.FC<{ invoice: Invoice, t: any }> = ({ invoice, t
 export const HVACTemplate1: React.FC<PageProps> = (props) => {
     const { invoice, pageItems, pageIndex, totalPages, subtotal, taxAmount, discountAmount, total, balanceDue, currencySymbol, t, accentColor, textColor } = props;
     const { business, client } = invoice;
-    const docTitle = 'Invoice';
+    const docTitle = (t.invoice || 'INVOICE').toUpperCase();
+    
     return (
         <div className={`p-8 bg-white font-sans text-gray-800 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: 'Arial, sans-serif', fontSize: `9pt`, minHeight: '1056px', color: textColor, backgroundColor: props.backgroundColor }}>
             <header className="flex justify-between items-start pb-4 border-b-2" style={{ borderColor: accentColor }}>
@@ -85,7 +87,7 @@ export const HVACTemplate1: React.FC<PageProps> = (props) => {
                     </div>
                 </div>
                 <div className="text-right">
-                  <h2 className="text-2xl font-bold text-gray-700">{docTitle.toUpperCase()}</h2>
+                  <h2 className="text-2xl font-bold text-gray-700">{docTitle}</h2>
                   <p className="text-xs">#{invoice.invoiceNumber}</p>
                 </div>
             </header>
@@ -170,7 +172,8 @@ export const HVACTemplate2: React.FC<PageProps> = (props) => {
             <header className="flex justify-between items-start mb-10 pb-4 border-b-2" style={{ borderColor: accentColor }}>
                 <div>
                     <h1 className="text-3xl font-bold" style={{ color: accentColor }}>{business.name}</h1>
-                    <p className="text-xs text-gray-500">{business.address}</p>
+                    <p className="text-xs text-gray-500 whitespace-pre-line">{business.address}</p>
+                    <p className="text-xs text-gray-500">{business.phone} | {business.email}</p>
                 </div>
                 <div className="text-right">
                     <h2 className="text-2xl font-light text-gray-400">{docTitle.toUpperCase()}</h2>
@@ -182,11 +185,16 @@ export const HVACTemplate2: React.FC<PageProps> = (props) => {
                     <p className="font-bold text-gray-500">{t.client || 'Client'}:</p>
                     <p className="font-semibold">{client.name}</p>
                     <p>{client.address}</p>
+                    <p>{client.phone} | {client.email}</p>
                 </div>
-                <div className="text-right col-span-2">
+                <div>
+                   {client.shippingAddress && <p><span className="font-bold text-gray-500">Ship To:</span><br/>{client.shippingAddress}</p>}
+                </div>
+                <div className="text-right">
                     <p><span className="font-bold">{t.invoiceNo || 'Invoice #'}:</span> {invoice.invoiceNumber}</p>
                     <p><span className="font-bold">{t.date || 'Date'}:</span> {safeFormat(invoice.invoiceDate, 'MMM d, yyyy')}</p>
                     <p><span className="font-bold">{t.dueDate || 'Due Date'}:</span> {safeFormat(invoice.dueDate, 'MMM d, yyyy')}</p>
+                    {invoice.poNumber && <p><span className="font-bold">PO #:</span> {invoice.poNumber}</p>}
                 </div>
             </section>
             
@@ -205,7 +213,10 @@ export const HVACTemplate2: React.FC<PageProps> = (props) => {
                     <tbody>
                         {pageItems.map(item => (
                             <tr key={item.id} className="border-b border-gray-100">
-                                <td className="py-2 align-top whitespace-pre-line">{item.name}</td>
+                                <td className="py-2 align-top">
+                                    <p className="font-semibold whitespace-pre-line">{item.name}</p>
+                                    {item.description && <p className="text-xs text-gray-500 whitespace-pre-line">{item.description}</p>}
+                                </td>
                                 <td className="py-2 align-top text-center">{item.quantity}</td>
                                 <td className="py-2 align-top text-right">{currencySymbol}{item.unitPrice.toFixed(2)}</td>
                                 <td className="py-2 align-top text-right">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</td>
@@ -246,6 +257,9 @@ export const HVACTemplate3: React.FC<PageProps> = (props) => {
                 <div>
                     <h1 className="text-4xl font-light tracking-wide">{business.name}</h1>
                      <p className="text-xs whitespace-pre-line">{business.address}</p>
+                     <p className="text-xs">{business.phone} | {business.email}</p>
+                     {business.website && <p className="text-xs">{business.website}</p>}
+                     {business.taxId && <p className="text-xs">Tax ID: {business.taxId}</p>}
                 </div>
                 <div className="text-right">
                     <h2 className="text-3xl font-bold">{docTitle.toUpperCase()}</h2>
@@ -254,9 +268,19 @@ export const HVACTemplate3: React.FC<PageProps> = (props) => {
             </header>
 
             <section className="mb-8 p-4 border rounded-md grid grid-cols-3 gap-4 text-xs">
-                <div><p className="font-bold">{t.from || 'From'}:</p><p className="font-bold">{business.name}<br/>{business.address}</p></div>
-                <div><p className="font-bold">{t.to || 'To'}:</p><p>{client.name}<br/>{client.companyName && `${client.companyName}<br/>`}{client.address}<br/>{client.phone}<br/>{client.email}</p></div>
-                <div><p className="font-bold">{t.details || 'Details'}:</p><p>{t.date || 'Date'}: {safeFormat(invoice.invoiceDate, 'MM-dd-yyyy')}<br/>Due: {safeFormat(invoice.dueDate, 'MM-dd-yyyy')}</p></div>
+                <div>
+                    <p className="font-bold">{t.from || 'From'}:</p>
+                    <p className="font-bold">{business.name}<br/>{business.address}</p>
+                </div>
+                <div>
+                    <p className="font-bold">{t.to || 'To'}:</p>
+                    <p>{client.name}<br/>{client.companyName && `${client.companyName}<br/>`}{client.address}<br/>{client.phone}<br/>{client.email}</p>
+                    {client.shippingAddress && <p className="mt-2"><span className="font-bold">Ship To:</span><br/>{client.shippingAddress}</p>}
+                </div>
+                <div>
+                    <p className="font-bold">{t.details || 'Details'}:</p>
+                    <p>{t.date || 'Date'}: {safeFormat(invoice.invoiceDate, 'MM-dd-yyyy')}<br/>Due: {safeFormat(invoice.dueDate, 'MM-dd-yyyy')}<br/>PO: {invoice.poNumber}</p>
+                </div>
             </section>
             
              <CategorySpecificDetails invoice={invoice} t={t} />
@@ -274,7 +298,10 @@ export const HVACTemplate3: React.FC<PageProps> = (props) => {
                     <tbody>
                         {pageItems.map(item => (
                             <tr key={item.id} className="border-b border-gray-100">
-                                <td className="p-2 align-top whitespace-pre-line">{item.name}</td>
+                                <td className="p-2 align-top">
+                                    <p className="font-semibold whitespace-pre-line">{item.name}</p>
+                                    {item.description && <p className="text-xs text-gray-500 whitespace-pre-line">{item.description}</p>}
+                                </td>
                                 <td className="p-2 align-top text-center">{item.quantity}</td>
                                 <td className="p-2 align-top text-right">{currencySymbol}{item.unitPrice.toFixed(2)}</td>
                                 <td className="p-2 align-top text-right font-semibold">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</td>
