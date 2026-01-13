@@ -168,7 +168,7 @@ export const ElectricalTemplate1: React.FC<PageProps> = (props) => {
 export const ElectricalTemplate2: React.FC<PageProps> = (props) => {
     const { invoice, pageItems, pageIndex, totalPages, subtotal, taxAmount, discountAmount, total, balanceDue, currencySymbol, t, accentColor, textColor } = props;
     const { business, client } = invoice;
-    const docTitle = 'Invoice';
+    const docTitle = (t.invoice || 'Invoice');
 
     return (
         <div className={`p-10 bg-white font-sans text-gray-800 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: 'Verdana, sans-serif', fontSize: '9.5pt', minHeight: '1056px', color: textColor, backgroundColor: props.backgroundColor }}>
@@ -369,11 +369,13 @@ export const ElectricalTemplate4: React.FC<PageProps> = (props) => {
                 <header className="flex justify-between items-start mb-10">
                     <div>
                         <h1 className="text-3xl font-bold">{business.name}</h1>
-                        <p className="text-xs whitespace-pre-line">{business.address}</p>
-                        <p className="text-xs">{business.phone} | {business.email}</p>
-                        {business.website && <p className="text-xs">{business.website}</p>}
-                        {business.licenseNumber && <p className="text-xs">Lic #: {business.licenseNumber}</p>}
-                        {business.taxId && <p className="text-xs">Tax ID: {business.taxId}</p>}
+                        <div className="text-xs whitespace-pre-line mt-1">
+                            <p>{business.address}</p>
+                            <p>{business.phone} | {business.email}</p>
+                            {business.website && <p>{business.website}</p>}
+                            {business.licenseNumber && <p>Lic: {business.licenseNumber}</p>}
+                            {business.taxId && <p>Tax ID: {business.taxId}</p>}
+                        </div>
                     </div>
                     <div className="text-right">
                         <h2 className="text-2xl font-bold text-gray-400">{docTitle.toUpperCase()}</h2>
@@ -462,33 +464,47 @@ export const ElectricalTemplate5: React.FC<PageProps> = (props) => {
 
     return (
         <div className={`p-10 bg-gray-50 font-['Roboto',_sans-serif] text-gray-900 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ minHeight: '1056px', backgroundColor: props.backgroundColor, color: textColor }}>
-            <header className="flex justify-between items-start mb-8">
+            <header className="grid grid-cols-2 gap-4 mb-10">
                 <div>
-                  <h1 className="text-3xl font-bold">{business.name}</h1>
-                  <p className="text-xs">{business.address}</p>
+                    <h1 className="text-4xl font-extrabold">{business.name}</h1>
+                    <div className="text-xs mt-1">
+                        <p>{business.address}</p>
+                        <p>{business.phone} | {business.email}</p>
+                        {business.website && <p>{business.website}</p>}
+                        {business.licenseNumber && <p>Lic #: {business.licenseNumber}</p>}
+                        {business.taxId && <p>Tax ID: {business.taxId}</p>}
+                    </div>
                 </div>
-                <div className="text-right">
-                    <h1 className="text-2xl font-extrabold" style={{color: props.accentColor}}>{docTitle.toUpperCase()}</h1>
+                 <div className="text-right">
+                     <p className="text-3xl font-bold">{docTitle.toUpperCase()}</p>
+                     <p className="text-sm">#{invoice.invoiceNumber}</p>
                 </div>
             </header>
 
-            <section className="grid grid-cols-2 gap-4 mb-8 text-xs p-4 bg-white rounded-lg shadow-sm">
-                <div><p className="font-bold text-gray-500">{t.from || 'From'}:</p><p className="font-semibold">{business.name}</p><p>{business.address}</p></div>
-                <div><p className="font-bold text-gray-500">{t.to || 'To'}:</p><p className="font-semibold">{client.name}</p><p>{client.address}</p></div>
-                <div><p className="font-bold text-gray-500">{t.invoiceNo || 'Invoice #'}:</p><p>{invoice.invoiceNumber}</p></div>
-                <div><p className="font-bold text-gray-500">{t.dateIssued || 'Date Issued'}:</p><p>{safeFormat(invoice.invoiceDate, 'MMM d, yyyy')}</p></div>
+            <section className="mb-8 p-4 bg-white shadow-sm rounded-md text-xs">
+                 <p className="font-bold text-gray-500 mb-2">BILLED TO: {client.name}</p>
+                 <p className="font-semibold">{client.address}</p>
+                 {client.companyName && <p>{client.companyName}</p>}
+                 <p>{client.phone} | {client.email}</p>
+                 {client.shippingAddress && <p className="mt-2"><span className="font-bold text-gray-500">SHIP TO:</span> {client.shippingAddress}</p>}
+            </section>
+            
+            <section className="mb-4 text-xs grid grid-cols-3 gap-2">
+                <p><strong>Date:</strong> {safeFormat(invoice.invoiceDate, 'yyyy-MM-dd')}</p>
+                <p><strong>Due Date:</strong> {safeFormat(invoice.dueDate, 'yyyy-MM-dd')}</p>
+                {invoice.poNumber && <p><strong>PO #:</strong> {invoice.poNumber}</p>}
             </section>
             
             <CategorySpecificDetails invoice={invoice} t={t} />
 
-            <main className="flex-grow bg-white p-4 rounded-lg shadow-sm">
+            <main className="flex-grow bg-white p-4 rounded-md shadow-sm">
                 <table className="w-full text-left text-xs">
                     <thead>
                         <tr className="border-b-2 border-gray-200">
-                            <th className="py-2 font-bold w-[60%]">{t.descriptionOfWork || 'DESCRIPTION OF WORK'}</th>
-                            <th className="py-2 font-bold text-center">{t.hoursQty || 'HOURS/QTY'}</th>
-                            <th className="py-2 font-bold text-right">{t.cost || 'COST'}</th>
-                            <th className="py-2 font-bold text-right">{t.total || 'TOTAL'}</th>
+                            <th className="py-2 font-bold w-[60%]">Description of Work</th>
+                            <th className="py-2 font-bold text-center">Qty</th>
+                            <th className="py-2 font-bold text-right">Cost</th>
+                            <th className="py-2 font-bold text-right">Total</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -510,18 +526,18 @@ export const ElectricalTemplate5: React.FC<PageProps> = (props) => {
             {pageIndex === totalPages - 1 && (
                 <footer className="mt-auto pt-8 flex justify-between items-end">
                     <div className="text-xs w-1/2">
-                        <p className="font-bold">{t.termsAndConditions || 'Terms & Conditions'}:</p>
+                        <p className="font-bold">Terms & Conditions:</p>
                         <p className="text-gray-500 whitespace-pre-line">{invoice.paymentInstructions}</p>
-                         <SignatureDisplay signature={business.ownerSignature} label={t.authorizedSignature || "Authorized Signature"} />
+                         <SignatureDisplay signature={business.ownerSignature} label="Authorized Signature" />
                     </div>
                     <div className="w-1/3 text-sm space-y-1">
-                        <p className="flex justify-between"><span>{t.subtotal || 'Subtotal'}</span><span>{currencySymbol}{subtotal.toFixed(2)}</span></p>
-                        {discountAmount > 0 && <p className="flex justify-between"><span>{t.discount || 'Discount'}</span><span className="text-red-500">-{currencySymbol}{discountAmount.toFixed(2)}</span></p>}
-                        {invoice.summary.shippingCost > 0 && <p className="flex justify-between"><span>{t.shipping || 'Shipping/Extra'}</span><span>{currencySymbol}{invoice.summary.shippingCost.toFixed(2)}</span></p>}
-                        <p className="flex justify-between"><span>{t.tax || 'Tax'}</span><span>{currencySymbol}{taxAmount.toFixed(2)}</span></p>
-                        <p className="flex justify-between p-2 mt-2 border-t-2 border-black font-bold text-lg"><span>{t.total || 'Total'}</span><span>{currencySymbol}{total.toFixed(2)}</span></p>
-                        {(invoice.amountPaid || 0) > 0 && <p className="flex justify-between p-2 text-green-600 font-bold"><span>{t.amountPaid || 'Amount Paid'}</span><span>-{currencySymbol}{(invoice.amountPaid || 0).toFixed(2)}</span></p>}
-                        <p className="flex justify-between bg-gray-200 p-2 font-bold text-lg"><span>{t.balanceDue || 'Balance Due'}</span><span>{currencySymbol}{balanceDue.toFixed(2)}</span></p>
+                        <p className="flex justify-between"><span>Subtotal</span><span>{currencySymbol}{subtotal.toFixed(2)}</span></p>
+                        {discountAmount > 0 && <p className="flex justify-between"><span>Discount</span><span className="text-red-500">-{currencySymbol}{discountAmount.toFixed(2)}</span></p>}
+                        {invoice.summary.shippingCost > 0 && <p className="flex justify-between"><span>Shipping/Extra</span><span>{currencySymbol}{invoice.summary.shippingCost.toFixed(2)}</span></p>}
+                        <p className="flex justify-between"><span>Tax</span><span>{currencySymbol}{taxAmount.toFixed(2)}</span></p>
+                        <p className="flex justify-between p-2 mt-2 border-t-2 border-black font-bold text-lg"><span>Total</span><span>{currencySymbol}{total.toFixed(2)}</span></p>
+                        {(invoice.amountPaid || 0) > 0 && <p className="flex justify-between p-2 text-green-600 font-bold"><span>Amount Paid</span><span>-{currencySymbol}{(invoice.amountPaid || 0).toFixed(2)}</span></p>}
+                        <p className="flex justify-between bg-gray-200 p-2 font-bold text-lg"><span>Balance Due</span><span>{currencySymbol}{balanceDue.toFixed(2)}</span></p>
                     </div>
                 </footer>
             )}
