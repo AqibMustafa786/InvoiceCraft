@@ -214,12 +214,12 @@ export const PlumbingTemplate2: React.FC<PageProps> = (props) => {
 
             <main className="flex-grow mt-4">
                  <table className="w-full text-left text-sm">
-                    <thead>
-                        <tr style={{ backgroundColor: accentColor }} className="text-white">
-                            <th className="p-2 font-bold w-1/2 rounded-l-md">DESCRIPTION</th>
+                    <thead style={{ backgroundColor: accentColor }} className="text-white">
+                        <tr className="rounded-t-lg">
+                            <th className="p-2 font-bold w-1/2 rounded-tl-md">DESCRIPTION</th>
                             <th className="p-2 font-bold text-center">QTY</th>
                             <th className="p-2 font-bold text-right">UNIT PRICE</th>
-                            <th className="p-2 font-bold text-right rounded-r-md">TOTAL</th>
+                            <th className="p-2 font-bold text-right rounded-tr-md">TOTAL</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -372,17 +372,25 @@ export const PlumbingTemplate4: React.FC<PageProps> = (props) => {
                         <p className="font-bold opacity-70 mb-1">INVOICE FOR</p>
                         <p className="font-bold text-base">{client.name}</p>
                         {client.companyName && <p>{client.companyName}</p>}
-                        <p>{client.address}</p>
+                        <p className="whitespace-pre-line">{client.address}</p>
+                        <p>{client.phone}</p>
+                        <p>{client.email}</p>
                     </div>
                      <div>
                         <p className="font-bold opacity-70 mb-1">FROM</p>
-                        <p>{business.address}</p>
+                        <p className="whitespace-pre-line">{business.address}</p>
+                        <p>{business.phone}</p>
+                        <p>{business.email}</p>
+                        {business.website && <p>{business.website}</p>}
+                        {business.licenseNumber && <p>Lic: {business.licenseNumber}</p>}
+                        {business.taxId && <p>Tax ID: {business.taxId}</p>}
                     </div>
                      <div>
                         <p className="font-bold opacity-70 mb-1">REFERENCE</p>
                         <p>#{invoice.invoiceNumber}</p>
                         <p>Date: {safeFormat(invoice.invoiceDate, 'yyyy-MM-dd')}</p>
                         <p>Due: {safeFormat(invoice.dueDate, 'yyyy-MM-dd')}</p>
+                        {invoice.poNumber && <p>PO: {invoice.poNumber}</p>}
                     </div>
                 </div>
             </div>
@@ -469,6 +477,7 @@ export const PlumbingTemplate5: React.FC<PageProps> = (props) => {
                  <p className="font-bold text-gray-500 mb-2">PROJECT FOR: {client.name}</p>
                  <p className="font-semibold">{client.address}</p>
                  {client.companyName && <p>{client.companyName}</p>}
+                 {client.projectLocation && <p>Location: {client.projectLocation}</p>}
             </section>
             
             <CategorySpecificDetails invoice={invoice} t={t} />
