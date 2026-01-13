@@ -112,9 +112,8 @@ export const PlumbingTemplate1: React.FC<PageProps> = (props) => {
                  <table className="w-full text-left text-xs">
                     <thead>
                         <tr className="bg-black text-white">
-                            <th className="p-1.5 font-bold w-[5%]">{t.id || 'ID'}</th>
                             <th className="p-1.5 font-bold w-[30%]">{t.item || 'ITEM'}</th>
-                            <th className="p-1.5 font-bold w-[25%]">{t.description || 'DESCRIPTION'}</th>
+                            <th className="p-1.5 font-bold w-[30%]">{t.description || 'DESCRIPTION'}</th>
                             <th className="p-1.5 font-bold text-center">{t.quantity || 'QTY'}</th>
                             <th className="p-1.5 font-bold text-right">{t.price || 'PRICE'}</th>
                             <th className="p-1.5 font-bold text-right">{t.total || 'TOTAL'}</th>
@@ -123,7 +122,6 @@ export const PlumbingTemplate1: React.FC<PageProps> = (props) => {
                     <tbody>
                         {pageItems.map((item, index) => (
                             <tr key={item.id} className="border-b border-gray-300">
-                                <td className="p-1.5 align-top">{index + 1}</td>
                                 <td className="p-1.5 align-top whitespace-pre-line">{item.name}</td>
                                 <td className="p-1.5 align-top whitespace-pre-line">{item.description}</td>
                                 <td className="p-1.5 align-top text-center">{item.quantity}</td>
@@ -493,5 +491,3 @@ export const PlumbingTemplate5: React.FC<PageProps> = (props) => {
         </div>
     );
 };
-
-```
