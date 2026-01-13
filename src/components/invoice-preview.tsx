@@ -452,8 +452,11 @@ const UsaTemplatePage: FC<PageProps> = ({ pageItems, pageIndex, totalPages, ...c
                      <section className="mb-8 text-xs" data-element="client-details">
                         <div className="p-3 bg-gray-50 rounded-md">
                             <p className="font-bold text-gray-600 border-b mb-1">Bill To</p>
-                            <p>{client.name}</p>
+                            <p className="font-semibold">{client.name}</p>
+                            {client.companyName && <p>{client.companyName}</p>}
                             <p>{client.address}</p>
+                            {client.phone && <p>Phone: {client.phone}</p>}
+                            {client.email && <p>Email: {client.email}</p>}
                             {invoice.poNumber && <p className="mt-2"><span className="font-bold">PO #: </span>{invoice.poNumber}</p>}
                         </div>
                     </section>
@@ -661,19 +664,29 @@ const InvoicePreviewInternal: FC<InvoicePreviewProps> = ({ invoice, accentColor,
         return height;
       };
       
-      const headerAndClientDetailsHeight = measureComponent(
-        <div style={previewStyle} className="p-8 md:p-10">
-            <div data-element="header-content">
-                <TemplateComponent {...commonProps} pageItems={[]} pageIndex={0} totalPages={1} />
-            </div>
-        </div>
+      let headerContent = (
+          <div data-element="page-content" className="flex-grow">
+              <header data-element="header"></header>
+              <section data-element="client-details"></section>
+              <div data-element="category-details"></div>
+          </div>
+      );
+      
+      const firstPageDummy = <TemplateComponent {...commonProps} pageItems={[]} pageIndex={0} totalPages={1} />;
+      const subsequentPageDummy = <TemplateComponent {...commonProps} pageItems={[]} pageIndex={1} totalPages={2} />;
+
+      const firstPageHeaderHeight = measureComponent(
+        <div style={previewStyle} className="p-8 md:p-10">{React.cloneElement(firstPageDummy, { children: headerContent })}</div>
+      );
+      const subsequentPageHeaderHeight = measureComponent(
+        <div style={previewStyle} className="p-8 md:p-10">{React.cloneElement(subsequentPageDummy, { children: headerContent })}</div>
       );
       
       const footerHeight = measureComponent(<InvoiceFooter {...commonProps} />);
       const tableHeaderHeight = measureComponent(<table className="w-full"><thead data-element="table-header"><tr><th>Header</th></tr></thead></table>);
       
-      const firstPageAvailableHeight = AVAILABLE_PAGE_HEIGHT_PX - headerAndClientDetailsHeight - footerHeight;
-      const subsequentPageAvailableHeight = AVAILABLE_PAGE_HEIGHT_PX - headerAndClientDetailsHeight - footerHeight;
+      const firstPageAvailableHeight = AVAILABLE_PAGE_HEIGHT_PX - firstPageHeaderHeight - footerHeight;
+      const subsequentPageAvailableHeight = AVAILABLE_PAGE_HEIGHT_PX - subsequentPageHeaderHeight - footerHeight;
       
       const rowHeights = invoice.lineItems.map(item => measureComponent(<ItemsTable items={[item]} {...commonProps} />));
   
@@ -776,3 +789,4 @@ export const ClientInvoicePreview: FC<InvoicePreviewProps> = (props) => {
 export { InvoicePreviewInternal as InvoicePreview };
 
     
+
