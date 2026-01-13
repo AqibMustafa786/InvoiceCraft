@@ -1,4 +1,3 @@
-
 'use client';
 
 import React from 'react';
@@ -31,12 +30,12 @@ const safeFormat = (date: Date | string | number | null | undefined, formatStrin
     return format(d, formatString);
 }
 
-const SignatureDisplay = ({ signature, label, style }: { signature: any, label: string, style?: React.CSSProperties }) => {
+const SignatureDisplay = ({ signature, label }: { signature: any, label: string }) => {
     if (!signature?.image) return null;
     return (
-        <div className="mt-8" style={style}>
-            <Image src={signature.image} alt={label} width={150} height={75} className="border-b" style={{borderColor: '#374151'}} />
-            <p className="text-xs pt-1 border-t-2 w-[150px]" style={{borderColor: '#374151'}}>{label}</p>
+        <div className="mt-8">
+            <Image src={signature.image} alt={label} width={150} height={75} className="border-b border-gray-400" />
+            <p className="text-xs text-gray-500 pt-1 border-t-2 border-gray-700 w-[150px]">{label}</p>
         </div>
     )
 }
@@ -180,8 +179,6 @@ export const HVACTemplate2: React.FC<PageProps> = (props) => {
                         <p className="whitespace-pre-line">{business.address}</p>
                         <p>{business.phone} | {business.email}</p>
                         {business.website && <p>{business.website}</p>}
-                        {business.licenseNumber && <p>Lic #: {business.licenseNumber}</p>}
-                        {business.taxId && <p>Tax ID: {business.taxId}</p>}
                     </div>
                 </div>
                 <div className="text-right">
@@ -207,7 +204,7 @@ export const HVACTemplate2: React.FC<PageProps> = (props) => {
                 </div>
             </section>
             
-            <CategorySpecificDetails invoice={invoice} t={t} />
+            <CategorySpecificDetails invoice={invoice} t={t}/>
 
             <main className="flex-grow mt-4">
                  <table className="w-full text-left text-xs">
@@ -237,12 +234,7 @@ export const HVACTemplate2: React.FC<PageProps> = (props) => {
             
             {pageIndex === totalPages - 1 && (
                 <footer className="mt-auto pt-8">
-                    <div className="flex justify-between items-start">
-                        <div className="w-1/2 text-xs">
-                           <p className="font-bold text-gray-500 mb-2">{t.termsAndConditions || 'Terms & Conditions'}</p>
-                           <p className="whitespace-pre-line">{invoice.paymentInstructions}</p>
-                           {business.ownerSignature && <SignatureDisplay signature={business.ownerSignature} label="Authorized Signature" />}
-                        </div>
+                     <div className="flex justify-end">
                         <div className="w-1/3 text-sm space-y-1">
                             <p className="flex justify-between"><span>{t.subtotal || 'Subtotal'}:</span><span>{currencySymbol}{subtotal.toFixed(2)}</span></p>
                             {discountAmount > 0 && <p className="flex justify-between">{t.discount || 'Discount'}: <span className="text-red-500">-{currencySymbol}{discountAmount.toFixed(2)}</span></p>}
@@ -252,6 +244,13 @@ export const HVACTemplate2: React.FC<PageProps> = (props) => {
                             {(invoice.amountPaid || 0) > 0 && <p className="flex justify-between font-bold text-green-600"><span>{t.amountPaid || 'Amount Paid'}:</span><span>-{currencySymbol}{(invoice.amountPaid || 0).toFixed(2)}</span></p>}
                             <p className="flex justify-between font-bold bg-gray-100 p-2 mt-1"><span>{t.balanceDue || 'Balance Due'}:</span><span>{currencySymbol}{balanceDue.toFixed(2)}</span></p>
                         </div>
+                    </div>
+                     <div className="text-xs mt-8">
+                        <p className="font-bold text-gray-500 mb-2">{t.termsAndConditions || 'Terms & Conditions'}</p>
+                        <p className="whitespace-pre-line">{invoice.paymentInstructions}</p>
+                    </div>
+                    <div className="flex justify-between mt-8">
+                        <SignatureDisplay signature={business.ownerSignature} label="Owner Signature" />
                     </div>
                 </footer>
             )}
@@ -274,8 +273,6 @@ export const HVACTemplate3: React.FC<PageProps> = (props) => {
                         <p>{business.address}</p>
                         <p>{business.phone} | {business.email}</p>
                         {business.website && <p>{business.website}</p>}
-                        {business.licenseNumber && <p>Lic: {business.licenseNumber}</p>}
-                        {business.taxId && <p>Tax ID: {business.taxId}</p>}
                     </div>
                 </div>
                 <div className="text-right">
@@ -285,19 +282,9 @@ export const HVACTemplate3: React.FC<PageProps> = (props) => {
             </header>
 
             <section className="mb-8 p-4 border rounded-md grid grid-cols-3 gap-4 text-xs">
-                <div>
-                    <p className="font-bold">{t.from || 'From'}:</p>
-                    <p className="font-bold">{business.name}<br/>{business.address}</p>
-                </div>
-                <div>
-                    <p className="font-bold">{t.to || 'To'}:</p>
-                    <p>{client.name}<br/>{client.companyName && `${client.companyName}<br/>`}{client.address}<br/>{client.phone}<br/>{client.email}</p>
-                    {client.shippingAddress && <p className="mt-2"><span className="font-bold">Ship To:</span><br/>{client.shippingAddress}</p>}
-                </div>
-                <div>
-                    <p className="font-bold">{t.details || 'Details'}:</p>
-                    <p>{t.date || 'Date'}: {safeFormat(invoice.invoiceDate, 'MM-dd-yyyy')}<br/>Due: {safeFormat(invoice.dueDate, 'MM-dd-yyyy')}<br/>{invoice.poNumber && `PO: ${invoice.poNumber}`}</p>
-                </div>
+                <div><p className="font-bold">{(t.from || 'From')}:</p><p>{business.name}<br/>{business.address}</p></div>
+                <div><p className="font-bold">{(t.to || 'To')}:</p><p>{client.name}<br/>{client.companyName && `${client.companyName}<br/>`}{client.address}<br/>{client.phone}<br/>{client.email}</p></div>
+                <div><p className="font-bold">{(t.details || 'Details')}:</p><p>{t.date || 'Date'}: {safeFormat(invoice.invoiceDate, 'MM-dd-yyyy')}<br/>Due: {safeFormat(invoice.dueDate, 'MM-dd-yyyy')}<br/>{invoice.poNumber && `PO: ${invoice.poNumber}`}</p></div>
             </section>
             
              <CategorySpecificDetails invoice={invoice} t={t} />
@@ -314,7 +301,7 @@ export const HVACTemplate3: React.FC<PageProps> = (props) => {
                     </thead>
                     <tbody>
                         {pageItems.map(item => (
-                            <tr key={item.id} className="border-b border-gray-100">
+                            <tr key={item.id} className="border-b">
                                 <td className="p-2 align-top">
                                     <p className="font-semibold whitespace-pre-line">{item.name}</p>
                                     {item.description && <p className="text-xs text-gray-500 whitespace-pre-line">{item.description}</p>}
@@ -350,5 +337,102 @@ export const HVACTemplate3: React.FC<PageProps> = (props) => {
 };
 
 // Template 4: Corporate Blue
-export const HVACTemplate4: React.FC<PageProps> = (props) => <HVACTemplate1 {...props} />;
-export const HVACTemplate5: React.FC<PageProps> = (props) => <HVACTemplate2 {...props} />;
+export const HVACTemplate4: React.FC<PageProps> = (props) => {
+    const { invoice, pageItems, pageIndex, totalPages, subtotal, taxAmount, discountAmount, total, balanceDue, currencySymbol, t, accentColor, textColor } = props;
+    const { business, client } = invoice;
+    const docTitle = (t.invoice || 'INVOICE').toUpperCase();
+
+    return (
+        <div className={`bg-white font-sans text-gray-800 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: 'Arial', fontSize: `9pt`, minHeight: '1056px', backgroundColor: props.backgroundColor, color: textColor }}>
+            <div className="p-10">
+                <header className="flex justify-between items-start mb-5 pb-5 border-b-8" style={{ borderColor: accentColor }}>
+                    <div>
+                      <h1 className="text-4xl font-extrabold">{business.name}</h1>
+                      <div className="text-xs text-gray-500">
+                        <p>{business.address}</p>
+                        <p>{business.phone} | {business.email}</p>
+                        {business.website && <p>{business.website}</p>}
+                        {business.licenseNumber && <p>Lic #: {business.licenseNumber}</p>}
+                        {business.taxId && <p>Tax ID: {business.taxId}</p>}
+                      </div>
+                    </div>
+                    <div className="text-right">
+                        <h2 className="text-3xl font-bold">{docTitle}</h2>
+                    </div>
+                </header>
+                
+                <section className="grid grid-cols-2 gap-4 mb-8 text-xs">
+                    <div>
+                        <p className="font-bold">{t.billTo || 'Bill To'}:</p>
+                        <p>{client.name}</p>
+                        {client.companyName && <p>{client.companyName}</p>}
+                        <p className="whitespace-pre-line">{client.address}</p>
+                        <p>{client.phone} | {client.email}</p>
+                        {client.shippingAddress && <p className="mt-2"><span className="font-bold">Ship To:</span><br/>{client.shippingAddress}</p>}
+                    </div>
+                    <div className="text-right">
+                         <p><span className="font-bold">{t.invoiceNo || 'Invoice #'}:</span> {invoice.invoiceNumber}</p>
+                         <p><span className="font-bold">{t.date || 'Date'}:</span> {safeFormat(invoice.invoiceDate, 'yyyy-MM-dd')}</p>
+                         <p><span className="font-bold">{t.dueDate || 'Due Date'}:</span> {safeFormat(invoice.dueDate, 'yyyy-MM-dd')}</p>
+                         {invoice.poNumber && <p><span className="font-bold">PO #:</span> {invoice.poNumber}</p>}
+                    </div>
+                </section>
+
+                <CategorySpecificDetails invoice={invoice} t={t}/>
+                
+                <main className="flex-grow">
+                     <table className="w-full text-left text-sm">
+                        <thead className="bg-gray-100">
+                            <tr>
+                                <th className="p-2 font-bold w-[45%]">{t.description || 'DESCRIPTION'}</th>
+                                <th className="p-2 font-bold text-center">{t.quantity || 'QTY'}</th>
+                                <th className="p-2 font-bold text-right">{t.price || 'PRICE'}</th>
+                                <th className="p-2 font-bold text-right">{t.amount || 'AMOUNT'}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {pageItems.map(item => (
+                                <tr key={item.id} className="border-b">
+                                    <td className="p-2 align-top">
+                                        <p className="font-semibold whitespace-pre-line">{item.name}</p>
+                                        {item.description && <p className="text-xs text-gray-500 whitespace-pre-line">{item.description}</p>}
+                                    </td>
+                                    <td className="p-2 align-top text-center">{item.quantity}</td>
+                                    <td className="p-2 align-top text-right">{currencySymbol}{item.unitPrice.toFixed(2)}</td>
+                                    <td className="p-2 align-top text-right font-semibold">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </main>
+            </div>
+            
+            {pageIndex === totalPages - 1 && (
+                <footer className="mt-auto">
+                    <div className="p-10 bg-gray-50">
+                        <div className="flex justify-end mb-4">
+                            <table className="w-1/3 text-sm">
+                                <tbody>
+                                    <tr><td className="py-1">{t.subtotal || 'Subtotal'}</td><td className="py-1 text-right">{currencySymbol}{subtotal.toFixed(2)}</td></tr>
+                                    {discountAmount > 0 && <tr><td className="py-1 text-red-600">{t.discount || 'Discount'}</td><td className="py-1 text-right text-red-600">-{currencySymbol}{discountAmount.toFixed(2)}</td></tr>}
+                                    {invoice.summary.shippingCost > 0 && <tr><td className="py-1">{t.shipping || 'Shipping'}</td><td className="py-1 text-right">{currencySymbol}{invoice.summary.shippingCost.toFixed(2)}</td></tr>}
+                                    {taxAmount > 0 && <tr><td className="py-1">{t.taxes || 'Taxes'}</td><td className="py-1 text-right">{currencySymbol}{taxAmount.toFixed(2)}</td></tr>}
+                                    <tr className="font-bold text-base border-t-2 border-black"><td className="py-2">{t.total || 'Total'}</td><td className="py-2 text-right">{currencySymbol}{total.toFixed(2)}</td></tr>
+                                    {(invoice.amountPaid || 0) > 0 && <tr className="font-bold text-green-600"><td>{t.amountPaid || 'Amount Paid'}</td><td className="text-right">-{currencySymbol}{(invoice.amountPaid || 0).toFixed(2)}</td></tr>}
+                                    <tr className="font-bold text-lg"><td className="py-2">{t.balanceDue || 'Balance Due'}</td><td className="py-2 text-right">{currencySymbol}{balanceDue.toFixed(2)}</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <p className="text-xs text-center whitespace-pre-line">{invoice.paymentInstructions}</p>
+                         <div className="flex justify-end mt-4">
+                            <SignatureDisplay signature={business.ownerSignature} label="Authorized Signature" />
+                        </div>
+                    </div>
+                </footer>
+            )}
+        </div>
+    );
+};
+
+// Template 5: Minimal Side-by-Side
+export const HVACTemplate5: React.FC<PageProps> = (props) => <HVACTemplate1 {...props} />;
