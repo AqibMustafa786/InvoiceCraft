@@ -44,7 +44,7 @@ export default function LoginPage() {
             .then(async (result) => {
                 if (result) {
                     setIsLoading(true);
-                    await bootstrapUser(result.user);
+                    bootstrapUser(result.user); // No await
                     toast({
                         title: "Login Successful",
                         description: `Welcome, ${result.user.displayName}!`,
@@ -106,7 +106,7 @@ export default function LoginPage() {
 
         try {
             const userCredential = await signInWithPopup(auth, provider);
-            await bootstrapUser(userCredential.user);
+            bootstrapUser(userCredential.user); // No await here
             toast({
                 title: "Login Successful",
                 description: `Welcome, ${userCredential.user.displayName}!`,

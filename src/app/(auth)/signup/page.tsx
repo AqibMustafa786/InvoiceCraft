@@ -46,7 +46,7 @@ export default function SignupPage() {
             .then(async (result) => {
                 if (result) {
                     setIsLoading(true);
-                    await bootstrapUser(result.user);
+                    bootstrapUser(result.user); // No await
                     toast({
                         title: "Sign-in Successful",
                         description: `Welcome, ${result.user.displayName}!`,
@@ -74,7 +74,7 @@ export default function SignupPage() {
             }
             const userCredential = await createUserWithEmailAndPassword(auth, data.email, data.password);
             
-            await bootstrapUser(userCredential.user, data.name);
+            bootstrapUser(userCredential.user, data.name); // No await
 
             toast({
                 title: "Account Created!",
@@ -111,7 +111,7 @@ export default function SignupPage() {
 
         try {
             const userCredential = await signInWithPopup(auth, provider);
-            await bootstrapUser(userCredential.user);
+            bootstrapUser(userCredential.user); // No await
             toast({
                 title: "Sign-in Successful",
                 description: `Welcome, ${userCredential.user.displayName}!`,
