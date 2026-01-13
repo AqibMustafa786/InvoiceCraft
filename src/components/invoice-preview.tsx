@@ -583,7 +583,7 @@ const InvoicePreviewInternal: FC<InvoicePreviewProps> = ({ invoice, accentColor,
   const balanceDue = total - (invoice.amountPaid || 0);
   const currencySymbol = currencySymbols[invoice.currency] || '$';
 
-  const commonProps: Omit<PageProps, 'pageItems' | 'pageIndex' | 'totalPages'> = {
+  const commonProps: Omit<PageProps, 'pageItems' | 'pageIndex' | 'totalPages'> = useMemo(() => ({
     invoice,
     accentColor,
     backgroundColor,
@@ -595,7 +595,7 @@ const InvoicePreviewInternal: FC<InvoicePreviewProps> = ({ invoice, accentColor,
     discountAmount,
     total,
     balanceDue,
-  };
+  }), [invoice, accentColor, backgroundColor, textColor, t, currencySymbol, subtotal, taxAmount, discountAmount, total, balanceDue]);
 
   useEffect(() => {
     setNeedsRemeasure(true);
@@ -619,105 +619,91 @@ const InvoicePreviewInternal: FC<InvoicePreviewProps> = ({ invoice, accentColor,
   
   useLayoutEffect(() => {
     if (!isPrint || !needsRemeasure || typeof window === 'undefined') return;
-
+  
     const measureAndPaginate = () => {
-        const container = document.createElement('div');
-        container.style.position = 'absolute';
-        container.style.left = '-9999px';
-        container.style.width = '8.5in'; // Standard letter width
-        document.body.appendChild(container);
-
-        const ptToPx = (pt: number) => pt * 96 / 72;
-        const availableHeightPx = ptToPx(AVAILABLE_PAGE_HEIGHT_PT);
-
-        const headerEl = document.createElement('div');
-        const headerContent = (
-            <TemplateComponent {...commonProps} pageItems={[]} pageIndex={0} totalPages={1} />
-        );
-        require('react-dom/client').createRoot(headerEl).render(headerContent);
-        container.appendChild(headerEl);
-
-        setTimeout(() => {
-            const pageContent = headerEl.querySelector('[data-element="page-content"]');
-            const headerContentEl = headerEl.querySelector('[data-element="header"]');
-            const clientDetailsEl = headerEl.querySelector('[data-element="client-details"]');
-            const categoryDetailsEl = headerEl.querySelector('[data-element="category-details"]');
-            const footerContentEl = headerEl.querySelector('[data-element="footer-content"]');
-
-            if (!pageContent || !headerContentEl || !clientDetailsEl) {
-                document.body.removeChild(container);
-                return;
-            }
-
-            const headerHeight = headerContentEl.clientHeight + clientDetailsEl.clientHeight + (categoryDetailsEl?.clientHeight || 0);
-            const footerHeight = footerContentEl?.clientHeight || 0;
-
-            const tempTable = document.createElement('table');
-            const tempTbody = document.createElement('tbody');
-            tempTable.style.width = '100%';
-            tempTable.style.fontSize = `${invoice.fontSize || 10}pt`;
-            tempTable.style.fontFamily = invoice.fontFamily || 'Inter, sans-serif';
-            tempTable.appendChild(tempTbody);
-            container.appendChild(tempTable);
-
-            const rowHeights = invoice.lineItems.map(item => {
-                const tr = document.createElement('tr');
-                const td = document.createElement('td');
-                td.style.padding = '8px'; // Corresponds to p-2 in Tailwind for text-sm
-                td.style.verticalAlign = 'top';
-                const nameP = document.createElement('p');
-                nameP.style.whiteSpace = 'pre-line';
-                nameP.innerText = item.name;
-                td.appendChild(nameP);
-                if (item.description) {
-                    const descP = document.createElement('p');
-                    descP.style.fontSize = '0.875em'; // Roughly text-xs relative to text-sm
-                    descP.style.whiteSpace = 'pre-line';
-                    descP.innerText = item.description;
-                    td.appendChild(descP);
-                }
-                tr.appendChild(td);
-                tempTbody.appendChild(tr);
-                const height = tr.clientHeight;
-                return height;
-            });
-
-            document.body.removeChild(container);
-
-            const pages: LineItem[][] = [];
-            let currentPageItems: LineItem[] = [];
-            let currentHeight = 0;
-
-            const firstPageAvailableHeight = availableHeightPx - headerHeight - footerHeight;
-            const subsequentPageAvailableHeight = availableHeightPx - headerHeight - footerHeight;
-
-            invoice.lineItems.forEach((item, index) => {
-                const isFirstPage = pages.length === 0;
-                const availableHeight = isFirstPage ? firstPageAvailableHeight : subsequentPageAvailableHeight;
-                const itemHeight = rowHeights[index];
-
-                if (currentHeight + itemHeight > availableHeight && currentPageItems.length > 0) {
-                    pages.push(currentPageItems);
-                    currentPageItems = [];
-                    currentHeight = 0;
-                }
-                currentPageItems.push(item);
-                currentHeight += itemHeight;
-            });
-            
-            if (currentPageItems.length > 0) {
-                pages.push(currentPageItems);
-            }
-            
-            setPaginatedItems(pages.length > 0 ? pages : [[]]);
-            setNeedsRemeasure(false);
-
-        }, 100);
+      // 1. Create a hidden div to measure content off-screen
+      const measurementContainer = document.createElement('div');
+      measurementContainer.style.position = 'absolute';
+      measurementContainer.style.left = '-9999px';
+      measurementContainer.style.width = '8.5in'; // Standard US Letter width
+      document.body.appendChild(measurementContainer);
+  
+      // Helper to render and measure a component
+      const measureComponent = (component: React.ReactElement): number => {
+        const div = document.createElement('div');
+        measurementContainer.appendChild(div);
+        const root = require('react-dom/client').createRoot(div);
+        root.render(component);
+        const height = div.clientHeight;
+        root.unmount();
+        div.remove();
+        return height;
+      };
+      
+      const ptToPx = (pt: number) => pt * 96 / 72; // Standard conversion
+      const pageHeightPx = ptToPx(PAGE_HEIGHT_PT);
+  
+      // 2. Measure static parts of the template
+      const headerHeight = measureComponent(
+        <TemplateComponent {...commonProps} pageItems={[]} pageIndex={0} totalPages={1} />
+      );
+      
+      const tableHeaderHeight = measureComponent(
+          <table className="w-full">
+              <thead data-element="table-header">
+                  <tr><th className="p-3">Header</th></tr>
+              </thead>
+          </table>
+      );
+      
+      const footerHeight = measureComponent(<InvoiceFooter {...commonProps} />);
+  
+      const firstPageAvailableHeight = pageHeightPx - headerHeight - footerHeight - ptToPx(20); // 20pt buffer
+      const subsequentPageAvailableHeight = pageHeightPx - headerHeight - footerHeight - ptToPx(20);
+      
+      // 3. Measure each line item
+      const rowHeights = invoice.lineItems.map(item =>
+        measureComponent(<ItemsTable items={[item]} {...commonProps} />)
+      );
+  
+      // 4. Paginate
+      const pages: LineItem[][] = [];
+      let currentPageItems: LineItem[] = [];
+      let currentHeight = 0;
+  
+      for (let i = 0; i < invoice.lineItems.length; i++) {
+        const itemHeight = rowHeights[i];
+        const isFirstPage = pages.length === 0;
+        const availableHeight = isFirstPage ? firstPageAvailableHeight : subsequentPageAvailableHeight;
+  
+        // Add table header height only for the first item on a new page
+        const additionalHeight = (currentPageItems.length === 0 ? tableHeaderHeight : 0);
+  
+        if (currentHeight + additionalHeight + itemHeight > availableHeight && currentPageItems.length > 0) {
+          pages.push(currentPageItems);
+          currentPageItems = [];
+          currentHeight = 0;
+        }
+  
+        currentPageItems.push(invoice.lineItems[i]);
+        currentHeight += itemHeight;
+      }
+  
+      if (currentPageItems.length > 0) {
+        pages.push(currentPageItems);
+      }
+  
+      setPaginatedItems(pages.length > 0 ? pages : [[]]);
+      setNeedsRemeasure(false);
+  
+      document.body.removeChild(measurementContainer);
     };
-
-    measureAndPaginate();
-    
-}, [isPrint, needsRemeasure, serializedInvoice, commonProps, TemplateComponent, invoice.fontSize, invoice.fontFamily]);
+  
+    // Debounce measurement to allow DOM to update
+    const timer = setTimeout(measureAndPaginate, 150);
+    return () => clearTimeout(timer);
+  
+  }, [isPrint, needsRemeasure, commonProps, TemplateComponent, invoice.lineItems]);
   
   if (isPrint) {
     const itemsToRender = needsRemeasure ? [invoice.lineItems] : (paginatedItems.length > 0 ? paginatedItems : [[]]);
