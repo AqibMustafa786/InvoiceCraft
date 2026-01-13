@@ -90,7 +90,7 @@ export const PlumbingTemplate1: React.FC<PageProps> = (props) => {
                     <p className="px-2 font-bold text-white bg-black">SERVICE PROVIDER</p>
                     <div className="p-2 space-y-0.5">
                         <p>{business.name}</p>
-                        <p>{business.address}</p>
+                        <p className="whitespace-pre-line">{business.address}</p>
                         <p>{business.phone}</p>
                         <p>{business.email}</p>
                         {business.website && <p>{business.website}</p>}
@@ -103,7 +103,7 @@ export const PlumbingTemplate1: React.FC<PageProps> = (props) => {
                     <div className="p-2 space-y-0.5">
                         <p>{client.name}</p>
                         {client.companyName && <p>{client.companyName}</p>}
-                        <p>{client.address}</p>
+                        <p className="whitespace-pre-line">{client.address}</p>
                         <p>{client.phone}</p>
                         <p>{client.email}</p>
                     </div>
@@ -199,11 +199,12 @@ export const PlumbingTemplate2: React.FC<PageProps> = (props) => {
                     <p className="font-bold text-gray-500">TO</p>
                     <p>{client.name}</p>
                     {client.companyName && <p>{client.companyName}</p>}
-                    <p>{client.address}</p>
+                    <p className="whitespace-pre-line">{client.address}</p>
                     <p>{client.phone}</p>
                     <p>{client.email}</p>
                 </div>
-                <div className="text-right col-span-2">
+                <div/>
+                <div className="text-right">
                     <p><span className="font-bold text-gray-500">DATE: </span>{safeFormat(invoice.invoiceDate, 'MMM d, yyyy')}</p>
                     <p><span className="font-bold text-gray-500">DUE DATE: </span>{safeFormat(invoice.dueDate, 'MMM d, yyyy')}</p>
                     {invoice.poNumber && <p><span className="font-bold text-gray-500">PO #: </span>{invoice.poNumber}</p>}
@@ -289,7 +290,7 @@ export const PlumbingTemplate3: React.FC<PageProps> = (props) => {
                     <p className="font-bold mb-1">Prepared for:</p>
                     <p>{client.name}</p>
                     {client.companyName && <p>{client.companyName}</p>}
-                    <p>{client.address}</p>
+                    <p className="whitespace-pre-line">{client.address}</p>
                     <p>{client.phone}</p>
                     <p>{client.email}</p>
                     {client.shippingAddress && <p className="mt-2"><span className="font-bold">Ship To:</span><br/>{client.shippingAddress}</p>}
@@ -375,6 +376,7 @@ export const PlumbingTemplate4: React.FC<PageProps> = (props) => {
                         <p className="whitespace-pre-line">{client.address}</p>
                         <p>{client.phone}</p>
                         <p>{client.email}</p>
+                         {client.shippingAddress && <p className="mt-2"><span className="font-bold opacity-70">SHIP TO:</span><br/>{client.shippingAddress}</p>}
                     </div>
                      <div>
                         <p className="font-bold opacity-70 mb-1">FROM</p>
@@ -465,7 +467,10 @@ export const PlumbingTemplate5: React.FC<PageProps> = (props) => {
                 <div>
                     <h1 className="text-4xl font-extrabold">{business.name}</h1>
                     <p className="text-xs">{business.address}</p>
+                    <p className="text-xs">{business.phone} | {business.email}</p>
                      {business.website && <p className="text-xs">{business.website}</p>}
+                     {business.licenseNumber && <p className="text-xs">Lic #: {business.licenseNumber}</p>}
+                    {business.taxId && <p className="text-xs">Tax ID: {business.taxId}</p>}
                 </div>
                  <div className="text-right">
                      <p className="text-3xl font-bold">{docTitle.toUpperCase()}</p>
@@ -474,10 +479,17 @@ export const PlumbingTemplate5: React.FC<PageProps> = (props) => {
             </header>
 
             <section className="mb-8 p-4 bg-white shadow-sm rounded-md text-xs">
-                 <p className="font-bold text-gray-500 mb-2">PROJECT FOR: {client.name}</p>
+                 <p className="font-bold text-gray-500 mb-2">BILLED TO: {client.name}</p>
                  <p className="font-semibold">{client.address}</p>
+                 <p>{client.phone} | {client.email}</p>
                  {client.companyName && <p>{client.companyName}</p>}
-                 {client.projectLocation && <p>Location: {client.projectLocation}</p>}
+                 {client.shippingAddress && <p className="mt-2"><span className="font-bold text-gray-500">SHIP TO:</span> {client.shippingAddress}</p>}
+            </section>
+            
+            <section className="mb-4 text-xs grid grid-cols-3 gap-2">
+                <p><strong>Date:</strong> {safeFormat(invoice.invoiceDate, 'yyyy-MM-dd')}</p>
+                <p><strong>Due Date:</strong> {safeFormat(invoice.dueDate, 'yyyy-MM-dd')}</p>
+                {invoice.poNumber && <p><strong>PO #:</strong> {invoice.poNumber}</p>}
             </section>
             
             <CategorySpecificDetails invoice={invoice} t={t} />
