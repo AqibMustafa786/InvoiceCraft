@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import React from 'react';
@@ -320,9 +321,15 @@ export const GenericTemplate4: React.FC<PageProps> = (props) => {
     const { invoice, pageItems, pageIndex, totalPages, subtotal, taxAmount, discountAmount, total, balanceDue, t, currencySymbol, accentColor, textColor } = props;
     const { business, client } = invoice;
     return (
-        <div className={`font-sans text-gray-800 flex ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ minHeight: '1056px', backgroundColor: props.backgroundColor, color: props.textColor }}>
-            <div className="w-1/4 p-8 text-white" style={{ backgroundColor: accentColor }}>
+        <div className={`font-sans text-gray-800 flex ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ minHeight: '1056px', backgroundColor: props.backgroundColor, color: textColor }}>
+            <div className="w-1/3 p-8 text-white" style={{ backgroundColor: accentColor }}>
                 <h1 className="text-4xl font-bold mb-2">{business.name}</h1>
+                <div className="text-sm space-y-1 mt-4 text-white/80">
+                    <p className="whitespace-pre-line">{business.address}</p>
+                    {business.phone && <p>{business.phone}</p>}
+                    {business.email && <p>{business.email}</p>}
+                    {business.website && <p>{business.website}</p>}
+                </div>
                 <div className="text-sm space-y-4 mt-8">
                   <div>
                     <p className="font-bold opacity-80 mb-1">{(t.client || 'CLIENT').toUpperCase()}</p>
@@ -338,7 +345,7 @@ export const GenericTemplate4: React.FC<PageProps> = (props) => {
                   </div>
                 </div>
             </div>
-            <div className="w-3/4 p-10 flex flex-col" style={{color: textColor}}>
+            <div className="w-2/3 p-10 flex flex-col" style={{color: textColor}}>
                  <main className="flex-grow">
                     <div className='flex justify-end mb-4'>
                         <div className="text-right">
@@ -349,8 +356,9 @@ export const GenericTemplate4: React.FC<PageProps> = (props) => {
                     <table className="w-full text-left text-sm mt-4">
                         <thead>
                             <tr className="border-b-2 border-gray-300">
-                                <th className="py-2 font-bold w-[50%]">{(t.serviceItem || 'SERVICE / ITEM').toUpperCase()}</th>
-                                <th className="py-2 font-bold text-center">{(t.quantity || 'QUANTITY').toUpperCase()}</th>
+                                <th className="py-2 font-bold w-[40%]">{(t.serviceItem || 'SERVICE / ITEM').toUpperCase()}</th>
+                                <th className="py-2 font-bold w-[30%]">{(t.description || 'DESCRIPTION').toUpperCase()}</th>
+                                <th className="py-2 font-bold text-center">{(t.quantity || 'QTY').toUpperCase()}</th>
                                 <th className="py-2 font-bold text-right">{(t.rate || 'RATE').toUpperCase()}</th>
                                 <th className="py-2 font-bold text-right">{(t.total || 'TOTAL').toUpperCase()}</th>
                             </tr>
@@ -358,7 +366,8 @@ export const GenericTemplate4: React.FC<PageProps> = (props) => {
                         <tbody>
                             {pageItems.map(item => (
                                 <tr key={item.id} className="border-b border-gray-200">
-                                    <td className="py-2 align-top whitespace-pre-line">{item.name}</td>
+                                    <td className="py-2 align-top font-medium whitespace-pre-line">{item.name}</td>
+                                    <td className="py-2 align-top text-xs text-gray-500 whitespace-pre-line">{item.description}</td>
                                     <td className="py-2 align-top text-center">{item.quantity}</td>
                                     <td className="py-2 align-top text-right">{currencySymbol}{item.unitPrice.toFixed(2)}</td>
                                     <td className="py-2 align-top text-right font-medium">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</td>
