@@ -449,15 +449,22 @@ const UsaTemplatePage: FC<PageProps> = ({ pageItems, pageIndex, totalPages, ...c
                     </div>
                 </header>
                 {pageIndex === 0 && (
-                     <section className="mb-8 text-xs" data-element="client-details">
-                        <div className="p-3 bg-gray-50 rounded-md">
-                            <p className="font-bold text-gray-600 border-b mb-1">Bill To</p>
-                            <p className="font-semibold">{client.name}</p>
+                     <section className="grid grid-cols-2 gap-8 text-sm mb-8" data-element="client-details">
+                        <div>
+                            <p className="font-bold text-gray-500">{(t.billFrom || 'BILL FROM').toUpperCase()}</p>
+                            <p className="font-bold" style={{color: accentColor}}>{business.name}</p>
+                            <p className="whitespace-pre-line">{business.address}</p>
+                             {business.phone && <p>{business.phone}</p>}
+                            {business.email && <p>{business.email}</p>}
+                            {business.website && <p>{business.website}</p>}
+                        </div>
+                        <div className="text-right">
+                            <p className="font-bold text-gray-500">{(t.billTo || 'BILL TO').toUpperCase()}</p>
+                            <p className="font-bold">{client.name}</p>
                             {client.companyName && <p>{client.companyName}</p>}
-                            <p>{client.address}</p>
-                            {client.phone && <p>Phone: {client.phone}</p>}
-                            {client.email && <p>Email: {client.email}</p>}
-                            {invoice.poNumber && <p className="mt-2"><span className="font-bold">PO #: </span>{invoice.poNumber}</p>}
+                            <p className="whitespace-pre-line">{client.address}</p>
+                            {client.phone && <p>{client.phone}</p>}
+                            {client.email && <p>{client.email}</p>}
                         </div>
                     </section>
                 )}
@@ -654,19 +661,7 @@ const InvoicePreviewInternal: FC<InvoicePreviewProps> = ({ invoice, accentColor,
         measurementContainer.style.width = '8.5in'; // Standard letter width
         document.body.appendChild(measurementContainer);
     
-        const measureComponent = (component: React.ReactElement): number => {
-            const div = document.createElement('div');
-            measurementContainer.appendChild(div);
-            // This is a workaround for client-side only rendering
-            const root = (require('react-dom/client') as any).createRoot(div);
-            root.render(component);
-            const height = div.clientHeight;
-            root.unmount();
-            div.remove();
-            return height;
-        };
-
-        const renderAndMeasure = (renderFunc: () => React.ReactElement) => {
+        const renderAndMeasure = (renderFunc: () => React.ReactElement): number => {
             const div = document.createElement('div');
             measurementContainer.appendChild(div);
             const root = (require('react-dom/client') as any).createRoot(div);
@@ -677,28 +672,39 @@ const InvoicePreviewInternal: FC<InvoicePreviewProps> = ({ invoice, accentColor,
             return height;
         };
 
-        const headerHeight = renderAndMeasure(() => <div style={previewStyle} className="p-8 md:p-10"><header data-element="header"></header><section data-element="client-details"></section><div data-element="category-details"></div></div>);
+        const firstPageDummy = <TemplateComponent {...commonProps} pageItems={[]} pageIndex={0} totalPages={1} />;
+        const subsequentPageDummy = <TemplateComponent {...commonProps} pageItems={[]} pageIndex={1} totalPages={2} />;
+
+        const headerContent = (
+            <>
+                <header data-element="header"></header>
+                <section data-element="client-details"></section>
+                <div data-element="category-details"></div>
+            </>
+        );
+
+      const firstPageHeaderHeight = renderAndMeasure(() => <div style={previewStyle} className="p-8 md:p-10">{React.cloneElement(firstPageDummy, { children: headerContent })}</div>);
+      const subsequentPageHeaderHeight = renderAndMeasure(() => <div style={previewStyle} className="p-8 md:p-10">{React.cloneElement(subsequentPageDummy, { children: headerContent })}</div>);
         const footerHeight = renderAndMeasure(() => <InvoiceFooter {...commonProps} />);
         const tableHeaderHeight = renderAndMeasure(() => <table className="w-full"><thead data-element="table-header"><tr><th>Header</th></tr></thead></table>);
         
-        const firstPageAvailableHeight = AVAILABLE_PAGE_HEIGHT_PX - headerHeight - footerHeight - tableHeaderHeight;
-        const subsequentPageAvailableHeight = AVAILABLE_PAGE_HEIGHT_PX - headerHeight - footerHeight - tableHeaderHeight; // Simplified for now
+        const firstPageAvailableHeight = AVAILABLE_PAGE_HEIGHT_PX - firstPageHeaderHeight - footerHeight;
+        const subsequentPageAvailableHeight = AVAILABLE_PAGE_HEIGHT_PX - subsequentPageHeaderHeight - footerHeight;
 
-        const rowHeights = invoice.lineItems.map(item => renderAndMeasure(() => <ItemsTable items={[item]} {...commonProps} />) );
+        const rowHeights = invoice.lineItems.map(item => renderAndMeasure(() => <div style={previewStyle}><ItemsTable items={[item]} {...commonProps} /></div>) );
 
         const pages: LineItem[][] = [];
         let currentPageItems: LineItem[] = [];
-        let currentHeight = 0;
-        
-        const availableHeight = pages.length === 0 ? firstPageAvailableHeight : subsequentPageAvailableHeight;
+        let currentHeight = tableHeaderHeight; // Start with table header height
         
         for (let i = 0; i < invoice.lineItems.length; i++) {
             const itemHeight = rowHeights[i];
+            const availableHeight = pages.length === 0 ? firstPageAvailableHeight : subsequentPageAvailableHeight;
             
             if (currentHeight + itemHeight > availableHeight && currentPageItems.length > 0) {
                 pages.push(currentPageItems);
                 currentPageItems = [];
-                currentHeight = 0;
+                currentHeight = tableHeaderHeight;
             }
             
             currentPageItems.push(invoice.lineItems[i]);
