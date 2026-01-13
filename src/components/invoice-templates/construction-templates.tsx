@@ -2,7 +2,7 @@
 'use client';
 
 import React from 'react';
-import type { Invoice, LineItem } from '@/lib/types';
+import type { Invoice, LineItem, CustomField } from '@/lib/types';
 import { format, isValid } from 'date-fns';
 import Image from 'next/image';
 import { CategorySpecificDetails } from './category-specific-details';
@@ -39,6 +39,24 @@ const SignatureDisplay = ({ signature, label }: { signature: any, label: string 
             <p className="text-xs text-gray-500 pt-1 border-t-2 border-gray-700 w-[150px]">{label}</p>
         </div>
     )
+}
+
+const CustomFieldsPreview: React.FC<{ fields?: CustomField[], textColor?: string, showHeading: boolean }> = ({ fields, textColor, showHeading }) => {
+  const validFields = fields?.filter(f => f.label && f.value) || [];
+  if (validFields.length === 0) return null;
+
+  return (
+    <section className="my-4 text-xs" style={{ color: textColor }}>
+      {showHeading && <p className="font-bold text-gray-500 mb-2 border-b">Additional Information</p>}
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-x-4 gap-y-1">
+        {validFields.map(field => (
+          <p key={field.id}>
+            <span className="font-semibold text-gray-600">{field.label}:</span> {field.value}
+          </p>
+        ))}
+      </div>
+    </section>
+  );
 }
 
 export const ConstructionDetails: React.FC<{ invoice: Invoice, t: any }> = ({ invoice, t }) => {
@@ -199,6 +217,7 @@ export const ConstructionTemplate2: React.FC<PageProps> = (props) => {
                         <p>{client.phone}</p>
                         <p>{client.email}</p>
                         {client.shippingAddress && <p className="mt-2"><span className="font-bold text-gray-500">Ship To:</span><br/>{client.shippingAddress}</p>}
+                        {client.projectLocation && <p className="mt-2"><span className="font-bold text-gray-500">Project Location:</span><br/>{client.projectLocation}</p>}
                     </div>
                     <div className="text-right">
                         <p className="font-bold text-gray-500 mb-1" style={{color: textColor ? textColor : undefined}}>{(t.invoiceDetails || 'INVOICE DETAILS')}</p>
@@ -273,21 +292,27 @@ export const ConstructionTemplate3: React.FC<PageProps> = (props) => {
             <header className="flex justify-between items-start mb-12">
                  <div>
                     <h1 className="text-4xl font-light tracking-wide">{business.name}</h1>
-                    <p className="text-xs whitespace-pre-line">{business.address}<br/>{business.phone}</p>
+                    <div className="text-xs whitespace-pre-line" style={{ color: textColor || '#6B7280' }}>
+                        <p>{business.address}</p>
+                        <p>{business.phone}</p>
+                        {business.website && <p>{business.website}</p>}
+                        {business.licenseNumber && <p>Lic #: {business.licenseNumber}</p>}
+                        {business.taxId && <p>Tax ID: {business.taxId}</p>}
+                    </div>
                 </div>
                 <div className="text-right">
-                    <h2 className="text-3xl font-bold">{(t.invoice || 'Invoice')}</h2>
+                    <h2 className="text-3xl font-bold">{(t.invoice || 'Invoice').toUpperCase()}</h2>
                 </div>
             </header>
 
             <section className="mb-8 p-4 border rounded-md grid grid-cols-3 gap-4 text-xs">
-                <div><p className="font-bold">{(t.from || 'From')}:</p><p>{business.name}<br/>{business.address}</p></div>
+                <div><p className="font-bold">{(t.from || 'From')}:</p><p className="font-bold">{business.name}<br/>{business.address}</p></div>
                 <div><p className="font-bold">{(t.to || 'To')}:</p><p>{client.name}<br/>{client.companyName && `${client.companyName}<br/>`}{client.address}<br/>{client.phone}<br/>{client.email}</p></div>
                 <div><p className="font-bold">{(t.details || 'Details')}:</p><p># {invoice.invoiceNumber}<br/>{(t.date || 'Date')}: {safeFormat(invoice.invoiceDate, 'MM-dd-yyyy')}<br/>Due: {safeFormat(invoice.dueDate, 'MM-dd-yyyy')}<br/>PO: {invoice.poNumber}</p></div>
             </section>
             
-             <ConstructionDetails invoice={invoice} t={t} />
-            
+             <CategorySpecificDetails invoice={invoice} t={t} />
+
             <main className="flex-grow">
                  <table className="w-full text-left text-xs">
                     <thead>
@@ -301,7 +326,10 @@ export const ConstructionTemplate3: React.FC<PageProps> = (props) => {
                     <tbody>
                         {pageItems.map(item => (
                             <tr key={item.id} className="border-b">
-                                <td className="p-2 align-top whitespace-pre-line">{item.name}</td>
+                                <td className="p-2 align-top">
+                                    <p className="font-medium whitespace-pre-line">{item.name}</p>
+                                    {item.description && <p className="text-xs text-gray-500 whitespace-pre-line" style={{ wordBreak: 'break-all' }}>{item.description}</p>}
+                                </td>
                                 <td className="p-2 align-top text-center">{item.quantity}</td>
                                 <td className="p-2 align-top text-right">{currencySymbol}{item.unitPrice.toFixed(2)}</td>
                                 <td className="p-2 align-top text-right font-semibold">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</td>
@@ -340,5 +368,3 @@ export const ConstructionTemplate3: React.FC<PageProps> = (props) => {
 export const ConstructionTemplate4: React.FC<PageProps> = (props) => <ConstructionTemplate1 {...props} />;
 export const ConstructionTemplate5: React.FC<PageProps> = (props) => <ConstructionTemplate2 {...props} />;
 export const ConstructionTemplate6: React.FC<PageProps> = (props) => <ConstructionTemplate3 {...props} />;
-
-    
