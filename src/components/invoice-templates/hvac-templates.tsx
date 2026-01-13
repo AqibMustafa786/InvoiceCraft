@@ -1,10 +1,10 @@
-
 'use client';
 
 import React from 'react';
 import type { Invoice, LineItem } from '@/lib/types';
 import { format, isValid } from 'date-fns';
 import Image from 'next/image';
+import { CategorySpecificDetails } from './category-specific-details';
 
 interface PageProps {
   invoice: Invoice;
@@ -108,7 +108,7 @@ export const HVACTemplate1: React.FC<PageProps> = (props) => {
                 </div>
             </section>
             
-            <HvacDetails invoice={invoice} t={t} />
+            <CategorySpecificDetails invoice={invoice} t={t} />
 
             <main className="flex-grow">
                  <table className="w-full text-left text-xs">
@@ -186,19 +186,20 @@ export const HVACTemplate2: React.FC<PageProps> = (props) => {
                 <div className="text-right col-span-2">
                     <p><span className="font-bold">{t.invoiceNo || 'Invoice #'}:</span> {invoice.invoiceNumber}</p>
                     <p><span className="font-bold">{t.date || 'Date'}:</span> {safeFormat(invoice.invoiceDate, 'MMM d, yyyy')}</p>
+                    <p><span className="font-bold">{t.dueDate || 'Due Date'}:</span> {safeFormat(invoice.dueDate, 'MMM d, yyyy')}</p>
                 </div>
             </section>
             
-            <HvacDetails invoice={invoice} t={t} />
+            <CategorySpecificDetails invoice={invoice} t={t} />
 
             <main className="flex-grow mt-4">
                  <table className="w-full text-left text-xs">
                     <thead>
                         <tr className="border-b-2 border-gray-200">
-                            <th className="py-2 font-bold w-1/2">{t.description || 'DESCRIPTION'}</th>
-                            <th className="py-2 font-bold text-center">{t.quantity || 'QTY'}</th>
-                            <th className="py-2 font-bold text-right">{t.rate || 'RATE'}</th>
-                            <th className="py-2 font-bold text-right">{t.total || 'TOTAL'}</th>
+                            <th className="py-2 font-bold w-1/2">{(t.description || 'DESCRIPTION').toUpperCase()}</th>
+                            <th className="py-2 font-bold text-center">{(t.quantity || 'QTY').toUpperCase()}</th>
+                            <th className="py-2 font-bold text-right">{(t.rate || 'RATE').toUpperCase()}</th>
+                            <th className="py-2 font-bold text-right">{(t.total || 'TOTAL').toUpperCase()}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -253,12 +254,12 @@ export const HVACTemplate3: React.FC<PageProps> = (props) => {
             </header>
 
             <section className="mb-8 p-4 border rounded-md grid grid-cols-3 gap-4 text-xs">
-                <div><p className="font-bold">{t.from || 'From'}:</p><p className="font-bold">{business.name}</p><p>{business.address}</p></div>
-                <div><p className="font-bold">{t.to || 'To'}:</p><p className="font-bold">{client.name}</p><p>{client.address}</p></div>
-                <div><p className="font-bold">{t.details || 'Details'}:</p><p>{t.date || 'Date'}: {safeFormat(invoice.invoiceDate, 'MM-dd-yyyy')}</p><p>Due: {safeFormat(invoice.dueDate, 'MM-dd-yyyy')}</p></div>
+                <div><p className="font-bold">{t.from || 'From'}:</p><p className="font-bold">{business.name}<br/>{business.address}</p></div>
+                <div><p className="font-bold">{t.to || 'To'}:</p><p>{client.name}<br/>{client.companyName && `${client.companyName}<br/>`}{client.address}<br/>{client.phone}<br/>{client.email}</p></div>
+                <div><p className="font-bold">{t.details || 'Details'}:</p><p>{t.date || 'Date'}: {safeFormat(invoice.invoiceDate, 'MM-dd-yyyy')}<br/>Due: {safeFormat(invoice.dueDate, 'MM-dd-yyyy')}</p></div>
             </section>
             
-             <HvacDetails invoice={invoice} t={t} />
+             <CategorySpecificDetails invoice={invoice} t={t} />
 
             <main className="flex-grow">
                 <table className="w-full text-left text-xs">
@@ -307,5 +308,3 @@ export const HVACTemplate3: React.FC<PageProps> = (props) => {
 // Template 4: Corporate Blue
 export const HVACTemplate4: React.FC<PageProps> = (props) => <HVACTemplate1 {...props} />;
 export const HVACTemplate5: React.FC<PageProps> = (props) => <HVACTemplate2 {...props} />;
-
-    
