@@ -84,6 +84,7 @@ export const GenericTemplate1: React.FC<PageProps> = (props) => {
                     {client.email && <p>{client.email}</p>}
                 </div>
                 <div className="text-right">
+                    <p><span className="font-bold">{t.invoiceNo || 'Invoice #'}:</span> {invoice.invoiceNumber}</p>
                     <p><span className="font-bold">{t.date || 'Date'}:</span> {safeFormat(invoice.invoiceDate, 'MMM d, yyyy')}</p>
                     <p><span className="font-bold">{t.dueDate || 'Due Date'}:</span> {safeFormat(invoice.dueDate, 'MMM d, yyyy')}</p>
                     {invoice.poNumber && <p><span className="font-bold">PO #:</span> {invoice.poNumber}</p>}
@@ -255,20 +256,30 @@ export const GenericTemplate3: React.FC<PageProps> = (props) => {
                         <p>{business.phone}</p>
                         <p>{business.email}</p>
                         {business.website && <p>{business.website}</p>}
+                        {business.licenseNumber && <p>Lic: {business.licenseNumber}</p>}
+                        {business.taxId && <p>Tax ID: {business.taxId}</p>}
                     </div>
                 </div>
                 <div className="text-right">
                     <h2 className="text-3xl font-bold">{(t.invoice || 'Invoice').toUpperCase()}</h2>
+                    <p># {invoice.invoiceNumber}</p>
                 </div>
             </header>
 
-            <section className="mb-10 text-sm">
-                <p className="font-bold mb-1">{(t.client || 'CLIENT')}:</p>
-                <p>{client.name}</p>
-                {client.companyName && <p>{client.companyName}</p>}
-                <p className="whitespace-pre-line">{client.address}</p>
-                {client.phone && <p>{client.phone}</p>}
-                {client.email && <p>{client.email}</p>}
+            <section className="grid grid-cols-2 gap-8 mb-10 text-sm">
+                <div>
+                    <p className="font-bold mb-1">{(t.client || 'CLIENT')}:</p>
+                    <p>{client.name}</p>
+                    {client.companyName && <p>{client.companyName}</p>}
+                    <p className="whitespace-pre-line">{client.address}</p>
+                    {client.phone && <p>{client.phone}</p>}
+                    {client.email && <p>{client.email}</p>}
+                </div>
+                <div className="text-right">
+                    <p><span className="font-bold">{t.date || 'Date'}:</span> {safeFormat(invoice.invoiceDate, 'MMM d, yyyy')}</p>
+                    <p><span className="font-bold">{t.dueDate || 'Due Date'}:</span> {safeFormat(invoice.dueDate, 'MMM d, yyyy')}</p>
+                    {invoice.poNumber && <p><span className="font-bold">PO #:</span> {invoice.poNumber}</p>}
+                </div>
             </section>
             
             <CategorySpecificDetails invoice={invoice} t={t} />
@@ -312,6 +323,10 @@ export const GenericTemplate3: React.FC<PageProps> = (props) => {
                             <div className="flex justify-between py-1 font-bold"><span>{t.balanceDue || 'Balance Due'}</span><span>{currencySymbol}{balanceDue.toFixed(2)}</span></div>
                         </div>
                     </div>
+                    <div className="text-xs text-gray-600" style={{color: textColor || '#6B7280'}}>
+                        <p className="font-bold mb-1 text-gray-700" style={{color: textColor}}>Notes & Terms</p>
+                        <p className="whitespace-pre-line">{invoice.paymentInstructions}</p>
+                    </div>
                      <div className="flex justify-between items-end mt-4">
                         {business.ownerSignature && <SignatureDisplay signature={business.ownerSignature} label={(t.authorizedSignature || 'Authorized Signature')} />}
                     </div>
@@ -329,7 +344,7 @@ export const GenericTemplate4: React.FC<PageProps> = (props) => {
         <div className={`font-sans text-gray-800 flex ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ minHeight: '1056px', backgroundColor: props.backgroundColor, color: textColor }}>
             <div className="w-1/3 p-8 text-white" style={{ backgroundColor: accentColor }}>
                 <h1 className="text-4xl font-bold mb-2">{business.name}</h1>
-                <div className="text-sm space-y-1 mt-4 text-white/80">
+                 <div className="text-sm space-y-1 mt-4 text-white/80">
                     <p className="whitespace-pre-line">{business.address}</p>
                     {business.phone && <p>{business.phone}</p>}
                     {business.email && <p>{business.email}</p>}
@@ -496,3 +511,5 @@ export const GenericTemplate5: React.FC<PageProps> = (props) => {
         </div>
     );
 };
+
+```
