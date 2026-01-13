@@ -78,6 +78,11 @@ export const ElectricalTemplate1: React.FC<PageProps> = (props) => {
                 <div>
                     <h1 className="text-3xl font-bold">{business.name}</h1>
                     <p className="text-xs whitespace-pre-line">{business.address}</p>
+                    <p className="text-xs">{business.phone}</p>
+                    <p className="text-xs">{business.email}</p>
+                    {business.website && <p className="text-xs">{business.website}</p>}
+                    {business.licenseNumber && <p className="text-xs">Lic #: {business.licenseNumber}</p>}
+                    {business.taxId && <p className="text-xs">Tax ID: {business.taxId}</p>}
                 </div>
                 <div className="text-right">
                     <h2 className="text-2xl font-extrabold" style={{ color: accentColor }}>{docTitle}</h2>
@@ -90,12 +95,15 @@ export const ElectricalTemplate1: React.FC<PageProps> = (props) => {
                     <p className="font-semibold">{client.name}</p>
                     {client.companyName && <p>{client.companyName}</p>}
                     <p className="whitespace-pre-line">{client.address}</p>
+                    <p>{client.phone}</p>
+                    <p>{client.email}</p>
+                    {client.shippingAddress && <p className="mt-2"><span className="font-bold">Ship To:</span><br/>{client.shippingAddress}</p>}
                 </div>
                 <div className="text-right space-y-1">
                     <p><span className="font-bold" style={{color: accentColor}}>{t.invoiceNo || 'Invoice #'}:</span> {invoice.invoiceNumber}</p>
-                    {invoice.poNumber && <p><span className="font-bold" style={{color: accentColor}}>{t.reference || 'Reference #'}:</span> {invoice.poNumber}</p>}
                     <p><span className="font-bold" style={{color: accentColor}}>{t.dateIssued || 'Date Issued'}:</span> {safeFormat(invoice.invoiceDate, 'dd-MM-yyyy')}</p>
                     <p><span className="font-bold" style={{color: accentColor}}>{t.dueDate || 'Due Date'}:</span> {safeFormat(invoice.dueDate, 'dd-MM-yyyy')}</p>
+                    {invoice.poNumber && <p><span className="font-bold" style={{color: accentColor}}>PO #:</span> {invoice.poNumber}</p>}
                 </div>
             </section>
             
@@ -115,7 +123,10 @@ export const ElectricalTemplate1: React.FC<PageProps> = (props) => {
                         {pageItems.map(item => (
                             <tr key={item.id} className="border-b border-gray-200">
                                 <td className="p-2 align-top text-center">{item.quantity}</td>
-                                <td className="p-2 align-top whitespace-pre-line">{item.name}</td>
+                                <td className="p-2 align-top">
+                                    <p className="font-semibold whitespace-pre-line">{item.name}</p>
+                                    {item.description && <p className="text-xs text-gray-500 whitespace-pre-line">{item.description}</p>}
+                                </td>
                                 <td className="p-2 align-top text-right">{currencySymbol}{item.unitPrice.toFixed(2)}</td>
                                 <td className="p-2 align-top text-right font-medium">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</td>
                             </tr>
