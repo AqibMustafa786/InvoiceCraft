@@ -1,9 +1,11 @@
+
 'use client';
 
 import React from 'react';
 import type { Invoice, LineItem } from '@/lib/types';
 import { format, isValid } from 'date-fns';
 import Image from 'next/image';
+import { CategorySpecificDetails } from './category-specific-details';
 
 interface PageProps {
   invoice: Invoice;
@@ -104,7 +106,7 @@ export const PlumbingTemplate1: React.FC<PageProps> = (props) => {
                 </div>
             </section>
             
-            <PlumbingDetails invoice={invoice} t={t} />
+            <CategorySpecificDetails invoice={invoice} t={t} />
 
             <main className="flex-grow">
                  <table className="w-full text-left text-xs">
@@ -191,7 +193,7 @@ export const PlumbingTemplate2: React.FC<PageProps> = (props) => {
                 </div>
             </section>
             
-            <PlumbingDetails invoice={invoice} t={t} />
+            <CategorySpecificDetails invoice={invoice} t={t} />
 
             <main className="flex-grow mt-4">
                  <table className="w-full text-left text-sm">
@@ -275,7 +277,7 @@ export const PlumbingTemplate3: React.FC<PageProps> = (props) => {
                 </div>
             </section>
             
-            <PlumbingDetails invoice={invoice} t={t} />
+            <CategorySpecificDetails invoice={invoice} t={t} />
 
             <main className="flex-grow">
                 <table className="w-full text-left text-xs">
@@ -310,7 +312,7 @@ export const PlumbingTemplate3: React.FC<PageProps> = (props) => {
                                 {invoice.summary.shippingCost > 0 && <tr><td className="py-1 text-gray-500">Shipping/Extra</td><td className="text-right">{currencySymbol}{invoice.summary.shippingCost.toFixed(2)}</td></tr>}
                                 <tr><td className="py-1 text-gray-500">Sales Tax</td><td className="text-right">{currencySymbol}{taxAmount.toFixed(2)}</td></tr>
                                 <tr className="font-bold text-base border-t-2 border-black"><td className="pt-2">TOTAL</td><td className="pt-2 text-right">{currencySymbol}{total.toFixed(2)}</td></tr>
-                                {(invoice.amountPaid || 0) > 0 && <tr className="font-bold text-green-600"><td className="pt-2">Amount Paid</td><td className="pt-2 text-right">-{currencySymbol}{(invoice.amountPaid || 0).toFixed(2)}</td></tr>}
+                                {(invoice.amountPaid || 0) > 0 && <tr className="font-bold text-green-600"><td>Amount Paid</td><td className="text-right">-{currencySymbol}{(invoice.amountPaid || 0).toFixed(2)}</td></tr>}
                                 <tr className="font-bold bg-gray-100"><td className="p-2">Balance Due</td><td className="p-2 text-right">{currencySymbol}{balanceDue.toFixed(2)}</td></tr>
                             </tbody>
                         </table>
@@ -330,7 +332,7 @@ export const PlumbingTemplate3: React.FC<PageProps> = (props) => {
 
 // Template 4: Side Panel
 export const PlumbingTemplate4: React.FC<PageProps> = (props) => {
-    const { invoice, pageItems, pageIndex, totalPages, subtotal, taxAmount, discountAmount, total, balanceDue, currencySymbol, t, accentColor, textColor } = props;
+    const { invoice, pageItems, pageIndex, totalPages, subtotal, taxAmount, discountAmount, total, balanceDue, currencySymbol, t, textColor } = props;
     const { business, client } = invoice;
     const docTitle = 'Invoice';
 
@@ -363,7 +365,7 @@ export const PlumbingTemplate4: React.FC<PageProps> = (props) => {
                         <h2 className='text-2xl font-bold'>{docTitle.toUpperCase()}</h2>
                     </div>
                 </div>
-                 <PlumbingDetails invoice={invoice} t={t} />
+                 <CategorySpecificDetails invoice={invoice} t={t} />
                 <main className="flex-grow">
                     <table className="w-full text-left text-sm">
                         <thead>
@@ -439,7 +441,7 @@ export const PlumbingTemplate5: React.FC<PageProps> = (props) => {
                  {client.companyName && <p>{client.companyName}</p>}
             </section>
             
-            <PlumbingDetails invoice={invoice} t={t} />
+            <CategorySpecificDetails invoice={invoice} t={t} />
 
             <main className="flex-grow bg-white p-4 rounded-md shadow-sm">
                 <table className="w-full text-left text-xs">
