@@ -77,12 +77,14 @@ export const ElectricalTemplate1: React.FC<PageProps> = (props) => {
             <header className="flex justify-between items-start mb-8">
                 <div>
                     <h1 className="text-3xl font-bold">{business.name}</h1>
-                    <p className="text-xs whitespace-pre-line">{business.address}</p>
-                    <p className="text-xs">{business.phone}</p>
-                    <p className="text-xs">{business.email}</p>
-                    {business.website && <p className="text-xs">{business.website}</p>}
-                    {business.licenseNumber && <p className="text-xs">Lic #: {business.licenseNumber}</p>}
-                    {business.taxId && <p className="text-xs">Tax ID: {business.taxId}</p>}
+                    <div className="text-xs space-y-0.5 mt-1">
+                        <p className="whitespace-pre-line">{business.address}</p>
+                        <p>{business.phone}</p>
+                        <p>{business.email}</p>
+                        {business.website && <p>{business.website}</p>}
+                        {business.licenseNumber && <p>Lic #: {business.licenseNumber}</p>}
+                        {business.taxId && <p>Tax ID: {business.taxId}</p>}
+                    </div>
                 </div>
                 <div className="text-right">
                     <h2 className="text-2xl font-extrabold" style={{ color: accentColor }}>{docTitle}</h2>
@@ -267,7 +269,13 @@ export const ElectricalTemplate3: React.FC<PageProps> = (props) => {
             <header className="flex justify-between items-start mb-12">
                 <div>
                     <h1 className="text-4xl font-light tracking-wider">{business.name}</h1>
-                    <p className="text-xs">{business.address}</p>
+                    <div className="text-xs mt-1">
+                        <p>{business.address}</p>
+                        <p>{business.phone} | {business.email}</p>
+                        {business.website && <p>{business.website}</p>}
+                        {business.licenseNumber && <p>Lic: {business.licenseNumber}</p>}
+                        {business.taxId && <p>Tax ID: {business.taxId}</p>}
+                    </div>
                 </div>
                 <div className="text-right">
                     <h2 className="text-3xl font-light tracking-wider">{docTitle.toUpperCase()}</h2>
@@ -276,12 +284,19 @@ export const ElectricalTemplate3: React.FC<PageProps> = (props) => {
 
             <section className="flex justify-between mb-10 text-xs">
                  <div>
-                    <p className="font-bold mb-1">{t.preparedFor || 'Prepared For'}</p>
-                    <p>{client.name}</p>{client.companyName && <p>{client.companyName}</p>}<p>{client.address}</p>
+                    <p className="font-bold mb-1">{t.preparedFor || 'Prepared For'}:</p>
+                    <p>{client.name}</p>
+                    {client.companyName && <p>{client.companyName}</p>}
+                    <p className="whitespace-pre-line">{client.address}</p>
+                    <p>{client.phone}</p>
+                    <p>{client.email}</p>
+                    {client.shippingAddress && <p className="mt-2"><span className="font-bold">Ship To:</span><br/>{client.shippingAddress}</p>}
                 </div>
                  <div className="text-right">
                     <p><span className="font-bold">{t.invoiceNo || 'Invoice #'}:</span> {invoice.invoiceNumber}</p>
                     <p><span className="font-bold">{t.date || 'Date'}:</span> {safeFormat(invoice.invoiceDate, 'MMM dd, yyyy')}</p>
+                    <p><span className="font-bold">{t.dueDate || 'Due Date'}:</span> {safeFormat(invoice.dueDate, 'MMM dd, yyyy')}</p>
+                    {invoice.poNumber && <p><span className="font-bold">PO #:</span> {invoice.poNumber}</p>}
                 </div>
             </section>
             
@@ -291,16 +306,19 @@ export const ElectricalTemplate3: React.FC<PageProps> = (props) => {
                 <table className="w-full text-left text-xs">
                     <thead>
                         <tr>
-                            <th className="p-2 font-semibold w-1/2 border-b-2 border-gray-300">{t.item || 'ITEM'}</th>
-                            <th className="p-2 font-semibold text-center border-b-2 border-gray-300">{t.quantity || 'QUANTITY'}</th>
-                            <th className="p-2 font-semibold text-right border-b-2 border-gray-300">{t.price || 'PRICE'}</th>
-                            <th className="p-2 font-semibold text-right border-b-2 border-gray-300">{t.amount || 'AMOUNT'}</th>
+                            <th className="p-2 font-semibold w-1/2 border-b-2 border-gray-300">{(t.item || 'ITEM').toUpperCase()}</th>
+                            <th className="p-2 font-semibold text-center border-b-2 border-gray-300">{(t.quantity || 'QUANTITY').toUpperCase()}</th>
+                            <th className="p-2 font-semibold text-right border-b-2 border-gray-300">{(t.price || 'PRICE').toUpperCase()}</th>
+                            <th className="p-2 font-semibold text-right border-b-2 border-gray-300">{(t.amount || 'AMOUNT').toUpperCase()}</th>
                         </tr>
                     </thead>
                     <tbody>
                         {pageItems.map(item => (
                             <tr key={item.id}>
-                                <td className="p-2 border-b border-gray-200 whitespace-pre-line">{item.name}</td>
+                                <td className="p-2 border-b border-gray-200">
+                                    <p className="font-medium whitespace-pre-line">{item.name}</p>
+                                    {item.description && <p className="text-xs text-gray-500 whitespace-pre-line">{item.description}</p>}
+                                </td>
                                 <td className="p-2 border-b border-gray-200 text-center">{item.quantity}</td>
                                 <td className="p-2 border-b border-gray-200 text-right">{currencySymbol}{item.unitPrice.toFixed(2)}</td>
                                 <td className="p-2 border-b border-gray-200 text-right">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</td>
