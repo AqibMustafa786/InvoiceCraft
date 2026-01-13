@@ -93,18 +93,29 @@ export const PlumbingTemplate1: React.FC<PageProps> = (props) => {
                         <p>{business.address}</p>
                         <p>{business.phone}</p>
                         <p>{business.email}</p>
+                        {business.website && <p>{business.website}</p>}
+                        {business.licenseNumber && <p>Lic #: {business.licenseNumber}</p>}
+                        {business.taxId && <p>Tax ID: {business.taxId}</p>}
                     </div>
                 </div>
                 <div className="p-2 border border-gray-400">
                      <p className="px-2 font-bold text-white bg-gray-500">CUSTOMER</p>
                     <div className="p-2 space-y-0.5">
                         <p>{client.name}</p>
+                        {client.companyName && <p>{client.companyName}</p>}
                         <p>{client.address}</p>
+                        {client.shippingAddress && <p className="mt-1"><span className="font-bold">Ship To:</span><br/>{client.shippingAddress}</p>}
                         <p>{client.phone}</p>
                         <p>{client.email}</p>
                     </div>
                 </div>
             </section>
+            
+             <section className="p-2 border border-t-0 border-black text-xs mb-4 grid grid-cols-3 gap-2">
+                <div><span className="font-bold">Date: </span>{safeFormat(invoice.invoiceDate, 'yyyy-MM-dd')}</div>
+                <div><span className="font-bold">Due Date: </span>{safeFormat(invoice.dueDate, 'yyyy-MM-dd')}</div>
+                {invoice.poNumber && <div><span className="font-bold">PO Number: </span>{invoice.poNumber}</div>}
+             </section>
             
             <CategorySpecificDetails invoice={invoice} t={t} />
 
@@ -190,6 +201,7 @@ export const PlumbingTemplate2: React.FC<PageProps> = (props) => {
                  <div className="text-right col-span-2">
                     <p><span className="font-bold text-gray-500">DATE: </span>{safeFormat(invoice.invoiceDate, 'MMM d, yyyy')}</p>
                     <p><span className="font-bold text-gray-500">DUE DATE: </span>{safeFormat(invoice.dueDate, 'MMM d, yyyy')}</p>
+                    {invoice.poNumber && <p><span className="font-bold text-gray-500">PO #: </span>{invoice.poNumber}</p>}
                 </div>
             </section>
             
