@@ -252,8 +252,8 @@ export const GenericTemplate3: React.FC<PageProps> = (props) => {
                  <div>
                     {business.logoUrl ? <Image src={business.logoUrl} alt="Logo" width={80} height={40} className="mb-2 object-contain" /> : <h1 className="text-4xl font-light tracking-wider mb-1">{business.name}</h1>}
                     <div className="text-xs" style={{ color: textColor || '#6B7280' }}>
-                        <p>{business.phone}</p>
-                        <p>{business.email}</p>
+                        {business.phone && <p>{business.phone}</p>}
+                        {business.email && <p>{business.email}</p>}
                         {business.website && <p>{business.website}</p>}
                         {business.licenseNumber && <p>Lic: {business.licenseNumber}</p>}
                         {business.taxId && <p>Tax ID: {business.taxId}</p>}
@@ -266,7 +266,7 @@ export const GenericTemplate3: React.FC<PageProps> = (props) => {
             </header>
 
             <section className="grid grid-cols-2 gap-8 mb-10 text-sm">
-                <div>
+                 <div>
                     <p className="font-bold mb-1">{(t.client || 'CLIENT')}:</p>
                     <p>{client.name}</p>
                     {client.companyName && <p>{client.companyName}</p>}
@@ -448,17 +448,24 @@ export const GenericTemplate5: React.FC<PageProps> = (props) => {
                     <p className="font-bold text-base">{client.name}</p>
                     {client.companyName && <p>{client.companyName}</p>}
                     <p className="whitespace-pre-line">{client.address}</p>
+                    <p>{client.phone}</p>
+                    <p>{client.email}</p>
                 </div>
                 <div className="p-4 bg-gray-50 rounded">
                     <p className="font-bold text-gray-500 mb-2" style={{color: textColor}}>{(t.details || 'DETAILS')}</p>
                     <p><span className="font-semibold">No:</span> {invoice.invoiceNumber}</p>
                     <p><span className="font-semibold">{t.date || 'Date'}:</span> {safeFormat(invoice.invoiceDate, 'MMM dd, yyyy')}</p>
+                    <p><span className="font-semibold">{t.dueDate || 'Due Date'}:</span> {safeFormat(invoice.dueDate, 'MMM dd, yyyy')}</p>
+                    {invoice.poNumber && <p><span className="font-semibold">PO #:</span> {invoice.poNumber}</p>}
                 </div>
                 <div className="p-4 bg-gray-50 rounded break-words">
                     <p className="font-bold text-gray-500 mb-2" style={{color: textColor}}>{(t.contact || 'CONTACT')}</p>
+                     <p className="whitespace-pre-line">{business.address}</p>
                     <p>{business.phone}</p>
                     <p>{business.email}</p>
                     <p>{business.website}</p>
+                     <p>Lic: {business.licenseNumber}</p>
+                    <p>Tax ID: {business.taxId}</p>
                 </div>
             </section>
             
@@ -495,7 +502,7 @@ export const GenericTemplate5: React.FC<PageProps> = (props) => {
                      <div className="flex justify-between items-start">
                          <div className="w-1/2 text-xs">
                              <p className="font-bold mb-1">{(t.terms || 'TERMS')}</p>
-                             <p className="whitespace-pre-line">{invoice.paymentInstructions}</p>
+                             <p className="whitespace-pre-line" style={{ color: textColor || '#6B7280' }}>{invoice.paymentInstructions}</p>
                          </div>
                          <div className="w-2/5">
                             <div className="flex justify-between p-2"><span>{(t.subtotal || 'Subtotal')}</span><span className="font-medium">{currencySymbol}{subtotal.toFixed(2)}</span></div>
