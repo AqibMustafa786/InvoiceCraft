@@ -104,7 +104,6 @@ export const PlumbingTemplate1: React.FC<PageProps> = (props) => {
                         <p>{client.name}</p>
                         {client.companyName && <p>{client.companyName}</p>}
                         <p>{client.address}</p>
-                        {client.shippingAddress && <p className="mt-1"><span className="font-bold">Ship To:</span><br/>{client.shippingAddress}</p>}
                         <p>{client.phone}</p>
                         <p>{client.email}</p>
                     </div>
@@ -196,8 +195,15 @@ export const PlumbingTemplate2: React.FC<PageProps> = (props) => {
             </header>
 
             <section className="grid grid-cols-3 gap-4 my-4 text-sm">
-                <div><p className="font-bold text-gray-500">TO</p><p>{client.name}</p>{client.companyName && <p>{client.companyName}</p>}<p>{client.address}</p><p>{client.phone}</p><p>{client.email}</p></div>
-                 <div className="text-right col-span-2">
+                <div>
+                    <p className="font-bold text-gray-500">TO</p>
+                    <p>{client.name}</p>
+                    {client.companyName && <p>{client.companyName}</p>}
+                    <p>{client.address}</p>
+                    <p>{client.phone}</p>
+                    <p>{client.email}</p>
+                </div>
+                <div className="text-right col-span-2">
                     <p><span className="font-bold text-gray-500">DATE: </span>{safeFormat(invoice.invoiceDate, 'MMM d, yyyy')}</p>
                     <p><span className="font-bold text-gray-500">DUE DATE: </span>{safeFormat(invoice.dueDate, 'MMM d, yyyy')}</p>
                     {invoice.poNumber && <p><span className="font-bold text-gray-500">PO #: </span>{invoice.poNumber}</p>}
@@ -269,10 +275,8 @@ export const PlumbingTemplate3: React.FC<PageProps> = (props) => {
             <header className="flex justify-between items-start mb-12 text-center">
                 <div className="text-left">
                     <h1 className="text-4xl font-bold">{business.name}</h1>
-                    <p className="text-xs">{business.address}</p>
-                    {business.website && <p className="text-xs">{business.website}</p>}
-                    {business.licenseNumber && <p className="text-xs">Lic #: {business.licenseNumber}</p>}
-                    {business.taxId && <p className="text-xs">Tax ID: {business.taxId}</p>}
+                    <p className="text-xs whitespace-pre-line">{business.address}</p>
+                    <p className="text-xs">{business.phone} | {business.email}</p>
                 </div>
                 <div className="text-right">
                     <h2 className="text-3xl font-light tracking-widest">{docTitle.toUpperCase()}</h2>
@@ -286,6 +290,9 @@ export const PlumbingTemplate3: React.FC<PageProps> = (props) => {
                     <p>{client.name}</p>
                     {client.companyName && <p>{client.companyName}</p>}
                     <p>{client.address}</p>
+                    <p>{client.phone}</p>
+                    <p>{client.email}</p>
+                    {client.shippingAddress && <p className="mt-2"><span className="font-bold">Ship To:</span><br/>{client.shippingAddress}</p>}
                 </div>
                 <div className="text-right">
                     <p><span className="font-bold">Date:</span> {safeFormat(invoice.invoiceDate, 'yyyy-MM-dd')}</p>
