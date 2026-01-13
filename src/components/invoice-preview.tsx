@@ -564,9 +564,9 @@ const templates: Record<string, FC<PageProps>> = {
   'rental-5': RentalTemplate5,
 };
 
-const PAGE_HEIGHT_PX = 1056; // 11 inches * 96 DPI
-const PAGE_PADDING_Y_PX = 80; // 40px top + 40px bottom
-const AVAILABLE_PAGE_HEIGHT = PAGE_HEIGHT_PX - PAGE_PADDING_Y_PX;
+const PAGE_HEIGHT_PT = 792; // 11 inches * 72 points/inch
+const PAGE_PADDING_Y_PT = 80; // 40pt top + 40pt bottom
+const AVAILABLE_PAGE_HEIGHT_PT = PAGE_HEIGHT_PT - PAGE_PADDING_Y_PT;
 
 const InvoicePreviewInternal: FC<InvoicePreviewProps> = ({ invoice, accentColor, backgroundColor, textColor, id = 'invoice-preview', isPrint = false }) => {
   const [paginatedItems, setPaginatedItems] = useState<LineItem[][]>([invoice?.lineItems || []]);
@@ -606,97 +606,90 @@ const InvoicePreviewInternal: FC<InvoicePreviewProps> = ({ invoice, accentColor,
   
   useLayoutEffect(() => {
     if (!isPrint || !needsRemeasure || !TemplateComponent) return;
-
+  
     const measureAndPaginate = () => {
-        const container = containerRef.current;
-        if (!container) {
-            requestAnimationFrame(measureAndPaginate);
-            return;
+      const tempRoot = document.createElement('div');
+      tempRoot.style.position = 'absolute';
+      tempRoot.style.left = '-9999px';
+      tempRoot.style.width = '8.5in'; // Simulate page width
+      document.body.appendChild(tempRoot);
+  
+      // Render a dummy page to measure heights
+      const dummyPage = (
+        <TemplateComponent
+          {...commonProps}
+          pageItems={invoice.lineItems}
+          pageIndex={0}
+          totalPages={1}
+        />
+      );
+      
+      const reactRoot = require('react-dom/client').createRoot(tempRoot);
+      reactRoot.render(dummyPage);
+      
+      // Wait for render
+      setTimeout(() => {
+        const header = tempRoot.querySelector('[data-element="header"]') as HTMLElement;
+        const clientDetails = tempRoot.querySelector('[data-element="client-details"]') as HTMLElement;
+        const categoryDetails = tempRoot.querySelector('[data-element="category-details"]') as HTMLElement;
+        const tableHeader = tempRoot.querySelector('[data-element="table-header"]') as HTMLElement;
+        const footer = tempRoot.querySelector('[data-element="footer-content"]') as HTMLElement;
+        const allRows = Array.from(tempRoot.querySelectorAll('[data-element="table-row"]')) as HTMLElement[];
+  
+        if (!header || !tableHeader || !footer) {
+          document.body.removeChild(tempRoot);
+          setNeedsRemeasure(false);
+          return;
         }
 
-        const tempRoot = document.createElement('div');
-        tempRoot.style.position = 'absolute';
-        tempRoot.style.left = '-9999px';
-        tempRoot.style.width = `${container.clientWidth}px`;
-        document.body.appendChild(tempRoot);
-
-        try {
-            const tempContainer = container.cloneNode(true) as HTMLElement;
-            tempContainer.style.visibility = 'hidden';
-            tempRoot.appendChild(tempContainer);
-
-            requestAnimationFrame(() => {
-                const header = tempContainer.querySelector('[data-element="header"]') as HTMLElement;
-                const clientDetails = tempContainer.querySelector('[data-element="client-details"]') as HTMLElement;
-                const invoiceMeta = tempContainer.querySelector('[data-element="invoice-meta"]') as HTMLElement;
-                const categoryDetails = tempContainer.querySelector('[data-element="category-details"]') as HTMLElement;
-                const tableHeader = tempContainer.querySelector('[data-element="table-header"]') as HTMLElement;
-                const footerContent = tempContainer.querySelector('[data-element="footer-content"]') as HTMLElement;
-                const allRows = Array.from(tempContainer.querySelectorAll('[data-element="table-row"]')) as HTMLElement[];
-
-                if (!header || !tableHeader || allRows.length === 0) {
-                    setNeedsRemeasure(false);
-                    if (document.body.contains(tempRoot)) {
-                         document.body.removeChild(tempRoot);
-                    }
-                    return;
-                }
-
-                const headerHeight = header.offsetHeight + (clientDetails?.offsetHeight || 0) + (invoiceMeta?.offsetHeight || 0) + (categoryDetails?.offsetHeight || 0);
-                const tableHeaderHeight = tableHeader.offsetHeight;
-                const footerHeight = footerContent?.offsetHeight || 200; // Estimate footer height
-
-                const firstPageAvailableHeight = AVAILABLE_PAGE_HEIGHT - headerHeight - tableHeaderHeight - footerHeight;
-                const subsequentPageAvailableHeight = AVAILABLE_PAGE_HEIGHT - tableHeaderHeight - footerHeight;
-
-                let pages: LineItem[][] = [];
-                let currentPageItems: LineItem[] = [];
-                let currentHeight = 0;
-                let currentPage = 0;
-
-                for (let i = 0; i < allRows.length; i++) {
-                    const row = allRows[i];
-                    const item = invoice.lineItems[i];
-                    const rowHeight = row.offsetHeight;
-
-                    const availableHeight = currentPage === 0 ? firstPageAvailableHeight : subsequentPageAvailableHeight;
-                    
-                    if (currentHeight + rowHeight > availableHeight) {
-                        pages.push(currentPageItems);
-                        currentPageItems = [item];
-                        currentHeight = rowHeight;
-                        currentPage++;
-                    } else {
-                        currentPageItems.push(item);
-                        currentHeight += rowHeight;
-                    }
-                }
-                
-                if (currentPageItems.length > 0) {
-                    pages.push(currentPageItems);
-                }
-                
-                if (pages.length === 0 && invoice.lineItems.length > 0) {
-                    pages.push(invoice.lineItems);
-                } else if (pages.length === 0) {
-                    pages.push([]);
-                }
-                
-                setPaginatedItems(pages);
-                setNeedsRemeasure(false);
-            });
-        } finally {
-            setTimeout(() => {
-                if (document.body.contains(tempRoot)) {
-                    document.body.removeChild(tempRoot);
-                }
-            }, 50);
+        const ptToPx = (pt: number) => pt * (96 / 72);
+        
+        const firstPageHeaderHeight = ptToPx(
+          header.offsetHeight + 
+          (clientDetails?.offsetHeight || 0) + 
+          (categoryDetails?.offsetHeight || 0) +
+          tableHeader.offsetHeight
+        );
+        
+        const subsequentPageHeaderHeight = ptToPx(header.offsetHeight + tableHeader.offsetHeight);
+        const footerHeight = ptToPx(footer.offsetHeight);
+  
+        const pages: LineItem[][] = [];
+        let currentPageItems: LineItem[] = [];
+        let currentHeight = 0;
+  
+        invoice.lineItems.forEach((item, index) => {
+          const rowHeight = ptToPx(allRows[index]?.offsetHeight || 24); // Estimate row height if not found
+          const isFirstPage = pages.length === 0;
+          const availableHeight = isFirstPage 
+            ? AVAILABLE_PAGE_HEIGHT_PT - firstPageHeaderHeight - footerHeight
+            : AVAILABLE_PAGE_HEIGHT_PT - subsequentPageHeaderHeight - footerHeight;
+  
+          if (currentHeight + rowHeight > availableHeight && currentPageItems.length > 0) {
+            pages.push(currentPageItems);
+            currentPageItems = [];
+            currentHeight = 0;
+          }
+  
+          currentPageItems.push(item);
+          currentHeight += rowHeight;
+        });
+  
+        if (currentPageItems.length > 0) {
+          pages.push(currentPageItems);
         }
+        
+        setPaginatedItems(pages.length > 0 ? pages : [[]]);
+        setNeedsRemeasure(false);
+  
+        // Cleanup
+        reactRoot.unmount();
+        document.body.removeChild(tempRoot);
+      }, 100); // Small delay to ensure rendering
     };
-    
+  
     measureAndPaginate();
-
-  }, [isPrint, needsRemeasure, TemplateComponent, serializedInvoice, invoice.lineItems]);
+  }, [isPrint, needsRemeasure, TemplateComponent, serializedInvoice, invoice.lineItems, commonProps]);
 
   const commonProps: Omit<PageProps, 'pageItems' | 'pageIndex' | 'totalPages'> = {
     invoice,
