@@ -12,7 +12,6 @@ import { HvacDetails } from './hvac-templates';
 import { RoofingDetails } from './roofing-templates';
 import { LandscapingDetails } from './landscaping-templates';
 import { CleaningDetails } from './cleaning-templates';
-import { AutoRepairDetails } from './auto-repair-templates';
 import { ITServiceDetails } from './it-freelance-templates';
 import { ConsultingDetails } from './consulting-templates';
 import { LegalDetails } from './legal-templates';
@@ -23,6 +22,7 @@ import { PhotographyDetails } from './photography-templates';
 import { RealEstateDetails } from './real-estate-templates';
 import { TransportationDetails } from './transportation-templates';
 import { RentalDetails } from './rental-templates';
+import { AutoRepairDetails } from './auto-repair-templates';
 
 // This is the preview for custom fields, now conditionally rendered
 const CustomFieldsPreview: FC<{ fields?: CustomField[], textColor?: string, showHeading: boolean }> = ({ fields, textColor, showHeading }) => {
@@ -51,14 +51,17 @@ export const CategorySpecificDetails: FC<{ invoice: Invoice, t: any }> = ({ invo
     const category = invoice.category;
     const commonProps = { invoice, t };
 
-    // A helper function to render the category details and the custom fields without a heading
+    const hasCustomFields = (invoice.customFields || []).filter(f => f.label && f.value).length > 0;
+
     const renderDetailsWithCustomFields = (DetailsComponent: React.FC<any> | null) => {
-      const categoryKey = category.split(" ")[0].toLowerCase() as keyof Invoice;
-      const hasCategoryData = invoice[categoryKey] && Object.values(invoice[categoryKey] as any).some(val => val !== null && val !== '');
+      const categoryKey = category.split(' ')[0].toLowerCase().replace('&', '') as keyof Invoice;
+      const categoryData = invoice[categoryKey];
+      const hasCategoryData = categoryData && typeof categoryData === 'object' && Object.values(categoryData).some(val => val !== null && val !== '');
+      
       return (
         <>
             {DetailsComponent && hasCategoryData ? <DetailsComponent {...commonProps} /> : null}
-            <CustomFieldsPreview fields={invoice.customFields} textColor={invoice.textColor} showHeading={!hasCategoryData && (invoice.customFields || []).length > 0} />
+            <CustomFieldsPreview fields={invoice.customFields} textColor={invoice.textColor} showHeading={!hasCategoryData && hasCustomFields} />
         </>
       );
     };

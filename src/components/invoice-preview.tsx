@@ -2,13 +2,12 @@
 'use client';
 
 import * as React from 'react';
-import { useState, useLayoutEffect, useRef, useEffect, FC, useMemo } from 'react';
-import type { Invoice, LineItem, CustomField } from '@/lib/types';
+import { useState, useLayoutEffect, useMemo, FC } from 'react';
+import type { Invoice, LineItem } from '@/lib/types';
 import { Card, CardContent } from '@/components/ui/card';
-import { Separator } from '@/components/ui/separator';
-import Image from 'next/image';
-import { format, isValid } from 'date-fns';
 import locales from '@/lib/locales';
+import { toDateSafe, toNumberSafe } from '@/lib/utils';
+import { CategorySpecificDetails } from './invoice-templates/category-specific-details';
 import { ConstructionTemplate1, ConstructionTemplate2, ConstructionTemplate3, ConstructionTemplate4, ConstructionTemplate5, ConstructionTemplate6 } from './invoice-templates/construction-templates';
 import { PlumbingTemplate1, PlumbingTemplate2, PlumbingTemplate3, PlumbingTemplate4, PlumbingTemplate5 } from './invoice-templates/plumbing-templates';
 import { ElectricalTemplate1, ElectricalTemplate2, ElectricalTemplate3, ElectricalTemplate4, ElectricalTemplate5 } from './invoice-templates/electrical-templates';
@@ -27,9 +26,7 @@ import { PhotographyTemplate1, PhotographyTemplate2, PhotographyTemplate3, Photo
 import { RealEstateTemplate1, RealEstateTemplate2, RealEstateTemplate3, RealEstateTemplate4, RealEstateTemplate5 } from './invoice-templates/real-estate-templates';
 import { TransportationTemplate1, TransportationTemplate2, TransportationTemplate3, TransportationTemplate4, TransportationTemplate5 } from './invoice-templates/transportation-templates';
 import { RentalTemplate1, RentalTemplate2, RentalTemplate3, RentalTemplate4, RentalTemplate5 } from './invoice-templates/rental-templates';
-import { toNumberSafe, toDateSafe } from '@/lib/utils';
-import { CategorySpecificDetails } from './invoice-templates/category-specific-details';
-import { GenericTemplate1, GenericTemplate2, GenericTemplate3, GenericTemplate4, GenericTemplate5 } from '../document-templates/generic-templates';
+import { GenericTemplate1, GenericTemplate2, GenericTemplate3, GenericTemplate4, GenericTemplate5 } from './invoice-templates/generic-templates';
 
 
 // --- PROPS ---
@@ -42,16 +39,8 @@ interface InvoicePreviewProps {
   isPrint?: boolean;
 }
 
-interface CommonTemplateProps {
-  invoice: Invoice;
-  accentColor: string;
-  backgroundColor: string;
-  textColor: string;
-  t: any;
-  currencySymbol: string;
-}
-
-interface PageProps extends CommonTemplateProps {
+export interface PageProps {
+    invoice: Invoice;
     pageItems: LineItem[];
     pageIndex: number;
     totalPages: number;
@@ -60,457 +49,20 @@ interface PageProps extends CommonTemplateProps {
     discountAmount: number;
     total: number;
     balanceDue: number;
+    t: any;
+    currencySymbol: string;
+    accentColor: string;
+    backgroundColor: string;
+    textColor: string;
 }
-
-const currencySymbols: { [key: string]: string } = {
-    USD: '$',
-    EUR: '€',
-    GBP: '£',
-    JPY: '¥',
-    PKR: '₨',
-};
-
-const safeFormat = (date: Date | string | number | null | undefined, formatString: string) => {
-    if (!date) return "N/A";
-    const d = toDateSafe(date);
-    return isValid(d) ? format(d, formatString) : "Invalid Date";
-}
-
-// --- SHARED COMPONENTS ---
-
-const ItemsTable: FC<{ items: LineItem[], t: any, currencySymbol: string, accentColor?: string, headerStyle?: 'filled' | 'underline' }> = ({ items, t, currencySymbol, accentColor, headerStyle = 'filled' }) => (
-    <section>
-        <table className="w-full text-left" style={{ pageBreakInside: 'auto' }}>
-            <thead 
-              data-element="table-header"
-              style={headerStyle === 'filled' ? {backgroundColor: accentColor, color: 'white'} : {}} 
-              className={headerStyle === 'filled' ? '' : 'border-b-2'}
-            >
-            <tr>
-                <th className="p-3 text-sm font-semibold w-1/2">{t.item}</th>
-                <th className="p-3 text-sm font-semibold text-center">{t.quantity}</th>
-                <th className="p-3 text-sm font-semibold text-right">{t.rate}</th>
-                <th className="p-3 text-sm font-semibold text-right">{t.subtotal}</th>
-            </tr>
-            </thead>
-            <tbody>
-            {items.map(item => (
-                <tr key={item.id} className="border-b" data-element="table-row" style={{ pageBreakInside: 'avoid' }}>
-                <td className="p-3 align-top">
-                    <p className="font-medium whitespace-pre-line">{item.name || <span className="text-gray-400">{t.itemDescription}</span>}</p>
-                    {item.description && <p className="text-xs text-muted-foreground whitespace-pre-line" style={{ wordBreak: 'break-all' }}>{item.description}</p>}
-                </td>
-                <td className="p-3 text-center align-top tabular-nums">{item.quantity}</td>
-                <td className="p-3 text-right align-top tabular-nums">{currencySymbol}{(toNumberSafe(item.unitPrice) || 0).toFixed(2)}</td>
-                <td className="p-3 text-right align-top tabular-nums font-medium">{currencySymbol}{(toNumberSafe(item.quantity) * (toNumberSafe(item.unitPrice) || 0)).toFixed(2)}</td>
-                </tr>
-            ))}
-            </tbody>
-        </table>
-    </section>
-);
-
-const InvoiceFooter: FC<{
-    invoice: Invoice, t: any, subtotal: number, taxAmount: number, discountAmount: number, total: number, currencySymbol: string, accentColor: string, balanceDue: number
-}> = ({ invoice, t, subtotal, taxAmount, discountAmount, total, currencySymbol, accentColor, balanceDue }) => (
-    <div className="avoid-page-break" data-element="footer-content">
-        <section className="flex justify-end mt-8">
-            <div className="w-full max-w-xs space-y-2">
-                <div className="flex justify-between text-sm">
-                <span className="text-muted-foreground">{t.subtotal}</span>
-                <span className="font-medium tabular-nums">{currencySymbol}{subtotal.toFixed(2)}</span>
-                </div>
-                {invoice.summary.discount > 0 && (
-                    <div className="flex justify-between text-sm">
-                        <span className="text-muted-foreground">{t.discount}</span>
-                        <span className="font-medium text-destructive tabular-nums">-{currencySymbol}{discountAmount.toFixed(2)}</span>
-                    </div>
-                )}
-                {invoice.summary.shippingCost > 0 && (
-                     <div className="flex justify-between text-sm">
-                        <span className="text-muted-foreground">Shipping Cost</span>
-                        <span className="font-medium tabular-nums">{currencySymbol}{invoice.summary.shippingCost.toFixed(2)}</span>
-                    </div>
-                )}
-                {invoice.summary.taxPercentage > 0 && (
-                <div className="flex justify-between text-sm">
-                <span className="text-muted-foreground">{t.tax} ({invoice.summary.taxPercentage}%)</span>
-                <span className="font-medium tabular-nums">{currencySymbol}{taxAmount.toFixed(2)}</span>
-                </div>
-                )}
-                <Separator className="my-2" />
-                <div className="flex justify-between items-center font-bold text-lg">
-                <span>{t.total}</span>
-                <span className="tabular-nums">{currencySymbol}{total.toFixed(2)}</span>
-                </div>
-                 {(invoice.amountPaid || 0) > 0 && (
-                    <div className="flex justify-between text-sm">
-                        <span className="text-muted-foreground">Amount Paid</span>
-                        <span className="font-medium tabular-nums">-{currencySymbol}{(invoice.amountPaid || 0).toFixed(2)}</span>
-                    </div>
-                )}
-                <div className="flex justify-between items-center font-bold text-lg p-3 mt-2 rounded-md" style={{backgroundColor: accentColor, color: 'white'}}>
-                    <span>Balance Due</span>
-                    <span className="tabular-nums">{currencySymbol}{balanceDue.toFixed(2)}</span>
-                </div>
-            </div>
-        </section>
-
-        {invoice.paymentInstructions && (
-            <footer className="mt-10" data-element="footer">
-                <p className="text-sm font-semibold text-gray-500">{t.notes}</p>
-                <p className="text-sm text-muted-foreground mt-1 whitespace-pre-line">{invoice.paymentInstructions}</p>
-            </footer>
-        )}
-         {invoice.business.ownerSignature && (
-            <div className="mt-8">
-                <p className="text-sm font-semibold text-gray-500">Authorized Signature</p>
-                <Image src={invoice.business.ownerSignature.image} alt="Owner Signature" width={150} height={75} />
-            </div>
-        )}
-    </div>
-);
-
-
-const DefaultTemplatePage: FC<PageProps> = ({ pageItems, pageIndex, totalPages, ...commonProps }) => {
-    const { invoice, t, currencySymbol, accentColor } = commonProps;
-    const { business, client } = invoice;
-    return (
-        <div className={`p-8 md:p-10 flex flex-col`} style={{minHeight: '1056px', fontFamily: invoice.fontFamily, fontSize: `${invoice.fontSize}px`, backgroundColor: commonProps.backgroundColor, color: commonProps.textColor }}>
-            <div data-element="page-content" className="flex-grow">
-                <header className="flex justify-between items-start mb-10" data-element="header">
-                    <div>
-                        {business.logoUrl ? (
-                            <Image src={business.logoUrl} alt={`${business.name} Logo`} width={120} height={40} className="object-contain mb-2" data-ai-hint="logo" />
-                        ) : (
-                            <h1 className="text-3xl font-bold font-headline" style={{ color: accentColor }}>{business.name}</h1>
-                        )}
-                        <div className="text-sm mt-2 space-y-1">
-                          <p className="whitespace-pre-line">{business.address}</p>
-                          {business.phone && <p>{business.phone}</p>}
-                          {business.email && <p>{business.email}</p>}
-                          {business.website && <p>{business.website}</p>}
-                          {business.licenseNumber && <p>{t.license || 'Lic #'}: {business.licenseNumber}</p>}
-                          {business.taxId && <p>{t.taxId || 'Tax ID'}: {business.taxId}</p>}
-                        </div>
-                    </div>
-                    <div className="text-right">
-                        <h2 className="text-3xl font-bold text-gray-400 uppercase tracking-wider">{((t.invoice as string) || 'Invoice').toUpperCase()}</h2>
-                        <p className="mt-1">{invoice.invoiceNumber}</p>
-                        {invoice.poNumber && <p className="text-xs">PO: {invoice.poNumber}</p>}
-                    </div>
-                </header>
-                {pageIndex === 0 && (
-                     <section className="flex justify-between mb-10" data-element="client-details">
-                        <div className="space-y-1">
-                            <p className="text-sm font-semibold text-gray-500">{((t.billTo as string) || 'BILL TO').toUpperCase()}</p>
-                            <p className="font-bold">{client.name}</p>
-                            {client.companyName && <p>{client.companyName}</p>}
-                            <p className="text-sm whitespace-pre-line">{client.address}</p>
-                            {client.phone && <p className="text-sm">{client.phone}</p>}
-                            {client.email && <p className="text-sm">{client.email}</p>}
-                            {client.shippingAddress && <p className="text-sm mt-2"><span className="font-bold">Ship To:</span><br/>{client.shippingAddress}</p>}
-                        </div>
-                        <div className="text-right space-y-1">
-                            <p className="text-sm font-semibold text-gray-500">{((t.invoiceDate as string) || 'Invoice Date').toUpperCase()}</p>
-                            <p>{safeFormat(invoice.invoiceDate, 'MMMM d, yyyy')}</p>
-                            <p className="text-sm font-semibold text-gray-500 mt-2">{((t.dueDate as string) || 'Due Date').toUpperCase()}</p>
-                            <p>{safeFormat(invoice.dueDate, 'MMMM d, yyyy')}</p>
-                        </div>
-                    </section>
-                )}
-                 <div data-element="category-details">
-                    {pageIndex === 0 && <CategorySpecificDetails invoice={invoice} t={t} />}
-                </div>
-                <ItemsTable items={pageItems} {...commonProps} />
-            </div>
-            {pageIndex === totalPages - 1 && <InvoiceFooter {...commonProps} />}
-        </div>
-    );
-};
-
-// --- TEMPLATE: Modern ---
-const ModernTemplatePage: FC<PageProps> = ({ pageItems, pageIndex, totalPages, ...commonProps }) => {
-    const { invoice, t, currencySymbol, accentColor } = commonProps;
-    const { business, client } = invoice;
-    return (
-     <div className={`p-8 md:p-10 flex flex-col`} style={{minHeight: '1056px', fontFamily: invoice.fontFamily, fontSize: `${invoice.fontSize}px`, backgroundColor: commonProps.backgroundColor, color: commonProps.textColor }}>
-        <div data-element="page-content" className="flex-grow">
-            <header className="flex justify-between items-center pb-4 border-b-4" style={{borderColor: accentColor}} data-element="header">
-                 <div>
-                    {business.logoUrl ? (
-                        <Image src={business.logoUrl} alt={`${business.name} Logo`} width={100} height={40} className="object-contain" />
-                    ) : (
-                        <h1 className="text-2xl font-bold font-headline">{business.name}</h1>
-                    )}
-                 </div>
-                 <h2 className="text-3xl font-bold uppercase" style={{color: accentColor}}>{((t.invoice as string) || 'Invoice').toUpperCase()}</h2>
-            </header>
-            {pageIndex === 0 && (
-                <>
-                 <section className="flex justify-between my-8 text-sm" data-element="client-details">
-                    <div className="space-y-1">
-                        <p className="font-bold">{business.name}</p>
-                        <p className="whitespace-pre-line">{business.address}</p>
-                        <p>{business.phone}</p>
-                        <p>{business.email}</p>
-                        {business.website && <p>{business.website}</p>}
-                        {business.licenseNumber && <p>Lic#: {business.licenseNumber}</p>}
-                        {business.taxId && <p>Tax ID: {business.taxId}</p>}
-                    </div>
-                    <div className="space-y-1 text-right">
-                        <p className="font-bold">{client.name}</p>
-                        {client.companyName && <p>{client.companyName}</p>}
-                        <p className="whitespace-pre-line">{client.address}</p>
-                        <p>{client.phone}</p>
-                        <p>{client.email}</p>
-                    </div>
-                </section>
-                 <section className="flex justify-between my-8 text-sm" data-element="invoice-meta">
-                    <div className="space-y-1">
-                        <p className="font-bold">Invoice #</p>
-                        <p>{invoice.invoiceNumber}</p>
-                    </div>
-                    <div className="space-y-1 text-right">
-                        <p className="font-bold">Date</p>
-                        <p>{safeFormat(invoice.invoiceDate, 'MM/dd/yyyy')}</p>
-                    </div>
-                    <div className="space-y-1 text-right">
-                        <p className="font-bold">Due Date</p>
-                        <p>{safeFormat(invoice.dueDate, 'MM/dd/yyyy')}</p>
-                    </div>
-                     <div className="space-y-1 text-right">
-                        <p className="font-bold">PO #</p>
-                        <p>{invoice.poNumber || 'N/A'}</p>
-                    </div>
-                </section>
-                 <div data-element="category-details">
-                    <CategorySpecificDetails invoice={invoice} t={t} />
-                </div>
-                </>
-            )}
-            <ItemsTable items={pageItems} {...commonProps} accentColor={accentColor} />
-        </div>
-        {pageIndex === totalPages - 1 && <InvoiceFooter {...commonProps} />}
-    </div>
-    )
-};
-
-// --- TEMPLATE: Minimalist ---
-const MinimalistTemplatePage: FC<PageProps> = ({ pageItems, pageIndex, totalPages, ...commonProps }) => {
-    const { invoice, t } = commonProps;
-    const { business, client } = invoice;
-    return (
-    <div className={`p-12 flex flex-col`} style={{minHeight: '1056px', fontFamily: invoice.fontFamily, fontSize: `${invoice.fontSize}px`, backgroundColor: commonProps.backgroundColor, color: commonProps.textColor }}>
-        <div data-element="page-content" className="flex-grow">
-            <header data-element="header" className="mb-12">
-                <div className="flex justify-between items-start">
-                    <h1 className="text-2xl font-bold">{business.name}</h1>
-                    <h2 className="text-2xl font-light uppercase text-gray-500">{((t.invoice as string) || 'Invoice').toUpperCase()}</h2>
-                </div>
-                <p className="text-xs text-gray-500 mt-1 whitespace-pre-line">{business.address} | {business.phone} | {business.email}</p>
-            </header>
-            {pageIndex === 0 && (
-                <>
-                <section data-element="client-details" className="grid grid-cols-4 gap-4 mb-12 text-xs">
-                    <div className="space-y-1 col-span-2">
-                        <p className="text-gray-500 uppercase tracking-widest">Billed To</p>
-                        <p className="font-medium">{client.name}</p>
-                        {client.companyName && <p>{client.companyName}</p>}
-                        <p className="whitespace-pre-line">{client.address}</p>
-                    </div>
-                    <div className="space-y-1">
-                        <p className="text-gray-500 uppercase tracking-widest">Invoice #</p>
-                        <p className="font-medium">{invoice.invoiceNumber}</p>
-                    </div>
-                    <div className="space-y-1">
-                        <p className="text-gray-500 uppercase tracking-widest">Date</p>
-                        <p className="font-medium">{safeFormat(invoice.invoiceDate, 'yyyy-MM-dd')}</p>
-                    </div>
-                    <div className="space-y-1 col-span-2">
-                        <p className="text-gray-500 uppercase tracking-widest">Shipping Address</p>
-                        <p className="font-medium">{client.shippingAddress || 'N/A'}</p>
-                    </div>
-                    <div className="space-y-1">
-                        <p className="text-gray-500 uppercase tracking-widest">PO Number</p>
-                        <p className="font-medium">{invoice.poNumber || 'N/A'}</p>
-                    </div>
-                </section>
-                <div data-element="category-details">
-                    <CategorySpecificDetails invoice={invoice} t={t} />
-                </div>
-                </>
-            )}
-            <ItemsTable items={pageItems} {...commonProps} headerStyle="underline" />
-        </div>
-        {pageIndex === totalPages - 1 && <InvoiceFooter {...commonProps} />}
-    </div>
-    )
-};
-
-// --- TEMPLATE: Creative ---
-const CreativeTemplatePage: FC<PageProps> = ({ pageItems, pageIndex, totalPages, ...commonProps }) => {
-    const { invoice, t, accentColor } = commonProps;
-    const { business, client } = invoice;
-    return (
-    <div className={`p-8 relative flex flex-col`} style={{minHeight: '1056px', fontFamily: invoice.fontFamily, fontSize: `${invoice.fontSize}px`, backgroundColor: commonProps.backgroundColor, color: commonProps.textColor }}>
-        <div className="absolute top-0 left-0 w-full h-48" style={{backgroundColor: accentColor, opacity: 0.1}}></div>
-        <div data-element="page-content" className="flex-grow z-10">
-            <header data-element="header" className="flex justify-between items-center mb-12">
-                <div>
-                    {business.logoUrl && <Image src={business.logoUrl} alt="logo" width={80} height={80} className="rounded-full" />}
-                    <h1 className="text-3xl font-bold mt-2">{business.name}</h1>
-                </div>
-                <div className="text-right">
-                    <h2 className="text-4xl font-extrabold uppercase" style={{color: accentColor}}>{((t.invoice as string) || 'Invoice').toUpperCase()}</h2>
-                    <p className="text-sm mt-1">{invoice.invoiceNumber}</p>
-                </div>
-            </header>
-            {pageIndex === 0 && (
-                <section data-element="client-details" className="mb-10 text-sm">
-                    <p className="text-gray-500">Billed to:</p>
-                    <p className="font-bold text-lg">{client.name}</p>
-                    {client.companyName && <p>{client.companyName}</p>}
-                    <p className="whitespace-pre-line">{client.address}</p>
-                    <p>{client.phone}</p>
-                    <p>{client.email}</p>
-                </section>
-            )}
-             <div data-element="category-details">
-                {pageIndex === 0 && <CategorySpecificDetails invoice={invoice} t={t} />}
-            </div>
-            <ItemsTable items={pageItems} {...commonProps} accentColor={accentColor} />
-        </div>
-        {pageIndex === totalPages - 1 && <InvoiceFooter {...commonProps} />}
-    </div>
-    )
-};
-
-// --- TEMPLATE: Elegant ---
-const ElegantTemplatePage: FC<PageProps> = ({ pageItems, pageIndex, totalPages, ...commonProps }) => {
-    const { invoice, t } = commonProps;
-    const { business, client } = invoice;
-    return (
-    <div className={`p-10 flex flex-col`} style={{minHeight: '1056px', fontFamily: invoice.fontFamily, fontSize: `${invoice.fontSize}px`, backgroundColor: commonProps.backgroundColor, color: commonProps.textColor }}>
-        <div data-element="page-content" className="flex-grow">
-            <header data-element="header" className="text-center mb-16">
-                {business.logoUrl && <Image src={business.logoUrl} alt="logo" width={100} height={50} className="mx-auto mb-4 object-contain" />}
-                <h1 className="text-4xl font-bold tracking-tight">{business.name}</h1>
-                <p className="text-xs text-gray-500 mt-2 tracking-widest whitespace-pre-line">{business.address} | {business.phone}</p>
-            </header>
-            <div className="w-full h-px bg-gray-300 mb-10"></div>
-            {pageIndex === 0 && (
-                <section data-element="client-details" className="flex justify-between items-center mb-10 text-sm">
-                    <div>
-                        <p className="font-bold">Billed to: {client.name}</p>
-                        {client.companyName && <p>{client.companyName}</p>}
-                        <p>{client.address}</p>
-                    </div>
-                    <div className="text-right">
-                        <p><span className="font-bold">Invoice Number:</span> {invoice.invoiceNumber}</p>
-                        <p><span className="font-bold">Date of Issue:</span> {safeFormat(invoice.invoiceDate, 'MMMM dd, yyyy')}</p>
-                        <p><span className="font-bold">PO Number:</span> {invoice.poNumber || 'N/A'}</p>
-                    </div>
-                </section>
-            )}
-             <div data-element="category-details">
-                {pageIndex === 0 && <CategorySpecificDetails invoice={invoice} t={t} />}
-            </div>
-            <ItemsTable items={pageItems} {...commonProps} headerStyle="underline" />
-        </div>
-        {pageIndex === totalPages - 1 && <InvoiceFooter {...commonProps} />}
-    </div>
-    )
-};
-
-// --- TEMPLATE: USA ---
-const UsaTemplatePage: FC<PageProps> = ({ pageItems, pageIndex, totalPages, ...commonProps }) => {
-    const { invoice, t, currencySymbol, subtotal, accentColor } = commonProps;
-    const { business, client } = invoice;
-
-    return (
-        <div className={`invoice-page font-sans text-gray-800`} style={{fontFamily: invoice.fontFamily, fontSize: `${invoice.fontSize}px`, backgroundColor: commonProps.backgroundColor, color: commonProps.textColor }}>
-            <div className="p-8 m-4 border-2" style={{ borderColor: accentColor }}>
-                <header className="grid grid-cols-2 gap-10 mb-8" data-element="header">
-                     <div>
-                        {business.logoUrl ? (
-                            <Image src={business.logoUrl} alt={`${business.name} Logo`} width={160} height={80} className="object-contain mb-2" data-ai-hint="logo" />
-                        ) : (
-                            <h1 className="text-3xl font-bold mb-1" style={{color: accentColor}}>{business.name}</h1>
-                        )}
-                        <p className="text-xs text-gray-600 whitespace-pre-line">{business.address}</p>
-                    </div>
-                     <div className="text-right">
-                        <h2 className="text-4xl font-bold">INVOICE</h2>
-                        <div className="mt-4 text-xs space-y-1">
-                            <p><span className="font-bold text-gray-500">Invoice #:</span> {invoice.invoiceNumber}</p>
-                            <p><span className="font-bold text-gray-500">Date:</span> {safeFormat(invoice.invoiceDate, 'M/d/yyyy')}</p>
-                        </div>
-                    </div>
-                </header>
-                {pageIndex === 0 && (
-                     <section className="grid grid-cols-2 gap-8 text-sm mb-8" data-element="client-details">
-                        <div>
-                            <p className="font-bold text-gray-500">{(t.billFrom || 'BILL FROM').toUpperCase()}</p>
-                            <p className="font-bold" style={{color: accentColor}}>{business.name}</p>
-                            <p className="whitespace-pre-line">{business.address}</p>
-                             {business.phone && <p>{business.phone}</p>}
-                            {business.email && <p>{business.email}</p>}
-                            {business.website && <p>{business.website}</p>}
-                        </div>
-                        <div className="text-right">
-                            <p className="font-bold text-gray-500">{(t.billTo || 'BILL TO').toUpperCase()}</p>
-                            <p className="font-bold">{client.name}</p>
-                            {client.companyName && <p>{client.companyName}</p>}
-                            <p className="whitespace-pre-line">{client.address}</p>
-                            {client.phone && <p>{client.phone}</p>}
-                            {client.email && <p>{client.email}</p>}
-                        </div>
-                    </section>
-                )}
-                 <div data-element="category-details">
-                    {pageIndex === 0 && <CategorySpecificDetails invoice={invoice} t={t} />}
-                </div>
-                <main>
-                    <table className="w-full border-collapse border text-sm" data-element="items-table">
-                        <thead data-element="table-header">
-                            <tr className="bg-gray-100">
-                                <th className="border p-2 font-bold text-left w-[50%]">Description</th>
-                                <th className="border p-2 font-bold text-center w-[15%]">Quantity</th>
-                                <th className="border p-2 font-bold text-right w-[15%]">Unit Price</th>
-                                <th className="border p-2 font-bold text-right w-[20%]">Total</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {pageItems?.filter(Boolean).map((item) => (
-                                <tr key={item.id} data-element="table-row">
-                                    <td className="border p-2 align-top h-8 whitespace-pre-line">{item.name}{item.description && `\n${item.description}`}</td>
-                                    <td className="border p-2 text-center align-top">{item.quantity}</td>
-                                    <td className="border p-2 text-right align-top">{currencySymbol}{(toNumberSafe(item.unitPrice) || 0).toFixed(2)}</td>
-                                    <td className="border p-2 text-right align-top">{currencySymbol}{(toNumberSafe(item.quantity) * (toNumberSafe(item.unitPrice) || 0)).toFixed(2)}</td>
-                                </tr>
-                            ))}
-                        </tbody>
-                         {pageIndex === totalPages - 1 && (
-                            <tfoot className="text-sm font-medium">
-                                <InvoiceFooter {...commonProps} />
-                            </tfoot>
-                         )}
-                    </table>
-                </main>
-            </div>
-        </div>
-    );
-};
-
 
 const templates: Record<string, FC<PageProps>> = {
-  'default': DefaultTemplatePage,
-  'modern': ModernTemplatePage,
-  'minimalist': MinimalistTemplatePage,
-  'creative': CreativeTemplatePage,
-  'elegant': ElegantTemplatePage,
-  'usa': UsaTemplatePage,
+  'default': GenericTemplate1,
+  'modern': GenericTemplate2,
+  'minimalist': GenericTemplate3,
+  'creative': GenericTemplate4,
+  'elegant': GenericTemplate5,
+  'usa': GenericTemplate1, // Re-using for now, can be specific later
   'construction-1': ConstructionTemplate1,
   'construction-2': ConstructionTemplate2,
   'construction-3': ConstructionTemplate3,
@@ -610,12 +162,13 @@ const InvoicePreviewInternal: FC<InvoicePreviewProps> = ({ invoice, accentColor,
   const t = locales[invoice.language as keyof locales] || locales.en;
   
   const subtotal = invoice.lineItems.reduce((acc, item) => acc + item.quantity * (toNumberSafe((item as any).unitPrice) || 0), 0);
-  const taxAmount = (subtotal * invoice.summary.taxPercentage) / 100;
   const discountAmount = invoice.summary.discount;
-  const total = subtotal + taxAmount - discountAmount + (invoice.summary.shippingCost || 0);
+  const subtotalAfterDiscount = subtotal - discountAmount;
+  const taxAmount = (subtotalAfterDiscount * invoice.summary.taxPercentage) / 100;
+  const total = subtotalAfterDiscount + taxAmount + (invoice.summary.shippingCost || 0);
   const balanceDue = total - (invoice.amountPaid || 0);
-  const currencySymbol = currencySymbols[invoice.currency] || '$';
-
+  const currencySymbol = locales[invoice.language as keyof locales]?.currencySymbol || '$';
+  
   const commonProps: Omit<PageProps, 'pageItems' | 'pageIndex' | 'totalPages'> = useMemo(() => ({
     invoice,
     accentColor,
@@ -630,7 +183,7 @@ const InvoicePreviewInternal: FC<InvoicePreviewProps> = ({ invoice, accentColor,
     balanceDue,
   }), [invoice, accentColor, backgroundColor, textColor, t, currencySymbol, subtotal, taxAmount, discountAmount, total, balanceDue]);
 
-  useEffect(() => {
+  React.useEffect(() => {
     setNeedsRemeasure(true);
   }, [serializedInvoice, accentColor, backgroundColor, textColor]);
 
@@ -645,85 +198,93 @@ const InvoicePreviewInternal: FC<InvoicePreviewProps> = ({ invoice, accentColor,
 
   const getTemplateComponent = () => {
     const templateId = invoice.template;
-    return templates[templateId] || DefaultTemplatePage;
+    return templates[templateId] || GenericTemplate1;
   };
 
   const TemplateComponent = getTemplateComponent();
   
   useLayoutEffect(() => {
     if (!isPrint || !needsRemeasure || typeof window === 'undefined' || !TemplateComponent) return;
-  
+
     const measureAndPaginate = () => {
-        if (typeof window === 'undefined' || typeof document === 'undefined') return;
-        const measurementContainer = document.createElement('div');
-        measurementContainer.style.position = 'absolute';
-        measurementContainer.style.left = '-9999px';
-        measurementContainer.style.width = '8.5in'; // Standard letter width
-        document.body.appendChild(measurementContainer);
-    
-        const renderAndMeasure = (renderFunc: () => React.ReactElement): number => {
-            const div = document.createElement('div');
-            measurementContainer.appendChild(div);
-            const root = (require('react-dom/client') as any).createRoot(div);
-            root.render(renderFunc());
-            const height = div.offsetHeight;
-            root.unmount();
-            div.remove();
-            return height;
-        };
+      const measurementRoot = document.createElement('div');
+      measurementRoot.style.position = 'absolute';
+      measurementRoot.style.left = '-9999px';
+      measurementRoot.style.width = '8.5in';
+      document.body.appendChild(measurementRoot);
 
-        const firstPageDummy = <TemplateComponent {...commonProps} pageItems={[]} pageIndex={0} totalPages={1} />;
-        const subsequentPageDummy = <TemplateComponent {...commonProps} pageItems={[]} pageIndex={1} totalPages={2} />;
+      const measureComponent = (component: React.ReactElement): number => {
+        const div = document.createElement('div');
+        measurementRoot.appendChild(div);
+        const root = (require('react-dom/client') as any).createRoot(div);
+        root.render(component);
+        const height = div.offsetHeight;
+        root.unmount();
+        div.remove();
+        return height;
+      };
 
-        const headerContent = (
-            <>
-                <header data-element="header"></header>
-                <section data-element="client-details"></section>
-                <div data-element="category-details"></div>
-            </>
-        );
+      const firstPageDummy = <TemplateComponent {...commonProps} pageItems={[]} pageIndex={0} totalPages={1} />;
+      const subsequentPageDummy = <TemplateComponent {...commonProps} pageItems={[]} pageIndex={1} totalPages={2} />;
 
-      const firstPageHeaderHeight = renderAndMeasure(() => <div style={previewStyle} className="p-8 md:p-10">{React.cloneElement(firstPageDummy, { children: headerContent })}</div>);
-      const subsequentPageHeaderHeight = renderAndMeasure(() => <div style={previewStyle} className="p-8 md:p-10">{React.cloneElement(subsequentPageDummy, { children: headerContent })}</div>);
-        const footerHeight = renderAndMeasure(() => <InvoiceFooter {...commonProps} />);
-        const tableHeaderHeight = renderAndMeasure(() => <table className="w-full"><thead data-element="table-header"><tr><th>Header</th></tr></thead></table>);
+      // Measure header content only once
+      const headerContent = (
+          <>
+              <header data-element="header"></header>
+              <section data-element="client-details"></section>
+              <div data-element="category-details"></div>
+          </>
+      );
+      
+      const firstPageHeaderHeight = measureComponent(
+        <div style={previewStyle} className="p-8 md:p-10">{React.cloneElement(firstPageDummy, { children: headerContent })}</div>
+      );
+      const subsequentPageHeaderHeight = measureComponent(
+        <div style={previewStyle} className="p-8 md:p-10">{React.cloneElement(subsequentPageDummy, { children: headerContent })}</div>
+      );
+
+      const footerHeight = measureComponent(<PagePropsFooter {...commonProps} />);
+      const tableHeaderHeight = measureComponent(<table className="w-full" style={previewStyle}><thead data-element="table-header"><tr><th>Header</th></tr></thead></table>);
+
+      const firstPageAvailableHeight = AVAILABLE_PAGE_HEIGHT_PX - firstPageHeaderHeight - footerHeight - tableHeaderHeight;
+      const subsequentPageAvailableHeight = AVAILABLE_PAGE_HEIGHT_PX - subsequentPageHeaderHeight - footerHeight - tableHeaderHeight;
+      
+      const rowHeights = invoice.lineItems.map(item =>
+        measureComponent(<table className="w-full" style={previewStyle}><tbody><tr data-element="table-row">{item.name}</tr></tbody></table>)
+      );
+
+      const pages: LineItem[][] = [];
+      let currentPageItems: LineItem[] = [];
+      let currentHeight = 0;
+
+      for (let i = 0; i < invoice.lineItems.length; i++) {
+        const itemHeight = rowHeights[i];
+        const isFirstPage = pages.length === 0;
+        const availableHeight = isFirstPage ? firstPageAvailableHeight : subsequentPageAvailableHeight;
         
-        const firstPageAvailableHeight = AVAILABLE_PAGE_HEIGHT_PX - firstPageHeaderHeight - footerHeight;
-        const subsequentPageAvailableHeight = AVAILABLE_PAGE_HEIGHT_PX - subsequentPageHeaderHeight - footerHeight;
-
-        const rowHeights = invoice.lineItems.map(item => renderAndMeasure(() => <div style={previewStyle}><ItemsTable items={[item]} {...commonProps} /></div>) );
-
-        const pages: LineItem[][] = [];
-        let currentPageItems: LineItem[] = [];
-        let currentHeight = tableHeaderHeight; // Start with table header height
-        
-        for (let i = 0; i < invoice.lineItems.length; i++) {
-            const itemHeight = rowHeights[i];
-            const availableHeight = pages.length === 0 ? firstPageAvailableHeight : subsequentPageAvailableHeight;
-            
-            if (currentHeight + itemHeight > availableHeight && currentPageItems.length > 0) {
-                pages.push(currentPageItems);
-                currentPageItems = [];
-                currentHeight = tableHeaderHeight;
-            }
-            
-            currentPageItems.push(invoice.lineItems[i]);
-            currentHeight += itemHeight;
-        }
-
-        if (currentPageItems.length > 0) {
+        if (currentHeight + itemHeight > availableHeight && currentPageItems.length > 0) {
             pages.push(currentPageItems);
+            currentPageItems = [];
+            currentHeight = 0;
         }
+        
+        currentPageItems.push(invoice.lineItems[i]);
+        currentHeight += itemHeight;
+      }
 
-        setPaginatedItems(pages.length > 0 ? pages : [[]]);
-        setNeedsRemeasure(false);
+      if (currentPageItems.length > 0) {
+        pages.push(currentPageItems);
+      }
+      
+      setPaginatedItems(pages.length > 0 ? pages : [[]]);
+      setNeedsRemeasure(false);
 
-        document.body.removeChild(measurementContainer);
+      document.body.removeChild(measurementRoot);
     };
 
     const timer = setTimeout(measureAndPaginate, 150);
     return () => clearTimeout(timer);
-  }, [isPrint, needsRemeasure, TemplateComponent, serializedInvoice, commonProps]);
+  }, [isPrint, needsRemeasure, TemplateComponent, commonProps, invoice.lineItems, previewStyle, serializedInvoice]);
   
   if (isPrint) {
     const itemsToRender = needsRemeasure ? [invoice.lineItems] : (paginatedItems.length > 0 ? paginatedItems : [[]]);
@@ -759,7 +320,13 @@ const InvoicePreviewInternal: FC<InvoicePreviewProps> = ({ invoice, accentColor,
       </CardContent>
     </Card>
   );
-}
+};
+
+const PagePropsFooter: FC<Omit<PageProps, 'pageItems' | 'pageIndex' | 'totalPages'>> = (props) => {
+    // A simplified footer just for measurement, adjust if your footers are very different
+    return <footer className="mt-auto pt-8">Footer Content</footer>
+};
+
 
 export const ClientInvoicePreview: FC<InvoicePreviewProps> = (props) => {
     const processedInvoice = useMemo(() => {
