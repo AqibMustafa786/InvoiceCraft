@@ -68,6 +68,7 @@ export const HvacDetails: React.FC<{ invoice: Invoice, t: any }> = ({ invoice, t
 };
 
 
+// Template 1: Direct Interpretation of user image
 export const HVACTemplate1: React.FC<PageProps> = (props) => {
     const { invoice, pageItems, pageIndex, totalPages, subtotal, taxAmount, discountAmount, total, balanceDue, currencySymbol, t, accentColor, textColor } = props;
     const { business, client } = invoice;
@@ -125,7 +126,10 @@ export const HVACTemplate1: React.FC<PageProps> = (props) => {
                     <tbody>
                         {pageItems.map((item) => (
                             <tr key={item.id} className="border-b border-gray-200">
-                                <td className="p-2 align-top whitespace-pre-line">{item.name}</td>
+                                <td className="p-2 align-top">
+                                    <p className="font-semibold whitespace-pre-line">{item.name}</p>
+                                    {item.description && <p className="text-xs text-gray-500 whitespace-pre-line">{item.description}</p>}
+                                </td>
                                 <td className="p-2 align-top text-center">{item.quantity}</td>
                                 <td className="p-2 align-top text-right">{currencySymbol}{item.unitPrice.toFixed(2)}</td>
                                 <td className="p-2 align-top text-right">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</td>
@@ -165,18 +169,23 @@ export const HVACTemplate1: React.FC<PageProps> = (props) => {
 export const HVACTemplate2: React.FC<PageProps> = (props) => {
     const { invoice, pageItems, pageIndex, totalPages, subtotal, taxAmount, discountAmount, total, balanceDue, currencySymbol, t, accentColor, textColor } = props;
     const { business, client } = invoice;
-    const docTitle = 'Invoice';
+    const docTitle = (t.invoice || 'Invoice').toUpperCase();
 
     return (
         <div className={`p-10 bg-white font-sans text-gray-700 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: 'Verdana, sans-serif', fontSize: '9.5pt', minHeight: '1056px', backgroundColor: props.backgroundColor, color: textColor }}>
             <header className="flex justify-between items-start mb-10 pb-4 border-b-2" style={{ borderColor: accentColor }}>
                 <div>
                     <h1 className="text-3xl font-bold" style={{ color: accentColor }}>{business.name}</h1>
-                    <p className="text-xs text-gray-500 whitespace-pre-line">{business.address}</p>
-                    <p className="text-xs text-gray-500">{business.phone} | {business.email}</p>
+                    <div className="text-xs text-gray-500">
+                        <p className="whitespace-pre-line">{business.address}</p>
+                        <p>{business.phone} | {business.email}</p>
+                        {business.website && <p>{business.website}</p>}
+                        {business.licenseNumber && <p>Lic #: {business.licenseNumber}</p>}
+                        {business.taxId && <p>Tax ID: {business.taxId}</p>}
+                    </div>
                 </div>
                 <div className="text-right">
-                    <h2 className="text-2xl font-light text-gray-400">{docTitle.toUpperCase()}</h2>
+                    <h2 className="text-2xl font-light text-gray-400">{docTitle}</h2>
                 </div>
             </header>
 
@@ -184,12 +193,12 @@ export const HVACTemplate2: React.FC<PageProps> = (props) => {
                 <div>
                     <p className="font-bold text-gray-500">{t.client || 'Client'}:</p>
                     <p className="font-semibold">{client.name}</p>
-                    <p>{client.address}</p>
+                    {client.companyName && <p>{client.companyName}</p>}
+                    <p className="whitespace-pre-line">{client.address}</p>
                     <p>{client.phone} | {client.email}</p>
+                    {client.shippingAddress && <p className="mt-2"><span className="font-bold text-gray-500">Ship To:</span><br/>{client.shippingAddress}</p>}
                 </div>
-                <div>
-                   {client.shippingAddress && <p><span className="font-bold text-gray-500">Ship To:</span><br/>{client.shippingAddress}</p>}
-                </div>
+                <div/>
                 <div className="text-right">
                     <p><span className="font-bold">{t.invoiceNo || 'Invoice #'}:</span> {invoice.invoiceNumber}</p>
                     <p><span className="font-bold">{t.date || 'Date'}:</span> {safeFormat(invoice.invoiceDate, 'MMM d, yyyy')}</p>
@@ -228,7 +237,12 @@ export const HVACTemplate2: React.FC<PageProps> = (props) => {
             
             {pageIndex === totalPages - 1 && (
                 <footer className="mt-auto pt-8">
-                     <div className="flex justify-end">
+                    <div className="flex justify-between items-start">
+                        <div className="w-1/2 text-xs">
+                           <p className="font-bold text-gray-500 mb-2">{t.termsAndConditions || 'Terms & Conditions'}</p>
+                           <p className="whitespace-pre-line">{invoice.paymentInstructions}</p>
+                           {business.ownerSignature && <SignatureDisplay signature={business.ownerSignature} label="Authorized Signature" />}
+                        </div>
                         <div className="w-1/3 text-sm space-y-1">
                             <p className="flex justify-between"><span>{t.subtotal || 'Subtotal'}:</span><span>{currencySymbol}{subtotal.toFixed(2)}</span></p>
                             {discountAmount > 0 && <p className="flex justify-between">{t.discount || 'Discount'}: <span className="text-red-500">-{currencySymbol}{discountAmount.toFixed(2)}</span></p>}
@@ -256,10 +270,13 @@ export const HVACTemplate3: React.FC<PageProps> = (props) => {
             <header className="flex justify-between items-start mb-10">
                 <div>
                     <h1 className="text-4xl font-light tracking-wide">{business.name}</h1>
-                     <p className="text-xs whitespace-pre-line">{business.address}</p>
-                     <p className="text-xs">{business.phone} | {business.email}</p>
-                     {business.website && <p className="text-xs">{business.website}</p>}
-                     {business.taxId && <p className="text-xs">Tax ID: {business.taxId}</p>}
+                     <div className="text-xs whitespace-pre-line mt-1">
+                        <p>{business.address}</p>
+                        <p>{business.phone} | {business.email}</p>
+                        {business.website && <p>{business.website}</p>}
+                        {business.licenseNumber && <p>Lic: {business.licenseNumber}</p>}
+                        {business.taxId && <p>Tax ID: {business.taxId}</p>}
+                    </div>
                 </div>
                 <div className="text-right">
                     <h2 className="text-3xl font-bold">{docTitle.toUpperCase()}</h2>
