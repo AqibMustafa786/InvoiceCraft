@@ -186,9 +186,8 @@ export const PlumbingTemplate2: React.FC<PageProps> = (props) => {
                 <div>
                     <h1 className="text-4xl font-bold" style={{ color: accentColor }}>{business.name}</h1>
                     <p className="text-xs whitespace-pre-line text-gray-500">{business.address}</p>
+                    <p className="text-xs text-gray-500">{business.phone} | {business.email}</p>
                     {business.website && <p className="text-xs text-gray-500">{business.website}</p>}
-                    {business.licenseNumber && <p className="text-xs text-gray-500">Lic #: {business.licenseNumber}</p>}
-                    {business.taxId && <p className="text-xs text-gray-500">Tax ID: {business.taxId}</p>}
                 </div>
                 <div className="text-right">
                     <h2 className="text-3xl font-bold text-gray-400">{docTitle}</h2>
@@ -197,7 +196,7 @@ export const PlumbingTemplate2: React.FC<PageProps> = (props) => {
             </header>
 
             <section className="grid grid-cols-3 gap-4 my-4 text-sm">
-                <div><p className="font-bold text-gray-500">TO</p><p>{client.name}</p>{client.companyName && <p>{client.companyName}</p>}<p>{client.address}</p></div>
+                <div><p className="font-bold text-gray-500">TO</p><p>{client.name}</p>{client.companyName && <p>{client.companyName}</p>}<p>{client.address}</p><p>{client.phone}</p><p>{client.email}</p></div>
                  <div className="text-right col-span-2">
                     <p><span className="font-bold text-gray-500">DATE: </span>{safeFormat(invoice.invoiceDate, 'MMM d, yyyy')}</p>
                     <p><span className="font-bold text-gray-500">DUE DATE: </span>{safeFormat(invoice.dueDate, 'MMM d, yyyy')}</p>
@@ -220,7 +219,10 @@ export const PlumbingTemplate2: React.FC<PageProps> = (props) => {
                     <tbody>
                         {pageItems.map(item => (
                             <tr key={item.id} className="border-b border-gray-100">
-                                <td className="p-2 align-top whitespace-pre-line">{item.name}</td>
+                                <td className="p-2 align-top">
+                                    <p className="font-semibold whitespace-pre-line">{item.name}</p>
+                                    {item.description && <p className="text-xs text-gray-500 whitespace-pre-line">{item.description}</p>}
+                                </td>
                                 <td className="p-2 align-top text-center">{item.quantity}</td>
                                 <td className="p-2 align-top text-right">{currencySymbol}{item.unitPrice.toFixed(2)}</td>
                                 <td className="p-2 align-top text-right">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</td>
@@ -269,6 +271,8 @@ export const PlumbingTemplate3: React.FC<PageProps> = (props) => {
                     <h1 className="text-4xl font-bold">{business.name}</h1>
                     <p className="text-xs">{business.address}</p>
                     {business.website && <p className="text-xs">{business.website}</p>}
+                    {business.licenseNumber && <p className="text-xs">Lic #: {business.licenseNumber}</p>}
+                    {business.taxId && <p className="text-xs">Tax ID: {business.taxId}</p>}
                 </div>
                 <div className="text-right">
                     <h2 className="text-3xl font-light tracking-widest">{docTitle.toUpperCase()}</h2>
@@ -286,6 +290,7 @@ export const PlumbingTemplate3: React.FC<PageProps> = (props) => {
                 <div className="text-right">
                     <p><span className="font-bold">Date:</span> {safeFormat(invoice.invoiceDate, 'yyyy-MM-dd')}</p>
                     <p><span className="font-bold">Due Date:</span> {safeFormat(invoice.dueDate, 'yyyy-MM-dd')}</p>
+                    {invoice.poNumber && <p><span className="font-bold">PO #:</span> {invoice.poNumber}</p>}
                 </div>
             </section>
             
@@ -304,7 +309,10 @@ export const PlumbingTemplate3: React.FC<PageProps> = (props) => {
                     <tbody>
                         {pageItems.map(item => (
                             <tr key={item.id}>
-                                <td className="p-2 border-b border-gray-200 whitespace-pre-line">{item.name}</td>
+                                <td className="p-2 border-b border-gray-200">
+                                    <p className="font-semibold whitespace-pre-line">{item.name}</p>
+                                    {item.description && <p className="text-xs text-gray-500 whitespace-pre-line">{item.description}</p>}
+                                </td>
                                 <td className="p-2 border-b border-gray-200 text-center">{item.quantity}</td>
                                 <td className="p-2 border-b border-gray-200 text-right">{currencySymbol}{item.unitPrice.toFixed(2)}</td>
                                 <td className="p-2 border-b border-gray-200 text-right">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</td>
@@ -391,7 +399,10 @@ export const PlumbingTemplate4: React.FC<PageProps> = (props) => {
                         <tbody>
                             {pageItems.map(item => (
                                 <tr key={item.id} className="border-b border-gray-100">
-                                    <td className="py-2 align-top whitespace-pre-line">{item.name}</td>
+                                    <td className="py-2 align-top">
+                                        <p className="font-semibold whitespace-pre-line">{item.name}</p>
+                                        {item.description && <p className="text-xs text-gray-500 whitespace-pre-line">{item.description}</p>}
+                                    </td>
                                     <td className="py-2 align-top text-center">{item.quantity}</td>
                                     <td className="py-2 align-top text-right">{currencySymbol}{item.unitPrice.toFixed(2)}</td>
                                     <td className="py-2 align-top text-right">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</td>
@@ -468,7 +479,10 @@ export const PlumbingTemplate5: React.FC<PageProps> = (props) => {
                     <tbody>
                         {pageItems.map(item => (
                             <tr key={item.id} className="border-b border-gray-100">
-                                <td className="py-2 align-top whitespace-pre-line">{item.name}</td>
+                                <td className="py-2 align-top">
+                                    <p className="font-semibold whitespace-pre-line">{item.name}</p>
+                                    {item.description && <p className="text-xs text-gray-500 whitespace-pre-line">{item.description}</p>}
+                                </td>
                                 <td className="py-2 align-top text-center">{item.quantity}</td>
                                 <td className="py-2 align-top text-right">{currencySymbol}{item.unitPrice.toFixed(2)}</td>
                                 <td className="py-2 align-top text-right font-semibold">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</td>
