@@ -636,7 +636,9 @@ const InvoicePreviewInternal: FC<InvoicePreviewProps> = ({ invoice, accentColor,
 
                 if (!header || !tableHeader || allRows.length === 0) {
                     setNeedsRemeasure(false);
-                    document.body.removeChild(tempRoot);
+                    if (document.body.contains(tempRoot)) {
+                         document.body.removeChild(tempRoot);
+                    }
                     return;
                 }
 
@@ -644,31 +646,26 @@ const InvoicePreviewInternal: FC<InvoicePreviewProps> = ({ invoice, accentColor,
                 const tableHeaderHeight = tableHeader.offsetHeight;
                 const footerHeight = footerContent?.offsetHeight || 200; // Estimate footer height
 
-                const firstPageAvailableHeight = AVAILABLE_PAGE_HEIGHT - headerHeight - tableHeaderHeight;
-                const subsequentPageAvailableHeight = AVAILABLE_PAGE_HEIGHT - tableHeaderHeight; // Assuming no large header on next pages
+                const firstPageAvailableHeight = AVAILABLE_PAGE_HEIGHT - headerHeight - tableHeaderHeight - footerHeight;
+                const subsequentPageAvailableHeight = AVAILABLE_PAGE_HEIGHT - tableHeaderHeight - footerHeight;
 
                 let pages: LineItem[][] = [];
                 let currentPageItems: LineItem[] = [];
                 let currentHeight = 0;
+                let currentPage = 0;
 
                 for (let i = 0; i < allRows.length; i++) {
                     const row = allRows[i];
                     const item = invoice.lineItems[i];
                     const rowHeight = row.offsetHeight;
-                    const isFirstPage = pages.length === 0;
 
-                    const availableHeight = isFirstPage ? firstPageAvailableHeight : subsequentPageAvailableHeight;
+                    const availableHeight = currentPage === 0 ? firstPageAvailableHeight : subsequentPageAvailableHeight;
                     
-                    if (currentHeight + rowHeight > availableHeight - (isFirstPage ? footerHeight : 0)) {
-                        // Check if adding the footer would push it over
-                        if (currentHeight + rowHeight + footerHeight > availableHeight && i < allRows.length - 1) {
-                            pages.push(currentPageItems);
-                            currentPageItems = [item];
-                            currentHeight = rowHeight;
-                        } else {
-                             currentPageItems.push(item);
-                             currentHeight += rowHeight;
-                        }
+                    if (currentHeight + rowHeight > availableHeight) {
+                        pages.push(currentPageItems);
+                        currentPageItems = [item];
+                        currentHeight = rowHeight;
+                        currentPage++;
                     } else {
                         currentPageItems.push(item);
                         currentHeight += rowHeight;
