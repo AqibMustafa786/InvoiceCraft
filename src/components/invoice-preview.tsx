@@ -1,7 +1,7 @@
 
-
 'use client';
 
+import * as React from 'react';
 import { useState, useLayoutEffect, useRef, useEffect, FC, useMemo } from 'react';
 import type { Invoice, LineItem, CustomField } from '@/lib/types';
 import { Card, CardContent } from '@/components/ui/card';
@@ -101,8 +101,8 @@ const ItemsTable: FC<{ items: LineItem[], t: any, currencySymbol: string, accent
                     {item.description && <p className="text-xs text-muted-foreground whitespace-pre-line" style={{ wordBreak: 'break-all' }}>{item.description}</p>}
                 </td>
                 <td className="p-3 text-center align-top tabular-nums">{item.quantity}</td>
-                <td className="p-3 text-right align-top tabular-nums">{currencySymbol}{(item.unitPrice || 0).toFixed(2)}</td>
-                <td className="p-3 text-right align-top tabular-nums font-medium">{currencySymbol}{(item.quantity * (item.unitPrice || 0)).toFixed(2)}</td>
+                <td className="p-3 text-right align-top tabular-nums">{currencySymbol}{(toNumberSafe(item.unitPrice) || 0).toFixed(2)}</td>
+                <td className="p-3 text-right align-top tabular-nums font-medium">{currencySymbol}{(toNumberSafe(item.quantity) * (toNumberSafe(item.unitPrice) || 0)).toFixed(2)}</td>
                 </tr>
             ))}
             </tbody>
@@ -425,7 +425,7 @@ const ElegantTemplatePage: FC<PageProps> = ({ pageItems, pageIndex, totalPages, 
 
 // --- TEMPLATE: USA ---
 const UsaTemplatePage: FC<PageProps> = ({ pageItems, pageIndex, totalPages, ...commonProps }) => {
-    const { invoice, t, accentColor, subtotal, currencySymbol } = commonProps;
+    const { invoice, t, currencySymbol, subtotal, accentColor } = commonProps;
     const { business, client } = invoice;
 
     return (
@@ -479,8 +479,8 @@ const UsaTemplatePage: FC<PageProps> = ({ pageItems, pageIndex, totalPages, ...c
                                 <tr key={item.id} data-element="table-row">
                                     <td className="border p-2 align-top h-8 whitespace-pre-line">{item.name}{item.description && `\n${item.description}`}</td>
                                     <td className="border p-2 text-center align-top">{item.quantity}</td>
-                                    <td className="border p-2 text-right align-top">{currencySymbol}{(item.unitPrice || 0).toFixed(2)}</td>
-                                    <td className="border p-2 text-right align-top">{currencySymbol}{(item.quantity * ((item as any).unitPrice || 0)).toFixed(2)}</td>
+                                    <td className="border p-2 text-right align-top">{currencySymbol}{(toNumberSafe(item.unitPrice) || 0).toFixed(2)}</td>
+                                    <td className="border p-2 text-right align-top">{currencySymbol}{(toNumberSafe(item.quantity) * (toNumberSafe(item.unitPrice) || 0)).toFixed(2)}</td>
                                 </tr>
                             ))}
                         </tbody>
@@ -602,7 +602,7 @@ const InvoicePreviewInternal: FC<InvoicePreviewProps> = ({ invoice, accentColor,
 
   const t = locales[invoice.language as keyof locales] || locales.en;
   
-  const subtotal = invoice.lineItems.reduce((acc, item) => acc + item.quantity * ((item as any).unitPrice || 0), 0);
+  const subtotal = invoice.lineItems.reduce((acc, item) => acc + item.quantity * (toNumberSafe((item as any).unitPrice) || 0), 0);
   const taxAmount = (subtotal * invoice.summary.taxPercentage) / 100;
   const discountAmount = invoice.summary.discount;
   const total = subtotal + taxAmount - discountAmount + (invoice.summary.shippingCost || 0);
@@ -647,83 +647,76 @@ const InvoicePreviewInternal: FC<InvoicePreviewProps> = ({ invoice, accentColor,
     if (!isPrint || !needsRemeasure || typeof window === 'undefined' || !TemplateComponent) return;
   
     const measureAndPaginate = () => {
-      const measurementContainer = document.createElement('div');
-      measurementContainer.style.position = 'absolute';
-      measurementContainer.style.left = '-9999px';
-      measurementContainer.style.width = '8.5in';
-      document.body.appendChild(measurementContainer);
-  
-      const measureComponent = (component: React.ReactElement): number => {
-        const div = document.createElement('div');
-        measurementContainer.appendChild(div);
-        const root = require('react-dom/client').createRoot(div);
-        root.render(component);
-        const height = div.clientHeight;
-        root.unmount();
-        div.remove();
-        return height;
-      };
-      
-      let headerContent = (
-          <div data-element="page-content" className="flex-grow">
-              <header data-element="header"></header>
-              <section data-element="client-details"></section>
-              <div data-element="category-details"></div>
-          </div>
-      );
-      
-      const firstPageDummy = <TemplateComponent {...commonProps} pageItems={[]} pageIndex={0} totalPages={1} />;
-      const subsequentPageDummy = <TemplateComponent {...commonProps} pageItems={[]} pageIndex={1} totalPages={2} />;
+        if (typeof window === 'undefined' || typeof document === 'undefined') return;
+        const measurementContainer = document.createElement('div');
+        measurementContainer.style.position = 'absolute';
+        measurementContainer.style.left = '-9999px';
+        measurementContainer.style.width = '8.5in'; // Standard letter width
+        document.body.appendChild(measurementContainer);
+    
+        const measureComponent = (component: React.ReactElement): number => {
+            const div = document.createElement('div');
+            measurementContainer.appendChild(div);
+            // This is a workaround for client-side only rendering
+            const root = (require('react-dom/client') as any).createRoot(div);
+            root.render(component);
+            const height = div.clientHeight;
+            root.unmount();
+            div.remove();
+            return height;
+        };
 
-      const firstPageHeaderHeight = measureComponent(
-        <div style={previewStyle} className="p-8 md:p-10">{React.cloneElement(firstPageDummy, { children: headerContent })}</div>
-      );
-      const subsequentPageHeaderHeight = measureComponent(
-        <div style={previewStyle} className="p-8 md:p-10">{React.cloneElement(subsequentPageDummy, { children: headerContent })}</div>
-      );
-      
-      const footerHeight = measureComponent(<InvoiceFooter {...commonProps} />);
-      const tableHeaderHeight = measureComponent(<table className="w-full"><thead data-element="table-header"><tr><th>Header</th></tr></thead></table>);
-      
-      const firstPageAvailableHeight = AVAILABLE_PAGE_HEIGHT_PX - firstPageHeaderHeight - footerHeight;
-      const subsequentPageAvailableHeight = AVAILABLE_PAGE_HEIGHT_PX - subsequentPageHeaderHeight - footerHeight;
-      
-      const rowHeights = invoice.lineItems.map(item => measureComponent(<ItemsTable items={[item]} {...commonProps} />));
-  
-      const pages: LineItem[][] = [];
-      let currentPageItems: LineItem[] = [];
-      let currentHeight = 0;
-  
-      for (let i = 0; i < invoice.lineItems.length; i++) {
-        const itemHeight = rowHeights[i];
-        const isFirstPage = pages.length === 0;
-        const availableHeight = isFirstPage ? firstPageAvailableHeight : subsequentPageAvailableHeight;
-  
-        const additionalHeight = (currentPageItems.length === 0 ? tableHeaderHeight : 0);
-  
-        if (currentHeight + additionalHeight + itemHeight > availableHeight && currentPageItems.length > 0) {
-          pages.push(currentPageItems);
-          currentPageItems = [];
-          currentHeight = 0;
+        const renderAndMeasure = (renderFunc: () => React.ReactElement) => {
+            const div = document.createElement('div');
+            measurementContainer.appendChild(div);
+            const root = (require('react-dom/client') as any).createRoot(div);
+            root.render(renderFunc());
+            const height = div.offsetHeight;
+            root.unmount();
+            div.remove();
+            return height;
+        };
+
+        const headerHeight = renderAndMeasure(() => <div style={previewStyle} className="p-8 md:p-10"><header data-element="header"></header><section data-element="client-details"></section><div data-element="category-details"></div></div>);
+        const footerHeight = renderAndMeasure(() => <InvoiceFooter {...commonProps} />);
+        const tableHeaderHeight = renderAndMeasure(() => <table className="w-full"><thead data-element="table-header"><tr><th>Header</th></tr></thead></table>);
+        
+        const firstPageAvailableHeight = AVAILABLE_PAGE_HEIGHT_PX - headerHeight - footerHeight - tableHeaderHeight;
+        const subsequentPageAvailableHeight = AVAILABLE_PAGE_HEIGHT_PX - headerHeight - footerHeight - tableHeaderHeight; // Simplified for now
+
+        const rowHeights = invoice.lineItems.map(item => renderAndMeasure(() => <ItemsTable items={[item]} {...commonProps} />) );
+
+        const pages: LineItem[][] = [];
+        let currentPageItems: LineItem[] = [];
+        let currentHeight = 0;
+        
+        const availableHeight = pages.length === 0 ? firstPageAvailableHeight : subsequentPageAvailableHeight;
+        
+        for (let i = 0; i < invoice.lineItems.length; i++) {
+            const itemHeight = rowHeights[i];
+            
+            if (currentHeight + itemHeight > availableHeight && currentPageItems.length > 0) {
+                pages.push(currentPageItems);
+                currentPageItems = [];
+                currentHeight = 0;
+            }
+            
+            currentPageItems.push(invoice.lineItems[i]);
+            currentHeight += itemHeight;
         }
-  
-        currentPageItems.push(invoice.lineItems[i]);
-        currentHeight += itemHeight;
-      }
-  
-      if (currentPageItems.length > 0) {
-        pages.push(currentPageItems);
-      }
-  
-      setPaginatedItems(pages.length > 0 ? pages : [[]]);
-      setNeedsRemeasure(false);
-  
-      document.body.removeChild(measurementContainer);
+
+        if (currentPageItems.length > 0) {
+            pages.push(currentPageItems);
+        }
+
+        setPaginatedItems(pages.length > 0 ? pages : [[]]);
+        setNeedsRemeasure(false);
+
+        document.body.removeChild(measurementContainer);
     };
-  
+
     const timer = setTimeout(measureAndPaginate, 150);
     return () => clearTimeout(timer);
-  
   }, [isPrint, needsRemeasure, TemplateComponent, serializedInvoice, commonProps]);
   
   if (isPrint) {
@@ -787,6 +780,3 @@ export const ClientInvoicePreview: FC<InvoicePreviewProps> = (props) => {
 
 
 export { InvoicePreviewInternal as InvoicePreview };
-
-    
-
