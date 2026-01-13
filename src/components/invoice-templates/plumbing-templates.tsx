@@ -112,11 +112,12 @@ export const PlumbingTemplate1: React.FC<PageProps> = (props) => {
                  <table className="w-full text-left text-xs">
                     <thead>
                         <tr className="bg-black text-white">
-                            <th className="p-1.5 font-bold w-[5%]">ID</th>
-                            <th className="p-1.5 font-bold w-[55%]">PLUMBING SERVICE</th>
-                            <th className="p-1.5 font-bold text-center">QUANTITY</th>
-                            <th className="p-1.5 font-bold text-right">PRICE</th>
-                            <th className="p-1.5 font-bold text-right">TOTAL</th>
+                            <th className="p-1.5 font-bold w-[5%]">{t.id || 'ID'}</th>
+                            <th className="p-1.5 font-bold w-[30%]">{t.item || 'ITEM'}</th>
+                            <th className="p-1.5 font-bold w-[25%]">{t.description || 'DESCRIPTION'}</th>
+                            <th className="p-1.5 font-bold text-center">{t.quantity || 'QTY'}</th>
+                            <th className="p-1.5 font-bold text-right">{t.price || 'PRICE'}</th>
+                            <th className="p-1.5 font-bold text-right">{t.total || 'TOTAL'}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -124,6 +125,7 @@ export const PlumbingTemplate1: React.FC<PageProps> = (props) => {
                             <tr key={item.id} className="border-b border-gray-300">
                                 <td className="p-1.5 align-top">{index + 1}</td>
                                 <td className="p-1.5 align-top whitespace-pre-line">{item.name}</td>
+                                <td className="p-1.5 align-top whitespace-pre-line">{item.description}</td>
                                 <td className="p-1.5 align-top text-center">{item.quantity}</td>
                                 <td className="p-1.5 align-top text-right">{currencySymbol}{item.unitPrice.toFixed(2)}</td>
                                 <td className="p-1.5 align-top text-right">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</td>
@@ -397,7 +399,7 @@ export const PlumbingTemplate4: React.FC<PageProps> = (props) => {
                                 {invoice.summary.shippingCost > 0 && <div className="flex justify-between p-2"><span className="text-gray-600">Shipping/Extra:</span><span>{currencySymbol}{invoice.summary.shippingCost.toFixed(2)}</span></div>}
                                 <div className="flex justify-between p-2"><span className="text-gray-600">Tax:</span><span>{currencySymbol}{taxAmount.toFixed(2)}</span></div>
                                 <div className="flex justify-between p-2 bg-gray-800 text-white font-bold text-base"><span>Total:</span><span>{currencySymbol}{total.toFixed(2)}</span></div>
-                                {(invoice.amountPaid || 0) > 0 && <div className="flex justify-between p-2 text-green-600"><span>Amount Paid:</span><span>-{currencySymbol}{(invoice.amountPaid || 0).toFixed(2)}</span></div>}
+                                {(invoice.amountPaid || 0) > 0 && <div className="flex justify-between p-2 text-green-600 font-bold"><span>Amount Paid:</span><span>-{currencySymbol}{(invoice.amountPaid || 0).toFixed(2)}</span></div>}
                                 <div className="flex justify-between p-2 bg-gray-200 font-bold"><span>Balance Due:</span><span>{currencySymbol}{balanceDue.toFixed(2)}</span></div>
                             </div>
                         </div>
@@ -491,3 +493,5 @@ export const PlumbingTemplate5: React.FC<PageProps> = (props) => {
         </div>
     );
 };
+
+```
