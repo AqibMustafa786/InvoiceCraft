@@ -158,6 +158,8 @@ export const GenericTemplate2: React.FC<PageProps> = (props) => {
                         {business.phone && <p>{business.phone}</p>}
                         {business.email && <p>{business.email}</p>}
                         {business.website && <p>{business.website}</p>}
+                        {business.licenseNumber && <p>Lic #: {business.licenseNumber}</p>}
+                        {business.taxId && <p>Tax ID: {business.taxId}</p>}
                     </div>
                 </div>
                 <div className="text-right">
@@ -200,7 +202,10 @@ export const GenericTemplate2: React.FC<PageProps> = (props) => {
                         <tbody>
                             {pageItems.map(item => (
                                 <tr key={item.id} className="border-b border-gray-200">
-                                    <td className="py-2 align-top whitespace-pre-line">{item.name}</td>
+                                    <td className="py-2 align-top">
+                                        <p className="font-medium whitespace-pre-line">{item.name}</p>
+                                        {item.description && <p className="text-xs text-gray-500 whitespace-pre-line" style={{ wordBreak: 'break-all' }}>{item.description}</p>}
+                                    </td>
                                     <td className="py-2 align-top text-center">{item.quantity}</td>
                                     <td className="py-2 align-top text-right">{currencySymbol}{item.unitPrice.toFixed(2)}</td>
                                     <td className="py-2 align-top text-right">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</td>
@@ -329,6 +334,8 @@ export const GenericTemplate4: React.FC<PageProps> = (props) => {
                     {business.phone && <p>{business.phone}</p>}
                     {business.email && <p>{business.email}</p>}
                     {business.website && <p>{business.website}</p>}
+                    {business.licenseNumber && <p>Lic #: {business.licenseNumber}</p>}
+                    {business.taxId && <p>Tax ID: {business.taxId}</p>}
                 </div>
                 <div className="text-sm space-y-4 mt-8">
                   <div>
