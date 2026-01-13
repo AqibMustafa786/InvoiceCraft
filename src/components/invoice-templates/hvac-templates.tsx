@@ -266,7 +266,7 @@ export const HVACTemplate3: React.FC<PageProps> = (props) => {
     const docTitle = 'Invoice';
 
     return (
-        <div className={`p-10 font-sans text-gray-700 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: 'Roboto, sans-serif', fontSize: `9pt`, minHeight: '1056px', backgroundColor: props.backgroundColor, color: textColor }}>
+        <div className={`p-10 font-sans text-gray-700 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: 'Roboto, sans-serif', fontSize: `9pt`, minHeight: '1056px', backgroundColor: props.backgroundColor, color: props.textColor }}>
             <header className="flex justify-between items-start mb-10">
                 <div>
                     <h1 className="text-4xl font-light tracking-wide">{business.name}</h1>
@@ -296,7 +296,7 @@ export const HVACTemplate3: React.FC<PageProps> = (props) => {
                 </div>
                 <div>
                     <p className="font-bold">{t.details || 'Details'}:</p>
-                    <p>{t.date || 'Date'}: {safeFormat(invoice.invoiceDate, 'MM-dd-yyyy')}<br/>Due: {safeFormat(invoice.dueDate, 'MM-dd-yyyy')}<br/>PO: {invoice.poNumber}</p>
+                    <p>{t.date || 'Date'}: {safeFormat(invoice.invoiceDate, 'MM-dd-yyyy')}<br/>Due: {safeFormat(invoice.dueDate, 'MM-dd-yyyy')}<br/>{invoice.poNumber && `PO: ${invoice.poNumber}`}</p>
                 </div>
             </section>
             
