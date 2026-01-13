@@ -278,9 +278,7 @@ function DashboardPageContent() {
     const { user, userProfile, isLoading: isAuthLoading } = useAuth();
     const router = useRouter();
 
-    const userPlan = userProfile?.plan || 'free';
     const companyId = userProfile?.companyId;
-    const isBusinessPlan = userPlan === 'business';
 
     const clientsQuery = useMemoFirebase(() => {
         if (!firestore || !companyId) return null;
@@ -320,9 +318,6 @@ function DashboardPageContent() {
     const { data: quotes, isLoading: isLoadingQuotes } = useCollection<Quote>(quotesQuery);
     const { data: insuranceDocs, isLoading: isLoadingInsurance } = useCollection<InsuranceDocument>(insuranceQuery);
     
-    const canCreateInvoice = isBusinessPlan || (invoices?.length || 0) < 5;
-    const canCreateEstimate = isBusinessPlan || (estimates?.length || 0) < 3;
-
     const handleKpiClick = (title: string, data: DocumentType[]) => {
         setModalState({ isOpen: true, title, data });
     };
@@ -337,44 +332,9 @@ function DashboardPageContent() {
         setHistoryModalState({ isOpen: true, auditLog: sortedLog });
     };
 
-    const handleCreateInvoice = () => {
-        if (canCreateInvoice) {
-            router.push('/create-invoice');
-        } else {
-            toast({
-                title: "Free Plan Limit Reached",
-                description: "Upgrade to the Business Plan to create unlimited invoices.",
-                variant: "destructive"
-            });
-            router.push('/pricing');
-        }
-    };
-    
-    const handleCreateEstimate = () => {
-        if (canCreateEstimate) {
-            router.push('/create-estimate');
-        } else {
-            toast({
-                title: "Free Plan Limit Reached",
-                description: "Upgrade to the Business Plan to create unlimited estimates.",
-                variant: "destructive"
-            });
-             router.push('/pricing');
-        }
-    };
-
-    const handleCreateQuote = () => {
-        if (isBusinessPlan) {
-            router.push('/create-quote');
-        } else {
-            toast({
-                title: "Upgrade Required",
-                description: "Creating quotes is a Business Plan feature. Please upgrade your plan.",
-                variant: "destructive"
-            });
-            router.push('/pricing');
-        }
-    };
+    const handleCreateInvoice = () => router.push('/create-invoice');
+    const handleCreateEstimate = () => router.push('/create-estimate');
+    const handleCreateQuote = () => router.push('/create-quote');
     
     const handleAddClient = () => {
         setEditingClient(null);
@@ -433,15 +393,6 @@ function DashboardPageContent() {
     
     const handleConvertToInvoice = async (estimate: Estimate | Quote) => {
         if (!firestore || !user || !companyId) return;
-        if (!canCreateInvoice) {
-            toast({
-                title: "Free Plan Limit Reached",
-                description: "You have reached your invoice limit. Please convert this document.",
-                variant: 'destructive'
-            });
-            router.push('/pricing');
-            return;
-        }
         
         const { business, client, lineItems, summary, projectTitle, currency, language, estimateNumber, auditLog } = estimate;
 
@@ -500,14 +451,6 @@ function DashboardPageContent() {
     };
 
     const handleShare = (docId: string, docType: 'estimate' | 'quote' | 'insurance') => {
-        if (!isBusinessPlan) {
-            toast({
-                title: "Upgrade to Share",
-                description: "Sharing documents via a link is a Business Plan feature.",
-                variant: 'destructive'
-            });
-            return;
-        }
         const url = `${window.location.origin}/${docType}/${docId}`;
         navigator.clipboard.writeText(url);
         toast({
@@ -1139,6 +1082,7 @@ export default function DashboardPage() {
         </Suspense>
     );
 }
+
 
 
 

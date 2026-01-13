@@ -299,24 +299,6 @@ export default function ClientPage() {
 
   const handleCreateDocument = (docType: 'invoice' | 'estimate' | 'quote' | 'insurance') => {
     if (!client) return;
-
-    // Check plan limits
-    const isBusinessPlan = userProfile?.plan === 'business';
-    if (docType === 'invoice' && !isBusinessPlan && (invoices?.length || 0) >= 5) {
-        toast({ title: "Free Plan Limit Reached", description: "Upgrade to create unlimited invoices.", variant: "destructive" });
-        router.push('/pricing');
-        return;
-    }
-    if (docType === 'estimate' && !isBusinessPlan && (estimates?.length || 0) >= 3) {
-        toast({ title: "Free Plan Limit Reached", description: "Upgrade to create unlimited estimates.", variant: "destructive" });
-        router.push('/pricing');
-        return;
-    }
-    if ((docType === 'quote' || docType === 'insurance') && !isBusinessPlan) {
-        toast({ title: "Upgrade Required", description: `Creating ${docType}s is a Business Plan feature.`, variant: "destructive" });
-        router.push('/pricing');
-        return;
-    }
     
     const queryParams = new URLSearchParams({
         clientId: client.id,
@@ -654,6 +636,7 @@ export default function ClientPage() {
     </div>
   );
 }
+
 
 
 
