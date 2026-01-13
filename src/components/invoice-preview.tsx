@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import { useState, useLayoutEffect, useRef, useEffect, FC, useMemo } from 'react';
@@ -464,14 +465,18 @@ const UsaTemplatePage: FC<PageProps> = ({ pageItems, pageIndex, totalPages, ...c
                     <table className="w-full border-collapse border text-sm" data-element="items-table">
                         <thead data-element="table-header">
                             <tr className="bg-gray-100">
-                                <th className="border p-2 font-bold w-full text-left">Description</th>
-                                <th className="border p-2 font-bold text-right">Total</th>
+                                <th className="border p-2 font-bold text-left w-[50%]">Description</th>
+                                <th className="border p-2 font-bold text-center w-[15%]">Quantity</th>
+                                <th className="border p-2 font-bold text-right w-[15%]">Unit Price</th>
+                                <th className="border p-2 font-bold text-right w-[20%]">Total</th>
                             </tr>
                         </thead>
                         <tbody>
                             {pageItems?.filter(Boolean).map((item) => (
                                 <tr key={item.id} data-element="table-row">
                                     <td className="border p-2 align-top h-8 whitespace-pre-line">{item.name}{item.description && `\n${item.description}`}</td>
+                                    <td className="border p-2 text-center align-top">{item.quantity}</td>
+                                    <td className="border p-2 text-right align-top">{currencySymbol}{(item.unitPrice || 0).toFixed(2)}</td>
                                     <td className="border p-2 text-right align-top">{currencySymbol}{(item.quantity * ((item as any).unitPrice || 0)).toFixed(2)}</td>
                                 </tr>
                             ))}
