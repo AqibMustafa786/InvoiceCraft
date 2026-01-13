@@ -369,7 +369,11 @@ export const ElectricalTemplate4: React.FC<PageProps> = (props) => {
                 <header className="flex justify-between items-start mb-10">
                     <div>
                         <h1 className="text-3xl font-bold">{business.name}</h1>
-                        <p className="text-xs">{business.address}</p>
+                        <p className="text-xs whitespace-pre-line">{business.address}</p>
+                        <p className="text-xs">{business.phone} | {business.email}</p>
+                        {business.website && <p className="text-xs">{business.website}</p>}
+                        {business.licenseNumber && <p className="text-xs">Lic #: {business.licenseNumber}</p>}
+                        {business.taxId && <p className="text-xs">Tax ID: {business.taxId}</p>}
                     </div>
                     <div className="text-right">
                         <h2 className="text-2xl font-bold text-gray-400">{docTitle.toUpperCase()}</h2>
@@ -377,8 +381,23 @@ export const ElectricalTemplate4: React.FC<PageProps> = (props) => {
                     </div>
                 </header>
                  <section className="grid grid-cols-2 gap-4 mb-8 text-xs">
-                    <div><p className="font-bold">{t.client || 'CLIENT'}:</p><p>{client.name}, {client.address}</p></div>
-                    <div className="text-right"><p className="font-bold">{t.date || 'DATE'}:</p><p>{safeFormat(invoice.invoiceDate, 'yyyy-MM-dd')}</p></div>
+                    <div>
+                        <p className="font-bold">{t.client || 'CLIENT'}:</p>
+                        <p>{client.name}</p>
+                        {client.companyName && <p>{client.companyName}</p>}
+                        <p>{client.address}</p>
+                        <p>{client.phone}</p>
+                        <p>{client.email}</p>
+                        {client.shippingAddress && <p className="mt-2"><span className="font-bold">Ship To:</span><br/>{client.shippingAddress}</p>}
+                    </div>
+                    <div className="text-right">
+                        <p className="font-bold">{t.date || 'DATE'}:</p>
+                        <p>{safeFormat(invoice.invoiceDate, 'yyyy-MM-dd')}</p>
+                        <p className="font-bold mt-2">{t.dueDate || 'DUE DATE'}:</p>
+                        <p>{safeFormat(invoice.dueDate, 'yyyy-MM-dd')}</p>
+                        {invoice.poNumber && <p className="font-bold mt-2">PO #:</p>}
+                        {invoice.poNumber && <p>{invoice.poNumber}</p>}
+                    </div>
                 </section>
 
                 <CategorySpecificDetails invoice={invoice} t={t}/>
@@ -396,7 +415,10 @@ export const ElectricalTemplate4: React.FC<PageProps> = (props) => {
                         <tbody>
                             {pageItems.map(item => (
                                 <tr key={item.id} className="border-b border-gray-100">
-                                    <td className="p-2 align-top whitespace-pre-line">{item.name}</td>
+                                    <td className="p-2 align-top">
+                                        <p className="font-semibold whitespace-pre-line">{item.name}</p>
+                                        {item.description && <p className="text-xs text-gray-500 whitespace-pre-line">{item.description}</p>}
+                                    </td>
                                     <td className="p-2 align-top text-center">{item.quantity}</td>
                                     <td className="p-2 align-top text-right">{currencySymbol}{item.unitPrice.toFixed(2)}</td>
                                     <td className="p-2 align-top text-right font-medium">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</td>
@@ -516,3 +538,4 @@ export const ElectricalTemplate10: React.FC<PageProps> = (props) => <ElectricalT
     
 
     
+
