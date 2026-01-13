@@ -73,7 +73,7 @@ export function Header() {
     }, []);
 
     // Do not render the header on dashboard pages or specific auth pages
-    if (pathname.startsWith('/dashboard')) {
+    if (pathname.startsWith('/dashboard') || ['/login', '/signup', '/forgot-password'].includes(pathname)) {
         return null;
     }
 

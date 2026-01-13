@@ -1,8 +1,18 @@
 
+'use client';
+
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { Twitter, Github, Linkedin, Instagram } from 'lucide-react';
 
 export function Footer() {
+  const pathname = usePathname();
+  const showFooter = !['/login', '/signup', '/forgot-password'].includes(pathname);
+
+  if (!showFooter) {
+    return null;
+  }
+
   return (
     <footer className="border-t border-border/40 bg-transparent">
       <div className="container grid grid-cols-1 gap-12 px-4 py-12 mx-auto md:grid-cols-5 md:px-6">

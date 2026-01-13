@@ -29,7 +29,6 @@ const roboto = Roboto({
     variable: '--font-roboto',
 });
 
-
 export const metadata: Metadata = {
   title: 'InvoiceCraft - Professional Invoice Generator',
   description: 'Easily create, manage, and export professional invoices.',
