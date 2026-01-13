@@ -261,7 +261,7 @@ export const GenericTemplate3: React.FC<PageProps> = (props) => {
                 </div>
                 <div className="text-right">
                     <h2 className="text-3xl font-bold">{(t.invoice || 'Invoice').toUpperCase()}</h2>
-                    <p># {invoice.invoiceNumber}</p>
+                     <p><span className="font-bold">#</span> {invoice.invoiceNumber}</p>
                 </div>
             </header>
 
@@ -356,13 +356,15 @@ export const GenericTemplate4: React.FC<PageProps> = (props) => {
                     <p className="font-bold opacity-80 mb-1">{(t.client || 'CLIENT').toUpperCase()}</p>
                     <p className="font-bold text-lg">{client.name}</p>
                     {client.companyName && <p>{client.companyName}</p>}
-                    <p>{client.phone}</p>
-                    <p>{client.email}</p>
+                    <p className="whitespace-pre-line mt-1">{client.address}</p>
+                    {client.shippingAddress && <p className="mt-2"><span className="font-bold opacity-80">Ship To:</span><br/>{client.shippingAddress}</p>}
                   </div>
                   <div>
                     <p className="font-bold opacity-80 mb-1">{(t.details || 'DETAILS').toUpperCase()}</p>
                     <p># {invoice.invoiceNumber}</p>
                     <p>{t.date || 'Date'}: {safeFormat(invoice.invoiceDate, 'yyyy-MM-dd')}</p>
+                    <p>{t.dueDate || 'Due'}: {safeFormat(invoice.dueDate, 'yyyy-MM-dd')}</p>
+                    {invoice.poNumber && <p>PO: {invoice.poNumber}</p>}
                   </div>
                 </div>
             </div>
@@ -409,6 +411,10 @@ export const GenericTemplate4: React.FC<PageProps> = (props) => {
                                 {(invoice.amountPaid || 0) > 0 && <div className="flex justify-between p-2 mt-1 text-green-600 font-bold"><span>Amount Paid:</span><span>-{currencySymbol}{(invoice.amountPaid || 0).toFixed(2)}</span></div>}
                                 <div className="flex justify-between p-2 mt-1 font-bold"><span>Balance Due:</span><span>{currencySymbol}{balanceDue.toFixed(2)}</span></div>
                             </div>
+                        </div>
+                        <div className="mt-8 text-xs">
+                           <p className="font-bold uppercase tracking-wider mb-2">{(t.paymentScheduleAndTerms || 'Payment Schedule &amp; Terms')}</p>
+                           <p className="whitespace-pre-line" style={{ color: textColor || '#6B7280' }}>{invoice.paymentInstructions}</p>
                         </div>
                     </footer>
                 )}
