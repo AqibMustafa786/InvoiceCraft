@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useLayoutEffect, useRef, useEffect, FC, useMemo } from 'react';
@@ -563,10 +564,9 @@ const templates: Record<string, FC<PageProps>> = {
   'rental-5': RentalTemplate5,
 };
 
-const PAGE_HEIGHT = 1056;
-const PAGE_PADDING_TOP = 80;
-const PAGE_PADDING_BOTTOM = 80;
-
+const PAGE_HEIGHT_PX = 1056; // 11 inches * 96 DPI
+const PAGE_PADDING_Y_PX = 80; // 40px top + 40px bottom
+const AVAILABLE_PAGE_HEIGHT = PAGE_HEIGHT_PX - PAGE_PADDING_Y_PX;
 
 const InvoicePreviewInternal: FC<InvoicePreviewProps> = ({ invoice, accentColor, backgroundColor, textColor, id = 'invoice-preview', isPrint = false }) => {
   const [paginatedItems, setPaginatedItems] = useState<LineItem[][]>([invoice?.lineItems || []]);
@@ -588,7 +588,6 @@ const InvoicePreviewInternal: FC<InvoicePreviewProps> = ({ invoice, accentColor,
     setNeedsRemeasure(true);
   }, [serializedInvoice]);
 
-
   const previewStyle = {
       '--primary-hsl': accentColor,
       '--primary': accentColor,
@@ -605,91 +604,102 @@ const InvoicePreviewInternal: FC<InvoicePreviewProps> = ({ invoice, accentColor,
 
   const TemplateComponent = getTemplateComponent();
   
-   useLayoutEffect(() => {
-    if (!isPrint || !needsRemeasure) return;
+  useLayoutEffect(() => {
+    if (!isPrint || !needsRemeasure || !TemplateComponent) return;
 
     const measureAndPaginate = () => {
-      const container = containerRef.current;
-      if (!container || !document.body.contains(container)) {
-        // If container isn't in the DOM yet, retry.
-        requestAnimationFrame(measureAndPaginate);
-        return;
-      }
+        const container = containerRef.current;
+        if (!container) {
+            requestAnimationFrame(measureAndPaginate);
+            return;
+        }
 
-      // Clone just the first page for measurement purposes
-      const firstPage = container.querySelector('[data-element="page-container"]');
-      if (!firstPage) return;
+        const tempRoot = document.createElement('div');
+        tempRoot.style.position = 'absolute';
+        tempRoot.style.left = '-9999px';
+        tempRoot.style.width = `${container.clientWidth}px`;
+        document.body.appendChild(tempRoot);
 
-      const tempRoot = document.createElement('div');
-      tempRoot.style.position = 'absolute';
-      tempRoot.style.left = '-9999px';
-      tempRoot.style.width = `${container.clientWidth}px`;
-      document.body.appendChild(tempRoot);
+        try {
+            const tempContainer = container.cloneNode(true) as HTMLElement;
+            tempContainer.style.visibility = 'hidden';
+            tempRoot.appendChild(tempContainer);
 
-      try {
-        const tempContainer = firstPage.cloneNode(true) as HTMLElement;
-        tempRoot.appendChild(tempContainer);
-        
-        // Let browser render the cloned content
-        requestAnimationFrame(() => {
-            const header = tempContainer.querySelector('[data-element="header"]') as HTMLElement;
-            const clientDetails = tempContainer.querySelector('[data-element="client-details"]') as HTMLElement;
-            const invoiceMeta = tempContainer.querySelector('[data-element="invoice-meta"]') as HTMLElement;
-            const categoryDetails = tempContainer.querySelector('[data-element="category-details"]') as HTMLElement;
-            const tableHeader = tempContainer.querySelector('[data-element="table-header"]') as HTMLElement;
-            const allRows = Array.from(tempContainer.querySelectorAll('[data-element="table-row"]')) as HTMLElement[];
-            
-            if (!header || !tableHeader || allRows.length === 0) {
-              setNeedsRemeasure(false);
-              document.body.removeChild(tempRoot);
-              return;
-            }
+            requestAnimationFrame(() => {
+                const header = tempContainer.querySelector('[data-element="header"]') as HTMLElement;
+                const clientDetails = tempContainer.querySelector('[data-element="client-details"]') as HTMLElement;
+                const invoiceMeta = tempContainer.querySelector('[data-element="invoice-meta"]') as HTMLElement;
+                const categoryDetails = tempContainer.querySelector('[data-element="category-details"]') as HTMLElement;
+                const tableHeader = tempContainer.querySelector('[data-element="table-header"]') as HTMLElement;
+                const footerContent = tempContainer.querySelector('[data-element="footer-content"]') as HTMLElement;
+                const allRows = Array.from(tempContainer.querySelectorAll('[data-element="table-row"]')) as HTMLElement[];
 
-            const headerHeight = header.offsetHeight + (clientDetails?.offsetHeight || 0) + (invoiceMeta?.offsetHeight || 0) + (categoryDetails?.offsetHeight || 0);
-            const tableHeaderHeight = tableHeader.offsetHeight;
-            const footerHeight = 250; // Estimate footer height
+                if (!header || !tableHeader || allRows.length === 0) {
+                    setNeedsRemeasure(false);
+                    document.body.removeChild(tempRoot);
+                    return;
+                }
 
-            const firstPageAvailableHeight = PAGE_HEIGHT - PAGE_PADDING_TOP - PAGE_PADDING_BOTTOM - headerHeight - tableHeaderHeight;
-            const subsequentPageAvailableHeight = PAGE_HEIGHT - PAGE_PADDING_TOP - PAGE_PADDING_BOTTOM - headerHeight - tableHeaderHeight;
+                const headerHeight = header.offsetHeight + (clientDetails?.offsetHeight || 0) + (invoiceMeta?.offsetHeight || 0) + (categoryDetails?.offsetHeight || 0);
+                const tableHeaderHeight = tableHeader.offsetHeight;
+                const footerHeight = footerContent?.offsetHeight || 200; // Estimate footer height
 
-            let pages: LineItem[][] = [];
-            let currentPageItems: LineItem[] = [];
-            let currentHeight = 0;
+                const firstPageAvailableHeight = AVAILABLE_PAGE_HEIGHT - headerHeight - tableHeaderHeight;
+                const subsequentPageAvailableHeight = AVAILABLE_PAGE_HEIGHT - tableHeaderHeight; // Assuming no large header on next pages
 
-            allRows.forEach((row, index) => {
-                const itemHeight = row.offsetHeight;
-                const isFirstPage = pages.length === 0;
-                const availableHeight = isFirstPage ? firstPageAvailableHeight : subsequentPageAvailableHeight;
-                
-                if (currentHeight + itemHeight > availableHeight) {
-                    pages.push(currentPageItems);
-                    currentPageItems = [];
-                    currentHeight = 0;
+                let pages: LineItem[][] = [];
+                let currentPageItems: LineItem[] = [];
+                let currentHeight = 0;
+
+                for (let i = 0; i < allRows.length; i++) {
+                    const row = allRows[i];
+                    const item = invoice.lineItems[i];
+                    const rowHeight = row.offsetHeight;
+                    const isFirstPage = pages.length === 0;
+
+                    const availableHeight = isFirstPage ? firstPageAvailableHeight : subsequentPageAvailableHeight;
+                    
+                    if (currentHeight + rowHeight > availableHeight - (isFirstPage ? footerHeight : 0)) {
+                        // Check if adding the footer would push it over
+                        if (currentHeight + rowHeight + footerHeight > availableHeight && i < allRows.length - 1) {
+                            pages.push(currentPageItems);
+                            currentPageItems = [item];
+                            currentHeight = rowHeight;
+                        } else {
+                             currentPageItems.push(item);
+                             currentHeight += rowHeight;
+                        }
+                    } else {
+                        currentPageItems.push(item);
+                        currentHeight += rowHeight;
+                    }
                 }
                 
-                currentPageItems.push(invoice.lineItems[index]);
-                currentHeight += itemHeight;
+                if (currentPageItems.length > 0) {
+                    pages.push(currentPageItems);
+                }
+                
+                if (pages.length === 0 && invoice.lineItems.length > 0) {
+                    pages.push(invoice.lineItems);
+                } else if (pages.length === 0) {
+                    pages.push([]);
+                }
+                
+                setPaginatedItems(pages);
+                setNeedsRemeasure(false);
             });
-
-            pages.push(currentPageItems);
-
-            setPaginatedItems(pages.filter(p => p.length > 0));
-            setNeedsRemeasure(false);
-        });
-
-      } finally {
-        // Clean up asynchronously to be safe
-        setTimeout(() => {
-          if (document.body.contains(tempRoot)) {
-            document.body.removeChild(tempRoot);
-          }
-        }, 100);
-      }
+        } finally {
+            setTimeout(() => {
+                if (document.body.contains(tempRoot)) {
+                    document.body.removeChild(tempRoot);
+                }
+            }, 50);
+        }
     };
-
+    
     measureAndPaginate();
-  }, [serializedInvoice, isPrint, needsRemeasure, TemplateComponent, invoice]);
 
+  }, [isPrint, needsRemeasure, TemplateComponent, serializedInvoice, invoice.lineItems]);
 
   const commonProps: Omit<PageProps, 'pageItems' | 'pageIndex' | 'totalPages'> = {
     invoice,
