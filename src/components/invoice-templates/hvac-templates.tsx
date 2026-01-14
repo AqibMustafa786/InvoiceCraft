@@ -1,3 +1,4 @@
+
 'use client';
 
 import React from 'react';
@@ -100,6 +101,7 @@ export const HVACTemplate1: React.FC<PageProps> = (props) => {
                     <p className="whitespace-pre-line">{client.address}</p>
                     <p>{client.email}</p>
                     <p>{client.phone}</p>
+                    {client.shippingAddress && <p className="mt-2"><span className="font-bold text-gray-500">Ship To:</span><br/>{client.shippingAddress}</p>}
                 </div>
                  <div className="p-4 bg-gray-50 rounded-md">
                      {invoice.poNumber && <p className="mt-2"><span className="font-bold text-gray-500">PO Number:</span><br/>{invoice.poNumber}</p>}
@@ -192,7 +194,7 @@ export const HVACTemplate2: React.FC<PageProps> = (props) => {
                     <p className="font-semibold">{client.name}</p>
                     {client.companyName && <p>{client.companyName}</p>}
                     <p className="whitespace-pre-line">{client.address}</p>
-                    <p>{client.phone} | {client.email}</p>
+                     <p>{client.phone} | {client.email}</p>
                     {client.shippingAddress && <p className="mt-2"><span className="font-bold text-gray-500">Ship To:</span><br/>{client.shippingAddress}</p>}
                 </div>
                 <div/>
@@ -273,6 +275,8 @@ export const HVACTemplate3: React.FC<PageProps> = (props) => {
                         <p>{business.address}</p>
                         <p>{business.phone} | {business.email}</p>
                         {business.website && <p>{business.website}</p>}
+                        {business.licenseNumber && <p>Lic #: {business.licenseNumber}</p>}
+                        {business.taxId && <p>Tax ID: {business.taxId}</p>}
                     </div>
                 </div>
                 <div className="text-right">
@@ -282,17 +286,21 @@ export const HVACTemplate3: React.FC<PageProps> = (props) => {
             </header>
 
             <section className="mb-8 p-4 border rounded-md grid grid-cols-3 gap-4 text-xs">
-                <div><p className="font-bold">{(t.from || 'From')}:</p><p>{business.name}<br/>{business.address}</p></div>
-                <div><p className="font-bold">{(t.to || 'To')}:</p><p>{client.name}<br/>{client.companyName && `${client.companyName}<br/>`}{client.address}<br/>{client.phone}<br/>{client.email}</p></div>
+                <div><p className="font-bold">{(t.from || 'From')}:</p><p className="font-bold">{business.name}<br/>{business.address}</p></div>
+                <div>
+                    <p className="font-bold">{(t.to || 'To')}:</p>
+                    <p>{client.name}<br/>{client.companyName && `${client.companyName}<br/>`}{client.address}<br/>{client.phone}<br/>{client.email}</p>
+                    {client.shippingAddress && <p className="mt-2"><span className="font-bold">Ship To:</span><br/>{client.shippingAddress}</p>}
+                </div>
                 <div><p className="font-bold">{(t.details || 'Details')}:</p><p>{t.date || 'Date'}: {safeFormat(invoice.invoiceDate, 'MM-dd-yyyy')}<br/>Due: {safeFormat(invoice.dueDate, 'MM-dd-yyyy')}<br/>{invoice.poNumber && `PO: ${invoice.poNumber}`}</p></div>
             </section>
             
              <CategorySpecificDetails invoice={invoice} t={t} />
 
             <main className="flex-grow">
-                <table className="w-full text-left text-xs">
-                    <thead className="bg-gray-100">
-                        <tr>
+                 <table className="w-full text-left text-xs">
+                    <thead>
+                        <tr className="bg-gray-100">
                             <th className="p-2 font-bold w-1/2">{(t.serviceDescription || 'SERVICE DESCRIPTION').toUpperCase()}</th>
                             <th className="p-2 font-bold text-center">{(t.quantity || 'QUANTITY').toUpperCase()}</th>
                             <th className="p-2 font-bold text-right">{(t.rate || 'RATE').toUpperCase()}</th>
@@ -349,7 +357,7 @@ export const HVACTemplate4: React.FC<PageProps> = (props) => {
                     <div>
                       <h1 className="text-4xl font-extrabold">{business.name}</h1>
                       <div className="text-xs text-gray-500">
-                        <p>{business.address}</p>
+                        <p className="whitespace-pre-line">{business.address}</p>
                         <p>{business.phone} | {business.email}</p>
                         {business.website && <p>{business.website}</p>}
                         {business.licenseNumber && <p>Lic #: {business.licenseNumber}</p>}
@@ -372,8 +380,8 @@ export const HVACTemplate4: React.FC<PageProps> = (props) => {
                     </div>
                     <div className="text-right">
                          <p><span className="font-bold">{t.invoiceNo || 'Invoice #'}:</span> {invoice.invoiceNumber}</p>
-                         <p><span className="font-bold">{t.date || 'Date'}:</span> {safeFormat(invoice.invoiceDate, 'yyyy-MM-dd')}</p>
-                         <p><span className="font-bold">{t.dueDate || 'Due Date'}:</span> {safeFormat(invoice.dueDate, 'yyyy-MM-dd')}</p>
+                         <p><span className="font-bold">{t.date || 'DATE'}:</span> {safeFormat(invoice.invoiceDate, 'yyyy-MM-dd')}</p>
+                         <p><span className="font-bold">{t.dueDate || 'DUE DATE'}:</span> {safeFormat(invoice.dueDate, 'yyyy-MM-dd')}</p>
                          {invoice.poNumber && <p><span className="font-bold">PO #:</span> {invoice.poNumber}</p>}
                     </div>
                 </section>
@@ -435,4 +443,89 @@ export const HVACTemplate4: React.FC<PageProps> = (props) => {
 };
 
 // Template 5: Minimal Side-by-Side
-export const HVACTemplate5: React.FC<PageProps> = (props) => <HVACTemplate1 {...props} />;
+export const HVACTemplate5: React.FC<PageProps> = (props) => {
+    const { invoice, pageItems, pageIndex, totalPages, subtotal, taxAmount, discountAmount, total, balanceDue, currencySymbol, t, accentColor, textColor } = props;
+    const { business, client } = invoice;
+    const docTitle = 'Invoice';
+
+    return (
+        <div className={`p-12 font-sans text-gray-800 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: invoice.fontFamily, fontSize: `${invoice.fontSize}pt`, minHeight: '1056px', backgroundColor: props.backgroundColor, color: textColor }}>
+            <header className="flex justify-between items-start mb-12">
+                <div>
+                    <h1 className="text-4xl font-bold">{business.name}</h1>
+                    <div className="text-xs text-gray-500" style={{color: textColor}}>
+                        {business.licenseNumber && <p className="mt-2">Lic #: {business.licenseNumber}</p>}
+                        {business.taxId && <p className="mt-1">Tax ID: {business.taxId}</p>}
+                    </div>
+                </div>
+                 <div className="text-right">
+                    <h2 className="text-3xl font-light tracking-wider">{docTitle.toUpperCase()}</h2>
+                    <p className="text-sm text-gray-500">#{invoice.invoiceNumber}</p>
+                </div>
+            </header>
+
+            <section className="grid grid-cols-2 gap-10 text-xs mb-10">
+                <div>
+                    <p className="font-bold text-gray-500" style={{color: textColor}}>{t.client || 'CLIENT'}</p>
+                    <p>{client.name}</p>
+                    <p className="whitespace-pre-line">{client.address}</p>
+                    <p>{client.email}</p>
+                    {client.shippingAddress && <p className="mt-2"><span className="font-bold text-gray-500">Ship To:</span><br/>{client.shippingAddress}</p>}
+                </div>
+                <div>
+                     <p className="font-bold text-gray-500" style={{color: textColor}}>{t.details || 'DETAILS'}</p>
+                     <p>{t.date || 'Date'}: {safeFormat(invoice.invoiceDate, 'MMM d, yyyy')}</p>
+                     <p>{t.dueDate || 'Due Date'}: {safeFormat(invoice.dueDate, 'MMM d, yyyy')}</p>
+                     {invoice.poNumber && <p>PO #: {invoice.poNumber}</p>}
+                </div>
+            </section>
+            
+            <CategorySpecificDetails invoice={invoice} t={t} />
+
+            <main className="flex-grow">
+                <table className="w-full text-left text-sm">
+                    <thead>
+                        <tr>
+                            <th className="pb-2 font-bold w-1/2 border-b-2 border-gray-800">{t.description || 'DESCRIPTION'}</th>
+                            <th className="pb-2 font-bold text-center border-b-2 border-gray-800">{t.quantity || 'QTY'}</th>
+                            <th className="pb-2 font-bold text-right border-b-2 border-gray-800">{t.price || 'PRICE'}</th>
+                            <th className="pb-2 font-bold text-right border-b-2 border-gray-800">{t.total || 'TOTAL'}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {pageItems.map(item => (
+                            <tr key={item.id}>
+                                <td className="py-2 border-b border-gray-200">
+                                    <p className="font-semibold whitespace-pre-line">{item.name}</p>
+                                    {item.description && <p className="text-xs text-gray-500 whitespace-pre-line">{item.description}</p>}
+                                </td>
+                                <td className="py-2 border-b border-gray-200 text-center">{item.quantity}</td>
+                                <td className="py-2 border-b border-gray-200 text-right">{currencySymbol}{item.unitPrice.toFixed(2)}</td>
+                                <td className="py-2 border-b border-gray-200 text-right">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </main>
+            
+            {pageIndex === totalPages - 1 && (
+                <footer className="mt-auto pt-8">
+                    <div className="flex justify-end">
+                        <div className="w-2/5 text-sm space-y-2">
+                             <div className="flex justify-between"><span className="text-gray-600" style={{color: textColor}}>{t.subtotal || 'Subtotal'}</span><span>{currencySymbol}{subtotal.toFixed(2)}</span></div>
+                             {discountAmount > 0 && (<div className="flex justify-between text-red-500"><span className="text-gray-600" style={{color: textColor}}>{t.discount || 'Discount'}</span><span>-{currencySymbol}{discountAmount.toFixed(2)}</span></div>)}
+                            {invoice.summary.shippingCost > 0 && (<div className="flex justify-between"><span className="text-gray-600" style={{color: textColor}}>{t.shipping || 'Shipping'}</span><span>{currencySymbol}{invoice.summary.shippingCost.toFixed(2)}</span></div>)}
+                             <div className="flex justify-between"><span className="text-gray-600" style={{color: textColor}}>{t.tax || 'Tax'}</span><span>{currencySymbol}{taxAmount.toFixed(2)}</span></div>
+                             <div className="flex justify-between font-bold text-lg mt-2 pt-2 border-t border-gray-800"><span>{t.total || 'TOTAL'}</span><span>{currencySymbol}{total.toFixed(2)}</span></div>
+                              {(invoice.amountPaid || 0) > 0 && <div className="flex justify-between font-bold text-green-600"><span>{t.amountPaid || 'Amount Paid'}</span><span>-{currencySymbol}{(invoice.amountPaid || 0).toFixed(2)}</span></div>}
+                             <div className="flex justify-between font-bold text-lg p-2 bg-gray-100"><span>{t.balanceDue || 'BALANCE DUE'}</span><span>{currencySymbol}{balanceDue.toFixed(2)}</span></div>
+                        </div>
+                    </div>
+                     <div className="flex justify-end mt-4">
+                       <SignatureDisplay signature={business.ownerSignature} label={(t.authorizedSignature || 'Authorized Signature')} style={{alignItems: 'flex-end', textAlign: 'right'}} />
+                    </div>
+                </footer>
+            )}
+        </div>
+    );
+};
