@@ -275,7 +275,7 @@ export const ITTemplate2: React.FC<PageProps> = (props) => {
                              <div className="flex justify-between font-bold p-1 rounded mt-1" style={{backgroundColor: `${accentColor}20`}}><span>{t.balanceDue || 'Balance Due'}:</span><span>{currencySymbol}{balanceDue.toFixed(2)}</span></div>
                         </div>
                     </div>
-                    <div className="text-xs mt-8">
+                     <div className="text-xs mt-8">
                         <p className="font-bold text-gray-500 mb-2">{t.termsAndConditions || 'Terms & Conditions'}</p>
                         <p className="whitespace-pre-line">{invoice.paymentInstructions}</p>
                     </div>
@@ -300,7 +300,7 @@ export const ITTemplate3: React.FC<PageProps> = (props) => {
                 <div>
                     <h1 className="text-3xl font-bold tracking-tighter">{business.name}</h1>
                     <div className="text-xs mt-1">
-                        <p>{business.address}</p>
+                        <p className="whitespace-pre-line">{business.address}</p>
                         <p>{business.phone} | {business.email}</p>
                         {business.website && <p>{business.website}</p>}
                         {business.licenseNumber && <p>Lic #: {business.licenseNumber}</p>}
@@ -331,7 +331,7 @@ export const ITTemplate3: React.FC<PageProps> = (props) => {
                 </div>
             </section>
             
-            <CategorySpecificDetails invoice={invoice} t={t}/>
+            <CategorySpecificDetails invoice={invoice} t={t} />
 
             <main className="flex-grow">
                  <table className="w-full text-left text-xs">
@@ -427,14 +427,17 @@ export const ITTemplate4: React.FC<PageProps> = (props) => {
                         <p className="whitespace-pre-line">{business.address}</p>
                         <p>{business.phone} | {business.email}</p>
                         {business.website && <p>{business.website}</p>}
+                        {business.licenseNumber && <p>Lic #: {business.licenseNumber}</p>}
+                        {business.taxId && <p>Tax ID: {business.taxId}</p>}
                     </div>
                 </header>
                  <CategorySpecificDetails invoice={invoice} t={t} />
                 <main className="flex-grow">
-                    <table className="w-full text-left text-sm">
+                    <table className="w-full text-left text-sm mt-4">
                         <thead className="border-b-2 border-gray-300">
                             <tr>
                                 <th className="py-2 font-bold w-1/2">{(t.serviceItem || 'SERVICE / ITEM').toUpperCase()}</th>
+                                <th className="py-2 font-bold w-[30%]">{(t.description || 'DESCRIPTION').toUpperCase()}</th>
                                 <th className="py-2 font-bold text-center">{(t.quantity || 'QTY').toUpperCase()}</th>
                                 <th className="py-2 font-bold text-right">{(t.rate || 'RATE').toUpperCase()}</th>
                                 <th className="py-2 font-bold text-right">{(t.total || 'TOTAL').toUpperCase()}</th>
@@ -443,7 +446,8 @@ export const ITTemplate4: React.FC<PageProps> = (props) => {
                         <tbody>
                             {pageItems.map(item => (
                                 <tr key={item.id} className="border-b border-gray-100">
-                                    <td className="py-2 align-top"><p className="font-semibold whitespace-pre-line">{item.name}</p>{item.description && <p className="text-xs text-gray-500 whitespace-pre-line">{item.description}</p>}</td>
+                                    <td className="py-2 align-top font-medium whitespace-pre-line">{item.name}</td>
+                                    <td className="py-2 align-top text-xs text-gray-500 whitespace-pre-line">{item.description}</td>
                                     <td className="py-2 align-top text-center">{item.quantity}</td>
                                     <td className="py-2 align-top text-right">{currencySymbol}{item.unitPrice.toFixed(2)}</td>
                                     <td className="py-2 align-top text-right font-medium">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</td>
@@ -453,8 +457,27 @@ export const ITTemplate4: React.FC<PageProps> = (props) => {
                     </table>
                 </main>
                 {pageIndex === totalPages - 1 && (
-                     <p className="mt-auto text-center text-xs text-gray-400">{t.thankYouForBusiness || 'Thank you for your business!'}</p>
-                 )}
+                    <footer className="mt-auto pt-8">
+                         <div className="flex justify-end">
+                            <div className="w-1/2 text-sm">
+                                <div className="flex justify-between p-2 bg-gray-50"><span>{(t.subtotal || 'Subtotal')}:</span><span className="font-medium">{currencySymbol}{subtotal.toFixed(2)}</span></div>
+                                {discountAmount > 0 && <div className="flex justify-between p-2 text-red-600"><span>{(t.discount || 'Discount')}:</span><span className="font-medium">-{currencySymbol}{discountAmount.toFixed(2)}</span></div>}
+                                {invoice.summary.shippingCost > 0 && <div className="flex justify-between p-2"><span>{(t.shipping || 'Shipping/Extra')}:</span><span className="font-medium">{currencySymbol}{invoice.summary.shippingCost.toFixed(2)}</span></div>}
+                                <div className="flex justify-between p-2"><span>{(t.tax || 'Tax')} ({invoice.summary.taxPercentage}%):</span><span className="font-medium">{currencySymbol}{taxAmount.toFixed(2)}</span></div>
+                                <div className="flex justify-between p-3 bg-gray-800 text-white rounded font-bold text-base"><span>{(t.total || 'Total')}:</span><span>{currencySymbol}{total.toFixed(2)}</span></div>
+                                {(invoice.amountPaid || 0) > 0 && <div className="flex justify-between p-2 text-green-600 font-bold"><span>Amount Paid:</span><span>-{currencySymbol}{(invoice.amountPaid || 0).toFixed(2)}</span></div>}
+                                <div className="flex justify-between p-2 font-bold"><span>Balance Due:</span><span>{currencySymbol}{balanceDue.toFixed(2)}</span></div>
+                            </div>
+                        </div>
+                        <div className="mt-8 text-xs">
+                           <p className="font-bold uppercase tracking-wider mb-2">{(t.paymentScheduleAndTerms || 'Payment Schedule &amp; Terms')}</p>
+                           <p className="whitespace-pre-line" style={{ color: textColor || '#6B7280' }}>{invoice.paymentInstructions}</p>
+                        </div>
+                         <div className="flex justify-between mt-8">
+                            <SignatureDisplay signature={business.ownerSignature} label={t.authorizedSignature || 'Authorized Signature'} />
+                        </div>
+                    </footer>
+                )}
             </div>
         </div>
     );
