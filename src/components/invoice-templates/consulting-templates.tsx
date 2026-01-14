@@ -187,9 +187,11 @@ export const ConsultingTemplate2: React.FC<PageProps> = (props) => {
                     <div>
                         <h1 className="text-3xl font-bold">{business.name}</h1>
                         <div className="text-xs opacity-80 mt-1">
-                            <p>{business.address}</p>
+                            <p className="whitespace-pre-line">{business.address}</p>
                             <p>{business.phone} | {business.email}</p>
                             {business.website && <p>{business.website}</p>}
+                            {business.licenseNumber && <p>Lic #: {business.licenseNumber}</p>}
+                            {business.taxId && <p>Tax ID: {business.taxId}</p>}
                         </div>
                     </div>
                     <div className="text-right">
@@ -218,22 +220,26 @@ export const ConsultingTemplate2: React.FC<PageProps> = (props) => {
                 <CategorySpecificDetails invoice={invoice} t={t}/>
                 <main className="flex-grow mt-4">
                     <table className="w-full text-left text-sm">
-                        <thead>
-                            <tr className="border-b">
-                                <th className="pb-2 font-semibold w-2/5">{t.service || 'Service'}</th>
-                                <th className="pb-2 font-semibold w-2/5">{t.description || 'Description'}</th>
-                                <th className="pb-2 font-semibold text-right">{t.amount || 'Amount'}</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {pageItems.map(item => (
-                                <tr key={item.id} className="border-b">
-                                    <td className="py-2 font-medium">{item.name}</td>
-                                    <td className="py-2 text-muted-foreground">{item.description}</td>
-                                    <td className="py-2 text-right">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</td>
-                                </tr>
-                            ))}
-                        </tbody>
+                       <thead>
+                           <tr className="border-b">
+                               <th className="pb-2 font-semibold w-[40%]">{t.service || 'Service'}</th>
+                               <th className="pb-2 font-semibold w-[30%]">{t.description || 'Description'}</th>
+                               <th className="pb-2 font-semibold text-center">{t.quantity || 'Qty'}</th>
+                               <th className="pb-2 font-semibold text-right">{t.rate || 'Rate'}</th>
+                               <th className="pb-2 font-semibold text-right">{t.amount || 'Amount'}</th>
+                           </tr>
+                       </thead>
+                       <tbody>
+                           {pageItems.map(item => (
+                               <tr key={item.id} className="border-b">
+                                   <td className="py-2 font-medium whitespace-pre-line">{item.name}</td>
+                                   <td className="py-2 text-muted-foreground whitespace-pre-line">{item.description}</td>
+                                   <td className="py-2 text-center">{item.quantity}</td>
+                                   <td className="py-2 text-right">{currencySymbol}{item.unitPrice.toFixed(2)}</td>
+                                   <td className="py-2 text-right">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</td>
+                               </tr>
+                           ))}
+                       </tbody>
                     </table>
                 </main>
                 {pageIndex === totalPages - 1 && (
@@ -262,7 +268,6 @@ export const ConsultingTemplate2: React.FC<PageProps> = (props) => {
         </div>
     );
 };
-
 // Template 3: Advisory
 export const ConsultingTemplate3: React.FC<PageProps> = (props) => {
     const { invoice, pageItems, pageIndex, totalPages, subtotal, taxAmount, discountAmount, total, balanceDue, currencySymbol, t, textColor } = props;
@@ -287,7 +292,7 @@ export const ConsultingTemplate3: React.FC<PageProps> = (props) => {
                     <div><p className="font-bold text-gray-500 mb-1">{t.billedTo || 'Billed To'}</p><p>{client.name}<br/>{client.address}</p></div>
                     <div className="text-right"><p><strong>{t.date || 'Date'}:</strong> {safeFormat(invoice.invoiceDate, 'dd-MMM-yyyy')}</p></div>
                 </section>
-                <CategorySpecificDetails invoice={invoice} t={t}/>
+                <CategorySpecificDetails invoice={invoice} t={t} />
                 <main className="flex-grow mt-4">
                     <table className="w-full text-left text-xs">
                         <thead><tr className="bg-gray-100"><th className="p-2 font-bold w-4/5">{t.serviceDescription || 'Service Description'}</th><th className="p-2 font-bold text-right">{t.fee || 'Fee'}</th></tr></thead>
