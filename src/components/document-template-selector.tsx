@@ -29,15 +29,8 @@ export function DocumentTemplateSelector({ selectedTemplate, onSelectTemplate, d
         toolTypeToShow = 'Estimate';
     }
     
-    let templates = allTemplates.filter(t => t.toolType === toolTypeToShow);
-    
-    // Further filter by category if provided
-    if (category && category !== 'General Services') {
-      const categoryTemplates = templates.filter(t => t.category === category);
-      if(categoryTemplates.length > 0) {
-        templates = categoryTemplates;
-      }
-    }
+    // Always show all templates for the given document type, regardless of category.
+    const templates = allTemplates.filter(t => t.toolType === toolTypeToShow);
     
     return templates;
   }, [documentType, category]);
