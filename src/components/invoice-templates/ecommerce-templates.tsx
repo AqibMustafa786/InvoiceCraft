@@ -4,6 +4,8 @@
 import React from 'react';
 import type { Invoice, LineItem } from '@/lib/types';
 import { format, isValid } from 'date-fns';
+import NextImage from 'next/image';
+import { CategorySpecificDetails } from './category-specific-details';
 
 interface PageProps {
   invoice: Invoice;
@@ -71,9 +73,9 @@ export const EcommerceTemplate1: React.FC<PageProps> = (props) => {
                     </div>
                     <div className="w-1/2 h-40 relative">
                         {business.logoUrl ? (
-                             <Image src={business.logoUrl} layout="fill" objectFit="contain" alt="Company Logo" className="rounded-md" />
+                             <NextImage src={business.logoUrl} layout="fill" objectFit="contain" alt="Company Logo" className="rounded-md" />
                         ) : (
-                             <Image src="https://picsum.photos/seed/ecom-fashion/400/200" layout="fill" objectFit="cover" alt="Fashion models" className="rounded-md" data-ai-hint="fashion models" />
+                             <NextImage src="https://picsum.photos/seed/ecom-fashion/400/200" layout="fill" objectFit="cover" alt="Fashion models" className="rounded-md" data-ai-hint="fashion models" />
                         )}
                     </div>
                 </div>
@@ -138,7 +140,6 @@ export const EcommerceTemplate1: React.FC<PageProps> = (props) => {
                             <p className="font-bold text-lg mb-2">Thank you for your purchase</p>
                             <p className="font-semibold">Payment Instructions:</p>
                             <p className="whitespace-pre-line">{invoice.paymentInstructions}</p>
-                            {business.ownerSignature && <SignatureDisplay signature={business.ownerSignature} label="Authorized Signature" />}
                         </div>
                          <div className="w-1/3 text-xs space-y-2">
                             <p className="flex justify-between"><span>SUBTOTAL:</span> <span>{currencySymbol}{subtotal.toFixed(2)}</span></p>
