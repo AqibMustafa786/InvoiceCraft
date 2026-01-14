@@ -43,24 +43,28 @@ const SignatureDisplay = ({ signature, label }: { signature: any, label: string 
 
 export const ConstructionDetails: React.FC<{ invoice: Invoice, t: any }> = ({ invoice, t }) => {
     if (!invoice.construction) return null;
-
     const { construction } = invoice;
     const hasDetails = Object.values(construction).some(val => val !== null && val !== '');
+    if (!hasDetails) {
+        return (
+            <section className="my-4 text-xs">
+                <p className="font-bold text-gray-500 mb-2 border-b">{t.constructionDetails || 'Construction Details'}</p>
+            </section>
+        );
+    }
 
     return (
         <section className="my-4 text-xs">
             <p className="font-bold text-gray-500 mb-2 border-b">{t.constructionDetails || 'Construction Details'}</p>
-             {hasDetails && (
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-x-4 gap-y-1">
-                    {construction.jobSiteAddress && <p><span className="font-semibold text-gray-600">{t.jobSite || 'Job Site'}:</span> {construction.jobSiteAddress}</p>}
-                    {construction.permitNumber && <p><span className="font-semibold text-gray-600">{t.permitNumber || 'Permit #'}:</span> {construction.permitNumber}</p>}
-                    {construction.laborRate && <p><span className="font-semibold text-gray-600">{t.laborRate || 'Labor Rate'}:</span> ${construction.laborRate}/hr</p>}
-                    {construction.equipmentRentalFees && <p><span className="font-semibold text-gray-600">{t.equipmentFees || 'Equipment Fees'}:</span> ${construction.equipmentRentalFees}</p>}
-                    {construction.wasteDisposalFee && <p><span className="font-semibold text-gray-600">{t.disposalFee || 'Disposal Fee'}:</span> ${construction.wasteDisposalFee}</p>}
-                    {construction.projectStartDate && <p><span className="font-semibold text-gray-600">{t.startDate || 'Start Date'}:</span> {safeFormat(construction.projectStartDate, 'MM/dd/yyyy')}</p>}
-                    {construction.projectEndDate && <p><span className="font-semibold text-gray-600">{t.endDate || 'End Date'}:</span> {safeFormat(construction.projectEndDate, 'MM/dd/yyyy')}</p>}
-                </div>
-             )}
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-x-4 gap-y-1">
+                {construction.jobSiteAddress && <p><span className="font-semibold text-gray-600">{t.jobSite || 'Job Site'}:</span> {construction.jobSiteAddress}</p>}
+                {construction.permitNumber && <p><span className="font-semibold text-gray-600">{t.permitNumber || 'Permit #'}:</span> {construction.permitNumber}</p>}
+                {construction.laborRate && <p><span className="font-semibold text-gray-600">{t.laborRate || 'Labor Rate'}:</span> ${construction.laborRate}/hr</p>}
+                {construction.equipmentRentalFees && <p><span className="font-semibold text-gray-600">{t.equipmentFees || 'Equipment Fees'}:</span> ${construction.equipmentRentalFees}</p>}
+                {construction.wasteDisposalFee && <p><span className="font-semibold text-gray-600">{t.disposalFee || 'Disposal Fee'}:</span> ${construction.wasteDisposalFee}</p>}
+                {construction.projectStartDate && <p><span className="font-semibold text-gray-600">{t.startDate || 'Start Date'}:</span> {safeFormat(construction.projectStartDate, 'MM/dd/yyyy')}</p>}
+                {construction.projectEndDate && <p><span className="font-semibold text-gray-600">{t.endDate || 'End Date'}:</span> {safeFormat(construction.projectEndDate, 'MM/dd/yyyy')}</p>}
+            </div>
         </section>
     );
 };
@@ -175,13 +179,11 @@ export const ConstructionTemplate2: React.FC<PageProps> = (props) => {
                     ) : (
                         <h1 className="text-4xl font-bold">{business.name}</h1>
                     )}
-                     <div className="text-xs space-y-0.5 mt-2" style={{ color: '#D1D5DB' }}>
+                     <div className="text-xs space-y-0.5 mt-2">
                         <p className="whitespace-pre-line">{business.address}</p>
                         {business.phone && <p>{business.phone}</p>}
                         {business.email && <p>{business.email}</p>}
                         {business.website && <p>{business.website}</p>}
-                        {business.licenseNumber && <p>Lic #: {business.licenseNumber}</p>}
-                        {business.taxId && <p>Tax ID: {business.taxId}</p>}
                     </div>
                 </div>
                 <div className="text-right">
@@ -266,7 +268,7 @@ export const ConstructionTemplate2: React.FC<PageProps> = (props) => {
 
 // Template 3: Minimalist & Clean
 export const ConstructionTemplate3: React.FC<PageProps> = (props) => {
-    const { invoice, pageItems, pageIndex, totalPages, subtotal, taxAmount, discountAmount, total, balanceDue, t, currencySymbol, textColor } = props;
+    const { invoice, pageItems, pageIndex, totalPages, subtotal, taxAmount, discountAmount, total, balanceDue, t, currencySymbol, textColor, accentColor } = props;
     const { business, client } = invoice;
     return (
         <div className={`p-10 font-sans text-gray-700 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ minHeight: '1056px', backgroundColor: props.backgroundColor, color: props.textColor }}>
@@ -319,7 +321,7 @@ export const ConstructionTemplate3: React.FC<PageProps> = (props) => {
             
             {pageIndex === totalPages - 1 && (
                  <footer className="mt-auto pt-8 flex justify-between items-start">
-                     <div className="w-1/2 text-xs text-gray-600" style={{color: textColor}}>
+                     <div className="w-1/2 text-xs" style={{color: textColor}}>
                         <p className="font-bold mb-1">{t.terms || 'TERMS'}</p>
                         <p className="whitespace-pre-line">{invoice.paymentInstructions}</p>
                          {business.ownerSignature && (
@@ -346,3 +348,5 @@ export const ConstructionTemplate3: React.FC<PageProps> = (props) => {
 export const ConstructionTemplate4: React.FC<PageProps> = (props) => <ConstructionTemplate1 {...props} />;
 export const ConstructionTemplate5: React.FC<PageProps> = (props) => <ConstructionTemplate2 {...props} />;
 export const ConstructionTemplate6: React.FC<PageProps> = (props) => <ConstructionTemplate3 {...props} />;
+
+    
