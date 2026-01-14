@@ -1,4 +1,3 @@
-
 'use client';
 
 import React from 'react';
@@ -188,9 +187,11 @@ export const CleaningTemplate2: React.FC<PageProps> = (props) => {
                 <div>
                     <h1 className="text-3xl font-bold" style={{ color: accentColor }}>{business.name}</h1>
                     <div className="text-xs text-gray-500">
-                        <p>{business.address}</p>
+                        <p className="whitespace-pre-line">{business.address}</p>
                         <p>{business.phone} | {business.email}</p>
                         {business.website && <p>{business.website}</p>}
+                        {business.licenseNumber && <p>Lic #: {business.licenseNumber}</p>}
+                        {business.taxId && <p>Tax ID: {business.taxId}</p>}
                     </div>
                 </div>
                 <div className="text-right">
@@ -203,7 +204,7 @@ export const CleaningTemplate2: React.FC<PageProps> = (props) => {
                     <p className="font-bold text-gray-500">{t.client || 'Client'}:</p>
                     <p className="font-semibold">{client.name}</p>
                     {client.companyName && <p>{client.companyName}</p>}
-                    <p>{client.address}</p>
+                    <p className="whitespace-pre-line">{client.address}</p>
                     <p>{client.phone} | {client.email}</p>
                     {client.shippingAddress && <p className="mt-2"><span className="font-bold text-gray-500">Ship To:</span><br/>{client.shippingAddress}</p>}
                 </div>
