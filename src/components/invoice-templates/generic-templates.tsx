@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import React from 'react';
@@ -162,8 +163,6 @@ export const GenericTemplate2: React.FC<PageProps> = (props) => {
                         {business.phone && <p>{business.phone}</p>}
                         {business.email && <p>{business.email}</p>}
                         {business.website && <p>{business.website}</p>}
-                        {business.licenseNumber && <p>Lic #: {business.licenseNumber}</p>}
-                        {business.taxId && <p>Tax ID: {business.taxId}</p>}
                     </div>
                 </div>
                 <div className="text-right">
@@ -342,6 +341,8 @@ export const GenericTemplate4: React.FC<PageProps> = (props) => {
                     {business.phone && <p>{business.phone}</p>}
                     {business.email && <p>{business.email}</p>}
                     {business.website && <p>{business.website}</p>}
+                    {business.licenseNumber && <p>Lic #: {business.licenseNumber}</p>}
+                    {business.taxId && <p>Tax ID: {business.taxId}</p>}
                 </div>
                 <div className="text-sm space-y-4 mt-8">
                   <div>
@@ -380,7 +381,7 @@ export const GenericTemplate4: React.FC<PageProps> = (props) => {
                         </thead>
                         <tbody>
                             {pageItems.map(item => (
-                                <tr key={item.id} className="border-b border-gray-200">
+                                <tr key={item.id} className="border-b border-gray-100">
                                     <td className="py-2 align-top font-medium whitespace-pre-line">{item.name}</td>
                                     <td className="py-2 align-top text-xs text-gray-500 whitespace-pre-line">{item.description}</td>
                                     <td className="py-2 align-top text-center">{item.quantity}</td>
@@ -401,13 +402,16 @@ export const GenericTemplate4: React.FC<PageProps> = (props) => {
                                 <div className="flex justify-between p-2"><span>{(t.tax || 'Tax')} ({invoice.summary.taxPercentage}%):</span><span className="font-medium">{currencySymbol}{taxAmount.toFixed(2)}</span></div>
                                 <div className="flex justify-between p-3 bg-gray-800 text-white rounded-b-lg font-bold text-base"><span>{(t.total || 'Total')}:</span><span>{currencySymbol}{total.toFixed(2)}</span></div>
                                 {(invoice.amountPaid || 0) > 0 && <div className="flex justify-between p-2 mt-1 text-green-600 font-bold"><span>Amount Paid:</span><span>-{currencySymbol}{(invoice.amountPaid || 0).toFixed(2)}</span></div>}
-                                <div className="flex justify-between p-2 mt-1 font-bold"><span>Balance Due:</span><span>{currencySymbol}{balanceDue.toFixed(2)}</span></div>
+                                <div className="flex justify-between p-2 font-bold"><span>Balance Due:</span><span>{currencySymbol}{balanceDue.toFixed(2)}</span></div>
                             </div>
                         </div>
                         <div className="mt-8 text-xs">
                            <p className="font-bold uppercase tracking-wider mb-2">{(t.paymentScheduleAndTerms || 'Payment Schedule &amp; Terms')}</p>
                            <p className="whitespace-pre-line" style={{ color: textColor || '#6B7280' }}>{invoice.paymentInstructions}</p>
                         </div>
+                         <div className="flex justify-end mt-4">
+                             <SignatureDisplay signature={business.ownerSignature} label={(t.authorizedSignature || 'Authorized Signature')} />
+                         </div>
                     </footer>
                 )}
             </div>
