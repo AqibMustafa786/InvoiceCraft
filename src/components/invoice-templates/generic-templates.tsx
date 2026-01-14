@@ -174,8 +174,8 @@ export const GenericTemplate2: React.FC<PageProps> = (props) => {
                         <p className="font-bold">{client.name}</p>
                         {client.companyName && <p>{client.companyName}</p>}
                         <p className="whitespace-pre-line">{client.address}</p>
-                        {client.phone && <p>{client.phone}</p>}
-                        {client.email && <p>{client.email}</p>}
+                        <p>{client.phone}</p>
+                        <p>{client.email}</p>
                         {client.shippingAddress && <p className="mt-2"><span className="font-bold text-gray-500">Ship To:</span><br/>{client.shippingAddress}</p>}
                     </div>
                     <div className="text-right">
@@ -265,21 +265,14 @@ export const GenericTemplate3: React.FC<PageProps> = (props) => {
                 </div>
             </header>
 
-            <section className="grid grid-cols-2 gap-8 mb-10 text-sm">
-                 <div>
-                    <p className="font-bold mb-1">{(t.client || 'CLIENT')}:</p>
-                    <p>{client.name}</p>
-                    {client.companyName && <p>{client.companyName}</p>}
-                    <p className="whitespace-pre-line">{client.address}</p>
-                    <p>{client.phone}</p>
-                    <p>{client.email}</p>
-                    {client.shippingAddress && <p className="mt-2"><span className="font-bold">Ship To:</span><br/>{client.shippingAddress}</p>}
-                </div>
-                 <div className="text-right">
-                    <p><span className="font-bold">{t.date || 'Date'}:</span> {safeFormat(invoice.invoiceDate, 'MMM d, yyyy')}</p>
-                    <p><span className="font-bold">{t.dueDate || 'Due Date'}:</span> {safeFormat(invoice.dueDate, 'MMM d, yyyy')}</p>
-                    {invoice.poNumber && <p><span className="font-bold">PO #:</span> {invoice.poNumber}</p>}
-                </div>
+            <section className="mb-10 text-sm">
+                <p className="font-bold mb-1">{(t.client || 'CLIENT')}:</p>
+                <p>{client.name}</p>
+                {client.companyName && <p>{client.companyName}</p>}
+                <p className="whitespace-pre-line">{client.address}</p>
+                <p>{client.phone}</p>
+                <p>{client.email}</p>
+                {client.shippingAddress && <p className="mt-2"><span className="font-bold">Ship To:</span><br/>{client.shippingAddress}</p>}
             </section>
             
             <CategorySpecificDetails invoice={invoice} t={t} />
@@ -338,27 +331,23 @@ export const GenericTemplate3: React.FC<PageProps> = (props) => {
 
 // Template 4: Creative
 export const GenericTemplate4: React.FC<PageProps> = (props) => {
-    const { invoice, pageItems, pageIndex, totalPages, subtotal, taxAmount, discountAmount, total, balanceDue, t, currencySymbol, accentColor, textColor } = props;
+    const { invoice, pageItems, pageIndex, totalPages, subtotal, taxAmount, discountAmount, total, balanceDue, t, currencySymbol, accentColor, backgroundColor, textColor } = props;
     const { business, client } = invoice;
     return (
-        <div className={`font-sans text-gray-800 flex ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ minHeight: '1056px', backgroundColor: props.backgroundColor, color: textColor }}>
-            <div className="w-1/3 p-8 text-white" style={{ backgroundColor: accentColor }}>
+        <div className={`font-sans text-gray-800 flex ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ minHeight: '1056px', backgroundColor: '#FFFFFF', color: textColor }}>
+            <div className="w-1/3 p-8 text-white" style={{ backgroundColor: backgroundColor }}>
                 <h1 className="text-4xl font-bold mb-2">{business.name}</h1>
                  <div className="text-sm space-y-1 mt-4 text-white/80">
                     <p className="whitespace-pre-line">{business.address}</p>
                     {business.phone && <p>{business.phone}</p>}
                     {business.email && <p>{business.email}</p>}
                     {business.website && <p>{business.website}</p>}
-                    {business.licenseNumber && <p>Lic #: {business.licenseNumber}</p>}
-                    {business.taxId && <p>Tax ID: {business.taxId}</p>}
                 </div>
                 <div className="text-sm space-y-4 mt-8">
                   <div>
                     <p className="font-bold opacity-80 mb-1">{(t.client || 'CLIENT').toUpperCase()}</p>
                     <p className="font-bold text-lg">{client.name}</p>
                     {client.companyName && <p>{client.companyName}</p>}
-                    <p className="whitespace-pre-line mt-1">{client.address}</p>
-                    {client.shippingAddress && <p className="mt-2"><span className="font-bold opacity-80">Ship To:</span><br/>{client.shippingAddress}</p>}
                   </div>
                   <div>
                     <p className="font-bold opacity-80 mb-1">{(t.details || 'DETAILS').toUpperCase()}</p>
@@ -457,7 +446,7 @@ export const GenericTemplate5: React.FC<PageProps> = (props) => {
                     <p className="font-bold text-gray-500 mb-2" style={{color: textColor}}>{(t.details || 'DETAILS')}</p>
                     <p><span className="font-semibold">No:</span> {invoice.invoiceNumber}</p>
                     <p><span className="font-semibold">{t.date || 'Date'}:</span> {safeFormat(invoice.invoiceDate, 'MMM dd, yyyy')}</p>
-                    <p><span className="font-semibold">{t.dueDate || 'Due Date'}:</span> {safeFormat(invoice.dueDate, 'MMM dd, yyyy')}</p>
+                    <p><span className="font-semibold">{t.dueDate || 'Due'}:</span> {safeFormat(invoice.dueDate, 'MMM dd, yyyy')}</p>
                     {invoice.poNumber && <p><span className="font-semibold">PO #:</span> {invoice.poNumber}</p>}
                 </div>
                 <div className="p-4 bg-gray-50 rounded break-words">
