@@ -90,10 +90,10 @@ export const LandscapingTemplate1: React.FC<PageProps> = (props) => {
 
             <section className="grid grid-cols-2 gap-8 my-8 text-sm">
                  <div className="text-xs space-y-1">
-                    <p className="grid grid-cols-[100px_1fr]"><span className="font-bold">{t.customerName || 'Customer Name'}:</span> <span>{client.name}</span></p>
-                    <p className="grid grid-cols-[100px_1fr]"><span className="font-bold">{t.address || 'Address'}:</span> <span className="whitespace-pre-line">{client.address}</span></p>
-                    <p className="grid grid-cols-[100px_1fr]"><span className="font-bold">{t.phone || 'Phone'}:</span> <span>{client.phone}</span></p>
-                    <p className="grid grid-cols-[100px_1fr]"><span className="font-bold">{t.email || 'E-mail'}:</span> <span>{client.email}</p>
+                    <p className="grid grid-cols-[100px_1fr]"><span className="font-bold">{(t.customerName || 'Customer Name')}:</span> <span>{client.name}</span></p>
+                    <p className="grid grid-cols-[100px_1fr]"><span className="font-bold">{(t.address || 'Address')}:</span> <span className="whitespace-pre-line">{client.address}</span></p>
+                    <p className="grid grid-cols-[100px_1fr]"><span className="font-bold">{(t.phone || 'Phone')}:</span> <span>{client.phone}</span></p>
+                    <p className="grid grid-cols-[100px_1fr]"><span className="font-bold">{(t.email || 'E-mail')}:</span> <span>{client.email}</span></p>
                     {client.shippingAddress && <p className="mt-2"><span className="font-bold">Ship To:</span><br/>{client.shippingAddress}</p>}
                 </div>
                 <div className="text-xs space-y-1 text-right">
@@ -343,12 +343,7 @@ export const LandscapingTemplate4: React.FC<PageProps> = (props) => {
             </header>
 
             <section className="flex justify-between mb-10 text-xs">
-                <div>
-                    <p className="font-bold mb-1">{t.to || 'To'}:</p>
-                    <p>{client.name}</p>
-                    <p>{client.address}</p>
-                    {client.shippingAddress && <p className="mt-2"><span className="font-bold">Ship To:</span><br/>{client.shippingAddress}</p>}
-                </div>
+                <div><p className="font-bold mb-1">{t.to || 'To'}:</p><p>{client.name}</p><p>{client.address}</p>{client.shippingAddress && <p className="mt-2"><span className="font-bold">Ship To:</span><br/>{client.shippingAddress}</p>}</div>
                 <div className="text-right"><p><span className="font-bold">{t.no || 'No'}:</span> {invoice.invoiceNumber}</p><p><span className="font-bold">{t.date || 'Date'}:</span> {safeFormat(invoice.invoiceDate, 'MMM dd, yyyy')}</p><p><span className="font-bold">{t.dueDate || 'Due'}:</span> {safeFormat(invoice.dueDate, 'MMM dd, yyyy')}</p>{invoice.poNumber && <p><span className="font-bold">PO #:</span> {invoice.poNumber}</p>}</div>
             </section>
             
@@ -484,3 +479,5 @@ export const LandscapingTemplate5: React.FC<PageProps> = (props) => {
         </div>
     );
 };
+
+    
