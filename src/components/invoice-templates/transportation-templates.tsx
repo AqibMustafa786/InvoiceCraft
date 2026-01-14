@@ -3,6 +3,7 @@
 
 import React from 'react';
 import type { Invoice, LineItem } from '@/lib/types';
+import { format, isValid } from 'date-fns';
 
 interface PageProps {
   invoice: Invoice;
@@ -19,6 +20,13 @@ interface PageProps {
   accentColor: string;
   backgroundColor: string;
   textColor: string;
+}
+
+const safeFormat = (date: Date | string | number | null | undefined, formatString: string) => {
+    if (!date) return "N/A";
+    const d = new Date(date);
+    if (!isValid(d)) return "Invalid Date";
+    return format(d, formatString);
 }
 
 export const TransportationDetails: React.FC<{ invoice: Invoice, t: any }> = ({ invoice, t }) => {

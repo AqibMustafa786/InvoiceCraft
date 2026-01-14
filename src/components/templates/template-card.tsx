@@ -12,7 +12,7 @@ import { cn } from '@/lib/utils';
 interface TemplateCardProps {
   template: Template;
   onPreview: (templateId: string) => void;
-  isSelected: boolean;
+  isSelected?: boolean;
 }
 
 export function TemplateCard({ template, onPreview, isSelected }: TemplateCardProps) {
