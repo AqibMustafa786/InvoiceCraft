@@ -791,7 +791,7 @@ export default function CreateInvoicePage() {
                 <h2 className="text-xl font-bold font-headline mb-4 text-center lg:text-left">Fill in Details</h2>
                 <InvoiceForm 
                   invoice={invoice} 
-                  setInvoice={setInvoice} 
+                  setInvoice={setInvoice}
                   accentColor={accentColor}
                   setAccentColor={setAccentColor}
                   backgroundColor={backgroundColor}
@@ -820,7 +820,9 @@ export default function CreateInvoicePage() {
                         <div className="py-4">
                             <DocumentTemplateSelector 
                                 selectedTemplate={invoice.template}
-                                onSelectTemplate={(templateId) => setInvoice(prev => prev ? ({...prev, template: templateId}) : null)}
+                                onSelectTemplate={(templateId: string) => {
+                                  setInvoice(prev => prev ? ({ ...prev, template: templateId }) : null);
+                                }}
                                 documentType="invoice"
                                 category={invoice.category}
                             />
@@ -830,7 +832,7 @@ export default function CreateInvoicePage() {
                 <div>
                   <h2 className="text-xl font-bold font-headline mb-4">Live Preview</h2>
                   <motion.div
-                    key={JSON.stringify(processedInvoice)}
+                    key={invoice.template + JSON.stringify(processedInvoice)}
                     initial={{ opacity: 0.8, scale: 0.995 }}
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ duration: 0.2 }}
