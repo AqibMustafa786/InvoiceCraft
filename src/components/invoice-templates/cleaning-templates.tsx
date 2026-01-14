@@ -115,6 +115,13 @@ export const CleaningTemplate1: React.FC<PageProps> = (props) => {
                     </div>
                 </section>
                 
+                <section className="grid grid-cols-3 gap-4 mb-4 text-xs">
+                    <div><p><span className="font-bold">{t.invoiceNo || 'Invoice#'}:</span> {invoice.invoiceNumber}</p></div>
+                    <div><p><span className="font-bold">{t.invoiceDate || 'Date'}:</span> {safeFormat(invoice.invoiceDate, 'MMM d, yyyy')}</p></div>
+                    <div className="text-right"><p><span className="font-bold">{t.dueDate || 'Due Date'}:</span> {safeFormat(invoice.dueDate, 'MMM d, yyyy')}</p></div>
+                    {invoice.poNumber && <div className="col-span-3"><p><span className="font-bold">PO #:</span> {invoice.poNumber}</p></div>}
+                </section>
+
                 <CategorySpecificDetails invoice={invoice} t={t} />
 
                 <main className="flex-grow">
@@ -275,7 +282,7 @@ export const CleaningTemplate3: React.FC<PageProps> = (props) => {
             <div className="w-full h-px bg-gray-300 mb-8"></div>
             <section className="grid grid-cols-2 gap-8 mb-8 text-sm">
                 <div><p><strong>{t.billedTo || 'Billed To'}:</strong> {client.name}</p>{client.companyName && <p>{client.companyName}</p>}<p>{client.address}</p><p>{client.email}</p></div>
-                <div className="text-right"><p><strong>{docTitle} #:</strong> {invoice.invoiceNumber}</p><p><strong>{t.date || 'Date'}:</strong> {safeFormat(invoice.invoiceDate, 'MMMM d, yyyy')}</p><p><strong>Due:</strong> {safeFormat(invoice.dueDate, 'MMMM d, yyyy')}</p></div>
+                <div className="text-right"><p><strong>{docTitle} #:</strong> {invoice.invoiceNumber}</p><p><strong>{t.date || 'Date'}:</strong> {safeFormat(invoice.invoiceDate, 'MMMM d, yyyy')}</p><p><strong>Due:</strong> {safeFormat(invoice.dueDate, 'MMMM d, yyyy')}</p>{invoice.poNumber && <p><strong>PO #:</strong> {invoice.poNumber}</p>}</div>
             </section>
             <CategorySpecificDetails invoice={invoice} t={t} />
             <main className="flex-grow mt-4">
