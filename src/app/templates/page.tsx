@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useMemo } from 'react';
@@ -173,7 +174,7 @@ export default function TemplatesPage() {
             >
                 {filteredTemplates.length > 0 ? (
                     filteredTemplates.map((template) => (
-                        <TemplateCard key={template.id + template.toolType} template={template} onPreview={() => handlePreview(template)} />
+                        <TemplateCard key={`${template.id}-${template.toolType}`} template={template} onPreview={() => handlePreview(template)} />
                     ))
                 ) : (
                     <div className="col-span-full text-center py-16 text-muted-foreground">
@@ -192,3 +193,4 @@ export default function TemplatesPage() {
     </>
   );
 }
+    
