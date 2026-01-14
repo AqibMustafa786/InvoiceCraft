@@ -1,4 +1,3 @@
-
 'use client';
 
 import Link from 'next/link';
@@ -213,9 +212,9 @@ export default function HomePage() {
             </svg>
           </div>
           <div className="container px-4 mx-auto md:px-6 relative z-10">
-            <div className="grid gap-12 lg:grid-cols-2 lg:gap-16 items-center">
+            <div className="grid gap-12 lg:grid-cols-1 lg:gap-16 items-center">
               <motion.div 
-                className="max-w-xl text-center lg:text-left"
+                className="max-w-xl text-center lg:text-left mx-auto"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, ease: 'easeOut' }}
@@ -264,18 +263,6 @@ export default function HomePage() {
                    </motion.div>
                 </motion.div>
               </motion.div>
-              <div className="relative w-full h-80 lg:h-auto lg:aspect-[4/3] animate-flip">
-                 <Image
-                    key={heroImageSrc} // Key changes to force re-render on theme switch
-                    src={heroImageSrc}
-                    alt="Illustration of a person working on a laptop"
-                    fill
-                    sizes="(max-width: 1024px) 100vw, 50vw"
-                    priority
-                    className="object-contain"
-                    data-ai-hint="workspace illustration"
-                  />
-              </div>
             </div>
           </div>
         </section>
