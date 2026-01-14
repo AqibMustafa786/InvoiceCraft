@@ -11,7 +11,7 @@ import { cn } from '@/lib/utils';
 
 interface TemplateCardProps {
   template: Template;
-  onPreview: (template: Template) => void;
+  onPreview: (templateId: string) => void;
   isSelected: boolean;
 }
 
@@ -41,7 +41,7 @@ export function TemplateCard({ template, onPreview, isSelected }: TemplateCardPr
       whileHover={{ y: -5 }}
       transition={{ type: 'spring', stiffness: 300, damping: 20 }}
       className="group relative block overflow-hidden rounded-lg border bg-card shadow-sm cursor-pointer"
-      onClick={() => onPreview(template)}
+      onClick={() => onPreview(template.id)}
     >
       <div
         className={cn(
