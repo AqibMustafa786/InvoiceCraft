@@ -84,8 +84,8 @@ export const GenericTemplate1: React.FC<PageProps> = (props) => {
                 </div>
                 <div className="text-right">
                     <p><span className="font-bold">{t.invoiceNo || 'Invoice #'}:</span> {invoice.invoiceNumber}</p>
-                    <p><span className="font-bold">{t.date || 'Date'}:</span> {safeFormat(invoice.invoiceDate, 'MMM d, yyyy')}</p>
-                    <p><span className="font-bold">{t.dueDate || 'Due Date'}:</span> {safeFormat(invoice.dueDate, 'MMM d, yyyy')}</p>
+                    <p><span className="font-bold">{(t.date || 'Date')}:</span> {safeFormat(invoice.invoiceDate, 'MMM d, yyyy')}</p>
+                    <p><span className="font-bold">{(t.dueDate || 'Due Date')}:</span> {safeFormat(invoice.dueDate, 'MMM d, yyyy')}</p>
                     {invoice.poNumber && <p><span className="font-bold">PO #:</span> {invoice.poNumber}</p>}
                 </div>
             </section>
@@ -335,7 +335,7 @@ export const GenericTemplate4: React.FC<PageProps> = (props) => {
     const { business, client } = invoice;
     return (
         <div className={`font-sans text-gray-800 flex ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ minHeight: '1056px', backgroundColor: '#FFFFFF', color: textColor }}>
-            <div className="w-1/3 p-8 text-white" style={{ backgroundColor: backgroundColor }}>
+            <div className="w-1/3 p-8 text-white" style={{ backgroundColor: accentColor }}>
                 <h1 className="text-4xl font-bold mb-2">{business.name}</h1>
                  <div className="text-sm space-y-1 mt-4 text-white/80">
                     <p className="whitespace-pre-line">{business.address}</p>
@@ -348,6 +348,8 @@ export const GenericTemplate4: React.FC<PageProps> = (props) => {
                     <p className="font-bold opacity-80 mb-1">{(t.client || 'CLIENT').toUpperCase()}</p>
                     <p className="font-bold text-lg">{client.name}</p>
                     {client.companyName && <p>{client.companyName}</p>}
+                    <p>{client.phone}</p>
+                    <p>{client.email}</p>
                   </div>
                   <div>
                     <p className="font-bold opacity-80 mb-1">{(t.details || 'DETAILS').toUpperCase()}</p>
