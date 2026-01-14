@@ -102,7 +102,7 @@ export const LandscapingTemplate1: React.FC<PageProps> = (props) => {
                     <p className="whitespace-pre-line">{client.address}</p>
                     <p>{client.phone}</p>
                     <p>{client.email}</p>
-                    {client.shippingAddress && <p className="mt-2"><span className="font-bold text-gray-500">Ship To:</span><br/>{client.shippingAddress}</p>}
+                    {client.shippingAddress && <p className="mt-2"><span className="font-bold">Ship To:</span><br/>{client.shippingAddress}</p>}
                 </div>
                 <div className="text-xs space-y-1 text-right">
                     <p><span className="font-bold">{t.invoiceNo || 'Invoice Number'}:</span> {invoice.invoiceNumber}</p>
@@ -116,8 +116,8 @@ export const LandscapingTemplate1: React.FC<PageProps> = (props) => {
 
             <main className="flex-grow">
                  <table className="w-full text-left text-xs">
-                    <thead>
-                        <tr style={{ backgroundColor: accentColor }} className="text-white">
+                    <thead style={{ backgroundColor: accentColor }} className="text-white">
+                        <tr>
                             <th className="p-2 font-bold w-1/2">{(t.description || 'DESCRIPTION').toUpperCase()}</th>
                             <th className="p-2 font-bold text-center">{(t.quantity || 'QTY').toUpperCase()}</th>
                             <th className="p-2 font-bold text-right">{(t.unitPrice || 'UNIT PRICE').toUpperCase()}</th>
@@ -227,10 +227,7 @@ export const LandscapingTemplate2: React.FC<PageProps> = (props) => {
                     <tbody>
                         {pageItems.map(item => (
                             <tr key={item.id} className="border-b border-gray-100">
-                                <td className="py-2 align-top">
-                                    <p className="font-semibold whitespace-pre-line">{item.name}</p>
-                                    {item.description && <p className="text-xs text-gray-500 whitespace-pre-line">{item.description}</p>}
-                                </td>
+                                <td className="py-2 align-top"><p className="font-semibold whitespace-pre-line">{item.name}</p>{item.description && <p className="text-xs text-gray-500 whitespace-pre-line">{item.description}</p>}</td>
                                 <td className="py-2 align-top text-center">{item.quantity}</td>
                                 <td className="py-2 align-top text-right">{currencySymbol}{item.unitPrice.toFixed(2)}</td>
                                 <td className="py-2 align-top text-right">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</td>
@@ -345,7 +342,7 @@ export const LandscapingTemplate3: React.FC<PageProps> = (props) => {
                             <p className="font-bold mb-1">{t.paymentInstructions || 'Payment Instructions'}</p>
                             <p className="whitespace-pre-line">{invoice.paymentInstructions}</p>
                         </div>
-                        <div className="flex justify-end mt-4">
+                         <div className="flex justify-end mt-4">
                             <SignatureDisplay signature={business.ownerSignature} label={(t.authorizedSignature || 'Authorized Signature')} />
                         </div>
                     </footer>
@@ -362,15 +359,21 @@ export const LandscapingTemplate4: React.FC<PageProps> = (props) => {
     const docTitle = (t.invoice || 'Invoice');
 
     return (
-        <div className={`p-12 bg-white font-['Garamond',_serif] text-gray-700 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ minHeight: '1056px', backgroundColor: props.backgroundColor, color: props.textColor }}>
+        <div className={`p-12 bg-white font-['Garamond',_serif] text-gray-700 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ minHeight: '1056px', backgroundColor: props.backgroundColor, color: textColor }}>
             <header className="mb-16 text-center">
                 <h1 className="text-5xl font-light tracking-widest">{business.name}</h1>
-                <h2 className="text-3xl font-light tracking-widest mt-2">{docTitle.toUpperCase()}</h2>
+                <div className="text-xs mt-2">
+                    <p>{business.address} | {business.phone} | {business.email}</p>
+                    {business.website && <p>{business.website}</p>}
+                    {business.licenseNumber && <p>Lic #: {business.licenseNumber}</p>}
+                    {business.taxId && <p>Tax ID: {business.taxId}</p>}
+                </div>
+                <h2 className="text-3xl font-light tracking-widest mt-4">{docTitle.toUpperCase()}</h2>
             </header>
 
             <section className="flex justify-between mb-10 text-xs">
-                <div><p className="font-bold mb-1">{t.to || 'To'}:</p><p>{client.name}</p><p>{client.address}</p></div>
-                <div className="text-right"><p><span className="font-bold">{t.no || 'No'}:</span> {invoice.invoiceNumber}</p><p><span className="font-bold">{t.date || 'Date'}:</span> {safeFormat(invoice.invoiceDate, 'MMM dd, yyyy')}</p><p><span className="font-bold">{t.dueDate || 'Due'}:</span> {safeFormat(invoice.dueDate, 'MMM dd, yyyy')}</p></div>
+                <div><p className="font-bold mb-1">{t.to || 'To'}:</p><p>{client.name}</p>{client.companyName && <p>{client.companyName}</p>}<p>{client.address}</p><p>{client.phone} | {client.email}</p>{client.shippingAddress && <p className="mt-2"><span className="font-bold">Ship To:</span><br/>{client.shippingAddress}</p>}</div>
+                <div className="text-right"><p><span className="font-bold">{t.no || 'No'}:</span> {invoice.invoiceNumber}</p><p><span className="font-bold">{t.date || 'Date'}:</span> {safeFormat(invoice.invoiceDate, 'MMM dd, yyyy')}</p><p><span className="font-bold">{t.dueDate || 'Due'}:</span> {safeFormat(invoice.dueDate, 'MMM dd, yyyy')}</p>{invoice.poNumber && <p><span className="font-bold">PO #:</span> {invoice.poNumber}</p>}</div>
             </section>
             
              <CategorySpecificDetails invoice={invoice} t={t} />
@@ -406,6 +409,13 @@ export const LandscapingTemplate4: React.FC<PageProps> = (props) => {
                                 <tr className="font-bold bg-gray-100 p-1"><td>{t.balanceDue || 'Balance Due'}</td><td className="text-right">{currencySymbol}{balanceDue.toFixed(2)}</td></tr>
                             </tbody>
                         </table>
+                    </div>
+                     <div className="text-xs mt-8">
+                        <p className="font-bold">{t.paymentInstructions || 'Payment Instructions'}</p>
+                        <p className="text-gray-500 whitespace-pre-line">{invoice.paymentInstructions}</p>
+                    </div>
+                     <div className="flex justify-end mt-4">
+                        <SignatureDisplay signature={business.ownerSignature} label="Authorized Signature" />
                     </div>
                 </footer>
             )}
@@ -446,7 +456,7 @@ export const LandscapingTemplate5: React.FC<PageProps> = (props) => {
                  {client.shippingAddress && <p className="mt-2"><span className="font-bold text-gray-500">SHIP TO:</span> {client.shippingAddress}</p>}
             </section>
             
-             <section className="mb-4 text-xs grid grid-cols-3 gap-2">
+            <section className="mb-4 text-xs grid grid-cols-3 gap-2">
                 <p><strong>Date:</strong> {safeFormat(invoice.invoiceDate, 'yyyy-MM-dd')}</p>
                 <p><strong>Due Date:</strong> {safeFormat(invoice.dueDate, 'yyyy-MM-dd')}</p>
                 {invoice.poNumber && <p><strong>PO #:</strong> {invoice.poNumber}</p>}
@@ -505,5 +515,7 @@ export const LandscapingTemplate5: React.FC<PageProps> = (props) => {
         </div>
     );
 };
+
+    
 
     
