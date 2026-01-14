@@ -76,7 +76,7 @@ export const PhotographyTemplate1: React.FC<PageProps> = (props) => {
 
     return (
         <div className={`font-serif bg-[#333333] text-white flex flex-col ${pageIndex < totalPages - 1 ? 'page-break-after' : ''}`} style={{ minHeight: '1056px', backgroundColor: props.backgroundColor, color: textColor }}>
-            <div 
+             <div 
                 className="relative h-48 w-full bg-cover bg-center"
                 style={{ backgroundImage: `url(${headerImageUrl})` }}
                 data-ai-hint="camera lens"
@@ -303,7 +303,7 @@ export const PhotographyTemplate5: React.FC<PageProps> = (props) => {
     const { business, client } = invoice;
     const docTitle = (t.invoice || 'Invoice');
     return (
-        <div className={`font-serif p-10 ${pageIndex < totalPages - 1 ? 'page-break-after' : ''}`} style={{ minHeight: '1056px', borderLeft: `10px solid ${accentColor}`, backgroundColor: props.backgroundColor, color: textColor }}>
+        <div className={`p-10 font-serif ${pageIndex < totalPages - 1 ? 'page-break-after' : ''}`} style={{ minHeight: '1056px', borderLeft: `10px solid ${accentColor}`, backgroundColor: props.backgroundColor, color: textColor }}>
             <header className="mb-10">
                 <h1 className="text-4xl font-bold">{business.name}</h1>
                 <p className="text-xs text-gray-500">{t.professionalPhotography || 'Professional Photography'}</p>
@@ -340,3 +340,5 @@ export const PhotographyTemplate5: React.FC<PageProps> = (props) => {
         </div>
     );
 };
+
+    
