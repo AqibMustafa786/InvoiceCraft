@@ -466,11 +466,13 @@ export const PlumbingTemplate5: React.FC<PageProps> = (props) => {
             <header className="grid grid-cols-2 gap-4 mb-10">
                 <div>
                     <h1 className="text-4xl font-extrabold">{business.name}</h1>
-                    <p className="text-xs">{business.address}</p>
-                    <p className="text-xs">{business.phone} | {business.email}</p>
-                     {business.website && <p className="text-xs">{business.website}</p>}
-                     {business.licenseNumber && <p className="text-xs">Lic #: {business.licenseNumber}</p>}
-                    {business.taxId && <p className="text-xs">Tax ID: {business.taxId}</p>}
+                    <div className="text-xs mt-1">
+                        <p className="whitespace-pre-line">{business.address}</p>
+                        <p>{business.phone} | {business.email}</p>
+                        {business.website && <p>{business.website}</p>}
+                        {business.licenseNumber && <p>Lic #: {business.licenseNumber}</p>}
+                        {business.taxId && <p>Tax ID: {business.taxId}</p>}
+                    </div>
                 </div>
                  <div className="text-right">
                      <p className="text-3xl font-bold">{docTitle.toUpperCase()}</p>

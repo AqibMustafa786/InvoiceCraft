@@ -79,7 +79,7 @@ export const CleaningTemplate1: React.FC<PageProps> = (props) => {
     const docTitle = (t.invoice || 'INVOICE').toUpperCase();
 
     return (
-        <div className={`bg-white font-sans text-gray-800 flex flex-col relative ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: 'Arial, sans-serif', fontSize: `10pt`, minHeight: '1056px', backgroundColor: props.backgroundColor, color: textColor }}>
+        <div className={`bg-white font-sans text-gray-800 flex flex-col relative ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: 'Arial, sans-serif', fontSize: `10pt`, minHeight: '1056px' }}>
             <div className="absolute top-0 left-0 right-0 h-48" style={{ backgroundColor: accentColor, clipPath: 'ellipse(100% 70% at 50% 0%)' }}></div>
             <div className="p-10 relative z-10 flex-grow flex flex-col" style={{color: textColor}}>
                 <header className="flex justify-between items-start mb-8 text-white">
@@ -290,7 +290,7 @@ export const CleaningTemplate3: React.FC<PageProps> = (props) => {
                 <div>
                     <p><strong>{t.billedTo || 'Billed To'}:</strong> {client.name}</p>
                     {client.companyName && <p>{client.companyName}</p>}
-                    <p>{client.address}</p>
+                    <p className="whitespace-pre-line">{client.address}</p>
                     <p>{client.email}</p>
                     <p>{client.phone}</p>
                     {client.shippingAddress && <p className="mt-2"><span className="font-bold">Ship To:</span><br/>{client.shippingAddress}</p>}

@@ -320,10 +320,6 @@ export const GenericTemplate3: React.FC<PageProps> = (props) => {
                             <div className="flex justify-between py-1 font-bold"><span>{t.balanceDue || 'Balance Due'}</span><span>{currencySymbol}{balanceDue.toFixed(2)}</span></div>
                         </div>
                     </div>
-                     <div className="text-xs text-gray-600" style={{color: textColor || '#6B7280'}}>
-                        <p className="font-bold mb-1 text-gray-700" style={{color: textColor}}>Notes & Terms</p>
-                        <p className="whitespace-pre-line">{invoice.paymentInstructions}</p>
-                    </div>
                      <div className="flex justify-between items-end mt-4">
                         {business.ownerSignature && <SignatureDisplay signature={business.ownerSignature} label={(t.authorizedSignature || 'Authorized Signature')} />}
                     </div>
@@ -446,7 +442,7 @@ export const GenericTemplate5: React.FC<PageProps> = (props) => {
                     <p className="whitespace-pre-line">{client.address}</p>
                     <p>{client.phone}</p>
                     <p>{client.email}</p>
-                    {client.shippingAddress && <p className="mt-2"><span className="font-bold">Ship To:</span><br/>{client.shippingAddress}</p>}
+                    {client.shippingAddress && <p className="mt-2"><span className="font-bold text-gray-500">Ship To:</span><br/>{client.shippingAddress}</p>}
                 </div>
                 <div className="p-4 bg-gray-50 rounded">
                     <p className="font-bold text-gray-500 mb-2" style={{color: textColor}}>{(t.details || 'DETAILS')}</p>

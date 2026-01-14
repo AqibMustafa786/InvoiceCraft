@@ -41,24 +41,6 @@ const SignatureDisplay = ({ signature, label }: { signature: any, label: string 
     )
 }
 
-const CustomFieldsPreview: React.FC<{ fields?: CustomField[], textColor?: string, showHeading: boolean }> = ({ fields, textColor, showHeading }) => {
-  const validFields = fields?.filter(f => f.label && f.value) || [];
-  if (validFields.length === 0) return null;
-
-  return (
-    <section className="my-4 text-xs" style={{ color: textColor }}>
-      {showHeading && <p className="font-bold text-gray-500 mb-2 border-b">Additional Information</p>}
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-x-4 gap-y-1">
-        {validFields.map(field => (
-          <p key={field.id}>
-            <span className="font-semibold text-gray-600">{field.label}:</span> {field.value}
-          </p>
-        ))}
-      </div>
-    </section>
-  );
-}
-
 export const ConstructionDetails: React.FC<{ invoice: Invoice, t: any }> = ({ invoice, t }) => {
     if (!invoice.construction) return null;
 
@@ -193,7 +175,7 @@ export const ConstructionTemplate2: React.FC<PageProps> = (props) => {
                     ) : (
                         <h1 className="text-4xl font-bold">{business.name}</h1>
                     )}
-                     <div className="text-xs space-y-0.5 mt-2 text-gray-300">
+                     <div className="text-xs space-y-0.5 mt-2" style={{ color: '#D1D5DB' }}>
                         <p className="whitespace-pre-line">{business.address}</p>
                         {business.phone && <p>{business.phone}</p>}
                         {business.email && <p>{business.email}</p>}
@@ -217,7 +199,6 @@ export const ConstructionTemplate2: React.FC<PageProps> = (props) => {
                         <p>{client.phone}</p>
                         <p>{client.email}</p>
                         {client.shippingAddress && <p className="mt-2"><span className="font-bold text-gray-500">Ship To:</span><br/>{client.shippingAddress}</p>}
-                        {client.projectLocation && <p className="mt-2"><span className="font-bold text-gray-500">Project Location:</span><br/>{client.projectLocation}</p>}
                     </div>
                     <div className="text-right">
                         <p className="font-bold text-gray-500 mb-1" style={{color: textColor ? textColor : undefined}}>{(t.invoiceDetails || 'INVOICE DETAILS')}</p>
@@ -227,9 +208,9 @@ export const ConstructionTemplate2: React.FC<PageProps> = (props) => {
                         {invoice.poNumber && <p>PO: {invoice.poNumber}</p>}
                     </div>
                 </section>
-
-                <ConstructionDetails invoice={invoice} t={t} />
                 
+                <CategorySpecificDetails invoice={invoice} t={t} />
+
                 <main className="flex-grow">
                     <table className="w-full text-left text-sm">
                         <thead>
@@ -294,7 +275,7 @@ export const ConstructionTemplate3: React.FC<PageProps> = (props) => {
                     <h1 className="text-4xl font-light tracking-wide">{business.name}</h1>
                     <div className="text-xs whitespace-pre-line mt-1">
                         <p>{business.address}</p>
-                        <p>{business.phone}</p>
+                        <p>{business.phone} | {business.email}</p>
                         {business.website && <p>{business.website}</p>}
                         {business.licenseNumber && <p>Lic #: {business.licenseNumber}</p>}
                         {business.taxId && <p>Tax ID: {business.taxId}</p>}
@@ -326,10 +307,7 @@ export const ConstructionTemplate3: React.FC<PageProps> = (props) => {
                     <tbody>
                         {pageItems.map(item => (
                             <tr key={item.id} className="border-b">
-                                <td className="p-2 align-top">
-                                    <p className="font-medium whitespace-pre-line">{item.name}</p>
-                                    {item.description && <p className="text-xs text-gray-500 whitespace-pre-line">{item.description}</p>}
-                                </td>
+                                <td className="p-2 align-top whitespace-pre-line">{item.name}</td>
                                 <td className="p-2 align-top text-center">{item.quantity}</td>
                                 <td className="p-2 align-top text-right">{currencySymbol}{item.unitPrice.toFixed(2)}</td>
                                 <td className="p-2 align-top text-right font-semibold">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</td>
