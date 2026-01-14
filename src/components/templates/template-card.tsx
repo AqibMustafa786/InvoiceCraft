@@ -1,5 +1,3 @@
-
-
 'use client';
 
 import { motion } from 'framer-motion';
@@ -12,7 +10,7 @@ import { cn } from '@/lib/utils';
 
 interface TemplateCardProps {
   template: Template;
-  onPreview: (templateId: string) => void;
+  onPreview: (template: Template) => void;
   isSelected?: boolean;
 }
 
@@ -42,7 +40,7 @@ export function TemplateCard({ template, onPreview, isSelected }: TemplateCardPr
       whileHover={{ y: -5 }}
       transition={{ type: 'spring', stiffness: 300, damping: 20 }}
       className="group relative block overflow-hidden rounded-lg border bg-card shadow-sm cursor-pointer"
-      onClick={() => onPreview(template.id)}
+      onClick={() => onPreview(template)}
     >
       <div
         className={cn(
