@@ -36,7 +36,7 @@ const SignatureDisplay = ({ signature, label }: { signature: any, label: string 
     return (
         <div className="mt-8">
             <Image src={signature.image} alt={label} width={150} height={75} className="border-b border-gray-400" />
-            <p className="text-xs text-gray-500 pt-1 border-t-2 border-gray-700 w-[150px]">{label}</p>
+            <p className="text-xs text-muted-foreground pt-1 border-t-2 border-current w-[150px]">{label}</p>
         </div>
     )
 }
@@ -48,18 +48,18 @@ export const AutoRepairDetails: React.FC<{ invoice: Invoice, t: any }> = ({ invo
 
     return (
         <section className="my-4 text-xs">
-            <p className="font-bold text-gray-500 mb-2 border-b">{t.vehicleInformation || 'Vehicle Information'}</p>
+            <p className="font-bold text-muted-foreground mb-2 border-b">{t.vehicleInformation || 'Vehicle Information'}</p>
              {hasDetails && (
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-x-4 gap-y-1">
-                    {autoRepair.vehicleMake && <p><span className="font-semibold text-gray-600">{(t.vehicle || 'Vehicle')}:</span> {autoRepair.vehicleMake} {autoRepair.vehicleModel} ({autoRepair.year})</p>}
-                    {autoRepair.odometer && <p><span className="font-semibold text-gray-600">{(t.mileage || 'Mileage')}:</span> {autoRepair.odometer.toLocaleString()}</p>}
-                    {autoRepair.vin && <p className="col-span-full"><span className="font-semibold text-gray-600">VIN:</span> {autoRepair.vin}</p>}
-                    {autoRepair.licensePlate && <p><span className="font-semibold text-gray-600">{(t.licensePlate || 'Plate')}:</span> {autoRepair.licensePlate}</p>}
-                    {autoRepair.laborHours && <p><span className="font-semibold text-gray-600">{(t.laborHours || 'Labor Hours')}:</span> {autoRepair.laborHours}</p>}
-                    {autoRepair.laborRate && <p><span className="font-semibold text-gray-600">{(t.laborRate || 'Labor Rate')}:</span> ${autoRepair.laborRate.toFixed(2)}/hr</p>}
-                    {autoRepair.diagnosticFee && <p><span className="font-semibold text-gray-600">{(t.diagnosticFee || 'Diagnostic Fee')}:</span> ${autoRepair.diagnosticFee.toFixed(2)}</p>}
-                    {autoRepair.shopSupplyFee && <p><span className="font-semibold text-gray-600">{(t.shopSupplyFee || 'Shop Supply Fee')}:</span> ${autoRepair.shopSupplyFee.toFixed(2)}</p>}
-                    {autoRepair.towingFee && <p><span className="font-semibold text-gray-600">{(t.towingFee || 'Towing Fee')}:</span> ${autoRepair.towingFee.toFixed(2)}</p>}
+                    {autoRepair.vehicleMake && <p><span className="font-semibold">{t.vehicle || 'Vehicle'}:</span> {autoRepair.vehicleMake} {autoRepair.vehicleModel} ({autoRepair.year})</p>}
+                    {autoRepair.odometer && <p><span className="font-semibold">{(t.mileage || 'Mileage')}:</span> {autoRepair.odometer.toLocaleString()}</p>}
+                    {autoRepair.vin && <p className="col-span-full"><span className="font-semibold">VIN:</span> {autoRepair.vin}</p>}
+                    {autoRepair.licensePlate && <p><span className="font-semibold">{(t.licensePlate || 'Plate')}:</span> {autoRepair.licensePlate}</p>}
+                    {autoRepair.laborHours && <p><span className="font-semibold">{(t.laborHours || 'Labor Hours')}:</span> {autoRepair.laborHours}</p>}
+                    {autoRepair.laborRate && <p><span className="font-semibold">{(t.laborRate || 'Labor Rate')}:</span> ${autoRepair.laborRate.toFixed(2)}/hr</p>}
+                    {autoRepair.diagnosticFee && <p><span className="font-semibold">{(t.diagnosticFee || 'Diagnostic Fee')}:</span> ${autoRepair.diagnosticFee.toFixed(2)}</p>}
+                    {autoRepair.shopSupplyFee && <p><span className="font-semibold">{(t.shopSupplyFee || 'Shop Supply Fee')}:</span> ${autoRepair.shopSupplyFee.toFixed(2)}</p>}
+                    {autoRepair.towingFee && <p><span className="font-semibold">{(t.towingFee || 'Towing Fee')}:</span> ${autoRepair.towingFee.toFixed(2)}</p>}
                 </div>
              )}
         </section>
@@ -175,16 +175,16 @@ export const AutoRepairTemplate2: React.FC<PageProps> = (props) => {
                     <h2 className="text-2xl font-extrabold tracking-wider">{docTitle}</h2>
                 </div>
             </header>
-            <div className="p-10 pt-0 flex-grow flex flex-col">
-                <section className="my-6 pb-4 border-b border-gray-600 grid grid-cols-2 gap-8 text-xs">
+            <div className="p-10 pt-6 flex-grow flex flex-col">
+                <section className="mb-6 pb-4 border-b border-gray-600 grid grid-cols-2 gap-8 text-xs">
                      <div>
-                        <p className="font-bold text-gray-400 mb-1">{(t.customer || 'CUSTOMER').toUpperCase()}</p>
+                        <p className="font-bold text-muted-foreground mb-1">{(t.customer || 'CUSTOMER').toUpperCase()}</p>
                         <p className="font-medium">{client.name}</p>
-                        <p className="text-gray-300">{client.address}</p>
+                        <p>{client.address}</p>
                     </div>
                     <div className="text-right">
-                        <p><span className="font-bold text-gray-400">{t.invoiceNo || 'Invoice #'}: </span>{invoice.invoiceNumber}</p>
-                        <p><span className="font-bold text-gray-400">{(t.date || 'DATE').toUpperCase()}: </span>{safeFormat(invoice.invoiceDate, 'yyyy-MM-dd')}</p>
+                        <p><span className="font-bold text-muted-foreground">{t.invoiceNo || 'Invoice #'}: </span>{invoice.invoiceNumber}</p>
+                        <p><span className="font-bold text-muted-foreground">{(t.date || 'DATE').toUpperCase()}: </span>{safeFormat(invoice.invoiceDate, 'yyyy-MM-dd')}</p>
                     </div>
                 </section>
                 
@@ -192,7 +192,7 @@ export const AutoRepairTemplate2: React.FC<PageProps> = (props) => {
 
                 <main className="flex-grow">
                      <table className="w-full text-left text-sm">
-                        <thead className="text-gray-300">
+                        <thead className="text-muted-foreground">
                             <tr>
                                 <th className="py-2 font-semibold w-1/2">{(t.service || 'SERVICE').toUpperCase()}</th>
                                 <th className="py-2 font-semibold text-center">{(t.quantity || 'QTY').toUpperCase()}</th>
@@ -202,7 +202,7 @@ export const AutoRepairTemplate2: React.FC<PageProps> = (props) => {
                         </thead>
                         <tbody>
                             {pageItems.map(item => (
-                                <tr key={item.id} className="border-b border-gray-700">
+                                <tr key={item.id} className="border-b" style={{ borderColor: props.backgroundColor === '#1F2937' ? '#374151' : '#e5e7eb' }}>
                                     <td className="py-2 align-top whitespace-pre-line">{item.name}</td>
                                     <td className="py-2 align-top text-center">{item.quantity}</td>
                                     <td className="py-2 align-top text-right">{currencySymbol}{item.unitPrice.toFixed(2)}</td>
@@ -217,11 +217,11 @@ export const AutoRepairTemplate2: React.FC<PageProps> = (props) => {
                     <footer className="mt-auto pt-8">
                          <div className="flex justify-end mb-6">
                             <div className="w-2/5 text-sm space-y-2">
-                                <div className="flex justify-between"><span className="text-gray-400">{(t.subtotal || 'Subtotal')}:</span><span>{currencySymbol}{subtotal.toFixed(2)}</span></div>
-                                {discountAmount > 0 && <div className="flex justify-between"><span className="text-gray-400">{t.discount || 'Discount'}:</span><span className="text-red-400">-{currencySymbol}{discountAmount.toFixed(2)}</span></div>}
-                                {invoice.summary.shippingCost > 0 && <div className="flex justify-between"><span className="text-gray-400">{t.shipping || 'Shipping'}:</span><span>{currencySymbol}{invoice.summary.shippingCost.toFixed(2)}</span></div>}
-                                <div className="flex justify-between"><span className="text-gray-400">{(t.taxesAndFees || 'Taxes &amp; Fees')}:</span><span>{currencySymbol}{taxAmount.toFixed(2)}</span></div>
-                                <div className="flex justify-between font-bold text-xl mt-2 pt-2 border-t-2 border-gray-500" style={{color: accentColor || '#FBBF24'}}><span>{(t.total || 'TOTAL')}:</span><span>{currencySymbol}{total.toFixed(2)}</span></div>
+                                <div className="flex justify-between"><span className="text-muted-foreground">{(t.subtotal || 'Subtotal')}:</span><span>{currencySymbol}{subtotal.toFixed(2)}</span></div>
+                                {discountAmount > 0 && <div className="flex justify-between"><span className="text-muted-foreground">{t.discount || 'Discount'}:</span><span className="text-red-400">-{currencySymbol}{discountAmount.toFixed(2)}</span></div>}
+                                {invoice.summary.shippingCost > 0 && <div className="flex justify-between"><span className="text-muted-foreground">{t.shipping || 'Shipping'}:</span><span>{currencySymbol}{invoice.summary.shippingCost.toFixed(2)}</span></div>}
+                                <div className="flex justify-between"><span className="text-muted-foreground">{(t.taxesAndFees || 'Taxes &amp; Fees')}:</span><span>{currencySymbol}{taxAmount.toFixed(2)}</span></div>
+                                <div className="flex justify-between font-bold text-xl mt-2 pt-2 border-t-2" style={{borderColor: textColor}}><span style={{color: accentColor}}>{(t.total || 'TOTAL')}:</span><span>{currencySymbol}{total.toFixed(2)}</span></div>
                             </div>
                         </div>
                     </footer>
@@ -291,10 +291,10 @@ export const AutoRepairTemplate3: React.FC<PageProps> = (props) => {
                     <div className="flex justify-end">
                         <table className="w-1/3 text-xs">
                              <tbody>
-                                <tr><td className="py-1 text-gray-500">{t.subtotal || 'Subtotal'}</td><td className="text-right">{currencySymbol}{subtotal.toFixed(2)}</td></tr>
-                                {discountAmount > 0 && <tr><td className="py-1 text-gray-500">{t.discount || 'Discount'}</td><td className="text-right text-red-600">-{currencySymbol}{discountAmount.toFixed(2)}</td></tr>}
-                                {invoice.summary.shippingCost > 0 && <tr><td className="py-1 text-gray-500">{t.shipping || 'Shipping'}</td><td className="text-right">{currencySymbol}{invoice.summary.shippingCost.toFixed(2)}</td></tr>}
-                                <tr><td className="py-1 text-gray-500">{(t.tax || 'Tax')}</td><td className="text-right">{currencySymbol}{taxAmount.toFixed(2)}</td></tr>
+                                <tr><td className="py-1 text-muted-foreground">{t.subtotal || 'Subtotal'}</td><td className="text-right">{currencySymbol}{subtotal.toFixed(2)}</td></tr>
+                                {discountAmount > 0 && <tr><td className="py-1 text-muted-foreground">{t.discount || 'Discount'}</td><td className="text-right text-red-600">-{currencySymbol}{discountAmount.toFixed(2)}</td></tr>}
+                                {invoice.summary.shippingCost > 0 && <tr><td className="py-1 text-muted-foreground">{t.shipping || 'Shipping'}</td><td className="text-right">{currencySymbol}{invoice.summary.shippingCost.toFixed(2)}</td></tr>}
+                                <tr><td className="py-1 text-muted-foreground">{(t.tax || 'Tax')}</td><td className="text-right">{currencySymbol}{taxAmount.toFixed(2)}</td></tr>
                                 <tr className="font-bold text-base border-t-2 border-black"><td className="pt-2">{(t.total || 'TOTAL').toUpperCase()}</td><td className="pt-2 text-right">{currencySymbol}{total.toFixed(2)}</td></tr>
                             </tbody>
                         </table>
@@ -391,10 +391,10 @@ export const AutoRepairTemplate5: React.FC<PageProps> = (props) => {
             </header>
 
             <section className="grid grid-cols-2 gap-4 mb-8 text-xs p-4 bg-white rounded-lg shadow-sm">
-                <div><p className="font-bold text-gray-500">{t.from || 'From'}:</p><p className="font-semibold">{business.name}</p><p>{business.address}</p></div>
-                <div><p className="font-bold text-gray-500">{t.to || 'To'}:</p><p className="font-semibold">{client.name}</p><p>{client.address}</p></div>
-                <div><p className="font-bold text-gray-500">{t.invoiceNo || 'Invoice #'}:</p><p>{invoice.invoiceNumber}</p></div>
-                <div><p className="font-bold text-gray-500">{t.dateIssued || 'Date Issued'}:</p><p>{safeFormat(invoice.invoiceDate, 'MMM d, yyyy')}</p></div>
+                <div><p className="font-bold text-muted-foreground">{t.from || 'From'}:</p><p className="font-semibold">{business.name}</p><p>{business.address}</p></div>
+                <div><p className="font-bold text-muted-foreground">{t.to || 'To'}:</p><p className="font-semibold">{client.name}</p><p>{client.address}</p></div>
+                <div><p className="font-bold text-muted-foreground">{t.invoiceNo || 'Invoice #'}:</p><p>{invoice.invoiceNumber}</p></div>
+                <div><p className="font-bold text-muted-foreground">{t.dateIssued || 'Date Issued'}:</p><p>{safeFormat(invoice.invoiceDate, 'MMM d, yyyy')}</p></div>
             </section>
             
             <CategorySpecificDetails invoice={invoice} t={t} />
@@ -403,7 +403,7 @@ export const AutoRepairTemplate5: React.FC<PageProps> = (props) => {
                 <table className="w-full text-left text-xs">
                     <thead>
                         <tr className="border-b-2 border-gray-200">
-                            <th className="py-2 font-bold w-3/5">{(t.descriptionOfWork || 'DESCRIPTION OF WORK').toUpperCase()}</th>
+                            <th className="py-2 font-bold w-[60%]">{(t.descriptionOfWork || 'DESCRIPTION OF WORK').toUpperCase()}</th>
                             <th className="py-2 font-bold text-center">{(t.hoursQty || 'HOURS/QTY').toUpperCase()}</th>
                             <th className="py-2 font-bold text-right">{(t.cost || 'COST').toUpperCase()}</th>
                             <th className="py-2 font-bold text-right">{(t.total || 'TOTAL').toUpperCase()}</th>
@@ -412,7 +412,10 @@ export const AutoRepairTemplate5: React.FC<PageProps> = (props) => {
                     <tbody>
                         {pageItems.map(item => (
                             <tr key={item.id} className="border-b border-gray-100">
-                                <td className="py-2 align-top whitespace-pre-line">{item.name}</td>
+                                <td className="py-2 align-top">
+                                    <p className="font-semibold whitespace-pre-line">{item.name}</p>
+                                    {item.description && <p className="text-xs text-muted-foreground whitespace-pre-line">{item.description}</p>}
+                                </td>
                                 <td className="py-2 align-top text-center">{item.quantity}</td>
                                 <td className="py-2 align-top text-right">{currencySymbol}{item.unitPrice.toFixed(2)}</td>
                                 <td className="py-2 align-top text-right font-semibold">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</td>
@@ -423,18 +426,25 @@ export const AutoRepairTemplate5: React.FC<PageProps> = (props) => {
             </main>
             
             {pageIndex === totalPages - 1 && (
-                <footer className="mt-auto pt-6 flex justify-end">
+                <footer className="mt-auto pt-8 flex justify-between items-end">
+                    <div className="text-xs w-1/2">
+                        <p className="font-bold">{(t.termsAndConditions || 'Terms & Conditions')}:</p>
+                        <p className="text-muted-foreground whitespace-pre-line">{invoice.paymentInstructions}</p>
+                         <SignatureDisplay signature={business.ownerSignature} label="Authorized Signature" />
+                    </div>
                     <div className="w-1/3 text-sm space-y-1">
                         <p className="flex justify-between"><span>{(t.subtotal || 'Subtotal')}</span><span>{currencySymbol}{subtotal.toFixed(2)}</span></p>
                         {discountAmount > 0 && <p className="flex justify-between"><span>{t.discount || 'Discount'}</span><span className="text-red-500">-{currencySymbol}{discountAmount.toFixed(2)}</span></p>}
                         {invoice.summary.shippingCost > 0 && <p className="flex justify-between"><span>{t.shipping || 'Shipping/Extra'}</span><span>{currencySymbol}{invoice.summary.shippingCost.toFixed(2)}</span></p>}
                         <p className="flex justify-between"><span>{(t.tax || 'Tax')}</span><span>{currencySymbol}{taxAmount.toFixed(2)}</span></p>
                         <p className="flex justify-between p-2 mt-2 border-t-2 border-black font-bold text-lg"><span>{t.total || 'Total'}</span><span>{currencySymbol}{total.toFixed(2)}</span></p>
-                        {(invoice.amountPaid || 0) > 0 && <p className="flex justify-between p-2 text-green-600 font-bold"><span>Amount Paid</span><span>-{currencySymbol}{(invoice.amountPaid || 0).toFixed(2)}</span></p>}
-                        <p className="flex justify-between bg-gray-200 p-2 font-bold text-lg"><span>Balance Due</span><span>{currencySymbol}{balanceDue.toFixed(2)}</span></p>
+                        {(invoice.amountPaid || 0) > 0 && <p className="flex justify-between p-2 text-green-600 font-bold"><span>{t.amountPaid || 'Amount Paid'}</span><span>-{currencySymbol}{(invoice.amountPaid || 0).toFixed(2)}</span></p>}
+                        <p className="flex justify-between bg-gray-200 p-2 font-bold text-lg"><span>{t.balanceDue || 'Balance Due'}</span><span>{currencySymbol}{balanceDue.toFixed(2)}</span></p>
                     </div>
                 </footer>
             )}
         </div>
     );
 };
+
+    
