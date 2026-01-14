@@ -113,8 +113,8 @@ export const ITTemplate1: React.FC<PageProps> = (props) => {
                     <div>
                         <h1 className="text-3xl font-bold">{business.name}</h1>
                         <p className="text-xs text-gray-500">{business.address} • {business.phone}</p>
-                        <p className="text-xs text-blue-600">{business.email}</p>
-                        {business.website && <p className="text-xs text-blue-600">{business.website}</p>}
+                        <p className="text-xs" style={{color: accentColor}}>{business.email}</p>
+                        {business.website && <p className="text-xs" style={{color: accentColor}}>{business.website}</p>}
                         {business.licenseNumber && <p className="text-xs text-gray-500">Lic #: {business.licenseNumber}</p>}
                         {business.taxId && <p className="text-xs text-gray-500">Tax ID: {business.taxId}</p>}
                     </div>
@@ -129,10 +129,11 @@ export const ITTemplate1: React.FC<PageProps> = (props) => {
                 <p className="font-bold text-gray-400 tracking-widest mb-2">{(t.projectInformation || 'PROJECT INFORMATION').toUpperCase()}</p>
                 <div className="grid grid-cols-[120px_1fr] gap-x-4 gap-y-1">
                     <span className="text-gray-600">{t.invoiceNo || 'INVOICE #'}:</span><span className="font-semibold">{invoice.invoiceNumber}</span>
-                    <span className="text-gray-600">{t.contactPerson || 'CONTACT PERSON'}:</span><span className="font-semibold">{client.name}</span>
-                    <span className="text-gray-600">{t.date || 'DATE'}:</span><span className="font-semibold">{safeFormat(invoice.invoiceDate, 'yyyy-MM-dd')}</span>
                     <span className="text-gray-600">{t.dueDate || 'DUE DATE'}:</span><span className="font-semibold">{safeFormat(invoice.dueDate, 'yyyy-MM-dd')}</span>
                     {invoice.poNumber && <><span className="text-gray-600">PO #:</span><span className="font-semibold">{invoice.poNumber}</span></>}
+                    <span className="text-gray-600">{t.contactPerson || 'CONTACT PERSON'}:</span><span className="font-semibold">{client.name}</span>
+                    <span className="text-gray-600">{t.estimator || 'ESTIMATOR'}:</span><span className="font-semibold">{business.name}</span>
+                    <span className="text-gray-600">{t.estimationDate || 'ESTIMATION DATE'}:</span><span className="font-semibold">{safeFormat(invoice.invoiceDate, 'yyyy-MM-dd')}</span>
                 </div>
             </section>
             
@@ -203,7 +204,13 @@ export const ITTemplate2: React.FC<PageProps> = (props) => {
             <header className="flex justify-between items-start mb-10">
                 <div>
                     <h1 className="text-4xl font-bold" style={{ color: accentColor }}>{business.name}</h1>
-                    <p className="text-xs text-gray-400">{t.softwareAndITSolutions || 'Software & IT Solutions'}</p>
+                    <div className="text-xs text-gray-400 mt-1">
+                        <p>{business.address}</p>
+                        <p>{business.phone} | {business.email}</p>
+                        {business.website && <p>{business.website}</p>}
+                        {business.licenseNumber && <p>Lic #: {business.licenseNumber}</p>}
+                        {business.taxId && <p>Tax ID: {business.taxId}</p>}
+                    </div>
                 </div>
                 <div className="text-right">
                     <h2 className="text-3xl font-light text-gray-400">{docTitle}</h2>
@@ -212,8 +219,13 @@ export const ITTemplate2: React.FC<PageProps> = (props) => {
             </header>
 
             <section className="grid grid-cols-2 gap-8 mb-8 text-xs">
-                <div><p className="font-bold text-gray-500 mb-1">{(t.projectFor || 'PROJECT FOR').toUpperCase()}:</p><p className="font-medium">{client.name}</p><p className="text-gray-400">{client.address}</p></div>
-                <div className="text-right"><p className="font-bold text-gray-500 mb-1">{(t.date || 'DATE').toUpperCase()}:</p><p>{safeFormat(invoice.invoiceDate, 'MM-dd-yyyy')}</p></div>
+                <div><p className="font-bold text-gray-500 mb-1">{(t.projectFor || 'PROJECT FOR').toUpperCase()}:</p><p className="font-medium">{client.name}</p><p className="text-gray-400">{client.address}</p>{client.shippingAddress && <p className="text-gray-400 mt-2"><span className="font-bold">Ship To:</span><br/>{client.shippingAddress}</p>}</div>
+                <div className="text-right">
+                    <p><span className="font-bold text-gray-500">{t.invoiceNo || 'Invoice #'}: </span>{invoice.invoiceNumber}</p>
+                    <p><span className="font-bold text-gray-500">{(t.date || 'DATE').toUpperCase()}: </span>{safeFormat(invoice.invoiceDate, 'MM-dd-yyyy')}</p>
+                    <p><span className="font-bold text-gray-500">{(t.dueDate || 'DUE DATE').toUpperCase()}: </span>{safeFormat(invoice.dueDate, 'MM-dd-yyyy')}</p>
+                    {invoice.poNumber && <p><span className="font-bold text-gray-500">PO #: </span>{invoice.poNumber}</p>}
+                </div>
             </section>
             
             <CategorySpecificDetails invoice={invoice} t={t} />
@@ -222,7 +234,8 @@ export const ITTemplate2: React.FC<PageProps> = (props) => {
                 <table className="w-full text-left text-sm">
                     <thead>
                         <tr className="border-b border-gray-700">
-                            <th className="py-2 font-semibold w-1/2 text-gray-400">{(t.service || 'SERVICE').toUpperCase()}</th>
+                            <th className="py-2 font-semibold w-2/5 text-gray-400">{(t.service || 'SERVICE').toUpperCase()}</th>
+                            <th className="py-2 font-semibold w-2/5 text-gray-400">{(t.description || 'DESCRIPTION').toUpperCase()}</th>
                             <th className="py-2 font-semibold text-center text-gray-400">{(t.quantity || 'QTY').toUpperCase()}</th>
                             <th className="py-2 font-semibold text-right text-gray-400">{(t.rate || 'RATE').toUpperCase()}</th>
                             <th className="py-2 font-semibold text-right text-gray-400">{(t.total || 'TOTAL').toUpperCase()}</th>
@@ -232,6 +245,7 @@ export const ITTemplate2: React.FC<PageProps> = (props) => {
                         {pageItems.map(item => (
                             <tr key={item.id} className="border-b border-gray-800">
                                 <td className="py-2 align-top whitespace-pre-line">{item.name}</td>
+                                <td className="py-2 align-top whitespace-pre-line text-gray-400">{item.description}</td>
                                 <td className="py-2 align-top text-center">{item.quantity}</td>
                                 <td className="py-2 align-top text-right">{currencySymbol}{item.unitPrice.toFixed(2)}</td>
                                 <td className="py-2 align-top text-right">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</td>
@@ -246,11 +260,20 @@ export const ITTemplate2: React.FC<PageProps> = (props) => {
                      <div className="flex justify-end">
                         <div className="w-2/5 text-sm space-y-1">
                             <div className="flex justify-between"><span className="text-gray-400">{t.subtotal || 'Subtotal'}:</span><span>{currencySymbol}{subtotal.toFixed(2)}</span></div>
+                            {discountAmount > 0 && <div className="flex justify-between"><span className="text-gray-400">{t.discount || 'Discount'}:</span><span className="text-red-400">-{currencySymbol}{discountAmount.toFixed(2)}</span></div>}
+                            {invoice.summary.shippingCost > 0 && <div className="flex justify-between"><span className="text-gray-400">{t.shipping || 'Shipping'}:</span><span>{currencySymbol}{invoice.summary.shippingCost.toFixed(2)}</span></div>}
                             <div className="flex justify-between"><span className="text-gray-400">{t.tax || 'Tax'} ({invoice.summary.taxPercentage}%):</span><span>{currencySymbol}{taxAmount.toFixed(2)}</span></div>
                             <div className="flex justify-between font-bold text-lg mt-2 pt-2 border-t border-gray-600"><span>{t.total || 'Total'}:</span><span style={{ color: accentColor }}>{currencySymbol}{total.toFixed(2)}</span></div>
                             {(invoice.amountPaid || 0) > 0 && <div className="flex justify-between font-bold text-green-400"><span>{t.amountPaid || 'Amount Paid'}:</span><span>-{currencySymbol}{(invoice.amountPaid || 0).toFixed(2)}</span></div>}
                              <div className="flex justify-between font-bold p-1 rounded mt-1" style={{backgroundColor: `${accentColor}20`}}><span>{t.balanceDue || 'Balance Due'}:</span><span>{currencySymbol}{balanceDue.toFixed(2)}</span></div>
                         </div>
+                    </div>
+                    <div className="text-xs mt-8">
+                        <p className="font-bold text-gray-500 mb-2">{t.termsAndConditions || 'Terms & Conditions'}</p>
+                        <p className="whitespace-pre-line">{invoice.paymentInstructions}</p>
+                    </div>
+                     <div className="flex justify-between mt-8">
+                        <SignatureDisplay signature={business.ownerSignature} label={t.authorizedSignature || 'Authorized Signature'} />
                     </div>
                 </footer>
             )}
@@ -281,7 +304,7 @@ export const ITTemplate3: React.FC<PageProps> = (props) => {
                 <div><p className="font-bold text-gray-500 mb-1">{t.to || 'To'}</p><p>{client.name}</p></div>
                 <div><p className="font-bold text-gray-500 mb-1">{t.invoiceNo || 'Invoice #'}</p><p>{invoice.invoiceNumber}</p></div>
                 <div><p className="font-bold text-gray-500 mb-1">{t.date || 'Date'}</p><p>{safeFormat(invoice.invoiceDate, 'yyyy-MM-dd')}</p></div>
-                <div><p className="font-bold text-gray-500 mb-1">{t.dueDate || 'Due Date'}</p><p>{safeFormat(invoice.dueDate, 'yyyy-MM-dd')}</p></div>
+                <div className="text-right"><p className="font-bold text-gray-500 mb-1">{t.dueDate || 'Due Date'}</p><p>{safeFormat(invoice.dueDate, 'yyyy-MM-dd')}</p></div>
             </section>
             
             <CategorySpecificDetails invoice={invoice} t={t}/>
@@ -299,7 +322,10 @@ export const ITTemplate3: React.FC<PageProps> = (props) => {
                     <tbody>
                         {pageItems.map(item => (
                             <tr key={item.id}>
-                                <td className="p-2 border-b border-gray-100 whitespace-pre-line">{item.name}</td>
+                                <td className="p-2 border-b border-gray-100">
+                                    <p className="font-semibold whitespace-pre-line">{item.name}</p>
+                                    {item.description && <p className="text-xs text-gray-500 whitespace-pre-line">{item.description}</p>}
+                                </td>
                                 <td className="p-2 border-b border-gray-100 text-center">{item.quantity}</td>
                                 <td className="p-2 border-b border-gray-100 text-right">{currencySymbol}{item.unitPrice.toFixed(2)}</td>
                                 <td className="p-2 border-b border-gray-100 text-right">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</td>
@@ -337,7 +363,7 @@ export const ITTemplate4: React.FC<PageProps> = (props) => {
 
     return (
         <div className={`font-sans flex ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ minHeight: '1056px', backgroundColor: props.backgroundColor, color: textColor }}>
-            <div className="w-1/3 p-8 text-white flex flex-col" style={{ backgroundColor: accentColor }}>
+            <div className="w-1/3 p-8 text-white" style={{ backgroundColor: accentColor }}>
                 <h1 className="text-4xl font-bold mb-10">{docTitle}</h1>
                 <div className="text-sm space-y-6 flex-grow">
                     <div>
