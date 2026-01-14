@@ -205,7 +205,7 @@ export const ITTemplate2: React.FC<PageProps> = (props) => {
                 <div>
                     <h1 className="text-4xl font-bold" style={{ color: accentColor }}>{business.name}</h1>
                     <div className="text-xs text-gray-400 mt-1">
-                        <p>{business.address}</p>
+                        <p className="whitespace-pre-line">{business.address}</p>
                         <p>{business.phone} | {business.email}</p>
                         {business.website && <p>{business.website}</p>}
                         {business.licenseNumber && <p>Lic #: {business.licenseNumber}</p>}
@@ -219,7 +219,14 @@ export const ITTemplate2: React.FC<PageProps> = (props) => {
             </header>
 
             <section className="grid grid-cols-2 gap-8 mb-8 text-xs">
-                <div><p className="font-bold text-gray-500 mb-1">{(t.projectFor || 'PROJECT FOR').toUpperCase()}:</p><p className="font-medium">{client.name}</p><p className="text-gray-400">{client.address}</p>{client.shippingAddress && <p className="text-gray-400 mt-2"><span className="font-bold">Ship To:</span><br/>{client.shippingAddress}</p>}</div>
+                <div>
+                    <p className="font-bold text-gray-500 mb-1">{(t.projectFor || 'PROJECT FOR').toUpperCase()}:</p>
+                    <p className="font-medium">{client.name}</p>
+                    {client.companyName && <p className="text-gray-400">{client.companyName}</p>}
+                    <p className="text-gray-400">{client.address}</p>
+                    <p className="text-gray-400">{client.phone} | {client.email}</p>
+                    {client.shippingAddress && <p className="text-gray-400 mt-2"><span className="font-bold text-gray-500">SHIP TO:</span><br/>{client.shippingAddress}</p>}
+                </div>
                 <div className="text-right">
                     <p><span className="font-bold text-gray-500">{t.invoiceNo || 'Invoice #'}: </span>{invoice.invoiceNumber}</p>
                     <p><span className="font-bold text-gray-500">{(t.date || 'DATE').toUpperCase()}: </span>{safeFormat(invoice.invoiceDate, 'MM-dd-yyyy')}</p>
@@ -292,7 +299,13 @@ export const ITTemplate3: React.FC<PageProps> = (props) => {
             <header className="flex justify-between items-start mb-12">
                 <div>
                     <h1 className="text-3xl font-bold tracking-tighter">{business.name}</h1>
-                    <p className="text-xs">{business.address}</p>
+                    <div className="text-xs mt-1">
+                        <p>{business.address}</p>
+                        <p>{business.phone} | {business.email}</p>
+                        {business.website && <p>{business.website}</p>}
+                        {business.licenseNumber && <p>Lic #: {business.licenseNumber}</p>}
+                        {business.taxId && <p>Tax ID: {business.taxId}</p>}
+                    </div>
                 </div>
                  <div className="text-right">
                     <h2 className="text-2xl font-extrabold tracking-tighter">{docTitle}</h2>
@@ -301,10 +314,21 @@ export const ITTemplate3: React.FC<PageProps> = (props) => {
             </header>
 
             <section className="grid grid-cols-4 gap-4 mb-10 text-xs">
-                <div><p className="font-bold text-gray-500 mb-1">{t.to || 'To'}</p><p>{client.name}</p></div>
+                <div>
+                    <p className="font-bold text-gray-500 mb-1">{t.to || 'To'}</p>
+                    <p>{client.name}</p>
+                    {client.companyName && <p>{client.companyName}</p>}
+                    <p className="whitespace-pre-line">{client.address}</p>
+                    <p>{client.phone} | {client.email}</p>
+                    {client.shippingAddress && <p className="mt-2"><span className="font-bold">Ship To:</span><br/>{client.shippingAddress}</p>}
+                </div>
                 <div><p className="font-bold text-gray-500 mb-1">{t.invoiceNo || 'Invoice #'}</p><p>{invoice.invoiceNumber}</p></div>
                 <div><p className="font-bold text-gray-500 mb-1">{t.date || 'Date'}</p><p>{safeFormat(invoice.invoiceDate, 'yyyy-MM-dd')}</p></div>
-                <div className="text-right"><p className="font-bold text-gray-500 mb-1">{t.dueDate || 'Due Date'}</p><p>{safeFormat(invoice.dueDate, 'yyyy-MM-dd')}</p></div>
+                <div className="text-right">
+                    <p className="font-bold text-gray-500 mb-1">{t.dueDate || 'Due Date'}</p>
+                    <p>{safeFormat(invoice.dueDate, 'yyyy-MM-dd')}</p>
+                    {invoice.poNumber && <><p className="font-bold text-gray-500 mb-1 mt-2">PO #</p><p>{invoice.poNumber}</p></>}
+                </div>
             </section>
             
             <CategorySpecificDetails invoice={invoice} t={t}/>
@@ -313,7 +337,8 @@ export const ITTemplate3: React.FC<PageProps> = (props) => {
                  <table className="w-full text-left text-xs">
                     <thead>
                         <tr>
-                            <th className="p-2 font-bold w-3/5 border-b-2 border-gray-300">{(t.item || 'ITEM').toUpperCase()}</th>
+                            <th className="p-2 font-bold w-1/2 border-b-2 border-gray-300">{(t.item || 'ITEM').toUpperCase()}</th>
+                            <th className="p-2 font-bold w-1/4 border-b-2 border-gray-300">{(t.description || 'DESCRIPTION').toUpperCase()}</th>
                             <th className="p-2 font-bold text-center border-b-2 border-gray-300">{(t.quantity || 'QTY').toUpperCase()}</th>
                             <th className="p-2 font-bold text-right border-b-2 border-gray-300">{(t.price || 'PRICE').toUpperCase()}</th>
                             <th className="p-2 font-bold text-right border-b-2 border-gray-300">{(t.amount || 'AMOUNT').toUpperCase()}</th>
@@ -322,10 +347,8 @@ export const ITTemplate3: React.FC<PageProps> = (props) => {
                     <tbody>
                         {pageItems.map(item => (
                             <tr key={item.id}>
-                                <td className="p-2 border-b border-gray-100">
-                                    <p className="font-semibold whitespace-pre-line">{item.name}</p>
-                                    {item.description && <p className="text-xs text-gray-500 whitespace-pre-line">{item.description}</p>}
-                                </td>
+                                <td className="p-2 border-b border-gray-100 font-semibold whitespace-pre-line">{item.name}</td>
+                                <td className="p-2 border-b border-gray-100 whitespace-pre-line">{item.description}</td>
                                 <td className="p-2 border-b border-gray-100 text-center">{item.quantity}</td>
                                 <td className="p-2 border-b border-gray-100 text-right">{currencySymbol}{item.unitPrice.toFixed(2)}</td>
                                 <td className="p-2 border-b border-gray-100 text-right">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</td>
@@ -341,12 +364,21 @@ export const ITTemplate3: React.FC<PageProps> = (props) => {
                         <table className="w-1/3 text-xs">
                             <tbody>
                                 <tr><td className="py-1 text-gray-500">{t.subtotal || 'Subtotal'}</td><td className="py-1 text-right">{currencySymbol}{subtotal.toFixed(2)}</td></tr>
-                                <tr><td className="py-1 text-gray-500 border-b">{t.tax || 'Tax'}</td><td className="py-1 text-right border-b">{currencySymbol}{taxAmount.toFixed(2)}</td></tr>
+                                {discountAmount > 0 && <tr><td className="py-1 text-gray-500">{t.discount || 'Discount'}</td><td className="py-1 text-right text-red-500">-{currencySymbol}{discountAmount.toFixed(2)}</td></tr>}
+                                {invoice.summary.shippingCost > 0 && <tr><td className="py-1 text-gray-500">{t.shipping || 'Shipping'}</td><td className="py-1 text-right">{currencySymbol}{invoice.summary.shippingCost.toFixed(2)}</td></tr>}
+                                <tr className="border-b"><td className="py-1 text-gray-500">{t.tax || 'Tax'}</td><td className="py-1 text-right">{currencySymbol}{taxAmount.toFixed(2)}</td></tr>
                                 <tr className="font-bold text-base"><td className="pt-2">{(t.total || 'TOTAL').toUpperCase()}</td><td className="pt-2 text-right">{currencySymbol}{total.toFixed(2)}</td></tr>
                                 {(invoice.amountPaid || 0) > 0 && <tr className="font-bold text-green-600"><td>{t.amountPaid || 'Amount Paid'}</td><td className="text-right">-{currencySymbol}{(invoice.amountPaid || 0).toFixed(2)}</td></tr>}
                                 <tr className="font-bold bg-gray-100"><td className="p-1">{t.balanceDue || 'Balance Due'}</td><td className="p-1 text-right">{currencySymbol}{balanceDue.toFixed(2)}</td></tr>
                             </tbody>
                         </table>
+                    </div>
+                     <div className="text-xs mt-8">
+                        <p className="font-bold">{t.termsAndConditions || 'Terms & Conditions'}:</p>
+                        <p className="text-gray-500 whitespace-pre-line">{invoice.paymentInstructions}</p>
+                    </div>
+                     <div className="flex justify-between mt-8">
+                        <SignatureDisplay signature={business.ownerSignature} label={t.authorizedSignature || 'Authorized Signature'} />
                     </div>
                 </footer>
             )}
@@ -461,7 +493,7 @@ export const ITTemplate5: React.FC<PageProps> = (props) => {
                 </div>
             </section>
             
-            <CategorySpecificDetails invoice={invoice} t={t}/>
+            <CategorySpecificDetails invoice={invoice} t={t} />
 
             <main className="flex-grow bg-white p-4 rounded-lg shadow-sm">
                 <table className="w-full text-left text-xs">
