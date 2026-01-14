@@ -1,4 +1,3 @@
-
 'use client';
 
 import React from 'react';
@@ -231,7 +230,7 @@ export const LandscapingTemplate2: React.FC<PageProps> = (props) => {
                             <p className="flex justify-between font-bold bg-gray-100 p-2 mt-1"><span>{t.balanceDue || 'Balance Due'}:</span><span>{currencySymbol}{balanceDue.toFixed(2)}</span></p>
                         </div>
                     </div>
-                    <div className="text-xs mt-8">
+                     <div className="text-xs mt-8">
                         <p className="font-bold text-gray-500 mb-2">{t.termsAndConditions || 'Terms & Conditions'}</p>
                         <p className="whitespace-pre-line">{invoice.paymentInstructions}</p>
                     </div>
