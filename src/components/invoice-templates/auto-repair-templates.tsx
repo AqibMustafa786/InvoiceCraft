@@ -201,7 +201,7 @@ export const AutoRepairTemplate2: React.FC<PageProps> = (props) => {
                      <table className="w-full text-left text-sm">
                         <thead className="text-muted-foreground">
                             <tr>
-                                <th className="py-2 font-semibold w-1/2">{(t.description || 'DESCRIPTION').toUpperCase()}</th>
+                                <th className="py-2 font-semibold w-1/2">{(t.service || 'SERVICE').toUpperCase()}</th>
                                 <th className="py-2 font-semibold text-center">{(t.quantity || 'QTY').toUpperCase()}</th>
                                 <th className="py-2 font-semibold text-right">{(t.unitCost || 'UNIT COST').toUpperCase()}</th>
                                 <th className="py-2 font-semibold text-right">{(t.subtotal || 'SUBTOTAL').toUpperCase()}</th>
@@ -259,6 +259,11 @@ export const AutoRepairTemplate3: React.FC<PageProps> = (props) => {
                 <div>
                     <h1 className="text-4xl font-light tracking-wider mb-1">{business.name}</h1>
                     <p className="text-xs">{business.address}</p>
+                    <p className="text-xs">{business.phone}</p>
+                    <p className="text-xs">{business.email}</p>
+                    <p className="text-xs">{business.website}</p>
+                    <p className="text-xs">{business.licenseNumber}</p>
+                    <p className="text-xs">{business.taxId}</p>
                 </div>
                 <div className="text-right">
                     <h2 className="text-3xl font-light tracking-wider" style={{color: accentColor}}>{docTitle.toUpperCase()}</h2>
@@ -268,11 +273,17 @@ export const AutoRepairTemplate3: React.FC<PageProps> = (props) => {
             <section className="flex justify-between mb-10 text-xs">
                  <div>
                     <p className="font-bold mb-1">{(t.preparedFor || 'Prepared For')}:</p>
-                    <p>{client.name}</p><p>{client.address}</p>
+                    <p>{client.name}</p>
+                    <p>{client.companyName}</p>
+                    <p>{client.address}</p>
+                    <p>{client.phone}</p>
+                    <p>{client.email}</p>
                 </div>
                  <div className="text-right">
                     <p><span className="font-bold">{t.invoiceNo || 'Invoice #'}:</span> {invoice.invoiceNumber}</p>
                     <p><span className="font-bold">{(t.date || 'Date')}:</span> {safeFormat(invoice.invoiceDate, 'MMM dd, yyyy')}</p>
+                    <p><span className="font-bold">{(t.dueDate || 'Due Date')}:</span> {safeFormat(invoice.dueDate, 'MMM dd, yyyy')}</p>
+                    {invoice.poNumber && <p><span className="font-bold">PO #:</span> {invoice.poNumber}</p>}
                 </div>
             </section>
             
@@ -282,7 +293,8 @@ export const AutoRepairTemplate3: React.FC<PageProps> = (props) => {
                 <table className="w-full text-left text-xs">
                     <thead>
                         <tr>
-                            <th className="p-2 font-semibold w-1/2 border-b-2" style={{borderColor: accentColor}}>{(t.item || 'ITEM').toUpperCase()}</th>
+                            <th className="p-2 font-semibold w-2/5 border-b-2" style={{borderColor: accentColor}}>{(t.item || 'ITEM').toUpperCase()}</th>
+                            <th className="p-2 font-semibold w-2/5 border-b-2" style={{borderColor: accentColor}}>{(t.description || 'DESCRIPTION').toUpperCase()}</th>
                             <th className="p-2 font-semibold text-center border-b-2" style={{borderColor: accentColor}}>{(t.quantity || 'QUANTITY').toUpperCase()}</th>
                             <th className="p-2 font-semibold text-right border-b-2" style={{borderColor: accentColor}}>{(t.price || 'PRICE').toUpperCase()}</th>
                             <th className="p-2 font-semibold text-right border-b-2" style={{borderColor: accentColor}}>{(t.amount || 'AMOUNT').toUpperCase()}</th>
@@ -292,6 +304,7 @@ export const AutoRepairTemplate3: React.FC<PageProps> = (props) => {
                         {pageItems.map(item => (
                             <tr key={item.id}>
                                 <td className="p-2 border-b border-gray-200 whitespace-pre-line">{item.name}</td>
+                                <td className="p-2 border-b border-gray-200 whitespace-pre-line">{item.description}</td>
                                 <td className="p-2 border-b border-gray-200 text-center">{item.quantity}</td>
                                 <td className="p-2 border-b border-gray-200 text-right">{currencySymbol}{item.unitPrice.toFixed(2)}</td>
                                 <td className="p-2 border-b border-gray-200 text-right">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</td>
@@ -307,7 +320,7 @@ export const AutoRepairTemplate3: React.FC<PageProps> = (props) => {
                         <table className="w-1/3 text-xs">
                              <tbody>
                                 <tr><td className="py-1 text-muted-foreground">{t.subtotal || 'Subtotal'}</td><td className="text-right">{currencySymbol}{subtotal.toFixed(2)}</td></tr>
-                                {discountAmount > 0 && <tr><td className="py-1 text-muted-foreground">{t.discount || 'Discount'}</td><td className="text-right text-red-600">-{currencySymbol}{discountAmount.toFixed(2)}</td></tr>}
+                                {discountAmount > 0 && <tr><td className="py-1 text-muted-foreground">{t.discount || 'Discount'}</td><td className="text-right text-red-500">-{currencySymbol}{discountAmount.toFixed(2)}</td></tr>}
                                 {invoice.summary.shippingCost > 0 && <tr><td className="py-1 text-muted-foreground">{t.shipping || 'Shipping/Extra'}</td><td className="text-right">{currencySymbol}{invoice.summary.shippingCost.toFixed(2)}</td></tr>}
                                 <tr><td className="py-1 text-muted-foreground">{(t.salesTax || 'Sales Tax')}</td><td className="text-right">{currencySymbol}{taxAmount.toFixed(2)}</td></tr>
                                 <tr className="font-bold text-base border-t-2 border-black"><td className="pt-2">{(t.total || 'TOTAL').toUpperCase()}</td><td className="pt-2 text-right">{currencySymbol}{total.toFixed(2)}</td></tr>
@@ -315,6 +328,13 @@ export const AutoRepairTemplate3: React.FC<PageProps> = (props) => {
                                 <tr className="font-bold bg-gray-100"><td className="p-1">{t.balanceDue || 'Balance Due'}</td><td className="p-1 text-right">{currencySymbol}{balanceDue.toFixed(2)}</td></tr>
                             </tbody>
                         </table>
+                    </div>
+                     <div className="text-xs mt-8">
+                        <p className="font-bold">{t.termsAndConditions || 'Terms & Conditions'}:</p>
+                        <p className="text-muted-foreground whitespace-pre-line">{invoice.paymentInstructions}</p>
+                    </div>
+                    <div className="flex justify-between mt-8">
+                        <SignatureDisplay signature={business.ownerSignature} label={t.authorizedSignature || "Authorized Signature"} />
                     </div>
                 </footer>
             )}
@@ -335,9 +355,9 @@ export const AutoRepairTemplate4: React.FC<PageProps> = (props) => {
                     <p className="font-bold text-3xl">{business.name}</p>
                     <div className="text-xs text-muted-foreground">
                         <p>{business.address}</p>
-                        {business.website && <p>{business.website}</p>}
-                        {business.licenseNumber && <p>Lic #: {business.licenseNumber}</p>}
-                        {business.taxId && <p>Tax ID: {business.taxId}</p>}
+                        <p>{business.website}</p>
+                        <p>Lic #: {business.licenseNumber}</p>
+                        <p>Tax ID: {business.taxId}</p>
                     </div>
                 </div>
                 <div className="text-right">
@@ -352,11 +372,13 @@ export const AutoRepairTemplate4: React.FC<PageProps> = (props) => {
                     {client.companyName && <p>{client.companyName}</p>}
                     <p>{client.address}</p>
                     <p>{client.phone} | {client.email}</p>
+                    {client.shippingAddress && <p className="mt-2"><span className="font-bold">Ship To:</span><br/>{client.shippingAddress}</p>}
                 </div>
                  <div className="text-right">
                     <p><span className="font-bold text-muted-foreground">{t.invoiceNo || 'Invoice #'}: </span>{invoice.invoiceNumber}</p>
                     <p><span className="font-bold text-muted-foreground">{(t.date || 'DATE').toUpperCase()}: </span>{safeFormat(invoice.invoiceDate, 'yyyy-MM-dd')}</p>
                     <p><span className="font-bold text-muted-foreground">{(t.dueDate || 'DUE DATE').toUpperCase()}: </span>{safeFormat(invoice.dueDate, 'yyyy-MM-dd')}</p>
+                     {invoice.poNumber && <p><span className="font-bold text-muted-foreground">PO #: </span>{invoice.poNumber}</p>}
                  </div>
             </section>
             
@@ -497,3 +519,5 @@ export const AutoRepairTemplate5: React.FC<PageProps> = (props) => {
         </div>
     );
 };
+
+    
