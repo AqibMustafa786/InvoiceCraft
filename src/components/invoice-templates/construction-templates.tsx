@@ -182,11 +182,11 @@ export const ConstructionTemplate1: React.FC<PageProps> = (props) => {
 
 // Template 2: Modern Dark Header
 export const ConstructionTemplate2: React.FC<PageProps> = (props) => {
-    const { invoice, pageItems, pageIndex, totalPages, subtotal, taxAmount, discountAmount, total, balanceDue, t, currencySymbol, textColor } = props;
+    const { invoice, pageItems, pageIndex, totalPages, subtotal, taxAmount, discountAmount, total, balanceDue, t, currencySymbol, textColor, accentColor } = props;
     const { business, client } = invoice;
     return (
         <div className={`p-0 font-sans text-gray-800 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ minHeight: '1056px', backgroundColor: props.backgroundColor, color: props.textColor }}>
-            <header className="p-10 text-white flex justify-between items-start" style={{ backgroundColor: '#1F2937' }}>
+            <header className="p-10 text-white flex justify-between items-start" style={{ backgroundColor: accentColor }}>
                 <div>
                      {business.logoUrl ? (
                         <Image src={business.logoUrl} alt="Logo" width={120} height={50} className="filter invert brightness-0"/>
@@ -292,7 +292,7 @@ export const ConstructionTemplate3: React.FC<PageProps> = (props) => {
             <header className="flex justify-between items-start mb-12">
                  <div>
                     <h1 className="text-4xl font-light tracking-wide">{business.name}</h1>
-                    <div className="text-xs whitespace-pre-line" style={{ color: textColor || '#6B7280' }}>
+                    <div className="text-xs whitespace-pre-line mt-1">
                         <p>{business.address}</p>
                         <p>{business.phone}</p>
                         {business.website && <p>{business.website}</p>}
@@ -328,7 +328,7 @@ export const ConstructionTemplate3: React.FC<PageProps> = (props) => {
                             <tr key={item.id} className="border-b">
                                 <td className="p-2 align-top">
                                     <p className="font-medium whitespace-pre-line">{item.name}</p>
-                                    {item.description && <p className="text-xs text-gray-500 whitespace-pre-line" style={{ wordBreak: 'break-all' }}>{item.description}</p>}
+                                    {item.description && <p className="text-xs text-gray-500 whitespace-pre-line">{item.description}</p>}
                                 </td>
                                 <td className="p-2 align-top text-center">{item.quantity}</td>
                                 <td className="p-2 align-top text-right">{currencySymbol}{item.unitPrice.toFixed(2)}</td>
@@ -341,9 +341,9 @@ export const ConstructionTemplate3: React.FC<PageProps> = (props) => {
             
             {pageIndex === totalPages - 1 && (
                  <footer className="mt-auto pt-8 flex justify-between items-start">
-                     <div className="w-1/2 text-xs">
-                         <p className="font-bold mb-1">{(t.termsAndConditions || 'TERMS')}</p>
-                         <p className="whitespace-pre-line">{invoice.paymentInstructions}</p>
+                     <div className="w-1/2 text-xs text-gray-600" style={{color: textColor}}>
+                        <p className="font-bold mb-1">{t.terms || 'TERMS'}</p>
+                        <p className="whitespace-pre-line">{invoice.paymentInstructions}</p>
                          {business.ownerSignature && (
                             <div className="mt-8">
                                 <SignatureDisplay signature={business.ownerSignature} label="Authorized Signature" />
@@ -355,9 +355,9 @@ export const ConstructionTemplate3: React.FC<PageProps> = (props) => {
                          {discountAmount > 0 && <p className="py-1 flex justify-between text-red-500"><span>{(t.discount || 'Discount')}:</span><span>-{currencySymbol}{discountAmount.toFixed(2)}</span></p>}
                          {invoice.summary.shippingCost > 0 && <p className="py-1 flex justify-between"><span>{(t.shipping || 'Shipping')}:</span><span>{currencySymbol}{invoice.summary.shippingCost.toFixed(2)}</span></p>}
                          <p className="py-1 flex justify-between"><span>{(t.tax || 'Tax')}:</span><span>{currencySymbol}{taxAmount.toFixed(2)}</span></p>
-                         <p className="py-1 flex justify-between font-bold"><span>{(t.total || 'Total')}:</span><span>{currencySymbol}{total.toFixed(2)}</span></p>
+                         <p className="py-2 mt-2 flex justify-between border-t-2 border-black font-bold text-base"><span>{(t.total || 'TOTAL')}:</span><span>{currencySymbol}{total.toFixed(2)}</span></p>
                          {(invoice.amountPaid || 0) > 0 && <p className="py-1 flex justify-between font-bold text-green-600"><span>Amount Paid:</span><span>-{currencySymbol}{(invoice.amountPaid || 0).toFixed(2)}</span></p>}
-                         <p className="py-2 mt-2 flex justify-between border-t-2 border-black font-bold text-base"><span>{(t.balanceDue || 'BALANCE DUE')}:</span><span>{currencySymbol}{balanceDue.toFixed(2)}</span></p>
+                         <p className="py-2 mt-1 flex justify-between bg-gray-200 font-bold text-base"><span>{(t.balanceDue || 'BALANCE DUE')}:</span><span>{currencySymbol}{balanceDue.toFixed(2)}</span></p>
                      </div>
                  </footer>
             )}
