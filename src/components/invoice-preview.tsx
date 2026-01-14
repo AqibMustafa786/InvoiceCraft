@@ -15,7 +15,7 @@ import { HVACTemplate1, HVACTemplate2, HVACTemplate3, HVACTemplate4, HVACTemplat
 import { RoofingTemplate1, RoofingTemplate2, RoofingTemplate3, RoofingTemplate4, RoofingTemplate5 } from './invoice-templates/roofing-templates';
 import { LandscapingTemplate1, LandscapingTemplate2, LandscapingTemplate3, LandscapingTemplate4, LandscapingTemplate5 } from './invoice-templates/landscaping-templates';
 import { CleaningTemplate1, CleaningTemplate2, CleaningTemplate3, CleaningTemplate4, CleaningTemplate5 } from './invoice-templates/cleaning-templates';
-import { AutoRepairTemplate1, AutoRepairTemplate2, AutoRepairTemplate3, AutoRepairTemplate4, AutoRepairTemplate5 } from './invoice-templates/auto-repair-templates';
+import { AutoRepairTemplate1 } from './invoice-templates/auto-repair-templates';
 import { ITTemplate1, ITTemplate2, ITTemplate3, ITTemplate4, ITTemplate5 } from './invoice-templates/it-freelance-templates';
 import { ConsultingTemplate1, ConsultingTemplate2, ConsultingTemplate3, ConsultingTemplate4, ConsultingTemplate5 } from './invoice-templates/consulting-templates';
 import { LegalTemplate1, LegalTemplate2, LegalTemplate3, LegalTemplate4, LegalTemplate5 } from './invoice-templates/legal-templates';
@@ -62,7 +62,7 @@ const templates: Record<string, FC<PageProps>> = {
   'minimalist': GenericTemplate3,
   'creative': GenericTemplate4,
   'elegant': GenericTemplate5,
-  'usa': GenericTemplate1, // Re-using for now, can be specific later
+  'usa': GenericTemplate1,
   'construction-1': ConstructionTemplate1,
   'construction-2': ConstructionTemplate2,
   'construction-3': ConstructionTemplate3,
@@ -100,10 +100,6 @@ const templates: Record<string, FC<PageProps>> = {
   'cleaning-4': CleaningTemplate4,
   'cleaning-5': CleaningTemplate5,
   'auto-repair-1': AutoRepairTemplate1,
-  'auto-repair-2': AutoRepairTemplate2,
-  'auto-repair-3': AutoRepairTemplate3,
-  'auto-repair-4': AutoRepairTemplate4,
-  'auto-repair-5': AutoRepairTemplate5,
   'it-1': ITTemplate1,
   'it-2': ITTemplate2,
   'it-3': ITTemplate3,
