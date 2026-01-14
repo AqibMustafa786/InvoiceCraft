@@ -1,3 +1,4 @@
+
 'use client';
 
 import React from 'react';
@@ -106,10 +107,9 @@ export const ITTemplate1: React.FC<PageProps> = (props) => {
         <div className={`p-10 bg-white font-sans text-gray-800 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: invoice.fontFamily, fontSize: `${invoice.fontSize}pt`, minHeight: '1056px', backgroundColor: props.backgroundColor, color: textColor }}>
             <header className="flex justify-between items-start pb-5 mb-5">
                 <div className="flex items-center gap-4">
-                    {business.logoUrl ? 
-                        <Image src={business.logoUrl} alt="Logo" width={50} height={50} className="object-contain" /> :
-                        <div className="w-12 h-12 bg-gray-200 rounded-md"></div>
-                    }
+                    {business.logoUrl && (
+                        <Image src={business.logoUrl} alt="Logo" width={50} height={50} className="object-contain" />
+                    )}
                     <div>
                         <h1 className="text-3xl font-bold">{business.name}</h1>
                         <p className="text-xs text-gray-500">{business.address} • {business.phone}</p>
@@ -190,21 +190,21 @@ export const ITTemplate2: React.FC<PageProps> = (props) => {
     const docTitle = (t.invoice || 'INVOICE').toUpperCase();
 
     return (
-        <div className={`p-10 font-['Roboto_Mono',_monospace] flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ minHeight: '1056px', backgroundColor: props.backgroundColor, color: props.textColor }}>
+        <div className={`p-10 bg-gray-900 text-gray-200 font-['Roboto_Mono',_monospace] flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ minHeight: '1056px', backgroundColor: props.backgroundColor, color: props.textColor }}>
             <header className="flex justify-between items-start mb-10">
                 <div>
                     <h1 className="text-4xl font-bold" style={{ color: accentColor }}>{business.name}</h1>
-                    <p className="text-xs">{t.softwareAndITSolutions || 'Software & IT Solutions'}</p>
+                    <p className="text-xs text-gray-400">{t.softwareAndITSolutions || 'Software & IT Solutions'}</p>
                 </div>
                 <div className="text-right">
-                    <h2 className="text-3xl font-light">{docTitle}</h2>
+                    <h2 className="text-3xl font-light text-gray-400">{docTitle}</h2>
                     <p className="text-sm">{invoice.category}</p>
                 </div>
             </header>
 
             <section className="grid grid-cols-2 gap-8 mb-8 text-xs">
-                <div><p className="font-bold text-muted-foreground mb-1">{(t.projectFor || 'PROJECT FOR').toUpperCase()}:</p><p className="font-medium">{client.name}</p><p>{client.address}</p></div>
-                <div className="text-right"><p className="font-bold text-muted-foreground mb-1">{(t.date || 'DATE').toUpperCase()}:</p><p>{safeFormat(invoice.invoiceDate, 'MM-dd-yyyy')}</p></div>
+                <div><p className="font-bold text-gray-500 mb-1">{(t.projectFor || 'PROJECT FOR').toUpperCase()}:</p><p className="font-medium">{client.name}</p><p className="text-gray-400">{client.address}</p></div>
+                <div className="text-right"><p className="font-bold text-gray-500 mb-1">{(t.date || 'DATE').toUpperCase()}:</p><p>{safeFormat(invoice.invoiceDate, 'MM-dd-yyyy')}</p></div>
             </section>
             
             <CategorySpecificDetails invoice={invoice} t={t} />
@@ -212,16 +212,16 @@ export const ITTemplate2: React.FC<PageProps> = (props) => {
             <main className="flex-grow">
                 <table className="w-full text-left text-sm">
                     <thead>
-                        <tr className="border-b" style={{borderColor: props.textColor ? props.textColor + '40' : 'rgba(255,255,255,0.4)'}}>
-                            <th className="py-2 font-semibold w-1/2 text-muted-foreground">{(t.service || 'SERVICE').toUpperCase()}</th>
-                            <th className="py-2 font-semibold text-center text-muted-foreground">{(t.quantity || 'QTY').toUpperCase()}</th>
-                            <th className="py-2 font-semibold text-right text-muted-foreground">{(t.rate || 'RATE').toUpperCase()}</th>
-                            <th className="py-2 font-semibold text-right text-muted-foreground">{(t.total || 'TOTAL').toUpperCase()}</th>
+                        <tr className="border-b border-gray-700">
+                            <th className="py-2 font-semibold w-1/2 text-gray-400">{(t.service || 'SERVICE').toUpperCase()}</th>
+                            <th className="py-2 font-semibold text-center text-gray-400">{(t.quantity || 'QTY').toUpperCase()}</th>
+                            <th className="py-2 font-semibold text-right text-gray-400">{(t.rate || 'RATE').toUpperCase()}</th>
+                            <th className="py-2 font-semibold text-right text-gray-400">{(t.total || 'TOTAL').toUpperCase()}</th>
                         </tr>
                     </thead>
                     <tbody>
                         {pageItems.map(item => (
-                            <tr key={item.id} className="border-b" style={{borderColor: props.textColor ? props.textColor + '20' : 'rgba(255,255,255,0.2)'}}>
+                            <tr key={item.id} className="border-b border-gray-800">
                                 <td className="py-2 align-top whitespace-pre-line">{item.name}</td>
                                 <td className="py-2 align-top text-center">{item.quantity}</td>
                                 <td className="py-2 align-top text-right">{currencySymbol}{item.unitPrice.toFixed(2)}</td>
@@ -236,9 +236,9 @@ export const ITTemplate2: React.FC<PageProps> = (props) => {
                 <footer className="mt-auto pt-8">
                      <div className="flex justify-end">
                         <div className="w-2/5 text-sm space-y-1">
-                            <div className="flex justify-between"><span className="text-muted-foreground">{t.subtotal || 'Subtotal'}:</span><span>{currencySymbol}{subtotal.toFixed(2)}</span></div>
-                            <div className="flex justify-between"><span className="text-muted-foreground">{t.tax || 'Tax'} ({invoice.summary.taxPercentage}%):</span><span>{currencySymbol}{taxAmount.toFixed(2)}</span></div>
-                            <div className="flex justify-between font-bold text-lg mt-2 pt-2 border-t" style={{borderColor: props.textColor}}><span>{t.total || 'Total'}:</span><span style={{ color: accentColor }}>{currencySymbol}{total.toFixed(2)}</span></div>
+                            <div className="flex justify-between"><span className="text-gray-400">{t.subtotal || 'Subtotal'}:</span><span>{currencySymbol}{subtotal.toFixed(2)}</span></div>
+                            <div className="flex justify-between"><span className="text-gray-400">{t.tax || 'Tax'} ({invoice.summary.taxPercentage}%):</span><span>{currencySymbol}{taxAmount.toFixed(2)}</span></div>
+                            <div className="flex justify-between font-bold text-lg mt-2 pt-2 border-t border-gray-600"><span>{t.total || 'Total'}:</span><span style={{ color: accentColor }}>{currencySymbol}{total.toFixed(2)}</span></div>
                             {(invoice.amountPaid || 0) > 0 && <div className="flex justify-between font-bold text-green-400"><span>{t.amountPaid || 'Amount Paid'}:</span><span>-{currencySymbol}{(invoice.amountPaid || 0).toFixed(2)}</span></div>}
                             <div className="flex justify-between font-bold p-1 rounded mt-1" style={{backgroundColor: `${accentColor}20`}}><span>{t.balanceDue || 'Balance Due'}:</span><span>{currencySymbol}{balanceDue.toFixed(2)}</span></div>
                         </div>
@@ -340,7 +340,7 @@ export const ITTemplate4: React.FC<PageProps> = (props) => {
                     </div>
                     <div>
                         <p className="font-bold opacity-80 mb-1">{(t.details || 'DETAILS').toUpperCase()}</p>
-                        <p>#{invoice.invoiceNumber}</p>
+                        <p># {invoice.invoiceNumber}</p>
                         <p>{t.date || 'Date'}: {safeFormat(invoice.invoiceDate, 'yyyy-MM-dd')}</p>
                         <p>{t.dueDate || 'Due'}: {safeFormat(invoice.dueDate, 'yyyy-MM-dd')}</p>
                         {invoice.poNumber && <p>PO: {invoice.poNumber}</p>}
@@ -385,7 +385,7 @@ export const ITTemplate4: React.FC<PageProps> = (props) => {
                         </tbody>
                     </table>
                 </main>
-                 {pageIndex === totalPages - 1 && (
+                {pageIndex === totalPages - 1 && (
                      <p className="mt-auto text-center text-xs text-gray-400">{t.thankYouForBusiness || 'Thank you for your business!'}</p>
                  )}
             </div>
