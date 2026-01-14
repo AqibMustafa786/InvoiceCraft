@@ -4,7 +4,7 @@
 import React from 'react';
 import type { Invoice, LineItem } from '@/lib/types';
 import { format, isValid } from 'date-fns';
-import Image from 'next/image';
+import NextImage from 'next/image';
 
 interface PageProps {
   invoice: Invoice;
@@ -28,6 +28,16 @@ const safeFormat = (date: Date | string | number | null | undefined, formatStrin
     const d = new Date(date);
     if (!isValid(d)) return "Invalid Date";
     return format(d, formatString);
+}
+
+const SignatureDisplay = ({ signature, label }: { signature: any, label: string }) => {
+    if (!signature?.image) return null;
+    return (
+        <div className="mt-8">
+            <NextImage src={signature.image} alt={label} width={150} height={75} className="border-b border-gray-400" />
+            <p className="text-xs text-gray-500 pt-1 border-t-2 border-gray-700 w-[150px]">{label}</p>
+        </div>
+    )
 }
 
 export const RetailDetails: React.FC<{ invoice: Invoice, t: any }> = ({ invoice, t }) => {
@@ -68,7 +78,7 @@ export const RetailTemplate1: React.FC<PageProps> = (props) => {
             <div className="flex-grow p-8">
                 <header className="flex justify-between items-start mb-4">
                     <div>
-                        {business.logoUrl && <Image src={business.logoUrl} alt="Logo" width={100} height={50} className="object-contain mb-2"/>}
+                        {business.logoUrl && <NextImage src={business.logoUrl} alt="Logo" width={100} height={50} className="object-contain mb-2"/>}
                         <h1 className="text-xl font-bold">{business.name}</h1>
                         <p className="text-xs">{business.address}</p>
                         <p className="text-xs">{business.phone} | {business.website}</p>

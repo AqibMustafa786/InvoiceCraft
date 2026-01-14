@@ -4,7 +4,7 @@
 import React from 'react';
 import type { Invoice, LineItem } from '@/lib/types';
 import { format, isValid } from 'date-fns';
-import Image from 'next/image';
+import NextImage from 'next/image';
 import { CategorySpecificDetails } from './category-specific-details';
 
 interface PageProps {
@@ -35,7 +35,7 @@ const SignatureDisplay = ({ signature, label }: { signature: any, label: string 
     if (!signature?.image) return null;
     return (
         <div className="mt-8">
-            <Image src={signature.image} alt={label} width={150} height={75} className="border-b border-gray-400" />
+            <NextImage src={signature.image} alt={label} width={150} height={75} className="border-b border-gray-400" />
             <p className="text-xs text-muted-foreground pt-1 border-t-2 border-current w-[150px]">{label}</p>
         </div>
     )
@@ -223,7 +223,7 @@ export const AutoRepairTemplate2: React.FC<PageProps> = (props) => {
                                 {discountAmount > 0 && <div className="flex justify-between"><span className="text-muted-foreground">{t.discount || 'Discount'}:</span><span className="text-red-400">-{currencySymbol}{discountAmount.toFixed(2)}</span></div>}
                                 {invoice.summary.shippingCost > 0 && <div className="flex justify-between"><span className="text-muted-foreground">{t.shipping || 'Shipping'}:</span><span>{currencySymbol}{invoice.summary.shippingCost.toFixed(2)}</span></div>}
                                 <div className="flex justify-between"><span className="text-muted-foreground">{(t.taxesAndFees || 'Taxes &amp; Fees')}:</span><span>{currencySymbol}{taxAmount.toFixed(2)}</span></div>
-                                <div className="flex justify-between font-bold text-xl mt-2 pt-2 border-t-2" style={{borderColor: textColor}}><span style={{color: accentColor}}>{(t.total || 'TOTAL')}:</span><span>{currencySymbol}{total.toFixed(2)}</span></div>
+                                <div className="flex justify-between font-bold text-xl mt-2 pt-2 border-t-2" style={{borderColor: props.textColor}}><span style={{color: accentColor}}>{(t.total || 'TOTAL')}:</span><span>{currencySymbol}{total.toFixed(2)}</span></div>
                                 {(invoice.amountPaid || 0) > 0 && <div className="flex justify-between font-bold text-green-400"><span>{t.amountPaid || 'Amount Paid'}:</span><span>-{currencySymbol}{(invoice.amountPaid || 0).toFixed(2)}</span></div>}
                                 <div className="flex justify-between font-bold p-2 mt-1 rounded" style={{backgroundColor: `${accentColor}20`}}><span>{t.balanceDue || 'Balance Due'}:</span><span>{currencySymbol}{balanceDue.toFixed(2)}</span></div>
                             </div>
@@ -459,5 +459,3 @@ export const AutoRepairTemplate5: React.FC<PageProps> = (props) => {
         </div>
     );
 };
-
-    

@@ -3,7 +3,7 @@
 
 import React from 'react';
 import { format, isValid } from 'date-fns';
-import Image from 'next/image';
+import NextImage from 'next/image';
 import type { InsuranceDocument } from '@/lib/types';
 import { Separator } from './ui/separator';
 
@@ -34,7 +34,7 @@ export const CertificateOfInsurance: React.FC<COIProps> = ({ document }) => {
             <header className="flex justify-between items-start pb-6 border-b-2 border-gray-200">
                 <div className="flex-1">
                     {business.logoUrl ? (
-                         <Image src={business.logoUrl} alt={`${business.name} Logo`} width={120} height={60} className="object-contain mb-4" />
+                         <NextImage src={business.logoUrl} alt={`${business.name} Logo`} width={120} height={60} className="object-contain mb-4" />
                     ): (
                         <h1 className="text-3xl font-bold text-gray-800">{business.name}</h1>
                     )}
@@ -95,7 +95,7 @@ export const CertificateOfInsurance: React.FC<COIProps> = ({ document }) => {
                         <h3 className="font-bold text-lg text-gray-800 mb-2 pb-1 border-b">Authorized Representative</h3>
                         <div className="flex flex-col items-end mt-10">
                             {business.ownerSignature ? (
-                                <Image src={business.ownerSignature.image} alt="Signature" width={150} height={75} />
+                                <NextImage src={business.ownerSignature.image} alt="Signature" width={150} height={75} />
                             ) : (
                                  <div className="w-48 h-12 border-b"></div>
                             )}

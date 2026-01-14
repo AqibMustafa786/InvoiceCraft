@@ -62,6 +62,8 @@ export const PhotographyDetails: React.FC<{ invoice: Invoice, t: any }> = ({ inv
                 {invoice.photography.packageSelected && <p><span className="font-semibold text-gray-300">{(t.package || 'Package')}:</span> {invoice.photography.packageSelected}</p>}
                 {invoice.photography.editedPhotosCount && <p><span className="font-semibold text-gray-300">{(t.editedPhotos || 'Edits')}:</span> {invoice.photography.editedPhotosCount}</p>}
                 {invoice.photography.rawFilesCost && <p><span className="font-semibold text-gray-300">{(t.rawFiles || 'RAWs')}:</span> ${invoice.photography.rawFilesCost.toFixed(2)}</p>}
+                {invoice.photography.travelFee && <p><span className="font-semibold text-gray-300">{(t.travelFee || 'Travel')}:</span> ${invoice.photography.travelFee.toFixed(2)}</p>}
+                {invoice.photography.equipmentRentalFee && <p><span className="font-semibold text-gray-300">{(t.equipmentFee || 'Gear')}:</span> ${invoice.photography.equipmentRentalFee.toFixed(2)}</p>}
             </div>
         </section>
     );
@@ -302,6 +304,7 @@ export const PhotographyTemplate5: React.FC<PageProps> = (props) => {
     const { invoice, pageItems, pageIndex, totalPages, subtotal, taxAmount, discountAmount, total, balanceDue, currencySymbol, t, accentColor, textColor } = props;
     const { business, client } = invoice;
     const docTitle = (t.invoice || 'Invoice');
+
     return (
         <div className={`p-10 font-serif ${pageIndex < totalPages - 1 ? 'page-break-after' : ''}`} style={{ minHeight: '1056px', borderLeft: `10px solid ${accentColor}`, backgroundColor: props.backgroundColor, color: textColor }}>
             <header className="mb-10">
@@ -340,5 +343,3 @@ export const PhotographyTemplate5: React.FC<PageProps> = (props) => {
         </div>
     );
 };
-
-    

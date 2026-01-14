@@ -38,9 +38,8 @@ export const RentalDetails: React.FC<{ invoice: Invoice, t: any }> = ({ invoice,
             <section className="my-4 text-xs">
                 <p className="font-bold text-gray-500 mb-2 border-b">{t.rentalDetails || 'Rental Details'}</p>
             </section>
-        )
+        );
     }
-
     return (
         <section className="my-4 text-xs">
             <p className="font-bold text-gray-500 mb-2 border-b">{t.rentalDetails || 'Rental Details'}</p>
