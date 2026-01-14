@@ -318,8 +318,11 @@ const getInitialInvoice = (): Omit<Invoice, 'userId' | 'companyId'> => ({
 });
 
 
-function PrintableInvoice({ invoice }: { invoice: Invoice }) {
+function PrintableInvoice({ invoice, accentColor, backgroundColor, textColor }: { invoice: Invoice, accentColor: string, backgroundColor: string, textColor: string }) {
     const serializedData = useMemo(() => JSON.stringify(invoice), [invoice]);
+    const serializedAccentColor = useMemo(() => accentColor, [accentColor]);
+    const serializedBackgroundColor = useMemo(() => backgroundColor, [backgroundColor]);
+    const serializedTextColor = useMemo(() => textColor, [textColor]);
 
     useEffect(() => {
         const container = document.getElementById('print-container');
@@ -327,18 +330,18 @@ function PrintableInvoice({ invoice }: { invoice: Invoice }) {
             ReactDOM.render(
                 <ClientInvoicePreview
                     invoice={JSON.parse(serializedData)}
-                    accentColor={invoice.accentColor || 'hsl(var(--primary))'}
-                    backgroundColor={invoice.backgroundColor || '#FFFFFF'}
-                    textColor={invoice.textColor || '#374151'}
+                    accentColor={serializedAccentColor}
+                    backgroundColor={serializedBackgroundColor}
+                    textColor={serializedTextColor}
                     id="invoice-preview-print"
                     isPrint={true}
                 />,
                 container
             );
         }
-    }, [serializedData, invoice]); // Dependency on serialized data ensures re-render on any change
+    }, [serializedData, serializedAccentColor, serializedBackgroundColor, serializedTextColor]); 
 
-    return null; // This component does not render anything itself
+    return null; 
 }
 
 export default function CreateInvoicePage() {
@@ -831,8 +834,8 @@ export default function CreateInvoicePage() {
                 </Sheet>
                 <div>
                   <h2 className="text-xl font-bold font-headline mb-4">Live Preview</h2>
-                  <motion.div
-                    key={invoice.template + JSON.stringify(processedInvoice)}
+                   <motion.div
+                    key={`${invoice.template}-${JSON.stringify(processedInvoice)}`}
                     initial={{ opacity: 0.8, scale: 0.995 }}
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ duration: 0.2 }}
@@ -844,7 +847,7 @@ export default function CreateInvoicePage() {
           </div>
         </div>
       </div>
-      {processedInvoice && <PrintableInvoice invoice={processedInvoice} />}
+      {processedInvoice && <PrintableInvoice invoice={processedInvoice} accentColor={accentColor} backgroundColor={backgroundColor} textColor={textColor} />}
     </>
   );
 }
