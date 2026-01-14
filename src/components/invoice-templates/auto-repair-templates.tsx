@@ -171,7 +171,9 @@ export const AutoRepairTemplate2: React.FC<PageProps> = (props) => {
             <header className="p-10 flex justify-between items-start" style={{backgroundColor: accentColor, color: 'white'}}>
                 <div>
                     <h1 className="text-3xl font-bold">{business.name}</h1>
-                    <p className="text-xs">{business.address}</p>
+                    <p className="text-xs text-gray-300">{business.address}</p>
+                    <p className="text-xs text-gray-300">{business.phone} | {business.email}</p>
+                    <p className="text-xs text-gray-300">{business.website}</p>
                 </div>
                 <div className="text-right">
                     <h2 className="text-2xl font-extrabold tracking-wider">{docTitle}</h2>
@@ -183,10 +185,13 @@ export const AutoRepairTemplate2: React.FC<PageProps> = (props) => {
                         <p className="font-bold text-muted-foreground mb-1">{(t.customer || 'CUSTOMER').toUpperCase()}</p>
                         <p className="font-medium">{client.name}</p>
                         <p>{client.address}</p>
+                        <p>{client.phone} | {client.email}</p>
                     </div>
                     <div className="text-right">
                         <p><span className="font-bold text-muted-foreground">{t.invoiceNo || 'Invoice #'}: </span>{invoice.invoiceNumber}</p>
                         <p><span className="font-bold text-muted-foreground">{(t.date || 'DATE').toUpperCase()}: </span>{safeFormat(invoice.invoiceDate, 'yyyy-MM-dd')}</p>
+                        <p><span className="font-bold text-muted-foreground">{(t.dueDate || 'DUE DATE').toUpperCase()}: </span>{safeFormat(invoice.dueDate, 'yyyy-MM-dd')}</p>
+                        {invoice.poNumber && <p><span className="font-bold text-muted-foreground">PO #: </span>{invoice.poNumber}</p>}
                     </div>
                 </section>
                 
@@ -196,7 +201,7 @@ export const AutoRepairTemplate2: React.FC<PageProps> = (props) => {
                      <table className="w-full text-left text-sm">
                         <thead className="text-muted-foreground">
                             <tr>
-                                <th className="py-2 font-semibold w-1/2">{(t.service || 'SERVICE').toUpperCase()}</th>
+                                <th className="py-2 font-semibold w-1/2">{(t.description || 'DESCRIPTION').toUpperCase()}</th>
                                 <th className="py-2 font-semibold text-center">{(t.quantity || 'QTY').toUpperCase()}</th>
                                 <th className="py-2 font-semibold text-right">{(t.unitCost || 'UNIT COST').toUpperCase()}</th>
                                 <th className="py-2 font-semibold text-right">{(t.subtotal || 'SUBTOTAL').toUpperCase()}</th>
@@ -205,7 +210,10 @@ export const AutoRepairTemplate2: React.FC<PageProps> = (props) => {
                         <tbody>
                             {pageItems.map(item => (
                                 <tr key={item.id} className="border-b" style={{borderColor: props.textColor ? props.textColor + '15' : 'rgba(255,255,255,0.15)'}}>
-                                    <td className="py-2 align-top whitespace-pre-line">{item.name}</td>
+                                    <td className="py-2 align-top">
+                                        <p className="font-semibold whitespace-pre-line">{item.name}</p>
+                                        {item.description && <p className="text-xs text-gray-400 whitespace-pre-line">{item.description}</p>}
+                                    </td>
                                     <td className="py-2 align-top text-center">{item.quantity}</td>
                                     <td className="py-2 align-top text-right">{currencySymbol}{item.unitPrice.toFixed(2)}</td>
                                     <td className="py-2 align-top text-right">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</td>
@@ -225,8 +233,11 @@ export const AutoRepairTemplate2: React.FC<PageProps> = (props) => {
                                 <div className="flex justify-between"><span className="text-muted-foreground">{(t.taxesAndFees || 'Taxes &amp; Fees')}:</span><span>{currencySymbol}{taxAmount.toFixed(2)}</span></div>
                                 <div className="flex justify-between font-bold text-xl mt-2 pt-2 border-t-2" style={{borderColor: props.textColor}}><span style={{color: accentColor}}>{(t.total || 'TOTAL')}:</span><span>{currencySymbol}{total.toFixed(2)}</span></div>
                                 {(invoice.amountPaid || 0) > 0 && <div className="flex justify-between font-bold text-green-400"><span>{t.amountPaid || 'Amount Paid'}:</span><span>-{currencySymbol}{(invoice.amountPaid || 0).toFixed(2)}</span></div>}
-                                <div className="flex justify-between font-bold p-2 mt-1 rounded" style={{backgroundColor: `${accentColor}20`}}><span>{t.balanceDue || 'Balance Due'}:</span><span>{currencySymbol}{balanceDue.toFixed(2)}</span></div>
+                                <div className="flex justify-between font-bold p-1 rounded mt-1" style={{backgroundColor: `${accentColor}20`}}><span>{t.balanceDue || 'Balance Due'}:</span><span>{currencySymbol}{balanceDue.toFixed(2)}</span></div>
                             </div>
+                        </div>
+                        <div className="flex justify-between items-end text-xs">
+                            <SignatureDisplay signature={business.ownerSignature} label={t.authorizedSignature || "Authorized Signature"} />
                         </div>
                     </footer>
                 )}
@@ -246,7 +257,7 @@ export const AutoRepairTemplate3: React.FC<PageProps> = (props) => {
         <div className={`p-12 font-['Garamond',_serif] flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{minHeight: '1056px', color: textColor, backgroundColor: props.backgroundColor }}>
             <header className="flex justify-between items-start mb-12">
                 <div>
-                    <h1 className="text-4xl font-light tracking-wider">{business.name}</h1>
+                    <h1 className="text-4xl font-light tracking-wider mb-1">{business.name}</h1>
                     <p className="text-xs">{business.address}</p>
                 </div>
                 <div className="text-right">
@@ -256,7 +267,7 @@ export const AutoRepairTemplate3: React.FC<PageProps> = (props) => {
 
             <section className="flex justify-between mb-10 text-xs">
                  <div>
-                    <p className="font-bold mb-1">{(t.preparedFor || 'Prepared For')}</p>
+                    <p className="font-bold mb-1">{(t.preparedFor || 'Prepared For')}:</p>
                     <p>{client.name}</p><p>{client.address}</p>
                 </div>
                  <div className="text-right">
@@ -297,8 +308,8 @@ export const AutoRepairTemplate3: React.FC<PageProps> = (props) => {
                              <tbody>
                                 <tr><td className="py-1 text-muted-foreground">{t.subtotal || 'Subtotal'}</td><td className="text-right">{currencySymbol}{subtotal.toFixed(2)}</td></tr>
                                 {discountAmount > 0 && <tr><td className="py-1 text-muted-foreground">{t.discount || 'Discount'}</td><td className="text-right text-red-600">-{currencySymbol}{discountAmount.toFixed(2)}</td></tr>}
-                                {invoice.summary.shippingCost > 0 && <tr><td className="py-1 text-muted-foreground">{t.shipping || 'Shipping'}</td><td className="text-right">{currencySymbol}{invoice.summary.shippingCost.toFixed(2)}</td></tr>}
-                                <tr><td className="py-1 text-muted-foreground">{(t.tax || 'Tax')}</td><td className="text-right">{currencySymbol}{taxAmount.toFixed(2)}</td></tr>
+                                {invoice.summary.shippingCost > 0 && <tr><td className="py-1 text-muted-foreground">{t.shipping || 'Shipping/Extra'}</td><td className="text-right">{currencySymbol}{invoice.summary.shippingCost.toFixed(2)}</td></tr>}
+                                <tr><td className="py-1 text-muted-foreground">{(t.salesTax || 'Sales Tax')}</td><td className="text-right">{currencySymbol}{taxAmount.toFixed(2)}</td></tr>
                                 <tr className="font-bold text-base border-t-2 border-black"><td className="pt-2">{(t.total || 'TOTAL').toUpperCase()}</td><td className="pt-2 text-right">{currencySymbol}{total.toFixed(2)}</td></tr>
                                 {(invoice.amountPaid || 0) > 0 && <tr className="font-bold text-green-600"><td>{t.amountPaid || 'Amount Paid'}</td><td className="text-right">-{currencySymbol}{(invoice.amountPaid || 0).toFixed(2)}</td></tr>}
                                 <tr className="font-bold bg-gray-100"><td className="p-1">{t.balanceDue || 'Balance Due'}</td><td className="p-1 text-right">{currencySymbol}{balanceDue.toFixed(2)}</td></tr>
@@ -319,25 +330,40 @@ export const AutoRepairTemplate4: React.FC<PageProps> = (props) => {
 
     return (
         <div className={`p-10 bg-white font-sans text-gray-800 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ minHeight: '1056px', color: textColor, backgroundColor: props.backgroundColor }}>
-            <header className="flex justify-between items-start pb-4 border-b-2" style={{borderColor: accentColor}}>
+            <header className="flex justify-between items-center mb-8 pb-4 border-b-4" style={{borderColor: accentColor}}>
                 <div>
-                  <h1 className="text-3xl font-bold">{business.name}</h1>
-                  <p className="text-xs">{business.address}</p>
+                    <p className="font-bold text-3xl">{business.name}</p>
+                    <div className="text-xs text-muted-foreground">
+                        <p>{business.address}</p>
+                        {business.website && <p>{business.website}</p>}
+                        {business.licenseNumber && <p>Lic #: {business.licenseNumber}</p>}
+                        {business.taxId && <p>Tax ID: {business.taxId}</p>}
+                    </div>
                 </div>
                 <div className="text-right">
-                    <h2 className="text-2xl font-extrabold" style={{color: accentColor}}>{docTitle}</h2>
+                    <h1 className="text-2xl font-extrabold" style={{color: accentColor}}>{docTitle}</h1>
                 </div>
             </header>
             
-            <section className="my-8 grid grid-cols-2 gap-4 text-xs">
-                 <div><p><span className="font-bold">{(t.to || 'TO').toUpperCase()}: </span>{client.name}</p><p>{client.address}</p></div>
-                 <div className="text-right"><p><span className="font-bold">{t.invoiceNo || 'Invoice #'}: </span>{invoice.invoiceNumber}</p><p><span className="font-bold">{(t.date || 'DATE').toUpperCase()}: </span>{safeFormat(invoice.invoiceDate, 'yyyy-MM-dd')}</p></div>
+            <section className="mb-8 grid grid-cols-2 gap-4 text-xs">
+                 <div>
+                    <p className="font-bold">{t.clientInfo || 'Client Information'}:</p>
+                    <p>{client.name}</p>
+                    {client.companyName && <p>{client.companyName}</p>}
+                    <p>{client.address}</p>
+                    <p>{client.phone} | {client.email}</p>
+                </div>
+                 <div className="text-right">
+                    <p><span className="font-bold text-muted-foreground">{t.invoiceNo || 'Invoice #'}: </span>{invoice.invoiceNumber}</p>
+                    <p><span className="font-bold text-muted-foreground">{(t.date || 'DATE').toUpperCase()}: </span>{safeFormat(invoice.invoiceDate, 'yyyy-MM-dd')}</p>
+                    <p><span className="font-bold text-muted-foreground">{(t.dueDate || 'DUE DATE').toUpperCase()}: </span>{safeFormat(invoice.dueDate, 'yyyy-MM-dd')}</p>
+                 </div>
             </section>
-
-             <CategorySpecificDetails invoice={invoice} t={t}/>
             
+            <CategorySpecificDetails invoice={invoice} t={t} />
+
             <main className="flex-grow">
-                 <table className="w-full text-left text-sm">
+                <table className="w-full text-left text-sm">
                     <thead className="bg-gray-100">
                         <tr>
                             <th className="p-2 font-bold w-[60%]">{(t.description || 'DESCRIPTION').toUpperCase()}</th>
@@ -349,7 +375,7 @@ export const AutoRepairTemplate4: React.FC<PageProps> = (props) => {
                     <tbody>
                         {pageItems.map(item => (
                             <tr key={item.id} className="border-b">
-                                <td className="p-2 align-top whitespace-pre-line">{item.name}</td>
+                                <td className="p-2 align-top"><p className="font-semibold whitespace-pre-line">{item.name}</p>{item.description && <p className="text-xs text-gray-500 whitespace-pre-line">{item.description}</p>}</td>
                                 <td className="p-2 align-top text-center">{item.quantity}</td>
                                 <td className="p-2 align-top text-right">{currencySymbol}{item.unitPrice.toFixed(2)}</td>
                                 <td className="p-2 align-top text-right font-semibold">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</td>
@@ -364,15 +390,18 @@ export const AutoRepairTemplate4: React.FC<PageProps> = (props) => {
                      <div className="flex justify-end">
                         <table className="w-1/3 text-sm">
                             <tbody>
-                                <tr><td className="py-1">{(t.subtotal || 'Subtotal')}</td><td className="py-1 text-right">{currencySymbol}{subtotal.toFixed(2)}</td></tr>
-                                {discountAmount > 0 && <tr><td className="py-1">{t.discount || 'Discount'}</td><td className="py-1 text-right text-red-600">-{currencySymbol}{discountAmount.toFixed(2)}</td></tr>}
-                                {invoice.summary.shippingCost > 0 && <tr><td className="py-1">{t.shipping || 'Shipping'}</td><td className="py-1 text-right">{currencySymbol}{invoice.summary.shippingCost.toFixed(2)}</td></tr>}
-                                {taxAmount > 0 && <tr><td className="py-1">{t.tax || 'Taxes'}</td><td className="py-1 text-right">{currencySymbol}{taxAmount.toFixed(2)}</td></tr>}
+                                <tr><td className="py-1 text-muted-foreground">{t.subtotal || 'Subtotal'}</td><td className="py-1 text-right">{currencySymbol}{subtotal.toFixed(2)}</td></tr>
+                                {discountAmount > 0 && (<tr><td className="py-1 text-muted-foreground">{t.discount || 'Discount'}</td><td className="py-1 text-right text-red-500">-{currencySymbol}{discountAmount.toFixed(2)}</td></tr>)}
+                                {invoice.summary.shippingCost > 0 && (<tr><td className="py-1 text-muted-foreground">{t.shipping || 'Shipping'}</td><td className="py-1 text-right">{currencySymbol}{invoice.summary.shippingCost.toFixed(2)}</td></tr>)}
+                                {taxAmount > 0 && <tr><td className="py-1 text-muted-foreground">{t.tax || 'Taxes'}</td><td className="py-1 text-right">{currencySymbol}{taxAmount.toFixed(2)}</td></tr>}
                                 <tr className="font-bold text-base border-t-2 border-black"><td className="py-2">{t.total || 'Total'}</td><td className="py-2 text-right">{currencySymbol}{total.toFixed(2)}</td></tr>
                                 {(invoice.amountPaid || 0) > 0 && <tr className="font-bold text-green-600"><td>{t.amountPaid || 'Amount Paid'}</td><td className="text-right">-{currencySymbol}{(invoice.amountPaid || 0).toFixed(2)}</td></tr>}
                                 <tr className="font-bold bg-gray-100"><td className="p-1">{t.balanceDue || 'Balance Due'}</td><td className="p-1 text-right">{currencySymbol}{balanceDue.toFixed(2)}</td></tr>
                             </tbody>
                         </table>
+                    </div>
+                    <div className="flex justify-end mt-4">
+                       <SignatureDisplay signature={business.ownerSignature} label={(t.authorizedSignature || 'Authorized Signature')} style={{alignItems: 'flex-end', textAlign: 'right'}} />
                     </div>
                 </footer>
             )}
@@ -395,6 +424,8 @@ export const AutoRepairTemplate5: React.FC<PageProps> = (props) => {
                         <p className="whitespace-pre-line">{business.address}</p>
                         <p>{business.phone} | {business.email}</p>
                         {business.website && <p>{business.website}</p>}
+                        {business.licenseNumber && <p>Lic #: {business.licenseNumber}</p>}
+                        {business.taxId && <p>Tax ID: {business.taxId}</p>}
                     </div>
                 </div>
                  <div className="text-right">
@@ -408,11 +439,13 @@ export const AutoRepairTemplate5: React.FC<PageProps> = (props) => {
                  <p className="font-semibold">{client.address}</p>
                  <p>{client.phone} | {client.email}</p>
                  {client.companyName && <p>{client.companyName}</p>}
+                 {client.shippingAddress && <p className="mt-2"><span className="font-bold text-gray-500">SHIP TO:</span> {client.shippingAddress}</p>}
             </section>
             
             <section className="mb-4 text-xs grid grid-cols-3 gap-2">
                 <p><strong>Date:</strong> {safeFormat(invoice.invoiceDate, 'yyyy-MM-dd')}</p>
                 <p><strong>Due Date:</strong> {safeFormat(invoice.dueDate, 'yyyy-MM-dd')}</p>
+                {invoice.poNumber && <p><strong>PO #:</strong> {invoice.poNumber}</p>}
             </section>
             
             <CategorySpecificDetails invoice={invoice} t={t} />
@@ -444,7 +477,12 @@ export const AutoRepairTemplate5: React.FC<PageProps> = (props) => {
             </main>
             
             {pageIndex === totalPages - 1 && (
-                <footer className="mt-auto pt-8 flex justify-end">
+                <footer className="mt-auto pt-8 flex justify-between items-end">
+                    <div className="text-xs w-1/2">
+                        <p className="font-bold">Terms & Conditions:</p>
+                        <p className="text-gray-500 whitespace-pre-line">{invoice.paymentInstructions}</p>
+                         <SignatureDisplay signature={business.ownerSignature} label="Owner Signature" />
+                    </div>
                     <div className="w-1/3 text-sm space-y-1">
                         <p className="flex justify-between"><span>Subtotal</span><span>{currencySymbol}{subtotal.toFixed(2)}</span></p>
                         {discountAmount > 0 && <p className="flex justify-between"><span>Discount</span><span className="text-red-500">-{currencySymbol}{discountAmount.toFixed(2)}</span></p>}
