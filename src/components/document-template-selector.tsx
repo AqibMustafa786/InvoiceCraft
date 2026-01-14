@@ -18,7 +18,7 @@ interface DocumentTemplateSelectorProps {
 }
 
 
-export function DocumentTemplateSelector({ selectedTemplate, onSelectTemplate, documentType }: DocumentTemplateSelectorProps) {
+export function DocumentTemplateSelector({ selectedTemplate, onSelectTemplate, documentType, category }: DocumentTemplateSelectorProps) {
   const filteredTemplates = useMemo(() => {
     let toolTypeToShow: 'Invoice' | 'Estimate' | 'Quote';
     if (documentType === 'invoice') {
@@ -28,8 +28,19 @@ export function DocumentTemplateSelector({ selectedTemplate, onSelectTemplate, d
     } else {
         toolTypeToShow = 'Estimate';
     }
-    return allTemplates.filter(t => t.toolType === toolTypeToShow);
-  }, [documentType]);
+    
+    let templates = allTemplates.filter(t => t.toolType === toolTypeToShow);
+    
+    // Further filter by category if provided
+    if (category && category !== 'General Services') {
+      const categoryTemplates = templates.filter(t => t.category === category);
+      if(categoryTemplates.length > 0) {
+        templates = categoryTemplates;
+      }
+    }
+    
+    return templates;
+  }, [documentType, category]);
 
   const docTypeLabel = documentType === 'invoice' ? 'Invoice' : (documentType === 'quote' ? 'Quote' : 'Estimate');
   
@@ -38,7 +49,7 @@ export function DocumentTemplateSelector({ selectedTemplate, onSelectTemplate, d
       {filteredTemplates.map((template) => {
         return (
             <TemplateCard 
-                key={`${template.id}-${template.category}-${template.toolType}`}
+                key={`${template.id}-${template.toolType}`}
                 template={template}
                 onPreview={() => onSelectTemplate(template.id)}
                 isSelected={selectedTemplate === template.id}
@@ -47,7 +58,7 @@ export function DocumentTemplateSelector({ selectedTemplate, onSelectTemplate, d
       })}
        {filteredTemplates.length === 0 && (
         <div className="text-center py-10 text-muted-foreground col-span-2">
-          <p>No templates found for this document type.</p>
+          <p>No templates found for this specific category and document type.</p>
         </div>
       )}
     </div>

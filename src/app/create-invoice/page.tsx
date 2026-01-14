@@ -791,7 +791,7 @@ export default function CreateInvoicePage() {
                 <h2 className="text-xl font-bold font-headline mb-4 text-center lg:text-left">Fill in Details</h2>
                 <InvoiceForm 
                   invoice={invoice} 
-                  setInvoice={setInvoice}
+                  setInvoice={setInvoice as any}
                   accentColor={accentColor}
                   setAccentColor={setAccentColor}
                   backgroundColor={backgroundColor}
@@ -848,3 +848,4 @@ export default function CreateInvoicePage() {
     </>
   );
 }
+
