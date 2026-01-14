@@ -40,6 +40,7 @@ export function DocumentTemplateSelector({ selectedTemplate, onSelectTemplate, d
                 key={`${template.id}-${template.category}-${template.toolType}`}
                 template={template}
                 onPreview={() => onSelectTemplate(template.id)}
+                isSelected={selectedTemplate === template.id}
              />
         )
       })}

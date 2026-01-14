@@ -12,9 +12,10 @@ import { cn } from '@/lib/utils';
 interface TemplateCardProps {
   template: Template;
   onPreview: (template: Template) => void;
+  isSelected: boolean;
 }
 
-export function TemplateCard({ template, onPreview }: TemplateCardProps) {
+export function TemplateCard({ template, onPreview, isSelected }: TemplateCardProps) {
   const itemVariants = {
     hidden: { opacity: 0, y: 20 },
     visible: { 
@@ -42,7 +43,12 @@ export function TemplateCard({ template, onPreview }: TemplateCardProps) {
       className="group relative block overflow-hidden rounded-lg border bg-card shadow-sm cursor-pointer"
       onClick={() => onPreview(template)}
     >
-      <div className="relative aspect-[3/4] overflow-hidden">
+      <div
+        className={cn(
+          'relative aspect-[3/4] overflow-hidden transition-all',
+           isSelected ? 'ring-4 ring-primary ring-offset-2 rounded-md' : 'ring-0'
+        )}
+      >
         <Image
           src={template.thumbnailUrl}
           alt={`Thumbnail for ${template.name} template`}
