@@ -168,8 +168,101 @@ export const LandscapingTemplate1: React.FC<PageProps> = (props) => {
     );
 };
 
-// ... other templates ...
-export const LandscapingTemplate2: React.FC<PageProps> = (props) => <LandscapingTemplate1 {...props} />;
+
+// Template 2: Modern & Clean
+export const LandscapingTemplate2: React.FC<PageProps> = (props) => {
+    const { invoice, pageItems, pageIndex, totalPages, subtotal, taxAmount, discountAmount, total, balanceDue, currencySymbol, t, accentColor, textColor } = props;
+    const { business, client } = invoice;
+    const docTitle = (t.invoice || 'INVOICE').toUpperCase();
+
+    return (
+        <div className={`p-10 bg-white font-sans text-gray-700 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: 'Verdana, sans-serif', fontSize: '9.5pt', minHeight: '1056px', backgroundColor: props.backgroundColor, color: textColor }}>
+            <header className="flex justify-between items-start mb-10 pb-4 border-b-2" style={{ borderColor: accentColor }}>
+                <div>
+                    <h1 className="text-3xl font-bold" style={{ color: accentColor }}>{business.name}</h1>
+                    <div className="text-xs text-gray-500">
+                        <p>{business.address}</p>
+                        <p>{business.phone} | {business.email}</p>
+                        {business.website && <p>{business.website}</p>}
+                    </div>
+                </div>
+                <div className="text-right">
+                    <h2 className="text-2xl font-light text-gray-400">{docTitle}</h2>
+                </div>
+            </header>
+
+            <section className="grid grid-cols-2 gap-8 mb-8 text-xs">
+                <div>
+                    <p className="font-bold text-gray-500">{t.client || 'Client'}:</p>
+                    <p className="font-semibold">{client.name}</p>
+                    {client.companyName && <p>{client.companyName}</p>}
+                    <p>{client.address}</p>
+                    <p>{client.phone} | {client.email}</p>
+                    {client.shippingAddress && <p className="mt-2"><span className="font-bold text-gray-500">Ship To:</span><br/>{client.shippingAddress}</p>}
+                </div>
+                <div className="text-right">
+                    <p><span className="font-bold">{t.invoiceNo || 'Invoice #'}:</span> {invoice.invoiceNumber}</p>
+                    <p><span className="font-bold">{t.date || 'Date'}:</span> {safeFormat(invoice.invoiceDate, 'MMM d, yyyy')}</p>
+                    <p><span className="font-bold">{t.dueDate || 'Due Date'}:</span> {safeFormat(invoice.dueDate, 'MMM d, yyyy')}</p>
+                    {invoice.poNumber && <p><span className="font-bold">PO #:</span> {invoice.poNumber}</p>}
+                </div>
+            </section>
+            
+            <CategorySpecificDetails invoice={invoice} t={t}/>
+
+            <main className="flex-grow">
+                 <table className="w-full text-left text-xs">
+                    <thead>
+                        <tr className="border-b-2 border-gray-200">
+                            <th className="py-2 font-bold w-1/2">{(t.description || 'DESCRIPTION').toUpperCase()}</th>
+                            <th className="py-2 font-bold text-center">{(t.quantity || 'QTY').toUpperCase()}</th>
+                            <th className="py-2 font-bold text-right">{(t.rate || 'RATE').toUpperCase()}</th>
+                            <th className="py-2 font-bold text-right">{(t.total || 'TOTAL').toUpperCase()}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {pageItems.map(item => (
+                            <tr key={item.id} className="border-b border-gray-100">
+                                <td className="py-2 align-top">
+                                    <p className="font-semibold whitespace-pre-line">{item.name}</p>
+                                    {item.description && <p className="text-xs text-gray-500 whitespace-pre-line">{item.description}</p>}
+                                </td>
+                                <td className="py-2 align-top text-center">{item.quantity}</td>
+                                <td className="py-2 align-top text-right">{currencySymbol}{item.unitPrice.toFixed(2)}</td>
+                                <td className="py-2 align-top text-right">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </main>
+            
+            {pageIndex === totalPages - 1 && (
+                <footer className="mt-auto pt-8">
+                     <div className="flex justify-end">
+                        <div className="w-1/3 text-sm space-y-1">
+                            <p className="flex justify-between"><span>{t.subtotal || 'Subtotal'}:</span><span>{currencySymbol}{subtotal.toFixed(2)}</span></p>
+                            {discountAmount > 0 && <p className="flex justify-between">{t.discount || 'Discount'}: <span className="text-red-500">-{currencySymbol}{discountAmount.toFixed(2)}</span></p>}
+                            {invoice.summary.shippingCost > 0 && <p className="flex justify-between">{t.shipping || 'Shipping/Extra'}: <span>{currencySymbol}{invoice.summary.shippingCost.toFixed(2)}</span></p>}
+                            <p className="flex justify-between"><span>{t.tax || 'Tax'}:</span><span>{currencySymbol}{taxAmount.toFixed(2)}</span></p>
+                            <p className="flex justify-between font-bold text-base mt-2 pt-2 border-t border-black"><span>{t.total || 'Total'}:</span><span>{currencySymbol}{total.toFixed(2)}</span></p>
+                            {(invoice.amountPaid || 0) > 0 && <p className="flex justify-between font-bold text-green-600"><span>{t.amountPaid || 'Amount Paid'}:</span><span>-{currencySymbol}{(invoice.amountPaid || 0).toFixed(2)}</span></p>}
+                            <p className="flex justify-between font-bold bg-gray-100 p-2 mt-1"><span>{t.balanceDue || 'Balance Due'}:</span><span>{currencySymbol}{balanceDue.toFixed(2)}</span></p>
+                        </div>
+                    </div>
+                     <div className="text-xs mt-8">
+                        <p className="font-bold text-gray-500 mb-2">{t.termsAndConditions || 'Terms & Conditions'}</p>
+                        <p className="whitespace-pre-line">{invoice.paymentInstructions}</p>
+                    </div>
+                    <div className="flex justify-between mt-8">
+                        <SignatureDisplay signature={business.ownerSignature} label={"Owner Signature"} />
+                    </div>
+                </footer>
+            )}
+        </div>
+    );
+};
+
+// Template 3: Side Panel Design
 export const LandscapingTemplate3: React.FC<PageProps> = (props) => <LandscapingTemplate1 {...props} />;
 export const LandscapingTemplate4: React.FC<PageProps> = (props) => <LandscapingTemplate1 {...props} />;
 export const LandscapingTemplate5: React.FC<PageProps> = (props) => <LandscapingTemplate1 {...props} />;
