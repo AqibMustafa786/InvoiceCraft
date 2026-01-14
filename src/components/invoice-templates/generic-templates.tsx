@@ -248,7 +248,7 @@ export const GenericTemplate2: React.FC<PageProps> = (props) => {
 
 // Template 3: Minimalist & Clean
 export const GenericTemplate3: React.FC<PageProps> = (props) => {
-    const { invoice, pageItems, pageIndex, totalPages, subtotal, taxAmount, discountAmount, total, balanceDue, t, currencySymbol, textColor } = props;
+    const { invoice, pageItems, pageIndex, totalPages, subtotal, taxAmount, discountAmount, total, balanceDue, t, currencySymbol, textColor, accentColor } = props;
     const { business, client } = invoice;
     return (
         <div className={`p-10 font-sans text-gray-700 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ minHeight: '1056px', backgroundColor: props.backgroundColor, color: props.textColor }}>
@@ -315,7 +315,7 @@ export const GenericTemplate3: React.FC<PageProps> = (props) => {
                              {discountAmount > 0 && <div className="flex justify-between py-1 text-red-600"><span>{(t.discount || 'Discount')}</span><span className="font-medium">-{currencySymbol}{discountAmount.toFixed(2)}</span></div>}
                             {invoice.summary.shippingCost > 0 && <div className="flex justify-between py-1"><span>{(t.shipping || 'Shipping/Extra')}</span><span className="font-medium">{currencySymbol}{invoice.summary.shippingCost.toFixed(2)}</span></div>}
                             <div className="flex justify-between py-1"><span>{(t.tax || 'Tax')}</span><span className="font-medium">{currencySymbol}{taxAmount.toFixed(2)}</span></div>
-                            <div className="flex justify-between py-2 mt-1 border-t-2 border-black font-bold"><span>{(t.total || 'Total')}</span><span>{currencySymbol}{total.toFixed(2)}</span></div>
+                            <div className="flex justify-between py-2 mt-1 border-t-2 font-bold" style={{borderColor: accentColor}}><span>{(t.total || 'Total')}</span><span>{currencySymbol}{total.toFixed(2)}</span></div>
                             {(invoice.amountPaid || 0) > 0 && <div className="flex justify-between py-1 font-bold text-green-600"><span>{t.amountPaid || 'Amount Paid'}</span><span>-{currencySymbol}{(invoice.amountPaid || 0).toFixed(2)}</span></div>}
                             <div className="flex justify-between py-1 font-bold"><span>{t.balanceDue || 'Balance Due'}</span><span>{currencySymbol}{balanceDue.toFixed(2)}</span></div>
                         </div>
@@ -338,7 +338,7 @@ export const GenericTemplate4: React.FC<PageProps> = (props) => {
     const { invoice, pageItems, pageIndex, totalPages, subtotal, taxAmount, discountAmount, total, balanceDue, t, currencySymbol, accentColor, backgroundColor, textColor } = props;
     const { business, client } = invoice;
     return (
-        <div className={`font-sans text-gray-800 flex ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ minHeight: '1056px', backgroundColor: '#FFFFFF', color: textColor }}>
+        <div className={`font-sans text-gray-800 flex ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ minHeight: '1056px', backgroundColor: backgroundColor, color: textColor }}>
             <div className="w-1/3 p-8 text-white" style={{ backgroundColor: accentColor }}>
                 <h1 className="text-4xl font-bold mb-2">{business.name}</h1>
                  <div className="text-sm space-y-1 mt-4 text-white/80">
