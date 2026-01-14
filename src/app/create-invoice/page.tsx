@@ -820,7 +820,7 @@ export default function CreateInvoicePage() {
                         <div className="py-4">
                             <DocumentTemplateSelector 
                                 selectedTemplate={invoice.template}
-                                onSelectTemplate={(template) => setInvoice(prev => prev ? ({...prev, template}) : null)}
+                                onSelectTemplate={(templateId) => setInvoice(prev => prev ? ({...prev, template: templateId}) : null)}
                                 documentType="invoice"
                                 category={invoice.category}
                             />

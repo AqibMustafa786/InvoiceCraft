@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import { ChangeEvent, Dispatch, SetStateAction, useState, useEffect } from 'react';
@@ -38,7 +39,7 @@ import { CategorySpecificFormFields } from './invoice-templates/category-specifi
 
 interface InvoiceFormProps {
   invoice: Invoice;
-  setInvoice: Dispatch<React.SetStateAction<Invoice>>;
+  setInvoice: Dispatch<React.SetStateAction<Invoice | null>>;
   accentColor: string;
   setAccentColor: Dispatch<SetStateAction<string>>;
   backgroundColor: string;
@@ -160,85 +161,89 @@ export function InvoiceForm({ invoice, setInvoice, accentColor, setAccentColor, 
 
   const handleNestedChange = (section: 'business' | 'client' | 'summary', e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    setInvoice(prev => ({
+    setInvoice(prev => prev ? ({
       ...prev,
       [section]: {
         ...prev[section],
         [name]: value
       }
-    }));
+    }) : null);
   };
 
   const handleCategoryDataChange = (category: keyof Invoice, e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value, type } = e.target;
     const isCheckbox = type === 'checkbox';
     
-    setInvoice(prev => ({
+    setInvoice(prev => prev ? ({
         ...prev,
         [category]: {
             ...(prev as any)[category],
             [name]: isCheckbox ? (e.target as HTMLInputElement).checked : (type === 'number' ? parseFloat(value) || null : value)
         }
-    }));
+    }) : null);
   };
 
    const handleCategorySelectChange = (category: keyof Invoice, name: string, value: string | boolean | number | null) => {
-     setInvoice(prev => ({
+     setInvoice(prev => prev ? ({
         ...prev,
         [category]: {
             ...(prev as any)[category],
             [name]: value
         }
-    }));
+    }) : null);
   };
   
   const handleDateChange = (category: keyof Invoice, name: string, date: Date | undefined) => {
-      setInvoice(prev => ({
+      setInvoice(prev => prev ? ({
           ...prev,
           [category]: {
               ...(prev as any)[category],
               [name]: date
           }
-      }));
+      }) : null);
   };
 
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    setInvoice(prev => ({ ...prev, [name]: value }));
+    setInvoice(prev => prev ? ({ ...prev, [name]: value }) : null);
   };
   
   const handleCurrencyChange = (value: string) => {
-    setInvoice(prev => ({ ...prev, currency: value }));
+    setInvoice(prev => prev ? ({ ...prev, currency: value }) : null);
   }
 
   const handleLanguageChange = (value: string) => {
-    setInvoice(prev => ({ ...prev, language: value }));
+    setInvoice(prev => prev ? ({ ...prev, language: value }) : null);
   };
 
   const handleNumberChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     const [section, field] = name.split('.');
     if (section === 'summary') {
-        setInvoice(prev => ({
+        setInvoice(prev => prev ? ({
         ...prev,
         [section as 'summary']: {
             ...prev[section as 'summary'],
             [field]: parseFloat(value) || 0,
         }
-        }));
+        }) : null);
     } else {
-        setInvoice(prev => ({ ...prev, [name]: parseFloat(value) || 0 }));
+        setInvoice(prev => prev ? ({ ...prev, [name]: parseFloat(value) || 0 }) : null);
     }
   }
 
   const handleItemChange = (index: number, field: keyof Omit<LineItem, 'id'>, value: string | number | boolean) => {
-    const newItems = [...invoice.lineItems];
-    (newItems[index] as any)[field] = value;
-    setInvoice(prev => ({ ...prev, lineItems: newItems }));
+    setInvoice(prev => {
+        if (!prev) return null;
+        const newItems = [...prev.lineItems];
+        (newItems[index] as any)[field] = value;
+        return { ...prev, lineItems: newItems };
+    });
   };
 
   const addItem = () => {
+    if (!invoice) return;
      if (invoice.lineItems.length >= 50) {
        toast({
         title: "Item Limit Reached",
@@ -247,13 +252,14 @@ export function InvoiceForm({ invoice, setInvoice, accentColor, setAccentColor, 
       });
       return;
     }
-    setInvoice(prev => ({
+    setInvoice(prev => prev ? ({
       ...prev,
       lineItems: [...prev.lineItems, { id: crypto.randomUUID(), name: '', description: '', quantity: 1, unitPrice: 0, taxable: false }],
-    }));
+    }) : null);
   };
   
   const handleBulkAddItem = () => {
+    if (!invoice) return;
     const count = Number(bulkAddCount);
     if (count <= 0) return;
 
@@ -275,29 +281,30 @@ export function InvoiceForm({ invoice, setInvoice, accentColor, setAccentColor, 
       taxable: false,
     }));
 
-    setInvoice(prev => ({
+    setInvoice(prev => prev ? ({
       ...prev,
       lineItems: [...prev.lineItems, ...newItems],
-    }));
+    }) : null);
   };
 
   const removeItem = (index: number) => {
+    if (!invoice) return;
     const newItems = invoice.lineItems.filter((_, i) => i !== index);
-    setInvoice(prev => ({ ...prev, lineItems: newItems }));
+    setInvoice(prev => prev ? ({ ...prev, lineItems: newItems }) : null);
   };
 
   const handleRemoveLogo = () => {
-    setInvoice(prev => ({
+    setInvoice(prev => prev ? ({
         ...prev,
         business: {
             ...prev.business,
             logoUrl: ''
         }
-    }));
+    }) : null);
   };
   
   const handleOwnerSignatureSave = (image: string, signerName: string) => {
-    setInvoice(prev => ({
+    setInvoice(prev => prev ? ({
         ...prev,
         business: {
             ...prev.business,
@@ -307,21 +314,23 @@ export function InvoiceForm({ invoice, setInvoice, accentColor, setAccentColor, 
                 signedAt: new Date(),
             }
         }
-    }));
+    }) : null);
     setIsSignatureDialogOpen(false);
   };
   
   const handleDeleteSignature = () => {
+    if (!invoice) return;
     const { ownerSignature, ...businessRest } = invoice.business;
-    setInvoice(prev => ({
+    setInvoice(prev => prev ? ({
       ...prev,
       business: {
         ...businessRest
       }
-    }));
+    }) : null);
   };
 
   const handleSavePreset = () => {
+    if (!invoice) return;
     if (!newPresetName.trim()) {
       toast({ title: 'Preset Name Required', description: 'Please enter a name for your preset.', variant: 'destructive' });
       return;
@@ -339,11 +348,12 @@ export function InvoiceForm({ invoice, setInvoice, accentColor, setAccentColor, 
   };
 
   const handleLoadPreset = () => {
+    if (!invoice) return;
     if (!selectedPreset) return;
     const preset = presets.find(p => p.name === selectedPreset);
     if (preset) {
       const newItems = preset.items.map(item => ({ ...item, id: crypto.randomUUID() }));
-      setInvoice(prev => ({ ...prev, lineItems: [...prev.lineItems, ...newItems] }));
+      setInvoice(prev => prev ? ({ ...prev, lineItems: [...prev.lineItems, ...newItems] }) : null);
       toast({ title: 'Preset Loaded', description: `Items from "${selectedPreset}" have been added.` });
     }
   };
@@ -358,26 +368,29 @@ export function InvoiceForm({ invoice, setInvoice, accentColor, setAccentColor, 
   };
 
   const handleCustomFieldChange = (index: number, field: 'label' | 'value', value: string) => {
+    if (!invoice) return;
     const newFields = [...(invoice.customFields || [])];
     newFields[index] = { ...newFields[index], [field]: value };
-    setInvoice(prev => ({ ...prev, customFields: newFields }));
+    setInvoice(prev => prev ? ({ ...prev, customFields: newFields }) : null);
   };
 
   const addCustomField = () => {
-    setInvoice(prev => ({
+    setInvoice(prev => prev ? ({
       ...prev,
       customFields: [...(prev.customFields || []), { id: crypto.randomUUID(), label: '', value: '' }]
-    }));
+    }) : null);
   };
 
   const removeCustomField = (index: number) => {
-    setInvoice(prev => ({
+    if (!invoice) return;
+    setInvoice(prev => prev ? ({
       ...prev,
       customFields: (prev.customFields || []).filter((_, i) => i !== index)
-    }));
+    }) : null);
   };
 
   const handleSaveCustomFieldPreset = () => {
+    if (!invoice) return;
     if (!newCustomFieldPresetName.trim()) {
       toast({ title: 'Preset Name Required', description: 'Please enter a name for the custom field preset.', variant: 'destructive' });
       return;
@@ -395,11 +408,12 @@ export function InvoiceForm({ invoice, setInvoice, accentColor, setAccentColor, 
   };
 
   const handleLoadCustomFieldPreset = () => {
+    if (!invoice) return;
     if (!selectedCustomFieldPreset) return;
     const preset = customFieldPresets.find(p => p.name === selectedCustomFieldPreset);
     if (preset) {
       const newFields = preset.fields.map(field => ({ ...field, id: crypto.randomUUID() }));
-      setInvoice(prev => ({ ...prev, customFields: [...(prev.customFields || []), ...newFields] }));
+      setInvoice(prev => prev ? ({ ...prev, customFields: [...(prev.customFields || []), ...newFields] }) : null);
       toast({ title: 'Custom Field Preset Loaded', description: `Fields from "${selectedCustomFieldPreset}" have been added.` });
     }
   };
@@ -414,7 +428,11 @@ export function InvoiceForm({ invoice, setInvoice, accentColor, setAccentColor, 
   };
 
 
-  const currencySymbol = currencies.find(c => c.value === invoice.currency)?.label.split(' ')[1] || '$';
+  const currencySymbol = currencies.find(c => c.value === invoice?.currency)?.label.split(' ')[1] || '$';
+
+  if (!invoice) {
+      return null;
+  }
 
   return (
     <div className="space-y-6">
@@ -491,7 +509,7 @@ export function InvoiceForm({ invoice, setInvoice, accentColor, setAccentColor, 
                         value={backgroundColor}
                         onChange={(e) => {
                             setBackgroundColor(e.target.value);
-                            setInvoice(prev => ({...prev, backgroundColor: e.target.value }));
+                            setInvoice(prev => prev ? ({...prev, backgroundColor: e.target.value }) : null);
                         }}
                         className="absolute right-1 top-1/2 -translate-y-1/2 h-7 w-7 p-1 rounded-md cursor-pointer bg-transparent border-none appearance-none"
                     />
@@ -515,7 +533,7 @@ export function InvoiceForm({ invoice, setInvoice, accentColor, setAccentColor, 
                         value={textColor}
                         onChange={(e) => {
                             setTextColor(e.target.value);
-                            setInvoice(prev => ({...prev, textColor: e.target.value }));
+                            setInvoice(prev => prev ? ({...prev, textColor: e.target.value }) : null);
                         }}
                         className="absolute right-1 top-1/2 -translate-y-1/2 h-7 w-7 p-1 rounded-md cursor-pointer bg-transparent border-none appearance-none"
                     />
@@ -523,7 +541,7 @@ export function InvoiceForm({ invoice, setInvoice, accentColor, setAccentColor, 
             </div>
              <div className="space-y-2">
                 <Label htmlFor="fontFamily" className="text-xs">Font Family</Label>
-                <Select value={invoice.fontFamily} onValueChange={(value) => setInvoice(p => ({...p, fontFamily: value}))}>
+                <Select value={invoice.fontFamily} onValueChange={(value) => setInvoice(p => p ? ({...p, fontFamily: value}) : null)}>
                     <SelectTrigger id="fontFamily" className="h-9 text-xs">
                         <SelectValue placeholder="Select font" />
                     </SelectTrigger>
@@ -648,7 +666,7 @@ export function InvoiceForm({ invoice, setInvoice, accentColor, setAccentColor, 
                 <Package className="absolute left-3 h-4 w-4 text-muted-foreground z-10" />
                 <Select
                     value={invoice.category}
-                    onValueChange={(value: InvoiceCategory) => setInvoice(p => ({ ...p, category: value }))}
+                    onValueChange={(value: InvoiceCategory) => setInvoice(p => p ? ({ ...p, category: value }) : null)}
                 >
                     <SelectTrigger id="category" className="pl-9 h-9 text-xs">
                         <SelectValue placeholder="Select a business category" />
@@ -665,11 +683,11 @@ export function InvoiceForm({ invoice, setInvoice, accentColor, setAccentColor, 
           </div>
           <div className="space-y-2">
             <Label className="text-xs">Invoice Date</Label>
-            <DatePicker date={invoice.invoiceDate} setDate={(date) => setInvoice(p => ({ ...p, invoiceDate: date! }))} className="h-9 text-xs" />
+            <DatePicker date={invoice.invoiceDate} setDate={(date) => setInvoice(p => p ? ({ ...p, invoiceDate: date! }) : null)} className="h-9 text-xs" />
           </div>
           <div className="space-y-2">
             <Label className="text-xs">Due Date</Label>
-            <DatePicker date={invoice.dueDate} setDate={(date) => setInvoice(p => ({ ...p, dueDate: date! }))} className="h-9 text-xs"/>
+            <DatePicker date={invoice.dueDate} setDate={(date) => setInvoice(p => p ? ({ ...p, dueDate: date! }) : null)} className="h-9 text-xs"/>
           </div>
            <div className="space-y-2">
                 <Label htmlFor="currency" className="text-xs">Currency</Label>
@@ -946,7 +964,7 @@ export function InvoiceForm({ invoice, setInvoice, accentColor, setAccentColor, 
               <Label htmlFor="amountPaid" className="text-xs">Amount Paid</Label>
                 <div className="relative flex items-center">
                   <Wallet className="absolute left-3 h-4 w-4 text-muted-foreground" />
-                  <Input id="amountPaid" name="amountPaid" type="number" value={invoice.amountPaid || 0} onChange={(e) => setInvoice(p => ({...p, amountPaid: parseFloat(e.target.value) || 0}))} className="pl-9 h-9 text-xs"/>
+                  <Input id="amountPaid" name="amountPaid" type="number" value={invoice.amountPaid || 0} onChange={(e) => setInvoice(p => p ? ({...p, amountPaid: parseFloat(e.target.value) || 0}) : null)} className="pl-9 h-9 text-xs"/>
               </div>
             </div>
           </div>
