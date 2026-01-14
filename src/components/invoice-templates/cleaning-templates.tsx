@@ -1,3 +1,4 @@
+
 'use client';
 
 import React from 'react';
@@ -80,7 +81,7 @@ export const CleaningTemplate1: React.FC<PageProps> = (props) => {
     return (
         <div className={`bg-white font-sans text-gray-800 flex flex-col relative ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: 'Arial, sans-serif', fontSize: `10pt`, minHeight: '1056px', backgroundColor: props.backgroundColor, color: textColor }}>
             <div className="absolute top-0 left-0 right-0 h-48" style={{ backgroundColor: accentColor, clipPath: 'ellipse(100% 70% at 50% 0%)' }}></div>
-            <div className="p-10 relative z-10 flex-grow flex flex-col">
+            <div className="p-10 relative z-10 flex-grow flex flex-col" style={{color: textColor}}>
                 <header className="flex justify-between items-start mb-8 text-white">
                     <div>
                         <h1 className="text-3xl font-bold">{business.name}</h1>
@@ -114,7 +115,7 @@ export const CleaningTemplate1: React.FC<PageProps> = (props) => {
                     </div>
                 </section>
                 
-                <section className="grid grid-cols-3 gap-4 mb-4 text-xs">
+                 <section className="grid grid-cols-3 gap-4 mb-4 text-xs">
                     <div><p><span className="font-bold">{t.invoiceNo || 'Invoice#'}:</span> {invoice.invoiceNumber}</p></div>
                     <div><p><span className="font-bold">{t.invoiceDate || 'Date'}:</span> {safeFormat(invoice.invoiceDate, 'MMM d, yyyy')}</p></div>
                     <div className="text-right"><p><span className="font-bold">{t.dueDate || 'Due Date'}:</span> {safeFormat(invoice.dueDate, 'MMM d, yyyy')}</p></div>
@@ -271,25 +272,58 @@ export const CleaningTemplate2: React.FC<PageProps> = (props) => {
 export const CleaningTemplate3: React.FC<PageProps> = (props) => {
     const { invoice, pageItems, pageIndex, totalPages, subtotal, taxAmount, discountAmount, total, balanceDue, currencySymbol, t, textColor } = props;
     const { business, client } = invoice;
-    const docTitle = 'Invoice';
+    const docTitle = (t.invoice || 'Invoice');
 
     return (
         <div className={`p-10 font-serif bg-white ${pageIndex < totalPages - 1 ? 'page-break-after' : ''}`} style={{ minHeight: '1056px', backgroundColor: props.backgroundColor, color: textColor }}>
             <header className="text-center mb-10">
                 <h1 className="text-4xl font-bold">{business.name}</h1>
-                <p className="text-xs">{business.address} | {business.phone}</p>
-                {business.website && <p className="text-xs">{business.website}</p>}
+                <div className="text-xs mt-1">
+                    <p>{business.address} | {business.phone} | {business.email}</p>
+                    {business.website && <p>{business.website}</p>}
+                    {business.licenseNumber && <p>Lic #: {business.licenseNumber}</p>}
+                    {business.taxId && <p>Tax ID: {business.taxId}</p>}
+                </div>
             </header>
             <div className="w-full h-px bg-gray-300 mb-8"></div>
             <section className="grid grid-cols-2 gap-8 mb-8 text-sm">
-                <div><p><strong>{t.billedTo || 'Billed To'}:</strong> {client.name}</p>{client.companyName && <p>{client.companyName}</p>}<p>{client.address}</p><p>{client.email}</p></div>
-                <div className="text-right"><p><strong>{docTitle} #:</strong> {invoice.invoiceNumber}</p><p><strong>{t.date || 'Date'}:</strong> {safeFormat(invoice.invoiceDate, 'MMMM d, yyyy')}</p><p><strong>Due:</strong> {safeFormat(invoice.dueDate, 'MMMM d, yyyy')}</p>{invoice.poNumber && <p><strong>PO #:</strong> {invoice.poNumber}</p>}</div>
+                <div>
+                    <p><strong>{t.billedTo || 'Billed To'}:</strong> {client.name}</p>
+                    {client.companyName && <p>{client.companyName}</p>}
+                    <p>{client.address}</p>
+                    <p>{client.email}</p>
+                    <p>{client.phone}</p>
+                    {client.shippingAddress && <p className="mt-2"><span className="font-bold">Ship To:</span><br/>{client.shippingAddress}</p>}
+                </div>
+                <div className="text-right">
+                    <p><strong>{docTitle} #:</strong> {invoice.invoiceNumber}</p>
+                    <p><strong>{t.date || 'Date'}:</strong> {safeFormat(invoice.invoiceDate, 'MMMM d, yyyy')}</p>
+                    <p><strong>{t.dueDate || 'Due'}:</strong> {safeFormat(invoice.dueDate, 'MMMM d, yyyy')}</p>
+                    {invoice.poNumber && <p><strong>PO #:</strong> {invoice.poNumber}</p>}
+                </div>
             </section>
             <CategorySpecificDetails invoice={invoice} t={t} />
             <main className="flex-grow mt-4">
                 <table className="w-full text-left text-sm">
-                    <thead><tr className="border-b-2 border-t-2"><th className="py-2 w-3/5">{t.description || 'Description'}</th><th className="py-2 text-right">{t.amount || 'Amount'}</th></tr></thead>
-                    <tbody>{pageItems.map(item => (<tr key={item.id} className="border-b"><td className="py-2">{item.name}</td><td className="py-2 text-right">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</td></tr>))}</tbody>
+                    <thead>
+                        <tr className="border-b-2 border-t-2">
+                            <th className="py-2 w-3/5 font-semibold">{(t.description || 'Description').toUpperCase()}</th>
+                            <th className="py-2 w-1/5 text-right font-semibold">{(t.quantity || 'Quantity').toUpperCase()}</th>
+                            <th className="py-2 text-right font-semibold">{(t.amount || 'Amount').toUpperCase()}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {pageItems.map(item => (
+                            <tr key={item.id} className="border-b">
+                                <td className="py-2">
+                                  <p className="font-medium whitespace-pre-line">{item.name}</p>
+                                  {item.description && <p className="text-xs text-gray-500 whitespace-pre-line">{item.description}</p>}
+                                </td>
+                                <td className="py-2 text-right">{item.quantity}</td>
+                                <td className="py-2 text-right">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</td>
+                            </tr>
+                        ))}
+                    </tbody>
                 </table>
             </main>
             {pageIndex === totalPages - 1 && (
@@ -301,7 +335,15 @@ export const CleaningTemplate3: React.FC<PageProps> = (props) => {
                         {invoice.summary.shippingCost > 0 && <p className="flex justify-between py-1"><span>{t.shipping || 'Other Fees'}:</span><span>{currencySymbol}{invoice.summary.shippingCost.toFixed(2)}</span></p>}
                         <p className="flex justify-between py-1"><span>{t.tax || 'Tax'}:</span><span>{currencySymbol}{taxAmount.toFixed(2)}</span></p>
                         <p className="flex justify-between font-bold text-xl mt-2 pt-2 border-t-2"><span>{t.balanceDue || 'Balance Due'}:</span><span>{currencySymbol}{balanceDue.toFixed(2)}</span></p>
+                        {(invoice.amountPaid || 0) > 0 && <p className="flex justify-between font-bold text-green-600"><span>{t.amountPaid || 'Amount Paid'}:</span><span>-{currencySymbol}{(invoice.amountPaid || 0).toFixed(2)}</span></p>}
                     </div>
+                </div>
+                 <div className="text-xs mt-8">
+                    <p className="font-bold">{t.paymentInstructions || 'Payment Instructions'}:</p>
+                    <p className="text-gray-500 whitespace-pre-line">{invoice.paymentInstructions}</p>
+                </div>
+                 <div className="flex justify-end mt-4">
+                    <SignatureDisplay signature={business.ownerSignature} label="Authorized Signature" />
                 </div>
             </footer>
             )}
