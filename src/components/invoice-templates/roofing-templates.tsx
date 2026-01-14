@@ -291,12 +291,21 @@ export const RoofingTemplate3: React.FC<PageProps> = (props) => {
             </header>
 
             <section className="grid grid-cols-3 gap-4 mb-8 text-xs p-4 bg-white rounded-lg shadow-sm">
-                <div><p className="font-bold text-gray-500">{t.client || 'Client'}:</p><p>{client.name}<br/>{client.companyName && `${client.companyName}<br/>`}{client.address}<br/>{client.phone}<br/>{client.email}</p></div>
-                <div><p className="font-bold text-gray-500">{t.shipTo || 'Ship To'}:</p><p>{client.shippingAddress || client.address}</p></div>
-                <div className="text-right"><p className="font-bold text-gray-500">{t.reference || 'Reference'}:</p><p>#{invoice.invoiceNumber}<br/>{t.date || 'Date'}: {safeFormat(invoice.invoiceDate, 'dd-MMM-yyyy')}<br/>Due: {safeFormat(invoice.dueDate, 'dd-MMM-yyyy')}<br/>{invoice.poNumber && `PO: ${invoice.poNumber}`}</p></div>
+                <div>
+                    <p className="font-bold text-gray-500">{t.client || 'Client'}:</p>
+                    <p>{client.name}<br/>{client.companyName && `${client.companyName}<br/>`}{client.address}<br/>{client.phone}<br/>{client.email}</p>
+                </div>
+                 <div>
+                    <p className="font-bold text-gray-500">{t.shipTo || 'Ship To'}:</p>
+                    <p>{client.shippingAddress || client.address}</p>
+                </div>
+                <div className="text-right">
+                    <p className="font-bold text-gray-500">{t.reference || 'Reference'}:</p>
+                    <p>#{invoice.invoiceNumber}<br/>{t.date || 'Date'}: {safeFormat(invoice.invoiceDate, 'dd-MMM-yyyy')}<br/>Due: {safeFormat(invoice.dueDate, 'dd-MMM-yyyy')}<br/>{invoice.poNumber && `PO: ${invoice.poNumber}`}</p>
+                </div>
             </section>
             
-            <CategorySpecificDetails invoice={invoice} t={t} />
+             <CategorySpecificDetails invoice={invoice} t={t} />
 
             <main className="flex-grow bg-white p-4 rounded-lg shadow-sm mt-4">
                 <table className="w-full text-left text-xs">
@@ -334,7 +343,7 @@ export const RoofingTemplate3: React.FC<PageProps> = (props) => {
                         {invoice.summary.shippingCost > 0 && <p className="flex justify-between p-1">{t.shipping || 'Shipping/Extra'}: <span>{currencySymbol}{invoice.summary.shippingCost.toFixed(2)}</span></p>}
                         <p className="flex justify-between p-1"><span>{t.tax || 'Tax'}</span><span>{currencySymbol}{taxAmount.toFixed(2)}</span></p>
                         <p className="flex justify-between font-bold text-lg mt-2 pt-2 border-t-2 border-gray-300"><span>{t.totalInvoice || 'Total Invoice'}</span><span>{currencySymbol}{total.toFixed(2)}</span></p>
-                        {(invoice.amountPaid || 0) > 0 && <p className="flex justify-between font-bold text-green-600 p-1"><span>{t.amountPaid || 'Amount Paid'}</span><span>-{currencySymbol}{(invoice.amountPaid || 0).toFixed(2)}</span></p>}
+                        {(invoice.amountPaid || 0) > 0 && <p className="flex justify-between font-bold p-1 text-green-600"><span>{t.amountPaid || 'Amount Paid'}</span><span>-{currencySymbol}{(invoice.amountPaid || 0).toFixed(2)}</span></p>}
                         <p className="flex justify-between font-bold bg-gray-200 p-2 mt-1"><span>{t.balanceDue || 'Balance Due'}</span><span>{currencySymbol}{balanceDue.toFixed(2)}</span></p>
                     </div>
                 </footer>
@@ -357,6 +366,10 @@ export const RoofingTemplate5: React.FC<PageProps> = (props) => {
                     <div>
                         <p className="font-bold opacity-80 mb-1">{t.preparedFor || 'Prepared For'}</p>
                         <p>{client.name}</p>
+                        {client.companyName && <p>{client.companyName}</p>}
+                        <p>{client.phone}</p>
+                        <p>{client.email}</p>
+                        {client.shippingAddress && <p className="mt-2"><span className="font-bold opacity-80">Ship To:</span><br/>{client.shippingAddress}</p>}
                     </div>
                     <div>
                         <p className="font-bold opacity-80 mb-1">{t.date || 'Date'}</p>
@@ -365,21 +378,22 @@ export const RoofingTemplate5: React.FC<PageProps> = (props) => {
                     <div>
                         <p className="font-bold opacity-80 mb-1">{t.invoiceNo || 'Invoice #'}</p>
                         <p>{invoice.invoiceNumber}</p>
+                         {invoice.poNumber && <p className="mt-2"><span className="font-bold opacity-80">PO #:</span> {invoice.poNumber}</p>}
                     </div>
-                    {invoice.poNumber && (
-                        <div>
-                            <p className="font-bold opacity-80 mb-1">PO #</p>
-                            <p>{invoice.poNumber}</p>
-                        </div>
-                    )}
                 </div>
             </div>
             <div className="w-2/3 p-10 flex flex-col">
                 <header className="mb-10 text-right">
                     <h1 className="text-2xl font-bold">{business.name}</h1>
-                    <p className="text-xs text-gray-500">{business.address}</p>
+                    <div className="text-xs text-gray-500">
+                        <p>{business.address}</p>
+                        <p>{business.phone} | {business.email}</p>
+                        {business.website && <p>{business.website}</p>}
+                        {business.licenseNumber && <p>Lic #: {business.licenseNumber}</p>}
+                        {business.taxId && <p>Tax ID: {business.taxId}</p>}
+                    </div>
                 </header>
-                
+
                 <CategorySpecificDetails invoice={invoice} t={t}/>
 
                 <main className="flex-grow">
@@ -387,6 +401,8 @@ export const RoofingTemplate5: React.FC<PageProps> = (props) => {
                         <thead className="border-b">
                             <tr>
                                 <th className="pb-2 font-bold w-4/5">{t.description || 'Description'}</th>
+                                <th className="pb-2 font-bold text-center">{t.quantity || 'Qty'}</th>
+                                <th className="pb-2 font-bold text-right">{t.price || 'Price'}</th>
                                 <th className="pb-2 font-bold text-right">{t.amount || 'Amount'}</th>
                             </tr>
                         </thead>
@@ -397,6 +413,8 @@ export const RoofingTemplate5: React.FC<PageProps> = (props) => {
                                         <p className="font-semibold whitespace-pre-line">{item.name}</p>
                                         {item.description && <p className="text-xs text-gray-500 whitespace-pre-line">{item.description}</p>}
                                     </td>
+                                    <td className="py-2 border-b text-center">{item.quantity}</td>
+                                    <td className="py-2 border-b text-right">{currencySymbol}{item.unitPrice.toFixed(2)}</td>
                                     <td className="py-2 border-b text-right">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</td>
                                 </tr>
                             ))}
@@ -419,7 +437,7 @@ export const RoofingTemplate5: React.FC<PageProps> = (props) => {
                             {(invoice.amountPaid || 0) > 0 && <p className="flex justify-between font-bold text-green-600"><span>{t.amountPaid || 'Amount Paid'}:</span><span>-{currencySymbol}{(invoice.amountPaid || 0).toFixed(2)}</span></p>}
                             <p className="flex justify-between font-bold text-lg bg-gray-100 p-2 mt-1"><span>{t.balanceDue || 'Balance Due'}:</span><span>{currencySymbol}{balanceDue.toFixed(2)}</span></p>
                         </div>
-                         <div className="flex justify-between mt-8">
+                         <div className="flex justify-end mt-8">
                             <SignatureDisplay signature={business.ownerSignature} label={"Owner Signature"} />
                         </div>
                     </footer>
