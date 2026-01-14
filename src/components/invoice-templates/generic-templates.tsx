@@ -146,13 +146,17 @@ export const GenericTemplate1: React.FC<PageProps> = (props) => {
 
 // Template 2: Modern Dark Header
 export const GenericTemplate2: React.FC<PageProps> = (props) => {
-    const { invoice, pageItems, pageIndex, totalPages, subtotal, taxAmount, discountAmount, total, balanceDue, t, currencySymbol, textColor } = props;
+    const { invoice, pageItems, pageIndex, totalPages, subtotal, taxAmount, discountAmount, total, balanceDue, t, currencySymbol, textColor, accentColor } = props;
     const { business, client } = invoice;
     return (
         <div className={`p-0 font-sans text-gray-800 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ minHeight: '1056px', backgroundColor: props.backgroundColor, color: props.textColor }}>
-            <header className="p-10 text-white flex justify-between items-start" style={{ backgroundColor: '#1F2937' }}>
+            <header className="p-10 text-white flex justify-between items-start" style={{ backgroundColor: accentColor }}>
                 <div>
-                     {business.logoUrl ? <Image src={business.logoUrl} alt="Logo" width={120} height={50} className="mb-2 object-contain filter invert brightness-0" /> : <h1 className="text-4xl font-bold">{business.name}</h1>}
+                     {business.logoUrl ? (
+                        <Image src={business.logoUrl} alt="Logo" width={120} height={50} className="mb-2 object-contain filter invert brightness-0"/>
+                    ) : (
+                        <h1 className="text-4xl font-bold">{business.name}</h1>
+                    )}
                      <div className="text-xs space-y-0.5 mt-2" style={{ color: '#D1D5DB' }}>
                         <p className="whitespace-pre-line">{business.address}</p>
                         {business.phone && <p>{business.phone}</p>}
