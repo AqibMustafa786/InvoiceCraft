@@ -81,9 +81,8 @@ export const LegalTemplate1: React.FC<PageProps> = (props) => {
         <div className={`p-10 font-serif bg-white ${pageIndex < totalPages - 1 ? 'page-break-after' : ''}`} style={{ minHeight: '1056px', backgroundColor: props.backgroundColor, color: textColor }}>
             <header className="grid grid-cols-2 gap-8 items-start mb-8">
                 <div className="flex items-start gap-4">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-gavel"><path d="m14 13-7.5 7.5c-.83.83-2.17.83-3 0 0 0 0 0 0 0a2.12 2.12 0 0 1 0-3L11 10"/><path d="m16 16 6-6"/><path d="m8 8 6-6"/><path d="m9 7 8 8"/><path d="m21 11-8-8"/></svg>
                     <div>
-                        <h2 className="text-2xl font-bold">{docTitle}</h2>
+                        <h2 className="text-2xl font-bold">{t.legalInvoice || 'LEGAL INVOICE'}</h2>
                     </div>
                 </div>
                 <div className="text-xs space-y-1 text-right">
@@ -207,7 +206,7 @@ export const LegalTemplate2: React.FC<PageProps> = (props) => {
             <div className="p-10">
                 <section className="grid grid-cols-2 gap-8 text-sm mb-8">
                      <div>
-                        <p className="font-bold">{t.client || 'Client'}</p>
+                        <p className="font-bold mb-1">{t.billTo || 'Bill To'}:</p>
                         <p>{client.name}</p>
                         {client.companyName && <p>{client.companyName}</p>}
                         <p className="whitespace-pre-line">{client.address}</p>
@@ -223,26 +222,8 @@ export const LegalTemplate2: React.FC<PageProps> = (props) => {
                 <CategorySpecificDetails invoice={invoice} t={t} />
                 <main className="flex-grow mt-4">
                     <table className="w-full text-left text-sm">
-                        <thead>
-                            <tr className="border-b-2">
-                                <th className="pb-2 font-bold w-1/3">{(t.description || 'Description').toUpperCase()}</th>
-                                <th className="pb-2 font-bold w-2/3">{(t.details || 'Details').toUpperCase()}</th>
-                                <th className="pb-2 font-bold text-center">{(t.quantity || 'QTY').toUpperCase()}</th>
-                                <th className="pb-2 font-bold text-right">{(t.unitPrice || 'Unit Price').toUpperCase()}</th>
-                                <th className="pb-2 font-bold text-right">{(t.amount || 'Amount').toUpperCase()}</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {pageItems.map(item => (
-                                <tr key={item.id} className="border-b">
-                                    <td className="py-2 font-semibold whitespace-pre-line">{item.name}</td>
-                                    <td className="py-2 text-xs text-muted-foreground whitespace-pre-line">{item.description}</td>
-                                    <td className="py-2 text-center">{item.quantity}</td>
-                                    <td className="py-2 text-right">{currencySymbol}{item.unitPrice.toFixed(2)}</td>
-                                    <td className="py-2 text-right">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</td>
-                                </tr>
-                            ))}
-                        </tbody>
+                        <thead><tr className="border-b-2"><th className="pb-2 font-bold w-1/3">{(t.description || 'Description').toUpperCase()}</th><th className="pb-2 font-bold w-2/3">{(t.details || 'Details').toUpperCase()}</th><th className="pb-2 font-bold text-center">{(t.quantity || 'QTY').toUpperCase()}</th><th className="pb-2 font-bold text-right">{(t.unitPrice || 'Unit Price').toUpperCase()}</th><th className="pb-2 font-bold text-right">{(t.amount || 'Amount').toUpperCase()}</th></tr></thead>
+                        <tbody>{pageItems.map(item => (<tr key={item.id} className="border-b"><td className="py-2 font-semibold whitespace-pre-line">{item.name}</td><td className="py-2 text-xs text-muted-foreground whitespace-pre-line">{item.description}</td><td className="py-2 text-center">{item.quantity}</td><td className="py-2 text-right">{currencySymbol}{item.unitPrice.toFixed(2)}</td><td className="py-2 text-right">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</td></tr>))}</tbody>
                     </table>
                 </main>
                  {pageIndex === totalPages - 1 && (
@@ -411,5 +392,3 @@ export const LegalTemplate5: React.FC<PageProps> = (props) => {
         </div>
     )
 };
-
-    
