@@ -75,13 +75,17 @@ export const LegalDetails: React.FC<{ invoice: Invoice, t: any }> = ({ invoice, 
 export const LegalTemplate1: React.FC<PageProps> = (props) => {
     const { invoice, pageItems, pageIndex, totalPages, subtotal, taxAmount, discountAmount, total, balanceDue, currencySymbol, t, textColor } = props;
     const { business, client } = invoice;
-    const docTitle = t.legalInvoice || 'LEGAL INVOICE';
+    const docTitle = (t.invoice || 'INVOICE').toUpperCase();
 
     return (
         <div className={`p-10 font-serif bg-white ${pageIndex < totalPages - 1 ? 'page-break-after' : ''}`} style={{ minHeight: '1056px', backgroundColor: props.backgroundColor, color: textColor }}>
             <header className="grid grid-cols-2 gap-8 items-start mb-8">
                 <div>
-                    
+                    {business.logoUrl ? (
+                        <Image src={business.logoUrl} alt="Company Logo" width={100} height={40} className="object-contain mb-4" />
+                    ) : (
+                        <h1 className="text-2xl font-bold mb-2">{business.name}</h1>
+                    )}
                 </div>
                 <div className="text-xs space-y-1 text-right">
                     <p><span className="font-bold">{t.invoiceNo || 'Invoice No.'}</span> {invoice.invoiceNumber}</p>
@@ -328,7 +332,7 @@ export const LegalTemplate4: React.FC<PageProps> = (props) => {
     const docTitle = (t.invoice || 'Invoice');
 
     return (
-        <div className={`p-10 font-serif bg-white ${pageIndex < totalPages - 1 ? 'page-break-after' : ''}`} style={{ minHeight: '1056px', backgroundColor: props.backgroundColor, color: textColor }}>
+        <div className={`p-10 font-serif bg-white ${pageIndex < totalPages - 1 ? 'page-break-after' : ''}`} style={{ minHeight: '1056px', backgroundColor: props.backgroundColor, color: props.textColor }}>
             <header className="text-center mb-10">
                 <h1 className="text-4xl font-bold">{business.name}</h1>
                 <p className="text-sm">{t.attorneysAtLaw || 'Attorneys at Law'}</p>
@@ -409,3 +413,5 @@ export const LegalTemplate5: React.FC<PageProps> = (props) => {
         </div>
     )
 };
+
+    
