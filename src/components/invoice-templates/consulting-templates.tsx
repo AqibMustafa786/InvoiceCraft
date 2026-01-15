@@ -366,7 +366,14 @@ export const ConsultingTemplate4: React.FC<PageProps> = (props) => {
     return (
         <div className={`font-sans ${pageIndex < totalPages - 1 ? 'page-break-after' : ''}`} style={{ minHeight: '1056px', backgroundColor: props.backgroundColor, color: textColor }}>
             <header style={{ backgroundColor: accentColor }} className="text-white p-10 flex justify-between items-center">
-                <h1 className="text-3xl font-bold">{business.name}</h1>
+                <div>
+                  <h1 className="text-3xl font-bold">{business.name}</h1>
+                  <p className="text-xs opacity-80 whitespace-pre-line">{business.address}</p>
+                  <p className="text-xs opacity-80">{business.phone} | {business.email}</p>
+                  {business.website && <p className="text-xs opacity-80">{business.website}</p>}
+                  {business.licenseNumber && <p className="text-xs opacity-80">Lic #: {business.licenseNumber}</p>}
+                  {business.taxId && <p className="text-xs opacity-80">Tax ID: {business.taxId}</p>}
+                </div>
                 <h2 className="text-xl">{docTitle} #{invoice.invoiceNumber}</h2>
             </header>
             <div className="p-10">
