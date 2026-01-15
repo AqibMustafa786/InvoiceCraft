@@ -270,7 +270,7 @@ export const ConsultingTemplate2: React.FC<PageProps> = (props) => {
 };
 // Template 3: Advisory
 export const ConsultingTemplate3: React.FC<PageProps> = (props) => {
-    const { invoice, pageItems, pageIndex, totalPages, subtotal, taxAmount, discountAmount, total, balanceDue, currencySymbol, t, textColor } = props;
+    const { invoice, pageItems, pageIndex, totalPages, subtotal, taxAmount, discountAmount, total, balanceDue, currencySymbol, t, textColor, accentColor } = props;
     const { business, client } = invoice;
     const docTitle = (t.invoice || 'INVOICE').toUpperCase();
 
@@ -281,7 +281,7 @@ export const ConsultingTemplate3: React.FC<PageProps> = (props) => {
                     <div>
                         {business.logoUrl && <Image src={business.logoUrl} alt="Logo" width={90} height={45} className="object-contain mb-2"/>}
                         <h1 className="text-2xl font-bold">{business.name}</h1>
-                        <p className="text-xs text-gray-500">{business.address}</p>
+                        <p className="text-xs text-gray-500 whitespace-pre-line">{business.address}</p>
                         <p className="text-xs text-gray-500">{business.phone} | {business.email}</p>
                         {business.website && <p className="text-xs text-gray-500">{business.website}</p>}
                     </div>
@@ -392,15 +392,19 @@ export const ConsultingTemplate4: React.FC<PageProps> = (props) => {
                         <thead>
                             <tr className="bg-gray-100">
                                 <th className="p-3 font-bold w-1/2">{t.serviceProvided || 'Service Provided'}</th>
-                                <th className="p-3 font-bold text-center w-1/4">{(t.quantity || 'Qty').toUpperCase()}</th>
-                                <th className="p-3 font-bold text-right w-1/4">{t.fee || 'Fee'}</th>
+                                <th className="p-3 font-bold w-1/4">{t.description || 'Description'}</th>
+                                <th className="p-3 font-bold text-center">{(t.quantity || 'Qty').toUpperCase()}</th>
+                                <th className="p-3 font-bold text-right">{t.rate || 'Rate'}</th>
+                                <th className="p-3 font-bold text-right">{t.fee || 'Fee'}</th>
                             </tr>
                         </thead>
                         <tbody>
                             {pageItems.map(item => (
                                 <tr key={item.id} className="border-b">
-                                    <td className="p-3">{item.name}</td>
+                                    <td className="p-3 font-medium whitespace-pre-line">{item.name}</td>
+                                    <td className="p-3 text-muted-foreground whitespace-pre-line">{item.description}</td>
                                     <td className="p-3 text-center">{item.quantity}</td>
+                                    <td className="p-3 text-right">{currencySymbol}{item.unitPrice.toFixed(2)}</td>
                                     <td className="p-3 text-right">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</td>
                                 </tr>
                             ))}
@@ -433,7 +437,6 @@ export const ConsultingTemplate4: React.FC<PageProps> = (props) => {
         </div>
     );
 };
-
 // Template 5: Minimal
 export const ConsultingTemplate5: React.FC<PageProps> = (props) => {
     const { invoice, pageItems, pageIndex, totalPages, subtotal, taxAmount, discountAmount, total, balanceDue, currencySymbol, t, accentColor, textColor } = props;
