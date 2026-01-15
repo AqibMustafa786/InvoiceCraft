@@ -122,11 +122,11 @@ export const LegalTemplate1: React.FC<PageProps> = (props) => {
                 <table className="w-full text-left text-xs border-collapse">
                     <thead>
                         <tr className="bg-gray-700 text-white">
-                            <th className="border p-2 font-bold w-2/5">{t.item || 'Item'}</th>
-                            <th className="border p-2 font-bold w-2/5">{t.description || 'Description'}</th>
-                            <th className="border p-2 font-bold text-center">{t.quantity || 'Quantity'}</th>
-                            <th className="border p-2 font-bold text-right">{t.rate || 'Rate'}</th>
-                            <th className="border p-2 font-bold text-right">{t.total || 'Total'} ({currencySymbol})</th>
+                            <th className="border p-2 font-bold w-1/4">{t.item || 'Item'}</th>
+                            <th className="border p-2 font-bold w-2/4">{t.description || 'Description'}</th>
+                            <th className="border p-2 font-bold text-center">{(t.quantity || 'QTY').toUpperCase()}</th>
+                            <th className="border p-2 font-bold text-right">{(t.rate || 'RATE').toUpperCase()}</th>
+                            <th className="border p-2 font-bold text-right">{(t.total || 'TOTAL').toUpperCase()} ({currencySymbol})</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -155,7 +155,7 @@ export const LegalTemplate1: React.FC<PageProps> = (props) => {
             {pageIndex === totalPages - 1 && (
             <footer className="mt-auto pt-4">
                 <div className="flex justify-end text-xs">
-                    <div className="w-2/5">
+                    <div className="w-1/3">
                         <div className="flex justify-between p-1"><span className="font-bold">{t.subtotal || 'Subtotal'}</span><span>{currencySymbol}{subtotal.toFixed(2)}</span></div>
                         {discountAmount > 0 && <div className="flex justify-between p-1 text-red-600"><span className="font-bold">{t.discount || 'Discount'}</span><span>-{currencySymbol}{discountAmount.toFixed(2)}</span></div>}
                         {invoice.summary.shippingCost > 0 && <div className="flex justify-between p-1"><span className="font-bold">{t.other || 'Other'}</span><span>{currencySymbol}{invoice.summary.shippingCost.toFixed(2)}</span></div>}
@@ -190,22 +190,60 @@ export const LegalTemplate2: React.FC<PageProps> = (props) => {
                 <div>
                     <h1 className="text-2xl font-bold">{business.name}</h1>
                     <p className="text-xs opacity-80">{t.attorneysAtLaw || 'Attorneys at Law'}</p>
+                    <div className="text-xs opacity-80 mt-2">
+                        <p className="whitespace-pre-line">{business.address}</p>
+                        <p>{business.phone} | {business.email}</p>
+                        {business.website && <p>{business.website}</p>}
+                        {business.licenseNumber && <p>Lic #: {business.licenseNumber}</p>}
+                        {business.taxId && <p>Tax ID: {business.taxId}</p>}
+                    </div>
                 </div>
                 <div className="text-right">
                     <h2 className="text-3xl font-bold">{docTitle}</h2>
                     <p>#{invoice.invoiceNumber}</p>
+                    {invoice.poNumber && <p>PO #: {invoice.poNumber}</p>}
                 </div>
             </header>
             <div className="p-10">
                 <section className="grid grid-cols-2 gap-8 text-sm mb-8">
-                     <div><p className="font-bold">{t.client || 'Client'}</p><p>{client.name}<br/>{client.address}</p></div>
-                     <div className="text-right"><p><strong>{t.date || 'Date'}:</strong> {safeFormat(invoice.invoiceDate, 'MMMM d, yyyy')}</p></div>
+                     <div>
+                        <p className="font-bold">{t.client || 'Client'}</p>
+                        <p>{client.name}</p>
+                        {client.companyName && <p>{client.companyName}</p>}
+                        <p className="whitespace-pre-line">{client.address}</p>
+                        <p>{client.phone}</p>
+                        <p>{client.email}</p>
+                        {client.shippingAddress && <p className="mt-2"><span className="font-bold">Ship To:</span><br/>{client.shippingAddress}</p>}
+                    </div>
+                     <div className="text-right">
+                        <p><strong>{t.date || 'Date'}:</strong> {safeFormat(invoice.invoiceDate, 'MMMM d, yyyy')}</p>
+                        <p><strong>{t.dueDate || 'Due Date'}:</strong> {safeFormat(invoice.dueDate, 'MMMM d, yyyy')}</p>
+                     </div>
                 </section>
                 <CategorySpecificDetails invoice={invoice} t={t} />
                 <main className="flex-grow mt-4">
                     <table className="w-full text-left text-sm">
-                        <thead><tr className="border-b-2"><th className="pb-2 font-bold w-3/5">{t.description || 'Description'}</th><th className="pb-2 font-bold text-right">{t.amount || 'Amount'}</th></tr></thead>
-                        <tbody>{pageItems.map(item => (<tr key={item.id} className="border-b"><td className="py-2">{item.name}</td><td className="py-2 text-right">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</td></tr>))}</tbody>
+                        <thead>
+                            <tr className="border-b-2">
+                                <th className="pb-2 font-bold w-[40%]">{(t.description || 'Description').toUpperCase()}</th>
+                                <th className="pb-2 font-bold text-center">{(t.quantity || 'QTY').toUpperCase()}</th>
+                                <th className="pb-2 font-bold text-right">{(t.unitPrice || 'Unit Price').toUpperCase()}</th>
+                                <th className="pb-2 font-bold text-right">{(t.amount || 'Amount').toUpperCase()}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {pageItems.map(item => (
+                                <tr key={item.id} className="border-b">
+                                    <td className="py-2">
+                                        <p className="font-semibold whitespace-pre-line">{item.name}</p>
+                                        <p className="text-xs text-gray-500 whitespace-pre-line">{item.description}</p>
+                                    </td>
+                                    <td className="py-2 text-center">{item.quantity}</td>
+                                    <td className="py-2 text-right">{currencySymbol}{item.unitPrice.toFixed(2)}</td>
+                                    <td className="py-2 text-right">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</td>
+                                </tr>
+                            ))}
+                        </tbody>
                     </table>
                 </main>
                  {pageIndex === totalPages - 1 && (
@@ -237,12 +275,12 @@ export const LegalTemplate3: React.FC<PageProps> = (props) => {
     const docTitle = (t.invoice || 'INVOICE').toUpperCase();
 
     return (
-        <div className={`p-10 font-sans bg-gray-50 ${pageIndex < totalPages - 1 ? 'page-break-after' : ''}`} style={{ minHeight: '1056px', backgroundColor: props.backgroundColor, color: textColor }}>
+        <div className={`p-10 font-sans bg-gray-50 ${pageIndex < totalPages - 1 ? 'page-break-after' : ''}`} style={{ minHeight: '1056px', backgroundColor: props.backgroundColor, color: props.textColor }}>
             <div className="bg-white p-8 shadow-lg">
                 <header className="flex justify-between items-start mb-8">
                     <div>
                         <h1 className="text-2xl font-bold">{business.name}</h1>
-                        <p className="text-xs text-gray-500">{business.address}</p>
+                        <p className="text-xs text-gray-500 whitespace-pre-line">{business.address}</p>
                     </div>
                     <div className="text-right">
                         <h2 className="text-3xl font-light text-gray-400">{docTitle}</h2>
@@ -370,5 +408,3 @@ export const LegalTemplate5: React.FC<PageProps> = (props) => {
         </div>
     )
 };
-
-    
