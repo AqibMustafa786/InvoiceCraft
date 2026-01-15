@@ -80,10 +80,8 @@ export const LegalTemplate1: React.FC<PageProps> = (props) => {
     return (
         <div className={`p-10 font-serif bg-white ${pageIndex < totalPages - 1 ? 'page-break-after' : ''}`} style={{ minHeight: '1056px', backgroundColor: props.backgroundColor, color: textColor }}>
             <header className="grid grid-cols-2 gap-8 items-start mb-8">
-                <div className="flex items-start gap-4">
-                    <div>
-                        <h2 className="text-2xl font-bold">{t.legalInvoice || 'LEGAL INVOICE'}</h2>
-                    </div>
+                <div>
+                    
                 </div>
                 <div className="text-xs space-y-1 text-right">
                     <p><span className="font-bold">{t.invoiceNo || 'Invoice No.'}</span> {invoice.invoiceNumber}</p>
@@ -222,8 +220,26 @@ export const LegalTemplate2: React.FC<PageProps> = (props) => {
                 <CategorySpecificDetails invoice={invoice} t={t} />
                 <main className="flex-grow mt-4">
                     <table className="w-full text-left text-sm">
-                        <thead><tr className="border-b-2"><th className="pb-2 font-bold w-1/3">{(t.description || 'Description').toUpperCase()}</th><th className="pb-2 font-bold w-2/3">{(t.details || 'Details').toUpperCase()}</th><th className="pb-2 font-bold text-center">{(t.quantity || 'QTY').toUpperCase()}</th><th className="pb-2 font-bold text-right">{(t.unitPrice || 'Unit Price').toUpperCase()}</th><th className="pb-2 font-bold text-right">{(t.amount || 'Amount').toUpperCase()}</th></tr></thead>
-                        <tbody>{pageItems.map(item => (<tr key={item.id} className="border-b"><td className="py-2 font-semibold whitespace-pre-line">{item.name}</td><td className="py-2 text-xs text-muted-foreground whitespace-pre-line">{item.description}</td><td className="py-2 text-center">{item.quantity}</td><td className="py-2 text-right">{currencySymbol}{item.unitPrice.toFixed(2)}</td><td className="py-2 text-right">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</td></tr>))}</tbody>
+                       <thead>
+                           <tr className="border-b-2">
+                               <th className="pb-2 font-bold w-[30%]">{t.service || 'Service'}</th>
+                               <th className="pb-2 font-bold w-[40%]">{t.description || 'Description'}</th>
+                               <th className="pb-2 font-bold text-center">{t.quantity || 'Qty'}</th>
+                               <th className="pb-2 font-bold text-right">{t.rate || 'Rate'}</th>
+                               <th className="pb-2 font-bold text-right">{t.amount || 'Amount'}</th>
+                           </tr>
+                       </thead>
+                       <tbody>
+                           {pageItems.map(item => (
+                               <tr key={item.id} className="border-b">
+                                   <td className="py-2 font-medium whitespace-pre-line">{item.name}</td>
+                                   <td className="py-2 text-xs text-muted-foreground whitespace-pre-line">{item.description}</td>
+                                   <td className="py-2 text-center">{item.quantity}</td>
+                                   <td className="py-2 text-right">{currencySymbol}{item.unitPrice.toFixed(2)}</td>
+                                   <td className="py-2 text-right">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</td>
+                               </tr>
+                           ))}
+                       </tbody>
                     </table>
                 </main>
                  {pageIndex === totalPages - 1 && (
@@ -263,6 +279,7 @@ export const LegalTemplate3: React.FC<PageProps> = (props) => {
             <div className="bg-white p-8 shadow-lg">
                 <header className="flex justify-between items-start mb-8">
                     <div>
+                        {business.logoUrl && <Image src={business.logoUrl} alt="Logo" width={90} height={45} className="object-contain mb-2"/>}
                         <h1 className="text-2xl font-bold">{business.name}</h1>
                         <p className="text-xs text-gray-500 whitespace-pre-line">{business.address}</p>
                     </div>
