@@ -84,7 +84,7 @@ export const MedicalTemplate1: React.FC<PageProps> = (props) => {
             <div className="relative z-10">
                 <header className="mb-8">
                     <div className="w-full h-2 mb-8" style={{backgroundColor: accentColor}}></div>
-                    <div className="flex justify-between items-start">
+                     <div className="flex justify-between items-start">
                         <div>
                            {business.logoUrl ? (
                                 <Image src={business.logoUrl} alt="Company Logo" width={100} height={40} className="object-contain mb-4" />
@@ -105,9 +105,9 @@ export const MedicalTemplate1: React.FC<PageProps> = (props) => {
                     <div>
                         <p className="font-bold">{client.name}</p>
                         {client.companyName && <p>{client.companyName}</p>}
-                        <p className="whitespace-pre-line">{client.address}</p>
                         <p>{client.phone}</p>
                         <p>{client.email}</p>
+                        <p className="whitespace-pre-line">{client.address}</p>
                         {client.shippingAddress && <p className="mt-2"><span className="font-bold">Ship To:</span><br/>{client.shippingAddress}</p>}
                     </div>
                     <div className="text-right">
@@ -162,8 +162,8 @@ export const MedicalTemplate1: React.FC<PageProps> = (props) => {
                             <p className="grid grid-cols-2 font-bold"><span>Balance Due:</span> <span>{currencySymbol}{balanceDue.toFixed(2)}</span></p>
                         </div>
                     </div>
-                     <div className="flex justify-between mt-8">
-                      <SignatureDisplay signature={business.ownerSignature} label={t.authorizedSignature || 'Authorized Signature'} />
+                    <div className="flex justify-between mt-8">
+                        {business.ownerSignature && <SignatureDisplay signature={business.ownerSignature} label={t.authorizedSignature || 'Authorized Signature'} />}
                     </div>
                 </footer>
                 )}
@@ -172,69 +172,77 @@ export const MedicalTemplate1: React.FC<PageProps> = (props) => {
     );
 }
 
-// Template 2: Vitality
+// Template 2: Vitality - Redesigned
 export const MedicalTemplate2: React.FC<PageProps> = (props) => {
     const { invoice, pageItems, pageIndex, totalPages, subtotal, taxAmount, discountAmount, total, balanceDue, currencySymbol, t, accentColor, textColor } = props;
     const { business, client } = invoice;
     const docTitle = (t.invoice || 'Invoice');
     return (
-        <div className={`p-10 font-serif bg-gray-50 ${pageIndex < totalPages - 1 ? 'page-break-after' : ''}`} style={{ minHeight: '1056px', backgroundColor: props.backgroundColor, color: textColor }}>
-            <header className="text-center mb-10">
-                <h1 className="text-4xl font-bold">{business.name}</h1>
-                <div className="text-xs mt-1">
-                    <p className="whitespace-pre-line">{business.address}</p>
-                    <p>{business.phone} | {business.email}</p>
-                    {business.website && <p>{business.website}</p>}
-                </div>
-            </header>
-            <section className="grid grid-cols-2 gap-8 mb-8 text-xs">
-                <div>
-                    <p className="font-bold">{t.patient || 'Patient'}:</p>
-                    <p>{client.name}</p>
-                    {client.companyName && <p>{client.companyName}</p>}
-                    <p className="whitespace-pre-line">{client.address}</p>
-                    <p>{client.phone}</p>
-                    <p>{client.email}</p>
+        <div className={`p-10 font-sans bg-white ${pageIndex < totalPages - 1 ? 'page-break-after' : ''}`} style={{ minHeight: '1056px', backgroundColor: props.backgroundColor, color: textColor }}>
+            <header className="flex justify-between items-start mb-10 pb-5 border-b" style={{borderColor: accentColor}}>
+                <div className="w-2/3">
+                    <h1 className="text-4xl font-bold mb-1" style={{color: accentColor}}>{business.name}</h1>
+                    <p className="text-xs text-gray-500 whitespace-pre-line">{business.address}</p>
+                    <p className="text-xs text-gray-500">{business.phone} | {business.email}</p>
                 </div>
                 <div className="text-right">
-                    <p><strong>{docTitle} #:</strong> {invoice.invoiceNumber}</p>
-                    <p><strong>{t.date || 'Date'}:</strong> {safeFormat(invoice.invoiceDate, 'yyyy-MM-dd')}</p>
-                    <p><strong>{t.dueDate || 'Due Date'}:</strong> {safeFormat(invoice.dueDate, 'yyyy-MM-dd')}</p>
+                    <h2 className="text-2xl font-semibold text-gray-600">{docTitle.toUpperCase()}</h2>
+                    <p className="text-sm">#{invoice.invoiceNumber}</p>
+                </div>
+            </header>
+            <section className="grid grid-cols-2 gap-8 mb-8 text-sm">
+                <div>
+                    <p className="font-bold text-gray-500 mb-1">{t.billedTo || 'Billed To'}</p>
+                    <p>{client.name}</p>
+                    {client.companyName && <p>{client.companyName}</p>}
+                    <p className="text-gray-600">{client.address}</p>
+                </div>
+                <div className="text-right">
+                    <p><strong className="text-gray-500">{t.date || 'Date'}:</strong> {safeFormat(invoice.invoiceDate, 'MMM dd, yyyy')}</p>
+                    <p><strong className="text-gray-500">{t.dueDate || 'Due Date'}:</strong> {safeFormat(invoice.dueDate, 'MMMM dd, yyyy')}</p>
                 </div>
             </section>
             <CategorySpecificDetails invoice={invoice} t={t} />
             <main className="flex-grow mt-4">
-                <table className="w-full text-left text-xs bg-white">
-                    <thead><tr className="bg-gray-200"><th className="p-2 font-semibold w-1/5">{t.serviceDate || 'Service Date'}</th><th className="p-2 font-semibold w-2/5">{t.procedure || 'Procedure'}</th><th className="p-2 font-semibold w-1/5">{t.description || 'Details'}</th><th className="p-2 font-semibold text-right">{t.charge || 'Charge'}</th></tr></thead>
-                    <tbody>{pageItems.map(item => (<tr key={item.id} className="border-b"><td className="p-2">{safeFormat(invoice.medical?.visitDate, 'MM/dd/yyyy')}</td><td className="p-2 whitespace-pre-line">{item.name}</td><td className="p-2 whitespace-pre-line text-xs text-muted-foreground">{item.description}</td><td className="p-2 text-right">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</td></tr>))}</tbody>
+                <table className="w-full text-left text-sm">
+                    <thead>
+                        <tr style={{backgroundColor: accentColor, color: 'white'}} className="rounded-t-lg">
+                            <th className="p-3 font-semibold w-1/5 rounded-tl-lg">{t.serviceDate || 'Service Date'}</th>
+                            <th className="p-3 font-semibold w-2/5">{t.procedure || 'Procedure'}</th>
+                            <th className="p-3 font-semibold w-2/5">{t.description || 'Details'}</th>
+                            <th className="p-3 font-semibold text-right rounded-tr-lg">{t.charge || 'Charge'}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {pageItems.map(item => (
+                            <tr key={item.id} className="border-b">
+                                <td className="p-3 align-top">{safeFormat(invoice.medical?.visitDate, 'MM/dd/yyyy')}</td>
+                                <td className="p-3 align-top font-medium whitespace-pre-line">{item.name}</td>
+                                <td className="p-3 align-top text-xs text-gray-600 whitespace-pre-line">{item.description}</td>
+                                <td className="p-3 align-top text-right">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</td>
+                            </tr>
+                        ))}
+                    </tbody>
                 </table>
             </main>
             {pageIndex === totalPages - 1 && (
             <footer className="mt-auto pt-8">
                 <div className="flex justify-end text-sm">
-                    <div className="w-1/3">
-                        <p className="flex justify-between"><span>{t.subtotal || 'Subtotal'}:</span><span>{currencySymbol}{subtotal.toFixed(2)}</span></p>
-                        {discountAmount > 0 && <p className="flex justify-between text-red-600"><span>{t.discount || 'Discount'}:</span><span>-{currencySymbol}{discountAmount.toFixed(2)}</span></p>}
-                        {invoice.summary.shippingCost > 0 && <p className="flex justify-between"><span>{t.shipping || 'Other Fees'}:</span><span>{currencySymbol}{invoice.summary.shippingCost.toFixed(2)}</span></p>}
-                        <p className="flex justify-between border-b pb-1"><span>{t.adjustments || 'Adjustments'}:</span><span>{currencySymbol}{(taxAmount > 0 ? taxAmount.toFixed(2) : '0.00')}</span></p>
-                        <p className="flex justify-between font-bold mt-2"><span>{t.balanceDue || 'Balance Due'}:</span><span>{currencySymbol}{total.toFixed(2)}</span></p>
-                        {(invoice.amountPaid || 0) > 0 && <p className="flex justify-between font-bold text-green-600"><span>{t.amountPaid || 'Amount Paid'}:</span><span>-{currencySymbol}{(invoice.amountPaid || 0).toFixed(2)}</span></p>}
-                        <p className="flex justify-between font-bold bg-gray-200 p-1"><span>{t.balanceDue || 'Balance Due'}:</span><span>{currencySymbol}{balanceDue.toFixed(2)}</span></p>
+                    <div className="w-2/5">
+                        <div className="flex justify-between py-1 border-b"><span>{t.subtotal || 'Subtotal'}:</span><span>{currencySymbol}{subtotal.toFixed(2)}</span></div>
+                        {discountAmount > 0 && <div className="flex justify-between py-1 border-b text-red-600"><span>{t.discount || 'Discount'}:</span><span>-{currencySymbol}{discountAmount.toFixed(2)}</span></div>}
+                        {invoice.summary.shippingCost > 0 && <div className="flex justify-between py-1 border-b"><span>{t.shipping || 'Other Fees'}:</span><span>{currencySymbol}{invoice.summary.shippingCost.toFixed(2)}</span></div>}
+                        <div className="flex justify-between py-1 border-b"><span>{t.adjustments || 'Adjustments'}:</span><span>{currencySymbol}{(taxAmount > 0 ? taxAmount.toFixed(2) : '0.00')}</span></div>
+                        <div className="flex justify-between font-bold py-2"><span>{t.total || 'Total'}:</span><span>{currencySymbol}{total.toFixed(2)}</span></div>
+                        {(invoice.amountPaid || 0) > 0 && <div className="flex justify-between py-1 font-bold text-green-600"><span>{t.amountPaid || 'Amount Paid'}:</span><span>-{currencySymbol}{(invoice.amountPaid || 0).toFixed(2)}</span></div>}
+                        <div className="flex justify-between font-bold p-2 mt-2 rounded-md" style={{backgroundColor: `${accentColor}20`, color: accentColor}}><span>{t.balanceDue || 'Balance Due'}:</span><span>{currencySymbol}{balanceDue.toFixed(2)}</span></div>
                     </div>
-                </div>
-                 <div className="text-xs mt-8">
-                    <p className="font-bold">{t.paymentInstructions || 'Payment Instructions'}:</p>
-                    <p className="text-muted-foreground whitespace-pre-line">{invoice.paymentInstructions}</p>
-                 </div>
-                 <div className="flex justify-between mt-8">
-                    <SignatureDisplay signature={business.ownerSignature} label={t.authorizedSignature || 'Authorized Signature'} />
                 </div>
             </footer>
             )}
         </div>
     );
-}
-
+};
 // Template 3: Clinic
 export const MedicalTemplate3: React.FC<PageProps> = (props) => {
     const { invoice, pageItems, pageIndex, totalPages, subtotal, taxAmount, discountAmount, total, balanceDue, currencySymbol, t, accentColor, textColor } = props;
@@ -252,13 +260,7 @@ export const MedicalTemplate3: React.FC<PageProps> = (props) => {
             </div>
             <div className="w-3/4 p-10">
                 <header className="text-right mb-10"><h2 className="text-2xl font-bold">{business.name}</h2><p className="text-xs">{business.address}</p></header>
-                <section className="mb-10 text-sm">
-                    <p className="font-bold">{t.to || 'To'}:</p>
-                    <p>{client.name}</p>
-                    {client.companyName && <p>{client.companyName}</p>}
-                    <p className="whitespace-pre-line">{client.address}</p>
-                    <p>{client.phone} | {client.email}</p>
-                </section>
+                <section className="mb-10 text-sm"><p className="font-bold">{t.to || 'To'}:</p><p>{client.name}</p></section>
                 <CategorySpecificDetails invoice={invoice} t={t} />
                 <main className="flex-grow mt-4">
                     <table className="w-full text-left text-xs">
@@ -285,6 +287,7 @@ export const MedicalTemplate4: React.FC<PageProps> = (props) => {
     const { invoice, pageItems, pageIndex, totalPages, subtotal, taxAmount, discountAmount, total, balanceDue, currencySymbol, t, accentColor, textColor } = props;
     const { business, client } = invoice;
     const docTitle = (t.invoice || 'Invoice');
+
     return (
         <div className={`p-10 font-sans ${pageIndex < totalPages - 1 ? 'page-break-after' : ''}`} style={{ minHeight: '1056px', borderTop: `10px solid ${accentColor}`, backgroundColor: props.backgroundColor, color: props.textColor }}>
             <header className="flex justify-between items-center mb-8">
@@ -312,7 +315,7 @@ export const MedicalTemplate4: React.FC<PageProps> = (props) => {
                         {discountAmount > 0 && <p className="flex justify-between text-red-600"><span>{t.discount || 'Discount'}:</span><span>-{currencySymbol}{discountAmount.toFixed(2)}</span></p>}
                         {invoice.summary.shippingCost > 0 && <p className="flex justify-between"><span>{t.shipping || 'Other Fees'}:</span><span>{currencySymbol}{invoice.summary.shippingCost.toFixed(2)}</span></p>}
                         <p className="flex justify-between"><span>{t.adjustments || 'Adjustments'}</span><span>{currencySymbol}{(taxAmount > 0 ? taxAmount.toFixed(2) : '0.00')}</span></p>
-                        <p className="flex justify-between font-bold mt-2"><span>{t.balanceDue || 'Balance Due'}:</span><span>{currencySymbol}{total.toFixed(2)}</span></p>
+                        <p className="flex justify-between font-bold mt-2"><span>{t.total || 'Total'}:</span><span>{currencySymbol}{total.toFixed(2)}</span></p>
                         {(invoice.amountPaid || 0) > 0 && <p className="flex justify-between font-bold text-green-600"><span>{t.amountPaid || 'Amount Paid'}:</span><span>-{currencySymbol}{(invoice.amountPaid || 0).toFixed(2)}</span></p>}
                         <p className="flex justify-between font-bold bg-gray-100 p-1"><span>{t.balanceDue || 'Balance Due'}:</span><span>{currencySymbol}{balanceDue.toFixed(2)}</span></p>
                     </div>
@@ -341,7 +344,6 @@ export const MedicalTemplate5: React.FC<PageProps> = (props) => {
             <h2 className="text-center text-xl font-semibold mb-8">{t.statementOfAccount || 'STATEMENT OF ACCOUNT'}</h2>
             <section className="text-xs mb-8">
                 <p><strong>{t.patient || 'Patient'}:</strong> {client.name}</p>
-                {client.companyName && <p>{client.companyName}</p>}
                 <p><strong>{t.accountNo || 'Account #'}:</strong> {invoice.medical?.patientId || 'N/A'}</p>
                 <p><strong>{t.invoiceNo || 'Invoice #'}:</strong> {invoice.invoiceNumber}</p>
                 <p><strong>{t.date || 'Date'}:</strong> {safeFormat(invoice.invoiceDate, 'MM/dd/yyyy')}</p>
@@ -351,16 +353,8 @@ export const MedicalTemplate5: React.FC<PageProps> = (props) => {
             <CategorySpecificDetails invoice={invoice} t={t} />
             <main className="flex-grow mt-4">
                 <table className="w-full text-left text-xs">
-                    <thead><tr className="bg-gray-100"><th className="p-2 font-bold w-2/3">{t.service || 'Service'}</th><th className="p-2 font-bold w-1/3">{t.description || 'Details'}</th><th className="p-2 font-bold text-right">{t.charge || 'Charge'}</th></tr></thead>
-                    <tbody>
-                        {pageItems.map(item => (
-                            <tr key={item.id} className="border-b">
-                                <td className="p-2 font-semibold whitespace-pre-line">{item.name}</td>
-                                <td className="p-2 text-xs text-muted-foreground whitespace-pre-line">{item.description}</td>
-                                <td className="p-2 text-right">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</td>
-                            </tr>
-                        ))}
-                    </tbody>
+                    <thead><tr className="bg-gray-100"><th className="p-2 font-bold w-2/3">{t.service || 'Service'}</th><th className="p-2 font-bold text-right">{t.charge || 'Charge'}</th></tr></thead>
+                    <tbody>{pageItems.map(item => (<tr key={item.id} className="border-b"><td className="p-2">{item.name}</td><td className="p-2 text-right">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</td></tr>))}</tbody>
                 </table>
             </main>
             {pageIndex === totalPages - 1 && (
