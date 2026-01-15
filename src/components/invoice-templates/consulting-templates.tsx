@@ -155,7 +155,7 @@ export const ConsultingTemplate1: React.FC<PageProps> = (props) => {
                         <p className="flex justify-between"><span>{t.tax || 'Tax'} ({invoice.summary.taxPercentage}%):</span><span>{currencySymbol}{taxAmount.toFixed(2)}</span></p>
                         <p className="flex justify-between font-bold text-base mt-2 pt-2 border-t"><span>{t.total || 'Total'}:</span><span>{currencySymbol}{total.toFixed(2)}</span></p>
                         {(invoice.amountPaid || 0) > 0 && <p className="flex justify-between font-bold text-green-600"><span>{t.amountPaid || 'Amount Paid'}:</span><span>-{currencySymbol}{(invoice.amountPaid || 0).toFixed(2)}</span></p>}
-                        <p className="flex justify-between font-bold bg-gray-100 p-2 mt-1"><span>{t.balanceDue || 'Balance Due'}:</span><span>{currencySymbol}{balanceDue.toFixed(2)}</span></p>
+                        <p className="flex justify-between font-bold bg-gray-100 p-1 mt-1"><span>{t.balanceDue || 'Balance Due'}:</span><span>{currencySymbol}{balanceDue.toFixed(2)}</span></p>
                     </div>
                 </div>
 
@@ -284,6 +284,8 @@ export const ConsultingTemplate3: React.FC<PageProps> = (props) => {
                         <p className="text-xs text-gray-500 whitespace-pre-line">{business.address}</p>
                         <p className="text-xs text-gray-500">{business.phone} | {business.email}</p>
                         {business.website && <p className="text-xs text-gray-500">{business.website}</p>}
+                        {business.licenseNumber && <p className="text-xs text-gray-500">Lic #: {business.licenseNumber}</p>}
+                        {business.taxId && <p className="text-xs text-gray-500">Tax ID: {business.taxId}</p>}
                     </div>
                     <div className="text-right">
                         <h2 className="text-3xl font-light text-gray-400">{docTitle}</h2>
@@ -311,8 +313,8 @@ export const ConsultingTemplate3: React.FC<PageProps> = (props) => {
                     <table className="w-full text-left text-xs">
                         <thead>
                             <tr className="bg-gray-100">
-                                <th className="p-2 font-bold w-2/5">{t.serviceDescription || 'Service Description'}</th>
-                                <th className="p-2 font-bold w-2/5">{t.description || 'Details'}</th>
+                                <th className="p-2 font-bold w-1/2">{t.serviceDescription || 'Service Description'}</th>
+                                <th className="p-2 font-bold w-1/4">{t.description || 'Details'}</th>
                                 <th className="p-2 font-bold text-center">{t.quantity || 'Qty'}</th>
                                 <th className="p-2 font-bold text-right">{t.unitPrice || 'Unit Price'}</th>
                                 <th className="p-2 font-bold text-right">{t.fee || 'Fee'}</th>
@@ -473,14 +475,7 @@ export const ConsultingTemplate5: React.FC<PageProps> = (props) => {
             <CategorySpecificDetails invoice={invoice} t={t} />
             <main className="flex-grow mt-4">
                 <table className="w-full text-left text-xs">
-                    <thead>
-                        <tr>
-                            <th className="pt-2 pb-2 border-t border-b border-dashed w-3/5">{t.description || 'Description'}</th>
-                            <th className="pt-2 pb-2 border-t border-b border-dashed text-center">{t.quantity || 'Qty'}</th>
-                            <th className="pt-2 pb-2 border-t border-b border-dashed text-right">{t.unitPrice || 'Unit Price'}</th>
-                            <th className="pt-2 pb-2 border-t border-b border-dashed text-right">{t.cost || 'Cost'}</th>
-                        </tr>
-                    </thead>
+                    <thead><tr><th className="pt-2 pb-2 border-t border-b border-dashed w-3/5">{t.description || 'Description'}</th><th className="pt-2 pb-2 border-t border-b border-dashed text-center">{t.quantity || 'Qty'}</th><th className="pt-2 pb-2 border-t border-b border-dashed text-right">{t.unitPrice || 'Unit Price'}</th><th className="pt-2 pb-2 border-t border-b border-dashed text-right">{t.cost || 'Cost'}</th></tr></thead>
                     <tbody>
                         {pageItems.map(item => (
                             <tr key={item.id}>
