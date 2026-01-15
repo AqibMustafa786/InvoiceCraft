@@ -190,8 +190,7 @@ export const LegalTemplate2: React.FC<PageProps> = (props) => {
             <header className="p-10 text-white flex justify-between" style={{backgroundColor: accentColor || '#1a202c'}}>
                 <div>
                     <h1 className="text-2xl font-bold">{business.name}</h1>
-                    <p className="text-xs opacity-80">{t.attorneysAtLaw || 'Attorneys at Law'}</p>
-                    <div className="text-xs opacity-80 mt-2">
+                    <div className="text-xs opacity-80 mt-1">
                         <p className="whitespace-pre-line">{business.address}</p>
                         <p>{business.phone} | {business.email}</p>
                         {business.website && <p>{business.website}</p>}
@@ -373,9 +372,8 @@ export const LegalTemplate4: React.FC<PageProps> = (props) => {
         <div className={`p-10 font-serif bg-white ${pageIndex < totalPages - 1 ? 'page-break-after' : ''}`} style={{ minHeight: '1056px', backgroundColor: props.backgroundColor, color: props.textColor }}>
             <header className="text-center mb-10">
                 <h1 className="text-4xl font-bold">{business.name}</h1>
-                <p className="text-sm">{t.attorneysAtLaw || 'Attorneys at Law'}</p>
                  <div className="text-xs mt-1">
-                    <p>{business.address}</p>
+                    <p className="whitespace-pre-line">{business.address}</p>
                     <p>{business.phone} | {business.email}</p>
                     {business.website && <p>{business.website}</p>}
                     {business.licenseNumber && <p>Lic: {business.licenseNumber}</p>}
@@ -529,5 +527,3 @@ export const LegalTemplate5: React.FC<PageProps> = (props) => {
         </div>
     )
 };
-
-    
