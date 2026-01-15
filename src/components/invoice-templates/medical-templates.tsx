@@ -95,7 +95,6 @@ export const MedicalTemplate1: React.FC<PageProps> = (props) => {
 
                 <section className="grid grid-cols-2 gap-8 text-xs mb-8">
                     <div>
-                        
                         <p className="font-bold">{client.name}</p>
                         {client.companyName && <p>{client.companyName}</p>}
                         <p>{client.phone}</p>
@@ -104,25 +103,19 @@ export const MedicalTemplate1: React.FC<PageProps> = (props) => {
                         {client.shippingAddress && <p className="mt-2"><span className="font-bold">Ship To:</span><br/>{client.shippingAddress}</p>}
                     </div>
                     <div className="text-right">
-                       
+                        
                         <p className="font-bold">{business.name}</p>
                         <p className="text-xs whitespace-pre-line">{business.address}</p>
-                        <p className="text-xs">{business.phone}</p>
-                        <p className="text-xs">{business.email}</p>
-                        {business.website && <p className="text-xs">{business.website}</p>}
-                        {business.licenseNumber && <p className="text-xs">Lic #: {business.licenseNumber}</p>}
-                        {business.taxId && <p className="text-xs">Tax ID: {business.taxId}</p>}
                     </div>
                 </section>
 
                 <section className="grid grid-cols-4 gap-4 text-xs text-center mb-8 p-3 bg-gray-100 rounded-md">
                     <div><p className="font-bold text-gray-500">{(t.invoiceNo || 'INVOICE NUMBER').toUpperCase()}</p><p className="mt-1">{invoice.invoiceNumber}</p></div>
+                    <div><p className="font-bold text-gray-500">{(t.date || 'DATE').toUpperCase()}</p><p className="mt-1">{safeFormat(invoice.invoiceDate, 'dd/MM/yy')}</p></div>
                     <div><p className="font-bold text-gray-500">{(t.dueDate || 'INVOICE DUE DATE').toUpperCase()}</p><p className="mt-1">{safeFormat(invoice.dueDate, 'dd/MM/yy')}</p></div>
                     <div><p className="font-bold text-gray-500">{(t.price || 'PRICE').toUpperCase()}</p><p className="mt-1 font-bold">{currencySymbol}{total.toFixed(2)}</p></div>
                     {invoice.poNumber && <div className="text-left"><p className="font-bold text-gray-500">PO #</p><p className="mt-1">{invoice.poNumber}</p></div>}
                 </section>
-                
-                 <CategorySpecificDetails invoice={invoice} t={t} />
                 
                 <main className="flex-grow">
                     <table className="w-full text-left text-sm">
@@ -130,7 +123,9 @@ export const MedicalTemplate1: React.FC<PageProps> = (props) => {
                             <tr>
                                 <th className="p-2 font-bold w-1/2">{(t.item || 'ITEM').toUpperCase()}</th>
                                 <th className="p-2 font-bold w-1/2">{(t.description || 'DESCRIPTION').toUpperCase()}</th>
-                                <th className="p-2 font-bold text-right">{(t.price || 'PRICE').toUpperCase()}</th>
+                                <th className="p-2 font-bold text-center">{(t.quantity || 'QTY').toUpperCase()}</th>
+                                <th className="p-2 font-bold text-right">{(t.unitPrice || 'PRICE').toUpperCase()}</th>
+                                <th className="p-2 font-bold text-right">{(t.total || 'TOTAL').toUpperCase()}</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -138,6 +133,8 @@ export const MedicalTemplate1: React.FC<PageProps> = (props) => {
                                 <tr key={item.id} className="border-b">
                                     <td className="p-2 text-xs font-semibold whitespace-pre-line">{item.name}</td>
                                     <td className="p-2 text-xs text-gray-600 whitespace-pre-line">{item.description}</td>
+                                    <td className="p-2 text-center text-xs">{item.quantity}</td>
+                                    <td className="p-2 text-right text-xs">{currencySymbol}{item.unitPrice.toFixed(2)}</td>
                                     <td className="p-2 text-right text-xs">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</td>
                                 </tr>
                             ))}
@@ -193,7 +190,6 @@ export const MedicalTemplate2: React.FC<PageProps> = (props) => {
                 </div>
                 <div className="text-right">
                     <h2 className="text-2xl font-light text-gray-400">{docTitle}</h2>
-                    <p>#{invoice.invoiceNumber}</p>
                 </div>
             </header>
 
@@ -204,9 +200,11 @@ export const MedicalTemplate2: React.FC<PageProps> = (props) => {
                     {client.companyName && <p>{client.companyName}</p>}
                     <p>{client.address}</p>
                     <p>{client.phone} | {client.email}</p>
-                    {client.shippingAddress && <p className="mt-2"><span className="font-bold">Ship To:</span><br/>{client.shippingAddress}</p>}
+                    {client.shippingAddress && <p className="mt-2"><span className="font-bold text-gray-500">Ship To:</span><br/>{client.shippingAddress}</p>}
                 </div>
                 <div className="text-right">
+                    <p><span className="font-bold">{t.invoiceNo || 'Invoice #'}:</span> {invoice.invoiceNumber}</p>
+                    <p><span className="font-bold">{t.invoiceDate || 'Date'}:</span> {safeFormat(invoice.invoiceDate, 'MMM d, yyyy')}</p>
                     <p><span className="font-bold">{t.dueDate || 'Due Date'}:</span> {safeFormat(invoice.dueDate, 'MMM d, yyyy')}</p>
                     {invoice.poNumber && <p><span className="font-bold">PO #:</span> {invoice.poNumber}</p>}
                 </div>
@@ -218,17 +216,15 @@ export const MedicalTemplate2: React.FC<PageProps> = (props) => {
                  <table className="w-full text-left text-xs">
                     <thead>
                         <tr className="border-b-2 border-gray-200">
-                            <th className="py-2 font-bold w-1/4">{(t.serviceDate || 'DATE') }</th>
-                            <th className="py-2 font-bold w-1/2">{(t.description || 'DESCRIPTION').toUpperCase()}</th>
+                            <th className="py-2 font-bold w-1/2">{(t.procedure || 'PROCEDURE').toUpperCase()}</th>
                             <th className="py-2 font-bold text-center">{(t.quantity || 'QTY').toUpperCase()}</th>
-                            <th className="py-2 font-bold text-right">{(t.rate || 'RATE').toUpperCase()}</th>
-                            <th className="py-2 font-bold text-right">{(t.total || 'TOTAL').toUpperCase()}</th>
+                            <th className="py-2 font-bold text-right">{(t.unitPrice || 'RATE').toUpperCase()}</th>
+                            <th className="py-2 font-bold text-right">{(t.charge || 'CHARGE').toUpperCase()}</th>
                         </tr>
                     </thead>
                     <tbody>
                         {pageItems.map(item => (
                             <tr key={item.id} className="border-b border-gray-100">
-                                <td className="py-2 align-top">{safeFormat(invoice.medical?.visitDate, 'MM/dd/yyyy')}</td>
                                 <td className="py-2 align-top"><p className="font-semibold whitespace-pre-line">{item.name}</p>{item.description && <p className="text-xs text-gray-500 whitespace-pre-line">{item.description}</p>}</td>
                                 <td className="py-2 align-top text-center">{item.quantity}</td>
                                 <td className="py-2 align-top text-right">{currencySymbol}{item.unitPrice.toFixed(2)}</td>
@@ -409,3 +405,5 @@ export const MedicalTemplate5: React.FC<PageProps> = (props) => {
         </div>
     );
 };
+
+    
