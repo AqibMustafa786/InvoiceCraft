@@ -1,14 +1,15 @@
 
-
 'use client';
 
 import { cn } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
 import Image from 'next/image';
 import type { EstimateCategory, InvoiceCategory } from '@/lib/types';
-import { useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import { allTemplates, Template } from '@/lib/template-data';
 import { TemplateCard } from './templates/template-card';
+import { Input } from '@/components/ui/input';
+import { Search } from 'lucide-react';
 
 interface DocumentTemplateSelectorProps {
   selectedTemplate: string;
@@ -19,6 +20,8 @@ interface DocumentTemplateSelectorProps {
 
 
 export function DocumentTemplateSelector({ selectedTemplate, onSelectTemplate, documentType, category }: DocumentTemplateSelectorProps) {
+  const [searchTerm, setSearchTerm] = useState('');
+
   const filteredTemplates = useMemo(() => {
     let toolTypeToShow: 'Invoice' | 'Estimate' | 'Quote';
     if (documentType === 'invoice') {
@@ -29,31 +32,49 @@ export function DocumentTemplateSelector({ selectedTemplate, onSelectTemplate, d
         toolTypeToShow = 'Estimate';
     }
     
-    // Always show all templates for the given document type, regardless of category.
-    const templates = allTemplates.filter(t => t.toolType === toolTypeToShow);
+    let templates = allTemplates.filter(t => t.toolType === toolTypeToShow);
+    
+    if (searchTerm) {
+        templates = templates.filter(t => 
+            t.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            t.category.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            t.useCases.some(uc => uc.toLowerCase().includes(searchTerm.toLowerCase()))
+        );
+    }
     
     return templates;
-  }, [documentType, category]);
+  }, [documentType, searchTerm]);
 
   const docTypeLabel = documentType === 'invoice' ? 'Invoice' : (documentType === 'quote' ? 'Quote' : 'Estimate');
   
   return (
-    <div className="grid grid-cols-2 gap-6">
-      {filteredTemplates.map((template) => {
-        return (
-            <TemplateCard 
-                key={`${template.id}-${template.toolType}`}
-                template={template}
-                onPreview={() => onSelectTemplate(template.id)}
-                isSelected={selectedTemplate === template.id}
-             />
-        )
-      })}
-       {filteredTemplates.length === 0 && (
-        <div className="text-center py-10 text-muted-foreground col-span-2">
-          <p>No templates found for this specific category and document type.</p>
-        </div>
-      )}
+    <div className="space-y-6">
+      <div className="relative">
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+        <Input 
+            placeholder="Search templates..." 
+            className="pl-10" 
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+        />
+      </div>
+      <div className="grid grid-cols-2 gap-6">
+        {filteredTemplates.map((template) => {
+          return (
+              <TemplateCard 
+                  key={`${template.id}-${template.toolType}`}
+                  template={template}
+                  onPreview={() => onSelectTemplate(template.id)}
+                  isSelected={selectedTemplate === template.id}
+               />
+          )
+        })}
+         {filteredTemplates.length === 0 && (
+          <div className="text-center py-10 text-muted-foreground col-span-2">
+            <p>No templates found.</p>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
