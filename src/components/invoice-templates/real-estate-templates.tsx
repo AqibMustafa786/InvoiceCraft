@@ -52,7 +52,6 @@ export const RealEstateDetails: React.FC<{ invoice: Invoice, t: any }> = ({ invo
             </section>
         );
     }
-    
     return (
         <section className="my-4 text-xs">
             <p className="font-bold text-gray-500 mb-2 border-b">{t.propertyDetails || 'Property Details'}</p>
@@ -91,10 +90,13 @@ export const RealEstateTemplate1: React.FC<PageProps> = (props) => {
                     <p className="font-bold text-gray-500">{(t.tenantInfo || 'Tenant Information').toUpperCase()}</p>
                     <p>{client.name}</p>
                     <p className="whitespace-pre-line">{client.address}</p>
+                    {client.shippingAddress && <p className="mt-2"><span className="font-bold">Ship To:</span><br/>{client.shippingAddress}</p>}
                 </div>
                 <div className="text-right">
                     <p className="font-bold text-gray-500">{(t.date || 'Date').toUpperCase()}</p>
                     <p>{safeFormat(invoice.invoiceDate, 'MMMM d, yyyy')}</p>
+                    <p className="font-bold text-gray-500 mt-2">{(t.dueDate || 'Due Date').toUpperCase()}</p>
+                    <p>{safeFormat(invoice.dueDate, 'MMMM d, yyyy')}</p>
                 </div>
             </section>
             <CategorySpecificDetails invoice={invoice} t={t} />
@@ -123,7 +125,7 @@ export const RealEstateTemplate1: React.FC<PageProps> = (props) => {
                             <span>{(t.totalDue || 'Total Due')}:</span>
                             <span>{currencySymbol}{total.toFixed(2)}</span>
                         </p>
-                         {(invoice.amountPaid || 0) > 0 && <p className="flex justify-between font-bold text-green-600"><span>{t.amountPaid || 'Amount Paid'}:</span><span>-{currencySymbol}{(invoice.amountPaid || 0).toFixed(2)}</span></p>}
+                        {(invoice.amountPaid || 0) > 0 && <p className="flex justify-between font-bold text-green-600"><span>{t.amountPaid || 'Amount Paid'}:</span><span>-{currencySymbol}{(invoice.amountPaid || 0).toFixed(2)}</span></p>}
                          <p className="flex justify-between font-bold bg-gray-100 p-2 mt-1"><span>{t.balanceDue || 'Balance Due'}:</span><span>{currencySymbol}{balanceDue.toFixed(2)}</span></p>
                     </div>
                 </div>
@@ -134,7 +136,7 @@ export const RealEstateTemplate1: React.FC<PageProps> = (props) => {
 }
 
 export const RealEstateTemplate2: React.FC<PageProps> = (props) => {
-    const { invoice, pageItems, pageIndex, totalPages, subtotal, taxAmount, discountAmount, total, balanceDue, currencySymbol, t, accentColor, textColor } = props;
+    const { invoice, pageItems, pageIndex, totalPages, subtotal, taxAmount, discountAmount, total, balanceDue, currencySymbol, t, textColor } = props;
     const { business, client } = invoice;
     const docTitle = (t.invoice || 'INVOICE').toUpperCase();
     return (
@@ -144,8 +146,8 @@ export const RealEstateTemplate2: React.FC<PageProps> = (props) => {
             <h2 className="text-2xl font-light text-gray-500">{docTitle}</h2>
         </header>
         <section className="grid grid-cols-2 gap-8 text-sm mb-8">
-            <div><p><strong>{t.to || 'To'}:</strong> {client.name}</p><p>{client.address}</p></div>
-            <div className="text-right"><p><strong>#:</strong> {invoice.invoiceNumber}</p><p><strong>{t.date || 'Date'}:</strong> {safeFormat(invoice.invoiceDate, 'MMM dd, yyyy')}</p></div>
+            <div><p><strong>{t.to || 'To'}:</strong> {client.name}</p><p>{client.address}</p>{client.shippingAddress && <p className="mt-2"><span className="font-bold">Ship To:</span><br/>{client.shippingAddress}</p>}</div>
+            <div className="text-right"><p><strong>#:</strong> {invoice.invoiceNumber}</p><p><strong>{t.date || 'Date'}:</strong> {safeFormat(invoice.invoiceDate, 'MMM dd, yyyy')}</p><p><strong>{t.dueDate || 'Due Date'}:</strong> {safeFormat(invoice.dueDate, 'MMM dd, yyyy')}</p></div>
         </section>
         <CategorySpecificDetails invoice={invoice} t={t} />
         <main className="flex-grow mt-4">
@@ -181,7 +183,7 @@ export const RealEstateTemplate3: React.FC<PageProps> = (props) => {
     const docTitle = (t.invoice || 'Invoice');
   
     return (
-      <div className={`p-10 font-serif bg-white ${pageIndex < totalPages - 1 ? 'page-break-after' : ''}`} style={{ minHeight: '1056px', backgroundColor: props.backgroundColor, color: textColor }}>
+      <div className={`p-10 font-serif bg-white ${pageIndex < totalPages - 1 ? 'page-break-after' : ''}`} style={{ minHeight: '1056px', backgroundColor: props.backgroundColor, color: props.textColor }}>
         <header className="text-center mb-10">
             <h1 className="text-4xl font-bold">{business.name}</h1>
             <div className="text-xs mt-1">
@@ -242,7 +244,7 @@ export const RealEstateTemplate3: React.FC<PageProps> = (props) => {
                     <p className="flex justify-between py-1"><span>{t.total || 'Total'}:</span><span>{currencySymbol}{subtotal.toFixed(2)}</span></p>
                     {discountAmount > 0 && <p className="flex justify-between py-1 text-red-600"><span>{t.discount || 'Discount'}:</span><span>-{currencySymbol}{discountAmount.toFixed(2)}</span></p>}
                     {invoice.summary.shippingCost > 0 && <p className="flex justify-between py-1"><span>{t.shipping || 'Other Fees'}:</span><span>{currencySymbol}{invoice.summary.shippingCost.toFixed(2)}</span></p>}
-                    <p className="flex justify-between py-1"><span>{t.tax || 'Tax'} ({invoice.summary.taxPercentage}%):</span><span>{currencySymbol}{taxAmount.toFixed(2)}</span></p>
+                    <p className="flex justify-between py-1"><span>{t.tax || 'Tax'}:</span><span>{currencySymbol}{taxAmount.toFixed(2)}</span></p>
                     <p className="flex justify-between font-bold text-xl mt-2 pt-2 border-t-2"><span>{t.totalDue || 'Total Due'}:</span><span>{currencySymbol}{total.toFixed(2)}</span></p>
                     {(invoice.amountPaid || 0) > 0 && <p className="flex justify-between font-bold text-green-600"><span>{t.amountPaid || 'Amount Paid'}:</span><span>-{currencySymbol}{(invoice.amountPaid || 0).toFixed(2)}</span></p>}
                     <p className="flex justify-between font-bold text-xl p-1 bg-gray-100"><span>{t.balanceDue || 'Balance Due'}:</span><span>{currencySymbol}{balanceDue.toFixed(2)}</span></p>
@@ -287,6 +289,8 @@ export const RealEstateTemplate4: React.FC<PageProps> = (props) => {
                 {pageIndex === totalPages - 1 && (
                 <footer className="mt-auto pt-8">
                     <div className="text-right text-2xl font-bold">{t.totalDue || 'Total Due'}: {currencySymbol}{total.toFixed(2)}</div>
+                    {(invoice.amountPaid || 0) > 0 && <div className="text-right text-xl font-bold text-green-600">{t.amountPaid || 'Paid'}: {currencySymbol}{(invoice.amountPaid || 0).toFixed(2)}</div>}
+                    <div className="text-right text-2xl font-bold mt-2 bg-gray-100 p-2">{t.balanceDue || 'Balance'}: {currencySymbol}{balanceDue.toFixed(2)}</div>
                 </footer>
                 )}
             </div>
@@ -338,4 +342,3 @@ export const RealEstateTemplate5: React.FC<PageProps> = (props) => {
         </div>
     );
 };
-

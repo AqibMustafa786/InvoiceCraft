@@ -46,11 +46,7 @@ export const MedicalDetails: React.FC<{ invoice: Invoice, t: any }> = ({ invoice
     const { medical } = invoice;
     const hasDetails = Object.values(medical).some(val => val !== null && val !== '');
     if (!hasDetails) {
-        return (
-            <section className="my-4 text-xs">
-                <p className="font-bold text-gray-500 mb-2 border-b">{t.patientInformation || 'Patient Information'}</p>
-            </section>
-        );
+        return null;
     }
 
     return (
@@ -75,8 +71,7 @@ export const MedicalDetails: React.FC<{ invoice: Invoice, t: any }> = ({ invoice
 export const MedicalTemplate1: React.FC<PageProps> = (props) => {
     const { invoice, pageItems, pageIndex, totalPages, subtotal, taxAmount, discountAmount, total, balanceDue, currencySymbol, t, accentColor, textColor } = props;
     const { business, client } = invoice;
-    const docTitle = (t.invoice || 'Medical Invoice');
-
+    
     return (
         <div className={`p-10 font-sans relative ${pageIndex < totalPages - 1 ? 'page-break-after' : ''}`} style={{ minHeight: '1056px', backgroundColor: props.backgroundColor, color: textColor }}>
             <div className="absolute inset-0 bg-no-repeat bg-center bg-contain opacity-5" style={{backgroundImage: `url("https://storage.googleapis.com/studio-hosting-assets/invoice-template-previews/medical-watermark.svg")`}}></div>
@@ -84,12 +79,13 @@ export const MedicalTemplate1: React.FC<PageProps> = (props) => {
             <div className="relative z-10">
                 <header className="mb-8">
                     <div className="w-full h-2 mb-8" style={{backgroundColor: accentColor}}></div>
-                     <div className="flex justify-between items-start">
+                    <div className="flex justify-between items-start">
                        {business.logoUrl ? (
                             <Image src={business.logoUrl} alt="Company Logo" width={100} height={40} className="object-contain" />
                         ) : (
                             <h1 className="text-3xl font-bold">{business.name}</h1>
                         )}
+                         <h1 className="text-3xl font-bold">{(t.invoice || 'Invoice').toUpperCase()}</h1>
                     </div>
                 </header>
 
@@ -103,9 +99,10 @@ export const MedicalTemplate1: React.FC<PageProps> = (props) => {
                         {client.shippingAddress && <p className="mt-2"><span className="font-bold">Ship To:</span><br/>{client.shippingAddress}</p>}
                     </div>
                     <div className="text-right">
-                        
                         <p className="font-bold">{business.name}</p>
-                        <p className="text-xs whitespace-pre-line">{business.address}</p>
+                        <p className="whitespace-pre-line">{business.address}</p>
+                        <p>{business.phone}</p>
+                        <p>{business.email}</p>
                     </div>
                 </section>
 
@@ -117,6 +114,8 @@ export const MedicalTemplate1: React.FC<PageProps> = (props) => {
                     {invoice.poNumber && <div className="text-left"><p className="font-bold text-gray-500">PO #</p><p className="mt-1">{invoice.poNumber}</p></div>}
                 </section>
                 
+                 <CategorySpecificDetails invoice={invoice} t={t} />
+
                 <main className="flex-grow">
                     <table className="w-full text-left text-sm">
                         <thead style={{backgroundColor: accentColor}} className="text-white">
@@ -160,7 +159,7 @@ export const MedicalTemplate1: React.FC<PageProps> = (props) => {
                         </div>
                     </div>
                      <div className="flex justify-end mt-4">
-                        <SignatureDisplay signature={business.ownerSignature} label="Authorized Signature" />
+                       <SignatureDisplay signature={business.ownerSignature} label="Authorized Signature" />
                     </div>
                 </footer>
                 )}
@@ -176,7 +175,7 @@ export const MedicalTemplate2: React.FC<PageProps> = (props) => {
     const docTitle = (t.invoice || 'INVOICE').toUpperCase();
 
     return (
-        <div className={`p-10 bg-white font-sans text-gray-700 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: 'Verdana, sans-serif', fontSize: '9.5pt', minHeight: '1056px', backgroundColor: props.backgroundColor, color: props.textColor }}>
+        <div className={`p-10 bg-white font-sans text-gray-700 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: 'Verdana, sans-serif', fontSize: '9.5pt', minHeight: '1056px', backgroundColor: props.backgroundColor, color: textColor }}>
             <header className="flex justify-between items-start mb-10 pb-4 border-b-2" style={{ borderColor: accentColor }}>
                 <div>
                     <h1 className="text-3xl font-bold" style={{ color: accentColor }}>{business.name}</h1>
@@ -216,15 +215,17 @@ export const MedicalTemplate2: React.FC<PageProps> = (props) => {
                  <table className="w-full text-left text-xs">
                     <thead>
                         <tr className="border-b-2 border-gray-200">
-                            <th className="py-2 font-bold w-1/2">{(t.procedure || 'PROCEDURE').toUpperCase()}</th>
+                            <th className="py-2 font-bold w-[20%]">{(t.serviceDate || 'SERVICE DATE').toUpperCase()}</th>
+                            <th className="py-2 font-bold w-[40%]">{(t.procedure || 'PROCEDURE').toUpperCase()}</th>
                             <th className="py-2 font-bold text-center">{(t.quantity || 'QTY').toUpperCase()}</th>
-                            <th className="py-2 font-bold text-right">{(t.unitPrice || 'RATE').toUpperCase()}</th>
+                            <th className="py-2 font-bold text-right">{(t.rate || 'RATE').toUpperCase()}</th>
                             <th className="py-2 font-bold text-right">{(t.charge || 'CHARGE').toUpperCase()}</th>
                         </tr>
                     </thead>
                     <tbody>
                         {pageItems.map(item => (
                             <tr key={item.id} className="border-b border-gray-100">
+                                <td className="py-2 align-top">{safeFormat(invoice.medical?.visitDate, 'MM/dd/yyyy')}</td>
                                 <td className="py-2 align-top"><p className="font-semibold whitespace-pre-line">{item.name}</p>{item.description && <p className="text-xs text-gray-500 whitespace-pre-line">{item.description}</p>}</td>
                                 <td className="py-2 align-top text-center">{item.quantity}</td>
                                 <td className="py-2 align-top text-right">{currencySymbol}{item.unitPrice.toFixed(2)}</td>
@@ -273,12 +274,21 @@ export const MedicalTemplate3: React.FC<PageProps> = (props) => {
                 <h1 className="text-3xl font-bold">{docTitle}</h1>
                 <div className="mt-10 text-xs space-y-4">
                     <div><p className="opacity-70">{t.statementDate || 'Statement Date'}</p><p>{safeFormat(invoice.invoiceDate, 'MM/dd/yyyy')}</p></div>
+                    <div><p className="opacity-70">{t.dueDate || 'Due Date'}</p><p>{safeFormat(invoice.dueDate, 'MM/dd/yyyy')}</p></div>
                     <div><p className="opacity-70">{t.accountNo || 'Account #'}</p><p>{invoice.medical?.patientId || invoice.invoiceNumber}</p></div>
                 </div>
             </div>
             <div className="w-3/4 p-10">
                 <header className="text-right mb-10"><h2 className="text-2xl font-bold">{business.name}</h2><p className="text-xs">{business.address}</p></header>
-                <section className="mb-10 text-sm"><p className="font-bold">{t.to || 'To'}:</p><p>{client.name}</p></section>
+                <section className="mb-10 text-sm">
+                    <p className="font-bold">{t.to || 'To'}:</p>
+                    <p>{client.name}</p>
+                    {client.companyName && <p>{client.companyName}</p>}
+                    <p className="whitespace-pre-line">{client.address}</p>
+                    <p>{client.phone}</p>
+                    <p>{client.email}</p>
+                    {client.shippingAddress && <p className="mt-2"><span className="font-bold">Ship To:</span><br/>{client.shippingAddress}</p>}
+                </section>
                 <CategorySpecificDetails invoice={invoice} t={t} />
                 <main className="flex-grow mt-4">
                     <table className="w-full text-left text-xs">
@@ -299,7 +309,6 @@ export const MedicalTemplate3: React.FC<PageProps> = (props) => {
         </div>
     );
 };
-
 // Template 4: Wellness
 export const MedicalTemplate4: React.FC<PageProps> = (props) => {
     const { invoice, pageItems, pageIndex, totalPages, subtotal, taxAmount, discountAmount, total, balanceDue, currencySymbol, t, accentColor, textColor } = props;
@@ -317,6 +326,7 @@ export const MedicalTemplate4: React.FC<PageProps> = (props) => {
                 <p><strong>{t.invoiceNo || 'Invoice #'}:</strong> {invoice.invoiceNumber}</p>
                 <p><strong>{t.date || 'Date'}:</strong> {safeFormat(invoice.invoiceDate, 'MMMM d, yyyy')}</p>
                 <p><strong>{t.dueDate || 'Due Date'}:</strong> {safeFormat(invoice.dueDate, 'MMMM d, yyyy')}</p>
+                {invoice.poNumber && <p><strong>PO #:</strong> {invoice.poNumber}</p>}
             </section>
             <CategorySpecificDetails invoice={invoice} t={t} />
             <main className="flex-grow mt-4">
@@ -343,7 +353,6 @@ export const MedicalTemplate4: React.FC<PageProps> = (props) => {
         </div>
     );
 };
-
 // Template 5: Remedy
 export const MedicalTemplate5: React.FC<PageProps> = (props) => {
     const { invoice, pageItems, pageIndex, totalPages, subtotal, taxAmount, discountAmount, total, balanceDue, currencySymbol, t, accentColor, textColor } = props;
@@ -406,4 +415,3 @@ export const MedicalTemplate5: React.FC<PageProps> = (props) => {
     );
 };
 
-    
