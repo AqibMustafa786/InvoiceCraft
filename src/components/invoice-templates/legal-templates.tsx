@@ -185,8 +185,8 @@ export const LegalTemplate2: React.FC<PageProps> = (props) => {
     const { business, client } = invoice;
     const docTitle = (t.invoice || 'INVOICE').toUpperCase();
      return (
-        <div className={`font-sans ${pageIndex < totalPages - 1 ? 'page-break-after' : ''}`} style={{ minHeight: '1056px', backgroundColor: props.backgroundColor, color: textColor }}>
-            <header className="p-10 text-white flex justify-between" style={{backgroundColor: accentColor}}>
+        <div className={`font-sans ${pageIndex < totalPages - 1 ? 'page-break-after' : ''}`} style={{ minHeight: '1056px', backgroundColor: props.backgroundColor, color: props.textColor }}>
+            <header className="p-10 text-white flex justify-between" style={{backgroundColor: accentColor || '#1a202c'}}>
                 <div>
                     <h1 className="text-2xl font-bold">{business.name}</h1>
                     <p className="text-xs opacity-80">{t.attorneysAtLaw || 'Attorneys at Law'}</p>
@@ -225,7 +225,8 @@ export const LegalTemplate2: React.FC<PageProps> = (props) => {
                     <table className="w-full text-left text-sm">
                         <thead>
                             <tr className="border-b-2">
-                                <th className="pb-2 font-bold w-[40%]">{(t.description || 'Description').toUpperCase()}</th>
+                                <th className="pb-2 font-bold w-1/3">{(t.description || 'Description').toUpperCase()}</th>
+                                <th className="pb-2 font-bold w-2/3">{(t.details || 'Details').toUpperCase()}</th>
                                 <th className="pb-2 font-bold text-center">{(t.quantity || 'QTY').toUpperCase()}</th>
                                 <th className="pb-2 font-bold text-right">{(t.unitPrice || 'Unit Price').toUpperCase()}</th>
                                 <th className="pb-2 font-bold text-right">{(t.amount || 'Amount').toUpperCase()}</th>
@@ -234,10 +235,8 @@ export const LegalTemplate2: React.FC<PageProps> = (props) => {
                         <tbody>
                             {pageItems.map(item => (
                                 <tr key={item.id} className="border-b">
-                                    <td className="py-2">
-                                        <p className="font-semibold whitespace-pre-line">{item.name}</p>
-                                        <p className="text-xs text-gray-500 whitespace-pre-line">{item.description}</p>
-                                    </td>
+                                    <td className="py-2 font-semibold whitespace-pre-line">{item.name}</td>
+                                    <td className="py-2 text-xs text-muted-foreground whitespace-pre-line">{item.description}</td>
                                     <td className="py-2 text-center">{item.quantity}</td>
                                     <td className="py-2 text-right">{currencySymbol}{item.unitPrice.toFixed(2)}</td>
                                     <td className="py-2 text-right">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</td>
@@ -258,6 +257,10 @@ export const LegalTemplate2: React.FC<PageProps> = (props) => {
                                 {(invoice.amountPaid || 0) > 0 && <p className="flex justify-between font-bold text-green-600"><span>{t.amountPaid || 'Amount Paid'}:</span><span>-{currencySymbol}{(invoice.amountPaid || 0).toFixed(2)}</span></p>}
                                 <p className="flex justify-between font-bold text-xl mt-2 bg-gray-100 p-2"><span>{t.balanceDue || 'Balance Due'}:</span><span>{currencySymbol}{balanceDue.toFixed(2)}</span></p>
                            </div>
+                        </div>
+                         <div className="text-xs mt-8">
+                            <p className="font-bold">{t.termsAndConditions || 'Terms & Conditions'}:</p>
+                            <p className="text-muted-foreground whitespace-pre-line">{invoice.paymentInstructions}</p>
                         </div>
                          <div className="flex justify-between mt-8">
                             <SignatureDisplay signature={business.ownerSignature} label={t.authorizedSignature || 'Authorized Signature'} />
@@ -408,3 +411,5 @@ export const LegalTemplate5: React.FC<PageProps> = (props) => {
         </div>
     )
 };
+
+    
