@@ -1,3 +1,4 @@
+
 'use client';
 
 import React from 'react';
@@ -108,6 +109,8 @@ export const MedicalTemplate1: React.FC<PageProps> = (props) => {
                         <p className="font-bold">{client.name}</p>
                         <p>{client.phone}</p>
                         <p className="whitespace-pre-line">{client.address}</p>
+                    </div>
+                    <div className="text-right">
                     </div>
                 </section>
 
@@ -243,7 +246,7 @@ export const MedicalTemplate2: React.FC<PageProps> = (props) => {
                  <div className="text-xs mt-8">
                     <p className="font-bold">{t.paymentInstructions || 'Payment Instructions'}:</p>
                     <p className="text-muted-foreground whitespace-pre-line">{invoice.paymentInstructions}</p>
-                </div>
+                 </div>
                  <div className="flex justify-between mt-8">
                     <SignatureDisplay signature={business.ownerSignature} label={t.authorizedSignature || 'Authorized Signature'} />
                 </div>
@@ -269,16 +272,7 @@ export const MedicalTemplate3: React.FC<PageProps> = (props) => {
                 </div>
             </div>
             <div className="w-3/4 p-10">
-                <header className="text-right mb-10">
-                    <h2 className="text-2xl font-bold">{business.name}</h2>
-                    <div className="text-xs mt-1">
-                        <p className="whitespace-pre-line">{business.address}</p>
-                        <p>{business.phone} | {business.email}</p>
-                        {business.website && <p>{business.website}</p>}
-                        {business.licenseNumber && <p>Lic #: {business.licenseNumber}</p>}
-                        {business.taxId && <p>Tax ID: {business.taxId}</p>}
-                    </div>
-                </header>
+                <header className="text-right mb-10"><h2 className="text-2xl font-bold">{business.name}</h2><p className="text-xs">{business.address}</p></header>
                 <section className="mb-10 text-sm">
                     <p className="font-bold">{t.to || 'To'}:</p>
                     <p>{client.name}</p>
@@ -309,12 +303,7 @@ export const MedicalTemplate3: React.FC<PageProps> = (props) => {
                 </main>
                 {pageIndex === totalPages - 1 && (
                 <footer className="mt-auto pt-8">
-                    <div className="flex justify-end text-xl font-bold">
-                        <p>
-                            <span>{t.total || 'Total'}: </span>
-                            <span>{currencySymbol}{total.toFixed(2)}</span>
-                        </p>
-                    </div>
+                    <div className="flex justify-end text-xl font-bold"><p><span>{t.total || 'Total'}: </span><span>{currencySymbol}{total.toFixed(2)}</span></p></div>
                     {(invoice.amountPaid || 0) > 0 && <div className="flex justify-end text-xl font-bold text-green-600"><p><span>{t.amountPaid || 'Paid'}: </span><span>-{currencySymbol}{(invoice.amountPaid || 0).toFixed(2)}</span></p></div>}
                     <div className="flex justify-end text-xl font-bold mt-2 bg-gray-100 p-2">
                        <p><span>{t.balanceDue || 'Balance Due'}: </span><span>{currencySymbol}{balanceDue.toFixed(2)}</span></p>
@@ -334,36 +323,29 @@ export const MedicalTemplate4: React.FC<PageProps> = (props) => {
     return (
         <div className={`p-10 font-sans ${pageIndex < totalPages - 1 ? 'page-break-after' : ''}`} style={{ minHeight: '1056px', borderTop: `10px solid ${accentColor}`, backgroundColor: props.backgroundColor, color: props.textColor }}>
             <header className="flex justify-between items-center mb-8">
-                <div>
-                    <h1 className="text-2xl font-bold">{business.name}</h1>
-                    <div className="text-xs text-muted-foreground mt-1">
-                        <p className="whitespace-pre-line">{business.address}</p>
-                        <p>{business.phone} | {business.email}</p>
-                    </div>
-                </div>
+                <div><h1 className="text-2xl font-bold">{business.name}</h1><p className="text-xs">{business.address}</p></div>
                 <h2 className="text-3xl font-light text-gray-500">{docTitle.toUpperCase()}</h2>
             </header>
-            <section className="text-sm mb-8">
-                <p><strong>{t.patient || 'Patient'}:</strong> {client.name}</p>
-                {client.companyName && <p>{client.companyName}</p>}
-                <p>{client.address}</p>
-            </section>
+            <section className="text-sm mb-8"><p><strong>{t.patient || 'Patient'}:</strong> {client.name}</p></section>
             <CategorySpecificDetails invoice={invoice} t={t} />
             <main className="flex-grow mt-4">
                 <table className="w-full text-left text-sm">
                     <thead>
                         <tr className="border-b">
-                            <th className="pb-2 font-bold w-4/5">{t.procedure || 'Procedure'}</th>
+                            <th className="pb-2 font-bold w-[30%]">{(t.item || 'Item')}</th>
+                            <th className="pb-2 font-bold w-[40%]">{(t.description || 'Description')}</th>
+                            <th className="pb-2 font-bold text-center">{(t.quantity || 'Qty')}</th>
+                            <th className="pb-2 font-bold text-right">{(t.unitPrice || 'Unit Price')}</th>
                             <th className="pb-2 font-bold text-right">{t.fee || 'Fee'}</th>
                         </tr>
                     </thead>
                     <tbody>
                         {pageItems.map(item => (
                             <tr key={item.id} className="border-b">
-                                <td className="py-2">
-                                    <p className="font-semibold whitespace-pre-line">{item.name}</p>
-                                    {item.description && <p className="text-xs text-gray-500 whitespace-pre-line">{item.description}</p>}
-                                </td>
+                                <td className="py-2 font-semibold whitespace-pre-line">{item.name}</td>
+                                <td className="py-2 text-xs text-muted-foreground whitespace-pre-line">{item.description}</td>
+                                <td className="py-2 text-center">{item.quantity}</td>
+                                <td className="py-2 text-right">{currencySymbol}{item.unitPrice.toFixed(2)}</td>
                                 <td className="py-2 text-right">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</td>
                             </tr>
                         ))}
@@ -395,7 +377,7 @@ export const MedicalTemplate5: React.FC<PageProps> = (props) => {
     const { business, client } = invoice;
     const docTitle = (t.invoice || 'Invoice');
     return (
-        <div className={`p-8 font-serif ${pageIndex < totalPages - 1 ? 'page-break-after' : ''}`} style={{ minHeight: '1056px', backgroundColor: props.backgroundColor, color: textColor }}>
+        <div className={`p-8 font-serif ${pageIndex < totalPages - 1 ? 'page-break-after' : ''}`} style={{ minHeight: '1056px', backgroundColor: props.backgroundColor, color: props.textColor }}>
             <header className="text-center mb-10">
                 <h1 className="text-3xl font-bold">{business.name}</h1>
                 <p className="text-xs">{business.address} | {business.phone}</p>
@@ -410,14 +392,18 @@ export const MedicalTemplate5: React.FC<PageProps> = (props) => {
             <CategorySpecificDetails invoice={invoice} t={t} />
             <main className="flex-grow mt-4">
                 <table className="w-full text-left text-xs">
-                    <thead><tr className="bg-gray-100"><th className="p-2 font-bold w-2/3">{t.service || 'Service'}</th><th className="p-2 font-bold text-right">{t.charge || 'Charge'}</th></tr></thead>
+                    <thead>
+                        <tr className="bg-gray-100">
+                            <th className="p-2 font-bold w-2/3">{t.service || 'Service'}</th>
+                            <th className="p-2 font-bold w-1/3">{t.description || 'Details'}</th>
+                            <th className="p-2 font-bold text-right">{t.charge || 'Charge'}</th>
+                        </tr>
+                    </thead>
                     <tbody>
                         {pageItems.map(item => (
                             <tr key={item.id} className="border-b">
-                                <td className="p-2">
-                                    <p className="font-semibold whitespace-pre-line">{item.name}</p>
-                                    {item.description && <p className="text-xs text-gray-500 whitespace-pre-line">{item.description}</p>}
-                                </td>
+                                <td className="p-2 font-semibold whitespace-pre-line">{item.name}</td>
+                                <td className="p-2 text-xs text-muted-foreground whitespace-pre-line">{item.description}</td>
                                 <td className="p-2 text-right">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</td>
                             </tr>
                         ))}
