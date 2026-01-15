@@ -51,7 +51,7 @@ export const MedicalDetails: React.FC<{ invoice: Invoice, t: any }> = ({ invoice
             <section className="my-4 text-xs">
                 <p className="font-bold text-gray-500 mb-2 border-b">{t.patientInformation || 'Patient Information'}</p>
             </section>
-        )
+        );
     }
 
     return (
@@ -86,18 +86,15 @@ export const MedicalTemplate1: React.FC<PageProps> = (props) => {
             <div className="relative z-10">
                 <header className="mb-8">
                     <div className="w-full h-2 mb-8" style={{backgroundColor: accentColor}}></div>
-                    <h1 className="text-3xl font-bold">{docTitle}</h1>
                 </header>
 
                 <section className="grid grid-cols-2 gap-8 text-xs mb-8">
                     <div>
-                        <p className="font-bold mb-2 border-b pb-1" style={{borderColor: accentColor}}>{t.patientInformation || 'Patient Information'}</p>
                         <p className="font-bold">{client.name}</p>
                         <p>{client.phone}</p>
                         <p className="whitespace-pre-line">{client.address}</p>
                     </div>
                     <div className="text-right">
-                        <p className="font-bold mb-2 border-b pb-1" style={{borderColor: accentColor}}>{t.prescribingPhysician || "Prescribing Physician's Information"}</p>
                         <p className="font-bold">{business.name}</p>
                         <p>{business.phone}</p>
                         <p className="whitespace-pre-line">{business.address}</p>
@@ -108,11 +105,9 @@ export const MedicalTemplate1: React.FC<PageProps> = (props) => {
                     <div><p className="font-bold text-gray-500">{(t.invoiceNo || 'INVOICE NUMBER').toUpperCase()}</p><p className="mt-1">{invoice.invoiceNumber}</p></div>
                     <div><p className="font-bold text-gray-500">{(t.date || 'DATE').toUpperCase()}</p><p className="mt-1">{safeFormat(invoice.invoiceDate, 'dd/MM/yy')}</p></div>
                     <div><p className="font-bold text-gray-500">{(t.dueDate || 'INVOICE DUE DATE').toUpperCase()}</p><p className="mt-1">{safeFormat(invoice.dueDate, 'dd/MM/yy')}</p></div>
-                    <div><p className="font-bold text-gray-500">{(t.total || 'TOTAL').toUpperCase()}</p><p className="mt-1 font-bold">{currencySymbol}{total.toFixed(2)}</p></div>
+                    <div><p className="font-bold text-gray-500">{(t.price || 'PRICE').toUpperCase()}</p><p className="mt-1 font-bold">{currencySymbol}{total.toFixed(2)}</p></div>
                 </section>
                 
-                 <CategorySpecificDetails invoice={invoice} t={t} />
-
                 <main className="flex-grow">
                     <table className="w-full text-left text-sm">
                         <thead style={{backgroundColor: accentColor}} className="text-white">
@@ -261,7 +256,7 @@ export const MedicalTemplate4: React.FC<PageProps> = (props) => {
                         <p className="flex justify-between py-1"><span>{t.total || 'Total'}:</span><span>{currencySymbol}{subtotal.toFixed(2)}</span></p>
                         {discountAmount > 0 && <p className="flex justify-between py-1 text-red-600"><span>{t.discount || 'Discount'}:</span><span>-{currencySymbol}{discountAmount.toFixed(2)}</span></p>}
                         {invoice.summary.shippingCost > 0 && <p className="flex justify-between py-1"><span>{t.shipping || 'Other Fees'}:</span><span>{currencySymbol}{invoice.summary.shippingCost.toFixed(2)}</span></p>}
-                        <p className="flex justify-between font-bold text-xl mt-2 pt-2 border-t-2"><span>{t.balanceDue || 'Balance Due'}:</span><span>{currencySymbol}{balanceDue.toFixed(2)}</span></p>
+                        <p className="flex justify-between font-bold text-xl mt-2 pt-2 border-t-2"><span>{t.balanceDue || 'Balance Due'}:</span><span>{currencySymbol}{total.toFixed(2)}</span></p>
                         {(invoice.amountPaid || 0) > 0 && <p className="flex justify-between font-bold text-green-600"><span>{t.amountPaid || 'Amount Paid'}:</span><span>-{currencySymbol}{(invoice.amountPaid || 0).toFixed(2)}</span></p>}
                         <p className="flex justify-between font-bold text-xl p-1 bg-gray-100"><span>{t.balanceDue || 'Balance Due'}:</span><span>{currencySymbol}{balanceDue.toFixed(2)}</span></p>
                     </div>
