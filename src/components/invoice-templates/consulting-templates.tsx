@@ -334,7 +334,7 @@ export const ConsultingTemplate3: React.FC<PageProps> = (props) => {
                 {pageIndex === totalPages - 1 && (
                 <footer className="mt-auto pt-8">
                     <div className="flex justify-end text-sm">
-                        <div className="w-2/5 space-y-1">
+                        <div className="w-1/3 space-y-1">
                             <p className="flex justify-between"><span>{t.subtotal || 'Subtotal'}:</span><span>{currencySymbol}{subtotal.toFixed(2)}</span></p>
                             {discountAmount > 0 && <p className="flex justify-between text-red-600"><span>{t.discount || 'Discount'}:</span><span>-{currencySymbol}{discountAmount.toFixed(2)}</span></p>}
                             {invoice.summary.shippingCost > 0 && <p className="flex justify-between"><span>{t.shipping || 'Other Fees'}:</span><span>{currencySymbol}{invoice.summary.shippingCost.toFixed(2)}</span></p>}
@@ -392,15 +392,15 @@ export const ConsultingTemplate4: React.FC<PageProps> = (props) => {
                         <thead>
                             <tr className="bg-gray-100">
                                 <th className="p-3 font-bold w-1/2">{t.serviceProvided || 'Service Provided'}</th>
-                                <th className="p-3 font-bold w-1/2">{t.description || 'Description'}</th>
-                                <th className="p-3 font-bold text-right">{t.fee || 'Fee'}</th>
+                                <th className="p-3 font-bold text-center w-1/4">{(t.quantity || 'Qty').toUpperCase()}</th>
+                                <th className="p-3 font-bold text-right w-1/4">{t.fee || 'Fee'}</th>
                             </tr>
                         </thead>
                         <tbody>
                             {pageItems.map(item => (
                                 <tr key={item.id} className="border-b">
-                                    <td className="p-3 font-semibold whitespace-pre-line">{item.name}</td>
-                                    <td className="p-3 text-xs text-muted-foreground whitespace-pre-line">{item.description}</td>
+                                    <td className="p-3">{item.name}</td>
+                                    <td className="p-3 text-center">{item.quantity}</td>
                                     <td className="p-3 text-right">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</td>
                                 </tr>
                             ))}
