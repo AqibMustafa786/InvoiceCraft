@@ -70,7 +70,7 @@ export const ConsultingDetails: React.FC<{ invoice: Invoice, t: any }> = ({ invo
 export const ConsultingTemplate1: React.FC<PageProps> = (props) => {
     const { invoice, pageItems, pageIndex, totalPages, subtotal, taxAmount, discountAmount, total, balanceDue, currencySymbol, t, accentColor, textColor } = props;
     const { business, client } = invoice;
-    const docTitle = (t.invoice || 'Invoice');
+    const docTitle = (t.invoice || 'INVOICE').toUpperCase();
 
     return (
         <div className={`p-10 font-sans ${pageIndex < totalPages - 1 ? 'page-break-after' : ''}`} style={{ minHeight: '1056px', backgroundColor: props.backgroundColor, color: textColor }}>
@@ -94,7 +94,7 @@ export const ConsultingTemplate1: React.FC<PageProps> = (props) => {
 
             {/* Title */}
             <div className="text-left my-8">
-                <h2 className="text-3xl font-bold tracking-wider">{docTitle.toUpperCase()}</h2>
+                <h2 className="text-3xl font-bold tracking-wider">{docTitle}</h2>
             </div>
             
             {/* Bill To and Invoice Details */}
@@ -181,7 +181,7 @@ export const ConsultingTemplate2: React.FC<PageProps> = (props) => {
     const docTitle = (t.invoice || 'INVOICE').toUpperCase();
 
     return (
-        <div className={`font-sans ${pageIndex < totalPages - 1 ? 'page-break-after' : ''}`} style={{ minHeight: '1056px', backgroundColor: props.backgroundColor, color: textColor }}>
+        <div className={`font-sans ${pageIndex < totalPages - 1 ? 'page-break-after' : ''}`} style={{ minHeight: '1056px', backgroundColor: props.backgroundColor, color: props.textColor }}>
             <div style={{ backgroundColor: accentColor, color: 'white' }} className="p-8 rounded-t-lg">
                 <header className="flex justify-between items-center">
                     <div>
@@ -222,8 +222,8 @@ export const ConsultingTemplate2: React.FC<PageProps> = (props) => {
                     <table className="w-full text-left text-sm">
                        <thead>
                            <tr className="border-b">
-                               <th className="pb-2 font-semibold w-[40%]">{t.service || 'Service'}</th>
-                               <th className="pb-2 font-semibold w-[30%]">{t.description || 'Description'}</th>
+                               <th className="pb-2 font-semibold w-[30%]">{t.service || 'Service'}</th>
+                               <th className="pb-2 font-semibold w-[40%]">{t.description || 'Description'}</th>
                                <th className="pb-2 font-semibold text-center">{t.quantity || 'Qty'}</th>
                                <th className="pb-2 font-semibold text-right">{t.rate || 'Rate'}</th>
                                <th className="pb-2 font-semibold text-right">{t.amount || 'Amount'}</th>
@@ -299,7 +299,7 @@ export const ConsultingTemplate3: React.FC<PageProps> = (props) => {
                         <p className="whitespace-pre-line">{client.address}</p>
                         <p>{client.phone}</p>
                         <p>{client.email}</p>
-                         {client.shippingAddress && <p className="mt-2"><span className="font-bold">Ship To:</span><br/>{client.shippingAddress}</p>}
+                        {client.shippingAddress && <p className="mt-2"><span className="font-bold">Ship To:</span><br/>{client.shippingAddress}</p>}
                     </div>
                     <div className="text-right">
                         <p><strong>{t.date || 'Date'}:</strong> {safeFormat(invoice.invoiceDate, 'dd-MMM-yyyy')}</p>
@@ -312,6 +312,7 @@ export const ConsultingTemplate3: React.FC<PageProps> = (props) => {
                         <thead>
                             <tr className="bg-gray-100">
                                 <th className="p-2 font-bold w-2/5">{t.serviceDescription || 'Service Description'}</th>
+                                <th className="p-2 font-bold w-2/5">{t.description || 'Details'}</th>
                                 <th className="p-2 font-bold text-center">{t.quantity || 'Qty'}</th>
                                 <th className="p-2 font-bold text-right">{t.unitPrice || 'Unit Price'}</th>
                                 <th className="p-2 font-bold text-right">{t.fee || 'Fee'}</th>
@@ -320,7 +321,8 @@ export const ConsultingTemplate3: React.FC<PageProps> = (props) => {
                         <tbody>
                             {pageItems.map(item => (
                                 <tr key={item.id} className="border-b">
-                                    <td className="p-2"><p className="font-semibold whitespace-pre-line">{item.name}</p>{item.description && <p className="text-xs text-muted-foreground whitespace-pre-line">{item.description}</p>}</td>
+                                    <td className="p-2 font-semibold whitespace-pre-line">{item.name}</td>
+                                    <td className="p-2 text-xs text-muted-foreground whitespace-pre-line">{item.description}</td>
                                     <td className="p-2 text-center">{item.quantity}</td>
                                     <td className="p-2 text-right">{currencySymbol}{item.unitPrice.toFixed(2)}</td>
                                     <td className="p-2 text-right">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</td>
@@ -374,11 +376,13 @@ export const ConsultingTemplate4: React.FC<PageProps> = (props) => {
                         <p>{client.name}</p>
                         {client.companyName && <p>{client.companyName}</p>}
                         <p className="whitespace-pre-line">{client.address}</p>
-                        <p>{client.phone} | {client.email}</p>
+                        <p>{client.phone}</p>
+                        <p>{client.email}</p>
                         {client.shippingAddress && <p className="mt-2"><span className="font-bold">Ship To:</span><br/>{client.shippingAddress}</p>}
                     </div>
                     <div className="text-right">
-                        <p><strong>{t.date || 'Date'}:</strong> {safeFormat(invoice.invoiceDate, 'MM/dd/yyyy')}<br/><strong>{t.dueDate || 'Due Date'}:</strong> {safeFormat(invoice.dueDate, 'MM/dd/yyyy')}</p>
+                        <p><strong>{t.date || 'Date'}:</strong> {safeFormat(invoice.invoiceDate, 'MM/dd/yyyy')}</p>
+                        <p><strong>{t.dueDate || 'Due Date'}:</strong> {safeFormat(invoice.dueDate, 'MM/dd/yyyy')}</p>
                         {invoice.poNumber && <p><strong>PO #:</strong> {invoice.poNumber}</p>}
                     </div>
                 </section>
@@ -387,9 +391,8 @@ export const ConsultingTemplate4: React.FC<PageProps> = (props) => {
                     <table className="w-full text-left text-sm">
                         <thead>
                             <tr className="bg-gray-100">
-                                <th className="p-3 font-bold w-2/5">{t.serviceProvided || 'Service Provided'}</th>
-                                <th className="p-3 font-bold w-2/5">{t.description || 'Description'}</th>
-                                <th className="p-3 font-bold text-center">{t.quantity || 'Qty'}</th>
+                                <th className="p-3 font-bold w-1/2">{t.serviceProvided || 'Service Provided'}</th>
+                                <th className="p-3 font-bold w-1/2">{t.description || 'Description'}</th>
                                 <th className="p-3 font-bold text-right">{t.fee || 'Fee'}</th>
                             </tr>
                         </thead>
@@ -398,7 +401,6 @@ export const ConsultingTemplate4: React.FC<PageProps> = (props) => {
                                 <tr key={item.id} className="border-b">
                                     <td className="p-3 font-semibold whitespace-pre-line">{item.name}</td>
                                     <td className="p-3 text-xs text-muted-foreground whitespace-pre-line">{item.description}</td>
-                                    <td className="p-3 text-center">{item.quantity}</td>
                                     <td className="p-3 text-right">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</td>
                                 </tr>
                             ))}
