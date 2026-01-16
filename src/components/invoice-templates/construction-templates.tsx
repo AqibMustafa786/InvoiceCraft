@@ -70,64 +70,73 @@ export const ConstructionDetails: React.FC<{ invoice: Invoice, t: any }> = ({ in
 };
 
 
-// Template 1: Classic Professional
+// Template 1: Foundation (REBUILT)
 export const ConstructionTemplate1: React.FC<PageProps> = (props) => {
-    const { invoice, pageItems, pageIndex, totalPages, subtotal, taxAmount, discountAmount, total, balanceDue, t, currencySymbol, accentColor, textColor } = props;
+    const { invoice, pageItems, pageIndex, totalPages, subtotal, taxAmount, discountAmount, total, balanceDue, t, currencySymbol, accentColor, textColor, backgroundColor } = props;
     const { business, client } = invoice;
     const docTitle = (t.invoice || 'INVOICE').toUpperCase();
     
     return (
-        <div className={`p-10 font-serif text-gray-800 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: invoice.fontFamily, fontSize: `${invoice.fontSize}pt`, minHeight: '1056px', backgroundColor: props.backgroundColor, color: textColor }}>
-            <header className="flex justify-between items-start">
+        <div className={`p-10 font-sans text-gray-800 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: invoice.fontFamily, fontSize: `${invoice.fontSize}pt`, minHeight: '1056px', backgroundColor: backgroundColor, color: textColor }}>
+            <header className="flex justify-between items-start mb-8 pb-4 border-b-4" style={{ borderColor: accentColor }}>
                 <div>
-                    <h1 className="text-3xl font-bold">{business.name}</h1>
-                    <p className="text-xs whitespace-pre-line mt-1">{business.address}</p>
-                    <p className="text-xs">{business.phone}</p>
-                    <p className="text-xs">{business.email}</p>
-                    {business.website && <p className="text-xs">{business.website}</p>}
+                    {business.logoUrl ? (
+                        <Image src={business.logoUrl} alt="Logo" width={120} height={60} className="object-contain mb-2" />
+                    ) : (
+                        <h1 className="text-4xl font-extrabold">{business.name}</h1>
+                    )}
+                     <div className="text-xs space-y-0.5 mt-1" style={{ color: textColor ? `${textColor}B3` : 'rgba(55,65,81,0.7)' }}>
+                        <p className="whitespace-pre-line">{business.address}</p>
+                        {business.phone && <p>{business.phone}</p>}
+                        {business.email && <p>{business.email}</p>}
+                        {business.website && <p>{business.website}</p>}
+                    </div>
                 </div>
                 <div className="text-right">
-                    <h2 className="text-4xl font-bold text-gray-700">{docTitle}</h2>
+                    <h2 className="text-4xl font-bold" style={{ color: accentColor }}>{docTitle}</h2>
+                    <p className="text-sm mt-1"># {invoice.invoiceNumber}</p>
                 </div>
             </header>
-            
-            <div className="mt-8 border-b-2" style={{ borderColor: accentColor }}></div>
 
-            <section className="grid grid-cols-2 gap-8 my-8 text-sm">
-                <div>
-                    <p className="font-bold text-xs uppercase text-gray-500">{t.billTo || 'BILL TO'}</p>
-                    <p className="font-bold mt-2" style={{color: accentColor}}>{client.name}</p>
+            <section className="grid grid-cols-2 gap-8 my-4 text-xs">
+                <div className="p-4 bg-gray-50 rounded-lg" style={{backgroundColor: `${accentColor}1A`}}>
+                    <p className="font-bold uppercase text-gray-500" style={{color: textColor ? `${textColor}B3` : 'rgba(107,114,128,0.7)'}}>{t.billTo || 'BILL TO'}</p>
+                    <p className="font-bold mt-2 text-base">{client.name}</p>
+                    {client.companyName && <p>{client.companyName}</p>}
                     <p className="whitespace-pre-line mt-1">{client.address}</p>
-                    <p>{client.phone}</p>
-                    <p>{client.email}</p>
                 </div>
-                <div className="text-right">
-                    <p><span className="font-bold">Invoice #:</span> {invoice.invoiceNumber}</p>
-                    <p><span className="font-bold">Date:</span> {safeFormat(invoice.invoiceDate, 'MMMM d, yyyy')}</p>
-                    <p><span className="font-bold">Due Date:</span> {safeFormat(invoice.dueDate, 'MMMM d, yyyy')}</p>
+                <div className="p-4 bg-gray-50 rounded-lg" style={{backgroundColor: `${accentColor}1A`}}>
+                    <p className="font-bold uppercase text-gray-500" style={{color: textColor ? `${textColor}B3` : 'rgba(107,114,128,0.7)'}}>{t.invoiceDetails || 'DETAILS'}</p>
+                    <div className="mt-2 space-y-1">
+                        <p><span className="font-semibold">{t.date || 'Date'}:</span> {safeFormat(invoice.invoiceDate, 'MMM d, yyyy')}</p>
+                        <p><span className="font-semibold">{t.dueDate || 'Due Date'}:</span> {safeFormat(invoice.dueDate, 'MMM d, yyyy')}</p>
+                        {invoice.poNumber && <p><span className="font-semibold">PO #:</span> {invoice.poNumber}</p>}
+                    </div>
                 </div>
             </section>
-
-            <main className="flex-grow">
+            
+            <CategorySpecificDetails invoice={invoice} t={t} />
+            
+            <main className="flex-grow mt-4">
                  <table className="w-full text-left text-sm">
-                    <thead className="border-b-2 border-black">
-                        <tr>
-                            <th className="py-2 font-bold w-1/2">DESCRIPTION</th>
-                            <th className="py-2 font-bold text-center">QTY</th>
-                            <th className="py-2 font-bold text-right">PRICE</th>
-                            <th className="py-2 font-bold text-right">TOTAL</th>
+                    <thead >
+                        <tr style={{ backgroundColor: accentColor, color: 'white' }} className="rounded-lg">
+                            <th className="p-3 font-bold w-1/2 rounded-l-md">{(t.description || 'DESCRIPTION')}</th>
+                            <th className="p-3 font-bold text-center">{(t.quantity || 'QTY')}</th>
+                            <th className="p-3 font-bold text-right">{(t.price || 'PRICE')}</th>
+                            <th className="p-3 font-bold text-right rounded-r-md">{(t.total || 'TOTAL')}</th>
                         </tr>
                     </thead>
                     <tbody>
                         {pageItems.map(item => (
-                            <tr key={item.id} className="border-b border-gray-200">
-                                <td className="py-2 align-top">
+                            <tr key={item.id} className="border-b border-gray-100">
+                                <td className="p-3 align-top">
                                     <p className="font-medium whitespace-pre-line">{item.name}</p>
-                                    {item.description && <p className="text-xs text-gray-500 whitespace-pre-line">{item.description}</p>}
+                                    {item.description && <p className="text-xs text-gray-500 whitespace-pre-line" style={{ wordBreak: 'break-all' }}>{item.description}</p>}
                                 </td>
-                                <td className="py-2 align-top text-center">{item.quantity}</td>
-                                <td className="py-2 align-top text-right">{currencySymbol}{item.unitPrice.toFixed(2)}</td>
-                                <td className="py-2 align-top text-right">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</td>
+                                <td className="p-3 align-top text-center">{item.quantity}</td>
+                                <td className="p-3 align-top text-right">{currencySymbol}{item.unitPrice.toFixed(2)}</td>
+                                <td className="p-3 align-top text-right font-medium">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</td>
                             </tr>
                         ))}
                     </tbody>
@@ -137,16 +146,22 @@ export const ConstructionTemplate1: React.FC<PageProps> = (props) => {
             {pageIndex === totalPages - 1 && (
                 <footer className="mt-auto pt-8">
                      <div className="flex justify-end">
-                        <div className="w-1/3 text-sm">
-                            <div className="flex justify-between py-1"><span className="text-gray-600">Subtotal:</span><span>{currencySymbol}{subtotal.toFixed(2)}</span></div>
-                            <div className="flex justify-between py-1"><span className="text-gray-600">Tax ({invoice.summary.taxPercentage}%):</span><span>{currencySymbol}{taxAmount.toFixed(2)}</span></div>
-                            <div className="flex justify-between font-bold py-1 mt-1 border-t border-black"><span >Total:</span><span>{currencySymbol}{total.toFixed(2)}</span></div>
-                            <div className="flex justify-between font-bold text-lg mt-2 p-2 bg-gray-100"><span>Balance Due:</span><span>{currencySymbol}{balanceDue.toFixed(2)}</span></div>
+                        <div className="w-2/5 text-sm space-y-2">
+                            <div className="flex justify-between py-1"><span>{(t.subtotal || 'Subtotal')}:</span><span>{currencySymbol}{subtotal.toFixed(2)}</span></div>
+                            {discountAmount > 0 && <div className="flex justify-between py-1 text-red-600"><span>{(t.discount || 'Discount')}:</span><span>-{currencySymbol}{discountAmount.toFixed(2)}</span></div>}
+                            {invoice.summary.shippingCost > 0 && <div className="flex justify-between py-1"><span>{(t.shipping || 'Shipping/Extra')}:</span><span>{currencySymbol}{invoice.summary.shippingCost.toFixed(2)}</span></div>}
+                            <div className="flex justify-between py-1"><span>{(t.tax || 'Tax')} ({invoice.summary.taxPercentage}%):</span><span>{currencySymbol}{taxAmount.toFixed(2)}</span></div>
+                            <div className="flex justify-between font-bold py-2 mt-2 border-t-2 border-black" style={{ color: accentColor }}><span className="text-lg">{(t.total || 'Total')}:</span><span className="text-lg">{currencySymbol}{total.toFixed(2)}</span></div>
+                            {(invoice.amountPaid || 0) > 0 && <div className="flex justify-between py-1 text-green-600 font-semibold"><span>{(t.amountPaid || 'Amount Paid')}:</span><span>-{currencySymbol}{(invoice.amountPaid || 0).toFixed(2)}</span></div>}
+                             <div className="flex justify-between font-bold text-lg mt-1 p-2 bg-gray-100 rounded-md"><span>{(t.balanceDue || 'Balance Due')}:</span><span>{currencySymbol}{balanceDue.toFixed(2)}</span></div>
                         </div>
                     </div>
-                    <div className="mt-16 text-xs">
-                        <p className="font-bold">Terms and Conditions</p>
-                        <p className="text-gray-600 whitespace-pre-line">{invoice.paymentInstructions}</p>
+                    <div className="mt-8 text-xs">
+                        <p className="font-bold mb-1">{(t.termsAndConditions || 'Terms & Conditions')}</p>
+                        <p className="whitespace-pre-line" style={{ color: textColor || '#6B7280' }}>{invoice.paymentInstructions}</p>
+                    </div>
+                    <div className="flex justify-between items-end mt-4">
+                        <SignatureDisplay signature={business.ownerSignature} label={(t.authorizedSignature || 'Authorized Signature')} />
                     </div>
                 </footer>
             )}
@@ -168,7 +183,7 @@ export const ConstructionTemplate2: React.FC<PageProps> = (props) => {
                     ) : (
                         <h1 className="text-4xl font-bold">{business.name}</h1>
                     )}
-                     <div className="text-xs space-y-0.5 mt-2">
+                     <div className="text-xs space-y-0.5 mt-2" style={{ color: '#D1D5DB' }}>
                         <p className="whitespace-pre-line">{business.address}</p>
                         {business.phone && <p>{business.phone}</p>}
                         {business.email && <p>{business.email}</p>}
@@ -281,7 +296,7 @@ export const ConstructionTemplate3: React.FC<PageProps> = (props) => {
             <section className="mb-8 p-4 border rounded-md grid grid-cols-3 gap-4 text-xs">
                 <div><p className="font-bold">{(t.from || 'From')}:</p><p className="font-bold">{business.name}<br/>{business.address}</p></div>
                 <div><p className="font-bold">{(t.to || 'To')}:</p><p>{client.name}<br/>{client.companyName && `${client.companyName}<br/>`}{client.address}<br/>{client.phone}<br/>{client.email}</p></div>
-                <div><p className="font-bold">{(t.details || 'Details')}:</p><p># {invoice.invoiceNumber}<br/>{(t.date || 'Date')}: {safeFormat(invoice.invoiceDate, 'MM-dd-yyyy')}<br/>Due: {safeFormat(invoice.dueDate, 'MM-dd-yyyy')}<br/>PO: {invoice.poNumber}</p></div>
+                <div><p className="font-bold">{(t.details || 'Details')}:</p><p># {invoice.invoiceNumber}<br/>{(t.date || 'Date')}: {safeFormat(invoice.invoiceDate, 'MM-dd-yyyy')}<br/>Due: {safeFormat(invoice.dueDate, 'MM-dd-yyyy')}<br/>{invoice.poNumber && `PO: ${invoice.poNumber}`}</p></div>
             </section>
             
              <CategorySpecificDetails invoice={invoice} t={t} />
@@ -338,6 +353,3 @@ export const ConstructionTemplate3: React.FC<PageProps> = (props) => {
 export const ConstructionTemplate4: React.FC<PageProps> = (props) => <ConstructionTemplate1 {...props} />;
 export const ConstructionTemplate5: React.FC<PageProps> = (props) => <ConstructionTemplate2 {...props} />;
 export const ConstructionTemplate6: React.FC<PageProps> = (props) => <ConstructionTemplate3 {...props} />;
-
-
-    
