@@ -1,5 +1,3 @@
-
-
 'use client';
 
 import { useState, useEffect, useCallback, useMemo, ChangeEvent } from 'react';
@@ -8,7 +6,7 @@ import type { Invoice, LineItem, AuditLogEntry, Client } from '@/lib/types';
 import { InvoiceForm } from '@/components/invoice-form';
 import { ClientInvoicePreview } from '@/components/invoice-preview';
 import { Button } from '@/components/ui/button';
-import { Printer, Edit, FilePlus, LayoutDashboard, MoreVertical, Brush } from 'lucide-react';
+import { Printer, Edit, FilePlus, LayoutDashboard, MoreVertical } from 'lucide-react';
 import { addDays, isValid } from 'date-fns';
 import { useToast } from '@/hooks/use-toast';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -24,11 +22,11 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { useAuth } from '@/context/auth-provider';
 import { motion } from 'framer-motion';
 import { toNumberSafe, toDateSafe } from '@/lib/utils';
 import { Skeleton } from '@/components/ui/skeleton';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 const INVOICES_COLLECTION = 'invoices';
 const CLIENTS_COLLECTION = 'clients';
@@ -783,12 +781,13 @@ export default function CreateInvoicePage() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-6 gap-8">
+          {/* Form Column */}
           <motion.div 
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5 }}
-            className="lg:col-span-1 order-2 lg:order-1"
+            className="lg:col-span-3 order-2 lg:order-1"
           >
              <div className="space-y-6">
                 <h2 className="text-xl font-bold font-headline mb-4 text-center lg:text-left">Fill in Details</h2>
@@ -807,31 +806,27 @@ export default function CreateInvoicePage() {
                 />
               </div>
           </motion.div>
+
+          {/* Template Selector Column */}
           <div className="lg:col-span-1 order-1 lg:order-2">
+              <div className="sticky top-24 space-y-4">
+                  <h2 className="text-xl font-bold font-headline mb-4">Template</h2>
+                   <ScrollArea className="h-[calc(100vh-10rem)] pr-4">
+                      <DocumentTemplateSelector 
+                          selectedTemplate={invoice.template}
+                          onSelectTemplate={(templateId: string) => {
+                            setInvoice(prev => prev ? ({ ...prev, template: templateId }) : null);
+                          }}
+                          documentType="invoice"
+                          category={invoice.category}
+                      />
+                  </ScrollArea>
+              </div>
+          </div>
+          
+          {/* Preview Column */}
+          <div className="lg:col-span-2 order-3">
              <div className="sticky top-24 space-y-4">
-                <Sheet>
-                    <SheetTrigger asChild>
-                        <Button variant="outline" className="w-full">
-                            <Brush className="mr-2 h-4 w-4" />
-                            Change Template
-                        </Button>
-                    </SheetTrigger>
-                    <SheetContent className="w-full sm:max-w-xl overflow-y-auto">
-                        <SheetHeader>
-                            <SheetTitle>Select a Template</SheetTitle>
-                        </SheetHeader>
-                        <div className="py-4">
-                            <DocumentTemplateSelector 
-                                selectedTemplate={invoice.template}
-                                onSelectTemplate={(templateId: string) => {
-                                  setInvoice(prev => prev ? ({ ...prev, template: templateId }) : null);
-                                }}
-                                documentType="invoice"
-                                category={invoice.category}
-                            />
-                        </div>
-                    </SheetContent>
-                </Sheet>
                 <div>
                   <h2 className="text-xl font-bold font-headline mb-4">Live Preview</h2>
                    <motion.div
@@ -851,4 +846,3 @@ export default function CreateInvoicePage() {
     </>
   );
 }
-

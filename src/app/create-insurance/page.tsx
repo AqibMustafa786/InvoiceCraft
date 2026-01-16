@@ -13,7 +13,6 @@ import { useToast } from '@/hooks/use-toast';
 import { InsuranceTemplateSelector } from '@/components/insurance-template-selector';
 import Link from 'next/link';
 import { serverTimestamp, doc, collection, Timestamp } from 'firebase/firestore';
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -29,6 +28,7 @@ import { useDoc } from '@/firebase/firestore/use-doc';
 import { setDocumentNonBlocking, updateDocumentNonBlocking } from '@/firebase/non-blocking-updates';
 import { Skeleton } from '@/components/ui/skeleton';
 import { HistoryModal } from '@/components/dashboard/history-modal';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 const INSURANCE_COLLECTION = 'insurance';
 const CLIENTS_COLLECTION = 'clients';
@@ -554,7 +554,7 @@ export default function CreateInsurancePage() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 xl:gap-12">
+        <div className="grid grid-cols-1 lg:grid-cols-6 gap-8 xl:gap-12">
           <div className="lg:col-span-3">
              <div className="space-y-6">
                 <h2 className="text-2xl font-bold font-headline mb-4 text-center lg:text-left">Fill in Details</h2>
@@ -571,27 +571,19 @@ export default function CreateInsurancePage() {
                 />
               </div>
           </div>
+          <div className="lg:col-span-1 order-first lg:order-none">
+              <div className="sticky top-24 space-y-4">
+                  <h2 className="text-2xl font-bold font-headline mb-4">Template</h2>
+                  <ScrollArea className="h-[calc(100vh-10rem)] pr-4">
+                      <InsuranceTemplateSelector 
+                          selectedTemplate={document.template}
+                          onSelectTemplate={(template) => setDocument(prev => prev ? ({...prev, template}) : null)}
+                      />
+                  </ScrollArea>
+              </div>
+          </div>
           <div className="lg:col-span-2">
              <div className="sticky top-24 space-y-4">
-                <Sheet>
-                      <SheetTrigger asChild>
-                          <Button variant="outline" className="w-full">
-                              <Brush className="mr-2 h-4 w-4" />
-                              Change Template
-                          </Button>
-                      </SheetTrigger>
-                      <SheetContent className="w-full sm:max-w-sm overflow-y-auto">
-                          <SheetHeader>
-                              <SheetTitle>Select a Template</SheetTitle>
-                          </SheetHeader>
-                          <div className="py-4">
-                              <InsuranceTemplateSelector 
-                                  selectedTemplate={document.template}
-                                  onSelectTemplate={(template) => setDocument(prev => prev ? ({...prev, template}) : null)}
-                              />
-                          </div>
-                      </SheetContent>
-                </Sheet>
                 <div>
                   <h2 className="text-2xl font-bold font-headline mb-4">Live Preview</h2>
                   <InsurancePreview doc={document} accentColor={accentColor} backgroundColor={backgroundColor} textColor={textColor} />

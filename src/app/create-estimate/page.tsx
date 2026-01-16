@@ -26,9 +26,9 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { Skeleton } from '@/components/ui/skeleton';
 import { toNumberSafe, toDateSafe } from '@/lib/utils';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 const ESTIMATES_COLLECTION = 'estimates';
 const CLIENTS_COLLECTION = 'clients';
@@ -654,8 +654,8 @@ export default function CreateEstimatePage() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            <div className="lg:col-span-1 order-2 lg:order-1">
+        <div className="grid grid-cols-1 lg:grid-cols-6 gap-8">
+            <div className="lg:col-span-3 order-2 lg:order-1">
               <div className="space-y-6">
                 <h2 className="text-xl font-bold font-headline mb-4 text-center lg:text-left">Fill in Details</h2>
                 <DocumentForm 
@@ -673,28 +673,20 @@ export default function CreateEstimatePage() {
               </div>
             </div>
             <div className="lg:col-span-1 order-1 lg:order-2">
+                <div className="sticky top-24 space-y-4">
+                  <h2 className="text-xl font-bold font-headline mb-4">Template</h2>
+                    <ScrollArea className="h-[calc(100vh-10rem)] pr-4">
+                        <DocumentTemplateSelector 
+                            selectedTemplate={document!.template}
+                            onSelectTemplate={(template) => setDocument(prev => prev ? ({...prev, template}) : null)}
+                            documentType="estimate"
+                            category={document!.category}
+                        />
+                    </ScrollArea>
+                </div>
+            </div>
+            <div className="lg:col-span-2 order-3">
               <div className="sticky top-24 space-y-4">
-                  <Sheet>
-                      <SheetTrigger asChild>
-                          <Button variant="outline" className="w-full">
-                              <Brush className="mr-2 h-4 w-4" />
-                              Change Template
-                          </Button>
-                      </SheetTrigger>
-                      <SheetContent className="w-full sm:max-w-xl overflow-y-auto">
-                          <SheetHeader>
-                              <SheetTitle>Select a Template</SheetTitle>
-                          </SheetHeader>
-                          <div className="py-4">
-                              <DocumentTemplateSelector 
-                                  selectedTemplate={document!.template}
-                                  onSelectTemplate={(template) => setDocument(prev => prev ? ({...prev, template}) : null)}
-                                  documentType="estimate"
-                                  category={document!.category}
-                              />
-                          </div>
-                      </SheetContent>
-                  </Sheet>
                   <div>
                     <h2 className="text-xl font-bold font-headline mb-4">Live Preview</h2>
                     <ClientDocumentPreview document={processedDocument} accentColor={accentColor} backgroundColor={backgroundColor} textColor={textColor} />
