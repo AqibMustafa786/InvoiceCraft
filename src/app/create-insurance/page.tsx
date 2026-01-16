@@ -552,8 +552,8 @@ export default function CreateInsurancePage() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 xl:gap-12">
-          <div className="lg:col-span-1 order-1">
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 xl:gap-12">
+          <div className="lg:col-span-2 order-1">
              <div className="space-y-6">
                 <h2 className="text-2xl font-bold font-headline mb-4 text-center lg:text-left">Fill in Details</h2>
                 <InsuranceForm 
@@ -569,7 +569,7 @@ export default function CreateInsurancePage() {
                 />
               </div>
           </div>
-          <div className="lg:col-span-1 order-2">
+          <div className="lg:col-span-2 order-2">
              <div className="sticky top-24 space-y-4">
                 <div>
                   <h2 className="text-2xl font-bold font-headline mb-4">Live Preview</h2>

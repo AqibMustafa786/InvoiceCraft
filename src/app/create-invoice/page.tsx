@@ -781,9 +781,9 @@ export default function CreateInvoicePage() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
           {/* Form Column */}
-          <div className="lg:col-span-1 order-1">
+          <div className="lg:col-span-2 order-1">
              <motion.div 
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
@@ -809,7 +809,7 @@ export default function CreateInvoicePage() {
           </div>
           
           {/* Preview Column */}
-          <div className="lg:col-span-1 order-2">
+          <div className="lg:col-span-2 order-2">
              <div className="sticky top-24 space-y-4">
                 <div>
                   <h2 className="text-xl font-bold font-headline mb-4">Live Preview</h2>
