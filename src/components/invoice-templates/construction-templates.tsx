@@ -90,6 +90,8 @@ export const ConstructionTemplate1: React.FC<PageProps> = (props) => {
                         {business.phone && <p>{business.phone}</p>}
                         {business.email && <p>{business.email}</p>}
                         {business.website && <p>{business.website}</p>}
+                        {business.licenseNumber && <p>{t.license || 'Lic #'}: {business.licenseNumber}</p>}
+                        {business.taxId && <p>{t.taxId || 'Tax ID'}: {business.taxId}</p>}
                     </div>
                 </div>
                 <div className="text-right">
@@ -104,6 +106,9 @@ export const ConstructionTemplate1: React.FC<PageProps> = (props) => {
                     <p className="font-bold mt-2 text-base">{client.name}</p>
                     {client.companyName && <p>{client.companyName}</p>}
                     <p className="whitespace-pre-line mt-1">{client.address}</p>
+                    {client.phone && <p>{client.phone}</p>}
+                    {client.email && <p>{client.email}</p>}
+                    {client.shippingAddress && <p className="mt-2"><span className="font-bold">Ship To:</span><br/>{client.shippingAddress}</p>}
                 </div>
                 <div className="p-4 bg-gray-50 rounded-lg" style={{backgroundColor: `${accentColor}1A`}}>
                     <p className="font-bold uppercase text-gray-500" style={{color: textColor ? `${textColor}B3` : 'rgba(107,114,128,0.7)'}}>{t.invoiceDetails || 'DETAILS'}</p>
@@ -153,7 +158,7 @@ export const ConstructionTemplate1: React.FC<PageProps> = (props) => {
                             <div className="flex justify-between py-1"><span>{(t.tax || 'Tax')} ({invoice.summary.taxPercentage}%):</span><span>{currencySymbol}{taxAmount.toFixed(2)}</span></div>
                             <div className="flex justify-between font-bold py-2 mt-2 border-t-2 border-black" style={{ color: accentColor }}><span className="text-lg">{(t.total || 'Total')}:</span><span className="text-lg">{currencySymbol}{total.toFixed(2)}</span></div>
                             {(invoice.amountPaid || 0) > 0 && <div className="flex justify-between py-1 text-green-600 font-semibold"><span>{(t.amountPaid || 'Amount Paid')}:</span><span>-{currencySymbol}{(invoice.amountPaid || 0).toFixed(2)}</span></div>}
-                             <div className="flex justify-between font-bold text-lg mt-1 p-2 bg-gray-100 rounded-md"><span>{(t.balanceDue || 'Balance Due')}:</span><span>{currencySymbol}{balanceDue.toFixed(2)}</span></div>
+                             <div className="flex justify-between font-bold text-lg mt-1 p-2 bg-gray-100"><span>{(t.balanceDue || 'Balance Due')}:</span><span>{currencySymbol}{balanceDue.toFixed(2)}</span></div>
                         </div>
                     </div>
                     <div className="mt-8 text-xs">
@@ -327,7 +332,7 @@ export const ConstructionTemplate3: React.FC<PageProps> = (props) => {
             {pageIndex === totalPages - 1 && (
                  <footer className="mt-auto pt-8 flex justify-between items-start">
                      <div className="w-1/2 text-xs" style={{color: textColor}}>
-                        <p className="font-bold mb-1">{t.terms || 'TERMS'}</p>
+                        <p className="font-bold mb-1">{(t.terms || 'TERMS')}</p>
                         <p className="whitespace-pre-line">{invoice.paymentInstructions}</p>
                          {business.ownerSignature && (
                             <div className="mt-8">
@@ -353,3 +358,5 @@ export const ConstructionTemplate3: React.FC<PageProps> = (props) => {
 export const ConstructionTemplate4: React.FC<PageProps> = (props) => <ConstructionTemplate1 {...props} />;
 export const ConstructionTemplate5: React.FC<PageProps> = (props) => <ConstructionTemplate2 {...props} />;
 export const ConstructionTemplate6: React.FC<PageProps> = (props) => <ConstructionTemplate3 {...props} />;
+
+    
