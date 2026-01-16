@@ -1,5 +1,3 @@
-
-
 'use client';
 
 import React from 'react';
@@ -163,6 +161,8 @@ export const GenericTemplate2: React.FC<PageProps> = (props) => {
                         {business.phone && <p>{business.phone}</p>}
                         {business.email && <p>{business.email}</p>}
                         {business.website && <p>{business.website}</p>}
+                        {business.licenseNumber && <p>{t.license || 'Lic #'}: {business.licenseNumber}</p>}
+                        {business.taxId && <p>{t.taxId || 'Tax ID'}: {business.taxId}</p>}
                     </div>
                 </div>
                 <div className="text-right">
@@ -255,8 +255,8 @@ export const GenericTemplate3: React.FC<PageProps> = (props) => {
                  <div>
                     {business.logoUrl ? <Image src={business.logoUrl} alt="Logo" width={80} height={40} className="mb-2 object-contain" /> : <h1 className="text-4xl font-light tracking-wider mb-1">{business.name}</h1>}
                     <div className="text-xs" style={{ color: textColor || '#6B7280' }}>
-                        {business.phone && <p>{business.phone}</p>}
-                        {business.email && <p>{business.email}</p>}
+                        <p>{business.phone}</p>
+                        <p>{business.email}</p>
                         {business.website && <p>{business.website}</p>}
                         {business.licenseNumber && <p>Lic: {business.licenseNumber}</p>}
                         {business.taxId && <p>Tax ID: {business.taxId}</p>}
