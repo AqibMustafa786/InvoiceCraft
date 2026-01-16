@@ -1,3 +1,4 @@
+
 'use client';
 
 import React, { useState, useEffect, useCallback } from 'react';
@@ -40,7 +41,7 @@ function NavLink({ href, label }: { href: string, label: string }) {
         <Link
             href={href}
             className={cn(
-                "relative block px-4 py-2 transition text-base font-medium",
+                "relative block px-3 py-2 transition text-sm font-medium",
                 isActive ? "text-primary" : "text-muted-foreground hover:text-primary"
             )}
         >
@@ -100,7 +101,7 @@ export function Header() {
               </CommandList>
             </CommandDialog>
 
-            <div className="container flex h-20 items-center">
+            <div className="container flex h-14 items-center">
                 {/* Mobile: Hamburger Menu */}
                  <div className="md:hidden">
                     <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
@@ -114,7 +115,7 @@ export function Header() {
                             <SheetHeader className="p-6 pb-4">
                                 <SheetTitle>
                                      <Link href="/" className="flex items-center gap-2 text-2xl font-bold" onClick={() => setIsSheetOpen(false)}>
-                                        <span className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent">InvoiceCraft</span>
+                                        <span className="text-2xl font-bold text-primary">InvoiceCraft</span>
                                     </Link>
                                 </SheetTitle>
                             </SheetHeader>
@@ -144,25 +145,25 @@ export function Header() {
                  {/* Mobile: Centered Logo */}
                 <div className="flex md:hidden flex-1 justify-center">
                     <Link href="/" className="flex items-center gap-2 text-xl font-bold">
-                        <span className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent">InvoiceCraft</span>
+                        <span className="text-2xl font-bold text-primary">InvoiceCraft</span>
                     </Link>
                 </div>
 
                 {/* Desktop: Logo */}
                 <div className="mr-auto hidden md:flex">
-                     <Link href="/" className="flex items-center gap-2 text-2xl font-bold">
-                       <span className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent">InvoiceCraft</span>
+                     <Link href="/" className="flex items-center gap-2 text-xl font-bold">
+                       <span className="text-2xl font-bold text-primary">InvoiceCraft</span>
                     </Link>
                 </div>
 
                 {/* Desktop: Centered Navigation */}
-                <nav className="hidden md:flex items-center">
+                <nav className="hidden md:flex items-center gap-4">
                     {mainNavLinks.map(link => (
                         <NavLink key={link.href} href={link.href} label={link.label} />
                     ))}
                      <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                           <Button variant="ghost" className="relative flex items-center gap-1 px-4 py-2 transition text-base font-medium text-muted-foreground hover:bg-transparent hover:text-primary">
+                           <Button variant="ghost" className="relative flex items-center gap-1 px-3 py-2 transition text-sm font-medium text-muted-foreground hover:text-primary">
                                 Tools <ChevronDown className="h-4 w-4" />
                             </Button>
                         </DropdownMenuTrigger>
@@ -181,7 +182,7 @@ export function Header() {
 
                 <div className="flex flex-1 md:flex-initial items-center justify-end gap-2">
                      <Button variant="ghost" size="icon" onClick={() => setOpen(true)}>
-                        <Search className="h-5 w-5" />
+                        <Search className="h-4 w-4" />
                         <span className="sr-only">Search</span>
                     </Button>
                     <ModeToggle />
@@ -193,3 +194,4 @@ export function Header() {
         </header>
     );
 }
+
