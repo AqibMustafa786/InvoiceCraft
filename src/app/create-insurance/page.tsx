@@ -1,5 +1,3 @@
-
-
 'use client';
 
 import { useState, useEffect, useCallback, useMemo } from 'react';
@@ -554,8 +552,8 @@ export default function CreateInsurancePage() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-6 gap-8 xl:gap-12">
-          <div className="lg:col-span-3">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 xl:gap-12">
+          <div className="lg:col-span-1 order-1">
              <div className="space-y-6">
                 <h2 className="text-2xl font-bold font-headline mb-4 text-center lg:text-left">Fill in Details</h2>
                 <InsuranceForm 
@@ -571,7 +569,15 @@ export default function CreateInsurancePage() {
                 />
               </div>
           </div>
-          <div className="lg:col-span-1 order-first lg:order-none">
+          <div className="lg:col-span-1 order-2">
+             <div className="sticky top-24 space-y-4">
+                <div>
+                  <h2 className="text-2xl font-bold font-headline mb-4">Live Preview</h2>
+                  <InsurancePreview doc={document} accentColor={accentColor} backgroundColor={backgroundColor} textColor={textColor} />
+                </div>
+            </div>
+          </div>
+           <div className="lg:col-span-1 order-3">
               <div className="sticky top-24 space-y-4">
                   <h2 className="text-2xl font-bold font-headline mb-4">Template</h2>
                   <ScrollArea className="h-[calc(100vh-10rem)] pr-4">
@@ -582,20 +588,9 @@ export default function CreateInsurancePage() {
                   </ScrollArea>
               </div>
           </div>
-          <div className="lg:col-span-2">
-             <div className="sticky top-24 space-y-4">
-                <div>
-                  <h2 className="text-2xl font-bold font-headline mb-4">Live Preview</h2>
-                  <InsurancePreview doc={document} accentColor={accentColor} backgroundColor={backgroundColor} textColor={textColor} />
-                </div>
-            </div>
-          </div>
         </div>
       </div>
       {document && <PrintableInsuranceDoc doc={document} />}
     </>
   );
 }
-
-
-    

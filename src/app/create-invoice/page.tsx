@@ -781,51 +781,35 @@ export default function CreateInvoicePage() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-6 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Form Column */}
-          <motion.div 
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.5 }}
-            className="lg:col-span-3 order-2 lg:order-1"
-          >
-             <div className="space-y-6">
-                <h2 className="text-xl font-bold font-headline mb-4 text-center lg:text-left">Fill in Details</h2>
-                <InvoiceForm 
-                  invoice={invoice} 
-                  setInvoice={setInvoice as any}
-                  accentColor={accentColor}
-                  setAccentColor={setAccentColor}
-                  backgroundColor={backgroundColor}
-                  setBackgroundColor={setBackgroundColor}
-                  textColor={textColor}
-                  setTextColor={setTextColor}
-                  toast={toast}
-                  onLogoUpload={handleLogoUpload}
-                  isUploading={isUploading}
-                />
-              </div>
-          </motion.div>
-
-          {/* Template Selector Column */}
-          <div className="lg:col-span-1 order-1 lg:order-2">
-              <div className="sticky top-24 space-y-4">
-                  <h2 className="text-xl font-bold font-headline mb-4">Template</h2>
-                   <ScrollArea className="h-[calc(100vh-10rem)] pr-4">
-                      <DocumentTemplateSelector 
-                          selectedTemplate={invoice.template}
-                          onSelectTemplate={(templateId: string) => {
-                            setInvoice(prev => prev ? ({ ...prev, template: templateId }) : null);
-                          }}
-                          documentType="invoice"
-                          category={invoice.category}
-                      />
-                  </ScrollArea>
-              </div>
+          <div className="lg:col-span-1 order-1">
+             <motion.div 
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.5 }}
+             >
+                 <div className="space-y-6">
+                    <h2 className="text-xl font-bold font-headline mb-4 text-center lg:text-left">Fill in Details</h2>
+                    <InvoiceForm 
+                      invoice={invoice} 
+                      setInvoice={setInvoice as any}
+                      accentColor={accentColor}
+                      setAccentColor={setAccentColor}
+                      backgroundColor={backgroundColor}
+                      setBackgroundColor={setBackgroundColor}
+                      textColor={textColor}
+                      setTextColor={setTextColor}
+                      toast={toast}
+                      onLogoUpload={handleLogoUpload}
+                      isUploading={isUploading}
+                    />
+                  </div>
+              </motion.div>
           </div>
           
           {/* Preview Column */}
-          <div className="lg:col-span-2 order-3">
+          <div className="lg:col-span-1 order-2">
              <div className="sticky top-24 space-y-4">
                 <div>
                   <h2 className="text-xl font-bold font-headline mb-4">Live Preview</h2>
@@ -839,6 +823,23 @@ export default function CreateInvoicePage() {
                   </motion.div>
                 </div>
             </div>
+          </div>
+          
+          {/* Template Selector Column */}
+          <div className="lg:col-span-1 order-3">
+              <div className="sticky top-24 space-y-4">
+                  <h2 className="text-xl font-bold font-headline mb-4">Template</h2>
+                   <ScrollArea className="h-[calc(100vh-10rem)] pr-4">
+                      <DocumentTemplateSelector 
+                          selectedTemplate={invoice.template}
+                          onSelectTemplate={(templateId: string) => {
+                            setInvoice(prev => prev ? ({ ...prev, template: templateId }) : null);
+                          }}
+                          documentType="invoice"
+                          category={invoice.category}
+                      />
+                  </ScrollArea>
+              </div>
           </div>
         </div>
       </div>

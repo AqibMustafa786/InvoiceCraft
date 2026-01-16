@@ -1,5 +1,3 @@
-
-
 'use client';
 
 import { useState, useEffect, useCallback, useMemo } from 'react';
@@ -654,8 +652,8 @@ export default function CreateEstimatePage() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-6 gap-8">
-            <div className="lg:col-span-3 order-2 lg:order-1">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div className="lg:col-span-1 order-1">
               <div className="space-y-6">
                 <h2 className="text-xl font-bold font-headline mb-4 text-center lg:text-left">Fill in Details</h2>
                 <DocumentForm 
@@ -672,7 +670,15 @@ export default function CreateEstimatePage() {
                 />
               </div>
             </div>
-            <div className="lg:col-span-1 order-1 lg:order-2">
+            <div className="lg:col-span-1 order-2">
+              <div className="sticky top-24 space-y-4">
+                  <div>
+                    <h2 className="text-xl font-bold font-headline mb-4">Live Preview</h2>
+                    <ClientDocumentPreview document={processedDocument} accentColor={accentColor} backgroundColor={backgroundColor} textColor={textColor} />
+                  </div>
+              </div>
+            </div>
+             <div className="lg:col-span-1 order-3">
                 <div className="sticky top-24 space-y-4">
                   <h2 className="text-xl font-bold font-headline mb-4">Template</h2>
                     <ScrollArea className="h-[calc(100vh-10rem)] pr-4">
@@ -684,14 +690,6 @@ export default function CreateEstimatePage() {
                         />
                     </ScrollArea>
                 </div>
-            </div>
-            <div className="lg:col-span-2 order-3">
-              <div className="sticky top-24 space-y-4">
-                  <div>
-                    <h2 className="text-xl font-bold font-headline mb-4">Live Preview</h2>
-                    <ClientDocumentPreview document={processedDocument} accentColor={accentColor} backgroundColor={backgroundColor} textColor={textColor} />
-                  </div>
-              </div>
             </div>
         </div>
       </div>
