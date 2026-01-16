@@ -1,4 +1,3 @@
-
 'use client';
 
 import React, { useState, useEffect, useCallback } from 'react';
@@ -70,7 +69,7 @@ export function Header() {
     const runCommand = useCallback((command: () => unknown) => {
         setOpen(false);
         command();
-    }, []);
+    }, [router]);
 
     // Do not render the header on dashboard pages or specific auth pages
     if (pathname.startsWith('/dashboard') || ['/login', '/signup', '/forgot-password'].includes(pathname)) {
@@ -101,97 +100,106 @@ export function Header() {
               </CommandList>
             </CommandDialog>
 
-            <div className="container flex h-14 items-center">
-                {/* Mobile: Hamburger Menu */}
-                 <div className="md:hidden">
-                    <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
-                        <SheetTrigger asChild>
-                            <Button variant="ghost" size="icon">
-                                <Menu className="h-5 w-5" />
-                                <span className="sr-only">Toggle navigation menu</span>
-                            </Button>
-                        </SheetTrigger>
-                        <SheetContent side="left" className="flex w-full flex-col p-0 sm:max-w-xs">
-                            <SheetHeader className="p-6 pb-4">
-                                <SheetTitle>
-                                     <Link href="/" className="flex items-center gap-2 text-2xl font-bold" onClick={() => setIsSheetOpen(false)}>
-                                        <span className="text-2xl font-bold text-primary">InvoiceCraft</span>
-                                    </Link>
-                                </SheetTitle>
-                            </SheetHeader>
-                            <ScrollArea className="flex-grow my-2 px-6">
-                                <nav className="grid gap-2 text-lg font-medium">
-                                    {[...mainNavLinks, ...toolsNavLinks].map(link => (
-                                        <Link
-                                            key={link.href}
-                                            href={link.href}
-                                            className={cn(
-                                                "flex items-center gap-3 py-2 transition-colors",
-                                                pathname === link.href ? "text-primary font-semibold" : "text-muted-foreground hover:text-primary"
-                                            )}
-                                            onClick={() => setIsSheetOpen(false)}
-                                        >
-                                            {React.cloneElement(link.icon, { className: "h-5 w-5" })} {link.label}
+            <div className="container relative flex h-14 items-center">
+                {/* --- DESKTOP & TABLET --- */}
+                <div className="hidden w-full md:flex items-center">
+                    {/* Part 1: Logo */}
+                    <div>
+                        <Link href="/" className="flex items-center gap-2 text-xl font-bold">
+                            <span className="text-xl font-bold text-primary">InvoiceCraft</span>
+                        </Link>
+                    </div>
+
+                    {/* Part 2: Centered Nav */}
+                    <nav className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center gap-2">
+                        {mainNavLinks.map(link => (
+                            <NavLink key={link.href} href={link.href} label={link.label} />
+                        ))}
+                        <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                               <Button variant="ghost" className="relative flex items-center gap-1 px-3 py-2 transition text-sm font-medium text-muted-foreground hover:text-primary">
+                                    Tools <ChevronDown className="h-4 w-4" />
+                                </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent>
+                                {toolsNavLinks.map(link => (
+                                    <DropdownMenuItem key={link.href} asChild>
+                                        <Link href={link.href} className="flex items-center gap-2">
+                                            {link.icon}
+                                            {link.label}
                                         </Link>
-                                    ))}
-                                </nav>
-                            </ScrollArea>
-                            <div className='mt-auto border-t p-6'>
-                                <AuthNav isMobile={true} />
-                            </div>
-                        </SheetContent>
-                    </Sheet>
-                </div>
-                 {/* Mobile: Centered Logo */}
-                <div className="flex md:hidden flex-1 justify-center">
-                    <Link href="/" className="flex items-center gap-2 text-xl font-bold">
-                        <span className="text-2xl font-bold text-primary">InvoiceCraft</span>
-                    </Link>
-                </div>
+                                    </DropdownMenuItem>
+                                ))}
+                            </DropdownMenuContent>
+                        </DropdownMenu>
+                    </nav>
 
-                {/* Desktop: Logo */}
-                <div className="mr-auto hidden md:flex">
-                     <Link href="/" className="flex items-center gap-2 text-xl font-bold">
-                       <span className="text-2xl font-bold text-primary">InvoiceCraft</span>
-                    </Link>
-                </div>
-
-                {/* Desktop: Centered Navigation */}
-                <nav className="hidden md:flex items-center gap-4">
-                    {mainNavLinks.map(link => (
-                        <NavLink key={link.href} href={link.href} label={link.label} />
-                    ))}
-                     <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                           <Button variant="ghost" className="relative flex items-center gap-1 px-3 py-2 transition text-sm font-medium text-muted-foreground hover:text-primary">
-                                Tools <ChevronDown className="h-4 w-4" />
-                            </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent>
-                            {toolsNavLinks.map(link => (
-                                <DropdownMenuItem key={link.href} asChild>
-                                    <Link href={link.href} className="flex items-center gap-2">
-                                        {link.icon}
-                                        {link.label}
-                                    </Link>
-                                </DropdownMenuItem>
-                            ))}
-                        </DropdownMenuContent>
-                    </DropdownMenu>
-                </nav>
-
-                <div className="flex flex-1 md:flex-initial items-center justify-end gap-2">
-                     <Button variant="ghost" size="icon" onClick={() => setOpen(true)}>
-                        <Search className="h-4 w-4" />
-                        <span className="sr-only">Search</span>
-                    </Button>
-                    <ModeToggle />
-                    <div className="hidden md:block">
+                    {/* Part 3: Actions */}
+                    <div className="ml-auto flex items-center gap-2">
+                         <Button variant="ghost" size="icon" onClick={() => setOpen(true)}>
+                            <Search className="h-4 w-4" />
+                            <span className="sr-only">Search</span>
+                        </Button>
+                        <ModeToggle />
                         <AuthNav />
+                    </div>
+                </div>
+                
+                {/* --- MOBILE --- */}
+                <div className="flex w-full items-center justify-between md:hidden">
+                    <div>
+                        <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
+                            <SheetTrigger asChild>
+                                <Button variant="ghost" size="icon">
+                                    <Menu className="h-5 w-5" />
+                                    <span className="sr-only">Toggle navigation menu</span>
+                                </Button>
+                            </SheetTrigger>
+                            <SheetContent side="left" className="flex w-full flex-col p-0 sm:max-w-xs">
+                                <SheetHeader className="p-6 pb-4">
+                                    <SheetTitle>
+                                         <Link href="/" className="flex items-center gap-2 text-2xl font-bold" onClick={() => setIsSheetOpen(false)}>
+                                            <span className="text-2xl font-bold text-primary">InvoiceCraft</span>
+                                        </Link>
+                                    </SheetTitle>
+                                </SheetHeader>
+                                <ScrollArea className="flex-grow my-2 px-6">
+                                    <nav className="grid gap-2 text-lg font-medium">
+                                        {[...mainNavLinks, ...toolsNavLinks].map(link => (
+                                            <Link
+                                                key={link.href}
+                                                href={link.href}
+                                                className={cn(
+                                                    "flex items-center gap-3 py-2 transition-colors",
+                                                    pathname === link.href ? "text-primary font-semibold" : "text-muted-foreground hover:text-primary"
+                                                )}
+                                                onClick={() => setIsSheetOpen(false)}
+                                            >
+                                                {React.cloneElement(link.icon, { className: "h-5 w-5" })} {link.label}
+                                            </Link>
+                                        ))}
+                                    </nav>
+                                </ScrollArea>
+                                <div className='mt-auto border-t p-6'>
+                                    <AuthNav isMobile={true} />
+                                </div>
+                            </SheetContent>
+                        </Sheet>
+                    </div>
+                    <div>
+                        <Link href="/" className="flex items-center gap-2 text-xl font-bold">
+                            <span className="text-2xl font-bold text-primary">InvoiceCraft</span>
+                        </Link>
+                    </div>
+                    <div className="flex items-center gap-1">
+                        <Button variant="ghost" size="icon" onClick={() => setOpen(true)}>
+                            <Search className="h-4 w-4" />
+                            <span className="sr-only">Search</span>
+                        </Button>
+                        <ModeToggle />
                     </div>
                 </div>
             </div>
         </header>
     );
 }
-
