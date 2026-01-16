@@ -5,26 +5,26 @@
 
 @layer base {
   :root {
-    --background-hsl: 224 71% 97%;
+    --background-hsl: 0 43% 98%; /* #FCF8F8 */
     --background: hsl(var(--background-hsl));
     --foreground: 222.2 84% 4.9%;
 
-    --card: 0 0% 100%;
+    --card: 0 31% 96%; /* #FBEFEF */
     --card-foreground: 222.2 84% 4.9%;
  
-    --popover: 0 0% 100%;
+    --popover: 0 31% 96%; /* #FBEFEF */
     --popover-foreground: 222.2 84% 4.9%;
  
-    --primary: 38 92% 50%; /* Gold/Yellow */
-    --primary-foreground: 222.2 84% 4.9%;
+    --primary: 350 75% 55%; /* Deep Pink/Red */
+    --primary-foreground: 0 0% 100%;
  
-    --secondary: 210 40% 96.1%;
+    --secondary: 0 73% 92%; /* #F9DFDF */
     --secondary-foreground: 222.2 47.4% 11.2%;
  
-    --muted: 210 40% 96.1%;
+    --muted: 0 73% 92%; /* #F9DFDF */
     --muted-foreground: 215.4 16.3% 46.9%;
  
-    --accent: 35 92% 50%; /* Lighter Gold/Yellow */
+    --accent: 0 75% 82%; /* #F5AFAF */
     --accent-foreground: 222.2 84% 4.9%;
  
     --destructive: 0 84.2% 60.2%;
@@ -33,9 +33,9 @@
     --success: 142.1 76.2% 36.3%;
     --success-foreground: 142.1 76.2% 96.3%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 38 92% 50%;
+    --border: 0 73% 92%; /* #F9DFDF */
+    --input: 0 73% 92%; /* #F9DFDF */
+    --ring: 350 75% 55%;
  
     --radius: 0.5rem;
 
@@ -47,18 +47,18 @@
   }
  
   .dark {
-    --background-hsl: 220 13% 11%;
+    --background-hsl: 222.2 84% 4.9%;
     --background: hsl(var(--background-hsl));
     --foreground: 210 40% 98%;
  
-    --card: 220 13% 15%;
+    --card: 222.2 84% 8%; /* Slightly lighter than background */
     --card-foreground: 210 40% 98%;
  
-    --popover: 220 13% 11%;
+    --popover: 222.2 84% 4.9%;
     --popover-foreground: 210 40% 98%;
  
-    --primary: 38 92% 50%; /* Gold/Yellow */
-    --primary-foreground: 222.2 84% 4.9%;
+    --primary: 210 90% 60%; /* Lighter blue for dark mode */
+    --primary-foreground: 210 40% 98%;
  
     --secondary: 217.2 32.6% 17.5%;
     --secondary-foreground: 210 40% 98%;
@@ -66,8 +66,8 @@
     --muted: 217.2 32.6% 17.5%;
     --muted-foreground: 215 20.2% 65.1%;
  
-    --accent: 35 92% 50%; /* Lighter Gold/Yellow */
-    --accent-foreground: 222.2 84% 4.9%;
+    --accent: 40 95% 55%; /* Brighter Orange */
+    --accent-foreground: 210 40% 98%;
  
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 210 40% 98%;
@@ -77,7 +77,7 @@
 
     --border: 217.2 32.6% 25.5%;
     --input: 217.2 32.6% 17.5%;
-    --ring: 38 92% 50%;
+    --ring: hsl(var(--accent));
   }
 }
  
@@ -88,6 +88,10 @@
   body {
     @apply bg-background text-foreground font-body;
     min-height: 100vh;
+  }
+  
+  .dark body {
+     background-image: radial-gradient(ellipse 50% 80% at 50% -20%, hsl(var(--primary) / 0.1), transparent);
   }
 }
 
