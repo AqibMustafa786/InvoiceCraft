@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect, useCallback, useMemo } from 'react';
@@ -597,14 +598,27 @@ export default function CreateEstimatePage() {
 
   if (!processedDocument) {
     return (
-        <div className="grid grid-cols-1 lg:grid-cols-2 lg:gap-8">
-            <div className="lg:col-span-1 space-y-4">
-              <Skeleton className="h-48 w-full" />
-              <Skeleton className="h-64 w-full" />
-              <Skeleton className="h-96 w-full" />
+        <div className="container mx-auto p-4 md:p-8 space-y-8">
+             <div className="flex justify-between items-center">
+                <Skeleton className="h-9 w-48" />
+                <div className="flex gap-2">
+                    <Skeleton className="h-9 w-24" />
+                    <Skeleton className="h-9 w-24" />
+                    <Skeleton className="h-9 w-9" />
+                </div>
             </div>
-            <div className="hidden lg:block lg:col-span-1">
-                <Skeleton className="h-[800px] w-full" />
+            <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
+                <div className="lg:col-span-2 space-y-6">
+                    <Skeleton className="h-64 w-full" />
+                    <Skeleton className="h-48 w-full" />
+                    <Skeleton className="h-96 w-full" />
+                </div>
+                <div className="lg:col-span-2">
+                    <Skeleton className="h-[800px] w-full" />
+                </div>
+                 <div className="lg:col-span-1">
+                    <Skeleton className="h-[800px] w-full" />
+                </div>
             </div>
         </div>
     );
@@ -615,7 +629,7 @@ export default function CreateEstimatePage() {
       <div className="container mx-auto p-4 md:px-6 md:py-8">
         <div className="flex flex-col md:flex-row justify-between md:items-center gap-4 mb-8">
           <div>
-            <h1 className="text-2xl font-bold font-headline">Create Estimate</h1>
+            <h1 className="text-xl font-bold font-headline">Create Estimate</h1>
             <p className="text-sm text-muted-foreground">Fill out the form to generate your professional estimate.</p>
           </div>
           <div className="flex w-full md:w-auto items-center gap-2">
@@ -655,7 +669,7 @@ export default function CreateEstimatePage() {
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
             <div className="lg:col-span-2 order-1">
               <div className="space-y-6">
-                <h2 className="text-xl font-bold font-headline mb-4 text-center lg:text-left">Fill in Details</h2>
+                <h2 className="text-2xl font-semibold tracking-tight mb-4 text-center lg:text-left">Fill in Details</h2>
                 <DocumentForm 
                   document={document!} 
                   setDocument={setDocument} 
@@ -673,14 +687,14 @@ export default function CreateEstimatePage() {
             <div className="lg:col-span-2 order-2">
               <div className="sticky top-24 space-y-4">
                   <div>
-                    <h2 className="text-xl font-bold font-headline mb-4">Live Preview</h2>
+                    <h2 className="text-2xl font-semibold tracking-tight mb-4">Live Preview</h2>
                     <ClientDocumentPreview document={processedDocument} accentColor={accentColor} backgroundColor={backgroundColor} textColor={textColor} />
                   </div>
               </div>
             </div>
              <div className="lg:col-span-1 order-3">
                 <div className="sticky top-24 space-y-4">
-                  <h2 className="text-xl font-bold font-headline mb-4">Template</h2>
+                  <h2 className="text-2xl font-semibold tracking-tight mb-4">Template</h2>
                     <ScrollArea className="h-[calc(100vh-10rem)] pr-4">
                         <DocumentTemplateSelector 
                             selectedTemplate={document!.template}

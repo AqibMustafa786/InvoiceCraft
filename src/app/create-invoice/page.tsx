@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect, useCallback, useMemo, ChangeEvent } from 'react';
@@ -726,13 +727,16 @@ export default function CreateInvoicePage() {
                     <Skeleton className="h-9 w-9" />
                 </div>
             </div>
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                <div className="space-y-6">
+            <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
+                <div className="lg:col-span-2 space-y-6">
                     <Skeleton className="h-64 w-full" />
                     <Skeleton className="h-48 w-full" />
                     <Skeleton className="h-96 w-full" />
                 </div>
-                <div>
+                <div className="lg:col-span-2">
+                    <Skeleton className="h-[800px] w-full" />
+                </div>
+                <div className="lg:col-span-1">
                     <Skeleton className="h-[800px] w-full" />
                 </div>
             </div>
@@ -782,7 +786,6 @@ export default function CreateInvoicePage() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
-          {/* Form Column */}
           <div className="lg:col-span-2 order-1">
              <motion.div 
                 initial={{ opacity: 0, x: -20 }}
@@ -790,7 +793,7 @@ export default function CreateInvoicePage() {
                 transition={{ duration: 0.5 }}
              >
                  <div className="space-y-6">
-                    <h2 className="text-xl font-bold font-headline mb-4 text-center lg:text-left">Fill in Details</h2>
+                    <h2 className="text-2xl font-semibold tracking-tight mb-4 text-center lg:text-left">Fill in Details</h2>
                     <InvoiceForm 
                       invoice={invoice} 
                       setInvoice={setInvoice as any}
@@ -808,11 +811,10 @@ export default function CreateInvoicePage() {
               </motion.div>
           </div>
           
-          {/* Preview Column */}
           <div className="lg:col-span-2 order-2">
              <div className="sticky top-24 space-y-4">
                 <div>
-                  <h2 className="text-xl font-bold font-headline mb-4">Live Preview</h2>
+                  <h2 className="text-2xl font-semibold tracking-tight mb-4">Live Preview</h2>
                    <motion.div
                     key={`${invoice.template}-${JSON.stringify(processedInvoice)}`}
                     initial={{ opacity: 0.8, scale: 0.995 }}
@@ -825,10 +827,9 @@ export default function CreateInvoicePage() {
             </div>
           </div>
           
-          {/* Template Selector Column */}
           <div className="lg:col-span-1 order-3">
               <div className="sticky top-24 space-y-4">
-                  <h2 className="text-xl font-bold font-headline mb-4">Template</h2>
+                  <h2 className="text-2xl font-semibold tracking-tight mb-4">Template</h2>
                    <ScrollArea className="h-[calc(100vh-10rem)] pr-4">
                       <DocumentTemplateSelector 
                           selectedTemplate={invoice.template}
