@@ -52,12 +52,12 @@ export function TemplateCard({ template, onPreview, isSelected }: TemplateCardPr
           src={template.thumbnailUrl}
           alt={`Thumbnail for ${template.name} template`}
           fill
-          sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, (max-width: 1024px) 25vw, (max-width: 1280px) 20vw, 16vw"
+          sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
           className="object-cover object-top transition-transform duration-500 ease-in-out group-hover:scale-105"
         />
         <div 
           aria-hidden="true" 
-          className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+          className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center"
         ></div>
         <div className="absolute inset-0 flex items-center justify-center opacity-0 transition-opacity duration-300 group-hover:opacity-100">
           <Button variant="secondary" size="sm" className="pointer-events-none">
@@ -65,9 +65,14 @@ export function TemplateCard({ template, onPreview, isSelected }: TemplateCardPr
             Select
           </Button>
         </div>
+        {template.isPro && (
+          <Badge className="absolute top-2 right-2" variant="secondary">
+            PRO
+          </Badge>
+        )}
       </div>
       <div className="p-3 bg-card flex items-start justify-between gap-2">
-        <div className="flex-1">
+        <div className="flex-1 min-w-0">
           <h3 className="font-semibold text-xs text-card-foreground leading-tight truncate">{template.name}</h3>
           <p className="text-[11px] text-muted-foreground mt-0.5 truncate">{template.category}</p>
         </div>
