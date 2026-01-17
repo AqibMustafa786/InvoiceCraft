@@ -271,22 +271,19 @@ export const GenericTemplate3: React.FC<PageProps> = (props) => {
                 </div>
             </header>
 
-            <section className="flex justify-between mb-10 text-sm">
-                <div>
-                    <p className="font-bold mb-1 text-gray-500">{(t.billTo || 'BILL TO')}</p>
-                    <p>{client.name}</p>
-                    {client.companyName && <p>{client.companyName}</p>}
-                    <p className="whitespace-pre-line">{client.address}</p>
-                    <p>{client.phone}</p>
-                    <p>{client.email}</p>
-                    {client.shippingAddress && <p className="mt-2"><span className="font-bold text-gray-500">Ship To:</span><br/>{client.shippingAddress}</p>}
-                </div>
-                <div className="text-right space-y-1">
-                    <p><span className="font-bold">{t.invoiceNo || 'Invoice #'}:</span> {invoice.invoiceNumber}</p>
-                    <p><span className="font-bold">{t.invoiceDate || 'Invoice Date'}:</span> {safeFormat(invoice.invoiceDate, 'MMM d, yyyy')}</p>
-                    <p><span className="font-bold">{t.dueDate || 'Due Date'}:</span> {safeFormat(invoice.dueDate, 'MMM d, yyyy')}</p>
-                    {invoice.poNumber && <p><span className="font-bold">PO #:</span> {invoice.poNumber}</p>}
-                </div>
+            <section className="mb-10 text-sm">
+                <p className="font-bold mb-1 text-gray-500">{(t.billTo || 'BILL TO')}:</p>
+                <p>{client.name}</p>
+                {client.companyName && <p>{client.companyName}</p>}
+                <p className="whitespace-pre-line">{client.address}</p>
+                {client.phone && <p>{client.phone}</p>}
+                {client.email && <p>{client.email}</p>}
+                {client.shippingAddress && (
+                    <div className="mt-2">
+                         <p className="font-bold text-gray-500">SHIP TO:</p>
+                         <p className="whitespace-pre-line">{client.shippingAddress}</p>
+                    </div>
+                )}
             </section>
             
             <CategorySpecificDetails invoice={invoice} t={t} />

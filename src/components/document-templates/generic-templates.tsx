@@ -1,5 +1,4 @@
 
-
 'use client';
 
 import React from 'react';
@@ -255,6 +254,12 @@ export const GenericTemplate3: React.FC<TemplateProps> = ({ document, pageItems,
                 <p className="whitespace-pre-line">{client.address}</p>
                 {client.phone && <p>{client.phone}</p>}
                 {client.email && <p>{client.email}</p>}
+                {client.projectLocation && (
+                    <div className="mt-2">
+                         <p className="font-bold text-gray-500">PROJECT LOCATION:</p>
+                         <p className="whitespace-pre-line">{client.projectLocation}</p>
+                    </div>
+                )}
             </section>
             
             <main className="flex-grow">
@@ -418,7 +423,7 @@ export const GenericTemplate5: React.FC<TemplateProps> = ({ document, pageItems,
                 <div className="p-4 bg-gray-50 rounded">
                     <p className="font-bold text-gray-500 mb-2" style={{color: textColor}}>{(t.details || 'DETAILS')}</p>
                     <p><span className="font-semibold">No:</span> {document.estimateNumber}</p>
-                    <p><span className="font-semibold">{t.date || 'Date'}:</span> {safeFormat(document.estimateDate, 'MMM d, yyyy')}</p>
+                    <p><span className="font-semibold">{t.date || 'Date'}:</span> {safeFormat(document.estimateDate, 'MMM dd, yyyy')}</p>
                 </div>
                 <div className="p-4 bg-gray-50 rounded break-words">
                     <p className="font-bold text-gray-500 mb-2" style={{color: textColor}}>{(t.contact || 'CONTACT')}</p>
