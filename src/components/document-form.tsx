@@ -1171,7 +1171,7 @@ export function DocumentForm({ document, setDocument, accentColor, setAccentColo
 
                 <Dialog open={isSavePresetOpen} onOpenChange={setIsSavePresetOpen}>
                   <DialogTrigger asChild>
-                    <Button variant="outline" size="sm" className="text-xs"><Save className="mr-2 h-3 w-3" /> Save as Preset</Button>
+                    <Button variant="outline" size="sm" className="text-xs" disabled={document.lineItems.length === 0}><Save className="mr-2 h-3 w-3" /> Save as Preset</Button>
                   </DialogTrigger>
                   <DialogContent>
                       <DialogHeader>
@@ -1193,7 +1193,7 @@ export function DocumentForm({ document, setDocument, accentColor, setAccentColo
               </div>
             </div>
 
-            <div className="hidden md:grid md:grid-cols-[2fr_3fr_60px_100px_50px_100px_auto] gap-x-4 text-xs font-medium text-muted-foreground items-center">
+            <div className="hidden md:grid md:grid-cols-[2fr_6fr_90px_120px_60px_120px_auto] gap-x-4 text-xs font-medium text-muted-foreground items-center">
                 <Label>Item</Label>
                 <Label>Description</Label>
                 <Label>Qty</Label>
@@ -1203,7 +1203,7 @@ export function DocumentForm({ document, setDocument, accentColor, setAccentColo
                 <span></span>
             </div>
             {document.lineItems.map((item, index) => (
-                <div key={item.id} className="grid grid-cols-1 md:grid-cols-[2fr_3fr_60px_100px_50px_100px_auto] gap-x-4 gap-y-2 items-start border-b pb-3">
+                <div key={item.id} className="grid grid-cols-1 md:grid-cols-[2fr_6fr_90px_120px_60px_120px_auto] gap-x-4 gap-y-2 items-start border-b pb-3">
                      <div className="space-y-2">
                         <Label htmlFor={`itemName-${index}`} className="text-xs md:hidden">Item</Label>
                         <Input id={`itemName-${index}`} placeholder="Item" value={item.name} onChange={(e) => handleItemChange(index, 'name', e.target.value)} className="h-9 text-xs"/>
