@@ -1,9 +1,8 @@
-
 'use client';
 
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
 import {
   FileText, FilePlus, Shield,
@@ -429,13 +428,13 @@ export default function HomePage() {
           </div>
         </section>
 
-        <section className="py-20 md:py-28 bg-card dark:bg-background text-card-foreground overflow-hidden">
+        <section className="py-20 md:py-28 bg-card dark:bg-card text-card-foreground overflow-hidden">
             <div className="container px-4 mx-auto md:px-6 relative">
                  <div className="absolute top-0 left-0 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-primary/20 rounded-full blur-3xl"></div>
                  <div className="absolute bottom-0 right-0 translate-x-1/2 translate-y-1/2 w-96 h-96 bg-accent/20 rounded-full blur-3xl"></div>
                 <div className="text-center max-w-2xl mx-auto mb-16">
                     <p className="text-sm font-bold tracking-wider uppercase text-muted-foreground">TESTIMONIALS</p>
-                    <h2 className="text-4xl md:text-5xl font-bold font-headline mt-2 text-primary dark:text-[#A27B5C]">What Our Customers Say</h2>
+                    <h2 className="text-4xl md:text-5xl font-bold font-headline mt-2 text-primary">What Our Customers Say</h2>
                     <p className="mt-4 text-muted-foreground">Trusted by thousands of businesses worldwide.</p>
                 </div>
                 <div className="relative min-h-[350px]" style={{ perspective: '1000px' }}>
