@@ -24,6 +24,16 @@ const safeFormat = (date: Date | string | number | undefined | null, formatStrin
     return format(d, formatString);
 }
 
+const SignatureDisplay = ({ signature, label }: { signature: any, label: string }) => {
+    if (!signature?.image) return null;
+    return (
+        <div className="mt-8">
+            <Image src={signature.image} alt={label} width={150} height={75} className="border-b border-gray-400" />
+            <p className="text-xs text-gray-500 pt-1 border-t-2 border-gray-700 w-[150px]">{label}</p>
+        </div>
+    )
+}
+
 const LandscapingDetails: React.FC<{ document: Estimate, t: any }> = ({ document, t }) => {
     if (!document.landscaping) return null;
     const { landscaping } = document;
@@ -109,6 +119,8 @@ export const LandscapingTemplate1: React.FC<TemplateProps> = ({ document, pageIt
                              <table className="w-full">
                                 <tbody>
                                     <tr className="border-b"><td className="p-2 font-bold">{(t.subtotal || 'Subtotal')}</td><td className="p-2 text-right">{currencySymbol}{summary.subtotal.toFixed(2)}</td></tr>
+                                    {summary.discount > 0 && <tr className="border-b text-red-500"><td className="p-2 font-bold">{(t.discount || 'Discount')}</td><td className="p-2 text-right">-{currencySymbol}{summary.discount.toFixed(2)}</td></tr>}
+                                    {summary.shippingCost > 0 && <tr className="border-b"><td className="p-2 font-bold">{(t.shipping || 'Shipping')}</td><td className="p-2 text-right">{currencySymbol}{summary.shippingCost.toFixed(2)}</td></tr>}
                                     <tr className="border-b"><td className="p-2 font-bold">{(t.tax || 'Tax')}</td><td className="p-2 text-right">{currencySymbol}{summary.taxAmount.toFixed(2)}</td></tr>
                                     <tr style={{ backgroundColor: style.color }} className="text-white"><td className="p-2 font-bold text-lg">{(t.totalEstimateCost || 'Total Estimate Cost')}</td><td className="p-2 text-right font-bold text-lg">{currencySymbol}{summary.grandTotal.toFixed(2)}</td></tr>
                                 </tbody>
@@ -274,121 +286,3 @@ export const LandscapingTemplate3: React.FC<TemplateProps> = ({ document, pageIt
         </div>
     );
 };
-
-// Template 4: Minimalist Elegant
-export const LandscapingTemplate4: React.FC<TemplateProps> = ({ document, pageItems, pageIndex, totalPages, style, t }) => {
-    const { business, client, summary, currency, category } = document;
-    const currencySymbol = currencySymbols[currency] || '$';
-    const docTitle = document.documentType === 'quote' ? (t.estimate || 'Estimate') : (t.estimate || 'Estimate');
-
-    return (
-        <div className={`p-12 bg-white font-['Garamond',_serif] text-gray-700 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ minHeight: '1056px' }}>
-            <header className="mb-16 text-center">
-                <h1 className="text-5xl font-light tracking-widest">{business.name}</h1>
-                <h2 className="text-3xl font-light tracking-widest mt-2">{docTitle.toUpperCase()}</h2>
-            </header>
-
-            <section className="flex justify-between mb-10 text-xs">
-                <div><p className="font-bold mb-1">{(t.to || 'To')}:</p><p>{client.name}</p><p>{client.address}</p></div>
-                <div className="text-right"><p><span className="font-bold">{(t.no || 'No')}:</span> {document.estimateNumber}</p><p><span className="font-bold">{(t.date || 'Date')}:</span> {safeFormat(document.estimateDate, 'MMM dd, yyyy')}</p></div>
-            </section>
-            
-             <LandscapingDetails document={document} t={t} />
-
-            <main className="flex-grow">
-                <table className="w-full text-left text-xs">
-                    <thead>
-                        <tr>
-                            <th className="p-2 font-semibold w-3/5 border-b-2 border-gray-300">{(t.item || 'Item').toUpperCase()}</th>
-                            <th className="p-2 font-semibold text-center border-b-2 border-gray-300">{(t.quantity || 'Quantity').toUpperCase()}</th>
-                            <th className="p-2 font-semibold text-right border-b-2 border-gray-300">{(t.rate || 'Rate').toUpperCase()}</th>
-                            <th className="p-2 font-semibold text-right border-b-2 border-gray-300">{(t.amount || 'Amount').toUpperCase()}</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {pageItems.map(item => (
-                            <tr key={item.id}><td className="py-2 px-2 border-b border-gray-200 whitespace-pre-line">{item.name}</td><td className="py-2 px-2 border-b border-gray-200 text-center">{item.quantity}</td><td className="py-2 px-2 border-b border-gray-200 text-right">{currencySymbol}{item.unitPrice.toFixed(2)}</td><td className="py-2 px-2 border-b border-gray-200 text-right">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</td></tr>
-                        ))}
-                    </tbody>
-                </table>
-            </main>
-            
-            {pageIndex === totalPages - 1 && (
-                <footer className="mt-auto pt-8">
-                    <div className="flex justify-end">
-                        <table className="w-1/3 text-xs">
-                             <tbody>
-                                <tr><td className="py-1 text-gray-500">{(t.subtotal || 'Subtotal')}</td><td className="text-right">{currencySymbol}{summary.subtotal.toFixed(2)}</td></tr>
-                                <tr><td className="py-1 text-gray-500">{(t.tax || 'Tax')}</td><td className="text-right">{currencySymbol}{summary.taxAmount.toFixed(2)}</td></tr>
-                                <tr className="font-bold text-base border-t-2 border-black"><td className="pt-2">{(t.total || 'TOTAL').toUpperCase()}</td><td className="pt-2 text-right">{currencySymbol}{summary.grandTotal.toFixed(2)}</td></tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </footer>
-            )}
-        </div>
-    );
-};
-
-// Template 5: Bold & Green
-export const LandscapingTemplate5: React.FC<TemplateProps> = ({ document, pageItems, pageIndex, totalPages, style, t }) => {
-    const { business, client, summary, currency, category } = document;
-    const currencySymbol = currencySymbols[currency] || '$';
-    const docTitle = document.documentType === 'quote' ? (t.estimate || 'Estimate') : (t.estimate || 'Estimate');
-
-    return (
-        <div className={`p-10 bg-gray-50 font-['Roboto'] text-gray-900 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ minHeight: '1056px' }}>
-            <header className="grid grid-cols-2 gap-4 mb-8">
-                <div>
-                  <h1 className="text-4xl font-extrabold" style={{ color: style.color }}>{business.name}</h1>
-                   <p className="text-xs">{business.address}</p>
-                </div>
-                 <div className="text-right">
-                     <p className="text-3xl font-bold">{docTitle}</p>
-                </div>
-            </header>
-
-            <section className="mb-8 p-4 bg-white shadow-sm rounded-md text-xs">
-                 <p className="font-bold text-gray-500 mb-2">{(t.projectFor || 'PROJECT FOR').toUpperCase()}: {client.name}</p>
-                 <p className="font-semibold">{document.projectTitle}</p>
-                 <p>{client.address}</p>
-            </section>
-            
-             <LandscapingDetails document={document} t={t} />
-
-            <main className="flex-grow bg-white p-4 rounded-md shadow-sm">
-                <table className="w-full text-left text-xs">
-                    <thead>
-                        <tr className="border-b-2 border-gray-200">
-                            <th className="py-2 font-bold w-3/5">{(t.description || 'DESCRIPTION').toUpperCase()}</th>
-                            <th className="py-2 font-bold text-center">{(t.quantity || 'QTY').toUpperCase()}</th>
-                            <th className="py-2 font-bold text-right">{(t.cost || 'COST').toUpperCase()}</th>
-                            <th className="py-2 font-bold text-right">{(t.total || 'TOTAL').toUpperCase()}</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {pageItems.map(item => (
-                            <tr key={item.id} className="border-b border-gray-100">
-                                <td className="py-2 align-top whitespace-pre-line">{item.name}</td>
-                                <td className="py-2 align-top text-center">{item.quantity}</td>
-                                <td className="py-2 align-top text-right">{currencySymbol}{item.unitPrice.toFixed(2)}</td>
-                                <td className="py-2 align-top text-right font-semibold">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
-            </main>
-            
-            {pageIndex === totalPages - 1 && (
-                <footer className="mt-auto pt-6 flex justify-end">
-                    <div className="w-1/3 text-sm space-y-1">
-                        <p className="flex justify-between"><span>{(t.subtotal || 'Subtotal')}</span><span>{currencySymbol}{summary.subtotal.toFixed(2)}</span></p>
-                        <p className="flex justify-between"><span>{(t.tax || 'Tax')}</span><span>{currencySymbol}{summary.taxAmount.toFixed(2)}</span></p>
-                        <p className="flex justify-between font-bold text-lg mt-2 pt-2 border-t-2 border-black"><span>{(t.totalEstimate || 'Total Estimate')}</span><span>{currencySymbol}{summary.grandTotal.toFixed(2)}</span></p>
-                    </div>
-                </footer>
-            )}
-        </div>
-    );
-};
-

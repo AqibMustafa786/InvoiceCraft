@@ -1,3 +1,4 @@
+
 'use client';
 
 import React from 'react';
@@ -182,7 +183,7 @@ export const CleaningTemplate2: React.FC<TemplateProps> = ({ document, pageItems
                 </div>
                 <div>
                      <p className="font-bold text-gray-500">{(t.project || 'Project')}:</p>
-                     <p className="font-semibold">{document.projectTitle || 'N/A'}</p>
+                     <p className="font-semibold">{document.projectTitle}</p>
                 </div>
                 <div className="text-right">
                     <p><span className="font-bold">{(document.documentType === 'quote' ? t.quoteNo : t.estimateNo) || 'Number #'}:</span> {document.estimateNumber}</p>
@@ -232,7 +233,7 @@ export const CleaningTemplate2: React.FC<TemplateProps> = ({ document, pageItems
     );
 };
 
-// New, simple, modern template to replace the broken one.
+// Template 3: Pristine
 export const CleaningTemplate3: React.FC<TemplateProps> = ({ document, pageItems, pageIndex, totalPages, style, t }) => {
     const { business, client, summary, currency, textColor, category } = document;
     const currencySymbol = currencySymbols[currency] || '$';
@@ -240,18 +241,17 @@ export const CleaningTemplate3: React.FC<TemplateProps> = ({ document, pageItems
     const docTypeTerm = document.documentType === 'quote' ? 'quote' : 'estimate';
 
     return (
-        <div className={`p-10 bg-white font-sans text-gray-800 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ minHeight: '1056px', color: textColor }}>
-            <header className="flex justify-between items-start mb-8 pb-4 border-b">
+        <div className={`p-10 font-sans bg-white text-gray-800 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ minHeight: '1056px', color: textColor }}>
+            <header className="flex justify-between items-start mb-8">
                 <div>
                     <h1 className="text-3xl font-bold">{business.name}</h1>
-                    <p className="text-xs">{business.address}</p>
                 </div>
                 <div className="text-right">
                     <h2 className="text-2xl font-bold" style={{ color: style.color }}>{docTitle.toUpperCase()}</h2>
                     <p>#{document.estimateNumber}</p>
                 </div>
             </header>
-            <section className="grid grid-cols-2 gap-4 mb-8 text-sm">
+            <section className="grid grid-cols-2 gap-8 text-sm mb-8">
                 <div>
                     <p className="font-bold">{t.billTo || 'Billed To'}:</p>
                     <p>{client.name}</p>
@@ -262,45 +262,36 @@ export const CleaningTemplate3: React.FC<TemplateProps> = ({ document, pageItems
                     <p><span className="font-bold">{t.validUntil || 'Valid Until'}:</span> {safeFormat(document.validUntilDate, 'MM/dd/yyyy')}</p>
                 </div>
             </section>
-            
             <CleaningDetails document={document} textColor={textColor || '#374151'} t={t}/>
-
             <main className="flex-grow mt-4">
                 <table className="w-full text-left text-sm">
-                    <thead className="bg-gray-100">
-                        <tr>
+                    <thead>
+                        <tr className="bg-gray-100">
                             <th className="p-2 font-bold w-3/5">{t.serviceDescription || 'Service Description'}</th>
-                            <th className="p-2 font-bold text-center">{t.quantity || 'Qty'}</th>
-                            <th className="p-2 font-bold text-right">{t.unitPrice || 'Unit Price'}</th>
-                            <th className="p-2 font-bold text-right">{t.total || 'Total'}</th>
+                            <th className="p-2 font-bold text-right">{t.amount || 'Amount'}</th>
                         </tr>
                     </thead>
                     <tbody>
                         {pageItems.map(item => (
                             <tr key={item.id} className="border-b">
                                 <td className="p-2">{item.name}</td>
-                                <td className="p-2 text-center">{item.quantity}</td>
-                                <td className="p-2 text-right">{currencySymbol}{item.unitPrice.toFixed(2)}</td>
-                                <td className="p-2 text-right font-medium">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</td>
+                                <td className="p-2 text-right">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</td>
                             </tr>
                         ))}
                     </tbody>
                 </table>
             </main>
             {pageIndex === totalPages - 1 && (
-                <footer className="mt-auto pt-8 text-right">
-                    <div className="inline-block w-2/5 text-sm">
-                         <p className="flex justify-between"><span>{t.subtotal || 'Subtotal'}:</span><span>{currencySymbol}{summary.subtotal.toFixed(2)}</span></p>
-                         {summary.discount > 0 && <p className="flex justify-between text-red-500"><span>{t.discount || 'Discount'}:</span><span>-{currencySymbol}{summary.discount.toFixed(2)}</span></p>}
-                         {summary.shippingCost > 0 && <p className="flex justify-between"><span>{t.shipping || 'Shipping'}:</span><span>{currencySymbol}{summary.shippingCost.toFixed(2)}</span></p>}
-                         <p className="flex justify-between"><span>{t.tax || 'Tax'}:</span><span>{currencySymbol}{summary.taxAmount.toFixed(2)}</span></p>
-                         <p className="flex justify-between font-bold text-base mt-2 pt-2 border-t"><span>{t.total || 'Total'}:</span><span>{currencySymbol}{summary.grandTotal.toFixed(2)}</span></p>
-                    </div>
-                </footer>
+            <footer className="mt-auto pt-8 text-right">
+                <div className="inline-block w-2/5 text-sm">
+                    <p className="flex justify-between"><span>{t.subtotal || 'Subtotal'}:</span><span>{currencySymbol}{summary.subtotal.toFixed(2)}</span></p>
+                    {summary.discount > 0 && <p className="flex justify-between text-red-500"><span>{t.discount || 'Discount'}:</span><span>-{currencySymbol}{summary.discount.toFixed(2)}</span></p>}
+                    {summary.shippingCost > 0 && <p className="flex justify-between"><span>{t.shipping || 'Shipping'}:</span><span>{currencySymbol}{summary.shippingCost.toFixed(2)}</span></p>}
+                    <p className="flex justify-between"><span>{t.tax || 'Tax'}:</span><span>{currencySymbol}{summary.taxAmount.toFixed(2)}</span></p>
+                    <p className="flex justify-between font-bold text-base mt-2 pt-2 border-t"><span>{t.total || 'Total'}:</span><span>{currencySymbol}{summary.grandTotal.toFixed(2)}</span></p>
+                </div>
+            </footer>
             )}
         </div>
     );
 };
-
-export const CleaningTemplate4: React.FC<TemplateProps> = (props) => <CleaningTemplate1 {...props} />;
-export const CleaningTemplate5: React.FC<TemplateProps> = (props) => <CleaningTemplate2 {...props} />;

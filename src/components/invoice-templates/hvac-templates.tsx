@@ -156,8 +156,8 @@ export const HVACTemplate1: React.FC<PageProps> = (props) => {
                             {invoice.summary.shippingCost > 0 && <div className="flex justify-between p-1"><span>{t.shipping || 'Shipping'}:</span><span className="font-medium">{currencySymbol}{invoice.summary.shippingCost.toFixed(2)}</span></div>}
                             <div className="flex justify-between p-1"><span>{t.tax || 'Tax'} ({invoice.summary.taxPercentage}%):</span><span className="font-medium">{currencySymbol}{taxAmount.toFixed(2)}</span></div>
                             <div className="flex justify-between p-2 mt-1 border-t-2 border-gray-400 font-bold" style={{ color: accentColor }}><span className="text-base">{t.totalCost || 'TOTAL COST'}:</span><span className="text-base">{currencySymbol}{total.toFixed(2)}</span></div>
-                            {(invoice.amountPaid || 0) > 0 && <div className="flex justify-between p-1 font-bold text-green-600"><span>{t.amountPaid || 'Amount Paid'}:</span><span>-{currencySymbol}{(invoice.amountPaid || 0).toFixed(2)}</span></div>}
-                            <div className="flex justify-between p-2 mt-1 bg-gray-100 font-bold"><span>{t.balanceDue || 'Balance Due'}:</span><span>{currencySymbol}{balanceDue.toFixed(2)}</span></div>
+                             {(invoice.amountPaid || 0) > 0 && <div className="flex justify-between p-1 font-bold text-green-600"><span>{t.amountPaid || 'Amount Paid'}:</span><span>-{currencySymbol}{(invoice.amountPaid || 0).toFixed(2)}</span></div>}
+                             <div className="flex justify-between p-2 mt-1 bg-gray-100 font-bold"><span>{t.balanceDue || 'Balance Due'}:</span><span>{currencySymbol}{balanceDue.toFixed(2)}</span></div>
                         </div>
                     </div>
                 </footer>
@@ -181,6 +181,8 @@ export const HVACTemplate2: React.FC<PageProps> = (props) => {
                         <p className="whitespace-pre-line">{business.address}</p>
                         <p>{business.phone} | {business.email}</p>
                         {business.website && <p>{business.website}</p>}
+                        {business.licenseNumber && <p>Lic #: {business.licenseNumber}</p>}
+                        {business.taxId && <p>Tax ID: {business.taxId}</p>}
                     </div>
                 </div>
                 <div className="text-right">
@@ -193,7 +195,7 @@ export const HVACTemplate2: React.FC<PageProps> = (props) => {
                     <p className="font-bold text-gray-500">{t.client || 'Client'}:</p>
                     <p className="font-semibold">{client.name}</p>
                     {client.companyName && <p>{client.companyName}</p>}
-                    <p>{client.address}</p>
+                    <p className="whitespace-pre-line">{client.address}</p>
                     <p>{client.phone} | {client.email}</p>
                     {client.shippingAddress && <p className="mt-2"><span className="font-bold text-gray-500">Ship To:</span><br/>{client.shippingAddress}</p>}
                 </div>
@@ -205,7 +207,7 @@ export const HVACTemplate2: React.FC<PageProps> = (props) => {
                 </div>
             </section>
             
-            <CategorySpecificDetails invoice={invoice} t={t}/>
+            <CategorySpecificDetails invoice={invoice} t={t} />
 
             <main className="flex-grow">
                  <table className="w-full text-left text-xs">
@@ -235,7 +237,7 @@ export const HVACTemplate2: React.FC<PageProps> = (props) => {
                      <div className="flex justify-end">
                         <div className="w-1/3 text-sm space-y-1">
                             <p className="flex justify-between"><span>{t.subtotal || 'Subtotal'}:</span><span>{currencySymbol}{subtotal.toFixed(2)}</span></p>
-                            {discountAmount > 0 && <p className="flex justify-between">{t.discount || 'Discount'}: <span className="text-red-500">-{currencySymbol}{discountAmount.toFixed(2)}</span></p>}
+                            {discountAmount > 0 && <p className="flex justify-between">{t.discount || 'Discount'}: <span className="text-red-600">-{currencySymbol}{discountAmount.toFixed(2)}</span></p>}
                             {invoice.summary.shippingCost > 0 && <p className="flex justify-between">{t.shipping || 'Shipping/Extra'}: <span>{currencySymbol}{invoice.summary.shippingCost.toFixed(2)}</span></p>}
                             <p className="flex justify-between"><span>{t.tax || 'Tax'}:</span><span>{currencySymbol}{taxAmount.toFixed(2)}</span></p>
                             <p className="flex justify-between font-bold text-base mt-2 pt-2 border-t border-black"><span>{t.total || 'Total'}:</span><span>{currencySymbol}{total.toFixed(2)}</span></p>
@@ -317,8 +319,8 @@ export const HVACTemplate3: React.FC<PageProps> = (props) => {
             
             {pageIndex === totalPages - 1 && (
                  <footer className="mt-auto pt-8 flex justify-between items-start">
-                     <div className="w-1/2 text-xs text-gray-600" style={{color: textColor}}>
-                        <p className="font-bold mb-1">{t.terms || 'TERMS'}</p>
+                     <div className="w-1/2 text-xs" style={{color: textColor}}>
+                        <p className="font-bold mb-1">{(t.terms || 'TERMS')}</p>
                         <p className="whitespace-pre-line">{invoice.paymentInstructions}</p>
                          {business.ownerSignature && (
                             <div className="mt-8">
@@ -340,6 +342,3 @@ export const HVACTemplate3: React.FC<PageProps> = (props) => {
         </div>
     );
 };
-
-export const HVACTemplate4: React.FC<PageProps> = (props) => <HVACTemplate1 {...props} />;
-export const HVACTemplate5: React.FC<PageProps> = (props) => <HVACTemplate2 {...props} />;

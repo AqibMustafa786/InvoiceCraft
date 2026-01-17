@@ -440,12 +440,3 @@ export const ElectricalTemplate5: React.FC<TemplateProps> = ({ document, pageIte
         </div>
     );
 };
-
-export const ElectricalTemplate6: React.FC<TemplateProps> = (props) => <ElectricalTemplate1 {...props} />;
-export const ElectricalTemplate7: React.FC<TemplateProps> = (props) => <ElectricalTemplate2 {...props} />;
-export const ElectricalTemplate8: React.FC<TemplateProps> = (props) => <ElectricalTemplate3 {...props} />;
-export const ElectricalTemplate9: React.FC<TemplateProps> = (props) => <ElectricalTemplate4 {...props} />;
-export const ElectricalTemplate10: React.FC<TemplateProps> = (props) => <ElectricalTemplate5 {...props} />;
-
-
-    
