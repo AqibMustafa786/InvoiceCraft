@@ -146,6 +146,8 @@ export const GenericTemplate2: React.FC<TemplateProps> = ({ document, pageItems,
                         {business.phone && <p>{business.phone}</p>}
                         {business.email && <p>{business.email}</p>}
                         {business.website && <p>{business.website}</p>}
+                        {business.licenseNumber && <p>{t.license || 'Lic #'}: {business.licenseNumber}</p>}
+                        {business.taxId && <p>{t.taxId || 'Tax ID'}: {business.taxId}</p>}
                     </div>
                 </div>
                 <div className="text-right">
@@ -416,7 +418,7 @@ export const GenericTemplate5: React.FC<TemplateProps> = ({ document, pageItems,
                 <div className="p-4 bg-gray-50 rounded">
                     <p className="font-bold text-gray-500 mb-2" style={{color: textColor}}>{(t.details || 'DETAILS')}</p>
                     <p><span className="font-semibold">No:</span> {document.estimateNumber}</p>
-                    <p><span className="font-semibold">{t.date || 'Date'}:</span> {safeFormat(document.estimateDate, 'MMM dd, yyyy')}</p>
+                    <p><span className="font-semibold">{t.date || 'Date'}:</span> {safeFormat(document.estimateDate, 'MMM d, yyyy')}</p>
                 </div>
                 <div className="p-4 bg-gray-50 rounded break-words">
                     <p className="font-bold text-gray-500 mb-2" style={{color: textColor}}>{(t.contact || 'CONTACT')}</p>
