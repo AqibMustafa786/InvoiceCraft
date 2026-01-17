@@ -174,16 +174,16 @@ export const GenericTemplate2: React.FC<TemplateProps> = ({ document, pageItems,
                     <table className="w-full text-left text-sm">
                         <thead>
                             <tr className="border-b-2 border-gray-300">
-                                <th className="py-2 font-bold w-[50%]">{(t.item || 'ITEM')}</th>
-                                <th className="py-2 font-bold text-center">{(t.quantity || 'QTY')}</th>
-                                <th className="py-2 font-bold text-right">{(t.unitPrice || 'UNIT PRICE')}</th>
-                                <th className="py-2 font-bold text-right">{(t.total || 'TOTAL')}</th>
+                                <th className="py-2 font-bold w-[50%]">{(t.item || 'ITEM').toUpperCase()}</th>
+                                <th className="py-2 font-bold text-center">{(t.quantity || 'QTY').toUpperCase()}</th>
+                                <th className="py-2 font-bold text-right">{(t.unitPrice || 'UNIT PRICE').toUpperCase()}</th>
+                                <th className="py-2 font-bold text-right">{(t.total || 'TOTAL').toUpperCase()}</th>
                             </tr>
                         </thead>
                         <tbody>
                             {pageItems.map(item => (
                                 <tr key={item.id} className="border-b border-gray-200">
-                                    <td className="py-2 align-top">
+                                     <td className="py-2 align-top">
                                         <p className="font-medium whitespace-pre-line">{item.name}</p>
                                         {item.description && <p className="text-xs text-gray-500 whitespace-pre-line" style={{ wordBreak: 'break-all' }}>{item.description}</p>}
                                     </td>
@@ -198,7 +198,12 @@ export const GenericTemplate2: React.FC<TemplateProps> = ({ document, pageItems,
             
                 {pageIndex === totalPages - 1 && (
                     <footer className="mt-auto pt-8">
-                        <div className="flex justify-end">
+                        <div className="flex justify-between items-start">
+                            <div className="w-1/2 text-xs">
+                                <p className="font-bold text-gray-500 mb-2" style={{ color: textColor ? textColor : undefined }}>{(t.termsAndConditions || 'TERMS & CONDITIONS')}</p>
+                                <p className="whitespace-pre-line">{document.termsAndConditions}</p>
+                                {document.business.ownerSignature && <SignatureDisplay signature={document.business.ownerSignature} label="Authorized Signature" />}
+                            </div>
                             <div className="w-2/5">
                                 <div className="bg-gray-100 p-4 rounded-lg text-sm">
                                     <div className="flex justify-between py-1"><span>{(t.subtotal || 'Subtotal')}:</span><span className="font-medium">{currencySymbol}{summary.subtotal.toFixed(2)}</span></div>
@@ -208,14 +213,6 @@ export const GenericTemplate2: React.FC<TemplateProps> = ({ document, pageItems,
                                     <div className="flex justify-between font-bold text-base mt-2 pt-2 border-t-2 border-gray-300"><span>{(t.grandTotal || 'Grand Total')}:</span><span>{currencySymbol}{summary.grandTotal.toFixed(2)}</span></div>
                                 </div>
                             </div>
-                        </div>
-                        <div className="mt-8 text-xs">
-                           <p className="font-bold mb-1">{(t.termsAndConditions || 'Terms & Conditions')}</p>
-                           <p className="whitespace-pre-line" style={{ color: textColor || '#6B7280' }}>{document.termsAndConditions}</p>
-                        </div>
-                         <div className="flex justify-between items-end mt-4">
-                            <SignatureDisplay signature={document.business.ownerSignature} label={(t.authorizedSignature || 'Authorized Signature')} />
-                            <SignatureDisplay signature={document.clientSignature} label={(t.clientSignature || 'Client Signature')} />
                         </div>
                     </footer>
                 )}
@@ -234,20 +231,23 @@ export const GenericTemplate3: React.FC<TemplateProps> = ({ document, pageItems,
         <div className={`p-10 font-sans text-gray-700 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: style.fontFamily, fontSize: `${style.fontSize}pt`, minHeight: '1056px', backgroundColor: document.backgroundColor, color: textColor }}>
             <header className="flex justify-between items-start mb-12">
                  <div>
-                    {business.logoUrl ? <Image src={business.logoUrl} alt="Logo" width={80} height={40} className="mb-2 object-contain" /> : <h1 className="text-4xl font-light tracking-wider mb-1">{business.name}</h1>}
+                    {business.logoUrl ? <Image src={business.logoUrl} alt="Logo" width={80} height={40} className="mb-2 object-contain" /> : <h1 className="text-2xl font-bold mb-1">{business.name}</h1>}
                     <div className="text-xs" style={{ color: textColor || '#6B7280' }}>
-                        <p>{business.phone}</p>
-                        <p>{business.email}</p>
+                        <p className="whitespace-pre-line">{business.address}</p>
+                        {business.phone && <p>{business.phone}</p>}
+                        {business.email && <p>{business.email}</p>}
                         {business.website && <p>{business.website}</p>}
+                        {business.licenseNumber && <p>{t.license || 'Lic #'}: {business.licenseNumber}</p>}
+                        {business.taxId && <p>{t.taxId || 'Tax ID'}: {business.taxId}</p>}
                     </div>
                 </div>
                 <div className="text-right">
-                    <h2 className="text-3xl font-light tracking-wider mb-1">{docTitle}</h2>
+                    <h2 className="text-2xl font-bold">{docTitle}</h2>
                 </div>
             </header>
 
             <section className="mb-10 text-sm">
-                <p className="font-bold mb-1">{(t.client || 'CLIENT')}:</p>
+                <p className="font-bold mb-1 text-gray-500">{(t.client || 'CLIENT')}:</p>
                 <p>{client.name}</p>
                 {client.companyName && <p>{client.companyName}</p>}
                 <p className="whitespace-pre-line">{client.address}</p>
@@ -310,7 +310,7 @@ export const GenericTemplate4: React.FC<TemplateProps> = ({ document, pageItems,
 
     return (
         <div className={`font-sans text-gray-800 flex ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: style.fontFamily, fontSize: `${style.fontSize}pt`, minHeight: '1056px', backgroundColor: document.backgroundColor }}>
-            <div className="w-1/4 p-8 text-white" style={{ backgroundColor: style.color }}>
+            <div className="w-1/3 p-8 text-white" style={{ backgroundColor: style.color }}>
                 {business.logoUrl ? <Image src={business.logoUrl} alt="Logo" width={80} height={80} className="mb-4 object-contain filter invert brightness-0" /> : <h1 className="text-4xl font-bold mb-2">{business.name}</h1>}
                 <div className="text-sm space-y-4 mt-8">
                   <div>
@@ -327,7 +327,7 @@ export const GenericTemplate4: React.FC<TemplateProps> = ({ document, pageItems,
                   </div>
                 </div>
             </div>
-            <div className="w-3/4 p-10 flex flex-col" style={{color: textColor}}>
+            <div className="w-2/3 p-10 flex flex-col" style={{color: textColor}}>
                  <main className="flex-grow">
                     <div className='flex justify-end mb-4'>
                         <div className="text-right">
@@ -411,17 +411,21 @@ export const GenericTemplate5: React.FC<TemplateProps> = ({ document, pageItems,
                     <p className="font-bold text-base">{client.name}</p>
                     {client.companyName && <p>{client.companyName}</p>}
                     <p className="whitespace-pre-line">{client.address}</p>
+                    <p>{client.phone} | {client.email}</p>
                 </div>
                 <div className="p-4 bg-gray-50 rounded">
                     <p className="font-bold text-gray-500 mb-2" style={{color: textColor}}>{(t.details || 'DETAILS')}</p>
                     <p><span className="font-semibold">No:</span> {document.estimateNumber}</p>
-                    <p><span className="font-semibold">{(t.date || 'Date')}:</span> {safeFormat(document.estimateDate, 'MMM dd, yyyy')}</p>
+                    <p><span className="font-semibold">{t.date || 'Date'}:</span> {safeFormat(document.estimateDate, 'MMM dd, yyyy')}</p>
                 </div>
                 <div className="p-4 bg-gray-50 rounded break-words">
                     <p className="font-bold text-gray-500 mb-2" style={{color: textColor}}>{(t.contact || 'CONTACT')}</p>
+                     <p className="whitespace-pre-line">{business.address}</p>
                     <p>{business.phone}</p>
                     <p>{business.email}</p>
                     <p>{business.website}</p>
+                     <p>Lic: {business.licenseNumber}</p>
+                    <p>Tax ID: {business.taxId}</p>
                 </div>
             </section>
             
@@ -475,3 +479,5 @@ export const GenericTemplate5: React.FC<TemplateProps> = ({ document, pageItems,
         </div>
     );
 };
+
+    

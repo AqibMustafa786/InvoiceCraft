@@ -257,6 +257,14 @@ export const GenericTemplate3: React.FC<PageProps> = (props) => {
             <header className="flex justify-between items-start mb-12">
                  <div>
                     {business.logoUrl ? <Image src={business.logoUrl} alt="Logo" width={80} height={40} className="mb-2 object-contain" /> : <h1 className="text-2xl font-bold mb-1">{business.name}</h1>}
+                    <div className="text-xs" style={{ color: textColor || '#6B7280' }}>
+                        <p className="whitespace-pre-line">{business.address}</p>
+                        {business.phone && <p>{business.phone}</p>}
+                        {business.email && <p>{business.email}</p>}
+                        {business.website && <p>{business.website}</p>}
+                        {business.licenseNumber && <p>{t.license || 'Lic #'}: {business.licenseNumber}</p>}
+                        {business.taxId && <p>{t.taxId || 'Tax ID'}: {business.taxId}</p>}
+                    </div>
                 </div>
                 <div className="text-right">
                     <h2 className="text-2xl font-bold">{docTitle}</h2>
@@ -269,8 +277,8 @@ export const GenericTemplate3: React.FC<PageProps> = (props) => {
                     <p>{client.name}</p>
                     {client.companyName && <p>{client.companyName}</p>}
                     <p className="whitespace-pre-line">{client.address}</p>
-                    {client.phone && <p>{client.phone}</p>}
-                    {client.email && <p>{client.email}</p>}
+                    <p>{client.phone}</p>
+                    <p>{client.email}</p>
                     {client.shippingAddress && <p className="mt-2"><span className="font-bold text-gray-500">Ship To:</span><br/>{client.shippingAddress}</p>}
                 </div>
                 <div className="text-right space-y-1">
@@ -287,7 +295,7 @@ export const GenericTemplate3: React.FC<PageProps> = (props) => {
                  <table className="w-full text-left text-sm">
                     <thead>
                         <tr>
-                            <th className="p-2 font-bold w-2/5 bg-gray-50">{(t.item || 'ITEM')}</th>
+                            <th className="p-2 font-bold w-1/2 bg-gray-50">{(t.item || 'ITEM')}</th>
                             <th className="p-2 font-bold text-center bg-gray-50">{(t.quantity || 'QTY')}</th>
                             <th className="p-2 font-bold text-right bg-gray-50">{(t.rate || 'RATE')}</th>
                             <th className="p-2 font-bold text-right bg-gray-50">{(t.amount || 'AMOUNT')}</th>
@@ -312,22 +320,18 @@ export const GenericTemplate3: React.FC<PageProps> = (props) => {
             {pageIndex === totalPages - 1 && (
                 <footer className="mt-auto pt-8">
                      <div className="flex justify-end mb-8">
-                        <div className="w-2/5 text-sm">
+                        <div className="w-1/3 text-sm">
                             <div className="flex justify-between py-1"><span>{(t.subtotal || 'Subtotal')}</span><span className="font-medium">{currencySymbol}{subtotal.toFixed(2)}</span></div>
                              {discountAmount > 0 && <div className="flex justify-between py-1 text-red-600"><span>{(t.discount || 'Discount')}</span><span className="font-medium">-{currencySymbol}{discountAmount.toFixed(2)}</span></div>}
                             {invoice.summary.shippingCost > 0 && <div className="flex justify-between py-1"><span>{(t.shipping || 'Shipping/Extra')}</span><span className="font-medium">{currencySymbol}{invoice.summary.shippingCost.toFixed(2)}</span></div>}
-                            <div className="flex justify-between py-1"><span>{(t.tax || 'Tax')} ({invoice.summary.taxPercentage}%)</span><span className="font-medium">{currencySymbol}{taxAmount.toFixed(2)}</span></div>
-                            <div className="flex justify-between py-2 mt-1 border-t-2 font-bold" style={{borderColor: accentColor}}><span>{(t.total || 'Total')}</span><span>{currencySymbol}{total.toFixed(2)}</span></div>
+                            <div className="flex justify-between py-1"><span>{(t.tax || 'Tax')}</span><span className="font-medium">{currencySymbol}{taxAmount.toFixed(2)}</span></div>
+                            <div className="flex justify-between py-2 mt-1 border-t-2 border-black font-bold"><span>{(t.total || 'Total')}</span><span>{currencySymbol}{total.toFixed(2)}</span></div>
                             {(invoice.amountPaid || 0) > 0 && <div className="flex justify-between py-1 font-bold text-green-600"><span>{t.amountPaid || 'Amount Paid'}</span><span>-{currencySymbol}{(invoice.amountPaid || 0).toFixed(2)}</span></div>}
-                            <div className="flex justify-between py-1 font-bold bg-gray-100 p-2 mt-1"><span>{t.balanceDue || 'Balance Due'}</span><span>{currencySymbol}{balanceDue.toFixed(2)}</span></div>
+                             <div className="flex justify-between py-1 font-bold bg-gray-100 p-1"><span>{t.balanceDue || 'Balance Due'}</span><span>{currencySymbol}{balanceDue.toFixed(2)}</span></div>
                         </div>
                     </div>
-                     <div className="text-xs mt-4">
-                        <p className="font-bold mb-1">{t.notes || 'Notes'}</p>
-                        <p className="text-gray-600 whitespace-pre-line">{invoice.paymentInstructions}</p>
-                    </div>
                      <div className="flex justify-between items-end mt-4">
-                        {business.ownerSignature && <SignatureDisplay signature={business.ownerSignature} label={(t.authorizedSignature || 'Authorized Signature')} />}
+                        <SignatureDisplay signature={business.ownerSignature} label={(t.authorizedSignature || 'Authorized Signature')} />
                     </div>
                 </footer>
             )}
@@ -451,8 +455,7 @@ export const GenericTemplate5: React.FC<PageProps> = (props) => {
                     <p className="font-bold text-base">{client.name}</p>
                     {client.companyName && <p>{client.companyName}</p>}
                     <p className="whitespace-pre-line">{client.address}</p>
-                    <p>{client.phone}</p>
-                    <p>{client.email}</p>
+                    <p>{client.phone} | {client.email}</p>
                     {client.shippingAddress && <p className="mt-2"><span className="font-bold text-gray-500">Ship To:</span><br/>{client.shippingAddress}</p>}
                 </div>
                 <div className="p-4 bg-gray-50 rounded">
@@ -526,3 +529,5 @@ export const GenericTemplate5: React.FC<PageProps> = (props) => {
         </div>
     );
 };
+
+    
