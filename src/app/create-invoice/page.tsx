@@ -841,7 +841,7 @@ export default function CreateInvoicePage() {
                     <Button
                         onClick={() => setIsSidebarOpen(!isSidebarOpen)}
                         variant="outline"
-                        className="absolute top-1/2 -translate-x-1/2 z-10 rounded-full h-10 w-10 p-0 bg-primary/10 border-primary/20 text-primary hover:bg-primary/20 dark:bg-primary/20 dark:border-primary/30 dark:text-primary dark:hover:bg-primary/30"
+                        className="absolute top-10 -translate-x-1/2 z-10 rounded-full h-10 w-10 p-0 bg-primary/10 border-primary/20 text-primary hover:bg-primary/20 dark:bg-primary/20 dark:border-primary/30 dark:text-primary dark:hover:bg-primary/30"
                     >
                         <span className="sr-only">Toggle Sidebar</span>
                         {isSidebarOpen ? <PanelRightClose className="h-5 w-5" /> : <PanelRightOpen className="h-5 w-5" />}
