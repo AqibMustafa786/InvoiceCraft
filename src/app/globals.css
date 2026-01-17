@@ -51,20 +51,20 @@
     --background: hsl(var(--background-hsl));
     --foreground: 43 16% 83%; /* #DCD7C9 */
  
-    --card: 180 11% 28%; /* #3F4E4F */
+    --card: 200 11% 25%;
     --card-foreground: 43 16% 83%; /* #DCD7C9 */
  
     --popover: 200 11% 20%; /* #2C3639 */
     --popover-foreground: 43 16% 83%; /* #DCD7C9 */
  
     --primary: 30 29% 50%; /* #A27B5C */
-    --primary-foreground: 210 40% 98%; /* Using a light color for contrast on brown */
+    --primary-foreground: 210 40% 98%;
  
-    --secondary: 180 11% 28%; /* #3F4E4F */
+    --secondary: 200 11% 25%;
     --secondary-foreground: 43 16% 83%; /* #DCD7C9 */
  
-    --muted: 180 11% 28%; /* #3F4E4F */
-    --muted-foreground: 43 10% 65%; /* Derived from #DCD7C9 */
+    --muted: 200 11% 25%;
+    --muted-foreground: 43 10% 65%;
  
     --accent: 30 29% 50%; /* #A27B5C */
     --accent-foreground: 210 40% 98%;
@@ -75,8 +75,8 @@
     --success: 142.1 76.2% 36.3%;
     --success-foreground: 142.1 76.2% 96.3%;
 
-    --border: 180 11% 28%; /* #3F4E4F */
-    --input: 180 11% 28%; /* #3F4E4F */
+    --border: 200 11% 25%;
+    --input: 200 11% 25%;
     --ring: hsl(var(--accent));
   }
 }
