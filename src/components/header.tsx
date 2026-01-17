@@ -78,7 +78,7 @@ export function Header() {
     }
 
     return (
-        <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur-sm">
+        <header className="sticky top-0 z-50 w-full bg-background/95 backdrop-blur-sm">
             <CommandDialog open={open} onOpenChange={setOpen}>
               <DialogTitle className="sr-only">Search</DialogTitle>
               <CommandInput placeholder="Type a command or search..." />
