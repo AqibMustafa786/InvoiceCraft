@@ -279,7 +279,8 @@ export const CleaningTemplate3: React.FC<PageProps> = (props) => {
             <header className="text-center mb-10">
                 <h1 className="text-4xl font-bold">{business.name}</h1>
                 <div className="text-xs mt-1">
-                    <p>{business.address} | {business.phone} | {business.email}</p>
+                    <p className="whitespace-pre-line">{business.address}</p>
+                    <p>{business.phone} | {business.email}</p>
                     {business.website && <p>{business.website}</p>}
                     {business.licenseNumber && <p>Lic #: {business.licenseNumber}</p>}
                     {business.taxId && <p>Tax ID: {business.taxId}</p>}
@@ -306,7 +307,7 @@ export const CleaningTemplate3: React.FC<PageProps> = (props) => {
             <main className="flex-grow mt-4">
                 <table className="w-full text-left text-sm">
                     <thead>
-                        <tr className="border-b-2 border-t-2">
+                        <tr className="border-b-2">
                             <th className="py-2 w-3/5 font-semibold">{(t.description || 'Description').toUpperCase()}</th>
                             <th className="py-2 w-1/5 text-right font-semibold">{(t.quantity || 'Quantity').toUpperCase()}</th>
                             <th className="py-2 text-right font-semibold">{(t.amount || 'Amount').toUpperCase()}</th>
@@ -315,10 +316,7 @@ export const CleaningTemplate3: React.FC<PageProps> = (props) => {
                     <tbody>
                         {pageItems.map(item => (
                             <tr key={item.id} className="border-b">
-                                <td className="py-2">
-                                  <p className="font-medium whitespace-pre-line">{item.name}</p>
-                                  {item.description && <p className="text-xs text-gray-500 whitespace-pre-line">{item.description}</p>}
-                                </td>
+                                <td className="py-2">{item.name}</td>
                                 <td className="py-2 text-right">{item.quantity}</td>
                                 <td className="py-2 text-right">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</td>
                             </tr>
@@ -329,20 +327,20 @@ export const CleaningTemplate3: React.FC<PageProps> = (props) => {
             {pageIndex === totalPages - 1 && (
             <footer className="mt-auto pt-8">
                 <div className="flex justify-end text-sm">
-                    <div className="w-1/3">
+                    <div className="w-2/5">
                         <p className="flex justify-between py-1"><span>{t.total || 'Total'}:</span><span>{currencySymbol}{subtotal.toFixed(2)}</span></p>
                         {discountAmount > 0 && <p className="flex justify-between py-1 text-red-600"><span>{t.discount || 'Discount'}:</span><span>-{currencySymbol}{discountAmount.toFixed(2)}</span></p>}
-                        {invoice.summary.shippingCost > 0 && <p className="flex justify-between py-1"><span>{t.shipping || 'Other Fees'}:</span><span>{currencySymbol}{invoice.summary.shippingCost.toFixed(2)}</span></p>
+                        {invoice.summary.shippingCost > 0 && <p className="flex justify-between py-1"><span>{t.shipping || 'Other Fees'}:</span><span>{currencySymbol}{invoice.summary.shippingCost.toFixed(2)}</span></p>}
                         <p className="flex justify-between py-1"><span>{t.tax || 'Tax'}:</span><span>{currencySymbol}{taxAmount.toFixed(2)}</span></p>
                         <p className="flex justify-between font-bold text-xl mt-2 pt-2 border-t-2"><span>{t.balanceDue || 'Balance Due'}:</span><span>{currencySymbol}{total.toFixed(2)}</span></p>
                         {(invoice.amountPaid || 0) > 0 && <p className="flex justify-between font-bold text-green-600"><span>{t.amountPaid || 'Amount Paid'}:</span><span>-{currencySymbol}{(invoice.amountPaid || 0).toFixed(2)}</span></p>}
-                        <p className="flex justify-between font-bold bg-gray-100 p-2"><span>{t.balanceDue || 'Balance Due'}:</span><span>{currencySymbol}{balanceDue.toFixed(2)}</span></p>
+                        <p className="flex justify-between font-bold text-xl p-1 bg-gray-100"><span>{t.balanceDue || 'Balance Due'}:</span><span>{currencySymbol}{balanceDue.toFixed(2)}</span></p>
                     </div>
                 </div>
                  <div className="text-xs mt-8">
                     <p className="font-bold">{t.paymentInstructions || 'Payment Instructions'}:</p>
                     <p className="text-muted-foreground whitespace-pre-line">{invoice.paymentInstructions}</p>
-                </div>
+                 </div>
                  <div className="flex justify-end mt-4">
                     <SignatureDisplay signature={business.ownerSignature} label="Authorized Signature" />
                 </div>
@@ -351,3 +349,6 @@ export const CleaningTemplate3: React.FC<PageProps> = (props) => {
         </div>
     );
 };
+
+export const CleaningTemplate4: React.FC<PageProps> = (props) => <CleaningTemplate1 {...props} />;
+export const CleaningTemplate5: React.FC<PageProps> = (props) => <CleaningTemplate2 {...props} />;
