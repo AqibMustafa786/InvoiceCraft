@@ -37,7 +37,7 @@ import { CategorySpecificFormFields } from './invoice-templates/category-specifi
 
 interface InvoiceFormProps {
   invoice: Invoice;
-  setInvoice: Dispatch<React.SetStateAction<Invoice | null>>;
+  setInvoice: Dispatch<SetStateAction<Invoice | null>>;
   accentColor: string;
   setAccentColor: Dispatch<SetStateAction<string>>;
   backgroundColor: string;
@@ -887,11 +887,11 @@ export function InvoiceForm({ invoice, setInvoice, accentColor, setAccentColor, 
             <div key={item.id} className="grid grid-cols-1 md:grid-cols-[1.5fr_4fr_1fr_1.5fr_1.5fr_auto] gap-x-4 gap-y-2 items-start border-b pb-3">
               <div className="space-y-2">
                  <Label htmlFor={`itemName-${index}`} className="text-xs md:hidden">Item</Label>
-                <Input id={`itemName-${index}`} placeholder="Item" value={item.name} onChange={(e) => handleItemChange(index, 'name', e.target.value)} className="h-9 text-xs"/>
+                <Textarea id={`itemName-${index}`} placeholder="Item" value={item.name} onChange={(e) => handleItemChange(index, 'name', e.target.value)} className="text-xs min-h-9" rows={1}/>
               </div>
               <div className="space-y-2">
                 <Label htmlFor={`itemDescription-${index}`} className="text-xs md:hidden">Description</Label>
-                <Input id={`itemDescription-${index}`} placeholder="Additional details" value={item.description || ''} onChange={(e) => handleItemChange(index, 'description', e.target.value)} className="h-9 text-xs"/>
+                <Textarea id={`itemDescription-${index}`} placeholder="Additional details" value={item.description || ''} onChange={(e) => handleItemChange(index, 'description', e.target.value)} className="text-xs min-h-9" rows={1}/>
               </div>
               <div className="grid grid-cols-2 md:contents gap-3">
                 <div className="space-y-2">
