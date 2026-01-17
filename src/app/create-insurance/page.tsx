@@ -600,7 +600,7 @@ export default function CreateInsurancePage() {
            <div className="lg:col-span-1 order-3">
               <div className="sticky top-24 space-y-4">
                   <h2 className="text-2xl font-semibold tracking-tight mb-4">Template</h2>
-                  <ScrollArea className="h-[calc(100vh-10rem)] pr-4">
+                  <ScrollArea className="h-[calc(100vh-10rem)]">
                       <InsuranceTemplateSelector 
                           selectedTemplate={document.template}
                           onSelectTemplate={(template) => setDocument(prev => prev ? ({...prev, template}) : null)}
