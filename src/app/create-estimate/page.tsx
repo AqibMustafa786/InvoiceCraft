@@ -6,7 +6,7 @@ import type { Estimate, LineItem, Quote, AuditLogEntry, Client } from '@/lib/typ
 import { DocumentForm } from '@/components/document-form';
 import { ClientDocumentPreview } from '@/components/document-preview';
 import { Button } from '@/components/ui/button';
-import { Printer, FilePlus, LayoutDashboard, Edit, Share2, Mail, Loader2, MoreVertical, Brush, PanelRightOpen, PanelRightClose } from 'lucide-react';
+import { Printer, FilePlus, LayoutDashboard, Edit, Share2, Mail, Loader2, MoreVertical, PanelRightOpen, PanelRightClose } from 'lucide-react';
 import { addDays, isValid } from 'date-fns';
 import { useToast } from '@/hooks/use-toast';
 import Link from 'next/link';
@@ -26,8 +26,8 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Skeleton } from '@/components/ui/skeleton';
 import { toNumberSafe, toDateSafe } from '@/lib/utils';
-import { ScrollArea } from '@/components/ui/scroll-area';
 import { motion, AnimatePresence } from 'framer-motion';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 const ESTIMATES_COLLECTION = 'estimates';
 const CLIENTS_COLLECTION = 'clients';
@@ -710,7 +710,7 @@ export default function CreateEstimatePage() {
                   <Button
                       onClick={() => setIsSidebarOpen(!isSidebarOpen)}
                       variant="outline"
-                      className="absolute top-1/2 -left-5 z-10 rounded-full h-10 w-10 p-0 bg-primary/10 border-primary/20 text-primary hover:bg-primary/20 dark:bg-primary/20 dark:border-primary/30 dark:text-primary dark:hover:bg-primary/30"
+                      className="absolute top-1/2 -translate-x-1/2 z-10 rounded-full h-10 w-10 p-0 bg-primary/10 border-primary/20 text-primary hover:bg-primary/20 dark:bg-primary/20 dark:border-primary/30 dark:text-primary dark:hover:bg-primary/30"
                   >
                       <span className="sr-only">Toggle Sidebar</span>
                       {isSidebarOpen ? <PanelRightClose className="h-5 w-5" /> : <PanelRightOpen className="h-5 w-5" />}
