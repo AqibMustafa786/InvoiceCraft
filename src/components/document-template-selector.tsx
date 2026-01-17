@@ -58,7 +58,7 @@ export function DocumentTemplateSelector({ selectedTemplate, onSelectTemplate, d
             onChange={(e) => setSearchTerm(e.target.value)}
         />
       </div>
-      <div className="grid grid-cols-2 gap-6">
+      <div className="grid grid-cols-[repeat(auto-fit,minmax(120px,1fr))] gap-4">
         {filteredTemplates.map((template) => {
           return (
               <TemplateCard 
@@ -70,7 +70,7 @@ export function DocumentTemplateSelector({ selectedTemplate, onSelectTemplate, d
           )
         })}
          {filteredTemplates.length === 0 && (
-          <div className="text-center py-10 text-muted-foreground col-span-2">
+          <div className="text-center py-10 text-muted-foreground col-span-full">
             <p>No templates found.</p>
           </div>
         )}

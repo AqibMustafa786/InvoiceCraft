@@ -32,7 +32,7 @@ const templates: Template[] = [
 
 export function InsuranceTemplateSelector({ selectedTemplate, onSelectTemplate }: InsuranceTemplateSelectorProps) {
   return (
-    <div className="grid grid-cols-2 gap-6">
+    <div className="grid grid-cols-[repeat(auto-fit,minmax(120px,1fr))] gap-4">
       {templates.map((template) => (
         <div
           key={template.id}
@@ -41,12 +41,11 @@ export function InsuranceTemplateSelector({ selectedTemplate, onSelectTemplate }
         >
           <div
             className={cn(
-              'relative rounded-lg border-2 transition-all overflow-hidden aspect-[3/4] shadow-md mx-auto',
+              'relative rounded-lg border-2 transition-all overflow-hidden aspect-[3/4] shadow-md',
               selectedTemplate === template.id
                 ? 'border-primary ring-4 ring-primary/20'
                 : 'border-border hover:border-primary/50'
             )}
-            style={{ width: '188px' }}
           >
             <Image
               src={template.thumbnailUrl}
