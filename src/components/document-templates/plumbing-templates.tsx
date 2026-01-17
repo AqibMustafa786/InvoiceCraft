@@ -242,19 +242,22 @@ export const PlumbingTemplate2: React.FC<TemplateProps> = ({ document, pageItems
 
 // Template 3: Clean & Minimal
 export const PlumbingTemplate3: React.FC<TemplateProps> = ({ document, pageItems, pageIndex, totalPages, style, t }) => {
-    const { business, client, summary, currency, category } = document;
+    const { business, client, summary, currency, category, textColor } = document;
     const currencySymbol = currencySymbols[currency] || '$';
     const docTitle = document.documentType === 'quote' ? 'Quote' : 'Estimate';
 
     return (
-        <div className={`p-12 bg-white font-['Helvetica'] text-gray-700 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ minHeight: '1056px' }}>
+        <div className={`p-12 bg-white font-['Helvetica'] text-gray-700 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{minHeight: '1056px', color: textColor, backgroundColor: document.backgroundColor }}>
             <header className="flex justify-between items-start mb-12 text-center">
                 <div className="text-left">
                     <h1 className="text-4xl font-bold">{business.name}</h1>
-                    <p className="text-xs">{business.address}</p>
-                    {business.website && <p className="text-xs">{business.website}</p>}
-                    {business.licenseNumber && <p className="text-xs">Lic #: {business.licenseNumber}</p>}
-                    {business.taxId && <p className="text-xs">Tax ID: {business.taxId}</p>}
+                    <div className="text-xs mt-1">
+                        <p className="whitespace-pre-line">{business.address}</p>
+                        <p>{business.phone} | {business.email}</p>
+                        {business.website && <p>{business.website}</p>}
+                        {business.licenseNumber && <p>Lic #: {business.licenseNumber}</p>}
+                        {business.taxId && <p>Tax ID: {business.taxId}</p>}
+                    </div>
                 </div>
                 <div className="text-right">
                     <h2 className="text-3xl font-light tracking-widest">{docTitle.toUpperCase()}</h2>
@@ -423,9 +426,6 @@ export const PlumbingTemplate5: React.FC<TemplateProps> = ({ document, pageItems
                 <div>
                     <h1 className="text-4xl font-extrabold">{business.name}</h1>
                     <p className="text-xs">{business.address}</p>
-                     {business.website && <p className="text-xs">{business.website}</p>}
-                    {business.licenseNumber && <p className="text-xs">Lic #: {business.licenseNumber}</p>}
-                    {business.taxId && <p className="text-xs">Tax ID: {business.taxId}</p>}
                 </div>
                  <div className="text-right">
                      <p className="text-3xl font-bold">{docTitle}</p>
@@ -438,7 +438,7 @@ export const PlumbingTemplate5: React.FC<TemplateProps> = ({ document, pageItems
                  <p className="font-semibold">{document.projectTitle}</p>
                  <p>{client.address}</p>
                  {client.companyName && <p>{client.companyName}</p>}
-                 <p>{client.projectLocation && `Location: ${client.projectLocation}`}</p>
+                 {client.projectLocation && <p>Location: {client.projectLocation}</p>}
             </section>
             
             <PlumbingDetails document={document} t={t} />
@@ -490,6 +490,3 @@ export const PlumbingTemplate5: React.FC<TemplateProps> = ({ document, pageItems
         </div>
     );
 };
-
-
-    
