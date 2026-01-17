@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect, useCallback, useMemo, ChangeEvent } from 'react';
@@ -7,7 +6,7 @@ import type { Invoice, LineItem, AuditLogEntry, Client } from '@/lib/types';
 import { InvoiceForm } from '@/components/invoice-form';
 import { ClientInvoicePreview } from '@/components/invoice-preview';
 import { Button } from '@/components/ui/button';
-import { Printer, Edit, FilePlus, LayoutDashboard, MoreVertical } from 'lucide-react';
+import { Printer, Edit, FilePlus, LayoutDashboard, MoreVertical, PanelRightOpen, PanelRightClose } from 'lucide-react';
 import { addDays, isValid } from 'date-fns';
 import { useToast } from '@/hooks/use-toast';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -24,7 +23,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { useAuth } from '@/context/auth-provider';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { toNumberSafe, toDateSafe } from '@/lib/utils';
 import { Skeleton } from '@/components/ui/skeleton';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -350,6 +349,7 @@ export default function CreateInvoicePage() {
   const [backgroundColor, setBackgroundColor] = useState<string>('#FFFFFF');
   const [textColor, setTextColor] = useState<string>('#374151');
   const [isUploading, setIsUploading] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const { toast } = useToast();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -728,15 +728,12 @@ export default function CreateInvoicePage() {
                 </div>
             </div>
             <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
-                <div className="lg:col-span-2 space-y-6">
+                <div className="lg:col-span-3 space-y-6">
                     <Skeleton className="h-64 w-full" />
                     <Skeleton className="h-48 w-full" />
                     <Skeleton className="h-96 w-full" />
                 </div>
                 <div className="lg:col-span-2">
-                    <Skeleton className="h-[800px] w-full" />
-                </div>
-                <div className="lg:col-span-1">
                     <Skeleton className="h-[800px] w-full" />
                 </div>
             </div>
@@ -754,19 +751,19 @@ export default function CreateInvoicePage() {
           </div>
           <div className="flex w-full md:w-auto items-center gap-2">
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.98 }}>
-              <Button onClick={handleSaveDraft} className="w-full md:w-auto h-8 px-3 text-xs">
+              <Button onClick={handleSaveDraft} className="w-full md:w-auto h-9 px-4 text-sm">
                   <Edit className="mr-2 h-4 w-4" /> Save Draft
               </Button>
             </motion.div>
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.98 }}>
-              <Button onClick={handlePrint} variant="outline" className="w-full md:w-auto h-8 px-3 text-xs">
+              <Button onClick={handlePrint} variant="outline" className="w-full md:w-auto h-9 px-4 text-sm">
                   <Printer className="mr-2 h-4 w-4" /> Save as PDF
               </Button>
             </motion.div>
             <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                    <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.95 }}>
-                    <Button variant="outline" size="icon" className="shrink-0 h-8 w-8">
+                    <Button variant="outline" size="icon" className="shrink-0 h-9 w-9">
                         <MoreVertical className="h-4 w-4" />
                     </Button>
                    </motion.div>
@@ -785,63 +782,96 @@ export default function CreateInvoicePage() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
-          <div className="lg:col-span-2 order-1">
-             <motion.div 
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.5 }}
-             >
-                 <div className="space-y-6">
-                    <h2 className="text-2xl font-semibold tracking-tight mb-4 text-center lg:text-left">Fill in Details</h2>
-                    <InvoiceForm 
-                      invoice={invoice} 
-                      setInvoice={setInvoice as any}
-                      accentColor={accentColor}
-                      setAccentColor={setAccentColor}
-                      backgroundColor={backgroundColor}
-                      setBackgroundColor={setBackgroundColor}
-                      textColor={textColor}
-                      setTextColor={setTextColor}
-                      toast={toast}
-                      onLogoUpload={handleLogoUpload}
-                      isUploading={isUploading}
-                    />
-                  </div>
-              </motion.div>
-          </div>
-          
-          <div className="lg:col-span-2 order-2">
-             <div className="sticky top-24 space-y-4">
-                <div>
-                  <h2 className="text-2xl font-semibold tracking-tight mb-4">Live Preview</h2>
-                   <motion.div
-                    key={`${invoice.template}-${JSON.stringify(processedInvoice)}`}
-                    initial={{ opacity: 0.8, scale: 0.995 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ duration: 0.2 }}
-                  >
-                    <ClientInvoicePreview invoice={processedInvoice!} accentColor={accentColor} backgroundColor={backgroundColor} textColor={textColor} />
-                  </motion.div>
-                </div>
-            </div>
-          </div>
-          
-          <div className="lg:col-span-1 order-3">
-              <div className="sticky top-24 space-y-4">
-                  <h2 className="text-2xl font-semibold tracking-tight mb-4">Template</h2>
-                   <ScrollArea className="h-[calc(100vh-10rem)]">
-                      <DocumentTemplateSelector 
-                          selectedTemplate={invoice.template}
-                          onSelectTemplate={(templateId: string) => {
-                            setInvoice(prev => prev ? ({ ...prev, template: templateId }) : null);
-                          }}
-                          documentType="invoice"
-                          category={invoice.category}
+        <div className="flex gap-4">
+            <motion.div
+              animate={{ width: isSidebarOpen ? '35%' : '47.5%' }}
+              transition={{ duration: 0.3 }}
+              className="transition-all"
+            >
+              <motion.div 
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.5 }}
+              >
+                  <div className="space-y-6">
+                      <h2 className="text-xl font-semibold tracking-tight mb-4 text-center lg:text-left">Fill in Details</h2>
+                      <InvoiceForm 
+                        invoice={invoice} 
+                        setInvoice={setInvoice as any}
+                        accentColor={accentColor}
+                        setAccentColor={setAccentColor}
+                        backgroundColor={backgroundColor}
+                        setBackgroundColor={setBackgroundColor}
+                        textColor={textColor}
+                        setTextColor={setTextColor}
+                        toast={toast}
+                        onLogoUpload={handleLogoUpload}
+                        isUploading={isUploading}
                       />
-                  </ScrollArea>
+                    </div>
+                </motion.div>
+            </motion.div>
+            
+            <motion.div
+              animate={{ width: isSidebarOpen ? '35%' : '47.5%' }}
+              transition={{ duration: 0.3 }}
+              className="transition-all"
+            >
+              <div className="sticky top-24 space-y-4">
+                  <div>
+                    <h2 className="text-xl font-semibold tracking-tight mb-4">Live Preview</h2>
+                    <motion.div
+                      key={`${invoice.template}-${JSON.stringify(processedInvoice)}`}
+                      initial={{ opacity: 0.8, scale: 0.995 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ duration: 0.2 }}
+                    >
+                      <ClientInvoicePreview invoice={processedInvoice!} accentColor={accentColor} backgroundColor={backgroundColor} textColor={textColor} />
+                    </motion.div>
+                  </div>
               </div>
-          </div>
+            </motion.div>
+            
+            <motion.div
+                animate={{ width: isSidebarOpen ? '30%' : '5%' }}
+                transition={{ duration: 0.3 }}
+                className="relative"
+            >
+                <div className="h-full sticky top-24">
+                    <Button
+                        onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+                        variant="outline"
+                        className="absolute top-1/2 -left-5 z-10 rounded-full h-10 w-10 p-0 bg-primary/10 border-primary/20 text-primary hover:bg-primary/20 dark:bg-primary/20 dark:border-primary/30 dark:text-primary dark:hover:bg-primary/30"
+                    >
+                        <span className="sr-only">Toggle Sidebar</span>
+                        {isSidebarOpen ? <PanelRightClose className="h-5 w-5" /> : <PanelRightOpen className="h-5 w-5" />}
+                    </Button>
+
+                    <AnimatePresence>
+                        {isSidebarOpen && (
+                            <motion.div
+                                initial={{ opacity: 0, x: 20 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                exit={{ opacity: 0, x: 20 }}
+                                transition={{ duration: 0.2 }}
+                                className="h-full w-full bg-card rounded-xl p-4 overflow-hidden"
+                            >
+                                <h2 className="text-xl font-semibold tracking-tight mb-4">Templates</h2>
+                                <ScrollArea className="h-[calc(100vh-12rem)]">
+                                    <DocumentTemplateSelector 
+                                        selectedTemplate={invoice.template}
+                                        onSelectTemplate={(templateId: string) => {
+                                            setInvoice(prev => prev ? ({ ...prev, template: templateId }) : null);
+                                        }}
+                                        documentType="invoice"
+                                        category={invoice.category}
+                                    />
+                                </ScrollArea>
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
+                </div>
+            </motion.div>
         </div>
       </div>
       {processedInvoice && <PrintableInvoice invoice={processedInvoice} accentColor={accentColor} backgroundColor={backgroundColor} textColor={textColor} />}

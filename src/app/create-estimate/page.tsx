@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect, useCallback, useMemo } from 'react';
@@ -7,7 +6,7 @@ import type { Estimate, LineItem, Quote, AuditLogEntry, Client } from '@/lib/typ
 import { DocumentForm } from '@/components/document-form';
 import { ClientDocumentPreview } from '@/components/document-preview';
 import { Button } from '@/components/ui/button';
-import { Printer, FilePlus, LayoutDashboard, Edit, Share2, Mail, Loader2, MoreVertical, Brush } from 'lucide-react';
+import { Printer, FilePlus, LayoutDashboard, Edit, Share2, Mail, Loader2, MoreVertical, Brush, PanelRightOpen, PanelRightClose } from 'lucide-react';
 import { addDays, isValid } from 'date-fns';
 import { useToast } from '@/hooks/use-toast';
 import Link from 'next/link';
@@ -28,6 +27,7 @@ import {
 import { Skeleton } from '@/components/ui/skeleton';
 import { toNumberSafe, toDateSafe } from '@/lib/utils';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const ESTIMATES_COLLECTION = 'estimates';
 const CLIENTS_COLLECTION = 'clients';
@@ -286,6 +286,7 @@ export default function CreateEstimatePage() {
   const [textColor, setTextColor] = useState<string>('#374151');
   const [isSendingEmail, setIsSendingEmail] = useState(false);
   const { toast } = useToast();
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   
   const { firestore } = useFirebase();
   const router = useRouter();
@@ -633,15 +634,15 @@ export default function CreateEstimatePage() {
             <p className="text-sm text-muted-foreground">Fill out the form to generate your professional estimate.</p>
           </div>
           <div className="flex w-full md:w-auto items-center gap-2">
-            <Button onClick={handleSaveDraft} className="w-full md:w-auto h-8 px-3 text-xs" disabled={!document}>
+            <Button onClick={handleSaveDraft} className="w-full md:w-auto h-9 px-4 text-sm" disabled={!document}>
                 <Edit className="mr-2 h-4 w-4" /> Save Draft
             </Button>
-            <Button onClick={handlePrint} variant="outline" className="w-full md:w-auto h-8 px-3 text-xs" disabled={!document}>
+            <Button onClick={handlePrint} variant="outline" className="w-full md:w-auto h-9 px-4 text-sm" disabled={!document}>
                 <Printer className="mr-2 h-4 w-4" /> Save as PDF
             </Button>
             <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                    <Button variant="outline" size="icon" className="shrink-0 h-8 w-8">
+                    <Button variant="outline" size="icon" className="shrink-0 h-9 w-9">
                         <MoreVertical className="h-4 w-4" />
                     </Button>
                 </DropdownMenuTrigger>
@@ -666,10 +667,14 @@ export default function CreateEstimatePage() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
-            <div className="lg:col-span-2 order-1">
-              <div className="space-y-6">
-                <h2 className="text-2xl font-semibold tracking-tight mb-4 text-center lg:text-left">Fill in Details</h2>
+        <div className="flex gap-4">
+          <motion.div
+            animate={{ width: isSidebarOpen ? '35%' : '47.5%' }}
+            transition={{ duration: 0.3 }}
+            className="transition-all"
+          >
+            <div className="space-y-6">
+                <h2 className="text-xl font-semibold tracking-tight mb-4 text-center lg:text-left">Fill in Details</h2>
                 <DocumentForm 
                   document={document!} 
                   setDocument={setDocument} 
@@ -683,28 +688,56 @@ export default function CreateEstimatePage() {
                   documentType="estimate"
                 />
               </div>
-            </div>
-            <div className="lg:col-span-2 order-2">
-              <div className="sticky top-24 space-y-4">
+          </motion.div>
+          <motion.div
+            animate={{ width: isSidebarOpen ? '35%' : '47.5%' }}
+            transition={{ duration: 0.3 }}
+            className="transition-all"
+          >
+             <div className="sticky top-24 space-y-4">
                   <div>
-                    <h2 className="text-2xl font-semibold tracking-tight mb-4">Live Preview</h2>
+                    <h2 className="text-xl font-semibold tracking-tight mb-4">Live Preview</h2>
                     <ClientDocumentPreview document={processedDocument} accentColor={accentColor} backgroundColor={backgroundColor} textColor={textColor} />
                   </div>
               </div>
-            </div>
-             <div className="lg:col-span-1 order-3">
-                <div className="sticky top-24 space-y-4">
-                  <h2 className="text-2xl font-semibold tracking-tight mb-4">Template</h2>
-                    <ScrollArea className="h-[calc(100vh-10rem)]">
-                        <DocumentTemplateSelector 
-                            selectedTemplate={document!.template}
-                            onSelectTemplate={(template) => setDocument(prev => prev ? ({...prev, template}) : null)}
-                            documentType="estimate"
-                            category={document!.category}
-                        />
-                    </ScrollArea>
-                </div>
-            </div>
+          </motion.div>
+          <motion.div
+            animate={{ width: isSidebarOpen ? '30%' : '5%' }}
+            transition={{ duration: 0.3 }}
+            className="relative"
+          >
+               <div className="h-full sticky top-24">
+                  <Button
+                      onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+                      variant="outline"
+                      className="absolute top-1/2 -left-5 z-10 rounded-full h-10 w-10 p-0 bg-primary/10 border-primary/20 text-primary hover:bg-primary/20 dark:bg-primary/20 dark:border-primary/30 dark:text-primary dark:hover:bg-primary/30"
+                  >
+                      <span className="sr-only">Toggle Sidebar</span>
+                      {isSidebarOpen ? <PanelRightClose className="h-5 w-5" /> : <PanelRightOpen className="h-5 w-5" />}
+                  </Button>
+                  <AnimatePresence>
+                      {isSidebarOpen && (
+                          <motion.div
+                              initial={{ opacity: 0, x: 20 }}
+                              animate={{ opacity: 1, x: 0 }}
+                              exit={{ opacity: 0, x: 20 }}
+                              transition={{ duration: 0.2 }}
+                              className="h-full w-full bg-card rounded-xl p-4 overflow-hidden"
+                          >
+                              <h2 className="text-xl font-semibold tracking-tight mb-4">Templates</h2>
+                              <ScrollArea className="h-[calc(100vh-12rem)]">
+                                  <DocumentTemplateSelector 
+                                      selectedTemplate={document!.template}
+                                      onSelectTemplate={(template) => setDocument(prev => prev ? ({...prev, template}) : null)}
+                                      documentType="estimate"
+                                      category={document!.category}
+                                  />
+                              </ScrollArea>
+                          </motion.div>
+                      )}
+                  </AnimatePresence>
+              </div>
+          </motion.div>
         </div>
       </div>
       {processedDocument && <PrintableDocument doc={processedDocument} />}

@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect, useCallback, useMemo } from 'react';
@@ -7,7 +6,7 @@ import type { InsuranceDocument, LineItem, AuditLogEntry, Client } from '@/lib/t
 import { InsuranceForm } from '@/components/insurance-form';
 import { InsurancePreview } from '@/components/insurance-preview';
 import { Button } from '@/components/ui/button';
-import { Printer, FilePlus, LayoutDashboard, Brush, MoreVertical, Edit, History, Loader2, Copy, Archive, ShieldCheck, Share2 } from 'lucide-react';
+import { Printer, FilePlus, LayoutDashboard, Brush, MoreVertical, Edit, History, Loader2, Copy, Archive, ShieldCheck, Share2, PanelRightOpen, PanelRightClose } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { InsuranceTemplateSelector } from '@/components/insurance-template-selector';
 import Link from 'next/link';
@@ -28,6 +27,7 @@ import { setDocumentNonBlocking, updateDocumentNonBlocking } from '@/firebase/no
 import { Skeleton } from '@/components/ui/skeleton';
 import { HistoryModal } from '@/components/dashboard/history-modal';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const INSURANCE_COLLECTION = 'insurance';
 const CLIENTS_COLLECTION = 'clients';
@@ -232,6 +232,7 @@ export default function CreateInsurancePage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [historyModalState, setHistoryModalState] = useState<{ isOpen: boolean, auditLog: AuditLogEntry[]}>({isOpen: false, auditLog: []});
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const draftId = searchParams.get('draftId');
   const prefillClientId = searchParams.get('clientId');
@@ -498,15 +499,12 @@ export default function CreateInsurancePage() {
                 </div>
             </div>
             <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
-                <div className="lg:col-span-2 space-y-6">
+                <div className="lg:col-span-3 space-y-6">
                     <Skeleton className="h-64 w-full" />
                     <Skeleton className="h-48 w-full" />
                     <Skeleton className="h-96 w-full" />
                 </div>
                 <div className="lg:col-span-2">
-                    <Skeleton className="h-[800px] w-full" />
-                </div>
-                 <div className="lg:col-span-1">
                     <Skeleton className="h-[800px] w-full" />
                 </div>
             </div>
@@ -528,16 +526,16 @@ export default function CreateInsurancePage() {
             <p className="text-muted-foreground">Select a template and fill out the form to generate your claim document.</p>
           </div>
           <div className="flex w-full md:w-auto items-center gap-2">
-              <Button onClick={handleSaveDraft} className="w-full md:w-auto h-8 px-3 text-xs">
+              <Button onClick={handleSaveDraft} className="w-full md:w-auto h-9 px-4 text-sm">
                   <Edit className="mr-2 h-4 w-4" /> Save Draft
               </Button>
-              <Button onClick={handlePrint} variant="outline" className="w-full md:w-auto h-8 px-3 text-xs">
+              <Button onClick={handlePrint} variant="outline" className="w-full md:w-auto h-9 px-4 text-sm">
                 <Printer className="mr-2 h-4 w-4" />
                 Save as PDF
               </Button>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                    <Button variant="outline" size="icon" className="shrink-0 h-8 w-8">
+                    <Button variant="outline" size="icon" className="shrink-0 h-9 w-9">
                         <MoreVertical className="h-4 w-4" />
                     </Button>
                 </DropdownMenuTrigger>
@@ -572,10 +570,14 @@ export default function CreateInsurancePage() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 xl:gap-12">
-          <div className="lg:col-span-2 order-1">
+        <div className="flex gap-4">
+            <motion.div
+              animate={{ width: isSidebarOpen ? '35%' : '47.5%' }}
+              transition={{ duration: 0.3 }}
+              className="transition-all"
+            >
              <div className="space-y-6">
-                <h2 className="text-2xl font-semibold tracking-tight mb-4 text-center lg:text-left">Fill in Details</h2>
+                <h2 className="text-xl font-semibold tracking-tight mb-4 text-center lg:text-left">Fill in Details</h2>
                 <InsuranceForm 
                   document={document} 
                   setDocument={setDocument} 
@@ -588,26 +590,54 @@ export default function CreateInsurancePage() {
                   toast={toast}
                 />
               </div>
-          </div>
-          <div className="lg:col-span-2 order-2">
+            </motion.div>
+            <motion.div
+              animate={{ width: isSidebarOpen ? '35%' : '47.5%' }}
+              transition={{ duration: 0.3 }}
+              className="transition-all"
+            >
              <div className="sticky top-24 space-y-4">
                 <div>
-                  <h2 className="text-2xl font-semibold tracking-tight mb-4">Live Preview</h2>
+                  <h2 className="text-xl font-semibold tracking-tight mb-4">Live Preview</h2>
                   <InsurancePreview doc={document} accentColor={accentColor} backgroundColor={backgroundColor} textColor={textColor} />
                 </div>
             </div>
-          </div>
-           <div className="lg:col-span-1 order-3">
-              <div className="sticky top-24 space-y-4">
-                  <h2 className="text-2xl font-semibold tracking-tight mb-4">Template</h2>
-                  <ScrollArea className="h-[calc(100vh-10rem)]">
-                      <InsuranceTemplateSelector 
-                          selectedTemplate={document.template}
-                          onSelectTemplate={(template) => setDocument(prev => prev ? ({...prev, template}) : null)}
-                      />
-                  </ScrollArea>
+          </motion.div>
+          <motion.div
+            animate={{ width: isSidebarOpen ? '30%' : '5%' }}
+            transition={{ duration: 0.3 }}
+            className="relative"
+          >
+            <div className="h-full sticky top-24">
+                  <Button
+                      onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+                      variant="outline"
+                      className="absolute top-1/2 -left-5 z-10 rounded-full h-10 w-10 p-0 bg-primary/10 border-primary/20 text-primary hover:bg-primary/20 dark:bg-primary/20 dark:border-primary/30 dark:text-primary dark:hover:bg-primary/30"
+                  >
+                      <span className="sr-only">Toggle Sidebar</span>
+                      {isSidebarOpen ? <PanelRightClose className="h-5 w-5" /> : <PanelRightOpen className="h-5 w-5" />}
+                  </Button>
+                  <AnimatePresence>
+                      {isSidebarOpen && (
+                          <motion.div
+                              initial={{ opacity: 0, x: 20 }}
+                              animate={{ opacity: 1, x: 0 }}
+                              exit={{ opacity: 0, x: 20 }}
+                              transition={{ duration: 0.2 }}
+                              className="h-full w-full bg-card rounded-xl p-4 overflow-hidden"
+                          >
+                              <h2 className="text-xl font-semibold tracking-tight mb-4">Templates</h2>
+                              <ScrollArea className="h-[calc(100vh-12rem)]">
+                                  <InsuranceTemplateSelector 
+                                      selectedTemplate={document.template}
+                                      onSelectTemplate={(template) => setDocument(prev => prev ? ({...prev, template}) : null)}
+                                  />
+                              </ScrollArea>
+                          </motion.div>
+                      )}
+                  </AnimatePresence>
               </div>
-          </div>
+          </motion.div>
         </div>
       </div>
       {document && <PrintableInsuranceDoc doc={document} />}
