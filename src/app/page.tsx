@@ -1,3 +1,4 @@
+
 'use client';
 
 import Link from 'next/link';
@@ -428,7 +429,7 @@ export default function HomePage() {
           </div>
         </section>
 
-        <section className="py-20 md:py-28 bg-card text-card-foreground overflow-hidden">
+        <section className="py-20 md:py-28 bg-[#4A555C] text-card-foreground overflow-hidden">
             <div className="container px-4 mx-auto md:px-6 relative">
                  <div className="absolute top-0 left-0 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-primary/20 rounded-full blur-3xl"></div>
                  <div className="absolute bottom-0 right-0 translate-x-1/2 translate-y-1/2 w-96 h-96 bg-accent/20 rounded-full blur-3xl"></div>
