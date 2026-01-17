@@ -633,15 +633,15 @@ export default function CreateEstimatePage() {
             <p className="text-sm text-muted-foreground">Fill out the form to generate your professional estimate.</p>
           </div>
           <div className="flex w-full md:w-auto items-center gap-2">
-            <Button size="sm" onClick={handleSaveDraft} className="w-full md:w-auto" disabled={!document}>
+            <Button onClick={handleSaveDraft} className="w-full md:w-auto h-8 px-3 text-xs" disabled={!document}>
                 <Edit className="mr-2 h-4 w-4" /> Save Draft
             </Button>
-            <Button size="sm" onClick={handlePrint} variant="outline" className="w-full md:w-auto" disabled={!document}>
+            <Button onClick={handlePrint} variant="outline" className="w-full md:w-auto h-8 px-3 text-xs" disabled={!document}>
                 <Printer className="mr-2 h-4 w-4" /> Save as PDF
             </Button>
             <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                    <Button variant="outline" size="sm" className="shrink-0 h-9 w-9 px-0">
+                    <Button variant="outline" size="icon" className="shrink-0 h-8 w-8">
                         <MoreVertical className="h-4 w-4" />
                     </Button>
                 </DropdownMenuTrigger>

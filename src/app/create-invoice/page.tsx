@@ -754,19 +754,19 @@ export default function CreateInvoicePage() {
           </div>
           <div className="flex w-full md:w-auto items-center gap-2">
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.98 }}>
-              <Button size="sm" onClick={handleSaveDraft} className="w-full md:w-auto">
+              <Button onClick={handleSaveDraft} className="w-full md:w-auto h-8 px-3 text-xs">
                   <Edit className="mr-2 h-4 w-4" /> Save Draft
               </Button>
             </motion.div>
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.98 }}>
-              <Button size="sm" onClick={handlePrint} variant="outline" className="w-full md:w-auto">
+              <Button onClick={handlePrint} variant="outline" className="w-full md:w-auto h-8 px-3 text-xs">
                   <Printer className="mr-2 h-4 w-4" /> Save as PDF
               </Button>
             </motion.div>
             <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                    <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.95 }}>
-                    <Button variant="outline" size="icon" className="shrink-0 h-9 w-9">
+                    <Button variant="outline" size="icon" className="shrink-0 h-8 w-8">
                         <MoreVertical className="h-4 w-4" />
                     </Button>
                    </motion.div>

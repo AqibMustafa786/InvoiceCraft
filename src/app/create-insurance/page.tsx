@@ -528,16 +528,16 @@ export default function CreateInsurancePage() {
             <p className="text-muted-foreground">Select a template and fill out the form to generate your claim document.</p>
           </div>
           <div className="flex w-full md:w-auto items-center gap-2">
-              <Button size="sm" onClick={handleSaveDraft} className="w-full md:w-auto">
+              <Button onClick={handleSaveDraft} className="w-full md:w-auto h-8 px-3 text-xs">
                   <Edit className="mr-2 h-4 w-4" /> Save Draft
               </Button>
-              <Button size="sm" onClick={handlePrint} variant="outline" className="w-full md:w-auto">
+              <Button onClick={handlePrint} variant="outline" className="w-full md:w-auto h-8 px-3 text-xs">
                 <Printer className="mr-2 h-4 w-4" />
                 Save as PDF
               </Button>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                    <Button variant="outline" size="sm" className="shrink-0 h-9 w-9 px-0">
+                    <Button variant="outline" size="icon" className="shrink-0 h-8 w-8">
                         <MoreVertical className="h-4 w-4" />
                     </Button>
                 </DropdownMenuTrigger>
