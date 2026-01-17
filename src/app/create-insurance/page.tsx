@@ -6,7 +6,7 @@ import type { InsuranceDocument, LineItem, AuditLogEntry, Client } from '@/lib/t
 import { InsuranceForm } from '@/components/insurance-form';
 import { InsurancePreview } from '@/components/insurance-preview';
 import { Button } from '@/components/ui/button';
-import { Printer, FilePlus, LayoutDashboard, Brush, MoreVertical, Edit, History, Loader2, Copy, Archive, ShieldCheck, Share2, PanelRightOpen, PanelRightClose } from 'lucide-react';
+import { Printer, FilePlus, LayoutDashboard, Brush, MoreVertical, Edit, History, Loader2, Copy, Archive, ShieldCheck, Share2, X } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { InsuranceTemplateSelector } from '@/components/insurance-template-selector';
 import Link from 'next/link';
@@ -540,6 +540,10 @@ export default function CreateInsurancePage() {
                     </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
+                    <DropdownMenuItem onClick={() => setIsSidebarOpen(!isSidebarOpen)}>
+                        <Brush className="mr-2 h-4 w-4" /> Change Template
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
                     <DropdownMenuItem onClick={handleNew}>
                         <FilePlus className="mr-2 h-4 w-4" /> New
                     </DropdownMenuItem>
@@ -572,7 +576,7 @@ export default function CreateInsurancePage() {
 
         <div className="flex gap-4">
             <motion.div
-              animate={{ width: isSidebarOpen ? '35%' : '47.5%' }}
+              animate={{ width: isSidebarOpen ? '35%' : '50%' }}
               transition={{ duration: 0.3 }}
               className="transition-all"
             >
@@ -592,7 +596,7 @@ export default function CreateInsurancePage() {
               </div>
             </motion.div>
             <motion.div
-              animate={{ width: isSidebarOpen ? '35%' : '47.5%' }}
+              animate={{ width: isSidebarOpen ? '35%' : '50%' }}
               transition={{ duration: 0.3 }}
               className="transition-all"
             >
@@ -603,41 +607,34 @@ export default function CreateInsurancePage() {
                 </div>
             </div>
           </motion.div>
-          <motion.div
-            animate={{ width: isSidebarOpen ? '30%' : '5%' }}
-            transition={{ duration: 0.3 }}
-            className="relative"
-          >
-            <div className="h-full sticky top-24">
-                  <Button
-                      onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-                      variant="outline"
-                      className="absolute top-10 -translate-x-1/2 z-10 rounded-full h-10 w-10 p-0 bg-primary/10 border-primary/20 text-primary hover:bg-primary/20 dark:bg-primary/20 dark:border-primary/30 dark:text-primary dark:hover:bg-primary/30"
-                  >
-                      <span className="sr-only">Toggle Sidebar</span>
-                      {isSidebarOpen ? <PanelRightClose className="h-5 w-5" /> : <PanelRightOpen className="h-5 w-5" />}
-                  </Button>
-                  <AnimatePresence>
-                      {isSidebarOpen && (
-                          <motion.div
-                              initial={{ opacity: 0, x: 20 }}
-                              animate={{ opacity: 1, x: 0 }}
-                              exit={{ opacity: 0, x: 20 }}
-                              transition={{ duration: 0.2 }}
-                              className="h-full w-full bg-card rounded-xl p-4 overflow-hidden"
-                          >
-                              <h2 className="text-xl font-semibold tracking-tight mb-4">Templates</h2>
-                              <ScrollArea className="h-[calc(100vh-12rem)]">
-                                  <InsuranceTemplateSelector 
-                                      selectedTemplate={document.template}
-                                      onSelectTemplate={(template) => setDocument(prev => prev ? ({...prev, template}) : null)}
-                                  />
-                              </ScrollArea>
-                          </motion.div>
-                      )}
-                  </AnimatePresence>
-              </div>
-          </motion.div>
+          <AnimatePresence>
+            {isSidebarOpen && (
+              <motion.div
+                  initial={{ width: 0, opacity: 0 }}
+                  animate={{ width: '30%', opacity: 1 }}
+                  exit={{ width: 0, opacity: 0 }}
+                  transition={{ duration: 0.3, ease: 'easeInOut' }}
+                  className="relative"
+              >
+                  <div className="h-full sticky top-24">
+                      <div className="h-full w-full bg-card rounded-xl p-4 overflow-hidden">
+                           <div className="flex justify-between items-center mb-4">
+                              <h2 className="text-xl font-semibold tracking-tight">Templates</h2>
+                              <Button onClick={() => setIsSidebarOpen(false)} variant="ghost" size="icon" className="h-8 w-8 rounded-full">
+                                  <X className="h-4 w-4" />
+                              </Button>
+                           </div>
+                          <ScrollArea className="h-[calc(100vh-12rem)]">
+                              <InsuranceTemplateSelector 
+                                  selectedTemplate={document.template}
+                                  onSelectTemplate={(template) => setDocument(prev => prev ? ({...prev, template}) : null)}
+                              />
+                          </ScrollArea>
+                      </div>
+                  </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       </div>
       {document && <PrintableInsuranceDoc doc={document} />}
