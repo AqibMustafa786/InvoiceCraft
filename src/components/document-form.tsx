@@ -1,4 +1,3 @@
-
 'use client';
 
 import { ChangeEvent, Dispatch, SetStateAction, useState, useEffect } from 'react';
@@ -1184,16 +1183,13 @@ export function DocumentForm({ document, setDocument, accentColor, setAccentColo
                           <Label htmlFor="preset-name">Preset Name</Label>
                           <Input id="preset-name" value={newPresetName} onChange={(e) => setNewPresetName(e.target.value)} placeholder="e.g., Standard Roof Repair"/>
                       </div>
-                      <DialogFooter>
-                          <DialogClose asChild><Button variant="ghost">Cancel</Button></DialogClose>
-                          <Button onClick={handleSavePreset}>Save Preset</Button>
-                      </DialogFooter>
+                      <DialogFooter><DialogClose asChild><Button variant="ghost">Cancel</Button></DialogClose><Button onClick={handleSavePreset}>Save Preset</Button></DialogFooter>
                   </DialogContent>
                 </Dialog>
               </div>
             </div>
 
-            <div className="hidden md:grid md:grid-cols-[2fr_6fr_90px_120px_60px_120px_auto] gap-x-4 text-xs font-medium text-muted-foreground items-center">
+            <div className="hidden md:grid md:grid-cols-[1.5fr_4fr_1fr_1.5fr_0.5fr_1.5fr_auto] gap-x-4 text-xs font-medium text-muted-foreground items-center">
                 <Label>Item</Label>
                 <Label>Description</Label>
                 <Label>Qty</Label>
@@ -1203,14 +1199,14 @@ export function DocumentForm({ document, setDocument, accentColor, setAccentColo
                 <span></span>
             </div>
             {document.lineItems.map((item, index) => (
-                <div key={item.id} className="grid grid-cols-1 md:grid-cols-[2fr_6fr_90px_120px_60px_120px_auto] gap-x-4 gap-y-2 items-start border-b pb-3">
+                <div key={item.id} className="grid grid-cols-1 md:grid-cols-[1.5fr_4fr_1fr_1.5fr_0.5fr_1.5fr_auto] gap-x-4 gap-y-2 items-start border-b pb-3">
                      <div className="space-y-2">
                         <Label htmlFor={`itemName-${index}`} className="text-xs md:hidden">Item</Label>
                         <Input id={`itemName-${index}`} placeholder="Item" value={item.name} onChange={(e) => handleItemChange(index, 'name', e.target.value)} className="h-9 text-xs"/>
                     </div>
                     <div className="space-y-2">
                         <Label htmlFor={`itemDescription-${index}`} className="text-xs md:hidden">Description</Label>
-                        <Textarea id={`itemDescription-${index}`} placeholder="Additional details" value={item.description} onChange={(e) => handleItemChange(index, 'description', e.target.value)} className="h-9 min-h-9 text-xs"/>
+                        <Input id={`itemDescription-${index}`} placeholder="Additional details" value={item.description || ''} onChange={(e) => handleItemChange(index, 'description', e.target.value)} className="h-9 text-xs"/>
                     </div>
                      <div className="grid grid-cols-3 md:contents gap-3">
                         <div className="space-y-2">
