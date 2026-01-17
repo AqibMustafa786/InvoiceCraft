@@ -1,3 +1,4 @@
+
 'use client';
 
 import React from 'react';
@@ -119,8 +120,8 @@ export const MedicalTemplate1: React.FC<PageProps> = (props) => {
                     <table className="w-full text-left text-sm">
                         <thead style={{backgroundColor: accentColor}} className="text-white">
                             <tr>
-                                <th className="p-2 font-bold w-1/2">{(t.item || 'ITEM').toUpperCase()}</th>
-                                <th className="p-2 font-bold w-1/2">{(t.description || 'DESCRIPTION').toUpperCase()}</th>
+                                <th className="p-2 font-bold w-2/5">{(t.item || 'ITEM').toUpperCase()}</th>
+                                <th className="p-2 font-bold w-2/5">{(t.description || 'DESCRIPTION').toUpperCase()}</th>
                                 <th className="p-2 font-bold text-right">{(t.price || 'PRICE').toUpperCase()}</th>
                             </tr>
                         </thead>
@@ -230,7 +231,7 @@ export const MedicalTemplate3: React.FC<PageProps> = (props) => {
 
     return (
         <div className={`flex ${pageIndex < totalPages - 1 ? 'page-break-after' : ''}`} style={{ minHeight: '1056px', backgroundColor: props.backgroundColor, color: props.textColor }}>
-            <div className="w-1/4 p-8 text-white" style={{backgroundColor: accentColor}}>
+            <div className="w-1/3 p-8 text-white" style={{backgroundColor: accentColor}}>
                 <h1 className="text-3xl font-bold">{docTitle}</h1>
                 <div className="mt-10 text-xs space-y-4">
                     <div><p className="opacity-70">{t.statementDate || 'Statement Date'}</p><p>{safeFormat(invoice.invoiceDate, 'MM/dd/yyyy')}</p></div>
@@ -239,38 +240,52 @@ export const MedicalTemplate3: React.FC<PageProps> = (props) => {
                     {invoice.poNumber && <div><p className="opacity-70">PO #</p><p>{invoice.poNumber}</p></div>}
                 </div>
             </div>
-            <div className="w-3/4 p-10">
-                <header className="text-right mb-10">
-                    <h2 className="text-2xl font-bold">{business.name}</h2>
-                    <div className="text-xs text-gray-500">
-                        <p className="whitespace-pre-line">{business.address}</p>
-                        <p>{business.phone} | {business.email}</p>
-                        {business.website && <p>{business.website}</p>}
-                        {business.licenseNumber && <p>Lic #: {business.licenseNumber}</p>}
-                        {business.taxId && <p>Tax ID: {business.taxId}</p>}
-                    </div>
-                </header>
+            <div className="w-2/3 p-10 flex flex-col">
+                <header className="text-right mb-10"><h2 className="text-2xl font-bold">{business.name}</h2><p className="text-xs">{business.address}</p></header>
                 <section className="mb-10 text-sm">
                     <p className="font-bold">{t.to || 'To'}:</p>
                     <p>{client.name}</p>
                     {client.companyName && <p>{client.companyName}</p>}
                     <p className="whitespace-pre-line">{client.address}</p>
                     <p>{client.phone} | {client.email}</p>
-                    {client.shippingAddress && <p className="mt-2"><span className="font-bold">Ship To:</span><br/>{client.shippingAddress}</p>}
                 </section>
                 <CategorySpecificDetails invoice={invoice} t={t} />
                 <main className="flex-grow mt-4">
                     <table className="w-full text-left text-xs">
-                        <thead><tr className="bg-gray-100"><th className="p-2 font-bold w-4/5">{t.description || 'Description'}</th><th className="p-2 font-bold text-right">{t.amount || 'Amount'}</th></tr></thead>
-                        <tbody>{pageItems.map(item => (<tr key={item.id} className="border-b"><td className="p-2">{item.name}</td><td className="p-2 text-right">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</td></tr>))}</tbody>
+                        <thead>
+                            <tr className="bg-gray-100">
+                                <th className="p-2 font-bold w-1/2">{t.item || 'Item'}</th>
+                                <th className="p-2 font-bold w-1/2">{t.description || 'Description'}</th>
+                                <th className="p-2 font-bold text-center">{t.quantity || 'Qty'}</th>
+                                <th className="p-2 font-bold text-right">{t.unitPrice || 'Unit Price'}</th>
+                                <th className="p-2 font-bold text-right">{t.amount || 'Amount'}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {pageItems.map(item => (
+                                <tr key={item.id} className="border-b">
+                                    <td className="p-2 font-semibold whitespace-pre-line">{item.name}</td>
+                                    <td className="p-2 text-xs text-muted-foreground whitespace-pre-line">{item.description}</td>
+                                    <td className="p-2 text-center">{item.quantity}</td>
+                                    <td className="p-2 text-right">{currencySymbol}{item.unitPrice.toFixed(2)}</td>
+                                    <td className="p-2 text-right">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</td>
+                                </tr>
+                            ))}
+                        </tbody>
                     </table>
                 </main>
                 {pageIndex === totalPages - 1 && (
                 <footer className="mt-auto pt-8">
-                    <div className="flex justify-end text-xl font-bold"><p><span>{t.total || 'Total'}: </span><span>{currencySymbol}{total.toFixed(2)}</span></p></div>
-                    {(invoice.amountPaid || 0) > 0 && <div className="flex justify-end text-xl font-bold text-green-600"><p><span>{t.amountPaid || 'Paid'}: </span><span>-{currencySymbol}{(invoice.amountPaid || 0).toFixed(2)}</span></p></div>}
-                    <div className="flex justify-end text-xl font-bold mt-2 bg-gray-100 p-2">
-                       <p><span>{t.balanceDue || 'Balance Due'}: </span><span>{currencySymbol}{balanceDue.toFixed(2)}</span></p>
+                    <div className="flex justify-end text-sm">
+                        <div className="w-1/2 space-y-1">
+                            <p className="flex justify-between"><span>{t.subtotal || 'Subtotal'}:</span><span>{currencySymbol}{subtotal.toFixed(2)}</span></p>
+                            {discountAmount > 0 && <p className="flex justify-between text-red-600"><span>{t.discount || 'Discount'}:</span><span>-{currencySymbol}{discountAmount.toFixed(2)}</span></p>}
+                            {invoice.summary.shippingCost > 0 && <p className="flex justify-between"><span>{t.shipping || 'Other Fees'}:</span><span>{currencySymbol}{invoice.summary.shippingCost.toFixed(2)}</span></p>}
+                            <p className="flex justify-between"><span>{t.tax || 'Tax'}:</span><span>{currencySymbol}{taxAmount.toFixed(2)}</span></p>
+                            <p className="flex justify-between font-bold text-xl mt-2"><span>{t.total || 'Total'}:</span><span>{currencySymbol}{total.toFixed(2)}</span></p>
+                            {(invoice.amountPaid || 0) > 0 && <p className="flex justify-between font-bold text-green-600"><span>{t.amountPaid || 'Amount Paid'}:</span><span>-{currencySymbol}{(invoice.amountPaid || 0).toFixed(2)}</span></p>}
+                             <p className="flex justify-between font-bold bg-gray-100 p-2 mt-1"><span>{t.balanceDue || 'Balance Due'}:</span><span>{currencySymbol}{balanceDue.toFixed(2)}</span></p>
+                        </div>
                     </div>
                      <div className="text-xs mt-8">
                         <p className="font-bold">{t.termsAndConditions || 'Terms & Conditions'}:</p>
@@ -316,8 +331,26 @@ export const MedicalTemplate4: React.FC<PageProps> = (props) => {
             <CategorySpecificDetails invoice={invoice} t={t} />
             <main className="flex-grow mt-4">
                 <table className="w-full text-left text-sm">
-                    <thead><tr className="border-b"><th className="pb-2 font-bold w-4/5">{t.procedure || 'Procedure'}</th><th className="pb-2 font-bold text-right">{t.fee || 'Fee'}</th></tr></thead>
-                    <tbody>{pageItems.map(item => (<tr key={item.id} className="border-b"><td className="py-2">{item.name}</td><td className="py-2 text-right">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</td></tr>))}</tbody>
+                    <thead>
+                        <tr className="border-b">
+                            <th className="pb-2 font-bold w-1/2">{t.procedure || 'Procedure'}</th>
+                            <th className="pb-2 font-bold w-1/4">{t.description || 'Details'}</th>
+                            <th className="pb-2 font-bold text-center">{t.quantity || 'Qty'}</th>
+                            <th className="pb-2 font-bold text-right">{t.rate || 'Rate'}</th>
+                            <th className="pb-2 font-bold text-right">{t.fee || 'Fee'}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {pageItems.map(item => (
+                            <tr key={item.id} className="border-b">
+                                <td className="py-2 font-medium whitespace-pre-line">{item.name}</td>
+                                <td className="py-2 text-xs text-muted-foreground whitespace-pre-line">{item.description}</td>
+                                <td className="py-2 text-center">{item.quantity}</td>
+                                <td className="py-2 text-right">{currencySymbol}{item.unitPrice.toFixed(2)}</td>
+                                <td className="py-2 text-right">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</td>
+                            </tr>
+                        ))}
+                    </tbody>
                 </table>
             </main>
             {pageIndex === totalPages - 1 && (
@@ -361,7 +394,7 @@ export const MedicalTemplate5: React.FC<PageProps> = (props) => {
             <section className="text-xs mb-8">
                 <p><strong>{t.patient || 'Patient'}:</strong> {client.name}</p>
                 <p><strong>{t.accountNo || 'Account #'}:</strong> {invoice.medical?.patientId || 'N/A'}</p>
-                <p><strong>{t.invoiceNo || 'Invoice #'}:</strong> {invoice.invoiceNumber}</p>
+                 <p><strong>{t.invoiceNo || 'Invoice #'}:</strong> {invoice.invoiceNumber}</p>
                 <p><strong>{t.date || 'Date'}:</strong> {safeFormat(invoice.invoiceDate, 'MM/dd/yyyy')}</p>
                 <p><strong>{t.dueDate || 'Due Date'}:</strong> {safeFormat(invoice.dueDate, 'MM/dd/yyyy')}</p>
                 {invoice.poNumber && <p><strong>PO #:</strong> {invoice.poNumber}</p>}
@@ -369,11 +402,19 @@ export const MedicalTemplate5: React.FC<PageProps> = (props) => {
             <CategorySpecificDetails invoice={invoice} t={t} />
             <main className="flex-grow mt-4">
                 <table className="w-full text-left text-xs">
-                    <thead><tr className="bg-gray-100"><th className="p-2 font-bold w-2/3">{t.service || 'Service'}</th><th className="p-2 font-bold w-1/6 text-center">{t.quantity || 'Qty'}</th><th className="p-2 font-bold text-right">{t.charge || 'Charge'}</th></tr></thead>
+                    <thead>
+                        <tr className="bg-gray-100">
+                            <th className="p-2 font-bold w-1/2">{t.service || 'Service'}</th>
+                            <th className="p-2 font-bold w-1/4">{t.description || 'Description'}</th>
+                            <th className="p-2 font-bold text-center">{t.quantity || 'Qty'}</th>
+                            <th className="p-2 font-bold text-right">{t.charge || 'Charge'}</th>
+                        </tr>
+                    </thead>
                     <tbody>
                         {pageItems.map(item => (
                             <tr key={item.id} className="border-b">
-                                <td className="p-2">{item.name}</td>
+                                <td className="p-2 font-semibold whitespace-pre-line">{item.name}</td>
+                                <td className="p-2 text-xs text-muted-foreground whitespace-pre-line">{item.description}</td>
                                 <td className="p-2 text-center">{item.quantity}</td>
                                 <td className="p-2 text-right">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</td>
                             </tr>
