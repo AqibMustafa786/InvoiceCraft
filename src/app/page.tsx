@@ -50,7 +50,7 @@ const homePageFeatures = [
     {
         icon: <LayoutDashboard className="h-8 w-8 text-primary" />,
         name: 'Cloud Dashboard',
-        description: 'Securely access and manage all your documents from anywhere.',
+        description: 'Securely access and manage all your documents from anywhere with our Firestore-backed dashboard.',
     },
     {
         icon: <Share2 className="h-8 w-8 text-primary" />,
@@ -301,7 +301,7 @@ export default function HomePage() {
         </section>
         
         <section className="py-20 md:py-28 text-foreground">
-             <div className="container mx-auto px-4 md:px-6">
+             <div className="container px-4 mx-auto md:px-6">
                 <div className="grid lg:grid-cols-2 gap-12 items-center">
                     <motion.div
                         className="max-w-md"
@@ -435,7 +435,7 @@ export default function HomePage() {
                  <div className="absolute bottom-0 right-0 translate-x-1/2 translate-y-1/2 w-96 h-96 bg-accent/20 rounded-full blur-3xl"></div>
                 <div className="text-center max-w-2xl mx-auto mb-16">
                     <p className="text-sm font-bold tracking-wider uppercase text-muted-foreground">TESTIMONIALS</p>
-                    <h2 className="text-4xl md:text-5xl font-bold font-headline mt-2 text-primary">What Our Customers Say</h2>
+                    <h2 className="text-4xl md:text-5xl font-bold font-headline mt-2 text-[#A27B5C]">What Our Customers Say</h2>
                     <p className="mt-4 text-muted-foreground">Trusted by thousands of businesses worldwide.</p>
                 </div>
                 <div className="relative min-h-[350px]" style={{ perspective: '1000px' }}>
