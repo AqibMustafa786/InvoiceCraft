@@ -37,13 +37,21 @@ const SignatureDisplay = ({ signature, label }: { signature: any, label: string 
 const RentalDetails: React.FC<{ document: Estimate, t: any }> = ({ document, t }) => {
     if (!document.rental) return null;
     const { rental } = document;
+    const hasDetails = Object.values(rental).some(val => val !== null && val !== '');
+    if (!hasDetails) {
+        return (
+            <section className="my-4 text-xs">
+                <p className="font-bold text-gray-500 mb-2 border-b">{t.rentalDetails || 'Rental Details'}</p>
+            </section>
+        );
+    }
     return (
         <section className="my-4 text-xs">
             <p className="font-bold text-gray-500 mb-2 border-b">{t.rentalDetails || 'Rental Details'}</p>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-x-4 gap-y-1">
-                <p className="col-span-full"><span className="font-semibold text-gray-600">{t.itemRented || 'Item'}:</span> {rental.rentalItemName}</p>
-                <p><span className="font-semibold text-gray-600">{t.rentalStart || 'Start'}:</span> {safeFormat(rental.rentalStartDate, 'MM/dd/yyyy')}</p>
-                <p><span className="font-semibold text-gray-600">{t.rentalEnd || 'End'}:</span> {safeFormat(rental.rentalEndDate, 'MM/dd/yyyy')}</p>
+                {rental.rentalItemName && <p className="col-span-full"><span className="font-semibold text-gray-600">{t.itemRented || 'Item'}:</span> {rental.rentalItemName}</p>}
+                {rental.rentalStartDate && <p><span className="font-semibold text-gray-600">{t.rentalStart || 'Start'}:</span> {safeFormat(rental.rentalStartDate, 'MM/dd/yyyy')}</p>}
+                {rental.rentalEndDate && <p><span className="font-semibold text-gray-600">{t.rentalEnd || 'End'}:</span> {safeFormat(rental.rentalEndDate, 'MM/dd/yyyy')}</p>}
                 {rental.dailyRate && <p><span className="font-semibold text-gray-600">{t.dailyRate || 'Daily Rate'}:</span> ${rental.dailyRate.toFixed(2)}</p>}
                 {rental.hourlyRate && <p><span className="font-semibold text-gray-600">{t.hourlyRate || 'Hourly Rate'}:</span> ${rental.hourlyRate.toFixed(2)}</p>}
                 {rental.numberOfDays && <p><span className="font-semibold text-gray-600">{t.days || 'Days'}:</span> {rental.numberOfDays}</p>}
@@ -57,7 +65,6 @@ const RentalDetails: React.FC<{ document: Estimate, t: any }> = ({ document, t }
     );
 };
 
-// Template 1
 export const RentalTemplate1: React.FC<TemplateProps> = ({ document, pageItems, pageIndex, totalPages, style, t }) => {
     const { business, client, summary, currency, textColor } = document;
     const currencySymbol = currencySymbols[currency] || '$';
@@ -204,7 +211,7 @@ export const RentalTemplate3: React.FC<TemplateProps> = ({ document, pageItems, 
                 <p><strong>{docTitle} #:</strong> {document.estimateNumber}</p>
                 <p><strong>{t.date || 'Date'}:</strong> {safeFormat(document.estimateDate, 'MMMM d, yyyy')}</p>
                 <p><strong>{t.validUntil || 'Valid Until'}:</strong> {safeFormat(document.validUntilDate, 'MMMM d, yyyy')}</p>
-                {document.poNumber && <p><strong>PO #:</strong> {document.poNumber}</p>}
+                {document.referenceNumber && <p><strong>Ref #:</strong> {document.referenceNumber}</p>}
             </div>
         </section>
         <RentalDetails document={document} t={t} />
@@ -261,7 +268,7 @@ export const RentalTemplate4: React.FC<TemplateProps> = ({ document, pageItems, 
                     <div><p className="opacity-70">{t.date || 'DATE'}</p><p>{safeFormat(document.estimateDate, 'yyyy-MM-dd')}</p></div>
                     <div><p className="opacity-70">{t.validUntil || 'VALID UNTIL'}</p><p>{safeFormat(document.validUntilDate, 'yyyy-MM-dd')}</p></div>
                     <div><p className="opacity-70">#</p><p>{document.estimateNumber}</p></div>
-                    {document.poNumber && <div><p className="opacity-70">PO #</p><p>{document.poNumber}</p></div>}
+                    {document.referenceNumber && <div><p className="opacity-70">Ref #</p><p>{document.referenceNumber}</p></div>}
                 </div>
             </div>
             <div className="w-2/3 p-10 flex flex-col">

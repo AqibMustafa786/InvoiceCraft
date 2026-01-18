@@ -41,6 +41,37 @@ const SignatureDisplay = ({ signature, label }: { signature: any, label: string 
     )
 }
 
+export const RentalDetails: React.FC<{ invoice: Invoice, t: any }> = ({ invoice, t }) => {
+    if (!invoice.rental) return null;
+    const { rental } = invoice;
+    const hasDetails = Object.values(rental).some(val => val !== null && val !== '');
+    if (!hasDetails) {
+        return (
+            <section className="my-4 text-xs">
+                <p className="font-bold text-gray-500 mb-2 border-b">{t.rentalDetails || 'Rental Details'}</p>
+            </section>
+        );
+    }
+    return (
+        <section className="my-4 text-xs">
+            <p className="font-bold text-gray-500 mb-2 border-b">{t.rentalDetails || 'Rental Details'}</p>
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-x-4 gap-y-1">
+                {rental.rentalItemName && <p className="col-span-full"><span className="font-semibold text-gray-600">{t.itemRented || 'Item'}:</span> {rental.rentalItemName}</p>}
+                {rental.rentalStartDate && <p><span className="font-semibold text-gray-600">{t.rentalStart || 'Start'}:</span> {safeFormat(rental.rentalStartDate, 'MM/dd/yyyy')}</p>}
+                {rental.rentalEndDate && <p><span className="font-semibold text-gray-600">{t.rentalEnd || 'End'}:</span> {safeFormat(rental.rentalEndDate, 'MM/dd/yyyy')}</p>}
+                {rental.dailyRate && <p><span className="font-semibold text-gray-600">{t.dailyRate || 'Daily Rate'}:</span> ${rental.dailyRate.toFixed(2)}</p>}
+                {rental.hourlyRate && <p><span className="font-semibold text-gray-600">{t.hourlyRate || 'Hourly Rate'}:</span> ${rental.hourlyRate.toFixed(2)}</p>}
+                {rental.numberOfDays && <p><span className="font-semibold text-gray-600">{t.days || 'Days'}:</span> {rental.numberOfDays}</p>}
+                {rental.numberOfHours && <p><span className="font-semibold text-gray-600">{t.hours || 'Hours'}:</span> {rental.numberOfHours}</p>}
+                {rental.securityDeposit && <p><span className="font-semibold text-gray-600">{t.securityDeposit || 'Deposit'}:</span> ${rental.securityDeposit.toFixed(2)}</p>}
+                {rental.damageCharges && <p><span className="font-semibold text-gray-600">{t.damageCharges || 'Damages'}:</span> ${rental.damageCharges.toFixed(2)}</p>}
+                {rental.deliveryFee && <p><span className="font-semibold text-gray-600">{t.deliveryFee || 'Delivery'}:</span> ${rental.deliveryFee.toFixed(2)}</p>}
+                {rental.pickupFee && <p><span className="font-semibold text-gray-600">{t.pickupFee || 'Pickup'}:</span> ${rental.pickupFee.toFixed(2)}</p>}
+            </div>
+        </section>
+    );
+};
+
 export const RentalTemplate1: React.FC<PageProps> = (props) => {
     const { invoice, pageItems, pageIndex, totalPages, subtotal, taxAmount, discountAmount, total, balanceDue, currencySymbol, t, accentColor, textColor } = props;
     const { business, client } = invoice;
@@ -51,7 +82,7 @@ export const RentalTemplate1: React.FC<PageProps> = (props) => {
             <header className="flex justify-between items-start mb-8">
                 {business.logoUrl ? <Image src={business.logoUrl} alt="Logo" width={100} height={100} className="object-contain" /> : <h1 className="text-3xl font-bold">{business.name}</h1>}
                 <div className="text-right">
-                    <h2 className="text-4xl font-bold" style={{color: accentColor}}>{docTitle.toUpperCase()}</h2>
+                    <h2 className="text-4xl font-bold" style={{color: accentColor}}>{docTitle}</h2>
                     <p>#{invoice.invoiceNumber}</p>
                 </div>
             </header>
@@ -65,6 +96,8 @@ export const RentalTemplate1: React.FC<PageProps> = (props) => {
                 <div className="text-right">
                     <p className="font-bold text-gray-500">{(t.date || 'Date').toUpperCase()}</p>
                     <p>{safeFormat(invoice.invoiceDate, 'MMMM d, yyyy')}</p>
+                     <p className="font-bold text-gray-500 mt-2">{(t.dueDate || 'Due Date').toUpperCase()}</p>
+                    <p>{safeFormat(invoice.dueDate, 'MMMM d, yyyy')}</p>
                 </div>
             </section>
             <CategorySpecificDetails invoice={invoice} t={t} />
@@ -353,10 +386,6 @@ export const RentalTemplate5: React.FC<PageProps> = (props) => {
                          <p className="flex justify-between font-bold bg-gray-200 p-1"><span>{t.balanceDue || 'Balance Due'}</span><span>{currencySymbol}{balanceDue.toFixed(2)}</span></p>
                     </div>
                 </div>
-                 <div className="text-xs mt-8">
-                    <p className="font-bold">{t.paymentInstructions || 'Payment Instructions'}:</p>
-                    <p className="text-muted-foreground whitespace-pre-line">{invoice.paymentInstructions}</p>
-                 </div>
                  <div className="flex justify-between mt-8">
                     <SignatureDisplay signature={business.ownerSignature} label={t.authorizedSignature || 'Authorized Signature'} />
                 </div>
