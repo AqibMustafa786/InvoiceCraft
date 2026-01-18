@@ -80,7 +80,7 @@ export const PhotographyTemplate1: React.FC<PageProps> = (props) => {
         <div className={`font-serif bg-[#333333] text-white flex flex-col ${pageIndex < totalPages - 1 ? 'page-break-after' : ''}`} style={{ minHeight: '1056px', backgroundColor: props.backgroundColor, color: textColor }}>
             
             <div className="p-10 flex-grow flex flex-col">
-                <section className="grid grid-cols-2 gap-8 mb-8">
+                <header className="flex justify-between items-start mb-8">
                     <div>
                         <h1 className="text-4xl tracking-wider">{docTitle}</h1>
                         <p className="text-sm mt-2">{t.no || 'No.'} {invoice.invoiceNumber}</p>
@@ -90,6 +90,27 @@ export const PhotographyTemplate1: React.FC<PageProps> = (props) => {
                         <p className="text-sm">{t.invoiceTo || 'Invoice to'}:</p>
                         <p className="text-xl font-bold">{client.name}</p>
                     </div>
+                </header>
+                
+                <section className="grid grid-cols-2 gap-8 mb-8 text-xs">
+                     <div>
+                        <p className="font-bold mb-1 text-gray-400">{(t.billFrom || 'BILL FROM').toUpperCase()}</p>
+                        <p className="font-bold">{business.name}</p>
+                        <p className="whitespace-pre-line">{business.address}</p>
+                        <p>{business.phone}</p>
+                        <p>{business.email}</p>
+                        {business.website && <p>{business.website}</p>}
+                        {business.licenseNumber && <p>Lic: {business.licenseNumber}</p>}
+                        {business.taxId && <p>Tax ID: {business.taxId}</p>}
+                    </div>
+                     <div>
+                        <p className="font-bold mb-1 text-gray-400">{(t.billTo || 'BILL TO').toUpperCase()}</p>
+                        <p className="font-bold">{client.name}</p>
+                        {client.companyName && <p>{client.companyName}</p>}
+                        <p className="whitespace-pre-line">{client.address}</p>
+                        <p>{client.phone}</p>
+                        <p>{client.email}</p>
+                    </div>
                 </section>
 
                 <CategorySpecificDetails invoice={invoice} t={t} />
@@ -98,16 +119,18 @@ export const PhotographyTemplate1: React.FC<PageProps> = (props) => {
                     <table className="w-full text-left text-sm">
                         <thead>
                             <tr className="border-b" style={{borderColor: accentColor}}>
-                                <th className="py-2 font-normal w-3/5" style={{color: accentColor}}>{t.description.toUpperCase()}</th>
-                                <th className="py-2 font-normal text-right" style={{color: accentColor}}>{t.price.toUpperCase()}</th>
-                                <th className="py-2 font-normal text-center" style={{color: accentColor}}>{t.quantity.toUpperCase()}</th>
-                                <th className="py-2 font-normal text-right" style={{color: accentColor}}>{t.total.toUpperCase()}</th>
+                                <th className="py-2 font-normal w-[40%]" style={{color: accentColor}}>{(t.item || 'Item').toUpperCase()}</th>
+                                <th className="py-2 font-normal w-[40%]" style={{color: accentColor}}>{(t.description || 'Description').toUpperCase()}</th>
+                                <th className="py-2 font-normal text-right" style={{color: accentColor}}>{(t.price || 'Price').toUpperCase()}</th>
+                                <th className="py-2 font-normal text-center" style={{color: accentColor}}>{(t.quantity || 'Qty').toUpperCase()}</th>
+                                <th className="py-2 font-normal text-right" style={{color: accentColor}}>{(t.total || 'Total').toUpperCase()}</th>
                             </tr>
                         </thead>
                         <tbody>
                             {pageItems.map(item => (
                                 <tr key={item.id} className="border-b border-gray-600">
-                                    <td className="py-3">{item.name}</td>
+                                    <td className="py-3 font-medium whitespace-pre-line">{item.name}</td>
+                                    <td className="py-3 text-xs text-gray-400 whitespace-pre-line">{item.description}</td>
                                     <td className="py-3 text-right">{currencySymbol}{item.unitPrice.toFixed(2)}</td>
                                     <td className="py-3 text-center">{item.quantity}</td>
                                     <td className="py-3 text-right">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</td>
@@ -124,6 +147,7 @@ export const PhotographyTemplate1: React.FC<PageProps> = (props) => {
                             <p style={{color: accentColor}}>{t.sendPaymentsTo || 'Send Payments To'}:</p>
                             <p>{business.name}</p>
                             <p>{business.email}</p>
+                            <p className="mt-4 whitespace-pre-line">{invoice.paymentInstructions}</p>
                             <div className="flex justify-between mt-8">
                                 <SignatureDisplay signature={business.ownerSignature} label={t.authorizedSignature || 'Authorized Signature'} />
                             </div>
@@ -232,7 +256,7 @@ export const PhotographyTemplate2: React.FC<PageProps> = (props) => {
                            </div>
                         </div>
                          <div className="text-xs mt-8">
-                            <p className="font-bold">{t.paymentInstructions || 'Payment Instructions'}:</p>
+                            <p className="font-bold">{t.termsAndConditions || 'Terms & Conditions'}:</p>
                             <p className="text-muted-foreground whitespace-pre-line">{invoice.paymentInstructions}</p>
                         </div>
                          <div className="flex justify-between mt-8">
@@ -254,6 +278,13 @@ export const PhotographyTemplate3: React.FC<PageProps> = (props) => {
             <header className="text-center mb-10">
                 <h1 className="text-4xl font-bold">{business.name}</h1>
                 <p className="text-sm">{t.photography || 'Photography'}</p>
+                 <div className="text-xs mt-1">
+                    <p>{business.address}</p>
+                    <p>{business.phone} | {business.email}</p>
+                    {business.website && <p>{business.website}</p>}
+                    {business.licenseNumber && <p>Lic #: {business.licenseNumber}</p>}
+                    {business.taxId && <p>Tax ID: {business.taxId}</p>}
+                </div>
             </header>
             <section className="grid grid-cols-2 gap-8 text-xs mb-8">
                 <div>
@@ -308,6 +339,10 @@ export const PhotographyTemplate3: React.FC<PageProps> = (props) => {
                             <p className="flex justify-between font-bold bg-gray-200 p-1"><span>{t.balanceDue || 'Balance Due'}</span><span>{currencySymbol}{balanceDue.toFixed(2)}</span></p>
                         </div>
                     </div>
+                     <div className="text-xs mt-8">
+                        <p className="font-bold">{t.termsAndConditions || 'Terms & Conditions'}:</p>
+                        <p className="text-muted-foreground whitespace-pre-line">{invoice.paymentInstructions}</p>
+                    </div>
                      <div className="flex justify-between mt-8">
                         <SignatureDisplay signature={business.ownerSignature} label={t.authorizedSignature || 'Authorized Signature'} />
                     </div>
@@ -359,14 +394,20 @@ export const PhotographyTemplate4: React.FC<PageProps> = (props) => {
                 <CategorySpecificDetails invoice={invoice} t={t} />
                 <main className="flex-grow mt-4">
                     <table className="w-full text-left text-sm">
-                        <thead><tr className="bg-gray-100"><th className="p-3 font-bold w-1/2">{t.serviceProvided || 'Service Provided'}</th><th className="p-3 font-bold w-1/2">{t.description || 'Description'}</th><th className="p-3 font-bold text-center">{t.quantity || 'Qty'}</th><th className="p-3 font-bold text-right">{t.rate || 'Rate'}</th><th className="p-3 font-bold text-right">{t.fee || 'Fee'}</th></tr></thead>
+                        <thead>
+                            <tr className="bg-gray-100">
+                                <th className="p-3 font-bold w-1/2">{t.serviceProvided || 'Service Provided'}</th>
+                                <th className="p-3 font-bold w-1/2">{t.description || 'Description'}</th>
+                                <th className="p-3 font-bold text-center">{t.quantity || 'Qty'}</th>
+                                <th className="p-3 font-bold text-right">{t.fee || 'Fee'}</th>
+                            </tr>
+                        </thead>
                         <tbody>
                             {pageItems.map(item => (
                                 <tr key={item.id} className="border-b">
                                     <td className="p-3 font-medium whitespace-pre-line">{item.name}</td>
                                     <td className="p-3 text-muted-foreground whitespace-pre-line">{item.description}</td>
                                     <td className="p-3 text-center">{item.quantity}</td>
-                                    <td className="p-3 text-right">{currencySymbol}{item.unitPrice.toFixed(2)}</td>
                                     <td className="p-3 text-right">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</td>
                                 </tr>
                             ))}
@@ -434,15 +475,7 @@ export const PhotographyTemplate5: React.FC<PageProps> = (props) => {
             <CategorySpecificDetails invoice={invoice} t={t} />
             <main className="flex-grow mt-4">
                  <table className="w-full text-left text-xs">
-                    <thead>
-                        <tr>
-                            <th className="py-2 border-b-2 font-normal text-gray-500 w-1/3">{t.item || 'ITEM'}</th>
-                            <th className="py-2 border-b-2 font-normal text-gray-500 w-2/3">{t.description || 'DESCRIPTION'}</th>
-                            <th className="py-2 border-b-2 font-normal text-gray-500 text-center">{t.quantity || 'QTY'}</th>
-                            <th className="py-2 border-b-2 font-normal text-gray-500 text-right">{t.unitPrice || 'UNIT PRICE'}</th>
-                            <th className="py-2 border-b-2 font-normal text-gray-500 text-right">{t.cost || 'Cost'}</th>
-                        </tr>
-                    </thead>
+                    <thead><tr><th className="py-2 border-b-2 font-normal text-gray-500 w-1/3">{t.item || 'ITEM'}</th><th className="py-2 border-b-2 font-normal text-gray-500 w-2/3">{t.description || 'DESCRIPTION'}</th><th className="py-2 border-b-2 font-normal text-gray-500 text-center">{t.quantity || 'QTY'}</th><th className="py-2 border-b-2 font-normal text-gray-500 text-right">{t.unitPrice || 'UNIT PRICE'}</th><th className="py-2 border-b-2 font-normal text-gray-500 text-right">{t.cost || 'Cost'}</th></tr></thead>
                     <tbody>
                         {pageItems.map(item => (
                             <tr key={item.id}>
@@ -480,6 +513,3 @@ export const PhotographyTemplate5: React.FC<PageProps> = (props) => {
         </div>
     );
 };
-
-
-    
