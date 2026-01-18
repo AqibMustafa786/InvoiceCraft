@@ -1,4 +1,3 @@
-
 'use client';
 
 import React from 'react';
@@ -264,18 +263,16 @@ export const MedicalTemplate5: React.FC<TemplateProps> = ({ document, pageItems,
             <header className="text-center mb-10">
                 {business.logoUrl && <Image src={business.logoUrl} alt="Logo" width={90} height={45} className="object-contain mx-auto mb-2"/>}
                 <h1 className="text-3xl font-bold">{business.name}</h1>
-                <div className="text-xs mt-1 text-gray-600" style={{color: textColor ? `${textColor}B3` : undefined}}>
-                    <p className="whitespace-pre-line">{business.address}</p>
-                    <p>{business.phone} | {business.email}</p>
-                    {business.website && <p>{business.website}</p>}
-                </div>
             </header>
             
             <section className="grid grid-cols-2 gap-8 text-xs mb-8">
                 <div>
-                    
+                    <p className="font-bold">{t.billedTo || 'Billed To'}:</p>
                     <p>{client.name}</p>
+                    {client.companyName && <p>{client.companyName}</p>}
                     <p className="whitespace-pre-line">{client.address}</p>
+                    <p>{client.phone}</p>
+                    <p>{client.email}</p>
                 </div>
                 <div className="text-right">
                     
@@ -291,8 +288,8 @@ export const MedicalTemplate5: React.FC<TemplateProps> = ({ document, pageItems,
                 <table className="w-full text-left text-xs">
                     <thead>
                         <tr className="bg-gray-100">
-                            <th className="p-2 font-bold w-[40%]">{(t.service || 'Service').toUpperCase()}</th>
-                            <th className="p-2 font-bold w-[40%]">{(t.description || 'Description').toUpperCase()}</th>
+                            <th className="p-2 font-bold w-[30%]">{(t.service || 'Service').toUpperCase()}</th>
+                            <th className="p-2 font-bold w-[30%]">{(t.description || 'Description').toUpperCase()}</th>
                             <th className="p-2 font-bold text-center">{(t.quantity || 'Qty').toUpperCase()}</th>
                             <th className="p-2 font-bold text-right">{(t.unitPrice || 'Unit Price').toUpperCase()}</th>
                             <th className="p-2 font-bold text-right">{(t.charge || 'Charge').toUpperCase()}</th>
@@ -328,7 +325,6 @@ export const MedicalTemplate5: React.FC<TemplateProps> = ({ document, pageItems,
                  </div>
                  <div className="flex justify-between mt-8">
                     <SignatureDisplay signature={document.business.ownerSignature} label={t.authorizedSignature || 'Authorized Signature'} />
-                    <SignatureDisplay signature={document.clientSignature} label={t.clientSignature || 'Client Signature'} />
                 </div>
             </footer>
             )}

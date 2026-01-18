@@ -1,4 +1,3 @@
-
 'use client';
 
 import React from 'react';
@@ -75,7 +74,8 @@ export const MedicalDetails: React.FC<{ invoice: Invoice, t: any }> = ({ invoice
 export const MedicalTemplate1: React.FC<PageProps> = (props) => {
     const { invoice, pageItems, pageIndex, totalPages, subtotal, taxAmount, discountAmount, total, balanceDue, currencySymbol, t, accentColor, textColor } = props;
     const { business, client } = invoice;
-    
+    const docTitle = (t.invoice || 'INVOICE').toUpperCase();
+
     return (
         <div className={`p-10 font-sans relative ${pageIndex < totalPages - 1 ? 'page-break-after' : ''}`} style={{ minHeight: '1056px', backgroundColor: props.backgroundColor, color: textColor }}>
             <div className="absolute inset-0 bg-no-repeat bg-center bg-contain opacity-5" style={{backgroundImage: `url("https://storage.googleapis.com/studio-hosting-assets/invoice-template-previews/medical-watermark.svg")`}}></div>
@@ -296,9 +296,12 @@ export const MedicalTemplate5: React.FC<PageProps> = (props) => {
             
             <section className="grid grid-cols-2 gap-8 text-xs mb-8">
                 <div>
-                    
+                    <p className="font-bold">{t.billedTo || 'Billed To'}:</p>
                     <p>{client.name}</p>
+                    {client.companyName && <p>{client.companyName}</p>}
                     <p className="whitespace-pre-line">{client.address}</p>
+                    <p>{client.phone}</p>
+                    <p>{client.email}</p>
                 </div>
                 <div className="text-right">
                     
@@ -315,8 +318,8 @@ export const MedicalTemplate5: React.FC<PageProps> = (props) => {
                 <table className="w-full text-left text-xs">
                     <thead>
                         <tr className="bg-gray-100">
-                            <th className="p-2 font-bold w-[40%]">{(t.service || 'Service').toUpperCase()}</th>
-                            <th className="p-2 font-bold w-[40%]">{(t.description || 'Description').toUpperCase()}</th>
+                            <th className="p-2 font-bold w-[30%]">{(t.service || 'Service').toUpperCase()}</th>
+                            <th className="p-2 font-bold w-[30%]">{(t.description || 'Description').toUpperCase()}</th>
                             <th className="p-2 font-bold text-center">{(t.quantity || 'Qty').toUpperCase()}</th>
                             <th className="p-2 font-bold text-right">{(t.unitPrice || 'Unit Price').toUpperCase()}</th>
                             <th className="p-2 font-bold text-right">{(t.charge || 'Charge').toUpperCase()}</th>
