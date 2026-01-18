@@ -2,30 +2,23 @@
 'use client';
 
 import React from 'react';
-import type { Invoice, LineItem } from '@/lib/types';
+import type { Estimate, LineItem } from '@/lib/types';
 import { format, isValid } from 'date-fns';
 import NextImage from 'next/image';
-import { CategorySpecificDetails } from './category-specific-details';
 
-interface PageProps {
-  invoice: Invoice;
+interface TemplateProps {
+  document: Estimate;
   pageItems: LineItem[];
   pageIndex: number;
   totalPages: number;
-  subtotal: number;
-  taxAmount: number;
-  discountAmount: number;
-  total: number;
-  balanceDue: number;
+  style: React.CSSProperties;
   t: any;
-  currencySymbol: string;
-  accentColor: string;
-  backgroundColor: string;
-  textColor: string;
 }
 
-const safeFormat = (date: Date | string | number | null | undefined, formatString: string) => {
-    if (!date) return "N/A";
+const currencySymbols: { [key: string]: string } = { USD: '$', EUR: '€', GBP: '£', JPY: '¥', PKR: '₨' };
+
+const safeFormat = (date: Date | string | number | undefined | null, formatString: string) => {
+    if (!date) return 'N/A';
     const d = new Date(date);
     if (!isValid(d)) return "Invalid Date";
     return format(d, formatString);
@@ -41,9 +34,9 @@ const SignatureDisplay = ({ signature, label }: { signature: any, label: string 
     )
 }
 
-export const RetailDetails: React.FC<{ invoice: Invoice, t: any }> = ({ invoice, t }) => {
-    if (!invoice.retail) return null;
-    const { retail } = invoice;
+const RetailDetails: React.FC<{ document: Estimate, t: any }> = ({ document, t }) => {
+    if (!document.retail) return null;
+    const { retail } = document;
     const hasDetails = Object.values(retail).some(val => val !== null && val !== '');
     if (!hasDetails) {
         return (
@@ -68,14 +61,14 @@ export const RetailDetails: React.FC<{ invoice: Invoice, t: any }> = ({ invoice,
     );
 };
 
-export const RetailTemplate1: React.FC<PageProps> = (props) => {
-    const { invoice, pageItems, pageIndex, totalPages, subtotal, taxAmount, discountAmount, total, balanceDue, currencySymbol, t, accentColor, textColor } = props;
-    const { business, client } = invoice;
-    const docTitle = (t.invoice || 'INVOICE').toUpperCase();
+export const RetailTemplate1: React.FC<TemplateProps> = ({ document, pageItems, pageIndex, totalPages, style, t }) => {
+    const { business, client, summary, currency, textColor } = document;
+    const currencySymbol = currencySymbols[currency] || '$';
+    const docTitle = document.documentType === 'quote' ? t.quote || 'Quote' : t.estimate || 'Estimate';
 
     return (
-        <div className={`font-sans flex ${pageIndex < totalPages - 1 ? 'page-break-after' : ''}`} style={{ minHeight: '1056px', backgroundColor: props.backgroundColor, color: textColor }}>
-            <div className="w-8" style={{ backgroundColor: accentColor || '#86EFAC' }}></div>
+        <div className={`font-sans flex ${pageIndex < totalPages - 1 ? 'page-break-after' : ''}`} style={{ minHeight: '1056px', backgroundColor: document.backgroundColor, color: textColor }}>
+            <div className="w-8" style={{ backgroundColor: style.color || '#86EFAC' }}></div>
             <div className="flex-grow p-8">
                 <header className="flex justify-between items-start mb-4">
                     <div>
@@ -88,9 +81,9 @@ export const RetailTemplate1: React.FC<PageProps> = (props) => {
                         {business.taxId && <p className="text-xs">Tax ID: {business.taxId}</p>}
                     </div>
                     <div className="text-right">
-                        <h2 className="text-3xl font-bold text-gray-700">{docTitle}</h2>
-                        <p className="text-xs mt-1"><span className="font-semibold">{t.date || 'DATE'}:</span> {safeFormat(invoice.invoiceDate, 'yyyy-MM-dd')}</p>
-                        <p className="text-xs"><span className="font-semibold">#:</span> {invoice.invoiceNumber}</p>
+                        <h2 className="text-3xl font-bold text-gray-700">{docTitle.toUpperCase()}</h2>
+                        <p className="text-xs mt-1"><span className="font-semibold">{t.date || 'DATE'}:</span> {safeFormat(document.estimateDate, 'yyyy-MM-dd')}</p>
+                        <p className="text-xs"><span className="font-semibold">#:</span> {document.estimateNumber}</p>
                     </div>
                 </header>
                 <div className="h-px bg-gray-300 mb-4"></div>
@@ -104,8 +97,8 @@ export const RetailTemplate1: React.FC<PageProps> = (props) => {
                     </div>
                      <div>
                         <p className="font-bold">{t.shipTo || 'Ship To'}:</p>
-                        <p>{client.shippingAddress ? `${client.name},` : ''}</p>
-                        <p className="whitespace-pre-line">{client.shippingAddress || client.address}</p>
+                        <p>{document.client.shippingAddress ? `${client.name},` : ''}</p>
+                        <p className="whitespace-pre-line">{document.client.shippingAddress || client.address}</p>
                     </div>
                 </section>
                 <section className="text-xs mb-4">
@@ -115,21 +108,23 @@ export const RetailTemplate1: React.FC<PageProps> = (props) => {
                                 <th className="p-1 border font-semibold">{t.poNumber || 'P.O. #'}</th>
                                 <th className="p-1 border font-semibold">{t.shipDate || 'Ship Date'}</th>
                                 <th className="p-1 border font-semibold">{t.shipVia || 'Ship Via'}</th>
-                                <th className="p-1 border font-semibold">{t.dueDate || 'Due Date'}</th>
+                                <th className="p-1 border font-semibold">{t.terms || 'Terms'}</th>
+                                <th className="p-1 border font-semibold">{t.dueDate || 'Valid Until'}</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
-                                <td className="p-1 border">{invoice.poNumber}</td>
-                                <td className="p-1 border">{safeFormat(invoice.invoiceDate, 'yyyy-MM-dd')}</td>
-                                <td className="p-1 border">{invoice.ecommerce?.shippingCarrier}</td>
-                                <td className="p-1 border">{safeFormat(invoice.dueDate, 'yyyy-MM-dd')}</td>
+                                <td className="p-1 border">{document.referenceNumber}</td>
+                                <td className="p-1 border">{safeFormat(document.estimateDate, 'yyyy-MM-dd')}</td>
+                                <td className="p-1 border"></td>
+                                <td className="p-1 border">{document.termsAndConditions.split('\n')[0]}</td>
+                                <td className="p-1 border">{safeFormat(document.validUntilDate, 'yyyy-MM-dd')}</td>
                             </tr>
                         </tbody>
                      </table>
                 </section>
 
-                <CategorySpecificDetails invoice={invoice} t={t} />
+                <RetailDetails document={document} t={t} />
 
                 <main className="flex-grow">
                     <table className="w-full text-left text-xs border-collapse">
@@ -163,19 +158,17 @@ export const RetailTemplate1: React.FC<PageProps> = (props) => {
                     <div className="flex justify-between items-start">
                         <div>
                             <p className="font-bold text-xs">{t.paymentInstructions || 'Payment Instructions'}:</p>
-                            <p className="text-xs text-gray-600 whitespace-pre-line">{invoice.paymentInstructions}</p>
+                            <p className="text-xs text-gray-600 whitespace-pre-line">{document.termsAndConditions}</p>
                             {business.ownerSignature && <SignatureDisplay signature={business.ownerSignature} label="Authorized Signature" />}
                         </div>
                         <div className="w-1/3 text-xs">
                              <table className="w-full">
                                 <tbody>
-                                    <tr><td className="text-right pr-4">{t.subtotal || 'SUBTOTAL'}</td><td className="text-right p-1 border">{currencySymbol}{subtotal.toFixed(2)}</td></tr>
-                                    {discountAmount > 0 && <tr><td className="text-right pr-4 text-red-600">{t.discount || 'DISCOUNT'}</td><td className="text-right p-1 border text-red-600">-{currencySymbol}{discountAmount.toFixed(2)}</td></tr>}
-                                    <tr><td className="text-right pr-4">{t.tax || 'TAX'} ({invoice.summary.taxPercentage}%)</td><td className="text-right p-1 border">{currencySymbol}{taxAmount.toFixed(2)}</td></tr>
-                                    <tr><td className="text-right pr-4">{t.delivery || 'Delivery'}</td><td className="text-right p-1 border">{invoice.summary.shippingCost > 0 ? currencySymbol + invoice.summary.shippingCost.toFixed(2) : '-'}</td></tr>
-                                    <tr className="font-bold"><td className="text-right pr-4">{t.total || 'TOTAL'}</td><td className="text-right p-1 border">{currencySymbol}{total.toFixed(2)}</td></tr>
-                                    {(invoice.amountPaid || 0) > 0 && <tr className="font-bold text-green-600"><td className="text-right pr-4">PAID</td><td className="text-right p-1 border">-{currencySymbol}{(invoice.amountPaid || 0).toFixed(2)}</td></tr>}
-                                     <tr className="font-bold text-lg"><td className="text-right pr-4">BALANCE DUE</td><td className="text-right p-1 border">{currencySymbol}{balanceDue.toFixed(2)}</td></tr>
+                                    <tr><td className="text-right pr-4">{t.subtotal || 'SUBTOTAL'}</td><td className="text-right p-1 border">{currencySymbol}{summary.subtotal.toFixed(2)}</td></tr>
+                                    {summary.discount > 0 && <tr><td className="text-right pr-4 text-red-600">{t.discount || 'DISCOUNT'}</td><td className="text-right p-1 border text-red-600">-{currencySymbol}{summary.discount.toFixed(2)}</td></tr>}
+                                    <tr><td className="text-right pr-4">{t.tax || 'TAX'} ({summary.taxPercentage}%)</td><td className="text-right p-1 border">{currencySymbol}{summary.taxAmount.toFixed(2)}</td></tr>
+                                    <tr><td className="text-right pr-4">{t.delivery || 'Delivery'}</td><td className="text-right p-1 border">{summary.shippingCost > 0 ? currencySymbol + summary.shippingCost.toFixed(2) : '-'}</td></tr>
+                                    <tr className="font-bold"><td className="text-right pr-4">{t.total || 'TOTAL'}</td><td className="text-right p-1 border">{currencySymbol}{summary.grandTotal.toFixed(2)}</td></tr>
                                 </tbody>
                              </table>
                         </div>
