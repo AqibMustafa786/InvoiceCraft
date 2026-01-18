@@ -167,7 +167,7 @@ export const MedicalTemplate2: React.FC<TemplateProps> = ({ document, pageItems,
                         {summary.discount > 0 && <p className="flex justify-between text-red-600"><span>{t.discount || 'Discount'}:</span><span>-{currencySymbol}{summary.discount.toFixed(2)}</span></p>}
                         {summary.shippingCost > 0 && <p className="flex justify-between"><span>{t.shipping || 'Other Fees'}:</span><span>{currencySymbol}{summary.shippingCost.toFixed(2)}</span></p>}
                         <p className="flex justify-between border-b pb-1"><span>{t.adjustments || 'Adjustments'}:</span><span>{currencySymbol}{(summary.taxAmount > 0 ? summary.taxAmount.toFixed(2) : '0.00')}</span></p>
-                        <p className="flex justify-between font-bold mt-2"><span>{t.balanceDue || 'Balance Due'}:</span><span>{currencySymbol}{summary.grandTotal.toFixed(2)}</span></p>
+                        <p className="flex justify-between font-bold mt-2"><span>{t.total || 'Total'}:</span><span>{currencySymbol}{summary.grandTotal.toFixed(2)}</span></p>
                     </div>
                 </div>
             </footer>
@@ -180,18 +180,18 @@ export const MedicalTemplate2: React.FC<TemplateProps> = ({ document, pageItems,
 export const MedicalTemplate3: React.FC<TemplateProps> = ({ document, pageItems, pageIndex, totalPages, style, t }) => {
     const { business, client, summary, currency, textColor } = document;
     const currencySymbol = currencySymbols[currency] || '$';
-    const docTitle = document.documentType === 'quote' ? t.quote || 'Quote' : t.estimate || 'Estimate';
+    const docTitle = t.statement || 'STATEMENT';
 
     return (
         <div className={`flex ${pageIndex < totalPages - 1 ? 'page-break-after' : ''}`} style={{ minHeight: '1056px', backgroundColor: document.backgroundColor, color: textColor }}>
-            <div className="w-1/4 p-8 text-white" style={{backgroundColor: style.color || '#1E40AF'}}>
-                <h1 className="text-3xl font-bold">{t.statement || 'STATEMENT'}</h1>
+            <div className="w-1/3 p-8 text-white" style={{backgroundColor: style.color || '#1E40AF'}}>
+                <h1 className="text-3xl font-bold">{docTitle.toUpperCase()}</h1>
                 <div className="mt-10 text-xs space-y-4">
                     <div><p className="opacity-70">{t.statementDate || 'Statement Date'}</p><p>{safeFormat(document.estimateDate, 'MM/dd/yyyy')}</p></div>
                     <div><p className="opacity-70">{t.accountNo || 'Account #'}</p><p>{document.medical?.patientId || document.estimateNumber}</p></div>
                 </div>
             </div>
-            <div className="w-3/4 p-10">
+            <div className="w-2/3 p-10">
                 <header className="text-right mb-10"><h2 className="text-2xl font-bold">{business.name}</h2><p className="text-xs">{business.address}</p></header>
                 <section className="mb-10 text-sm"><p className="font-bold">{t.to || 'To'}:</p><p>{client.name}</p></section>
                 <MedicalDetails document={document} t={t} />
@@ -210,7 +210,6 @@ export const MedicalTemplate3: React.FC<TemplateProps> = ({ document, pageItems,
         </div>
     );
 };
-
 // Template 4: Wellness
 export const MedicalTemplate4: React.FC<TemplateProps> = ({ document, pageItems, pageIndex, totalPages, style, t }) => {
     const { business, client, summary, currency, textColor } = document;
@@ -223,7 +222,11 @@ export const MedicalTemplate4: React.FC<TemplateProps> = ({ document, pageItems,
                 <div><h1 className="text-2xl font-bold">{business.name}</h1><p className="text-xs">{business.address}</p></div>
                 <h2 className="text-3xl font-light text-gray-500">{docTitle.toUpperCase()}</h2>
             </header>
-            <section className="text-sm mb-8"><p><strong>{t.patient || 'Patient'}:</strong> {client.name}</p></section>
+            <section className="text-sm mb-8">
+                <p><strong>{t.patient || 'Patient'}:</strong> {client.name}</p>
+                <p><strong>{docTitle} #:</strong> {document.estimateNumber}</p>
+                <p><strong>{t.date || 'Date'}:</strong> {safeFormat(document.estimateDate, 'MMMM d, yyyy')}</p>
+            </section>
             <MedicalDetails document={document} t={t} />
             <main className="flex-grow mt-4">
                 <table className="w-full text-left text-sm">
@@ -239,7 +242,7 @@ export const MedicalTemplate4: React.FC<TemplateProps> = ({ document, pageItems,
                         {summary.discount > 0 && <p className="flex justify-between text-red-600"><span>{t.discount || 'Discount'}:</span><span>-{currencySymbol}{summary.discount.toFixed(2)}</span></p>}
                         {summary.shippingCost > 0 && <p className="flex justify-between"><span>{t.shipping || 'Other Fees'}:</span><span>{currencySymbol}{summary.shippingCost.toFixed(2)}</span></p>}
                         <p className="flex justify-between"><span>{t.adjustments || 'Adjustments'}</span><span>{currencySymbol}{(summary.taxAmount > 0 ? summary.taxAmount.toFixed(2) : '0.00')}</span></p>
-                        <p className="flex justify-between font-bold mt-2"><span>{t.balanceDue || 'Balance Due'}</span><span>{currencySymbol}{summary.grandTotal.toFixed(2)}</span></p>
+                        <p className="flex justify-between font-bold mt-2"><span>{t.totalDue || 'Total Due'}</span><span>{currencySymbol}{summary.grandTotal.toFixed(2)}</span></p>
                     </div>
                 </div>
             </footer>
@@ -247,7 +250,6 @@ export const MedicalTemplate4: React.FC<TemplateProps> = ({ document, pageItems,
         </div>
     );
 };
-
 // Template 5: Remedy
 export const MedicalTemplate5: React.FC<TemplateProps> = ({ document, pageItems, pageIndex, totalPages, style, t }) => {
     const { business, client, summary, currency, textColor } = document;
@@ -277,7 +279,6 @@ export const MedicalTemplate5: React.FC<TemplateProps> = ({ document, pageItems,
                     <p><strong>{docTitle} #:</strong> {document.estimateNumber}</p>
                     <p><strong>{t.date || 'Date'}:</strong> {safeFormat(document.estimateDate, 'MM/dd/yyyy')}</p>
                     <p><strong>{t.validUntil || 'Valid Until'}:</strong> {safeFormat(document.validUntilDate, 'MM/dd/yyyy')}</p>
-                    {document.referenceNumber && <p><strong>Ref #:</strong> {document.referenceNumber}</p>}
                 </div>
             </section>
             
@@ -287,10 +288,11 @@ export const MedicalTemplate5: React.FC<TemplateProps> = ({ document, pageItems,
                 <table className="w-full text-left text-xs">
                     <thead>
                         <tr className="bg-gray-100">
-                            <th className="p-2 font-bold w-1/2">{t.service || 'Service'}</th>
-                            <th className="p-2 font-bold w-1/2">{t.description || 'Description'}</th>
-                            <th className="p-2 font-bold text-center">{t.quantity || 'Qty'}</th>
-                            <th className="p-2 font-bold text-right">{t.charge || 'Charge'}</th>
+                            <th className="p-2 font-bold w-[40%]">{(t.service || 'Service').toUpperCase()}</th>
+                            <th className="p-2 font-bold w-[40%]">{(t.description || 'Description').toUpperCase()}</th>
+                            <th className="p-2 font-bold text-center">{(t.quantity || 'Qty').toUpperCase()}</th>
+                            <th className="p-2 font-bold text-right">{(t.unitPrice || 'Unit Price').toUpperCase()}</th>
+                            <th className="p-2 font-bold text-right">{(t.charge || 'Charge').toUpperCase()}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -299,6 +301,7 @@ export const MedicalTemplate5: React.FC<TemplateProps> = ({ document, pageItems,
                                 <td className="p-2 font-semibold whitespace-pre-line">{item.name}</td>
                                 <td className="p-2 text-xs text-muted-foreground whitespace-pre-line">{item.description}</td>
                                 <td className="p-2 text-center">{item.quantity}</td>
+                                <td className="p-2 text-right">{currencySymbol}{item.unitPrice.toFixed(2)}</td>
                                 <td className="p-2 text-right">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</td>
                             </tr>
                         ))}
