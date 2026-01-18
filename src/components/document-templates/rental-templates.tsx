@@ -307,6 +307,8 @@ export const RentalTemplate4: React.FC<TemplateProps> = ({ document, pageItems, 
                 <section className="mb-10 text-sm">
                     <p><strong>{t.to || 'To'}:</strong> {client.name}</p>
                     <p className="whitespace-pre-line">{client.address}</p>
+                    <p>{client.phone} | {client.email}</p>
+                    {client.shippingAddress && <p className="mt-2"><span className="font-bold">Ship To:</span><br/>{client.shippingAddress}</p>}
                 </section>
                 <RentalDetails document={document} t={t} />
                 <main className="flex-grow mt-4">
@@ -372,7 +374,10 @@ export const RentalTemplate5: React.FC<TemplateProps> = ({ document, pageItems, 
             <h2 className="text-center text-xl mb-8">{docTitle.toUpperCase()}</h2>
             <section className="text-xs mb-8">
                 <p><strong>{t.to || 'To'}:</strong> {client.name}</p>
-                <p><strong>{t.no || 'No'}:</strong> {document.estimateNumber}</p>
+                {client.companyName && <p>{client.companyName}</p>}
+                <p>{client.address}</p>
+                <p>{client.phone} | {client.email}</p>
+                <p className="mt-2"><strong>{t.no || 'No'}:</strong> {document.estimateNumber}</p>
                 <p><strong>{t.date || 'Date'}:</strong> {safeFormat(document.estimateDate, 'MM/dd/yyyy')}</p>
             </section>
             <RentalDetails document={document} t={t} />
@@ -412,3 +417,5 @@ export const RentalTemplate5: React.FC<TemplateProps> = ({ document, pageItems, 
         </div>
     );
 };
+
+    
