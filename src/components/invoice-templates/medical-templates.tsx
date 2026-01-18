@@ -135,7 +135,7 @@ export const MedicalTemplate1: React.FC<PageProps> = (props) => {
                     <div className="flex justify-between items-start">
                         <div className="w-1/3 text-xs p-4 bg-gray-50 rounded-md">
                             <p className="font-bold" style={{color: accentColor}}>{t.notes || 'Notes'}</p>
-                            <p className="mt-1 whitespace-pre-line">{invoice.paymentInstructions}</p>
+                            <p className="mt-1">{invoice.paymentInstructions}</p>
                         </div>
                         <div className="w-1/3 text-right text-xs space-y-2">
                              <p className="grid grid-cols-2"><span className="font-bold">{(t.subtotal || 'SUBTOTAL').toUpperCase()}</span> <span>{currencySymbol}{subtotal.toFixed(2)}</span></p>
@@ -156,7 +156,7 @@ export const MedicalTemplate1: React.FC<PageProps> = (props) => {
 
 // Template 2: Vitality
 export const MedicalTemplate2: React.FC<PageProps> = (props) => {
-    const { invoice, pageItems, pageIndex, totalPages, subtotal, taxAmount, discountAmount, total, balanceDue, currencySymbol, t, accentColor, textColor } = props;
+    const { invoice, pageItems, pageIndex, totalPages, subtotal, taxAmount, discountAmount, total, balanceDue, currencySymbol, t, textColor } = props;
     const { business, client } = invoice;
     const docTitle = (t.invoice || 'INVOICE').toUpperCase();
 
@@ -197,14 +197,14 @@ export const MedicalTemplate2: React.FC<PageProps> = (props) => {
 
 // Template 3: Clinic
 export const MedicalTemplate3: React.FC<PageProps> = (props) => {
-    const { invoice, pageItems, pageIndex, totalPages, subtotal, taxAmount, discountAmount, total, balanceDue, currencySymbol, t, accentColor, textColor } = props;
+    const { invoice, pageItems, pageIndex, totalPages, total, balanceDue, currencySymbol, t, accentColor, textColor } = props;
     const { business, client } = invoice;
-    const docTitle = (t.statement || 'STATEMENT').toUpperCase();
+    const docTitle = t.statement || 'STATEMENT';
 
     return (
         <div className={`flex ${pageIndex < totalPages - 1 ? 'page-break-after' : ''}`} style={{ minHeight: '1056px', backgroundColor: props.backgroundColor, color: props.textColor }}>
-            <div className="w-1/3 p-8 text-white" style={{backgroundColor: accentColor}}>
-                <h1 className="text-3xl font-bold">{docTitle}</h1>
+            <div className="w-1/3 p-8 text-white" style={{backgroundColor: accentColor || '#1E40AF'}}>
+                <h1 className="text-3xl font-bold">{docTitle.toUpperCase()}</h1>
                 <div className="mt-10 text-xs space-y-4">
                     <div><p className="opacity-70">{t.statementDate || 'Statement Date'}</p><p>{safeFormat(invoice.invoiceDate, 'MM/dd/yyyy')}</p></div>
                     <div><p className="opacity-70">{t.dueDate || 'Due Date'}</p><p>{safeFormat(invoice.dueDate, 'MM/dd/yyyy')}</p></div>
@@ -212,7 +212,7 @@ export const MedicalTemplate3: React.FC<PageProps> = (props) => {
                     {invoice.poNumber && <div><p className="opacity-70">PO #</p><p>{invoice.poNumber}</p></div>}
                 </div>
             </div>
-            <div className="w-2/3 p-10 flex flex-col">
+            <div className="w-2/3 p-10">
                 <header className="text-right mb-10"><h2 className="text-2xl font-bold">{business.name}</h2><p className="text-xs">{business.address}</p></header>
                 <section className="mb-10 text-sm"><p className="font-bold">{t.to || 'To'}:</p><p>{client.name}</p></section>
                 <CategorySpecificDetails invoice={invoice} t={t} />
@@ -266,7 +266,7 @@ export const MedicalTemplate4: React.FC<PageProps> = (props) => {
                         {discountAmount > 0 && <p className="flex justify-between text-red-600"><span>{t.discount || 'Discount'}:</span><span>-{currencySymbol}{discountAmount.toFixed(2)}</span></p>}
                         {invoice.summary.shippingCost > 0 && <p className="flex justify-between"><span>{t.shipping || 'Other Fees'}:</span><span>{currencySymbol}{invoice.summary.shippingCost.toFixed(2)}</span></p>}
                         <p className="flex justify-between"><span>{t.adjustments || 'Adjustments'}</span><span>{currencySymbol}{(taxAmount > 0 ? taxAmount.toFixed(2) : '0.00')}</span></p>
-                        <p className="flex justify-between font-bold mt-2"><span>{t.total || 'Total'}:</span><span>{currencySymbol}{total.toFixed(2)}</span></p>
+                        <p className="flex justify-between font-bold mt-2"><span>{t.totalDue || 'Total Due'}</span><span>{currencySymbol}{total.toFixed(2)}</span></p>
                         {(invoice.amountPaid || 0) > 0 && <p className="flex justify-between font-bold text-green-600"><span>{t.amountPaid || 'Amount Paid'}:</span><span>-{currencySymbol}{(invoice.amountPaid || 0).toFixed(2)}</span></p>}
                         <p className="flex justify-between font-bold bg-gray-100 p-1"><span>{t.balanceDue || 'Balance Due'}:</span><span>{currencySymbol}{balanceDue.toFixed(2)}</span></p>
                     </div>
@@ -293,15 +293,15 @@ export const MedicalTemplate5: React.FC<PageProps> = (props) => {
                     {business.website && <p>{business.website}</p>}
                 </div>
             </header>
-            <h2 className="text-center text-xl font-semibold mb-8">{t.statementOfAccount || 'STATEMENT OF ACCOUNT'}</h2>
+            
             <section className="grid grid-cols-2 gap-8 text-xs mb-8">
                 <div>
-                    <p className="font-bold">{t.patient || 'Patient'}:</p>
+                    
                     <p>{client.name}</p>
                     <p className="whitespace-pre-line">{client.address}</p>
                 </div>
                 <div className="text-right">
-                    <p><strong>{t.accountNo || 'Account #'}:</strong> {invoice.medical?.patientId || 'N/A'}</p>
+                    
                     <p><strong>{t.invoiceNo || 'Invoice #'}:</strong> {invoice.invoiceNumber}</p>
                     <p><strong>{t.date || 'Date'}:</strong> {safeFormat(invoice.invoiceDate, 'MM/dd/yyyy')}</p>
                     <p><strong>{t.dueDate || 'Due Date'}:</strong> {safeFormat(invoice.dueDate, 'MM/dd/yyyy')}</p>

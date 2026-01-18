@@ -62,6 +62,7 @@ export const MedicalTemplate1: React.FC<TemplateProps> = ({ document, pageItems,
     const currencySymbol = currencySymbols[currency] || '$';
     const docTitle = document.documentType === 'quote' ? t.quote || 'Quote' : t.estimate || 'Estimate';
 
+
     return (
         <div className={`p-10 font-sans relative ${pageIndex < totalPages - 1 ? 'page-break-after' : ''}`} style={{ minHeight: '1056px', backgroundColor: document.backgroundColor, color: textColor }}>
             <div className="absolute inset-0 bg-no-repeat bg-center bg-contain opacity-5" style={{backgroundImage: `url("https://storage.googleapis.com/studio-hosting-assets/invoice-template-previews/medical-watermark.svg")`}}></div>
@@ -188,6 +189,7 @@ export const MedicalTemplate3: React.FC<TemplateProps> = ({ document, pageItems,
                 <h1 className="text-3xl font-bold">{docTitle.toUpperCase()}</h1>
                 <div className="mt-10 text-xs space-y-4">
                     <div><p className="opacity-70">{t.statementDate || 'Statement Date'}</p><p>{safeFormat(document.estimateDate, 'MM/dd/yyyy')}</p></div>
+                    <div><p className="opacity-70">{t.validUntil || 'Valid Until'}</p><p>{safeFormat(document.validUntilDate, 'MM/dd/yyyy')}</p></div>
                     <div><p className="opacity-70">{t.accountNo || 'Account #'}</p><p>{document.medical?.patientId || document.estimateNumber}</p></div>
                 </div>
             </div>
@@ -226,6 +228,7 @@ export const MedicalTemplate4: React.FC<TemplateProps> = ({ document, pageItems,
                 <p><strong>{t.patient || 'Patient'}:</strong> {client.name}</p>
                 <p><strong>{docTitle} #:</strong> {document.estimateNumber}</p>
                 <p><strong>{t.date || 'Date'}:</strong> {safeFormat(document.estimateDate, 'MMMM d, yyyy')}</p>
+                <p><strong>{t.validUntil || 'Valid Until'}:</strong> {safeFormat(document.validUntilDate, 'MMMM d, yyyy')}</p>
             </section>
             <MedicalDetails document={document} t={t} />
             <main className="flex-grow mt-4">
@@ -267,16 +270,16 @@ export const MedicalTemplate5: React.FC<TemplateProps> = ({ document, pageItems,
                     {business.website && <p>{business.website}</p>}
                 </div>
             </header>
-            <h2 className="text-center text-xl font-semibold mb-8">{t.statementOfAccount || 'STATEMENT OF ACCOUNT'}</h2>
+            
             <section className="grid grid-cols-2 gap-8 text-xs mb-8">
                 <div>
-                    <p className="font-bold">{t.patient || 'Patient'}:</p>
+                    
                     <p>{client.name}</p>
                     <p className="whitespace-pre-line">{client.address}</p>
                 </div>
                 <div className="text-right">
-                    <p><strong>{t.accountNo || 'Account #'}:</strong> {document.medical?.patientId || 'N/A'}</p>
-                    <p><strong>{docTitle} #:</strong> {document.estimateNumber}</p>
+                    
+                    <p><strong>{document.documentType === 'quote' ? t.quoteNo : t.estimateNo || 'Estimate #'}:</strong> {document.estimateNumber}</p>
                     <p><strong>{t.date || 'Date'}:</strong> {safeFormat(document.estimateDate, 'MM/dd/yyyy')}</p>
                     <p><strong>{t.validUntil || 'Valid Until'}:</strong> {safeFormat(document.validUntilDate, 'MM/dd/yyyy')}</p>
                 </div>
