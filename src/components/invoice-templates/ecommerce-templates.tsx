@@ -72,10 +72,8 @@ export const EcommerceTemplate1: React.FC<PageProps> = (props) => {
                         {business.website && <p className="text-xs text-white/80">{business.website}</p>}
                     </div>
                     <div className="w-1/2 h-40 relative">
-                        {business.logoUrl ? (
+                        {business.logoUrl && (
                              <NextImage src={business.logoUrl} layout="fill" objectFit="contain" alt="Company Logo" className="rounded-md" />
-                        ) : (
-                             <NextImage src="https://picsum.photos/seed/ecom-fashion/400/200" layout="fill" objectFit="cover" alt="Fashion models" className="rounded-md" data-ai-hint="fashion models" />
                         )}
                     </div>
                 </div>
