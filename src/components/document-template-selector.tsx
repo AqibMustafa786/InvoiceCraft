@@ -1,4 +1,3 @@
-
 'use client';
 
 import { cn } from '@/lib/utils';
@@ -49,7 +48,7 @@ export function DocumentTemplateSelector({ selectedTemplate, onSelectTemplate, d
   
   return (
     <div className="space-y-6">
-      <div className="relative">
+      <div className="relative sticky top-0 z-10 bg-card py-2">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
         <Input 
             placeholder="Search templates..." 
