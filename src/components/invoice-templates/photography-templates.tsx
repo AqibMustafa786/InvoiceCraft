@@ -215,7 +215,7 @@ export const PhotographyTemplate3: React.FC<PageProps> = (props) => {
     const { business, client } = invoice;
     const docTitle = (t.invoice || 'INVOICE').toUpperCase();
     return (
-         <div className={`p-10 font-serif bg-gray-50 text-gray-700 ${pageIndex < totalPages - 1 ? 'page-break-after' : ''}`} style={{ minHeight: '1056px', backgroundColor: props.backgroundColor, color: textColor }}>
+         <div className={`p-10 font-serif bg-gray-50 text-gray-700 ${pageIndex < totalPages - 1 ? 'page-break-after' : ''}`} style={{ minHeight: '1056px', backgroundColor: props.backgroundColor, color: props.textColor }}>
             <header className="text-center mb-10">
                 <h1 className="text-4xl font-bold">{business.name}</h1>
                 <p className="text-sm">{t.photography || 'Photography'}</p>
@@ -228,21 +228,8 @@ export const PhotographyTemplate3: React.FC<PageProps> = (props) => {
                 </div>
             </header>
             <section className="grid grid-cols-2 gap-8 text-xs mb-8">
-                <div>
-                    <p className="font-bold">{t.billedTo || 'Billed To'}</p>
-                    <p>{client.name}</p>
-                    {client.companyName && <p>{client.companyName}</p>}
-                    <p className="whitespace-pre-line">{client.address}</p>
-                    <p>{client.phone}</p>
-                    <p>{client.email}</p>
-                    {client.shippingAddress && <p className="mt-2"><span className="font-bold">Ship To:</span><br/>{client.shippingAddress}</p>}
-                </div>
-                <div className="text-right">
-                    <p><strong>{t.invoiceNo || 'Invoice #'}:</strong> {invoice.invoiceNumber}</p>
-                    <p><strong>{t.date || 'Date'}:</strong> {safeFormat(invoice.invoiceDate, 'MM/dd/yyyy')}</p>
-                    <p><strong>{t.dueDate || 'Due Date'}:</strong> {safeFormat(invoice.dueDate, 'MM/dd/yyyy')}</p>
-                    {invoice.poNumber && <p><strong>PO #:</strong> {invoice.poNumber}</p>}
-                </div>
+                <div><p className="font-bold">{t.billedTo || 'Billed To'}</p><p>{client.name}<br/>{client.address}</p></div>
+                <div className="text-right"><p><strong>{t.invoiceNo || 'Invoice #'}:</strong> {invoice.invoiceNumber}</p><p><strong>{t.date || 'Date'}:</strong> {safeFormat(invoice.invoiceDate, 'MM/dd/yyyy')}</p></div>
             </section>
             <CategorySpecificDetails invoice={invoice} t={t} />
             <main className="flex-grow mt-4">
@@ -278,7 +265,7 @@ export const PhotographyTemplate3: React.FC<PageProps> = (props) => {
                             {invoice.summary.shippingCost > 0 && <p className="flex justify-between"><span>{t.shipping || 'Shipping'}</span><span>{currencySymbol}{invoice.summary.shippingCost.toFixed(2)}</span></p>}
                             <p className="flex justify-between border-b pb-1"><span>{t.tax || 'Tax'}</span><span>{currencySymbol}{taxAmount.toFixed(2)}</span></p>
                             <p className="flex justify-between font-bold mt-2"><span>{t.total || 'Total'}</span><span>{currencySymbol}{total.toFixed(2)}</span></p>
-                             {(invoice.amountPaid || 0) > 0 && <p className="flex justify-between font-bold text-green-600"><span>{t.amountPaid || 'Amount Paid'}</span><span>-{currencySymbol}{(invoice.amountPaid || 0).toFixed(2)}</span></p>}
+                            {(invoice.amountPaid || 0) > 0 && <p className="flex justify-between font-bold text-green-600"><span>{t.amountPaid || 'Amount Paid'}</span><span>-{currencySymbol}{(invoice.amountPaid || 0).toFixed(2)}</span></p>}
                              <p className="flex justify-between font-bold bg-gray-200 p-1"><span>{t.balanceDue || 'Balance Due'}</span><span>{currencySymbol}{balanceDue.toFixed(2)}</span></p>
                         </div>
                     </div>
@@ -301,7 +288,7 @@ export const PhotographyTemplate4: React.FC<PageProps> = (props) => {
     const docTitle = (t.invoice || 'Invoice');
 
     return (
-        <div className={`font-sans ${pageIndex < totalPages - 1 ? 'page-break-after' : ''}`} style={{ minHeight: '1056px', backgroundColor: props.backgroundColor, color: textColor }}>
+        <div className={`font-sans ${pageIndex < totalPages - 1 ? 'page-break-after' : ''}`} style={{ minHeight: '1056px', backgroundColor: props.backgroundColor, color: props.textColor }}>
              <header className="p-10 text-white flex justify-between items-center" style={{backgroundColor: accentColor}}>
                 <h1 className="text-3xl font-bold">{business.name}</h1>
                 <div className="text-right">
@@ -311,27 +298,36 @@ export const PhotographyTemplate4: React.FC<PageProps> = (props) => {
             <div className="p-10">
                 <section className="grid grid-cols-2 gap-10 text-sm mb-10">
                     <div>
-                        <p className="font-bold">{t.billedTo || 'Billed To'}</p>
-                        <p>{client.name}</p>
-                        {client.companyName && <p>{client.companyName}</p>}
-                        <p className="whitespace-pre-line">{client.address}</p>
-                        <p>{client.phone} | {client.email}</p>
-                        {client.shippingAddress && <p className="mt-2"><span className="font-bold">Ship To:</span><br/>{client.shippingAddress}</p>}
+                        <p className="font-bold mb-2" style={{color: accentColor}}>{t.billedTo || 'Billed To'}</p>
+                        <p className="font-semibold">{client.name}</p>
+                        {client.companyName && <p className="text-muted-foreground">{client.companyName}</p>}
+                        <p className="text-muted-foreground whitespace-pre-line">{client.address}</p>
+                        <p className="text-muted-foreground">{client.phone}</p>
+                        <p className="text-muted-foreground">{client.email}</p>
                     </div>
                     <div className="text-right">
-                        <p><strong>{t.date || 'Date'}:</strong> {safeFormat(invoice.invoiceDate, 'MM/dd/yyyy')}<br/><strong>{t.dueDate || 'Due Date'}:</strong> {safeFormat(invoice.dueDate, 'MM/dd/yyyy')}</p>
-                        {invoice.poNumber && <p><strong>PO #:</strong> {invoice.poNumber}</p>}
+                         <p className="font-bold mb-2" style={{color: accentColor}}>{t.billFrom || 'Bill From'}</p>
+                         <p className="whitespace-pre-line">{business.address}</p>
+                         <p>{business.phone}</p>
+                         <p>{business.email}</p>
+                         {business.website && <p>{business.website}</p>}
                     </div>
+                </section>
+                <section className="text-sm mb-8">
+                    <p><strong>{t.date || 'Date'}:</strong> {safeFormat(invoice.invoiceDate, 'MM/dd/yyyy')}</p>
+                    <p><strong>{t.dueDate || 'Due Date'}:</strong> {safeFormat(invoice.dueDate, 'MM/dd/yyyy')}</p>
+                    {business.licenseNumber && <p><strong>{t.license || 'Lic #'}:</strong> {business.licenseNumber}</p>}
+                    {business.taxId && <p><strong>{t.taxId || 'Tax ID'}:</strong> {business.taxId}</p>}
                 </section>
                 <CategorySpecificDetails invoice={invoice} t={t} />
                 <main className="flex-grow mt-4">
                     <table className="w-full text-left text-sm">
                         <thead>
                             <tr className="bg-gray-100">
-                                <th className="p-3 font-bold w-1/2">{t.serviceProvided || 'Service Provided'}</th>
-                                <th className="p-3 font-bold w-1/4">{(t.description || 'Details')}</th>
-                                <th className="p-3 font-bold text-center">{(t.quantity || 'Qty')}</th>
-                                <th className="p-3 font-bold text-right">{(t.rate || 'Rate')}</th>
+                                <th className="p-3 font-bold w-1/2">{t.item || 'Item'}</th>
+                                <th className="p-3 font-bold w-1/4">{t.description || 'Description'}</th>
+                                <th className="p-3 font-bold text-center">{t.quantity || 'Qty'}</th>
+                                <th className="p-3 font-bold text-right">{t.unitPrice || 'Unit Price'}</th>
                                 <th className="p-3 font-bold text-right">{t.fee || 'Fee'}</th>
                             </tr>
                         </thead>
@@ -348,7 +344,7 @@ export const PhotographyTemplate4: React.FC<PageProps> = (props) => {
                         </tbody>
                     </table>
                 </main>
-                 {pageIndex === totalPages - 1 && (
+                {pageIndex === totalPages - 1 && (
                 <footer className="mt-10 pt-10 border-t">
                     <div className="flex justify-end text-sm">
                         <div className="w-1/3">
@@ -379,9 +375,8 @@ export const PhotographyTemplate5: React.FC<PageProps> = (props) => {
     const { invoice, pageItems, pageIndex, totalPages, subtotal, taxAmount, discountAmount, total, balanceDue, currencySymbol, t, accentColor, textColor } = props;
     const { business, client } = invoice;
     const docTitle = (t.invoice || 'Invoice');
-
     return (
-        <div className={`p-10 font-serif ${pageIndex < totalPages - 1 ? 'page-break-after' : ''}`} style={{ minHeight: '1056px', borderLeft: `10px solid ${accentColor}`, backgroundColor: props.backgroundColor, color: textColor }}>
+        <div className={`p-10 font-serif ${pageIndex < totalPages - 1 ? 'page-break-after' : ''}`} style={{ minHeight: '1056px', borderLeft: `10px solid ${accentColor}`, backgroundColor: props.backgroundColor, color: props.textColor }}>
             <header className="mb-10">
                 <h1 className="text-4xl font-bold">{business.name}</h1>
                 <p className="text-xs text-gray-500">{t.professionalPhotography || 'Professional Photography'}</p>
@@ -421,8 +416,8 @@ export const PhotographyTemplate5: React.FC<PageProps> = (props) => {
                  <table className="w-full text-left text-xs">
                     <thead>
                         <tr>
-                            <th className="py-2 border-b-2 font-normal text-gray-500 w-2/5">{t.service || 'Service'}</th>
-                            <th className="py-2 border-b-2 font-normal text-gray-500 w-2/5">{t.description || 'Description'}</th>
+                            <th className="py-2 border-b-2 font-normal text-gray-500 w-1/2">{t.service || 'Service'}</th>
+                            <th className="py-2 border-b-2 font-normal text-gray-500 w-1/4">{t.description || 'Description'}</th>
                             <th className="py-2 border-b-2 font-normal text-gray-500 text-center">{t.quantity || 'Qty'}</th>
                             <th className="py-2 border-b-2 font-normal text-gray-500 text-right">{t.unitPrice || 'Unit Price'}</th>
                             <th className="py-2 border-b-2 font-normal text-gray-500 text-right">{t.cost || 'Cost'}</th>
