@@ -203,7 +203,7 @@ export const MedicalTemplate3: React.FC<TemplateProps> = ({ document, pageItems,
                 </main>
                 {pageIndex === totalPages - 1 && (
                 <footer className="mt-auto pt-8">
-                    <div className="flex justify-end text-xl font-bold"><p><span>{t.total || 'Total'}: </span><span>{currencySymbol}{summary.grandTotal.toFixed(2)}</span></p></div>
+                    <div className="text-right text-xl font-bold">{t.total || 'Total'}: {currencySymbol}{summary.grandTotal.toFixed(2)}</div>
                 </footer>
                 )}
             </div>
@@ -257,19 +257,52 @@ export const MedicalTemplate5: React.FC<TemplateProps> = ({ document, pageItems,
     return (
         <div className={`p-8 font-serif ${pageIndex < totalPages - 1 ? 'page-break-after' : ''}`} style={{ minHeight: '1056px', backgroundColor: document.backgroundColor, color: textColor }}>
             <header className="text-center mb-10">
+                {business.logoUrl && <Image src={business.logoUrl} alt="Logo" width={90} height={45} className="object-contain mx-auto mb-2"/>}
                 <h1 className="text-3xl font-bold">{business.name}</h1>
-                <p className="text-xs">{business.address} | {business.phone}</p>
+                <div className="text-xs mt-1 text-gray-600" style={{color: textColor ? `${textColor}B3` : undefined}}>
+                    <p className="whitespace-pre-line">{business.address}</p>
+                    <p>{business.phone} | {business.email}</p>
+                    {business.website && <p>{business.website}</p>}
+                </div>
             </header>
             <h2 className="text-center text-xl font-semibold mb-8">{t.statementOfAccount || 'STATEMENT OF ACCOUNT'}</h2>
-            <section className="text-xs mb-8">
-                <p><strong>{t.patient || 'Patient'}:</strong> {client.name}</p>
-                <p><strong>{t.accountNo || 'Account #'}:</strong> {document.medical?.patientId || 'N/A'}</p>
+            <section className="grid grid-cols-2 gap-8 text-xs mb-8">
+                <div>
+                    <p className="font-bold">{t.patient || 'Patient'}:</p>
+                    <p>{client.name}</p>
+                    <p className="whitespace-pre-line">{client.address}</p>
+                </div>
+                <div className="text-right">
+                    <p><strong>{t.accountNo || 'Account #'}:</strong> {document.medical?.patientId || 'N/A'}</p>
+                    <p><strong>{docTitle} #:</strong> {document.estimateNumber}</p>
+                    <p><strong>{t.date || 'Date'}:</strong> {safeFormat(document.estimateDate, 'MM/dd/yyyy')}</p>
+                    <p><strong>{t.validUntil || 'Valid Until'}:</strong> {safeFormat(document.validUntilDate, 'MM/dd/yyyy')}</p>
+                    {document.referenceNumber && <p><strong>Ref #:</strong> {document.referenceNumber}</p>}
+                </div>
             </section>
+            
             <MedicalDetails document={document} t={t} />
+
             <main className="flex-grow mt-4">
                 <table className="w-full text-left text-xs">
-                    <thead><tr className="bg-gray-100"><th className="p-2 font-bold w-2/3">{t.service || 'Service'}</th><th className="p-2 font-bold text-right">{t.charge || 'Charge'}</th></tr></thead>
-                    <tbody>{pageItems.map(item => (<tr key={item.id} className="border-b"><td className="p-2">{item.name}</td><td className="p-2 text-right">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</td></tr>))}</tbody>
+                    <thead>
+                        <tr className="bg-gray-100">
+                            <th className="p-2 font-bold w-1/2">{t.service || 'Service'}</th>
+                            <th className="p-2 font-bold w-1/2">{t.description || 'Description'}</th>
+                            <th className="p-2 font-bold text-center">{t.quantity || 'Qty'}</th>
+                            <th className="p-2 font-bold text-right">{t.charge || 'Charge'}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {pageItems.map(item => (
+                            <tr key={item.id} className="border-b">
+                                <td className="p-2 font-semibold whitespace-pre-line">{item.name}</td>
+                                <td className="p-2 text-xs text-muted-foreground whitespace-pre-line">{item.description}</td>
+                                <td className="p-2 text-center">{item.quantity}</td>
+                                <td className="p-2 text-right">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</td>
+                            </tr>
+                        ))}
+                    </tbody>
                 </table>
             </main>
             {pageIndex === totalPages - 1 && (
@@ -283,10 +316,16 @@ export const MedicalTemplate5: React.FC<TemplateProps> = ({ document, pageItems,
                         <p className="flex justify-between font-bold text-xl mt-2" style={{color: style.color}}><span>{t.pleaseRemit || 'Please Remit'}: </span><span>{currencySymbol}{summary.grandTotal.toFixed(2)}</span></p>
                     </div>
                 </div>
+                 <div className="text-xs mt-8">
+                    <p className="font-bold">{t.paymentInstructions || 'Payment Instructions'}:</p>
+                    <p className="text-muted-foreground whitespace-pre-line">{document.termsAndConditions}</p>
+                 </div>
+                 <div className="flex justify-between mt-8">
+                    <SignatureDisplay signature={document.business.ownerSignature} label={t.authorizedSignature || 'Authorized Signature'} />
+                    <SignatureDisplay signature={document.clientSignature} label={t.clientSignature || 'Client Signature'} />
+                </div>
             </footer>
             )}
         </div>
     );
 };
-
-    
