@@ -1,4 +1,3 @@
-
 'use client';
 
 import React from 'react';
@@ -189,7 +188,7 @@ export const RentalTemplate3: React.FC<TemplateProps> = ({ document, pageItems, 
                 <div className="w-1/3">
                     <p className="flex justify-between py-1"><span>{t.total || 'Total'}:</span><span>{currencySymbol}{summary.subtotal.toFixed(2)}</span></p>
                     {summary.discount > 0 && <p className="flex justify-between py-1 text-red-600"><span>{t.discount || 'Discount'}:</span><span>-{currencySymbol}{summary.discount.toFixed(2)}</span></p>}
-                    {summary.shippingCost > 0 && <p className="flex justify-between py-1"><span>{t.shipping || 'Shipping'}:</span><span>{currencySymbol}{summary.shippingCost.toFixed(2)}</span></p>}
+                    {summary.shippingCost > 0 && <p className="flex justify-between py-1"><span>{t.shipping || 'Other Fees'}:</span><span>{currencySymbol}{summary.shippingCost.toFixed(2)}</span></p>}
                     <p className="flex justify-between font-bold text-xl mt-2 pt-2 border-t-2"><span>{t.totalDue || 'Total Due'}:</span><span>{currencySymbol}{summary.grandTotal.toFixed(2)}</span></p>
                 </div>
             </div>
@@ -205,7 +204,7 @@ export const RentalTemplate3: React.FC<TemplateProps> = ({ document, pageItems, 
 export const RentalTemplate4: React.FC<TemplateProps> = ({ document, pageItems, pageIndex, totalPages, style, t }) => {
     const { business, client, summary, currency, textColor } = document;
     const currencySymbol = currencySymbols[currency] || '$';
-    const docTitle = document.documentType === 'quote' ? t.quote || 'QUOTE' : t.estimate || 'ESTIMATE';
+    const docTitle = document.documentType === 'quote' ? (t.quote || 'QUOTE') : (t.estimate || 'ESTIMATE');
 
     return (
         <div className={`flex ${pageIndex < totalPages - 1 ? 'page-break-after' : ''}`} style={{ minHeight: '1056px', backgroundColor: document.backgroundColor, color: textColor }}>
@@ -250,7 +249,7 @@ export const RentalTemplate5: React.FC<TemplateProps> = ({ document, pageItems, 
                 <h1 className="text-2xl font-bold">{business.name}</h1>
                 <p className="text-xs">{business.address} | {business.phone}</p>
             </header>
-            <h2 className="text-center text-xl mb-8">{t.rental || 'RENTAL'} {docTitle.toUpperCase()}</h2>
+            <h2 className="text-center text-xl mb-8">{docTitle.toUpperCase()}</h2>
             <section className="text-xs mb-8">
                 <p><strong>{t.to || 'To'}:</strong> {client.name}</p>
                 <p><strong>{t.no || 'No'}:</strong> {document.estimateNumber}</p>
@@ -283,5 +282,3 @@ export const RentalTemplate5: React.FC<TemplateProps> = ({ document, pageItems, 
         </div>
     );
 };
-
-  
