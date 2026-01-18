@@ -4,7 +4,7 @@
 import React from 'react';
 import type { Estimate, LineItem } from '@/lib/types';
 import { format, isValid } from 'date-fns';
-import NextImage from 'next/image';
+import Image from 'next/image';
 
 interface TemplateProps {
   document: Estimate;
@@ -28,7 +28,7 @@ const SignatureDisplay = ({ signature, label }: { signature: any, label: string 
     if (!signature?.image) return null;
     return (
         <div className="mt-8">
-            <NextImage src={signature.image} alt={label} width={150} height={75} className="border-b border-gray-400" />
+            <Image src={signature.image} alt={label} width={150} height={75} className="border-b border-gray-400" />
             <p className="text-xs text-gray-500 pt-1 border-t-2 border-gray-700 w-[150px]">{label}</p>
         </div>
     )
@@ -64,11 +64,6 @@ export const PhotographyTemplate1: React.FC<TemplateProps> = ({ document, pageIt
 
     return (
         <div className={`font-serif bg-[#333333] text-white flex flex-col ${pageIndex < totalPages - 1 ? 'page-break-after' : ''}`} style={{ minHeight: '1056px' }}>
-            <div 
-                className="relative h-48 w-full bg-cover bg-center"
-                style={{ backgroundImage: `url(https://picsum.photos/seed/camera-lens/800/200)` }}
-                data-ai-hint="camera lens"
-            ></div>
             
             <div className="p-10 flex-grow flex flex-col">
                 <section className="grid grid-cols-2 gap-8 mb-8">
@@ -336,7 +331,6 @@ export const PhotographyTemplate4: React.FC<TemplateProps> = ({ document, pageIt
         </div>
     );
 };
-
 // Template 5: Portfolio
 export const PhotographyTemplate5: React.FC<TemplateProps> = ({ document, pageItems, pageIndex, totalPages, style, t }) => {
     const { business, client, summary, currency, category } = document;
@@ -379,3 +373,5 @@ export const PhotographyTemplate5: React.FC<TemplateProps> = ({ document, pageIt
         </div>
     );
 };
+
+    
