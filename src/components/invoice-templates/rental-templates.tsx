@@ -156,10 +156,6 @@ export const RentalTemplate2: React.FC<PageProps> = (props) => {
                     <p className="flex justify-between font-bold bg-gray-200 p-1"><span>{t.balanceDue || 'Balance Due'}</span><span>{currencySymbol}{balanceDue.toFixed(2)}</span></p>
                 </div>
             </div>
-             <div className="text-xs mt-8">
-                <p className="font-bold">{t.paymentInstructions || 'Payment Instructions'}:</p>
-                <p className="text-muted-foreground whitespace-pre-line">{invoice.paymentInstructions}</p>
-            </div>
              <div className="flex justify-between mt-8">
                 <SignatureDisplay signature={business.ownerSignature} label={t.authorizedSignature || 'Authorized Signature'} />
             </div>
@@ -266,12 +262,22 @@ export const RentalTemplate4: React.FC<PageProps> = (props) => {
                 <CategorySpecificDetails invoice={invoice} t={t} />
                 <main className="flex-grow mt-4">
                     <table className="w-full text-left text-sm">
-                        <thead><tr className="bg-gray-100"><th className="p-2 font-bold w-1/2">{t.item || 'Item'}</th><th className="p-2 font-bold w-1/4 text-center">{t.quantity || 'Qty'}</th><th className="p-2 font-bold w-1/4 text-right">{t.amount || 'Amount'}</th></tr></thead>
+                        <thead>
+                            <tr className="bg-gray-100">
+                                <th className="p-2 font-bold w-1/3">{t.item || 'Item'}</th>
+                                <th className="p-2 font-bold w-1/3">{t.description || 'Description'}</th>
+                                <th className="p-2 font-bold text-center">{t.quantity || 'Qty'}</th>
+                                <th className="p-2 font-bold text-right">{t.unitPrice || 'Unit Price'}</th>
+                                <th className="p-2 font-bold text-right">{t.amount || 'Amount'}</th>
+                            </tr>
+                        </thead>
                         <tbody>
                             {pageItems.map(item => (
                                 <tr key={item.id} className="border-b">
-                                    <td className="p-2">{item.name}</td>
+                                    <td className="p-2 whitespace-pre-line">{item.name}</td>
+                                    <td className="p-2 text-xs text-muted-foreground whitespace-pre-line">{item.description}</td>
                                     <td className="p-2 text-center">{item.quantity}</td>
+                                    <td className="p-2 text-right">{currencySymbol}{item.unitPrice.toFixed(2)}</td>
                                     <td className="p-2 text-right">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</td>
                                 </tr>
                             ))}
@@ -286,9 +292,9 @@ export const RentalTemplate4: React.FC<PageProps> = (props) => {
                             {discountAmount > 0 && <p className="flex justify-between py-1 text-red-600"><span>{t.discount || 'Discount'}:</span><span>-{currencySymbol}{discountAmount.toFixed(2)}</span></p>}
                             {invoice.summary.shippingCost > 0 && <p className="flex justify-between py-1"><span>{t.shipping || 'Shipping'}:</span><span>{currencySymbol}{invoice.summary.shippingCost.toFixed(2)}</span></p>}
                             <p className="flex justify-between py-1"><span>{t.tax || 'Tax'}:</span><span>{currencySymbol}{taxAmount.toFixed(2)}</span></p>
-                            <p className="flex justify-between font-bold text-xl mt-2"><span>{t.totalDue || 'Total Due'}:</span><span>{currencySymbol}{total.toFixed(2)}</span></p>
+                            <p className="flex justify-between font-bold text-2xl mt-2"><span>{t.totalDue || 'Total Due'}:</span><span>{currencySymbol}{total.toFixed(2)}</span></p>
                             {(invoice.amountPaid || 0) > 0 && <p className="flex justify-between font-bold text-green-600"><span>{t.amountPaid || 'Amount Paid'}:</span><span>-{currencySymbol}{(invoice.amountPaid || 0).toFixed(2)}</span></p>}
-                            <p className="flex justify-between font-bold mt-1 bg-gray-100 p-2"><span>{t.balanceDue || 'Balance'}:</span><span>{currencySymbol}{balanceDue.toFixed(2)}</span></p>
+                             <p className="flex justify-between font-bold mt-1 bg-gray-100 p-2"><span>{t.balanceDue || 'Balance'}:</span><span>{currencySymbol}{balanceDue.toFixed(2)}</span></p>
                         </div>
                     </div>
                      <div className="text-xs mt-8">

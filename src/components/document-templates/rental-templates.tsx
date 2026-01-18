@@ -139,8 +139,18 @@ export const RentalTemplate2: React.FC<TemplateProps> = ({ document, pageItems, 
         <RentalDetails document={document} t={t} />
         <main className="flex-grow mt-4">
             <table className="w-full text-left text-sm">
-                <thead><tr className="bg-gray-200"><th className="p-2 w-4/5 font-bold">{t.description || 'DESCRIPTION'}</th><th className="p-2 font-bold text-right">{t.total || 'TOTAL'}</th></tr></thead>
-                <tbody>{pageItems.map(item => (<tr key={item.id} className="border-b"><td className="p-2">{item.name}</td><td className="p-2 text-right">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</td></tr>))}</tbody>
+                <thead><tr className="bg-gray-200"><th className="p-2 w-1/2 font-bold">{t.item || 'Item'}</th><th className="p-2 w-1/2 font-bold">{t.description || 'Description'}</th><th className="p-2 font-bold text-center">{(t.quantity || 'Qty')}</th><th className="p-2 font-bold text-right">{(t.unitPrice || 'Unit Price')}</th><th className="p-2 font-bold text-right">{t.total || 'TOTAL'}</th></tr></thead>
+                <tbody>
+                    {pageItems.map(item => (
+                        <tr key={item.id} className="border-b">
+                            <td className="p-2 font-semibold whitespace-pre-line">{item.name}</td>
+                            <td className="p-2 text-xs text-muted-foreground whitespace-pre-line">{item.description}</td>
+                            <td className="p-2 text-center">{item.quantity}</td>
+                            <td className="p-2 text-right">{currencySymbol}{item.unitPrice.toFixed(2)}</td>
+                            <td className="p-2 text-right">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</td>
+                        </tr>
+                    ))}
+                </tbody>
             </table>
         </main>
         {pageIndex === totalPages - 1 && (
@@ -180,8 +190,18 @@ export const RentalTemplate3: React.FC<TemplateProps> = ({ document, pageItems, 
         <RentalDetails document={document} t={t} />
         <main className="flex-grow mt-4">
             <table className="w-full text-left text-sm">
-                <thead><tr className="border-b-2 border-t-2"><th className="py-2 w-3/5">{t.rentalCharges || 'Rental Charges'}</th><th className="py-2 text-right">{t.amount || 'Amount'}</th></tr></thead>
-                <tbody>{pageItems.map(item => (<tr key={item.id} className="border-b"><td className="py-2">{item.name}</td><td className="py-2 text-right">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</td></tr>))}</tbody>
+                <thead><tr className="border-b-2 border-t-2"><th className="py-2 w-1/2">{t.item || 'Item'}</th><th className="py-2 w-1/2">{t.description || 'Description'}</th><th className="py-2 text-center">{t.quantity || 'Qty'}</th><th className="py-2 text-right">{t.unitPrice || 'Unit Price'}</th><th className="py-2 text-right">{t.amount || 'Amount'}</th></tr></thead>
+                <tbody>
+                    {pageItems.map(item => (
+                        <tr key={item.id} className="border-b">
+                            <td className="py-2 font-semibold whitespace-pre-line">{item.name}</td>
+                            <td className="py-2 text-xs text-muted-foreground whitespace-pre-line">{item.description}</td>
+                            <td className="py-2 text-center">{item.quantity}</td>
+                            <td className="py-2 text-right">{currencySymbol}{item.unitPrice.toFixed(2)}</td>
+                            <td className="py-2 text-right">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</td>
+                        </tr>
+                    ))}
+                </tbody>
             </table>
         </main>
         {pageIndex === totalPages - 1 && (
@@ -220,38 +240,27 @@ export const RentalTemplate4: React.FC<TemplateProps> = ({ document, pageItems, 
                 </div>
             </div>
             <div className="w-2/3 p-10 flex flex-col">
-                <header className="text-right mb-10">
-                    <h2 className="text-2xl font-bold">{business.name}</h2>
-                    <p className="text-xs whitespace-pre-line">{business.address}</p>
-                    <p className="text-xs">{business.phone} | {business.email}</p>
-                    {business.website && <p className="text-xs">{business.website}</p>}
-                    {business.licenseNumber && <p className="text-xs">Lic #: {business.licenseNumber}</p>}
-                    {business.taxId && <p className="text-xs">Tax ID: {business.taxId}</p>}
-                </header>
-                <section className="mb-10 text-sm">
-                    <p className="font-bold">{t.to || 'To'}:</p>
-                    <p>{client.name}</p>
-                    {client.companyName && <p>{client.companyName}</p>}
-                    <p className="whitespace-pre-line">{client.address}</p>
-                    <p>{client.phone}</p>
-                    <p>{client.email}</p>
-                    {client.shippingAddress && <p className="mt-2"><span className="font-bold">Ship To:</span><br/>{client.shippingAddress}</p>}
-                </section>
+                <header className="text-right mb-10"><h2 className="text-2xl font-bold">{business.name}</h2><p className="text-xs">{business.address}</p></header>
+                <section className="mb-10 text-sm"><p><strong>{t.to || 'To'}:</strong> {client.name}</p></section>
                 <RentalDetails document={document} t={t} />
                 <main className="flex-grow mt-4">
                     <table className="w-full text-left text-sm">
-                        <thead>
+                       <thead>
                             <tr className="bg-gray-100">
-                                <th className="p-2 font-bold w-1/2">{t.item || 'Item'}</th>
-                                <th className="p-2 font-bold w-1/4 text-center">{t.quantity || 'Qty'}</th>
-                                <th className="p-2 font-bold w-1/4 text-right">{t.amount || 'Amount'}</th>
+                                <th className="p-2 font-bold w-[30%]">{t.item || 'Item'}</th>
+                                <th className="p-2 font-bold w-[30%]">{t.description || 'Description'}</th>
+                                <th className="p-2 font-bold text-center">{t.quantity || 'Qty'}</th>
+                                <th className="p-2 font-bold text-right">{t.unitPrice || 'Unit Price'}</th>
+                                <th className="p-2 font-bold text-right">{t.amount || 'Amount'}</th>
                             </tr>
                         </thead>
                         <tbody>
                             {pageItems.map(item => (
                                 <tr key={item.id} className="border-b">
                                     <td className="p-2 whitespace-pre-line">{item.name}</td>
+                                    <td className="p-2 text-xs text-muted-foreground whitespace-pre-line">{item.description}</td>
                                     <td className="p-2 text-center">{item.quantity}</td>
+                                    <td className="p-2 text-right">{currencySymbol}{item.unitPrice.toFixed(2)}</td>
                                     <td className="p-2 text-right">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</td>
                                 </tr>
                             ))}
@@ -303,8 +312,18 @@ export const RentalTemplate5: React.FC<TemplateProps> = ({ document, pageItems, 
             <RentalDetails document={document} t={t} />
             <main className="flex-grow mt-4">
                 <table className="w-full text-left text-xs">
-                    <thead><tr><th className="py-2 border-b-2 w-3/4">{t.description || 'DESCRIPTION'}</th><th className="py-2 border-b-2 text-right">{t.amount || 'AMOUNT'}</th></tr></thead>
-                    <tbody>{pageItems.map(item => (<tr key={item.id}><td className="py-2 border-b">{item.name}</td><td className="py-2 border-b text-right">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</td></tr>))}</tbody>
+                    <thead><tr><th className="py-2 border-b-2 w-1/4">{t.item || 'ITEM'}</th><th className="py-2 border-b-2 w-2/4">{t.description || 'DESCRIPTION'}</th><th className="py-2 border-b-2 text-center">{t.quantity || 'QTY'}</th><th className="py-2 border-b-2 text-right">{t.unitPrice || 'UNIT PRICE'}</th><th className="py-2 border-b-2 text-right">{t.amount || 'AMOUNT'}</th></tr></thead>
+                    <tbody>
+                        {pageItems.map(item => (
+                            <tr key={item.id}>
+                                <td className="py-2 border-b font-medium whitespace-pre-line">{item.name}</td>
+                                <td className="py-2 border-b text-xs text-muted-foreground whitespace-pre-line">{item.description}</td>
+                                <td className="py-2 border-b text-center">{item.quantity}</td>
+                                <td className="py-2 border-b text-right">{currencySymbol}{item.unitPrice.toFixed(2)}</td>
+                                <td className="py-2 border-b text-right">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</td>
+                            </tr>
+                        ))}
+                    </tbody>
                 </table>
             </main>
             {pageIndex === totalPages - 1 && (
