@@ -157,18 +157,8 @@ export const RentalTemplate2: React.FC<TemplateProps> = ({ document, pageItems, 
             <h2 className="text-2xl font-light text-gray-500">{docTitle}</h2>
         </header>
         <section className="grid grid-cols-2 gap-8 text-sm mb-8">
-            <div>
-                <p><strong>{t.to || 'To'}:</strong> {client.name}</p>
-                <p>{client.companyName}</p>
-                <p>{client.address}</p>
-                <p>{client.phone}</p>
-                <p>{client.email}</p>
-                {document.client.shippingAddress && <p className="mt-2"><span className="font-bold">Ship To:</span><br/>{document.client.shippingAddress}</p>}
-            </div>
-            <div className="text-right">
-                <p><strong>#:</strong> {document.estimateNumber}</p>
-                <p><strong>{t.date || 'Date'}:</strong> {safeFormat(document.estimateDate, 'MMM dd, yyyy')}</p>
-            </div>
+            <div><p><strong>{t.to || 'To'}:</strong> {client.name}</p><p>{client.companyName}</p><p>{client.address}</p><p>{client.phone} | {client.email}</p>{document.client.shippingAddress && <p className="mt-2"><span className="font-bold">Ship To:</span><br/>{document.client.shippingAddress}</p>}</div>
+            <div className="text-right"><p><strong>#:</strong> {document.estimateNumber}</p><p><strong>{t.date || 'Date'}:</strong> {safeFormat(document.estimateDate, 'MMM dd, yyyy')}</p><p><strong>{t.validUntil || 'Valid Until'}:</strong> {safeFormat(document.validUntilDate, 'MMM dd, yyyy')}</p></div>
         </section>
         <RentalDetails document={document} t={t} />
         <main className="flex-grow mt-4">
@@ -303,6 +293,7 @@ export const RentalTemplate4: React.FC<TemplateProps> = ({ document, pageItems, 
                     <h2 className="text-2xl font-bold">{business.name}</h2>
                     <p className="text-xs">{business.address}</p>
                     <p className="text-xs">{business.phone} | {business.email}</p>
+                    {business.website && <p className="text-xs">{business.website}</p>}
                 </header>
                 <section className="mb-10 text-sm">
                     <p><strong>{t.to || 'To'}:</strong> {client.name}</p>
@@ -369,21 +360,29 @@ export const RentalTemplate5: React.FC<TemplateProps> = ({ document, pageItems, 
         <div className={`p-10 font-serif ${pageIndex < totalPages - 1 ? 'page-break-after' : ''}`} style={{ minHeight: '1056px', backgroundColor: '#FDFBF7', color: '#5A4A42' }}>
             <header className="text-center mb-10">
                 <h1 className="text-2xl font-bold">{business.name}</h1>
-                <p className="text-xs">{business.address} | {business.phone}</p>
+                <div className="text-xs mt-1">
+                    <p className="whitespace-pre-line">{business.address}</p>
+                    <p>{business.phone} | {business.email}</p>
+                    {business.website && <p>{business.website}</p>}
+                    {business.licenseNumber && <p>Lic #: {business.licenseNumber}</p>}
+                    {business.taxId && <p>Tax ID: {business.taxId}</p>}
+                </div>
             </header>
             <h2 className="text-center text-xl mb-8">{docTitle.toUpperCase()}</h2>
             <section className="text-xs mb-8">
                 <p><strong>{t.to || 'To'}:</strong> {client.name}</p>
                 {client.companyName && <p>{client.companyName}</p>}
-                <p>{client.address}</p>
+                <p className="whitespace-pre-line">{client.address}</p>
                 <p>{client.phone} | {client.email}</p>
+                {client.shippingAddress && <p className="mt-2"><span className="font-bold">Ship To:</span><br/>{client.shippingAddress}</p>}
                 <p className="mt-2"><strong>{t.no || 'No'}:</strong> {document.estimateNumber}</p>
                 <p><strong>{t.date || 'Date'}:</strong> {safeFormat(document.estimateDate, 'MM/dd/yyyy')}</p>
+                <p><strong>{t.validUntil || 'Valid Until'}:</strong> {safeFormat(document.validUntilDate, 'MM/dd/yyyy')}</p>
             </section>
             <RentalDetails document={document} t={t} />
             <main className="flex-grow mt-4">
                 <table className="w-full text-left text-xs">
-                    <thead><tr><th className="py-2 border-b-2 w-1/4">{t.item || 'ITEM'}</th><th className="py-2 border-b-2 w-2/4">{t.description || 'DESCRIPTION'}</th><th className="py-2 border-b-2 text-center">{t.quantity || 'QTY'}</th><th className="py-2 border-b-2 text-right">{t.unitPrice || 'UNIT PRICE'}</th><th className="py-2 border-b-2 text-right">{t.amount || 'AMOUNT'}</th></tr></thead>
+                    <thead><tr><th className="py-2 border-b-2 w-1/4">{(t.item || 'ITEM').toUpperCase()}</th><th className="py-2 border-b-2 w-2/4">{(t.description || 'DESCRIPTION').toUpperCase()}</th><th className="py-2 border-b-2 text-center">{(t.quantity || 'QTY').toUpperCase()}</th><th className="py-2 border-b-2 text-right">{(t.unitPrice || 'UNIT PRICE').toUpperCase()}</th><th className="py-2 border-b-2 text-right">{(t.amount || 'AMOUNT').toUpperCase()}</th></tr></thead>
                     <tbody>
                         {pageItems.map(item => (
                             <tr key={item.id}>
@@ -408,6 +407,10 @@ export const RentalTemplate5: React.FC<TemplateProps> = ({ document, pageItems, 
                         <p className="flex justify-between font-bold mt-2 pt-2 border-t"><span>{t.total || 'TOTAL'}</span><span>{currencySymbol}{summary.grandTotal.toFixed(2)}</span></p>
                     </div>
                 </div>
+                 <div className="text-xs mt-8">
+                    <p className="font-bold">{t.paymentInstructions || 'Payment Instructions'}:</p>
+                    <p className="text-muted-foreground whitespace-pre-line">{document.termsAndConditions}</p>
+                </div>
                  <div className="flex justify-between mt-8">
                     <SignatureDisplay signature={document.business.ownerSignature} label={t.authorizedSignature || 'Authorized Signature'} />
                     <SignatureDisplay signature={document.clientSignature} label={t.clientSignature || 'Client Signature'} />
@@ -418,4 +421,3 @@ export const RentalTemplate5: React.FC<TemplateProps> = ({ document, pageItems, 
     );
 };
 
-    
