@@ -73,7 +73,15 @@ export const RentalTemplate1: React.FC<TemplateProps> = ({ document, pageItems, 
     return (
         <div className={`p-10 font-sans ${pageIndex < totalPages - 1 ? 'page-break-after' : ''}`} style={{ minHeight: '1056px', backgroundColor: document.backgroundColor, color: textColor }}>
             <header className="flex justify-between items-start mb-8">
-                {business.logoUrl ? <Image src={business.logoUrl} alt="Logo" width={100} height={100} className="object-contain" /> : <h1 className="text-3xl font-bold">{business.name}</h1>}
+                <div>
+                  {business.logoUrl ? <Image src={business.logoUrl} alt="Logo" width={100} height={100} className="object-contain" /> : <h1 className="text-3xl font-bold">{business.name}</h1>}
+                  <div className="text-xs mt-2 text-gray-600">
+                        <p className="whitespace-pre-line">{business.address}</p>
+                        <p>{business.phone}</p>
+                        <p>{business.email}</p>
+                        {business.website && <p>{business.website}</p>}
+                    </div>
+                </div>
                 <div className="text-right">
                     <h2 className="text-4xl font-bold" style={{color: style.color}}>{docTitle.toUpperCase()}</h2>
                     <p>#{document.estimateNumber}</p>
@@ -82,8 +90,11 @@ export const RentalTemplate1: React.FC<TemplateProps> = ({ document, pageItems, 
             <section className="grid grid-cols-2 gap-8 text-sm mb-8">
                 <div>
                     <p className="font-bold text-gray-500">{(t.tenantInfo || 'Tenant Information').toUpperCase()}</p>
-                    <p>{client.name}</p>
+                    <p className="font-bold">{client.name}</p>
+                    {client.companyName && <p>{client.companyName}</p>}
                     <p className="whitespace-pre-line">{client.address}</p>
+                    <p>{client.phone}</p>
+                    <p>{client.email}</p>
                     {client.shippingAddress && <p className="mt-2"><span className="font-bold">Ship To:</span><br/>{client.shippingAddress}</p>}
                 </div>
                 <div className="text-right">
@@ -136,12 +147,28 @@ export const RentalTemplate2: React.FC<TemplateProps> = ({ document, pageItems, 
     return (
       <div className={`p-10 bg-gray-50 font-sans ${pageIndex < totalPages - 1 ? 'page-break-after' : ''}`} style={{ minHeight: '1056px', backgroundColor: document.backgroundColor, color: textColor }}>
         <header className="flex justify-between items-center mb-8 pb-4 border-b-2">
-            <h1 className="text-2xl font-bold">{business.name}</h1>
+            <div>
+                <h1 className="text-2xl font-bold">{business.name}</h1>
+                <div className="text-xs mt-1 text-gray-500">
+                    <p className="whitespace-pre-line">{business.address}</p>
+                    <p>{business.phone} | {business.email}</p>
+                </div>
+            </div>
             <h2 className="text-2xl font-light text-gray-500">{docTitle}</h2>
         </header>
         <section className="grid grid-cols-2 gap-8 text-sm mb-8">
-            <div><p><strong>{t.to || 'To'}:</strong> {client.name}</p><p>{client.address}</p>{document.client.shippingAddress && <p className="mt-2"><span className="font-bold">Ship To:</span><br/>{document.client.shippingAddress}</p>}</div>
-            <div className="text-right"><p><strong>#:</strong> {document.estimateNumber}</p><p><strong>{t.date || 'Date'}:</strong> {safeFormat(document.estimateDate, 'MMM dd, yyyy')}</p></div>
+            <div>
+                <p><strong>{t.to || 'To'}:</strong> {client.name}</p>
+                <p>{client.companyName}</p>
+                <p>{client.address}</p>
+                <p>{client.phone}</p>
+                <p>{client.email}</p>
+                {document.client.shippingAddress && <p className="mt-2"><span className="font-bold">Ship To:</span><br/>{document.client.shippingAddress}</p>}
+            </div>
+            <div className="text-right">
+                <p><strong>#:</strong> {document.estimateNumber}</p>
+                <p><strong>{t.date || 'Date'}:</strong> {safeFormat(document.estimateDate, 'MMM dd, yyyy')}</p>
+            </div>
         </section>
         <RentalDetails document={document} t={t} />
         <main className="flex-grow mt-4">
@@ -243,7 +270,7 @@ export const RentalTemplate3: React.FC<TemplateProps> = ({ document, pageItems, 
                 </div>
             </div>
              <div className="text-xs mt-8">
-                <p className="font-bold">{t.termsAndConditions || 'Payment Instructions'}:</p>
+                <p className="font-bold">{t.paymentInstructions || 'Payment Instructions'}:</p>
                 <p className="text-muted-foreground whitespace-pre-line">{document.termsAndConditions}</p>
             </div>
              <div className="flex justify-between mt-8">
@@ -272,8 +299,15 @@ export const RentalTemplate4: React.FC<TemplateProps> = ({ document, pageItems, 
                 </div>
             </div>
             <div className="w-2/3 p-10 flex flex-col">
-                <header className="text-right mb-10"><h2 className="text-2xl font-bold">{business.name}</h2><p className="text-xs">{business.address}</p></header>
-                <section className="mb-10 text-sm"><p><strong>{t.to || 'To'}:</strong> {client.name}</p></section>
+                <header className="text-right mb-10">
+                    <h2 className="text-2xl font-bold">{business.name}</h2>
+                    <p className="text-xs">{business.address}</p>
+                    <p className="text-xs">{business.phone} | {business.email}</p>
+                </header>
+                <section className="mb-10 text-sm">
+                    <p><strong>{t.to || 'To'}:</strong> {client.name}</p>
+                    <p className="whitespace-pre-line">{client.address}</p>
+                </section>
                 <RentalDetails document={document} t={t} />
                 <main className="flex-grow mt-4">
                     <table className="w-full text-left text-sm">
