@@ -31,31 +31,46 @@ const safeFormat = (date: Date | string | number | null | undefined, formatStrin
     return format(d, formatString);
 }
 
+const SignatureDisplay = ({ signature, label }: { signature: any, label: string }) => {
+    if (!signature?.image) return null;
+    return (
+        <div className="mt-8">
+            <NextImage src={signature.image} alt={label} width={150} height={75} className="border-b border-gray-400" />
+            <p className="text-xs text-muted-foreground pt-1 border-t-2 border-current w-[150px]">{label}</p>
+        </div>
+    )
+}
+
+
 export const EcommerceDetails: React.FC<{ invoice: Invoice, t: any }> = ({ invoice, t }) => {
-    // Render the heading if the ecommerce object exists, even if its fields are empty.
     if (!invoice.ecommerce) {
       return null;
     }
 
     const { ecommerce } = invoice;
-    // Check if there are any actual values in the details object to display.
     const hasDetails = Object.values(ecommerce).some(val => val !== null && val !== '');
-
+    if (!hasDetails) {
+        return (
+            <section className="my-4 text-xs">
+                <p className="font-bold text-gray-500 mb-2 border-b">{t.orderDetails || 'Order Details'}</p>
+            </section>
+        );
+    }
     return (
         <section className="my-4 text-xs">
             <p className="font-bold text-gray-500 mb-2 border-b">{t.orderDetails || 'Order Details'}</p>
-            {hasDetails && (
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-x-4 gap-y-1">
-                    {ecommerce.orderNumber && <p><span className="font-semibold text-gray-600">{t.orderNumber || 'Order #'}:</span> {ecommerce.orderNumber}</p>}
-                    {ecommerce.sku && <p><span className="font-semibold text-gray-600">{t.sku || 'SKU'}:</span> {ecommerce.sku}</p>}
-                    {ecommerce.shippingCarrier && <p><span className="font-semibold text-gray-600">{t.shippingCarrier || 'Carrier'}:</span> {ecommerce.shippingCarrier}</p>}
-                    {ecommerce.trackingId && <p><span className="font-semibold text-gray-600">{t.trackingId || 'Tracking #'}:</span> {ecommerce.trackingId}</p>}
-                </div>
-            )}
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-x-4 gap-y-1">
+                {ecommerce.orderNumber && <p><span className="font-semibold text-gray-600">{t.orderNumber || 'Order #'}:</span> {ecommerce.orderNumber}</p>}
+                {ecommerce.sku && <p><span className="font-semibold text-gray-600">{t.sku || 'SKU'}:</span> {ecommerce.sku}</p>}
+                {ecommerce.shippingCarrier && <p><span className="font-semibold text-gray-600">{t.shippingCarrier || 'Carrier'}:</span> {ecommerce.shippingCarrier}</p>}
+                {ecommerce.trackingId && <p><span className="font-semibold text-gray-600">{t.trackingId || 'Tracking #'}:</span> {ecommerce.trackingId}</p>}
+            </div>
         </section>
     );
 };
 
+
+// Rebuilt EcommerceTemplate1
 export const EcommerceTemplate1: React.FC<PageProps> = (props) => {
     const { invoice, pageItems, pageIndex, totalPages, subtotal, taxAmount, discountAmount, total, balanceDue, currencySymbol, t, accentColor, textColor } = props;
     const { business, client } = invoice;
@@ -66,15 +81,18 @@ export const EcommerceTemplate1: React.FC<PageProps> = (props) => {
             <header className="relative text-white" style={{ backgroundColor: accentColor }}>
                 <div className="flex justify-between items-center p-10">
                     <div className="w-1/2">
-                        <h1 className="text-4xl font-extrabold tracking-tight">{business.name}</h1>
-                        <p className="text-xs text-white/80 whitespace-pre-line">{business.address}</p>
-                        <p className="text-xs text-white/80">{business.phone} | {business.email}</p>
-                        {business.website && <p className="text-xs text-white/80">{business.website}</p>}
-                    </div>
-                    <div className="w-1/2 h-40 relative">
-                        {business.logoUrl && (
-                             <NextImage src={business.logoUrl} layout="fill" objectFit="contain" alt="Company Logo" className="rounded-md" />
+                        {business.logoUrl ? (
+                             <NextImage src={business.logoUrl} alt="Company Logo" width={100} height={50} className="object-contain mb-4 filter invert brightness-0" />
+                        ): (
+                            <h1 className="text-4xl font-extrabold tracking-tight">{business.name}</h1>
                         )}
+                        <div className="text-xs text-white/80 whitespace-pre-line mt-2">
+                            <p>{business.address}</p>
+                            <p>{business.phone} | {business.email}</p>
+                            {business.website && <p>{business.website}</p>}
+                            {business.licenseNumber && <p>Lic #: {business.licenseNumber}</p>}
+                            {business.taxId && <p>Tax ID: {business.taxId}</p>}
+                        </div>
                     </div>
                 </div>
             </header>
@@ -84,6 +102,7 @@ export const EcommerceTemplate1: React.FC<PageProps> = (props) => {
                     <div>
                         <p className="font-bold text-lg mb-2">Invoice to: {client.name}</p>
                         <div className="text-xs text-gray-600">
+                            {client.companyName && <p>{client.companyName}</p>}
                             <p className="whitespace-pre-line">{client.address}</p>
                             <p>{client.phone}</p>
                             <p>{client.email}</p>
@@ -92,9 +111,6 @@ export const EcommerceTemplate1: React.FC<PageProps> = (props) => {
                     </div>
                     <div className="text-right">
                         <div className="flex justify-end items-center gap-2 mb-2">
-                             <div className="w-8 h-8 bg-black rounded-full flex items-center justify-center">
-                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="white"><path d="M8 5v14l11-7z"/></svg>
-                             </div>
                              <p className="text-xl font-bold">{docTitle}</p>
                         </div>
                         <p className="text-xs"><span className="font-bold">Invoice#:</span> {invoice.invoiceNumber}</p>
@@ -104,14 +120,15 @@ export const EcommerceTemplate1: React.FC<PageProps> = (props) => {
                     </div>
                 </section>
                 
-                <EcommerceDetails invoice={invoice} t={t} />
+                <CategorySpecificDetails invoice={invoice} t={t} />
 
                 <main className="flex-grow">
                     <table className="w-full text-left text-xs">
                         <thead>
                             <tr style={{ backgroundColor: accentColor, color: 'white' }}>
                                 <th className="p-2 font-bold w-[5%]">SL.</th>
-                                <th className="p-2 font-bold w-[55%]">PRODUCT DESCRIPTION</th>
+                                <th className="p-2 font-bold w-[30%]">ITEM</th>
+                                <th className="p-2 font-bold w-[30%]">DESCRIPTION</th>
                                 <th className="p-2 font-bold text-right">PRICE</th>
                                 <th className="p-2 font-bold text-center">QTY.</th>
                                 <th className="p-2 font-bold text-right">TOTAL</th>
@@ -121,7 +138,8 @@ export const EcommerceTemplate1: React.FC<PageProps> = (props) => {
                             {pageItems.map((item, index) => (
                                 <tr key={item.id} className="border-b" style={{backgroundColor: index % 2 === 0 ? '#F9FAFB' : 'white'}}>
                                     <td className="p-2 text-center">{index + 1}</td>
-                                    <td className="p-2 whitespace-pre-line">{item.name}</td>
+                                    <td className="p-2 font-semibold whitespace-pre-line">{item.name}</td>
+                                    <td className="p-2 text-gray-500 whitespace-pre-line">{item.description}</td>
                                     <td className="p-2 text-right">{currencySymbol}{item.unitPrice.toFixed(2)}</td>
                                     <td className="p-2 text-center">{item.quantity}</td>
                                     <td className="p-2 text-right font-medium">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</td>
@@ -137,13 +155,14 @@ export const EcommerceTemplate1: React.FC<PageProps> = (props) => {
                         <div className="text-xs w-1/2">
                             <p className="font-bold text-lg mb-2">Thank you for your purchase</p>
                             <p className="font-semibold">Payment Instructions:</p>
-                            <p className="whitespace-pre-line">{invoice.paymentInstructions}</p>
+                            <p className="whitespace-pre-line text-muted-foreground">{invoice.paymentInstructions}</p>
+                            {business.ownerSignature && <SignatureDisplay signature={business.ownerSignature} label="Authorized Signature"/>}
                         </div>
                          <div className="w-1/3 text-xs space-y-2">
-                            <p className="flex justify-between"><span>SUBTOTAL:</span> <span>{currencySymbol}{subtotal.toFixed(2)}</span></p>
-                            {discountAmount > 0 && <p className="flex justify-between text-red-500"><span>DISCOUNT:</span><span>-{currencySymbol}{discountAmount.toFixed(2)}</span></p>}
-                            {invoice.summary.shippingCost > 0 && <p className="flex justify-between"><span>SHIPPING:</span><span>{currencySymbol}{invoice.summary.shippingCost.toFixed(2)}</span></p>}
-                            <p className="flex justify-between"><span>TAX:</span> <span>{currencySymbol}{taxAmount.toFixed(2)}</span></p>
+                             <p className="flex justify-between"><span>SUBTOTAL:</span> <span>{currencySymbol}{subtotal.toFixed(2)}</span></p>
+                             {discountAmount > 0 && <p className="flex justify-between text-red-500"><span>DISCOUNT:</span><span>-{currencySymbol}{discountAmount.toFixed(2)}</span></p>}
+                             {invoice.summary.shippingCost > 0 && <p className="flex justify-between"><span>SHIPPING:</span><span>{currencySymbol}{invoice.summary.shippingCost.toFixed(2)}</span></p>}
+                             <p className="flex justify-between"><span>TAX:</span> <span>{currencySymbol}{taxAmount.toFixed(2)}</span></p>
                              <div className="p-3 rounded-md text-white font-bold flex justify-between text-base" style={{backgroundColor: accentColor}}>
                                 <span>TOTAL:</span>
                                 <span>{currencySymbol}{total.toFixed(2)}</span>
@@ -157,7 +176,7 @@ export const EcommerceTemplate1: React.FC<PageProps> = (props) => {
             </div>
              {pageIndex === totalPages - 1 && (
                 <div className="text-center text-gray-500 text-xs font-light tracking-widest p-4 mt-auto">
-                    CLOTHES JUST FOR YOU, SHOP YOUR FAVORITE
+                    THANK YOU FOR YOUR BUSINESS
                 </div>
              )}
         </div>
