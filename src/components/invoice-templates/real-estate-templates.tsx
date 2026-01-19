@@ -145,6 +145,10 @@ export const RealEstateTemplate1: React.FC<PageProps> = (props) => {
                         <p className="flex justify-between font-bold bg-gray-100 p-2 mt-1"><span>{t.balanceDue || 'Balance Due'}:</span><span>{currencySymbol}{balanceDue.toFixed(2)}</span></p>
                     </div>
                 </div>
+                 <div className="text-xs mt-8">
+                    <p className="font-bold">{t.paymentInstructions || 'Payment Instructions'}:</p>
+                    <p className="text-muted-foreground whitespace-pre-line">{invoice.paymentInstructions}</p>
+                </div>
                  <div className="flex justify-between mt-8">
                     <SignatureDisplay signature={business.ownerSignature} label={t.authorizedSignature || 'Authorized Signature'} />
                 </div>
@@ -204,7 +208,7 @@ export const RealEstateTemplate2: React.FC<PageProps> = (props) => {
                     <p className="flex justify-between font-bold bg-gray-200 p-1"><span>{t.balanceDue || 'Balance Due'}</span><span>{currencySymbol}{balanceDue.toFixed(2)}</span></p>
                 </div>
             </div>
-             <div className="text-xs mt-8">
+            <div className="text-xs mt-8">
                 <p className="font-bold">{t.paymentInstructions || 'Payment Instructions / Notes'}:</p>
                 <p className="text-muted-foreground whitespace-pre-line">{invoice.paymentInstructions}</p>
             </div>
@@ -332,9 +336,6 @@ export const RealEstateTemplate4: React.FC<PageProps> = (props) => {
                     <div className="text-xs text-muted-foreground">
                         <p className="whitespace-pre-line">{business.address}</p>
                         <p>{business.phone} | {business.email}</p>
-                        {business.website && <p>{business.website}</p>}
-                        {business.licenseNumber && <p>Lic #: {business.licenseNumber}</p>}
-                        {business.taxId && <p>Tax ID: {business.taxId}</p>}
                     </div>
                 </header>
 
@@ -390,7 +391,7 @@ export const RealEstateTemplate4: React.FC<PageProps> = (props) => {
                         </div>
                     </div>
                      <div className="text-xs mt-8">
-                        <p className="font-bold">{t.termsAndConditions || 'Terms & Conditions'}:</p>
+                        <p className="font-bold">{t.termsAndConditions || 'Terms &amp; Conditions'}:</p>
                         <p className="text-muted-foreground whitespace-pre-line">{invoice.paymentInstructions}</p>
                     </div>
                     <div className="flex justify-between mt-8">
@@ -456,8 +457,8 @@ export const RealEstateTemplate5: React.FC<PageProps> = (props) => {
                         {invoice.summary.shippingCost > 0 && <p className="flex justify-between"><span>{t.shipping || 'Shipping'}</span><span>{currencySymbol}{invoice.summary.shippingCost.toFixed(2)}</span></p>}
                         <p className="flex justify-between"><span>{t.tax || 'Tax'}</span><span>{currencySymbol}{taxAmount.toFixed(2)}</span></p>
                         <p className="flex justify-between font-bold mt-2 pt-2 border-t"><span>{t.total || 'TOTAL'}</span><span>{currencySymbol}{total.toFixed(2)}</span></p>
-                         {(invoice.amountPaid || 0) > 0 && <p className="flex justify-between font-bold text-green-600"><span>{t.amountPaid || 'Amount Paid'}</span><span>-{currencySymbol}{(invoice.amountPaid || 0).toFixed(2)}</span></p>}
-                         <p className="flex justify-between font-bold bg-gray-200 p-1"><span>{t.balanceDue || 'Balance Due'}</span><span>{currencySymbol}{balanceDue.toFixed(2)}</span></p>
+                         {(invoice.amountPaid || 0) > 0 && <p className="flex justify-between font-bold text-green-600"><span>{t.amountPaid || 'Amount Paid'}:</span><span>-{currencySymbol}{(invoice.amountPaid || 0).toFixed(2)}</span></p>}
+                         <p className="flex justify-between font-bold bg-gray-200 p-1"><span>{t.balanceDue || 'Balance Due'}:</span><span>{currencySymbol}{balanceDue.toFixed(2)}</span></p>
                     </div>
                 </div>
                  <div className="text-xs mt-8">
@@ -472,3 +473,4 @@ export const RealEstateTemplate5: React.FC<PageProps> = (props) => {
         </div>
     );
 };
+
