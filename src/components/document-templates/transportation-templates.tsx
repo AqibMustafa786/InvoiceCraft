@@ -1,4 +1,3 @@
-
 'use client';
 
 import React from 'react';
@@ -65,7 +64,7 @@ export const TransportationTemplate1: React.FC<TemplateProps> = ({ document, pag
             <header className="flex justify-between items-start mb-8">
                 <div>
                     <h1 className="text-3xl font-bold">{business.name}</h1>
-                     <div className="text-xs mt-1 text-gray-500">
+                    <div className="text-xs mt-1 text-gray-500">
                         <p>{business.address}</p>
                         <p>{business.phone} | {business.email}</p>
                         {business.website && <p>{business.website}</p>}
@@ -134,7 +133,7 @@ export const TransportationTemplate1: React.FC<TemplateProps> = ({ document, pag
                         </p>
                     </div>
                 </div>
-                <div className="text-xs mt-8">
+                 <div className="text-xs mt-8">
                     <p className="font-bold">{t.termsAndConditions || 'Terms & Conditions'}:</p>
                     <p className="text-muted-foreground whitespace-pre-line">{document.termsAndConditions}</p>
                 </div>
@@ -166,7 +165,7 @@ export const TransportationTemplate2: React.FC<TemplateProps> = ({ document, pag
             <h2 className="text-2xl font-light text-gray-500">{docTitle}</h2>
         </header>
         <section className="grid grid-cols-2 gap-8 text-sm mb-8">
-            <div><p><strong>{t.to || 'To'}:</strong> {client.name}</p><p>{client.address}</p>{document.client.shippingAddress && <p className="mt-2"><span className="font-bold">Ship To:</span><br/>{document.client.shippingAddress}</p>}</div>
+            <div><p><strong>{t.to || 'To'}:</strong> {client.name}</p><p>{client.companyName}</p><p className="whitespace-pre-line">{client.address}</p><p>{client.phone} | {client.email}</p>{document.client.shippingAddress && <p className="mt-2"><span className="font-bold">Ship To:</span><br/>{document.client.shippingAddress}</p>}</div>
             <div className="text-right"><p><strong>#:</strong> {document.estimateNumber}</p><p><strong>{t.date || 'Date'}:</strong> {safeFormat(document.estimateDate, 'MMM dd, yyyy')}</p><p><strong>{t.validUntil || 'Valid Until'}:</strong> {safeFormat(document.validUntilDate, 'MMM dd, yyyy')}</p></div>
         </section>
         <TransportationDetails document={document} t={t} />
@@ -269,11 +268,20 @@ export const TransportationTemplate4: React.FC<TemplateProps> = ({ document, pag
                     <div>
                         <p className="font-bold mb-2" style={{color: style.color}}>{t.billedTo || 'Billed To'}</p>
                         <p className="font-semibold">{client.name}</p>
+                        {client.companyName && <p className="text-muted-foreground">{client.companyName}</p>}
                         <p className="text-muted-foreground whitespace-pre-line">{client.address}</p>
+                        <p className="text-muted-foreground">{client.phone}</p>
+                        <p className="text-muted-foreground">{client.email}</p>
+                        {client.shippingAddress && <p className="mt-2"><span className="font-bold">Ship To:</span><br/>{client.shippingAddress}</p>}
                     </div>
                     <div className="text-right">
                          <p className="font-bold mb-2" style={{color: style.color}}>{t.billFrom || 'Bill From'}</p>
                          <p className="whitespace-pre-line">{business.address}</p>
+                         <p>{business.phone}</p>
+                         <p>{business.email}</p>
+                         {business.website && <p>{business.website}</p>}
+                         {business.licenseNumber && <p>Lic #: {business.licenseNumber}</p>}
+                         {business.taxId && <p>Tax ID: {business.taxId}</p>}
                     </div>
                 </section>
                 <section className="text-sm mb-8">
@@ -287,7 +295,8 @@ export const TransportationTemplate4: React.FC<TemplateProps> = ({ document, pag
                     <table className="w-full text-left text-sm">
                         <thead>
                             <tr className="border-b" style={{borderColor: style.color}}>
-                                <th className="py-2 font-bold w-1/2">{t.description || 'Description'}</th>
+                                <th className="py-2 font-bold w-2/5">{t.item || 'Item'}</th>
+                                <th className="py-2 font-bold w-2/5">{t.description || 'Description'}</th>
                                 <th className="py-2 font-bold text-center">{t.quantity || 'Qty'}</th>
                                 <th className="py-2 font-bold text-right">{t.unitPrice || 'Unit Price'}</th>
                                 <th className="py-2 font-bold text-right">{t.amount || 'Amount'}</th>
@@ -296,7 +305,8 @@ export const TransportationTemplate4: React.FC<TemplateProps> = ({ document, pag
                         <tbody>
                             {pageItems.map(item => (
                                 <tr key={item.id} className="border-b border-gray-200">
-                                     <td className="py-2 align-top">{item.name}</td>
+                                     <td className="py-2 align-top font-semibold whitespace-pre-line">{item.name}</td>
+                                     <td className="py-2 align-top text-xs text-muted-foreground whitespace-pre-line">{item.description}</td>
                                     <td className="py-2 align-top text-center">{item.quantity}</td>
                                     <td className="py-2 align-top text-right">{currencySymbol}{item.unitPrice.toFixed(2)}</td>
                                     <td className="py-2 align-top text-right">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</td>
@@ -411,8 +421,3 @@ export const TransportationTemplate5: React.FC<TemplateProps> = ({ document, pag
         </div>
     );
 };
-
-
-
-
-  
