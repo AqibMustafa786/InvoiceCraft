@@ -130,7 +130,7 @@ export const TransportationTemplate2: React.FC<TemplateProps> = ({ document, pag
             <h2 className="text-2xl font-light text-gray-500">{docTitle}</h2>
         </header>
         <section className="grid grid-cols-2 gap-8 text-sm mb-8">
-            <div><p><strong>{t.to || 'To'}:</strong> {client.name}</p><p>{client.companyName}</p><p>{client.address}</p>{document.client.shippingAddress && <p className="mt-2"><span className="font-bold">Ship To:</span><br/>{document.client.shippingAddress}</p>}</div>
+            <div><p><strong>{t.to || 'To'}:</strong> {client.name}</p><p>{client.companyName}</p><p className="whitespace-pre-line">{client.address}</p><p>{client.phone} | {client.email}</p>{document.client.shippingAddress && <p className="mt-2"><span className="font-bold">Ship To:</span><br/>{document.client.shippingAddress}</p>}</div>
             <div className="text-right"><p><strong>#:</strong> {document.estimateNumber}</p><p><strong>{t.date || 'Date'}:</strong> {safeFormat(document.estimateDate, 'MMM dd, yyyy')}</p><p><strong>{t.validUntil || 'Valid Until'}:</strong> {safeFormat(document.validUntilDate, 'MMM dd, yyyy')}</p></div>
         </section>
         <TransportationDetails document={document} t={t} />
@@ -171,10 +171,12 @@ export const TransportationTemplate3: React.FC<TemplateProps> = ({ document, pag
                 <header className="flex justify-between items-start mb-10">
                     <div>
                         <h1 className="text-4xl font-black tracking-tighter">{business.name}</h1>
-                        <div className="text-xs mt-2">
+                         <div className="text-xs mt-2">
                             <p className="whitespace-pre-line">{business.address}</p>
                             <p>{business.phone} | {business.email}</p>
                             {business.website && <p>{business.website}</p>}
+                            {business.licenseNumber && <p>Lic #: {business.licenseNumber}</p>}
+                            {business.taxId && <p>Tax ID: {business.taxId}</p>}
                         </div>
                     </div>
                     <div className="text-right">
@@ -183,9 +185,19 @@ export const TransportationTemplate3: React.FC<TemplateProps> = ({ document, pag
                     </div>
                 </header>
                 <section className="grid grid-cols-3 gap-4 text-xs mb-8">
-                    <div><p className="font-bold text-gray-500">{t.from || 'From'}:</p><p className="whitespace-pre-line">{business.address}</p></div>
-                    <div><p className="font-bold text-gray-500">{t.to || 'To'}:</p><p>{client.name}, {client.address}</p></div>
-                    <div className="text-right"><p className="font-bold text-gray-500">{t.date || 'Date'}:</p><p>{safeFormat(document.estimateDate, 'yyyy-MM-dd')}</p></div>
+                    <div>
+                        <p className="font-bold text-gray-500">{t.from || 'From'}:</p>
+                        <p className="whitespace-pre-line">{business.address}</p>
+                    </div>
+                    <div>
+                        <p className="font-bold text-gray-500">{t.to || 'To'}:</p>
+                        <p>{client.name}, {client.address}</p>
+                    </div>
+                    <div className="text-right">
+                        <p className="font-bold text-gray-500">{t.date || 'Date'}:</p><p>{safeFormat(document.estimateDate, 'yyyy-MM-dd')}</p>
+                        <p className="font-bold text-gray-500 mt-2">{t.validUntil || 'Valid Until'}:</p><p>{safeFormat(document.validUntilDate, 'yyyy-MM-dd')}</p>
+                        {document.poNumber && <p className="mt-2"><span className="font-bold text-gray-500">PO #:</span> {document.poNumber}</p>}
+                    </div>
                 </section>
                 <TransportationDetails document={document} t={t} />
                 <main className="flex-grow mt-4">
