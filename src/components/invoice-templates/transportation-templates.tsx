@@ -1,3 +1,4 @@
+
 'use client';
 
 import React from 'react';
@@ -95,8 +96,7 @@ export const TransportationTemplate1: React.FC<PageProps> = (props) => {
                     <p>{client.name}</p>
                     {client.companyName && <p>{client.companyName}</p>}
                     <p className="whitespace-pre-line">{client.address}</p>
-                    <p>{client.phone}</p>
-                    <p>{client.email}</p>
+                    <p>{client.phone} | {client.email}</p>
                 </div>
                 <div className="p-2 bg-gray-100 rounded-md">
                     <p className="font-bold">{t.shipTo || 'Ship To'}:</p>
@@ -229,8 +229,15 @@ export const TransportationTemplate3: React.FC<PageProps> = (props) => {
         <div className={`font-sans ${pageIndex < totalPages - 1 ? 'page-break-after' : ''}`} style={{ minHeight: '1056px', backgroundColor: props.backgroundColor, color: props.textColor }}>
             <div className="p-10">
                 <header className="flex justify-between items-start mb-10">
-                    <h1 className="text-4xl font-black tracking-tighter">{business.name}</h1>
-                    <div className="text-right">
+                    <div className="w-1/2">
+                      <h1 className="text-4xl font-black tracking-tighter">{business.name}</h1>
+                       <div className="text-xs mt-2">
+                            <p className="whitespace-pre-line">{business.address}</p>
+                            <p>{business.phone} | {business.email}</p>
+                            {business.website && <p>{business.website}</p>}
+                        </div>
+                    </div>
+                    <div className="text-right w-1/2">
                         <h2 className="text-xl font-bold">{docTitle}</h2>
                         <p className="text-xs text-gray-500">#{invoice.invoiceNumber}</p>
                     </div>
@@ -336,7 +343,7 @@ export const TransportationTemplate4: React.FC<PageProps> = (props) => {
                 <footer className="mt-10 pt-10 border-t">
                     <div className="flex justify-end text-sm">
                         <div className="w-1/3">
-                            <p className="flex justify-between py-1"><span>{t.subtotal || 'Subtotal'}:</span><span>{currencySymbol}{subtotal.toFixed(2)}</span></p>
+                            <p className="flex justify-between py-1"><span>{t.total || 'Total'}:</span><span>{currencySymbol}{subtotal.toFixed(2)}</span></p>
                              {discountAmount > 0 && <p className="flex justify-between py-1 text-red-600"><span>{t.discount || 'Discount'}:</span><span>-{currencySymbol}{discountAmount.toFixed(2)}</span></p>}
                              {invoice.summary.shippingCost > 0 && <p className="flex justify-between py-1"><span>{t.shipping || 'Shipping'}:</span><span>{currencySymbol}{invoice.summary.shippingCost.toFixed(2)}</span></p>}
                              <p className="flex justify-between py-1"><span>{t.tax || 'Tax'}:</span><span>{currencySymbol}{taxAmount.toFixed(2)}</span></p>
@@ -419,7 +426,7 @@ export const TransportationTemplate5: React.FC<PageProps> = (props) => {
                         {invoice.summary.shippingCost > 0 && <p className="flex justify-between"><span>{t.shipping || 'Shipping'}</span><span>{currencySymbol}{invoice.summary.shippingCost.toFixed(2)}</span></p>}
                         <p className="flex justify-between"><span>{t.tax || 'Tax'}</span><span>{currencySymbol}{taxAmount.toFixed(2)}</span></p>
                         <p className="flex justify-between font-bold mt-2 pt-2 border-t"><span>{t.total || 'TOTAL'}</span><span>{currencySymbol}{total.toFixed(2)}</span></p>
-                        {(invoice.amountPaid || 0) > 0 && <p className="flex justify-between font-bold text-green-600"><span>{t.amountPaid || 'Amount Paid'}</span><span>-{currencySymbol}{(invoice.amountPaid || 0).toFixed(2)}</span></p>}
+                         {(invoice.amountPaid || 0) > 0 && <p className="flex justify-between font-bold text-green-600"><span>{t.amountPaid || 'Amount Paid'}</span><span>-{currencySymbol}{(invoice.amountPaid || 0).toFixed(2)}</span></p>}
                          <p className="flex justify-between font-bold bg-gray-100 p-1"><span>{t.balanceDue || 'Balance Due'}</span><span>{currencySymbol}{balanceDue.toFixed(2)}</span></p>
                     </div>
                 </div>
@@ -435,3 +442,4 @@ export const TransportationTemplate5: React.FC<PageProps> = (props) => {
         </div>
     );
 };
+
