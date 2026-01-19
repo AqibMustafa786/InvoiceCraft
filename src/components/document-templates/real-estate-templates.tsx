@@ -101,6 +101,7 @@ export const RealEstateTemplate1: React.FC<TemplateProps> = ({ document, pageIte
                 <div className="text-right">
                     <p className="font-bold text-gray-500" style={{color: textColor ? `${textColor}B3` : undefined}}>{(t.date || 'Date').toUpperCase()}</p>
                     <p>{safeFormat(document.estimateDate, 'MMMM d, yyyy')}</p>
+                    {document.referenceNumber && <p className="mt-2"><span className="font-bold">Ref #:</span> {document.referenceNumber}</p>}
                 </div>
             </section>
             <RealEstateDetails document={document} t={t} />
@@ -161,7 +162,7 @@ export const RealEstateTemplate2: React.FC<TemplateProps> = ({ document, pageIte
         </header>
         <section className="grid grid-cols-2 gap-8 text-sm mb-8">
             <div><p><strong>{t.to || 'To'}:</strong> {client.name}</p><p>{client.companyName}</p><p className="whitespace-pre-line">{client.address}</p><p>{client.phone} | {client.email}</p>{document.client.shippingAddress && <p className="mt-2"><span className="font-bold">Ship To:</span><br/>{document.client.shippingAddress}</p>}</div>
-            <div className="text-right"><p><strong>#:</strong> {document.estimateNumber}</p><p><strong>{t.date || 'Date'}:</strong> {safeFormat(document.estimateDate, 'MMM dd, yyyy')}</p><p><strong>{t.validUntil || 'Valid Until'}:</strong> {safeFormat(document.validUntilDate, 'MMM dd, yyyy')}</p></div>
+            <div className="text-right"><p><strong>#:</strong> {document.estimateNumber}</p><p><strong>{t.date || 'Date'}:</strong> {safeFormat(document.estimateDate, 'MMM dd, yyyy')}</p><p><strong>{t.validUntil || 'Valid Until'}:</strong> {safeFormat(document.validUntilDate, 'MMM dd, yyyy')}</p>{document.referenceNumber && <p><strong>Ref #:</strong> {document.referenceNumber}</p>}</div>
         </section>
         <RealEstateDetails document={document} t={t} />
         <main className="flex-grow mt-4">
@@ -386,7 +387,7 @@ export const RealEstateTemplate4: React.FC<TemplateProps> = ({ document, pageIte
 export const RealEstateTemplate5: React.FC<TemplateProps> = ({ document, pageItems, pageIndex, totalPages, style, t }) => {
     const { business, client, summary, currency, textColor } = document;
     const currencySymbol = currencySymbols[currency] || '$';
-    const docTitle = document.documentType === 'quote' ? (t.quote || 'Quote') : (t.estimate || 'Estimate');
+    const docTitle = document.documentType === 'quote' ? t.quote || 'Quote' : t.estimate || 'Estimate';
     return (
         <div className={`p-10 font-serif ${pageIndex < totalPages - 1 ? 'page-break-after' : ''}`} style={{ minHeight: '1056px', backgroundColor: '#FDFBF7', color: '#5A4A42' }}>
             <header className="text-center mb-10">
@@ -451,5 +452,3 @@ export const RealEstateTemplate5: React.FC<TemplateProps> = ({ document, pageIte
         </div>
     );
 };
-
-```
