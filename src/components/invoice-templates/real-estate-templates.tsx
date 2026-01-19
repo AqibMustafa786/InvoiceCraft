@@ -108,7 +108,7 @@ export const RealEstateTemplate1: React.FC<PageProps> = (props) => {
                 <div className="text-right">
                     <p className="font-bold text-gray-500" style={{color: textColor ? `${textColor}B3` : undefined}}>{(t.date || 'Date').toUpperCase()}</p>
                     <p>{safeFormat(invoice.invoiceDate, 'MMMM d, yyyy')}</p>
-                     <p className="font-bold text-gray-500 mt-2" style={{color: textColor ? `${textColor}B3` : undefined}}>{(t.dueDate || 'Due Date').toUpperCase()}</p>
+                    <p className="font-bold text-gray-500 mt-2" style={{color: textColor ? `${textColor}B3` : undefined}}>{(t.dueDate || 'Due Date').toUpperCase()}</p>
                     <p>{safeFormat(invoice.dueDate, 'MMMM d, yyyy')}</p>
                     {invoice.poNumber && <p className="mt-2"><span className="font-bold">PO #:</span> {invoice.poNumber}</p>}
                 </div>
@@ -141,13 +141,9 @@ export const RealEstateTemplate1: React.FC<PageProps> = (props) => {
                             <span>{(t.totalDue || 'Total Due').toUpperCase()}:</span>
                             <span>{currencySymbol}{total.toFixed(2)}</span>
                         </p>
-                         {(invoice.amountPaid || 0) > 0 && <p className="flex justify-between font-bold text-green-600"><span>{t.amountPaid || 'Amount Paid'}:</span><span>-{currencySymbol}{(invoice.amountPaid || 0).toFixed(2)}</span></p>}
+                        {(invoice.amountPaid || 0) > 0 && <p className="flex justify-between font-bold text-green-600"><span>{t.amountPaid || 'Amount Paid'}:</span><span>-{currencySymbol}{(invoice.amountPaid || 0).toFixed(2)}</span></p>}
                          <p className="flex justify-between font-bold bg-gray-100 p-2 mt-1"><span>{t.balanceDue || 'Balance Due'}:</span><span>{currencySymbol}{balanceDue.toFixed(2)}</span></p>
                     </div>
-                </div>
-                 <div className="text-xs mt-8">
-                    <p className="font-bold">{t.paymentInstructions || 'Payment Instructions'}:</p>
-                    <p className="text-muted-foreground whitespace-pre-line">{invoice.paymentInstructions}</p>
                 </div>
                  <div className="flex justify-between mt-8">
                     <SignatureDisplay signature={business.ownerSignature} label={t.authorizedSignature || 'Authorized Signature'} />
@@ -170,15 +166,12 @@ export const RealEstateTemplate2: React.FC<PageProps> = (props) => {
                 <div className="text-xs mt-1 text-gray-500">
                     <p className="whitespace-pre-line">{business.address}</p>
                     <p>{business.phone} | {business.email}</p>
-                    {business.website && <p>{business.website}</p>}
-                    {business.licenseNumber && <p>Lic #: {business.licenseNumber}</p>}
-                    {business.taxId && <p>Tax ID: {business.taxId}</p>}
                 </div>
             </div>
             <h2 className="text-2xl font-light text-gray-500">{docTitle}</h2>
         </header>
         <section className="grid grid-cols-2 gap-8 text-sm mb-8">
-            <div><p><strong>{t.to || 'To'}:</strong> {client.name}</p>{client.companyName && <p>{client.companyName}</p>}<p className="whitespace-pre-line">{client.address}</p><p>{client.phone} | {client.email}</p>{invoice.client.shippingAddress && <p className="mt-2"><span className="font-bold">Ship To:</span><br/>{invoice.client.shippingAddress}</p>}</div>
+            <div><p><strong>{t.to || 'To'}:</strong> {client.name}</p><p>{client.companyName}</p><p className="whitespace-pre-line">{client.address}</p><p>{client.phone} | {client.email}</p>{invoice.client.shippingAddress && <p className="mt-2"><span className="font-bold">Ship To:</span><br/>{invoice.client.shippingAddress}</p>}</div>
             <div className="text-right"><p><strong>#:</strong> {invoice.invoiceNumber}</p><p><strong>{t.date || 'Date'}:</strong> {safeFormat(invoice.invoiceDate, 'MMM dd, yyyy')}</p><p><strong>{t.dueDate || 'Due Date'}:</strong> {safeFormat(invoice.dueDate, 'MMM dd, yyyy')}</p></div>
         </section>
         <CategorySpecificDetails invoice={invoice} t={t} />
@@ -210,10 +203,6 @@ export const RealEstateTemplate2: React.FC<PageProps> = (props) => {
                     {(invoice.amountPaid || 0) > 0 && <p className="flex justify-between font-bold text-green-600"><span>{t.amountPaid || 'Amount Paid'}</span><span>-{currencySymbol}{(invoice.amountPaid || 0).toFixed(2)}</span></p>}
                     <p className="flex justify-between font-bold bg-gray-200 p-1"><span>{t.balanceDue || 'Balance Due'}</span><span>{currencySymbol}{balanceDue.toFixed(2)}</span></p>
                 </div>
-            </div>
-             <div className="text-xs mt-8">
-                <p className="font-bold">{t.termsAndConditions || 'Terms & Conditions'}:</p>
-                <p className="text-muted-foreground whitespace-pre-line">{invoice.paymentInstructions}</p>
             </div>
              <div className="flex justify-between mt-8">
                 <SignatureDisplay signature={business.ownerSignature} label={t.authorizedSignature || 'Authorized Signature'} />
@@ -305,7 +294,7 @@ export const RealEstateTemplate4: React.FC<PageProps> = (props) => {
     const docTitle = (t.invoice || 'INVOICE').toUpperCase();
 
     return (
-        <div className={`flex font-sans ${pageIndex < totalPages - 1 ? 'page-break-after' : ''}`} style={{ minHeight: '1056px', backgroundColor: props.backgroundColor, color: textColor }}>
+        <div className={`flex font-sans ${pageIndex < totalPages - 1 ? 'page-break-after' : ''}`} style={{ minHeight: '1056px', backgroundColor: props.backgroundColor, color: props.textColor }}>
             {/* Left Sidebar */}
             <div className="w-1/3 text-white p-8 flex flex-col" style={{backgroundColor: accentColor}}>
                 <h2 className="text-4xl font-bold mb-10">{docTitle}</h2>
@@ -389,15 +378,15 @@ export const RealEstateTemplate4: React.FC<PageProps> = (props) => {
                            {discountAmount > 0 && <p className="flex justify-between text-red-500"><span>{t.discount || 'Discount'}:</span> <span>-{currencySymbol}{discountAmount.toFixed(2)}</span></p>}
                            {invoice.summary.shippingCost > 0 && <p className="flex justify-between"><span>{t.shipping || 'Shipping'}:</span> <span>{currencySymbol}{invoice.summary.shippingCost.toFixed(2)}</span></p>}
                            <p className="flex justify-between"><span>{t.tax || 'Tax'} ({invoice.summary.taxPercentage}%):</span> <span>{currencySymbol}{taxAmount.toFixed(2)}</span></p>
-                           <p className="flex justify-between font-bold text-lg mt-2 border-t pt-2"><span>{t.totalDue || 'Total Due'}:</span> <span>{currencySymbol}{total.toFixed(2)}</span></p>
-                           {(invoice.amountPaid || 0) > 0 && <p className="flex justify-between font-bold text-green-600"><span>{t.amountPaid || 'Amount Paid'}:</span> <span>-{currencySymbol}{(invoice.amountPaid || 0).toFixed(2)}</span></p>}
                            <div className="p-4 bg-gray-100 rounded-md mt-2">
-                               <p className="flex justify-between font-bold text-lg"><span>{t.balanceDue || 'Balance Due'}:</span> <span>{currencySymbol}{balanceDue.toFixed(2)}</span></p>
+                               <p className="flex justify-between font-bold text-lg"><span>{t.totalDue || 'Total Due'}:</span> <span>{currencySymbol}{total.toFixed(2)}</span></p>
+                               {(invoice.amountPaid || 0) > 0 && <p className="flex justify-between font-bold text-green-600"><span>{t.amountPaid || 'Amount Paid'}:</span><span>-{currencySymbol}{(invoice.amountPaid || 0).toFixed(2)}</span></p>}
+                               <p className="flex justify-between font-bold text-lg mt-1"><span>{t.balanceDue || 'Balance Due'}:</span> <span>{currencySymbol}{balanceDue.toFixed(2)}</span></p>
                            </div>
                         </div>
                     </div>
                      <div className="text-xs mt-8">
-                        <p className="font-bold">{t.paymentInstructions || 'Payment Instructions'}:</p>
+                        <p className="font-bold">{t.termsAndConditions || 'Terms & Conditions'}:</p>
                         <p className="text-muted-foreground whitespace-pre-line">{invoice.paymentInstructions}</p>
                     </div>
                     <div className="flex justify-between mt-8">
@@ -443,12 +432,12 @@ export const RealEstateTemplate5: React.FC<PageProps> = (props) => {
                     <thead><tr><th className="py-2 border-b-2 w-1/4">{(t.item || 'ITEM').toUpperCase()}</th><th className="py-2 border-b-2 w-2/4">{(t.description || 'DESCRIPTION').toUpperCase()}</th><th className="py-2 border-b-2 text-center">{(t.quantity || 'QTY').toUpperCase()}</th><th className="py-2 border-b-2 text-right">{(t.unitPrice || 'UNIT PRICE').toUpperCase()}</th><th className="py-2 border-b-2 text-right">{(t.amount || 'AMOUNT').toUpperCase()}</th></tr></thead>
                     <tbody>
                         {pageItems.map(item => (
-                            <tr key={item.id} className="border-b">
-                                <td className="py-2 font-medium whitespace-pre-line">{item.name}</td>
-                                <td className="py-2 text-xs text-muted-foreground whitespace-pre-line">{item.description}</td>
-                                <td className="py-2 text-center">{item.quantity}</td>
-                                <td className="py-2 text-right">{currencySymbol}{item.unitPrice.toFixed(2)}</td>
-                                <td className="py-2 text-right">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</td>
+                            <tr key={item.id}>
+                                <td className="py-2 border-b font-medium whitespace-pre-line">{item.name}</td>
+                                <td className="py-2 border-b text-xs text-muted-foreground whitespace-pre-line">{item.description}</td>
+                                <td className="py-2 border-b text-center">{item.quantity}</td>
+                                <td className="py-2 border-b text-right">{currencySymbol}{item.unitPrice.toFixed(2)}</td>
+                                <td className="py-2 border-b text-right">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</td>
                             </tr>
                         ))}
                     </tbody>
@@ -479,5 +468,3 @@ export const RealEstateTemplate5: React.FC<PageProps> = (props) => {
         </div>
     );
 };
-
-```
