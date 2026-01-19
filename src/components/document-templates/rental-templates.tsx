@@ -1,4 +1,3 @@
-
 'use client';
 
 import React from 'react';
@@ -68,14 +67,14 @@ const RentalDetails: React.FC<{ document: Estimate, t: any }> = ({ document, t }
 export const RentalTemplate1: React.FC<TemplateProps> = ({ document, pageItems, pageIndex, totalPages, style, t }) => {
     const { business, client, summary, currency, textColor } = document;
     const currencySymbol = currencySymbols[currency] || '$';
-    const docTitle = document.documentType === 'quote' ? t.quote || 'Rental Quote' : t.estimate || 'Rental Estimate';
+    const docTitle = document.documentType === 'quote' ? t.quote || 'QUOTE' : t.estimate || 'ESTIMATE';
 
     return (
         <div className={`p-10 font-sans ${pageIndex < totalPages - 1 ? 'page-break-after' : ''}`} style={{ minHeight: '1056px', backgroundColor: document.backgroundColor, color: textColor }}>
             <header className="flex justify-between items-start mb-8">
                 <div>
-                  {business.logoUrl ? <Image src={business.logoUrl} alt="Logo" width={100} height={100} className="object-contain" /> : <h1 className="text-3xl font-bold">{business.name}</h1>}
-                  <div className="text-xs mt-2 text-gray-600">
+                  <h1 className="text-3xl font-bold">{business.name}</h1>
+                  <div className="text-xs mt-2 text-gray-600" style={{color: textColor ? `${textColor}B3` : undefined}}>
                         <p className="whitespace-pre-line">{business.address}</p>
                         <p>{business.phone}</p>
                         <p>{business.email}</p>
@@ -89,7 +88,7 @@ export const RentalTemplate1: React.FC<TemplateProps> = ({ document, pageItems, 
             </header>
             <section className="grid grid-cols-2 gap-8 text-sm mb-8">
                 <div>
-                    <p className="font-bold text-gray-500">{(t.tenantInfo || 'Tenant Information').toUpperCase()}</p>
+                    <p className="font-bold text-gray-500" style={{color: textColor ? `${textColor}B3` : undefined}}>{(t.tenantInfo || 'TENANT INFORMATION').toUpperCase()}</p>
                     <p className="font-bold">{client.name}</p>
                     {client.companyName && <p>{client.companyName}</p>}
                     <p className="whitespace-pre-line">{client.address}</p>
@@ -98,18 +97,25 @@ export const RentalTemplate1: React.FC<TemplateProps> = ({ document, pageItems, 
                     {client.shippingAddress && <p className="mt-2"><span className="font-bold">Ship To:</span><br/>{client.shippingAddress}</p>}
                 </div>
                 <div className="text-right">
-                    <p className="font-bold text-gray-500">{(t.date || 'Date').toUpperCase()}</p>
+                    <p className="font-bold text-gray-500" style={{color: textColor ? `${textColor}B3` : undefined}}>{(t.date || 'DATE').toUpperCase()}</p>
                     <p>{safeFormat(document.estimateDate, 'MMMM d, yyyy')}</p>
+                    <p className="font-bold text-gray-500 mt-2" style={{color: textColor ? `${textColor}B3` : undefined}}>{(t.validUntil || 'VALID UNTIL').toUpperCase()}</p>
+                    <p>{safeFormat(document.validUntilDate, 'MMMM d, yyyy')}</p>
                 </div>
             </section>
             <RentalDetails document={document} t={t} />
             <main className="flex-grow mt-4">
                 <table className="w-full text-left text-sm">
-                    <thead><tr className="border-b-2"><th className="pb-2 font-bold w-3/5">{(t.charges || 'Charges').toUpperCase()}</th><th className="pb-2 font-bold text-right">{(t.amount || 'Amount').toUpperCase()}</th></tr></thead>
+                    <thead><tr className="border-b-2"><th className="pb-2 font-bold w-1/2">{(t.description || 'DESCRIPTION').toUpperCase()}</th><th className="pb-2 font-bold text-center">{(t.quantity || 'QTY').toUpperCase()}</th><th className="pb-2 font-bold text-right">{(t.unitPrice || 'UNIT PRICE').toUpperCase()}</th><th className="pb-2 font-bold text-right">{(t.amount || 'AMOUNT').toUpperCase()}</th></tr></thead>
                     <tbody>
                         {pageItems.map(item => (
                             <tr key={item.id} className="border-b">
-                                <td className="py-2">{item.name}</td>
+                                <td className="py-2">
+                                    <p className="font-semibold whitespace-pre-line">{item.name}</p>
+                                    {item.description && <p className="text-xs text-muted-foreground whitespace-pre-line">{item.description}</p>}
+                                </td>
+                                <td className="py-2 text-center">{item.quantity}</td>
+                                <td className="py-2 text-right">{currencySymbol}{item.unitPrice.toFixed(2)}</td>
                                 <td className="py-2 text-right">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</td>
                             </tr>
                         ))}
@@ -118,21 +124,24 @@ export const RentalTemplate1: React.FC<TemplateProps> = ({ document, pageItems, 
             </main>
             {pageIndex === totalPages - 1 && (
             <footer className="mt-auto pt-8">
-                <div className="flex justify-end text-right text-sm">
+                <div className="flex justify-between items-start">
                     <div className="w-1/2">
-                        <p className="flex justify-between py-1"><span className="text-gray-600">{t.totalCharges || 'Total Charges'}:</span><span>{currencySymbol}{summary.subtotal.toFixed(2)}</span></p>
-                        {summary.discount > 0 && <p className="flex justify-between py-1 text-red-500"><span>{(t.discount || 'Discount')}:</span><span>-{currencySymbol}{summary.discount.toFixed(2)}</span></p>}
-                        {summary.shippingCost > 0 && <p className="flex justify-between py-1"><span>{(t.shipping || 'Other Fees')}:</span><span>{currencySymbol}{summary.shippingCost.toFixed(2)}</span></p>}
-                        <p className="flex justify-between py-1"><span className="text-gray-600">{(t.tax || 'Tax')}:</span><span>{currencySymbol}{summary.taxAmount.toFixed(2)}</span></p>
-                        <p className="flex justify-between font-bold text-2xl mt-2 pt-2 border-t-2">
-                            <span>{(t.totalDue || 'Total Due').toUpperCase()}:</span>
-                            <span>{currencySymbol}{summary.grandTotal.toFixed(2)}</span>
-                        </p>
+                        {document.business.ownerSignature && <SignatureDisplay signature={document.business.ownerSignature} label={t.authorizedSignature || 'Authorized Signature'} />}
                     </div>
-                </div>
-                 <div className="flex justify-between mt-8">
-                    <SignatureDisplay signature={document.business.ownerSignature} label={t.authorizedSignature || 'Authorized Signature'} />
-                    <SignatureDisplay signature={document.clientSignature} label={t.clientSignature || 'Client Signature'} />
+                    <div className="w-1/2 flex justify-end text-right text-sm">
+                        <div className="w-full max-w-xs">
+                            <p className="flex justify-between py-1"><span className="text-gray-600">{t.totalCharges || 'Total Charges'}:</span><span>{currencySymbol}{summary.subtotal.toFixed(2)}</span></p>
+                            {summary.discount > 0 && <p className="flex justify-between py-1 text-red-500"><span>{(t.discount || 'Discount')}:</span><span>-{currencySymbol}{summary.discount.toFixed(2)}</span></p>}
+                            {summary.shippingCost > 0 && <p className="flex justify-between py-1"><span>{(t.shipping || 'Other Fees')}:</span><span>{currencySymbol}{summary.shippingCost.toFixed(2)}</span></p>}
+                            <p className="flex justify-between py-1"><span className="text-gray-600">{(t.tax || 'Tax')}:</span><span>{currencySymbol}{summary.taxAmount.toFixed(2)}</span></p>
+                            <div className="mt-2 p-2 bg-gray-100 rounded">
+                                <p className="flex justify-between font-bold text-lg">
+                                    <span>{(t.totalDue || 'TOTAL DUE').toUpperCase()}:</span>
+                                    <span>{currencySymbol}{summary.grandTotal.toFixed(2)}</span>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </footer>
             )}
@@ -200,7 +209,7 @@ export const RentalTemplate2: React.FC<TemplateProps> = ({ document, pageItems, 
 export const RentalTemplate3: React.FC<TemplateProps> = ({ document, pageItems, pageIndex, totalPages, style, t }) => {
     const { business, client, summary, currency, textColor } = document;
     const currencySymbol = currencySymbols[currency] || '$';
-    const docTitle = document.documentType === 'quote' ? (t.quote || 'Quote') : (t.estimate || 'Estimate');
+    const docTitle = document.documentType === 'quote' ? 'Quote' : 'Estimate';
     return (
       <div className={`p-10 font-serif bg-white ${pageIndex < totalPages - 1 ? 'page-break-after' : ''}`} style={{ minHeight: '1056px', backgroundColor: document.backgroundColor, color: textColor }}>
         <header className="text-center mb-10">
@@ -209,8 +218,6 @@ export const RentalTemplate3: React.FC<TemplateProps> = ({ document, pageItems, 
                 <p className="whitespace-pre-line">{business.address}</p>
                 <p>{business.phone} | {business.email}</p>
                 {business.website && <p>{business.website}</p>}
-                {business.licenseNumber && <p>Lic #: {business.licenseNumber}</p>}
-                {business.taxId && <p>Tax ID: {business.taxId}</p>}
             </div>
         </header>
         <div className="w-full h-px bg-gray-300 mb-8"></div>
@@ -220,15 +227,11 @@ export const RentalTemplate3: React.FC<TemplateProps> = ({ document, pageItems, 
                 <p>{client.name}</p>
                 {client.companyName && <p>{client.companyName}</p>}
                 <p className="whitespace-pre-line">{client.address}</p>
-                <p>{client.phone}</p>
-                <p>{client.email}</p>
-                {client.shippingAddress && <p className="mt-2"><span className="font-bold">Ship To:</span><br/>{client.shippingAddress}</p>}
             </div>
             <div className="text-right">
                 <p><strong>{docTitle} #:</strong> {document.estimateNumber}</p>
                 <p><strong>{t.date || 'Date'}:</strong> {safeFormat(document.estimateDate, 'MMMM d, yyyy')}</p>
                 <p><strong>{t.validUntil || 'Valid Until'}:</strong> {safeFormat(document.validUntilDate, 'MMMM d, yyyy')}</p>
-                {document.referenceNumber && <p><strong>Ref #:</strong> {document.referenceNumber}</p>}
             </div>
         </section>
         <RentalDetails document={document} t={t} />
@@ -260,7 +263,7 @@ export const RentalTemplate3: React.FC<TemplateProps> = ({ document, pageItems, 
                 </div>
             </div>
              <div className="text-xs mt-8">
-                <p className="font-bold">{t.paymentInstructions || 'Payment Instructions'}:</p>
+                <p className="font-bold">{t.termsAndConditions || 'Terms &amp; Conditions'}:</p>
                 <p className="text-muted-foreground whitespace-pre-line">{document.termsAndConditions}</p>
             </div>
              <div className="flex justify-between mt-8">
@@ -275,17 +278,16 @@ export const RentalTemplate3: React.FC<TemplateProps> = ({ document, pageItems, 
 export const RentalTemplate4: React.FC<TemplateProps> = ({ document, pageItems, pageIndex, totalPages, style, t }) => {
     const { business, client, summary, currency, textColor } = document;
     const currencySymbol = currencySymbols[currency] || '$';
-    const docTitle = document.documentType === 'quote' ? (t.quote || 'QUOTE') : (t.estimate || 'ESTIMATE');
+    const docTitle = document.documentType === 'quote' ? t.quote || 'QUOTE' : t.estimate || 'ESTIMATE';
 
     return (
         <div className={`flex ${pageIndex < totalPages - 1 ? 'page-break-after' : ''}`} style={{ minHeight: '1056px', backgroundColor: document.backgroundColor, color: textColor }}>
             <div className="w-1/3 p-8 text-white" style={{backgroundColor: style.color || '#be123c'}}>
-                <h1 className="text-3xl font-bold">{docTitle}</h1>
+                <h1 className="text-3xl font-bold">{docTitle.toUpperCase()}</h1>
                 <div className="mt-10 text-xs space-y-4">
                     <div><p className="opacity-70">{t.date || 'DATE'}</p><p>{safeFormat(document.estimateDate, 'yyyy-MM-dd')}</p></div>
                     <div><p className="opacity-70">{t.validUntil || 'VALID UNTIL'}</p><p>{safeFormat(document.validUntilDate, 'yyyy-MM-dd')}</p></div>
                     <div><p className="opacity-70">#</p><p>{document.estimateNumber}</p></div>
-                    {document.referenceNumber && <div><p className="opacity-70">Ref #</p><p>{document.referenceNumber}</p></div>}
                 </div>
             </div>
             <div className="w-2/3 p-10 flex flex-col">
@@ -304,15 +306,7 @@ export const RentalTemplate4: React.FC<TemplateProps> = ({ document, pageItems, 
                 <RentalDetails document={document} t={t} />
                 <main className="flex-grow mt-4">
                     <table className="w-full text-left text-sm">
-                       <thead>
-                            <tr className="bg-gray-100">
-                                <th className="p-2 font-bold w-1/3">{t.item || 'Item'}</th>
-                                <th className="p-2 font-bold w-1/3">{t.description || 'Description'}</th>
-                                <th className="p-2 font-bold text-center">{t.quantity || 'Qty'}</th>
-                                <th className="p-2 font-bold text-right">{t.unitPrice || 'Unit Price'}</th>
-                                <th className="p-2 font-bold text-right">{t.amount || 'Amount'}</th>
-                            </tr>
-                        </thead>
+                        <thead><tr className="bg-gray-100"><th className="p-2 font-bold w-1/3">{t.item || 'Item'}</th><th className="p-2 font-bold w-1/3">{t.description || 'Description'}</th><th className="p-2 font-bold text-center">{t.quantity || 'Qty'}</th><th className="p-2 font-bold text-right">{t.unitPrice || 'Unit Price'}</th><th className="p-2 font-bold text-right">{t.amount || 'Amount'}</th></tr></thead>
                         <tbody>
                             {pageItems.map(item => (
                                 <tr key={item.id} className="border-b">
@@ -334,7 +328,7 @@ export const RentalTemplate4: React.FC<TemplateProps> = ({ document, pageItems, 
                             {summary.discount > 0 && <p className="flex justify-between py-1 text-red-600"><span>{t.discount || 'Discount'}:</span><span>-{currencySymbol}{summary.discount.toFixed(2)}</span></p>}
                             {summary.shippingCost > 0 && <p className="flex justify-between py-1"><span>{t.shipping || 'Shipping'}:</span><span>{currencySymbol}{summary.shippingCost.toFixed(2)}</span></p>}
                             <p className="flex justify-between py-1"><span>{t.tax || 'Tax'}:</span><span>{currencySymbol}{summary.taxAmount.toFixed(2)}</span></p>
-                            <p className="flex justify-between font-bold text-2xl mt-2"><span>{t.totalDue || 'Total Due'}:</span><span>{currencySymbol}{summary.grandTotal.toFixed(2)}</span></p>
+                            <p className="flex justify-between font-bold text-lg mt-2"><span>{t.totalDue || 'Total Due'}:</span><span>{currencySymbol}{summary.grandTotal.toFixed(2)}</span></p>
                         </div>
                     </div>
                      <div className="text-xs mt-8">
@@ -354,8 +348,7 @@ export const RentalTemplate4: React.FC<TemplateProps> = ({ document, pageItems, 
 export const RentalTemplate5: React.FC<TemplateProps> = ({ document, pageItems, pageIndex, totalPages, style, t }) => {
     const { business, client, summary, currency, textColor } = document;
     const currencySymbol = currencySymbols[currency] || '$';
-    const docTitle = document.documentType === 'quote' ? (t.quote || 'Quote') : (t.estimate || 'Estimate');
-
+    const docTitle = document.documentType === 'quote' ? t.quote || 'Quote' : t.estimate || 'Estimate';
     return (
         <div className={`p-10 font-serif ${pageIndex < totalPages - 1 ? 'page-break-after' : ''}`} style={{ minHeight: '1056px', backgroundColor: '#FDFBF7', color: '#5A4A42' }}>
             <header className="text-center mb-10">
@@ -364,8 +357,6 @@ export const RentalTemplate5: React.FC<TemplateProps> = ({ document, pageItems, 
                     <p className="whitespace-pre-line">{business.address}</p>
                     <p>{business.phone} | {business.email}</p>
                     {business.website && <p>{business.website}</p>}
-                    {business.licenseNumber && <p>Lic #: {business.licenseNumber}</p>}
-                    {business.taxId && <p>Tax ID: {business.taxId}</p>}
                 </div>
             </header>
             <h2 className="text-center text-xl mb-8">{docTitle.toUpperCase()}</h2>
