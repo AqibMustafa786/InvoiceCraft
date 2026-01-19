@@ -81,7 +81,7 @@ export const TransportationTemplate1: React.FC<PageProps> = (props) => {
                 <div>
                     <h1 className="text-3xl font-bold">{business.name}</h1>
                 </div>
-                <h2 className="text-4xl font-bold text-gray-400">{docTitle}</h2>
+                <h2 className="text-4xl font-bold text-gray-400">{docTitle.toUpperCase()}</h2>
             </header>
             <section className="grid grid-cols-3 gap-4 text-xs mb-8">
                 <div className="p-2 bg-gray-100"><p className="font-bold">{t.to || 'To'}:</p><p>{client.name}</p><p>{client.address}</p></div>
@@ -129,6 +129,7 @@ export const TransportationTemplate2: React.FC<PageProps> = (props) => {
     const { invoice, pageItems, pageIndex, totalPages, subtotal, taxAmount, discountAmount, total, balanceDue, currencySymbol, t, textColor } = props;
     const { business, client } = invoice;
     const docTitle = (t.invoice || 'INVOICE').toUpperCase();
+
     return (
       <div className={`p-10 bg-gray-50 font-sans ${pageIndex < totalPages - 1 ? 'page-break-after' : ''}`} style={{ minHeight: '1056px', backgroundColor: props.backgroundColor, color: props.textColor }}>
         <header className="flex justify-between items-center mb-8 pb-4 border-b-2">
@@ -142,19 +143,44 @@ export const TransportationTemplate2: React.FC<PageProps> = (props) => {
             <h2 className="text-2xl font-light text-gray-500">{docTitle}</h2>
         </header>
         <section className="grid grid-cols-2 gap-8 text-sm mb-8">
-            <div><p><strong>{t.to || 'To'}:</strong> {client.name}</p><p>{client.companyName}</p><p className="whitespace-pre-line">{client.address}</p><p>{client.phone} | {client.email}</p>{invoice.client.shippingAddress && <p className="mt-2"><span className="font-bold">Ship To:</span><br/>{invoice.client.shippingAddress}</p>}</div>
-            <div className="text-right"><p><strong>#:</strong> {invoice.invoiceNumber}</p><p><strong>{t.date || 'Date'}:</strong> {safeFormat(invoice.invoiceDate, 'MMM dd, yyyy')}</p><p><strong>{t.dueDate || 'Due Date'}:</strong> {safeFormat(invoice.dueDate, 'MMM dd, yyyy')}</p></div>
+            <div>
+                <p><strong>{t.to || 'To'}:</strong> {client.name}</p>
+                {client.companyName && <p>{client.companyName}</p>}
+                <p className="whitespace-pre-line">{client.address}</p>
+                <p>{client.phone} | {client.email}</p>
+                {invoice.client.shippingAddress && <p className="mt-2"><span className="font-bold">Ship To:</span><br/>{invoice.client.shippingAddress}</p>}
+            </div>
+            <div className="text-right">
+                <p><strong>#:</strong> {invoice.invoiceNumber}</p>
+                <p><strong>{t.date || 'Date'}:</strong> {safeFormat(invoice.invoiceDate, 'MMM dd, yyyy')}</p>
+                <p><strong>{t.dueDate || 'Due Date'}:</strong> {safeFormat(invoice.dueDate, 'MMM dd, yyyy')}</p>
+                {invoice.poNumber && <p><strong>PO #:</strong> {invoice.poNumber}</p>}
+            </div>
         </section>
         <CategorySpecificDetails invoice={invoice} t={t} />
         <main className="flex-grow mt-4">
             <table className="w-full text-left text-sm">
                 <thead>
                     <tr className="bg-gray-200">
-                        <th className="p-2 w-4/5 font-bold">{t.description || 'DESCRIPTION'}</th>
-                        <th className="p-2 font-bold text-right">{t.total || 'TOTAL'}</th>
+                        <th className="p-2 w-2/5 font-bold">{(t.description || 'DESCRIPTION').toUpperCase()}</th>
+                        <th className="p-2 w-1/5 font-bold text-center">{(t.quantity || 'QTY').toUpperCase()}</th>
+                        <th className="p-2 w-1/5 font-bold text-right">{(t.unitPrice || 'UNIT PRICE').toUpperCase()}</th>
+                        <th className="p-2 w-1/5 font-bold text-right">{t.total || 'TOTAL'}</th>
                     </tr>
                 </thead>
-                <tbody>{pageItems.map(item => (<tr key={item.id} className="border-b"><td className="p-2">{item.name}</td><td className="p-2 text-right">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</td></tr>))}</tbody>
+                <tbody>
+                    {pageItems.map(item => (
+                        <tr key={item.id} className="border-b">
+                           <td className="p-2 align-top">
+                                <p className="font-semibold whitespace-pre-line">{item.name}</p>
+                                {item.description && <p className="text-xs text-muted-foreground whitespace-pre-line">{item.description}</p>}
+                            </td>
+                            <td className="p-2 text-center align-top">{item.quantity}</td>
+                            <td className="p-2 text-right align-top">{currencySymbol}{item.unitPrice.toFixed(2)}</td>
+                            <td className="p-2 text-right align-top">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</td>
+                        </tr>
+                    ))}
+                </tbody>
             </table>
         </main>
         {pageIndex === totalPages - 1 && (
@@ -170,6 +196,10 @@ export const TransportationTemplate2: React.FC<PageProps> = (props) => {
                     <p className="flex justify-between font-bold bg-gray-200 p-1"><span>{t.balanceDue || 'Balance Due'}</span><span>{currencySymbol}{balanceDue.toFixed(2)}</span></p>
                 </div>
             </div>
+            <div className="text-xs mt-8">
+                <p className="font-bold">{t.paymentInstructions || 'Payment Instructions / Notes'}:</p>
+                <p className="text-muted-foreground whitespace-pre-line">{invoice.paymentInstructions}</p>
+            </div>
              <div className="flex justify-between mt-8">
                 <SignatureDisplay signature={business.ownerSignature} label={t.authorizedSignature || 'Authorized Signature'} />
             </div>
@@ -179,7 +209,7 @@ export const TransportationTemplate2: React.FC<PageProps> = (props) => {
     );
 };
 export const TransportationTemplate3: React.FC<PageProps> = (props) => {
-    const { invoice, pageItems, pageIndex, totalPages, subtotal, taxAmount, discountAmount, total, balanceDue, t, currencySymbol, accentColor, textColor } = props;
+    const { invoice, pageItems, pageIndex, totalPages, subtotal, taxAmount, discountAmount, total, balanceDue, currencySymbol, t, accentColor, textColor } = props;
     const { business, client } = invoice;
     const docTitle = (t.invoice || 'INVOICE').toUpperCase();
 
@@ -204,12 +234,20 @@ export const TransportationTemplate3: React.FC<PageProps> = (props) => {
                 </header>
                 <section className="grid grid-cols-3 gap-4 text-xs mb-8">
                     <div>
-                        <p className="font-bold text-gray-500">{t.from || 'From'}:</p>
-                        <p className="whitespace-pre-line">{business.address}</p>
-                    </div>
-                    <div>
                         <p className="font-bold text-gray-500">{t.to || 'To'}:</p>
-                        <p>{client.name}, {client.address}</p>
+                        <p>{client.name}</p>
+                        {client.companyName && <p>{client.companyName}</p>}
+                        <p className="whitespace-pre-line">{client.address}</p>
+                        <p>{client.phone}</p>
+                        <p>{client.email}</p>
+                    </div>
+                     <div>
+                        {client.shippingAddress && (
+                             <>
+                                <p className="font-bold text-gray-500">{t.shipTo || 'Ship To'}:</p>
+                                <p className="whitespace-pre-line">{client.shippingAddress}</p>
+                             </>
+                         )}
                     </div>
                     <div className="text-right">
                         <p className="font-bold text-gray-500">{t.date || 'Date'}:</p><p>{safeFormat(invoice.invoiceDate, 'yyyy-MM-dd')}</p>
@@ -250,13 +288,13 @@ export const TransportationTemplate3: React.FC<PageProps> = (props) => {
                             {discountAmount > 0 && <p className="flex justify-between text-red-600"><span>{t.discount || 'Discount'}:</span><span>-{currencySymbol}{discountAmount.toFixed(2)}</span></p>}
                             {invoice.summary.shippingCost > 0 && <p className="flex justify-between"><span>{t.shipping || 'Shipping'}:</span><span>{currencySymbol}{invoice.summary.shippingCost.toFixed(2)}</span></p>}
                              <p className="flex justify-between"><span>{t.tax || 'Tax'}:</span><span>{currencySymbol}{taxAmount.toFixed(2)}</span></p>
-                            <p className="flex justify-between font-bold text-xl mt-2 pt-2 border-t-2" style={{borderColor: accentColor}}><span>{t.amountDue || 'Amount Due'}:</span><span>{currencySymbol}{total.toFixed(2)}</span></p>
-                             {(invoice.amountPaid || 0) > 0 && <p className="flex justify-between font-bold text-green-600"><span>{t.amountPaid || 'Amount Paid'}:</span><span>-{currencySymbol}{(invoice.amountPaid || 0).toFixed(2)}</span></p>}
+                            <p className="flex justify-between font-bold text-xl mt-2 pt-2 border-t-2" style={{borderColor: accentColor}}><span>{t.total || 'TOTAL'}:</span><span>{currencySymbol}{total.toFixed(2)}</span></p>
+                            {(invoice.amountPaid || 0) > 0 && <p className="flex justify-between font-bold text-green-600"><span>{t.amountPaid || 'Amount Paid'}:</span><span>-{currencySymbol}{(invoice.amountPaid || 0).toFixed(2)}</span></p>}
                              <p className="flex justify-between font-bold bg-gray-100 p-1"><span>{t.balanceDue || 'Balance Due'}:</span><span>{currencySymbol}{balanceDue.toFixed(2)}</span></p>
                         </div>
                     </div>
                      <div className="text-xs mt-8">
-                        <p className="font-bold">{t.termsAndConditions || 'Terms & Conditions'}:</p>
+                        <p className="font-bold">{t.paymentInstructions || 'Payment Instructions / Notes'}:</p>
                         <p className="text-muted-foreground whitespace-pre-line">{invoice.paymentInstructions}</p>
                     </div>
                      <div className="flex justify-between mt-8">

@@ -118,12 +118,12 @@ export const TransportationTemplate1: React.FC<TemplateProps> = ({ document, pag
 }
 
 export const TransportationTemplate2: React.FC<TemplateProps> = ({ document, pageItems, pageIndex, totalPages, style, t }) => {
-    const { business, client, summary, currency, textColor, category } = document;
+    const { business, client, summary, currency, category } = document;
     const currencySymbol = currencySymbols[currency] || '$';
     const docTitle = document.documentType === 'quote' ? (t.estimate || 'ESTIMATE').toUpperCase() : (t.estimate || 'ESTIMATE').toUpperCase();
 
     return (
-      <div className={`p-10 bg-gray-50 font-sans ${pageIndex < totalPages - 1 ? 'page-break-after' : ''}`} style={{ minHeight: '1056px', backgroundColor: document.backgroundColor, color: textColor }}>
+      <div className={`p-10 bg-gray-50 font-sans ${pageIndex < totalPages - 1 ? 'page-break-after' : ''}`} style={{ minHeight: '1056px', backgroundColor: document.backgroundColor, color: document.textColor }}>
         <header className="flex justify-between items-center mb-8 pb-4 border-b-2">
             <div>
                 <h1 className="text-2xl font-bold">{business.name}</h1>
@@ -136,18 +136,32 @@ export const TransportationTemplate2: React.FC<TemplateProps> = ({ document, pag
         </header>
         <section className="grid grid-cols-2 gap-8 text-sm mb-8">
             <div><p><strong>{t.to || 'To'}:</strong> {client.name}</p><p>{client.companyName}</p><p className="whitespace-pre-line">{client.address}</p><p>{client.phone} | {client.email}</p>{document.client.shippingAddress && <p className="mt-2"><span className="font-bold">Ship To:</span><br/>{document.client.shippingAddress}</p>}</div>
-            <div className="text-right"><p><strong>#:</strong> {document.estimateNumber}</p><p><strong>{t.date || 'Date'}:</strong> {safeFormat(document.estimateDate, 'MMM dd, yyyy')}</p><p><strong>{t.validUntil || 'Valid Until'}:</strong> {safeFormat(document.validUntilDate, 'MMM dd, yyyy')}</p></div>
+            <div className="text-right"><p><strong>#:</strong> {document.estimateNumber}</p><p><strong>{t.date || 'Date'}:</strong> {safeFormat(document.estimateDate, 'MMM dd, yyyy')}</p><p><strong>{t.validUntil || 'Valid Until'}:</strong> {safeFormat(document.validUntilDate, 'MMM dd, yyyy')}</p>{document.referenceNumber && <p><strong>Ref #:</strong> {document.referenceNumber}</p>}</div>
         </section>
         <TransportationDetails document={document} t={t} />
         <main className="flex-grow mt-4">
             <table className="w-full text-left text-sm">
                 <thead>
                     <tr className="bg-gray-200">
-                        <th className="p-2 w-4/5 font-bold">{t.description || 'DESCRIPTION'}</th>
-                        <th className="p-2 font-bold text-right">{t.total || 'TOTAL'}</th>
+                        <th className="p-2 w-2/5 font-bold">{(t.description || 'DESCRIPTION').toUpperCase()}</th>
+                        <th className="p-2 w-1/5 font-bold text-center">{(t.quantity || 'QTY').toUpperCase()}</th>
+                        <th className="p-2 w-1/5 font-bold text-right">{(t.unitPrice || 'UNIT PRICE').toUpperCase()}</th>
+                        <th className="p-2 w-1/5 font-bold text-right">{t.total || 'TOTAL'}</th>
                     </tr>
                 </thead>
-                <tbody>{pageItems.map(item => (<tr key={item.id} className="border-b"><td className="p-2">{item.name}</td><td className="p-2 text-right">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</td></tr>))}</tbody>
+                <tbody>
+                    {pageItems.map(item => (
+                        <tr key={item.id} className="border-b">
+                           <td className="p-2 align-top">
+                                <p className="font-semibold whitespace-pre-line">{item.name}</p>
+                                {item.description && <p className="text-xs text-muted-foreground whitespace-pre-line">{item.description}</p>}
+                            </td>
+                            <td className="p-2 text-center align-top">{item.quantity}</td>
+                            <td className="p-2 text-right align-top">{currencySymbol}{item.unitPrice.toFixed(2)}</td>
+                            <td className="p-2 text-right align-top">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</td>
+                        </tr>
+                    ))}
+                </tbody>
             </table>
         </main>
         {pageIndex === totalPages - 1 && (
@@ -160,6 +174,10 @@ export const TransportationTemplate2: React.FC<TemplateProps> = ({ document, pag
                     <p className="flex justify-between border-b pb-1"><span>{t.tax || 'Tax'}</span><span>{currencySymbol}{summary.taxAmount.toFixed(2)}</span></p>
                     <p className="flex justify-between font-bold mt-2"><span>{t.total || 'Total'}</span><span>{currencySymbol}{summary.grandTotal.toFixed(2)}</span></p>
                 </div>
+            </div>
+            <div className="text-xs mt-8">
+                <p className="font-bold">{t.termsAndConditions || 'Terms & Conditions'}:</p>
+                <p className="text-muted-foreground whitespace-pre-line">{document.termsAndConditions}</p>
             </div>
              <div className="flex justify-between mt-8">
                 <SignatureDisplay signature={document.business.ownerSignature} label={t.authorizedSignature || 'Authorized Signature'} />
@@ -196,12 +214,20 @@ export const TransportationTemplate3: React.FC<TemplateProps> = ({ document, pag
                 </header>
                 <section className="grid grid-cols-3 gap-4 text-xs mb-8">
                     <div>
-                        <p className="font-bold text-gray-500">{t.from || 'From'}:</p>
-                        <p className="whitespace-pre-line">{business.address}</p>
-                    </div>
-                    <div>
                         <p className="font-bold text-gray-500">{t.to || 'To'}:</p>
-                        <p>{client.name}, {client.address}</p>
+                        <p>{client.name}</p>
+                        {client.companyName && <p>{client.companyName}</p>}
+                        <p className="whitespace-pre-line">{client.address}</p>
+                        <p>{client.phone}</p>
+                        <p>{client.email}</p>
+                    </div>
+                     <div>
+                        {client.shippingAddress && (
+                             <>
+                                <p className="font-bold text-gray-500">{t.shipTo || 'Ship To'}:</p>
+                                <p className="whitespace-pre-line">{client.shippingAddress}</p>
+                             </>
+                         )}
                     </div>
                     <div className="text-right">
                         <p className="font-bold text-gray-500">{t.date || 'Date'}:</p><p>{safeFormat(document.estimateDate, 'yyyy-MM-dd')}</p>
@@ -242,7 +268,7 @@ export const TransportationTemplate3: React.FC<TemplateProps> = ({ document, pag
                             {summary.discount > 0 && <p className="flex justify-between text-red-600"><span>{t.discount || 'Discount'}:</span><span>-{currencySymbol}{summary.discount.toFixed(2)}</span></p>}
                             {summary.shippingCost > 0 && <p className="flex justify-between"><span>{t.shipping || 'Shipping'}:</span><span>{currencySymbol}{summary.shippingCost.toFixed(2)}</span></p>}
                              <p className="flex justify-between"><span>{t.tax || 'Tax'}:</span><span>{currencySymbol}{summary.taxAmount.toFixed(2)}</span></p>
-                            <p className="flex justify-between font-bold text-xl mt-2 pt-2 border-t-2" style={{borderColor: accentColor}}><span>{t.amountDue || 'Amount Due'}:</span><span>{currencySymbol}{summary.grandTotal.toFixed(2)}</span></p>
+                            <p className="flex justify-between font-bold text-xl mt-2 pt-2 border-t-2" style={{borderColor: accentColor}}><span>{t.total || 'TOTAL'}:</span><span>{currencySymbol}{summary.grandTotal.toFixed(2)}</span></p>
                         </div>
                     </div>
                      <div className="text-xs mt-8">
@@ -262,7 +288,7 @@ export const TransportationTemplate3: React.FC<TemplateProps> = ({ document, pag
 export const TransportationTemplate4: React.FC<TemplateProps> = ({ document, pageItems, pageIndex, totalPages, style, t }) => {
     const { business, client, summary, currency, textColor } = document;
     const currencySymbol = currencySymbols[currency] || '$';
-    const docTitle = document.documentType === 'quote' ? (t.quote || 'QUOTE').toUpperCase() : (t.estimate || 'ESTIMATE').toUpperCase();
+    const docTitle = document.documentType === 'quote' ? t.quote || 'QUOTE' : t.estimate || 'ESTIMATE';
 
     return (
         <div className={`font-sans ${pageIndex < totalPages - 1 ? 'page-break-after' : ''}`} style={{ minHeight: '1056px', backgroundColor: document.backgroundColor, color: textColor }}>
