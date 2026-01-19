@@ -81,7 +81,7 @@ export const TransportationTemplate1: React.FC<PageProps> = (props) => {
                 <div>
                     <h1 className="text-3xl font-bold">{business.name}</h1>
                 </div>
-                <h2 className="text-4xl font-bold text-gray-400">{docTitle}</h2>
+                <h2 className="text-4xl font-bold text-gray-400">{docTitle.toUpperCase()}</h2>
             </header>
             <section className="grid grid-cols-3 gap-4 text-xs mb-8">
                 <div className="p-2 bg-gray-100"><p className="font-bold">{t.to || 'To'}:</p><p>{client.name}</p><p>{client.address}</p></div>

@@ -288,15 +288,7 @@ export const TransportationTemplate4: React.FC<TemplateProps> = ({ document, pag
                 <main className="flex-grow mt-4">
                     <table className="w-full text-left text-sm">
                         <thead><tr className="bg-gray-100"><th className="p-3 font-bold w-3/5">{t.serviceProvided || 'Service Provided'}</th><th className="p-3 font-bold text-center">{t.quantity || 'Qty'}</th><th className="p-3 font-bold text-right">{t.fee || 'Fee'}</th></tr></thead>
-                        <tbody>
-                            {pageItems.map(item => (
-                                <tr key={item.id} className="border-b">
-                                    <td className="p-3 font-medium whitespace-pre-line">{item.name}</td>
-                                    <td className="p-3 text-center">{item.quantity}</td>
-                                    <td className="p-3 text-right">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</td>
-                                </tr>
-                            ))}
-                        </tbody>
+                        <tbody>{pageItems.map(item => (<tr key={item.id} className="border-b"><td className="p-3 font-medium whitespace-pre-line">{item.name}</td><td className="p-3 text-center">{item.quantity}</td><td className="p-3 text-right">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</td></tr>))}</tbody>
                     </table>
                 </main>
                 {pageIndex === totalPages - 1 && (
@@ -350,7 +342,6 @@ export const TransportationTemplate5: React.FC<TemplateProps> = ({ document, pag
                 <p className="mt-2"><strong>{t.no || 'No'}:</strong> {document.estimateNumber}</p>
                 <p><strong>{t.date || 'Date'}:</strong> {safeFormat(document.estimateDate, 'MM/dd/yyyy')}</p>
                 <p><strong>{t.validUntil || 'Valid Until'}:</strong> {safeFormat(document.validUntilDate, 'MM/dd/yyyy')}</p>
-                {document.referenceNumber && <p><strong>Ref #:</strong> {document.referenceNumber}</p>}
             </section>
             <TransportationDetails document={document} t={t} />
             <main className="flex-grow mt-4">
