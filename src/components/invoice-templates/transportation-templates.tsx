@@ -1,3 +1,4 @@
+
 'use client';
 
 import React from 'react';
@@ -190,20 +191,9 @@ export const TransportationTemplate3: React.FC<PageProps> = (props) => {
                     </div>
                 </header>
                 <section className="grid grid-cols-3 gap-4 text-xs mb-8">
-                    <div>
-                        <p className="font-bold text-gray-500">{t.from || 'From'}:</p>
-                        <p className="whitespace-pre-line">{business.address}</p>
-                    </div>
-                    <div>
-                        <p className="font-bold text-gray-500">{t.to || 'To'}:</p>
-                        <p>{client.name}, {client.address}</p>
-                    </div>
-                    <div className="text-right">
-                        <p className="font-bold text-gray-500">{t.date || 'Date'}:</p>
-                        <p>{safeFormat(invoice.invoiceDate, 'yyyy-MM-dd')}</p>
-                        <p className="font-bold text-gray-500 mt-2">{t.dueDate || 'Due Date'}:</p>
-                        <p>{safeFormat(invoice.dueDate, 'yyyy-MM-dd')}</p>
-                    </div>
+                    <div><p className="font-bold text-gray-500">{t.from || 'From'}:</p><p className="whitespace-pre-line">{business.address}</p></div>
+                    <div><p className="font-bold text-gray-500">{t.to || 'To'}:</p><p>{client.name}, {client.address}</p></div>
+                    <div className="text-right"><p className="font-bold text-gray-500">{t.date || 'Date'}:</p><p>{safeFormat(invoice.invoiceDate, 'yyyy-MM-dd')}</p></div>
                 </section>
                 <CategorySpecificDetails invoice={invoice} t={t} />
                 <main className="flex-grow mt-4">
@@ -240,7 +230,7 @@ export const TransportationTemplate3: React.FC<PageProps> = (props) => {
                              <p className="flex justify-between"><span>{t.tax || 'Tax'}:</span><span>{currencySymbol}{taxAmount.toFixed(2)}</span></p>
                             <p className="flex justify-between font-bold text-xl mt-2 pt-2 border-t-2" style={{borderColor: accentColor}}><span>{t.amountDue || 'Amount Due'}:</span><span>{currencySymbol}{total.toFixed(2)}</span></p>
                             {(invoice.amountPaid || 0) > 0 && <p className="flex justify-between font-bold text-green-600"><span>{t.amountPaid || 'Amount Paid'}:</span><span>-{currencySymbol}{(invoice.amountPaid || 0).toFixed(2)}</span></p>}
-                            <p className="flex justify-between font-bold bg-gray-100 p-2 mt-1"><span>{t.balanceDue || 'Balance Due'}:</span><span>{currencySymbol}{balanceDue.toFixed(2)}</span></p>
+                             <p className="flex justify-between font-bold bg-gray-100 p-1"><span>{t.balanceDue || 'Balance Due'}:</span><span>{currencySymbol}{balanceDue.toFixed(2)}</span></p>
                         </div>
                     </div>
                      <div className="text-xs mt-8">
@@ -258,4 +248,5 @@ export const TransportationTemplate3: React.FC<PageProps> = (props) => {
 };
 export const TransportationTemplate4: React.FC<PageProps> = (props) => <TransportationTemplate1 {...props} />;
 export const TransportationTemplate5: React.FC<PageProps> = (props) => <TransportationTemplate2 {...props} />;
-```
+
+    

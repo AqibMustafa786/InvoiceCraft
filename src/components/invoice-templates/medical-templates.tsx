@@ -1,3 +1,4 @@
+
 'use client';
 
 import React from 'react';
@@ -233,7 +234,6 @@ export const MedicalTemplate3: React.FC<PageProps> = (props) => {
         </div>
     );
 };
-
 // Template 4: Wellness
 export const MedicalTemplate4: React.FC<PageProps> = (props) => {
     const { invoice, pageItems, pageIndex, totalPages, subtotal, taxAmount, discountAmount, total, balanceDue, currencySymbol, t, accentColor, textColor } = props;
@@ -241,7 +241,7 @@ export const MedicalTemplate4: React.FC<PageProps> = (props) => {
     const docTitle = (t.invoice || 'Invoice');
 
     return (
-        <div className={`p-10 font-sans ${pageIndex < totalPages - 1 ? 'page-break-after' : ''}`} style={{ minHeight: '1056px', borderTop: `10px solid ${accentColor}`, backgroundColor: props.backgroundColor, color: textColor }}>
+        <div className={`p-10 font-sans ${pageIndex < totalPages - 1 ? 'page-break-after' : ''}`} style={{ minHeight: '1056px', borderTop: `10px solid ${accentColor}`, backgroundColor: props.backgroundColor, color: props.textColor }}>
             <header className="flex justify-between items-center mb-8">
                 <div>
                   <h1 className="text-2xl font-bold">{business.name}</h1>
@@ -275,10 +275,10 @@ export const MedicalTemplate4: React.FC<PageProps> = (props) => {
                 <table className="w-full text-left text-sm">
                     <thead>
                         <tr className="border-b">
-                            <th className="pb-2 font-bold w-2/5">{t.description || 'Description'}</th>
-                            <th className="pb-2 font-bold w-1/5 text-center">{t.quantity || 'Quantity'}</th>
-                            <th className="pb-2 font-bold text-right w-1/5">{t.unitPrice || 'Unit Price'}</th>
-                            <th className="pb-2 font-bold text-right w-1/5">{t.amount || 'Amount'}</th>
+                            <th className="pb-2 font-bold w-2/5">{(t.description || 'Description')}</th>
+                            <th className="pb-2 font-bold w-1/5 text-center">{(t.quantity || 'Quantity')}</th>
+                            <th className="pb-2 font-bold text-right w-1/5">{(t.unitPrice || 'Unit Price')}</th>
+                            <th className="pb-2 font-bold text-right w-1/5">{(t.amount || 'Amount')}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -300,10 +300,10 @@ export const MedicalTemplate4: React.FC<PageProps> = (props) => {
             <footer className="mt-auto pt-8">
                 <div className="flex justify-end text-right">
                     <div className="w-1/3 text-sm">
-                        <p className="flex justify-between py-1"><span>{t.subtotal || 'Subtotal'}</span><span>{currencySymbol}{subtotal.toFixed(2)}</span></p>
-                        {discountAmount > 0 && <p className="flex justify-between py-1 text-red-600"><span>{t.discount || 'Discount'}:</span><span>-{currencySymbol}{discountAmount.toFixed(2)}</span></p>}
-                        {invoice.summary.shippingCost > 0 && <p className="flex justify-between py-1"><span>{t.shipping || 'Other Fees'}:</span><span>{currencySymbol}{invoice.summary.shippingCost.toFixed(2)}</span></p>}
-                        <p className="flex justify-between py-1"><span>{t.adjustments || 'Adjustments'}</span><span>{currencySymbol}{(taxAmount > 0 ? taxAmount.toFixed(2) : '0.00')}</span></p>
+                        <p className="flex justify-between"><span>{t.subtotal || 'Subtotal'}</span><span>{currencySymbol}{subtotal.toFixed(2)}</span></p>
+                        {discountAmount > 0 && <p className="flex justify-between text-red-600"><span>{t.discount || 'Discount'}:</span><span>-{currencySymbol}{discountAmount.toFixed(2)}</span></p>}
+                        {invoice.summary.shippingCost > 0 && <p className="flex justify-between"><span>{t.shipping || 'Other Fees'}:</span><span>{currencySymbol}{invoice.summary.shippingCost.toFixed(2)}</span></p>}
+                        <p className="flex justify-between"><span>{t.adjustments || 'Adjustments'}</span><span>{currencySymbol}{(taxAmount > 0 ? taxAmount.toFixed(2) : '0.00')}</span></p>
                         <p className="flex justify-between font-bold mt-2"><span>{t.totalDue || 'Total Due'}</span><span>{currencySymbol}{total.toFixed(2)}</span></p>
                         {(invoice.amountPaid || 0) > 0 && <p className="flex justify-between font-bold text-green-600"><span>{t.amountPaid || 'Amount Paid'}:</span><span>-{currencySymbol}{(invoice.amountPaid || 0).toFixed(2)}</span></p>}
                         <p className="flex justify-between font-bold bg-gray-100 p-1"><span>{t.balanceDue || 'Balance Due'}:</span><span>{currencySymbol}{balanceDue.toFixed(2)}</span></p>
@@ -350,7 +350,7 @@ export const MedicalTemplate5: React.FC<PageProps> = (props) => {
                 </div>
                 <div className="text-right">
                     
-                    <p><strong>{t.invoiceNo || 'Invoice #'}:</strong> {invoice.invoiceNumber}</p>
+                    <p><strong>{docTitle} #:</strong> {invoice.invoiceNumber}</p>
                     <p><strong>{t.date || 'Date'}:</strong> {safeFormat(invoice.invoiceDate, 'MM/dd/yyyy')}</p>
                     <p><strong>{t.dueDate || 'Due Date'}:</strong> {safeFormat(invoice.dueDate, 'MM/dd/yyyy')}</p>
                     {invoice.poNumber && <p><strong>PO #:</strong> {invoice.poNumber}</p>}

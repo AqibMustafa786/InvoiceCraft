@@ -1,3 +1,4 @@
+
 'use client';
 
 import React from 'react';
@@ -251,10 +252,10 @@ export const MedicalTemplate4: React.FC<TemplateProps> = ({ document, pageItems,
                 <table className="w-full text-left text-sm">
                     <thead>
                         <tr className="border-b">
-                            <th className="pb-2 font-bold w-2/5">{t.description || 'Description'}</th>
-                            <th className="pb-2 font-bold w-1/5 text-center">{t.quantity || 'Quantity'}</th>
-                            <th className="pb-2 font-bold text-right w-1/5">{t.unitPrice || 'Unit Price'}</th>
-                            <th className="pb-2 font-bold text-right w-1/5">{t.amount || 'Amount'}</th>
+                            <th className="pb-2 font-bold w-2/5">{(t.description || 'Description')}</th>
+                            <th className="pb-2 font-bold w-1/5 text-center">{(t.quantity || 'Quantity')}</th>
+                            <th className="pb-2 font-bold text-right w-1/5">{(t.unitPrice || 'Unit Price')}</th>
+                            <th className="pb-2 font-bold text-right w-1/5">{(t.amount || 'Amount')}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -296,7 +297,6 @@ export const MedicalTemplate4: React.FC<TemplateProps> = ({ document, pageItems,
         </div>
     );
 };
-
 // Template 5: Remedy
 export const MedicalTemplate5: React.FC<TemplateProps> = ({ document, pageItems, pageIndex, totalPages, style, t }) => {
     const { business, client, summary, currency, textColor } = document;
