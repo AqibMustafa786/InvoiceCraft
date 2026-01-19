@@ -81,7 +81,7 @@ export const TransportationTemplate1: React.FC<PageProps> = (props) => {
                 <div>
                     <h1 className="text-3xl font-bold">{business.name}</h1>
                 </div>
-                <h2 className="text-4xl font-bold text-gray-400">{docTitle.toUpperCase()}</h2>
+                <h2 className="text-4xl font-bold text-gray-400">{docTitle}</h2>
             </header>
             <section className="grid grid-cols-3 gap-4 text-xs mb-8">
                 <div className="p-2 bg-gray-100"><p className="font-bold">{t.to || 'To'}:</p><p>{client.name}</p><p>{client.address}</p></div>
@@ -91,7 +91,12 @@ export const TransportationTemplate1: React.FC<PageProps> = (props) => {
             <CategorySpecificDetails invoice={invoice} t={t} />
             <main className="flex-grow mt-4">
                 <table className="w-full text-left text-sm">
-                    <thead style={{backgroundColor: accentColor, color: 'white'}}><th className="p-2 font-bold w-3/5">{t.description || 'Description'}</th><th className="p-2 font-bold text-right">{t.amount || 'Amount'}</th></tr></thead>
+                    <thead style={{backgroundColor: accentColor, color: 'white'}}>
+                        <tr>
+                            <th className="p-2 font-bold w-3/5">{t.description || 'Description'}</th>
+                            <th className="p-2 font-bold text-right">{t.amount || 'Amount'}</th>
+                        </tr>
+                    </thead>
                     <tbody>{pageItems.map(item => (<tr key={item.id} className="border-b"><td className="p-2">{item.name}</td><td className="p-2 text-right">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</td></tr>))}</tbody>
                 </table>
             </main>
@@ -118,7 +123,7 @@ export const TransportationTemplate1: React.FC<PageProps> = (props) => {
             )}
         </div>
     );
-};
+}
 
 export const TransportationTemplate2: React.FC<PageProps> = (props) => {
     const { invoice, pageItems, pageIndex, totalPages, subtotal, taxAmount, discountAmount, total, balanceDue, currencySymbol, t, textColor } = props;
@@ -143,7 +148,12 @@ export const TransportationTemplate2: React.FC<PageProps> = (props) => {
         <CategorySpecificDetails invoice={invoice} t={t} />
         <main className="flex-grow mt-4">
             <table className="w-full text-left text-sm">
-                <thead><tr className="bg-gray-200"><th className="p-2 w-4/5 font-bold">{t.description || 'DESCRIPTION'}</th><th className="p-2 font-bold text-right">{t.total || 'TOTAL'}</th></tr></thead>
+                <thead>
+                    <tr className="bg-gray-200">
+                        <th className="p-2 w-4/5 font-bold">{t.description || 'DESCRIPTION'}</th>
+                        <th className="p-2 font-bold text-right">{t.total || 'TOTAL'}</th>
+                    </tr>
+                </thead>
                 <tbody>{pageItems.map(item => (<tr key={item.id} className="border-b"><td className="p-2">{item.name}</td><td className="p-2 text-right">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</td></tr>))}</tbody>
             </table>
         </main>

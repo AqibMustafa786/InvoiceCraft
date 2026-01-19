@@ -84,7 +84,12 @@ export const TransportationTemplate1: React.FC<TemplateProps> = ({ document, pag
             <TransportationDetails document={document} t={t} />
             <main className="flex-grow mt-4">
                 <table className="w-full text-left text-sm">
-                    <thead style={{backgroundColor: style.color, color: 'white'}}><th className="p-2 font-bold w-3/5">{t.description || 'Description'}</th><th className="p-2 font-bold text-right">{t.amount || 'Amount'}</th></tr></thead>
+                    <thead style={{backgroundColor: style.color, color: 'white'}}>
+                        <tr>
+                            <th className="p-2 font-bold w-3/5">{t.description || 'Description'}</th>
+                            <th className="p-2 font-bold text-right">{t.amount || 'Amount'}</th>
+                        </tr>
+                    </thead>
                     <tbody>{pageItems.map(item => (<tr key={item.id} className="border-b"><td className="p-2">{item.name}</td><td className="p-2 text-right">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</td></tr>))}</tbody>
                 </table>
             </main>
@@ -136,7 +141,12 @@ export const TransportationTemplate2: React.FC<TemplateProps> = ({ document, pag
         <TransportationDetails document={document} t={t} />
         <main className="flex-grow mt-4">
             <table className="w-full text-left text-sm">
-                <thead><tr className="bg-gray-200"><th className="p-2 w-4/5 font-bold">{t.description || 'DESCRIPTION'}</th><th className="p-2 font-bold text-right">{t.total || 'TOTAL'}</th></tr></thead>
+                <thead>
+                    <tr className="bg-gray-200">
+                        <th className="p-2 w-4/5 font-bold">{t.description || 'DESCRIPTION'}</th>
+                        <th className="p-2 font-bold text-right">{t.total || 'TOTAL'}</th>
+                    </tr>
+                </thead>
                 <tbody>{pageItems.map(item => (<tr key={item.id} className="border-b"><td className="p-2">{item.name}</td><td className="p-2 text-right">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</td></tr>))}</tbody>
             </table>
         </main>
@@ -288,7 +298,15 @@ export const TransportationTemplate4: React.FC<TemplateProps> = ({ document, pag
                 <main className="flex-grow mt-4">
                     <table className="w-full text-left text-sm">
                         <thead><tr className="bg-gray-100"><th className="p-3 font-bold w-3/5">{t.serviceProvided || 'Service Provided'}</th><th className="p-3 font-bold text-center">{t.quantity || 'Qty'}</th><th className="p-3 font-bold text-right">{t.fee || 'Fee'}</th></tr></thead>
-                        <tbody>{pageItems.map(item => (<tr key={item.id} className="border-b"><td className="p-3 font-medium whitespace-pre-line">{item.name}</td><td className="p-3 text-center">{item.quantity}</td><td className="p-3 text-right">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</td></tr>))}</tbody>
+                        <tbody>
+                            {pageItems.map(item => (
+                                <tr key={item.id} className="border-b">
+                                    <td className="p-3 font-medium whitespace-pre-line">{item.name}</td>
+                                    <td className="p-3 text-center">{item.quantity}</td>
+                                    <td className="p-3 text-right">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</td>
+                                </tr>
+                            ))}
+                        </tbody>
                     </table>
                 </main>
                 {pageIndex === totalPages - 1 && (
@@ -319,7 +337,7 @@ export const TransportationTemplate4: React.FC<TemplateProps> = ({ document, pag
 export const TransportationTemplate5: React.FC<TemplateProps> = ({ document, pageItems, pageIndex, totalPages, style, t }) => {
     const { business, client, summary, currency, textColor } = document;
     const currencySymbol = currencySymbols[currency] || '$';
-    const docTitle = document.documentType === 'quote' ? (t.quote || 'Quote') : (t.estimate || 'Estimate');
+    const docTitle = document.documentType === 'quote' ? t.quote || 'Quote' : t.estimate || 'Estimate';
     return (
         <div className={`p-10 font-serif ${pageIndex < totalPages - 1 ? 'page-break-after' : ''}`} style={{ minHeight: '1056px', backgroundColor: '#FDFBF7', color: '#5A4A42' }}>
             <header className="text-center mb-10">
