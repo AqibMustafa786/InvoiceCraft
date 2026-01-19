@@ -96,12 +96,10 @@ export const RealEstateTemplate1: React.FC<TemplateProps> = ({ document, pageIte
                     <p className="whitespace-pre-line">{client.address}</p>
                     <p>{client.phone}</p>
                     <p>{client.email}</p>
-                    {client.shippingAddress && <p className="mt-2"><span className="font-bold">Ship To:</span><br/>{client.shippingAddress}</p>}
                 </div>
                 <div className="text-right">
                     <p className="font-bold text-gray-500" style={{color: textColor ? `${textColor}B3` : undefined}}>{(t.date || 'Date').toUpperCase()}</p>
                     <p>{safeFormat(document.estimateDate, 'MMMM d, yyyy')}</p>
-                    {document.referenceNumber && <p className="mt-2"><span className="font-bold">Ref #:</span> {document.referenceNumber}</p>}
                 </div>
             </section>
             <RealEstateDetails document={document} t={t} />
@@ -161,8 +159,8 @@ export const RealEstateTemplate2: React.FC<TemplateProps> = ({ document, pageIte
             <h2 className="text-2xl font-light text-gray-500">{docTitle}</h2>
         </header>
         <section className="grid grid-cols-2 gap-8 text-sm mb-8">
-            <div><p><strong>{t.to || 'To'}:</strong> {client.name}</p><p>{client.companyName}</p><p className="whitespace-pre-line">{client.address}</p><p>{client.phone} | {client.email}</p>{document.client.shippingAddress && <p className="mt-2"><span className="font-bold">Ship To:</span><br/>{document.client.shippingAddress}</p>}</div>
-            <div className="text-right"><p><strong>#:</strong> {document.estimateNumber}</p><p><strong>{t.date || 'Date'}:</strong> {safeFormat(document.estimateDate, 'MMM dd, yyyy')}</p><p><strong>{t.validUntil || 'Valid Until'}:</strong> {safeFormat(document.validUntilDate, 'MMM dd, yyyy')}</p>{document.referenceNumber && <p><strong>Ref #:</strong> {document.referenceNumber}</p>}</div>
+            <div><p><strong>{t.to || 'To'}:</strong> {client.name}</p><p>{client.companyName}</p><p className="whitespace-pre-line">{client.address}</p><p>{client.phone} | {client.email}</p></div>
+            <div className="text-right"><p><strong>#:</strong> {document.estimateNumber}</p><p><strong>{t.date || 'Date'}:</strong> {safeFormat(document.estimateDate, 'MMM dd, yyyy')}</p><p><strong>{t.validUntil || 'Valid Until'}:</strong> {safeFormat(document.validUntilDate, 'MMM dd, yyyy')}</p>{document.poNumber && <p><strong>Ref #:</strong> {document.poNumber}</p>}</div>
         </section>
         <RealEstateDetails document={document} t={t} />
         <main className="flex-grow mt-4">
@@ -192,6 +190,10 @@ export const RealEstateTemplate2: React.FC<TemplateProps> = ({ document, pageIte
                     <p className="flex justify-between font-bold mt-2"><span>{t.total || 'Total'}</span><span>{currencySymbol}{summary.grandTotal.toFixed(2)}</span></p>
                 </div>
             </div>
+             <div className="text-xs mt-8">
+                <p className="font-bold">{t.termsAndConditions || 'Terms & Conditions'}:</p>
+                <p className="text-muted-foreground whitespace-pre-line">{document.termsAndConditions}</p>
+            </div>
              <div className="flex justify-between mt-8">
                 <SignatureDisplay signature={document.business.ownerSignature} label={t.authorizedSignature || 'Authorized Signature'} />
                 <SignatureDisplay signature={document.clientSignature} label={t.clientSignature || 'Client Signature'} />
@@ -204,7 +206,7 @@ export const RealEstateTemplate2: React.FC<TemplateProps> = ({ document, pageIte
 export const RealEstateTemplate3: React.FC<TemplateProps> = ({ document, pageItems, pageIndex, totalPages, style, t }) => {
     const { business, client, summary, currency, textColor } = document;
     const currencySymbol = currencySymbols[currency] || '$';
-    const docTitle = document.documentType === 'quote' ? t.quote || 'Quote' : t.estimate || 'Estimate';
+    const docTitle = document.documentType === 'quote' ? 'Quote' : 'Estimate';
     return (
       <div className={`p-10 font-serif bg-white ${pageIndex < totalPages - 1 ? 'page-break-after' : ''}`} style={{ minHeight: '1056px', backgroundColor: document.backgroundColor, color: textColor }}>
         <header className="text-center mb-10">
@@ -226,7 +228,6 @@ export const RealEstateTemplate3: React.FC<TemplateProps> = ({ document, pageIte
                 <p className="whitespace-pre-line">{client.address}</p>
                 <p>{client.phone}</p>
                 <p>{client.email}</p>
-                {client.shippingAddress && <p className="mt-2"><span className="font-bold">Ship To:</span><br/>{client.shippingAddress}</p>}
             </div>
             <div className="text-right">
                 <p><strong>{docTitle} #:</strong> {document.estimateNumber}</p>
@@ -298,12 +299,6 @@ export const RealEstateTemplate4: React.FC<TemplateProps> = ({ document, pageIte
                         <p className="font-bold opacity-80">#</p>
                         <p>{document.estimateNumber}</p>
                     </div>
-                    {document.referenceNumber && (
-                        <div>
-                           <p className="font-bold opacity-80">Ref #</p>
-                           <p>{document.referenceNumber}</p>
-                        </div>
-                     )}
                 </div>
             </div>
             
@@ -315,18 +310,13 @@ export const RealEstateTemplate4: React.FC<TemplateProps> = ({ document, pageIte
                     <div className="text-xs text-muted-foreground">
                         <p className="whitespace-pre-line">{business.address}</p>
                         <p>{business.phone} | {business.email}</p>
-                        {business.website && <p>{business.website}</p>}
-                        {business.licenseNumber && <p>Lic #: {business.licenseNumber}</p>}
-                        {business.taxId && <p>Tax ID: {business.taxId}</p>}
                     </div>
                 </header>
 
                 <section className="mb-10 text-sm">
                     <p className="font-bold text-muted-foreground">{t.to || 'To'}:</p>
                     <p>{client.name}</p>
-                    {client.companyName && <p>{client.companyName}</p>}
                     <p className="whitespace-pre-line">{client.address}</p>
-                     {client.shippingAddress && <p className="mt-2"><span className="font-bold">Ship To:</span><br/>{client.shippingAddress}</p>}
                 </section>
                 
                 <RealEstateDetails document={document} t={t} />
@@ -406,7 +396,6 @@ export const RealEstateTemplate5: React.FC<TemplateProps> = ({ document, pageIte
                 {client.companyName && <p>{client.companyName}</p>}
                 <p className="whitespace-pre-line">{client.address}</p>
                 <p>{client.phone} | {client.email}</p>
-                {client.shippingAddress && <p className="mt-2"><span className="font-bold">Ship To:</span><br/>{client.shippingAddress}</p>}
                 <p className="mt-2"><strong>{t.no || 'No'}:</strong> {document.estimateNumber}</p>
                 <p><strong>{t.date || 'Date'}:</strong> {safeFormat(document.estimateDate, 'MM/dd/yyyy')}</p>
                 <p><strong>{t.validUntil || 'Valid Until'}:</strong> {safeFormat(document.validUntilDate, 'MM/dd/yyyy')}</p>

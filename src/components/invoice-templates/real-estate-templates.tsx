@@ -142,7 +142,7 @@ export const RealEstateTemplate1: React.FC<PageProps> = (props) => {
                             <span>{currencySymbol}{total.toFixed(2)}</span>
                         </p>
                         {(invoice.amountPaid || 0) > 0 && <p className="flex justify-between font-bold text-green-600"><span>{t.amountPaid || 'Amount Paid'}:</span><span>-{currencySymbol}{(invoice.amountPaid || 0).toFixed(2)}</span></p>}
-                         <p className="flex justify-between font-bold bg-gray-100 p-2 mt-1"><span>{t.balanceDue || 'Balance Due'}:</span><span>{currencySymbol}{balanceDue.toFixed(2)}</span></p>
+                        <p className="flex justify-between font-bold bg-gray-100 p-2 mt-1"><span>{t.balanceDue || 'Balance Due'}:</span><span>{currencySymbol}{balanceDue.toFixed(2)}</span></p>
                     </div>
                 </div>
                  <div className="flex justify-between mt-8">
@@ -172,7 +172,7 @@ export const RealEstateTemplate2: React.FC<PageProps> = (props) => {
         </header>
         <section className="grid grid-cols-2 gap-8 text-sm mb-8">
             <div><p><strong>{t.to || 'To'}:</strong> {client.name}</p><p>{client.companyName}</p><p className="whitespace-pre-line">{client.address}</p><p>{client.phone} | {client.email}</p>{invoice.client.shippingAddress && <p className="mt-2"><span className="font-bold">Ship To:</span><br/>{invoice.client.shippingAddress}</p>}</div>
-            <div className="text-right"><p><strong>#:</strong> {invoice.invoiceNumber}</p><p><strong>{t.date || 'Date'}:</strong> {safeFormat(invoice.invoiceDate, 'MMM dd, yyyy')}</p><p><strong>{t.dueDate || 'Due Date'}:</strong> {safeFormat(invoice.dueDate, 'MMM dd, yyyy')}</p>{invoice.poNumber && <p><strong>PO #:</strong> {invoice.poNumber}</p>}</div>
+            <div className="text-right"><p><strong>#:</strong> {invoice.invoiceNumber}</p><p><strong>{t.date || 'Date'}:</strong> {safeFormat(invoice.invoiceDate, 'MMM dd, yyyy')}</p><p><strong>{t.dueDate || 'Due Date'}:</strong> {safeFormat(invoice.dueDate, 'MMM dd, yyyy')}</p>{invoice.poNumber && <p><strong>Ref #:</strong> {invoice.poNumber}</p>}</div>
         </section>
         <CategorySpecificDetails invoice={invoice} t={t} />
         <main className="flex-grow mt-4">
@@ -203,6 +203,10 @@ export const RealEstateTemplate2: React.FC<PageProps> = (props) => {
                     {(invoice.amountPaid || 0) > 0 && <p className="flex justify-between font-bold text-green-600"><span>{t.amountPaid || 'Amount Paid'}</span><span>-{currencySymbol}{(invoice.amountPaid || 0).toFixed(2)}</span></p>}
                     <p className="flex justify-between font-bold bg-gray-200 p-1"><span>{t.balanceDue || 'Balance Due'}</span><span>{currencySymbol}{balanceDue.toFixed(2)}</span></p>
                 </div>
+            </div>
+             <div className="text-xs mt-8">
+                <p className="font-bold">{t.paymentInstructions || 'Payment Instructions / Notes'}:</p>
+                <p className="text-muted-foreground whitespace-pre-line">{invoice.paymentInstructions}</p>
             </div>
              <div className="flex justify-between mt-8">
                 <SignatureDisplay signature={business.ownerSignature} label={t.authorizedSignature || 'Authorized Signature'} />
