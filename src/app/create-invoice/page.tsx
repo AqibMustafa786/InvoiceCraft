@@ -47,39 +47,53 @@ const diff = (original: any, updated: any): string[] => {
     const changes: string[] = [];
     if (!original || !updated) return changes;
 
-    const allKeys = new Set([...Object.keys(original), ...Object.keys(updated)]);
     const formatKey = (key: string) => key.replace(/([A-Z])/g, ' $1').replace(/^./, (str) => str.toUpperCase());
+    
     const isDate = (value: any) => value instanceof Date || (value && typeof value.toDate === 'function');
+    
+    const formatValue = (value: any): string => {
+        if (value === null || value === undefined || value === '') return 'empty';
+        if (isDate(value)) return toDateSafe(value)!.toLocaleDateString();
+        if (typeof value === 'object' && value !== null && !Array.isArray(value)) return '[details]';
+        if (typeof value === 'boolean') return value ? 'checked' : 'unchecked';
+        const strValue = String(value);
+        return `"${strValue.substring(0, 30)}${strValue.length > 30 ? '...' : ''}"`;
+    };
 
-    allKeys.forEach(key => {
-        if (key === 'auditLog' || key === 'updatedAt' || key === 'createdAt' || key === 'lineItems') return;
-
-        let originalValue = original[key];
-        let updatedValue = updated[key];
-
-        if (key === 'logoUrl') {
-            if (originalValue !== updatedValue) {
-                changes.push(updatedValue ? 'Business logo was updated' : 'Business logo was removed');
-            }
-            return;
+    const compareValues = (key: string, originalValue: any, updatedValue: any, prefix = '') => {
+        let originalComp = JSON.stringify(originalValue);
+        let updatedComp = JSON.stringify(updatedValue);
+        
+        if (isDate(originalValue) || isDate(updatedValue)) {
+            originalComp = originalValue ? toDateSafe(originalValue)?.toISOString() ?? 'null' : 'null';
+            updatedComp = updatedValue ? toDateSafe(updatedValue)?.toISOString() ?? 'null' : 'null';
         }
 
-        if (isDate(originalValue)) originalValue = toDateSafe(originalValue);
-        if (isDate(updatedValue)) updatedValue = toDateSafe(updatedValue);
-        
-        let originalComp = (originalValue instanceof Date) ? originalValue.toISOString() : JSON.stringify(originalValue);
-        let updatedComp = (updatedValue instanceof Date) ? updatedValue.toISOString() : JSON.stringify(updatedValue);
-        
         if (originalComp !== updatedComp) {
-            if (typeof updatedValue === 'object' && updatedValue !== null && !Array.isArray(updatedValue) && !(updatedValue instanceof Date)) {
-                 changes.push(`Updated ${formatKey(key)}`);
-            } else {
-                 changes.push(`${formatKey(key)} was changed`);
-            }
+            const keyName = formatKey(key);
+            changes.push(`${prefix}${keyName} changed from ${formatValue(originalValue)} to ${formatValue(updatedValue)}`);
+        }
+    };
+
+    const allTopLevelKeys = new Set([...Object.keys(original), ...Object.keys(updated)]);
+    allTopLevelKeys.forEach(key => {
+        if (['id', 'auditLog', 'updatedAt', 'createdAt', 'lineItems', 'userId', 'companyId', 'isPublic', 'documentType'].includes(key)) return;
+
+        const originalValue = original[key];
+        const updatedValue = updated[key];
+        
+        if (updatedValue && typeof updatedValue === 'object' && !Array.isArray(updatedValue) && !isDate(updatedValue)) {
+            const subKeys = new Set([...Object.keys(originalValue || {}), ...Object.keys(updatedValue)]);
+            subKeys.forEach(subKey => {
+                if (typeof updatedValue[subKey] !== 'object' || isDate(updatedValue[subKey]) || Array.isArray(updatedValue[subKey])) {
+                    compareValues(subKey, originalValue?.[subKey], updatedValue?.[subKey], `${formatKey(key)} > `);
+                }
+            });
+        } else {
+            compareValues(key, originalValue, updatedValue);
         }
     });
 
-    // Line item changes
     const originalItems = original.lineItems || [];
     const updatedItems = updated.lineItems || [];
     if(JSON.stringify(originalItems) !== JSON.stringify(updatedItems)) {

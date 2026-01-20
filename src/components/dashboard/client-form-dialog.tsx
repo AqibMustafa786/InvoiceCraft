@@ -1,5 +1,3 @@
-
-
 'use client';
 
 import { useState, useEffect, ChangeEvent } from 'react';
@@ -49,8 +47,15 @@ const diffClients = (original: Partial<Client>, updated: Partial<Client>): strin
     const changes: string[] = [];
     if (!original || !updated) return changes;
 
-    const allKeys = new Set([...Object.keys(original), ...Object.keys(updated)]);
     const formatKey = (key: string) => key.replace(/([A-Z])/g, ' $1').replace(/^./, (str) => str.toUpperCase());
+    
+    const formatValue = (value: any): string => {
+        if (value === null || value === undefined || value === '') return 'empty';
+        const strValue = String(value);
+        return `"${strValue.substring(0, 30)}${strValue.length > 30 ? '...' : ''}"`;
+    };
+
+    const allKeys = new Set([...Object.keys(original), ...Object.keys(updated)]);
     
     allKeys.forEach(key => {
         if (['id', 'companyId', 'createdAt', 'updatedAt', 'auditLog'].includes(key)) return;
@@ -59,7 +64,7 @@ const diffClients = (original: Partial<Client>, updated: Partial<Client>): strin
         const updatedValue = (updated as any)[key];
         
         if (JSON.stringify(originalValue) !== JSON.stringify(updatedValue)) {
-             changes.push(`${formatKey(key)} was changed.`);
+             changes.push(`${formatKey(key)} changed from ${formatValue(originalValue)} to ${formatValue(updatedValue)}`);
         }
     });
 
