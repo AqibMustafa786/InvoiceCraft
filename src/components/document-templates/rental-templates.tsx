@@ -1,3 +1,4 @@
+
 'use client';
 
 import React from 'react';
@@ -79,6 +80,8 @@ export const RentalTemplate1: React.FC<TemplateProps> = ({ document, pageItems, 
                         <p>{business.phone}</p>
                         <p>{business.email}</p>
                         {business.website && <p>{business.website}</p>}
+                        {business.licenseNumber && <p>Lic #: {business.licenseNumber}</p>}
+                        {business.taxId && <p>Tax ID: {business.taxId}</p>}
                     </div>
                 </div>
                 <div className="text-right">
@@ -101,19 +104,18 @@ export const RentalTemplate1: React.FC<TemplateProps> = ({ document, pageItems, 
                     <p>{safeFormat(document.estimateDate, 'MMMM d, yyyy')}</p>
                     <p className="font-bold text-gray-500 mt-2" style={{color: textColor ? `${textColor}B3` : undefined}}>{(t.validUntil || 'VALID UNTIL').toUpperCase()}</p>
                     <p>{safeFormat(document.validUntilDate, 'MMMM d, yyyy')}</p>
+                    {document.referenceNumber && <p className="mt-2"><span className="font-bold">Ref #:</span> {document.referenceNumber}</p>}
                 </div>
             </section>
             <RentalDetails document={document} t={t} />
             <main className="flex-grow mt-4">
                 <table className="w-full text-left text-sm">
-                    <thead><tr className="border-b-2"><th className="pb-2 font-bold w-1/2">{(t.description || 'DESCRIPTION').toUpperCase()}</th><th className="pb-2 font-bold text-center">{(t.quantity || 'QTY').toUpperCase()}</th><th className="pb-2 font-bold text-right">{(t.unitPrice || 'UNIT PRICE').toUpperCase()}</th><th className="pb-2 font-bold text-right">{(t.amount || 'AMOUNT').toUpperCase()}</th></tr></thead>
+                    <thead><tr className="border-b-2"><th className="pb-2 font-bold w-1/3">{(t.description || 'DESCRIPTION').toUpperCase()}</th><th className="pb-2 font-bold w-2/5">{(t.itemDescription || 'ITEM DESCRIPTION').toUpperCase()}</th><th className="pb-2 font-bold text-center">{(t.quantity || 'QTY').toUpperCase()}</th><th className="pb-2 font-bold text-right">{(t.unitPrice || 'UNIT PRICE').toUpperCase()}</th><th className="pb-2 font-bold text-right">{(t.amount || 'AMOUNT').toUpperCase()}</th></tr></thead>
                     <tbody>
                         {pageItems.map(item => (
                             <tr key={item.id} className="border-b">
-                                <td className="py-2">
-                                    <p className="font-semibold whitespace-pre-line">{item.name}</p>
-                                    {item.description && <p className="text-xs text-muted-foreground whitespace-pre-line">{item.description}</p>}
-                                </td>
+                                <td className="py-2"><p className="font-semibold whitespace-pre-line">{item.name}</p></td>
+                                <td className="py-2 text-xs text-muted-foreground whitespace-pre-line">{item.description}</td>
                                 <td className="py-2 text-center">{item.quantity}</td>
                                 <td className="py-2 text-right">{currencySymbol}{item.unitPrice.toFixed(2)}</td>
                                 <td className="py-2 text-right">{currencySymbol}{(item.quantity * item.unitPrice).toFixed(2)}</td>
@@ -125,8 +127,10 @@ export const RentalTemplate1: React.FC<TemplateProps> = ({ document, pageItems, 
             {pageIndex === totalPages - 1 && (
             <footer className="mt-auto pt-8">
                 <div className="flex justify-between items-start">
-                    <div className="w-1/2">
-                        {document.business.ownerSignature && <SignatureDisplay signature={document.business.ownerSignature} label={t.authorizedSignature || 'Authorized Signature'} />}
+                    <div className="w-1/2 text-xs">
+                        <p className="font-bold">{t.termsAndConditions || 'Terms & Conditions'}:</p>
+                        <p className="text-muted-foreground whitespace-pre-line">{document.termsAndConditions}</p>
+                        {business.ownerSignature && <SignatureDisplay signature={business.ownerSignature} label={t.authorizedSignature || 'Authorized Signature'} />}
                     </div>
                     <div className="w-1/2 flex justify-end text-right text-sm">
                         <div className="w-full max-w-xs">
@@ -197,6 +201,10 @@ export const RentalTemplate2: React.FC<TemplateProps> = ({ document, pageItems, 
                     <p className="flex justify-between font-bold mt-2"><span>{t.total || 'Total'}</span><span>{currencySymbol}{summary.grandTotal.toFixed(2)}</span></p>
                 </div>
             </div>
+             <div className="text-xs mt-8">
+                <p className="font-bold">{t.termsAndConditions || 'Terms & Conditions'}:</p>
+                <p className="text-muted-foreground whitespace-pre-line">{document.termsAndConditions}</p>
+            </div>
              <div className="flex justify-between mt-8">
                 <SignatureDisplay signature={document.business.ownerSignature} label={t.authorizedSignature || 'Authorized Signature'} />
                 <SignatureDisplay signature={document.clientSignature} label={t.clientSignature || 'Client Signature'} />
@@ -218,6 +226,8 @@ export const RentalTemplate3: React.FC<TemplateProps> = ({ document, pageItems, 
                 <p className="whitespace-pre-line">{business.address}</p>
                 <p>{business.phone} | {business.email}</p>
                 {business.website && <p>{business.website}</p>}
+                {business.licenseNumber && <p>Lic #: {business.licenseNumber}</p>}
+                {business.taxId && <p>Tax ID: {business.taxId}</p>}
             </div>
         </header>
         <div className="w-full h-px bg-gray-300 mb-8"></div>
@@ -357,6 +367,8 @@ export const RentalTemplate5: React.FC<TemplateProps> = ({ document, pageItems, 
                     <p className="whitespace-pre-line">{business.address}</p>
                     <p>{business.phone} | {business.email}</p>
                     {business.website && <p>{business.website}</p>}
+                    {business.licenseNumber && <p>Lic #: {business.licenseNumber}</p>}
+                    {business.taxId && <p>Tax ID: {business.taxId}</p>}
                 </div>
             </header>
             <h2 className="text-center text-xl mb-8">{docTitle.toUpperCase()}</h2>
@@ -411,4 +423,3 @@ export const RentalTemplate5: React.FC<TemplateProps> = ({ document, pageItems, 
         </div>
     );
 };
-
