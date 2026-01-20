@@ -9,7 +9,8 @@
  * - sendEmail: A flow that sends an email by writing to a Firestore collection.
  * - SendEmailSchema: The Zod schema for the input of the sendEmail flow.
  */
-import { ai } from '@/ai/genkit';
+import '@/ai/genkit';
+import { defineFlow } from '@genkit-ai/flow';
 import { getFirebase } from '@/firebase';
 import { addDoc, collection } from 'firebase/firestore';
 import { z } from 'zod';
@@ -34,7 +35,7 @@ export async function sendEmail(input: z.infer<typeof SendEmailSchema>) {
   return await sendEmailFlow(input);
 }
 
-const sendEmailFlow = ai.defineFlow(
+const sendEmailFlow = defineFlow(
   {
     name: 'sendEmailFlow',
     inputSchema: SendEmailSchema,

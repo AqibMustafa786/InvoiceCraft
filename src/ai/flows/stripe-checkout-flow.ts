@@ -1,7 +1,8 @@
 
 'use server';
 
-import { ai } from '@/ai/genkit';
+import '@/ai/genkit';
+import { defineFlow } from '@genkit-ai/flow';
 import { z } from 'zod';
 import Stripe from 'stripe';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
@@ -42,7 +43,7 @@ async function getOrCreateStripeCustomer(userId: string, email: string, companyI
 }
 
 
-export const createStripeCheckoutSession = ai.defineFlow(
+export const createStripeCheckoutSession = defineFlow(
   {
     name: 'createStripeCheckoutSession',
     inputSchema: StripeCheckoutInputSchema,

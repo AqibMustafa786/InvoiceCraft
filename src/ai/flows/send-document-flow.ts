@@ -1,6 +1,7 @@
+'use server';
 
-
-import { ai } from '@/ai/genkit';
+import '@/ai/genkit';
+import { defineFlow } from '@genkit-ai/flow';
 import { z } from 'zod';
 import { getFirebase } from '@/firebase';
 import { doc, getDoc, collection, query, where, getDocs } from 'firebase/firestore';
@@ -42,7 +43,7 @@ async function findDocument(docId: string, docType: 'quote' | 'estimate' | 'invo
     return null;
 }
 
-export const sendDocumentFlow = ai.defineFlow(
+export const sendDocumentFlow = defineFlow(
   {
     name: 'sendDocumentFlow',
     inputSchema: SendDocumentSchema,
@@ -60,7 +61,7 @@ export const sendDocumentFlow = ai.defineFlow(
       const pdfBase64 = pdfBuffer.toString('base64');
       
       const docTypeTitle = docType.charAt(0).toUpperCase() + docType.slice(1);
-      const docNumber = 'estimateNumber' in document ? document.estimateNumber : 'invoiceNumber' in document ? document.invoiceNumber : 'N/A';
+      const docNumber = 'estimateNumber' in document ? document.estimateNumber : 'invoiceNumber' in document ? (document as Invoice).invoiceNumber : 'N/A';
 
       await sendEmail({
         to: document.client.email,
@@ -96,3 +97,7 @@ export const sendDocumentFlow = ai.defineFlow(
     }
   }
 );
+
+export async function sendDocumentByEmail(input: z.infer<typeof SendDocumentSchema>) {
+    return await sendDocumentFlow(input);
+}

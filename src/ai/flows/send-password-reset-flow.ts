@@ -1,5 +1,7 @@
 
-import { ai } from '@/ai/genkit';
+'use server';
+import '@/ai/genkit';
+import { defineFlow } from '@genkit-ai/flow';
 import { z } from 'zod';
 import { sendPasswordResetEmail } from 'firebase/auth';
 import { getFirebase } from '@/firebase';
@@ -8,7 +10,7 @@ export const sendPasswordResetEmailSchema = z.object({
   email: z.string().email(),
 });
 
-export const sendPasswordResetEmailFlow = ai.defineFlow(
+export const sendPasswordResetEmailFlow = defineFlow(
   {
     name: 'sendPasswordResetEmailFlow',
     inputSchema: sendPasswordResetEmailSchema,
@@ -38,3 +40,7 @@ export const sendPasswordResetEmailFlow = ai.defineFlow(
     }
   }
 );
+
+export async function sendPasswordReset(input: z.infer<typeof sendPasswordResetEmailSchema>) {
+    return await sendPasswordResetEmailFlow(input);
+}
