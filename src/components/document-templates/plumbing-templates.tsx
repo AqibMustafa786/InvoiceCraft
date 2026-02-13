@@ -7,12 +7,12 @@ import { format, isValid } from 'date-fns';
 import Image from 'next/image';
 
 interface TemplateProps {
-  document: Estimate;
-  pageItems: LineItem[];
-  pageIndex: number;
-  totalPages: number;
-  style: React.CSSProperties;
-  t: any;
+    document: Estimate;
+    pageItems: LineItem[];
+    pageIndex: number;
+    totalPages: number;
+    style: React.CSSProperties;
+    t: any;
 }
 
 const currencySymbols: { [key: string]: string } = { USD: '$', EUR: '€', GBP: '£', JPY: '¥', PKR: '₨' };
@@ -34,7 +34,7 @@ const SignatureDisplay = ({ signature, label }: { signature: any, label: string 
     )
 }
 
-const PlumbingDetails: React.FC<{ document: Estimate, t: any }> = ({ document, t }) => {
+export const PlumbingDetails: React.FC<{ document: Estimate, t: any }> = ({ document, t }) => {
     if (!document.plumbing) return null;
     const { plumbing } = document;
     return (
@@ -67,7 +67,7 @@ export const PlumbingTemplate1: React.FC<TemplateProps> = ({ document, pageItems
             <header className="flex justify-between items-start mb-4">
                 <div>
                     {business.logoUrl && <Image src={business.logoUrl} alt="Logo" width={120} height={60} className="object-contain" />}
-                    <h1 className="text-3xl font-bold mt-2" style={{color: style.color}}>{business.name}</h1>
+                    <h1 className="text-3xl font-bold mt-2" style={{ color: style.color }}>{business.name}</h1>
                 </div>
                 <div className="text-right">
                     <h2 className="text-4xl font-bold">{docTitle}</h2>
@@ -89,7 +89,7 @@ export const PlumbingTemplate1: React.FC<TemplateProps> = ({ document, pageItems
                     </div>
                 </div>
                 <div className="p-2 border border-gray-400">
-                     <p className="px-2 font-bold text-white bg-gray-500">CUSTOMER</p>
+                    <p className="px-2 font-bold text-white bg-gray-500">CUSTOMER</p>
                     <div className="p-2 space-y-0.5">
                         <p>{client.name}</p>
                         {client.companyName && <p>{client.companyName}</p>}
@@ -99,16 +99,16 @@ export const PlumbingTemplate1: React.FC<TemplateProps> = ({ document, pageItems
                     </div>
                 </div>
             </section>
-            
+
             <section className="p-2 border border-t-0 border-black text-xs mb-4">
-              <span className="font-bold">PROJECT DESCRIPTION: </span>
-              {document.projectTitle}
+                <span className="font-bold">PROJECT DESCRIPTION: </span>
+                {document.projectTitle}
             </section>
-            
+
             <PlumbingDetails document={document} t={t} />
 
             <main className="flex-grow">
-                 <table className="w-full text-left text-xs">
+                <table className="w-full text-left text-xs">
                     <thead>
                         <tr className="bg-black text-white">
                             <th className="p-1.5 font-bold w-[5%]">ID</th>
@@ -131,15 +131,15 @@ export const PlumbingTemplate1: React.FC<TemplateProps> = ({ document, pageItems
                     </tbody>
                 </table>
             </main>
-            
+
             {pageIndex === totalPages - 1 && (
                 <footer className="mt-auto pt-4 text-xs">
-                     <div className="flex justify-between items-start">
+                    <div className="flex justify-between items-start">
                         <div className="w-1/2">
-                             <p className="font-bold">THANK YOU FOR YOUR BUSINESS!</p>
-                             <p className="font-bold mt-4">Terms & Conditions:</p>
-                             <p className="whitespace-pre-line text-gray-600">{document.termsAndConditions}</p>
-                             <div className="flex gap-16 mt-8">
+                            <p className="font-bold">THANK YOU FOR YOUR BUSINESS!</p>
+                            <p className="font-bold mt-4">Terms & Conditions:</p>
+                            <p className="whitespace-pre-line text-gray-600">{document.termsAndConditions}</p>
+                            <div className="flex gap-16 mt-8">
                                 <SignatureDisplay signature={document.business.ownerSignature} label={"Owner Signature"} />
                                 <SignatureDisplay signature={document.clientSignature} label={"Client Signature"} />
                             </div>
@@ -189,11 +189,11 @@ export const PlumbingTemplate2: React.FC<TemplateProps> = ({ document, pageItems
                 <div><p className="font-bold text-gray-500">PROJECT</p><p>{document.projectTitle}</p><p>{client.projectLocation}</p></div>
                 <div className="text-right"><p className="font-bold text-gray-500">DATE</p><p>{safeFormat(document.estimateDate, 'MMM d, yyyy')}</p></div>
             </section>
-            
+
             <PlumbingDetails document={document} t={t} />
 
             <main className="flex-grow mt-4">
-                 <table className="w-full text-left text-sm">
+                <table className="w-full text-left text-sm">
                     <thead>
                         <tr style={{ backgroundColor: accentColor }} className="text-white">
                             <th className="p-2 font-bold w-1/2 rounded-l-md">DESCRIPTION</th>
@@ -214,23 +214,23 @@ export const PlumbingTemplate2: React.FC<TemplateProps> = ({ document, pageItems
                     </tbody>
                 </table>
             </main>
-            
+
             {pageIndex === totalPages - 1 && (
                 <footer className="mt-auto pt-8">
                     <div className="flex justify-end">
                         <div className="w-1/3 text-sm space-y-1">
-                             <div className="flex justify-between p-1"><span className="text-gray-600">Subtotal:</span><span className="font-medium">{currencySymbol}{summary.subtotal.toFixed(2)}</span></div>
-                             {summary.discount > 0 && <div className="flex justify-between p-1"><span className="text-gray-600">Discount:</span><span className="font-medium text-red-500">-{currencySymbol}{summary.discount.toFixed(2)}</span></div>}
+                            <div className="flex justify-between p-1"><span className="text-gray-600">Subtotal:</span><span className="font-medium">{currencySymbol}{summary.subtotal.toFixed(2)}</span></div>
+                            {summary.discount > 0 && <div className="flex justify-between p-1"><span className="text-gray-600">Discount:</span><span className="font-medium text-red-500">-{currencySymbol}{summary.discount.toFixed(2)}</span></div>}
                             {summary.shippingCost > 0 && <div className="flex justify-between p-1"><span className="text-gray-600">Shipping/Extra:</span><span className="font-medium">{currencySymbol}{summary.shippingCost.toFixed(2)}</span></div>}
                             <div className="flex justify-between p-1"><span className="text-gray-600">Tax:</span><span className="font-medium">{currencySymbol}{summary.taxAmount.toFixed(2)}</span></div>
                             <div className="flex justify-between font-bold text-base mt-2 pt-2 border-t-2" style={{ borderColor: accentColor }}><span style={{ color: accentColor }}>Total:</span><span>{currencySymbol}{summary.grandTotal.toFixed(2)}</span></div>
                         </div>
                     </div>
-                     <div className="text-xs mt-8">
+                    <div className="text-xs mt-8">
                         <p className="font-bold">Terms & Conditions:</p>
                         <p className="text-gray-500 whitespace-pre-line">{document.termsAndConditions}</p>
                     </div>
-                     <div className="flex justify-between mt-8">
+                    <div className="flex justify-between mt-8">
                         <SignatureDisplay signature={document.business.ownerSignature} label="Owner Signature" />
                         <SignatureDisplay signature={document.clientSignature} label="Client Signature" />
                     </div>
@@ -247,7 +247,7 @@ export const PlumbingTemplate3: React.FC<TemplateProps> = ({ document, pageItems
     const docTitle = document.documentType === 'quote' ? 'Quote' : 'Estimate';
 
     return (
-        <div className={`p-12 bg-white font-['Helvetica'] text-gray-700 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{minHeight: '1056px', color: textColor, backgroundColor: document.backgroundColor }}>
+        <div className={`p-12 bg-white font-['Helvetica'] text-gray-700 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ minHeight: '1056px', color: textColor, backgroundColor: document.backgroundColor }}>
             <header className="flex justify-between items-start mb-12 text-center">
                 <div className="text-left">
                     <h1 className="text-4xl font-bold">{business.name}</h1>
@@ -278,8 +278,8 @@ export const PlumbingTemplate3: React.FC<TemplateProps> = ({ document, pageItems
                     <p><span className="font-bold">Date:</span> {safeFormat(document.estimateDate, 'yyyy-MM-dd')}</p>
                 </div>
             </section>
-            
-             <PlumbingDetails document={document} t={t} />
+
+            <PlumbingDetails document={document} t={t} />
 
             <main className="flex-grow">
                 <table className="w-full text-left text-xs">
@@ -303,12 +303,12 @@ export const PlumbingTemplate3: React.FC<TemplateProps> = ({ document, pageItems
                     </tbody>
                 </table>
             </main>
-            
+
             {pageIndex === totalPages - 1 && (
                 <footer className="mt-auto pt-8">
                     <div className="flex justify-end">
                         <table className="w-1/3 text-xs">
-                             <tbody>
+                            <tbody>
                                 <tr><td className="py-1 text-gray-500">Subtotal</td><td className="text-right">{currencySymbol}{summary.subtotal.toFixed(2)}</td></tr>
                                 {summary.discount > 0 && <tr><td className="py-1 text-gray-500">Discount</td><td className="text-right text-red-500">-{currencySymbol}{summary.discount.toFixed(2)}</td></tr>}
                                 {summary.shippingCost > 0 && <tr><td className="py-1 text-gray-500">Shipping/Extra</td><td className="text-right">{currencySymbol}{summary.shippingCost.toFixed(2)}</td></tr>}
@@ -317,11 +317,11 @@ export const PlumbingTemplate3: React.FC<TemplateProps> = ({ document, pageItems
                             </tbody>
                         </table>
                     </div>
-                     <div className="text-xs mt-8">
+                    <div className="text-xs mt-8">
                         <p className="font-bold">Terms & Conditions:</p>
                         <p className="text-gray-500 whitespace-pre-line">{document.termsAndConditions}</p>
                     </div>
-                     <div className="flex justify-between mt-8">
+                    <div className="flex justify-between mt-8">
                         <SignatureDisplay signature={document.business.ownerSignature} label="Owner Signature" />
                         <SignatureDisplay signature={document.clientSignature} label="Client Signature" />
                     </div>
@@ -340,7 +340,7 @@ export const PlumbingTemplate4: React.FC<TemplateProps> = ({ document, pageItems
     return (
         <div className={`bg-white font-sans text-gray-800 flex ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ minHeight: '1056px' }}>
             <div className="w-1/3 p-8 text-white bg-gray-800 flex flex-col">
-                 <h1 className="text-3xl font-bold mb-2">{business.name}</h1>
+                <h1 className="text-3xl font-bold mb-2">{business.name}</h1>
                 <div className="text-xs space-y-4 flex-grow">
                     <div>
                         <p className="font-bold opacity-70 mb-1">INVOICE FOR</p>
@@ -348,11 +348,11 @@ export const PlumbingTemplate4: React.FC<TemplateProps> = ({ document, pageItems
                         {client.companyName && <p>{client.companyName}</p>}
                         <p>{client.address}</p>
                     </div>
-                     <div>
+                    <div>
                         <p className="font-bold opacity-70 mb-1">FROM</p>
                         <p>{business.address}</p>
                     </div>
-                     <div>
+                    <div>
                         <p className="font-bold opacity-70 mb-1">REFERENCE</p>
                         <p>#{document.estimateNumber}</p>
                         <p>Date: {safeFormat(document.estimateDate, 'yyyy-MM-dd')}</p>
@@ -365,7 +365,7 @@ export const PlumbingTemplate4: React.FC<TemplateProps> = ({ document, pageItems
                         <h2 className='text-2xl font-bold'>{docTitle}</h2>
                     </div>
                 </div>
-                 <PlumbingDetails document={document} t={t} />
+                <PlumbingDetails document={document} t={t} />
                 <main className="flex-grow">
                     <table className="w-full text-left text-sm">
                         <thead>
@@ -390,7 +390,7 @@ export const PlumbingTemplate4: React.FC<TemplateProps> = ({ document, pageItems
                 </main>
                 {pageIndex === totalPages - 1 && (
                     <footer className="mt-auto pt-8">
-                         <div className="flex justify-end">
+                        <div className="flex justify-end">
                             <div className="w-1/2 text-sm">
                                 <div className="flex justify-between p-2 bg-gray-50"><span className="text-gray-600">Subtotal:</span><span>{currencySymbol}{summary.subtotal.toFixed(2)}</span></div>
                                 {summary.discount > 0 && <div className="flex justify-between p-2"><span className="text-gray-600">Discount:</span><span className="text-red-500">-{currencySymbol}{summary.discount.toFixed(2)}</span></div>}
@@ -403,7 +403,7 @@ export const PlumbingTemplate4: React.FC<TemplateProps> = ({ document, pageItems
                             <p className="font-bold">Terms & Conditions:</p>
                             <p className="text-gray-500 whitespace-pre-line">{document.termsAndConditions}</p>
                         </div>
-                         <div className="flex justify-between mt-8">
+                        <div className="flex justify-between mt-8">
                             <SignatureDisplay signature={document.business.ownerSignature} label="Owner Signature" />
                             <SignatureDisplay signature={document.clientSignature} label="Client Signature" />
                         </div>
@@ -427,20 +427,20 @@ export const PlumbingTemplate5: React.FC<TemplateProps> = ({ document, pageItems
                     <h1 className="text-4xl font-extrabold">{business.name}</h1>
                     <p className="text-xs">{business.address}</p>
                 </div>
-                 <div className="text-right">
-                     <p className="text-3xl font-bold">{docTitle}</p>
-                     <p className="text-sm">#{document.estimateNumber}</p>
+                <div className="text-right">
+                    <p className="text-3xl font-bold">{docTitle}</p>
+                    <p className="text-sm">#{document.estimateNumber}</p>
                 </div>
             </header>
 
             <section className="mb-8 p-4 bg-white shadow-sm rounded-md text-xs">
-                 <p className="font-bold text-gray-500 mb-2">PROJECT FOR: {client.name}</p>
-                 <p className="font-semibold">{document.projectTitle}</p>
-                 <p>{client.address}</p>
-                 {client.companyName && <p>{client.companyName}</p>}
-                 {client.projectLocation && <p>Location: {client.projectLocation}</p>}
+                <p className="font-bold text-gray-500 mb-2">PROJECT FOR: {client.name}</p>
+                <p className="font-semibold">{document.projectTitle}</p>
+                <p>{client.address}</p>
+                {client.companyName && <p>{client.companyName}</p>}
+                {client.projectLocation && <p>Location: {client.projectLocation}</p>}
             </section>
-            
+
             <PlumbingDetails document={document} t={t} />
 
             <main className="flex-grow bg-white p-4 rounded-md shadow-sm">
@@ -465,23 +465,23 @@ export const PlumbingTemplate5: React.FC<TemplateProps> = ({ document, pageItems
                     </tbody>
                 </table>
             </main>
-            
+
             {pageIndex === totalPages - 1 && (
                 <footer className="mt-auto pt-8">
-                     <div className="flex justify-end">
+                    <div className="flex justify-end">
                         <div className="w-1/3 text-sm space-y-1">
-                             <div className="flex justify-between p-1"><span>Subtotal</span><span>{currencySymbol}{summary.subtotal.toFixed(2)}</span></div>
-                             {summary.discount > 0 && <div className="flex justify-between p-1"><span>Discount</span><span className="text-red-500">-{currencySymbol}{summary.discount.toFixed(2)}</span></div>}
+                            <div className="flex justify-between p-1"><span>Subtotal</span><span>{currencySymbol}{summary.subtotal.toFixed(2)}</span></div>
+                            {summary.discount > 0 && <div className="flex justify-between p-1"><span>Discount</span><span className="text-red-500">-{currencySymbol}{summary.discount.toFixed(2)}</span></div>}
                             {summary.shippingCost > 0 && <div className="flex justify-between p-1"><span>Shipping/Extra</span><span>{currencySymbol}{summary.shippingCost.toFixed(2)}</span></div>}
-                             <div className="flex justify-between p-1"><span>Tax</span><span>{currencySymbol}{summary.taxAmount.toFixed(2)}</span></div>
-                             <div className="flex justify-between p-2 mt-2 border-t-2 border-black font-bold text-lg"><span>Total</span><span>{currencySymbol}{summary.grandTotal.toFixed(2)}</span></div>
+                            <div className="flex justify-between p-1"><span>Tax</span><span>{currencySymbol}{summary.taxAmount.toFixed(2)}</span></div>
+                            <div className="flex justify-between p-2 mt-2 border-t-2 border-black font-bold text-lg"><span>Total</span><span>{currencySymbol}{summary.grandTotal.toFixed(2)}</span></div>
                         </div>
                     </div>
-                     <div className="text-xs mt-8">
+                    <div className="text-xs mt-8">
                         <p className="font-bold">Terms & Conditions:</p>
                         <p className="text-gray-500 whitespace-pre-line">{document.termsAndConditions}</p>
                     </div>
-                     <div className="flex justify-between mt-8">
+                    <div className="flex justify-between mt-8">
                         <SignatureDisplay signature={document.business.ownerSignature} label="Owner Signature" />
                         <SignatureDisplay signature={document.clientSignature} label="Client Signature" />
                     </div>

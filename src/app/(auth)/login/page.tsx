@@ -12,7 +12,7 @@ import { useFirebase } from '@/firebase';
 import { signInWithEmailAndPassword, signInWithPopup, signInWithRedirect, GoogleAuthProvider, GithubAuthProvider, FacebookAuthProvider, getRedirectResult } from 'firebase/auth';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { Eye, EyeOff } from 'lucide-react';
 import { bootstrapUser } from '@/firebase/auth-helpers';
 import { Alert, AlertDescription } from "@/components/ui/alert";
@@ -24,8 +24,15 @@ const loginSchema = z.object({
 });
 
 type LoginFormValues = z.infer<typeof loginSchema>;
-
 export default function LoginPage() {
+    return (
+        <Suspense fallback={<div className="min-h-screen flex items-center justify-center bg-[#FDFCFB]">Loading...</div>}>
+            <LoginContent />
+        </Suspense>
+    );
+}
+
+function LoginContent() {
     const [isLoading, setIsLoading] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
     const [error, setError] = useState<string | null>(null);

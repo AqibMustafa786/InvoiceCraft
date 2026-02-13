@@ -157,6 +157,17 @@ export interface RoofingInfo {
   tearOffRequired: boolean;
   underlaymentType: string;
   dumpsterFee: number | null;
+  roofMaterial?: string;
+  shingleBrand?: string;
+  roofSize?: string;
+  layersToRemove?: number;
+  roofPitch?: string;
+  flashingDetails?: string;
+  ventilationSystem?: string;
+  gutterRepairNeeded?: boolean;
+  warranty?: string;
+  estimatedTimeline?: string;
+  inspectionRequired?: boolean;
 }
 
 export interface PlumbingInfo {
@@ -164,6 +175,12 @@ export interface PlumbingInfo {
   pipeMaterial: string;
   fixtureName: string;
   emergencyFee: number | null;
+  fixtureType?: string;
+  floorLevel?: string;
+  emergencyService?: boolean;
+  waterPressureIssue?: boolean;
+  leakLocation?: string;
+  estimatedRepairTime?: string;
 }
 
 export interface ElectricalInfo {
@@ -185,6 +202,11 @@ export interface LandscapingInfo {
   serviceType: string;
   equipmentFee: number | null;
   disposalFee: number | null;
+  propertySize?: string;
+  yardCondition?: string;
+  grassHeight?: string;
+  treeCount?: number;
+  fenceLengthNeeded?: number;
 }
 
 export interface CleaningInfo {
@@ -194,6 +216,12 @@ export interface CleaningInfo {
   suppliesFee: number | null;
   recurringSchedule: string;
   addOns?: string[];
+  frequency?: string;
+  homeSize?: string;
+  bedrooms?: number;
+  bathrooms?: number;
+  kitchenSize?: string;
+  hasPets?: boolean;
 }
 
 export interface ConsultingInfo {
@@ -231,15 +259,20 @@ export interface AutoRepairInfo {
   vehicleMake: string;
   vehicleModel: string;
   year: number | null;
+  vehicleYear?: number;
   licensePlate: string;
   vin: string;
   odometer: number | null;
+  mileage?: number;
   laborHours: number | null;
   laborRate: number | null;
   diagnosticFee: number | null;
   shopSupplyFee: number | null;
   towingFee: number | null;
   parts: { name: string; partNumber: string; cost: number; }[];
+  issueDescription?: string;
+  partsRequired?: string;
+  diagnosticType?: string;
 }
 
 export interface EcommerceInfo {
@@ -333,6 +366,14 @@ export interface ITFreelanceInfo {
   fixedRate: number | null;
   hoursLogged: number | null;
   milestoneDescription: string;
+  projectType?: string;
+  designStyle?: string;
+  pagesScreensCount?: number;
+  revisionsIncluded?: number;
+  deliveryTimeline?: string;
+  scopeOfWork?: string;
+  featuresNeeded?: string;
+  integrations?: string;
 }
 
 export interface AuditLogEntry {
@@ -480,6 +521,16 @@ export interface Estimate {
   autoRepair?: AutoRepairInfo;
   construction?: ConstructionInfo;
   itFreelance?: ITFreelanceInfo;
+  photography?: PhotographyInfo;
+  transportation?: TransportationInfo;
+  medical?: MedicalInfo;
+  legal?: LegalInfo;
+  consulting?: ConsultingInfo;
+  retail?: RetailInfo;
+  rental?: RentalInfo;
+  realEstate?: RealEstateInfo;
+  itServices?: ITServiceInfo;
+  ecommerce?: EcommerceInfo;
 }
 
 export type Quote = Estimate & { documentType: 'quote' };

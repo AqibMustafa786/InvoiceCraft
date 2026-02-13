@@ -3,7 +3,7 @@
 import { configureGenkit } from '@genkit-ai/core';
 import { googleAI } from '@genkit-ai/googleai';
 
-configureGenkit({
+export const ai = configureGenkit({
   plugins: [
     googleAI({
       apiVersion: 'v1beta',

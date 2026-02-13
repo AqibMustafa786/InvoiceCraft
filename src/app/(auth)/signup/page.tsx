@@ -12,7 +12,7 @@ import { useFirebase } from '@/firebase';
 import { createUserWithEmailAndPassword, signInWithPopup, signInWithRedirect, GoogleAuthProvider, GithubAuthProvider, FacebookAuthProvider, getRedirectResult } from 'firebase/auth';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { Eye, EyeOff } from 'lucide-react';
 import { bootstrapUser } from '@/firebase/auth-helpers';
 
@@ -23,8 +23,15 @@ const signupSchema = z.object({
 });
 
 type SignupFormValues = z.infer<typeof signupSchema>;
-
 export default function SignupPage() {
+    return (
+        <Suspense fallback={<div className="min-h-screen flex items-center justify-center bg-[#FDFCFB]">Loading...</div>}>
+            <SignupContent />
+        </Suspense>
+    );
+}
+
+function SignupContent() {
     const [isLoading, setIsLoading] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
     const { auth, firestore } = useFirebase();

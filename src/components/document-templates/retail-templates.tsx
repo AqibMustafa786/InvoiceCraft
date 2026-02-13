@@ -7,12 +7,12 @@ import { format, isValid } from 'date-fns';
 import Image from 'next/image';
 
 interface TemplateProps {
-  document: Estimate;
-  pageItems: LineItem[];
-  pageIndex: number;
-  totalPages: number;
-  style: React.CSSProperties;
-  t: any;
+    document: Estimate;
+    pageItems: LineItem[];
+    pageIndex: number;
+    totalPages: number;
+    style: React.CSSProperties;
+    t: any;
 }
 
 const currencySymbols: { [key: string]: string } = { USD: '$', EUR: '€', GBP: '£', JPY: '¥', PKR: '₨' };
@@ -34,7 +34,7 @@ const SignatureDisplay = ({ signature, label }: { signature: any, label: string 
     )
 }
 
-const RetailDetails: React.FC<{ document: Estimate, t: any }> = ({ document, t }) => {
+export const RetailDetails: React.FC<{ document: Estimate, t: any }> = ({ document, t }) => {
     if (!document.retail) return null;
     const { retail } = document;
     return (
@@ -64,7 +64,7 @@ export const RetailTemplate1: React.FC<TemplateProps> = ({ document, pageItems, 
             <div className="flex-grow p-8">
                 <header className="flex justify-between items-start mb-4">
                     <div>
-                        {business.logoUrl && <Image src={business.logoUrl} alt="Logo" width={100} height={50} className="object-contain mb-2"/>}
+                        {business.logoUrl && <Image src={business.logoUrl} alt="Logo" width={100} height={50} className="object-contain mb-2" />}
                         <h1 className="text-xl font-bold">{business.name}</h1>
                         <p className="text-xs">{business.address}</p>
                         <p className="text-xs">{business.phone} | {business.website}</p>
@@ -82,14 +82,14 @@ export const RetailTemplate1: React.FC<TemplateProps> = ({ document, pageItems, 
                         <p>{client.name}</p>
                         <p>{client.address}</p>
                     </div>
-                     <div>
+                    <div>
                         <p className="font-bold">{t.shipTo || 'Ship To'}:</p>
                         <p>{document.client.shippingAddress || client.name}</p>
                         <p>{document.client.shippingAddress ? '' : client.address}</p>
                     </div>
                 </section>
                 <section className="text-xs mb-4">
-                     <table className="w-full text-left border-collapse">
+                    <table className="w-full text-left border-collapse">
                         <thead>
                             <tr className="bg-gray-100">
                                 <th className="p-1 border font-semibold">{t.poNumber || 'P.O. #'}</th>
@@ -110,7 +110,7 @@ export const RetailTemplate1: React.FC<TemplateProps> = ({ document, pageItems, 
                                 <td className="p-1 border">{safeFormat(document.validUntilDate, 'yyyy-MM-dd')}</td>
                             </tr>
                         </tbody>
-                     </table>
+                    </table>
                 </section>
                 <main className="flex-grow">
                     <table className="w-full text-left text-xs border-collapse">
@@ -140,30 +140,29 @@ export const RetailTemplate1: React.FC<TemplateProps> = ({ document, pageItems, 
                     </table>
                 </main>
                 {pageIndex === totalPages - 1 && (
-                <footer className="mt-4 pt-4">
-                    <div className="flex justify-between items-start">
-                        <div>
-                            <p className="font-bold text-xs">{t.signature || 'SIGNATURE'}:</p>
-                            <div className="w-48 h-12 border border-gray-400 mt-1"></div>
+                    <footer className="mt-4 pt-4">
+                        <div className="flex justify-between items-start">
+                            <div>
+                                <p className="font-bold text-xs">{t.signature || 'SIGNATURE'}:</p>
+                                <div className="w-48 h-12 border border-gray-400 mt-1"></div>
+                            </div>
+                            <div className="w-1/3 text-xs">
+                                <table className="w-full">
+                                    <tbody>
+                                        <tr><td className="text-right pr-4">{t.subtotal || 'SUBTOTAL'}</td><td className="text-right p-1 border">{currencySymbol}{summary.subtotal.toFixed(2)}</td></tr>
+                                        {summary.discount > 0 && <tr><td className="text-right pr-4 text-red-600">{t.discount || 'DISCOUNT'}</td><td className="text-right p-1 border text-red-600">-{currencySymbol}{summary.discount.toFixed(2)}</td></tr>}
+                                        <tr><td className="text-right pr-4">{t.tax || 'TAX'} ({summary.taxPercentage}%)</td><td className="text-right p-1 border">{currencySymbol}{summary.taxAmount.toFixed(2)}</td></tr>
+                                        <tr><td className="text-right pr-4">{t.delivery || 'Delivery'}</td><td className="text-right p-1 border">{summary.shippingCost > 0 ? currencySymbol + summary.shippingCost.toFixed(2) : '-'}</td></tr>
+                                        <tr className="font-bold"><td className="text-right pr-4">{t.total || 'TOTAL'}</td><td className="text-right p-1 border">{currencySymbol}{summary.grandTotal.toFixed(2)}</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
-                        <div className="w-1/3 text-xs">
-                             <table className="w-full">
-                                <tbody>
-                                    <tr><td className="text-right pr-4">{t.subtotal || 'SUBTOTAL'}</td><td className="text-right p-1 border">{currencySymbol}{summary.subtotal.toFixed(2)}</td></tr>
-                                    {summary.discount > 0 && <tr><td className="text-right pr-4 text-red-600">{t.discount || 'DISCOUNT'}</td><td className="text-right p-1 border text-red-600">-{currencySymbol}{summary.discount.toFixed(2)}</td></tr>}
-                                    <tr><td className="text-right pr-4">{t.tax || 'TAX'} ({summary.taxPercentage}%)</td><td className="text-right p-1 border">{currencySymbol}{summary.taxAmount.toFixed(2)}</td></tr>
-                                    <tr><td className="text-right pr-4">{t.delivery || 'Delivery'}</td><td className="text-right p-1 border">{summary.shippingCost > 0 ? currencySymbol + summary.shippingCost.toFixed(2) : '-'}</td></tr>
-                                    <tr className="font-bold"><td className="text-right pr-4">{t.total || 'TOTAL'}</td><td className="text-right p-1 border">{currencySymbol}{summary.grandTotal.toFixed(2)}</td></tr>
-                                </tbody>
-                             </table>
-                        </div>
-                    </div>
-                     <p className="text-center font-bold text-xs mt-4">{t.thankYouForBusiness || 'THANK YOU FOR YOUR BUSINESS!'}</p>
-                </footer>
+                        <p className="text-center font-bold text-xs mt-4">{t.thankYouForBusiness || 'THANK YOU FOR YOUR BUSINESS!'}</p>
+                    </footer>
                 )}
             </div>
         </div>
     );
 };
 
-    

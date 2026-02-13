@@ -7,12 +7,12 @@ import { format, isValid } from 'date-fns';
 import Image from 'next/image';
 
 interface TemplateProps {
-  document: Estimate;
-  pageItems: LineItem[];
-  pageIndex: number;
-  totalPages: number;
-  style: React.CSSProperties;
-  t: any;
+    document: Estimate;
+    pageItems: LineItem[];
+    pageIndex: number;
+    totalPages: number;
+    style: React.CSSProperties;
+    t: any;
 }
 
 const currencySymbols: { [key: string]: string } = { USD: '$', EUR: '€', GBP: '£', JPY: '¥', PKR: '₨' };
@@ -34,7 +34,7 @@ const SignatureDisplay = ({ signature, label }: { signature: any, label: string 
     )
 }
 
-const ITFreelanceDetails: React.FC<{ document: Estimate, t: any }> = ({ document, t }) => {
+export const ITFreelanceDetails: React.FC<{ document: Estimate, t: any }> = ({ document, t }) => {
     if (!document.itFreelance) return null;
     const { itFreelance } = document;
     return (
@@ -50,11 +50,11 @@ const ITFreelanceDetails: React.FC<{ document: Estimate, t: any }> = ({ document
                     <p className="font-semibold text-gray-600">{t.scope || 'Scope'}:</p>
                     <p className="whitespace-pre-line pl-2">{itFreelance.scopeOfWork}</p>
                 </div>
-                 <div className="col-span-full mt-2">
+                <div className="col-span-full mt-2">
                     <p className="font-semibold text-gray-600">{t.features || 'Features'}:</p>
                     <p className="whitespace-pre-line pl-2">{itFreelance.featuresNeeded}</p>
                 </div>
-                 <div className="col-span-full mt-2">
+                <div className="col-span-full mt-2">
                     <p className="font-semibold text-gray-600">{t.integrations || 'Integrations'}:</p>
                     <p className="whitespace-pre-line pl-2">{itFreelance.integrations}</p>
                 </div>
@@ -73,7 +73,7 @@ export const ITTemplate1: React.FC<TemplateProps> = ({ document, pageItems, page
         <div className={`p-10 bg-white font-sans text-gray-800 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: style.fontFamily, fontSize: `${style.fontSize}pt`, minHeight: '1056px' }}>
             <header className="flex justify-between items-start pb-5 mb-5">
                 <div className="flex items-center gap-4">
-                    {business.logoUrl ? 
+                    {business.logoUrl ?
                         <Image src={business.logoUrl} alt="Logo" width={50} height={50} className="object-contain" /> :
                         <div className="w-12 h-12 bg-gray-200 rounded-md"></div>
                     }
@@ -83,8 +83,8 @@ export const ITTemplate1: React.FC<TemplateProps> = ({ document, pageItems, page
                         <p className="text-xs text-blue-600">{business.email}</p>
                     </div>
                 </div>
-                 <div className="text-right">
-                    <p className="text-2xl font-extrabold">{currencySymbol}{summary.grandTotal.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</p>
+                <div className="text-right">
+                    <p className="text-2xl font-extrabold">{currencySymbol}{summary.grandTotal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
                     <p className="text-sm font-bold text-gray-500 tracking-wider">{(t.totalCost || 'TOTAL COST').toUpperCase()}</p>
                 </div>
             </header>
@@ -99,12 +99,12 @@ export const ITTemplate1: React.FC<TemplateProps> = ({ document, pageItems, page
                     <span className="text-gray-600">{t.estimationDate || 'ESTIMATION DATE'}:</span><span className="font-semibold">{safeFormat(document.estimateDate, 'yyyy-MM-dd')}</span>
                 </div>
             </section>
-            
+
             <ITFreelanceDetails document={document} t={t} />
 
             <main className="flex-grow">
-                 <p className="font-bold text-gray-400 tracking-widest mb-2 text-xs">{(t.costEstimate || 'COST ESTIMATE').toUpperCase()}</p>
-                 <table className="w-full text-left text-xs">
+                <p className="font-bold text-gray-400 tracking-widest mb-2 text-xs">{(t.costEstimate || 'COST ESTIMATE').toUpperCase()}</p>
+                <table className="w-full text-left text-xs">
                     <thead>
                         <tr className="border-b-2 border-gray-200">
                             <th className="py-2 font-bold w-1/2">{(t.description || 'DESCRIPTION').toUpperCase()}</th>
@@ -125,27 +125,27 @@ export const ITTemplate1: React.FC<TemplateProps> = ({ document, pageItems, page
                     </tbody>
                 </table>
             </main>
-            
+
             {pageIndex === totalPages - 1 && (
                 <footer className="mt-auto pt-8 flex justify-between items-end text-xs">
                     <div className="space-y-4">
                         <div>
-                             <p className="font-bold text-gray-400 tracking-widest mb-2">{(t.notes || 'NOTES').toUpperCase()}</p>
-                             <p className="text-gray-600 whitespace-pre-line w-96">{document.termsAndConditions}</p>
+                            <p className="font-bold text-gray-400 tracking-widest mb-2">{(t.notes || 'NOTES').toUpperCase()}</p>
+                            <p className="text-gray-600 whitespace-pre-line w-96">{document.termsAndConditions}</p>
                         </div>
-                         <div>
-                             <p className="font-bold text-gray-400 tracking-widest mb-2">{(t.clientInformation || 'CLIENT INFORMATION').toUpperCase()}</p>
+                        <div>
+                            <p className="font-bold text-gray-400 tracking-widest mb-2">{(t.clientInformation || 'CLIENT INFORMATION').toUpperCase()}</p>
                             <p><span className="text-gray-600 w-20 inline-block">{t.client || 'CLIENT'}:</span> <span className="font-semibold">{client.name}</span></p>
                             <p><span className="text-gray-600 w-20 inline-block">{t.address || 'ADDRESS'}:</span> <span className="font-semibold">{client.address}</span></p>
                             <p><span className="text-gray-600 w-20 inline-block">{t.contact || 'CONTACT'}:</span> <span className="font-semibold">{client.phone}</span></p>
                             <p><span className="text-gray-600 w-20 inline-block">{t.email || 'EMAIL'}:</span> <span className="font-semibold">{client.email}</span></p>
                         </div>
                     </div>
-                     <div className="text-right">
+                    <div className="text-right">
                         <SignatureDisplay signature={document.business.ownerSignature} label={business.name} />
-                         <p className="text-lg font-bold mt-4" style={{fontFamily: 'cursive'}}>{t.thankYou || 'Thank you!'}</p>
-                         <p className="text-[8px] text-gray-500 mt-2 max-w-[250px]">{t.thankYouMessage || 'Thank you for considering IT Solutions Inc. for your project needs. We look forward to the opportunity to work together and deliver exceptional results.'}</p>
-                     </div>
+                        <p className="text-lg font-bold mt-4" style={{ fontFamily: 'cursive' }}>{t.thankYou || 'Thank you!'}</p>
+                        <p className="text-[8px] text-gray-500 mt-2 max-w-[250px]">{t.thankYouMessage || 'Thank you for considering IT Solutions Inc. for your project needs. We look forward to the opportunity to work together and deliver exceptional results.'}</p>
+                    </div>
                 </footer>
             )}
         </div>
@@ -175,7 +175,7 @@ export const ITTemplate2: React.FC<TemplateProps> = ({ document, pageItems, page
                 <div><p className="font-bold text-gray-500 mb-1">{(t.projectFor || 'PROJECT FOR').toUpperCase()}:</p><p className="font-medium">{client.name}</p><p className="text-gray-400">{client.address}</p></div>
                 <div className="text-right"><p className="font-bold text-gray-500 mb-1">{(t.date || 'DATE').toUpperCase()}:</p><p>{safeFormat(document.estimateDate, 'MM-dd-yyyy')}</p></div>
             </section>
-            
+
             <ITFreelanceDetails document={document} t={t} />
 
             <main className="flex-grow">
@@ -200,10 +200,10 @@ export const ITTemplate2: React.FC<TemplateProps> = ({ document, pageItems, page
                     </tbody>
                 </table>
             </main>
-            
+
             {pageIndex === totalPages - 1 && (
                 <footer className="mt-auto pt-8">
-                     <div className="flex justify-end">
+                    <div className="flex justify-end">
                         <div className="w-2/5 text-sm space-y-1">
                             <div className="flex justify-between"><span className="text-gray-400">{t.subtotal || 'Subtotal'}:</span><span>{currencySymbol}{summary.subtotal.toFixed(2)}</span></div>
                             <div className="flex justify-between"><span className="text-gray-400">{t.tax || 'Tax'} ({summary.taxPercentage}%):</span><span>{currencySymbol}{summary.taxAmount.toFixed(2)}</span></div>
@@ -229,7 +229,7 @@ export const ITTemplate3: React.FC<TemplateProps> = ({ document, pageItems, page
                     <h1 className="text-3xl font-bold tracking-tighter">{business.name}</h1>
                     <p className="text-xs">{business.address}</p>
                 </div>
-                 <div className="text-right">
+                <div className="text-right">
                     <h2 className="text-2xl font-extrabold tracking-tighter">{docTitle}</h2>
                     {category !== 'Generic' && <p className="text-sm">{category}</p>}
                 </div>
@@ -241,11 +241,11 @@ export const ITTemplate3: React.FC<TemplateProps> = ({ document, pageItems, page
                 <div><p className="font-bold text-gray-500 mb-1">{t.date || 'Date'}</p><p>{safeFormat(document.estimateDate, 'yyyy-MM-dd')}</p></div>
                 <div><p className="font-bold text-gray-500 mb-1">{t.project || 'Project'}</p><p>{document.projectTitle}</p></div>
             </section>
-            
-            <ITFreelanceDetails document={document} t={t}/>
+
+            <ITFreelanceDetails document={document} t={t} />
 
             <main className="flex-grow">
-                 <table className="w-full text-left text-xs">
+                <table className="w-full text-left text-xs">
                     <thead>
                         <tr>
                             <th className="p-2 font-bold w-3/5 border-b-2 border-gray-300">{(t.item || 'ITEM').toUpperCase()}</th>
@@ -311,10 +311,10 @@ export const ITTemplate4: React.FC<TemplateProps> = ({ document, pageItems, page
                         <p>{t.date || 'Date'}: {safeFormat(document.estimateDate, 'yyyy-MM-dd')}</p>
                     </div>
                 </div>
-                 {pageIndex === totalPages - 1 && (
+                {pageIndex === totalPages - 1 && (
                     <div className="mt-auto text-sm">
-                         <p className="font-bold opacity-80 mb-2">{(t.totalEstimate || 'TOTAL ESTIMATE').toUpperCase()}</p>
-                         <p className="text-4xl font-extrabold">{currencySymbol}{summary.grandTotal.toFixed(2)}</p>
+                        <p className="font-bold opacity-80 mb-2">{(t.totalEstimate || 'TOTAL ESTIMATE').toUpperCase()}</p>
+                        <p className="text-4xl font-extrabold">{currencySymbol}{summary.grandTotal.toFixed(2)}</p>
                     </div>
                 )}
             </div>
@@ -323,7 +323,7 @@ export const ITTemplate4: React.FC<TemplateProps> = ({ document, pageItems, page
                     <h2 className="text-3xl font-bold">{business.name}</h2>
                     <p className="text-xs text-gray-500">{business.address}</p>
                 </header>
-                 <ITFreelanceDetails document={document} t={t} />
+                <ITFreelanceDetails document={document} t={t} />
                 <main className="flex-grow">
                     <table className="w-full text-left text-sm">
                         <thead className="border-b-2 border-gray-300">
@@ -364,7 +364,7 @@ export const ITTemplate5: React.FC<TemplateProps> = ({ document, pageItems, page
                     <h1 className="text-3xl font-extrabold tracking-tighter">{business.name}</h1>
                     <p className="text-xs">{business.address}</p>
                 </div>
-                 <div className="text-right">
+                <div className="text-right">
                     <p className="text-2xl font-extrabold tracking-tighter text-gray-400">{docTitle}</p>
                     {category !== 'Generic' && <p className="text-xs text-gray-400">{category}</p>}
                 </div>
@@ -381,8 +381,8 @@ export const ITTemplate5: React.FC<TemplateProps> = ({ document, pageItems, page
                     <p className="text-gray-500">{t.date || 'Date'}: <span className="font-mono text-black">{safeFormat(document.estimateDate, 'dd.MM.yyyy')}</span></p>
                 </div>
             </section>
-            
-             <ITFreelanceDetails document={document} t={t}/>
+
+            <ITFreelanceDetails document={document} t={t} />
 
             <main className="flex-grow bg-white p-4 rounded-lg shadow-sm">
                 <table className="w-full text-left text-xs">
@@ -406,7 +406,7 @@ export const ITTemplate5: React.FC<TemplateProps> = ({ document, pageItems, page
                     </tbody>
                 </table>
             </main>
-            
+
             {pageIndex === totalPages - 1 && (
                 <footer className="mt-auto pt-8 flex justify-end">
                     <div className="w-1/3 text-sm space-y-1">

@@ -6,12 +6,12 @@ import { format, isValid } from 'date-fns';
 import Image from 'next/image';
 
 interface TemplateProps {
-  document: Estimate;
-  pageItems: LineItem[];
-  pageIndex: number;
-  totalPages: number;
-  style: React.CSSProperties;
-  t: any;
+    document: Estimate;
+    pageItems: LineItem[];
+    pageIndex: number;
+    totalPages: number;
+    style: React.CSSProperties;
+    t: any;
 }
 
 const currencySymbols: { [key: string]: string } = { USD: '$', EUR: '€', GBP: '£', JPY: '¥', PKR: '₨' };
@@ -33,14 +33,14 @@ const SignatureDisplay = ({ signature, label }: { signature: any, label: string 
     )
 }
 
-const AutoRepairDetails: React.FC<{ document: Estimate; textColor: string; t: any; }> = ({ document, textColor, t }) => {
+export const AutoRepairDetails: React.FC<{ document: Estimate; textColor: string; t: any; }> = ({ document, textColor, t }) => {
     if (!document.autoRepair) return null;
     const { autoRepair } = document;
     return (
         <section className="my-4 text-xs">
-            <p className="font-bold border-b" style={{color: textColor}}>{t.vehicleInformation || 'Vehicle Information'}</p>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-x-4 gap-y-1 mt-2" style={{color: textColor}}>
-                 <p><span className="font-semibold">{t.vehicle || 'Vehicle'}:</span> {autoRepair.vehicleMake} {autoRepair.vehicleModel} ({autoRepair.vehicleYear})</p>
+            <p className="font-bold border-b" style={{ color: textColor }}>{t.vehicleInformation || 'Vehicle Information'}</p>
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-x-4 gap-y-1 mt-2" style={{ color: textColor }}>
+                <p><span className="font-semibold">{t.vehicle || 'Vehicle'}:</span> {autoRepair.vehicleMake} {autoRepair.vehicleModel} ({autoRepair.vehicleYear})</p>
                 {autoRepair.mileage && <p><span className="font-semibold">{t.mileage || 'Mileage'}:</span> {autoRepair.mileage.toLocaleString()}</p>}
                 <p className="col-span-full"><span className="font-semibold">VIN:</span> {autoRepair.vin}</p>
                 <p className="col-span-full"><span className="font-semibold">{t.issue || 'Issue'}:</span> {autoRepair.issueDescription}</p>
@@ -71,27 +71,27 @@ export const AutoRepairTemplate1: React.FC<TemplateProps> = ({ document, pageIte
                     <h2 className="text-2xl font-extrabold" style={{ color: accentColor }}>{docTitle}</h2>
                 </div>
             </header>
-            <div className="px-10 pb-10 flex-grow flex flex-col" style={{color: textColor}}>
+            <div className="px-10 pb-10 flex-grow flex flex-col" style={{ color: textColor }}>
                 <section className="grid grid-cols-2 gap-4 mb-6 text-xs pb-4 border-b border-gray-200">
                     <div>
-                        <p className="p-1 text-sm font-bold rounded" style={{ backgroundColor: `${accentColor}40`}}>{t.customerInformation || 'Customer Information'}</p>
+                        <p className="p-1 text-sm font-bold rounded" style={{ backgroundColor: `${accentColor}40` }}>{t.customerInformation || 'Customer Information'}</p>
                         <p className="mt-2"><span className="font-bold w-20 inline-block">{t.name || 'Name'}:</span> {client.name}</p>
                         <p><span className="font-bold w-20 inline-block">{t.address || 'Address'}:</span> <span className="whitespace-pre-line">{client.address}</span></p>
                         <p><span className="font-bold w-20 inline-block">{t.phone || 'Phone'}:</span> {client.phone}</p>
                         <p><span className="font-bold w-20 inline-block">{t.email || 'Email'}:</span> {client.email}</p>
                     </div>
                     <div>
-                       <p className="p-1 text-sm font-bold rounded" style={{ backgroundColor: `${accentColor}40`}}>{t.estimateDetails || 'Details'}</p>
+                        <p className="p-1 text-sm font-bold rounded" style={{ backgroundColor: `${accentColor}40` }}>{t.estimateDetails || 'Details'}</p>
                         <p className="mt-2"><span className="font-bold w-20 inline-block">{(document.documentType === 'quote' ? t.quoteNo : t.estimateNo) || 'Number #'}:</span> {document.estimateNumber}</p>
                         <p><span className="font-bold w-20 inline-block">{t.date || 'Date'}:</span> {safeFormat(document.estimateDate, 'MM/dd/yyyy')}</p>
                     </div>
                 </section>
-                
-                 <AutoRepairDetails document={document} textColor={textColor || '#374151'} t={t} />
+
+                <AutoRepairDetails document={document} textColor={textColor || '#374151'} t={t} />
 
                 <main className="flex-grow">
-                     <p className="p-1 mb-2 text-sm font-bold rounded" style={{ backgroundColor: `${accentColor}40`}}>{t.repairDetails || 'Repair Details'}</p>
-                     <table className="w-full text-left text-xs">
+                    <p className="p-1 mb-2 text-sm font-bold rounded" style={{ backgroundColor: `${accentColor}40` }}>{t.repairDetails || 'Repair Details'}</p>
+                    <table className="w-full text-left text-xs">
                         <thead className="border-y border-gray-400">
                             <tr>
                                 <th className="p-2 font-bold w-1/2">{(t.description || 'DESCRIPTION').toUpperCase()}</th>
@@ -110,7 +110,7 @@ export const AutoRepairTemplate1: React.FC<TemplateProps> = ({ document, pageIte
                                 </tr>
                             ))}
                         </tbody>
-                         {pageIndex === totalPages - 1 && (
+                        {pageIndex === totalPages - 1 && (
                             <tfoot>
                                 <tr><td colSpan={3} className="p-2 text-right">{t.subtotal || 'Subtotal'}</td><td className="p-2 text-right">{currencySymbol}{summary.subtotal.toFixed(2)}</td></tr>
                                 {summary.discount > 0 && <tr><td colSpan={3} className="p-2 text-right">{t.discount || 'Discount'}</td><td className="p-2 text-right text-red-600">-{currencySymbol}{summary.discount.toFixed(2)}</td></tr>}
@@ -121,10 +121,10 @@ export const AutoRepairTemplate1: React.FC<TemplateProps> = ({ document, pageIte
                                     <td className="p-2 pt-2 text-right font-bold text-base">{currencySymbol}{summary.grandTotal.toFixed(2)}</td>
                                 </tr>
                             </tfoot>
-                         )}
+                        )}
                     </table>
                 </main>
-            
+
                 {pageIndex === totalPages - 1 && (
                     <footer className="mt-auto pt-8 text-xs">
                         <section className="grid grid-cols-2 gap-8 mb-6">
@@ -132,7 +132,7 @@ export const AutoRepairTemplate1: React.FC<TemplateProps> = ({ document, pageIte
                                 <p className="font-bold mb-2">{(t.paymentInformation || 'Payment Information')}</p>
                                 <p>{t.paymentDetailsOnInvoice || 'Details available upon request or on final invoice.'}</p>
                             </div>
-                             <div>
+                            <div>
                                 <p className="font-bold mb-2">{(t.additionalNotes || 'Additional Notes')}</p>
                                 <p className="whitespace-pre-line">{document.termsAndConditions.replace(/estimate/gi, docTypeTerm)}</p>
                             </div>
@@ -172,7 +172,7 @@ export const AutoRepairTemplate2: React.FC<TemplateProps> = ({ document, pageIte
             </header>
             <div className="p-10 pt-0 flex-grow flex flex-col">
                 <section className="mb-6 pb-4 border-b border-gray-600 grid grid-cols-2 gap-8 text-xs">
-                     <div>
+                    <div>
                         <p className="font-bold text-gray-400 mb-1">{(t.customer || 'CUSTOMER').toUpperCase()}</p>
                         <p className="font-medium">{client.name}</p>
                         <p className="text-gray-300">{client.address}</p>
@@ -182,11 +182,11 @@ export const AutoRepairTemplate2: React.FC<TemplateProps> = ({ document, pageIte
                         <p><span className="font-bold text-gray-400">{(t.date || 'DATE').toUpperCase()}: </span>{safeFormat(document.estimateDate, 'yyyy-MM-dd')}</p>
                     </div>
                 </section>
-                
+
                 <AutoRepairDetails document={document} textColor={textColor || '#FFFFFF'} t={t} />
 
                 <main className="flex-grow">
-                     <table className="w-full text-left text-sm">
+                    <table className="w-full text-left text-sm">
                         <thead className="text-gray-300">
                             <tr>
                                 <th className="py-2 font-semibold w-1/2">{(t.service || 'SERVICE').toUpperCase()}</th>
@@ -207,16 +207,16 @@ export const AutoRepairTemplate2: React.FC<TemplateProps> = ({ document, pageIte
                         </tbody>
                     </table>
                 </main>
-            
+
                 {pageIndex === totalPages - 1 && (
                     <footer className="mt-auto pt-8">
-                         <div className="flex justify-end mb-6">
+                        <div className="flex justify-end mb-6">
                             <div className="w-2/5 text-sm space-y-2">
                                 <div className="flex justify-between"><span className="text-gray-400">{(t.subtotal || 'Subtotal')}:</span><span>{currencySymbol}{summary.subtotal.toFixed(2)}</span></div>
                                 {summary.discount > 0 && <div className="flex justify-between"><span className="text-gray-400">{t.discount || 'Discount'}:</span><span className="text-red-400">-{currencySymbol}{summary.discount.toFixed(2)}</span></div>}
                                 {summary.shippingCost > 0 && <div className="flex justify-between"><span className="text-gray-400">{t.shipping || 'Shipping'}:</span><span>{currencySymbol}{summary.shippingCost.toFixed(2)}</span></div>}
                                 <div className="flex justify-between"><span className="text-gray-400">{(t.taxesAndFees || 'Taxes &amp; Fees')}:</span><span>{currencySymbol}{summary.taxAmount.toFixed(2)}</span></div>
-                                <div className="flex justify-between font-bold text-xl mt-2 pt-2 border-t-2 border-gray-500" style={{color: style.color || '#FBBF24'}}><span>{(document.documentType === 'quote' ? t.quoteTotal : t.estimateTotal) || 'TOTAL'}:</span><span>{currencySymbol}{summary.grandTotal.toFixed(2)}</span></div>
+                                <div className="flex justify-between font-bold text-xl mt-2 pt-2 border-t-2 border-gray-500" style={{ color: style.color || '#FBBF24' }}><span>{(document.documentType === 'quote' ? t.quoteTotal : t.estimateTotal) || 'TOTAL'}:</span><span>{currencySymbol}{summary.grandTotal.toFixed(2)}</span></div>
                             </div>
                         </div>
                         <div className="flex justify-between items-end text-xs">
@@ -239,7 +239,7 @@ export const AutoRepairTemplate3: React.FC<TemplateProps> = ({ document, pageIte
     const docTypeTerm = document.documentType === 'quote' ? 'quote' : 'estimate';
 
     return (
-        <div className={`p-12 bg-white font-['Garamond',_serif] text-gray-700 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{minHeight: '1056px', color: textColor, backgroundColor: document.backgroundColor }}>
+        <div className={`p-12 bg-white font-['Garamond',_serif] text-gray-700 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ minHeight: '1056px', color: textColor, backgroundColor: document.backgroundColor }}>
             <header className="flex justify-between items-start mb-12">
                 <div>
                     <h1 className="text-4xl font-light tracking-wider">{business.name}</h1>
@@ -251,18 +251,18 @@ export const AutoRepairTemplate3: React.FC<TemplateProps> = ({ document, pageIte
             </header>
 
             <section className="flex justify-between mb-10 text-xs">
-                 <div>
+                <div>
                     <p className="font-bold mb-1">{(t.preparedFor || 'Prepared For')}</p>
                     <p>{client.name}</p><p>{client.address}</p>
                 </div>
-                 <div className="text-right">
+                <div className="text-right">
                     <p><span className="font-bold">{(document.documentType === 'quote' ? t.quoteNo : t.estimateNo) || 'Number #'}:</span> {document.estimateNumber}</p>
                     <p><span className="font-bold">{(t.date || 'Date')}:</span> {safeFormat(document.estimateDate, 'MMM dd, yyyy')}</p>
                 </div>
             </section>
 
-             <AutoRepairDetails document={document} textColor={textColor || '#374151'} t={t} />
-            
+            <AutoRepairDetails document={document} textColor={textColor || '#374151'} t={t} />
+
             <main className="flex-grow">
                 <table className="w-full text-left text-xs">
                     <thead>
@@ -290,7 +290,7 @@ export const AutoRepairTemplate3: React.FC<TemplateProps> = ({ document, pageIte
                 <footer className="mt-auto pt-8">
                     <div className="flex justify-end">
                         <table className="w-1/3 text-xs">
-                             <tbody>
+                            <tbody>
                                 <tr><td className="py-1">{(t.subtotal || 'Subtotal')}</td><td className="text-right">{currencySymbol}{summary.subtotal.toFixed(2)}</td></tr>
                                 {summary.discount > 0 && <tr><td className="py-1">{t.discount || 'Discount'}</td><td className="text-right text-red-600">-{currencySymbol}{summary.discount.toFixed(2)}</td></tr>}
                                 {summary.shippingCost > 0 && <tr><td className="py-1">{t.shipping || 'Shipping'}</td><td className="text-right">{currencySymbol}{summary.shippingCost.toFixed(2)}</td></tr>}
@@ -319,25 +319,25 @@ export const AutoRepairTemplate4: React.FC<TemplateProps> = ({ document, pageIte
 
     return (
         <div className={`p-10 bg-white font-sans text-gray-800 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ minHeight: '1056px', color: textColor, backgroundColor: document.backgroundColor }}>
-            <header className="flex justify-between items-start pb-4 border-b-2" style={{borderColor: accentColor}}>
+            <header className="flex justify-between items-start pb-4 border-b-2" style={{ borderColor: accentColor }}>
                 <div>
-                  <h1 className="text-3xl font-bold">{business.name}</h1>
-                  <p className="text-xs">{business.address}</p>
+                    <h1 className="text-3xl font-bold">{business.name}</h1>
+                    <p className="text-xs">{business.address}</p>
                 </div>
                 <div className="text-right">
-                    <h2 className="text-2xl font-extrabold" style={{color: accentColor}}>{docTitle}</h2>
+                    <h2 className="text-2xl font-extrabold" style={{ color: accentColor }}>{docTitle}</h2>
                 </div>
             </header>
-            
+
             <section className="my-8 grid grid-cols-2 gap-4 text-xs">
-                 <div><p><span className="font-bold">{(t.to || 'TO').toUpperCase()}: </span>{client.name}</p><p>{client.address}</p></div>
-                 <div className="text-right"><p><span className="font-bold">{(document.documentType === 'quote' ? t.quoteNo : t.estimateNo) || 'Number #'}: </span>{document.estimateNumber}</p><p><span className="font-bold">{(t.date || 'DATE').toUpperCase()}: </span>{safeFormat(document.estimateDate, 'yyyy-MM-dd')}</p></div>
+                <div><p><span className="font-bold">{(t.to || 'TO').toUpperCase()}: </span>{client.name}</p><p>{client.address}</p></div>
+                <div className="text-right"><p><span className="font-bold">{(document.documentType === 'quote' ? t.quoteNo : t.estimateNo) || 'Number #'}: </span>{document.estimateNumber}</p><p><span className="font-bold">{(t.date || 'DATE').toUpperCase()}: </span>{safeFormat(document.estimateDate, 'yyyy-MM-dd')}</p></div>
             </section>
 
-             <AutoRepairDetails document={document} textColor={textColor || '#374151'} t={t}/>
-            
+            <AutoRepairDetails document={document} textColor={textColor || '#374151'} t={t} />
+
             <main className="flex-grow">
-                 <table className="w-full text-left text-sm">
+                <table className="w-full text-left text-sm">
                     <thead className="bg-gray-100">
                         <tr>
                             <th className="p-2 font-bold w-[60%]">{(t.description || 'DESCRIPTION').toUpperCase()}</th>
@@ -358,10 +358,10 @@ export const AutoRepairTemplate4: React.FC<TemplateProps> = ({ document, pageIte
                     </tbody>
                 </table>
             </main>
-            
+
             {pageIndex === totalPages - 1 && (
                 <footer className="mt-auto pt-8">
-                     <div className="flex justify-end">
+                    <div className="flex justify-end">
                         <table className="w-1/3 text-sm">
                             <tbody>
                                 <tr><td className="py-1">{(t.subtotal || 'Subtotal')}</td><td className="py-1 text-right">{currencySymbol}{summary.subtotal.toFixed(2)}</td></tr>
@@ -390,14 +390,14 @@ export const AutoRepairTemplate5: React.FC<TemplateProps> = ({ document, pageIte
     const docTypeTerm = document.documentType === 'quote' ? 'quote' : 'estimate';
 
     return (
-        <div className={`p-10 bg-gray-50 font-['Roboto',_sans-serif] text-gray-900 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{minHeight: '1056px', color: textColor, backgroundColor: document.backgroundColor}}>
+        <div className={`p-10 bg-gray-50 font-['Roboto',_sans-serif] text-gray-900 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ minHeight: '1056px', color: textColor, backgroundColor: document.backgroundColor }}>
             <header className="flex justify-between items-start mb-8">
                 <div>
-                  {business.logoUrl ? <Image src={business.logoUrl} alt="Logo" width={100} height={40} className="object-contain" /> : <h1 className="text-3xl font-bold">{business.name}</h1>}
-                   <p className="text-xs">{business.address}</p>
+                    {business.logoUrl ? <Image src={business.logoUrl} alt="Logo" width={100} height={40} className="object-contain" /> : <h1 className="text-3xl font-bold">{business.name}</h1>}
+                    <p className="text-xs">{business.address}</p>
                 </div>
-                 <div className="text-right">
-                    <h1 className="text-2xl font-extrabold" style={{color: style.color}}>{docTitle}</h1>
+                <div className="text-right">
+                    <h1 className="text-2xl font-extrabold" style={{ color: style.color }}>{docTitle}</h1>
                 </div>
             </header>
 
@@ -407,8 +407,8 @@ export const AutoRepairTemplate5: React.FC<TemplateProps> = ({ document, pageIte
                 <div><p className="font-bold text-gray-500">{(document.documentType === 'quote' ? t.quoteNo : t.estimateNo) || 'Number #'}:</p><p>{document.estimateNumber}</p></div>
                 <div><p className="font-bold text-gray-500">{(t.dateIssued || 'DATE ISSUED').toUpperCase()}:</p><p>{safeFormat(document.estimateDate, 'MMM d, yyyy')}</p></div>
             </section>
-            
-             <AutoRepairDetails document={document} textColor={textColor || '#374151'} t={t}/>
+
+            <AutoRepairDetails document={document} textColor={textColor || '#374151'} t={t} />
 
             <main className="flex-grow bg-white p-4 rounded-lg shadow-sm">
                 <table className="w-full text-left text-xs">
@@ -432,7 +432,7 @@ export const AutoRepairTemplate5: React.FC<TemplateProps> = ({ document, pageIte
                     </tbody>
                 </table>
             </main>
-            
+
             {pageIndex === totalPages - 1 && (
                 <footer className="mt-auto pt-6 flex justify-end">
                     <div className="w-1/3 text-sm space-y-1">

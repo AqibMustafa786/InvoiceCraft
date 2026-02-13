@@ -7,12 +7,12 @@ import { format, isValid } from 'date-fns';
 import Image from 'next/image';
 
 interface TemplateProps {
-  document: Estimate;
-  pageItems: LineItem[];
-  pageIndex: number;
-  totalPages: number;
-  style: React.CSSProperties;
-  t: any;
+    document: Estimate;
+    pageItems: LineItem[];
+    pageIndex: number;
+    totalPages: number;
+    style: React.CSSProperties;
+    t: any;
 }
 
 const currencySymbols: { [key: string]: string } = { USD: '$', EUR: '€', GBP: '£', JPY: '¥', PKR: '₨' };
@@ -35,11 +35,11 @@ const SignatureDisplay = ({ signature, label }: { signature: any, label: string 
     )
 }
 
-const CleaningDetails: React.FC<{ document: Estimate; textColor: string; t: any; }> = ({ document, textColor, t }) => {
+export const CleaningDetails: React.FC<{ document: Estimate; textColor: string; t: any; }> = ({ document, textColor, t }) => {
     if (!document.cleaning) return null;
     const { cleaning } = document;
     return (
-        <section className="my-4 text-xs" style={{color: textColor}}>
+        <section className="my-4 text-xs" style={{ color: textColor }}>
             <p className="font-bold border-b" >{(t.cleaningSpecifics || 'Cleaning Specifics')}</p>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-x-4 gap-y-1 mt-2">
                 <p><span className="font-semibold">{t.type || 'Type'}:</span> {cleaning.cleaningType}</p>
@@ -49,7 +49,7 @@ const CleaningDetails: React.FC<{ document: Estimate; textColor: string; t: any;
                 {cleaning.bathrooms && <p><span className="font-semibold">{t.bathrooms || 'Bathrooms'}:</span> {cleaning.bathrooms}</p>}
                 <p><span className="font-semibold">{t.kitchenSize || 'Kitchen Size'}:</span> {cleaning.kitchenSize}</p>
                 <p><span className="font-semibold">{t.hasPets || 'Has Pets'}:</span> {cleaning.hasPets ? 'Yes' : 'No'}</p>
-                {cleaning.addOns.length > 0 && <p className="col-span-full"><span className="font-semibold">{t.addOns || 'Add-ons'}:</span> {cleaning.addOns.join(', ')}</p>}
+                {cleaning.addOns && cleaning.addOns.length > 0 && <p className="col-span-full"><span className="font-semibold">{t.addOns || 'Add-ons'}:</span> {cleaning.addOns.join(', ')}</p>}
             </div>
         </section>
     );
@@ -66,7 +66,7 @@ export const CleaningTemplate1: React.FC<TemplateProps> = ({ document, pageItems
     return (
         <div className={`bg-white font-sans text-gray-800 flex flex-col relative ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: 'Arial, sans-serif', fontSize: `10pt`, minHeight: '1056px' }}>
             <div className="absolute top-0 left-0 right-0 h-48" style={{ backgroundColor: style.color, clipPath: 'ellipse(100% 70% at 50% 0%)' }}></div>
-            <div className="p-10 relative z-10 flex-grow flex flex-col" style={{color: textColor}}>
+            <div className="p-10 relative z-10 flex-grow flex flex-col" style={{ color: textColor }}>
                 <header className="flex justify-between items-start mb-8 text-white">
                     <div>
                         <h1 className="text-3xl font-bold">{business.name}</h1>
@@ -93,11 +93,11 @@ export const CleaningTemplate1: React.FC<TemplateProps> = ({ document, pageItems
                         <p><span className="font-bold w-24 inline-block">{t.email || 'Email'}:</span> {client.email}</p>
                     </div>
                 </section>
-                
-                 <CleaningDetails document={document} textColor={textColor || '#374151'} t={t} />
+
+                <CleaningDetails document={document} textColor={textColor || '#374151'} t={t} />
 
                 <main className="flex-grow">
-                     <table className="w-full text-left text-xs">
+                    <table className="w-full text-left text-xs">
                         <thead style={{ backgroundColor: style.color }} className="text-white">
                             <tr>
                                 <th className="p-2 font-bold w-12">{t.no || 'No'}</th>
@@ -120,25 +120,25 @@ export const CleaningTemplate1: React.FC<TemplateProps> = ({ document, pageItems
                         </tbody>
                     </table>
                 </main>
-                
+
                 {pageIndex === totalPages - 1 && (
                     <footer className="mt-auto pt-8">
                         <div className="flex justify-end mb-8">
-                             <table className="w-2/5 text-sm">
+                            <table className="w-2/5 text-sm">
                                 <tbody>
                                     <tr><td className="p-2 text-right">{(t.subtotal || 'Subtotal')}</td><td className="p-2 text-right">{currencySymbol}{summary.subtotal.toFixed(2)}</td></tr>
                                     {summary.discount > 0 && <tr><td className="p-2 text-right text-red-500">{(t.discount || 'Discount')}</td><td className="p-2 text-right text-red-500">-{currencySymbol}{summary.discount.toFixed(2)}</td></tr>}
                                     {summary.shippingCost > 0 && <tr><td className="p-2 text-right">{(t.shipping || 'Shipping')}</td><td className="p-2 text-right">{currencySymbol}{summary.shippingCost.toFixed(2)}</td></tr>}
                                     <tr><td className="p-2 text-right">{(t.tax || 'Tax')} ({summary.taxPercentage}%)</td><td className="p-2 text-right">{currencySymbol}{summary.taxAmount.toFixed(2)}</td></tr>
-                                    <tr className="border-t-2" style={{borderColor: style.color}}><td className="p-2 text-right font-bold">{(t.total || 'Total')}</td><td className="p-2 text-right font-bold">{currencySymbol}{summary.grandTotal.toFixed(2)}</td></tr>
+                                    <tr className="border-t-2" style={{ borderColor: style.color }}><td className="p-2 text-right font-bold">{(t.total || 'Total')}</td><td className="p-2 text-right font-bold">{currencySymbol}{summary.grandTotal.toFixed(2)}</td></tr>
                                 </tbody>
-                             </table>
+                            </table>
                         </div>
                         <div className="grid grid-cols-2 gap-8 items-end text-xs">
-                             <div>
+                            <div>
                                 <p className="font-bold text-base mb-2">{(t.termsAndConditions || 'Terms and Conditions')}:</p>
                                 <ul className="list-disc list-inside space-y-1">
-                                   <li className="whitespace-pre-line">{document.termsAndConditions.replace(/estimate/gi, docTypeTerm)}</li>
+                                    <li className="whitespace-pre-line">{document.termsAndConditions.replace(/estimate/gi, docTypeTerm)}</li>
                                 </ul>
                             </div>
                             <div className="text-center">
@@ -166,7 +166,7 @@ export const CleaningTemplate2: React.FC<TemplateProps> = ({ document, pageItems
         <div className={`p-10 bg-white font-sans text-gray-700 flex flex-col ${pageIndex < totalPages - 1 ? "page-break-after" : ""}`} style={{ fontFamily: 'Verdana, sans-serif', fontSize: '9.5pt', minHeight: '1056px', color: textColor }}>
             <header className="flex justify-between items-start mb-10 pb-4 border-b-2 border-gray-100">
                 <div>
-                    {business.logoUrl && <Image src={business.logoUrl} alt="Logo" width={100} height={50} className="object-contain mb-2"/>}
+                    {business.logoUrl && <Image src={business.logoUrl} alt="Logo" width={100} height={50} className="object-contain mb-2" />}
                     <h1 className="text-3xl font-bold" style={{ color: accentColor }}>{business.name}</h1>
                     <p className="text-xs text-gray-500">{business.address}</p>
                 </div>
@@ -182,19 +182,19 @@ export const CleaningTemplate2: React.FC<TemplateProps> = ({ document, pageItems
                     <p>{client.address}</p>
                 </div>
                 <div>
-                     <p className="font-bold text-gray-500">{(t.project || 'Project')}:</p>
-                     <p className="font-semibold">{document.projectTitle}</p>
+                    <p className="font-bold text-gray-500">{(t.project || 'Project')}:</p>
+                    <p className="font-semibold">{document.projectTitle}</p>
                 </div>
                 <div className="text-right">
                     <p><span className="font-bold">{(document.documentType === 'quote' ? t.quoteNo : t.estimateNo) || 'Number #'}:</span> {document.estimateNumber}</p>
                     <p><span className="font-bold">{(t.date || 'Date')}:</span> {safeFormat(document.estimateDate, 'MMM d, yyyy')}</p>
                 </div>
             </section>
-            
-            <CleaningDetails document={document} textColor={textColor || '#374151'} t={t}/>
+
+            <CleaningDetails document={document} textColor={textColor || '#374151'} t={t} />
 
             <main className="flex-grow mt-4">
-                 <table className="w-full text-left text-xs">
+                <table className="w-full text-left text-xs">
                     <thead>
                         <tr className="border-b-2 border-gray-200">
                             <th className="py-2 font-bold w-1/2">{(t.description || 'DESCRIPTION').toUpperCase()}</th>
@@ -215,10 +215,10 @@ export const CleaningTemplate2: React.FC<TemplateProps> = ({ document, pageItems
                     </tbody>
                 </table>
             </main>
-            
+
             {pageIndex === totalPages - 1 && (
                 <footer className="mt-auto pt-8">
-                     <div className="flex justify-end">
+                    <div className="flex justify-end">
                         <div className="w-1/3 text-sm space-y-1">
                             <p className="flex justify-between"><span>{(t.subtotal || 'Subtotal')}:</span><span>{currencySymbol}{summary.subtotal.toFixed(2)}</span></p>
                             {summary.discount > 0 && <p className="flex justify-between text-red-500"><span>{(t.discount || 'Discount')}:</span><span>-{currencySymbol}{summary.discount.toFixed(2)}</span></p>}
@@ -262,7 +262,7 @@ export const CleaningTemplate3: React.FC<TemplateProps> = ({ document, pageItems
                     <p><span className="font-bold">{t.validUntil || 'Valid Until'}:</span> {safeFormat(document.validUntilDate, 'MM/dd/yyyy')}</p>
                 </div>
             </section>
-            <CleaningDetails document={document} textColor={textColor || '#374151'} t={t}/>
+            <CleaningDetails document={document} textColor={textColor || '#374151'} t={t} />
             <main className="flex-grow mt-4">
                 <table className="w-full text-left text-sm">
                     <thead>
@@ -282,16 +282,21 @@ export const CleaningTemplate3: React.FC<TemplateProps> = ({ document, pageItems
                 </table>
             </main>
             {pageIndex === totalPages - 1 && (
-            <footer className="mt-auto pt-8 text-right">
-                <div className="inline-block w-2/5 text-sm">
-                    <p className="flex justify-between"><span>{t.subtotal || 'Subtotal'}:</span><span>{currencySymbol}{summary.subtotal.toFixed(2)}</span></p>
-                    {summary.discount > 0 && <p className="flex justify-between text-red-500"><span>{t.discount || 'Discount'}:</span><span>-{currencySymbol}{summary.discount.toFixed(2)}</span></p>}
-                    {summary.shippingCost > 0 && <p className="flex justify-between"><span>{t.shipping || 'Shipping'}:</span><span>{currencySymbol}{summary.shippingCost.toFixed(2)}</span></p>}
-                    <p className="flex justify-between"><span>{t.tax || 'Tax'}:</span><span>{currencySymbol}{summary.taxAmount.toFixed(2)}</span></p>
-                    <p className="flex justify-between font-bold text-base mt-2 pt-2 border-t"><span>{t.total || 'Total'}:</span><span>{currencySymbol}{summary.grandTotal.toFixed(2)}</span></p>
-                </div>
-            </footer>
+                <footer className="mt-auto pt-8 text-right">
+                    <div className="inline-block w-2/5 text-sm">
+                        <p className="flex justify-between"><span>{t.subtotal || 'Subtotal'}:</span><span>{currencySymbol}{summary.subtotal.toFixed(2)}</span></p>
+                        {summary.discount > 0 && <p className="flex justify-between text-red-500"><span>{t.discount || 'Discount'}:</span><span>-{currencySymbol}{summary.discount.toFixed(2)}</span></p>}
+                        {summary.shippingCost > 0 && <p className="flex justify-between"><span>{t.shipping || 'Shipping'}:</span><span>{currencySymbol}{summary.shippingCost.toFixed(2)}</span></p>}
+                        <p className="flex justify-between"><span>{t.tax || 'Tax'}:</span><span>{currencySymbol}{summary.taxAmount.toFixed(2)}</span></p>
+                        <p className="flex justify-between font-bold text-base mt-2 pt-2 border-t"><span>{t.total || 'Total'}:</span><span>{currencySymbol}{summary.grandTotal.toFixed(2)}</span></p>
+                    </div>
+                </footer>
             )}
         </div>
     );
 };
+// Template 4: Efficient
+export const CleaningTemplate4 = CleaningTemplate1;
+
+// Template 5: Sparkle Plus
+export const CleaningTemplate5 = CleaningTemplate2;

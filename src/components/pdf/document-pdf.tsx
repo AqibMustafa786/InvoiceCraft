@@ -11,8 +11,8 @@ import { toDateSafe } from '@/lib/utils';
 Font.register({
   family: 'Inter',
   fonts: [
-    { src: 'https://cdn.jsdelivr.net/gh/google/fonts@main/ofl/inter/Inter%5Bslnt%2Cwght%5D.ttf' },
-    { src: 'https://cdn.jsdelivr.net/gh/google/fonts@main/ofl/inter/Inter%5Bslnt%2Cwght%5D.ttf', fontWeight: 'bold' },
+    { src: 'https://cdn.jsdelivr.net/gh/google/fonts@v1.0.1/ofl/inter/static/Inter-Regular.ttf' },
+    { src: 'https://cdn.jsdelivr.net/gh/google/fonts@v1.0.1/ofl/inter/static/Inter-Bold.ttf', fontWeight: 'bold' },
   ],
 });
 
@@ -379,8 +379,8 @@ export const PDFDocument = ({ data, language }: { data: Estimate | Quote | Invoi
                 {item.description && <Text style={styles.itemDescription}>{s(item.description)}</Text>}
               </View>
               <Text style={[styles.tableCell, { flex: 1, textAlign: 'center' }]}>{s(item.quantity)}</Text>
-              <Text style={[styles.tableCell, { flex: 1.5, textAlign: 'right' }]}>{item.unitPrice.toFixed(2)}</Text>
-              <Text style={[styles.tableCell, { flex: 1.5, textAlign: 'right' }]}>{(item.quantity * (item.unitPrice || item.rate || 0)).toFixed(2)}</Text>
+              <Text style={[styles.tableCell, { flex: 1.5, textAlign: 'right' }]}>{s(item.unitPrice.toFixed(2))}</Text>
+              <Text style={[styles.tableCell, { flex: 1.5, textAlign: 'right' }]}>{s((item.quantity * (item.unitPrice || item.rate || 0)).toFixed(2))}</Text>
             </View>
           ))}
         </View>
@@ -388,13 +388,13 @@ export const PDFDocument = ({ data, language }: { data: Estimate | Quote | Invoi
         {/* Totals Section */}
         <View style={styles.totalSection} wrap={false}>
           <View style={styles.totalTable}>
-            <View style={styles.totalRow}><Text>{t.subtotal}</Text><Text>{summary.subtotal.toFixed(2)}</Text></View>
-            {summary.taxAmount > 0 && <View style={styles.totalRow}><Text>{t.tax} ({s(summary.taxPercentage)}%)</Text><Text>{summary.taxAmount.toFixed(2)}</Text></View>}
-            {summary.discount > 0 && <View style={styles.totalRow}><Text>{t.discount}</Text><Text>-{summary.discount.toFixed(2)}</Text></View>}
-            {summary.shippingCost > 0 && <View style={styles.totalRow}><Text>{t.shipping}</Text><Text>{summary.shippingCost.toFixed(2)}</Text></View>}
-            <View style={styles.grandTotalRow}><Text>{t.grandTotal}</Text><Text>{summary.grandTotal.toFixed(2)}</Text></View>
-            {isInvoice && amountPaid > 0 && <View style={styles.totalRow}><Text>{t.amountPaid}</Text><Text>{amountPaid.toFixed(2)}</Text></View>}
-            {isInvoice && <View style={styles.balanceRow}><Text>{t.balanceDue}</Text><Text>{balanceDue.toFixed(2)}</Text></View>}
+            <View style={styles.totalRow}><Text>{t.subtotal}</Text><Text>{s(summary.subtotal.toFixed(2))}</Text></View>
+            {summary.taxAmount > 0 && <View style={styles.totalRow}><Text>{t.tax} ({s(summary.taxPercentage)}%)</Text><Text>{s(summary.taxAmount.toFixed(2))}</Text></View>}
+            {summary.discount > 0 && <View style={styles.totalRow}><Text>{t.discount}</Text><Text>-{s(summary.discount.toFixed(2))}</Text></View>}
+            {summary.shippingCost > 0 && <View style={styles.totalRow}><Text>{t.shipping}</Text><Text>{s(summary.shippingCost.toFixed(2))}</Text></View>}
+            <View style={styles.grandTotalRow}><Text>{t.grandTotal}</Text><Text>{s(summary.grandTotal.toFixed(2))}</Text></View>
+            {isInvoice && amountPaid > 0 && <View style={styles.totalRow}><Text>{t.amountPaid}</Text><Text>{s(amountPaid.toFixed(2))}</Text></View>}
+            {isInvoice && <View style={styles.balanceRow}><Text>{t.balanceDue}</Text><Text>{s(balanceDue.toFixed(2))}</Text></View>}
           </View>
         </View>
 
