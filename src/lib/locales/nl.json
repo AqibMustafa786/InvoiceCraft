@@ -1,0 +1,15 @@
+{
+    "invoice": "Factuur",
+    "billTo": "FACTUUR AAN",
+    "invoiceDate": "Factuurdatum",
+    "dueDate": "Vervaldatum",
+    "item": "Artikel",
+    "quantity": "Aantal",
+    "rate": "Tarief",
+    "subtotal": "Subtotaal",
+    "tax": "Belasting",
+    "discount": "Korting",
+    "total": "Totaal",
+    "notes": "Notities",
+    "itemDescription": "Artikelomschrijving"
+}

@@ -1,0 +1,15 @@
+{
+    "invoice": "发票",
+    "billTo": "发票抬头",
+    "invoiceDate": "发票日期",
+    "dueDate": "到期日期",
+    "item": "项目",
+    "quantity": "数量",
+    "rate": "费率",
+    "subtotal": "小计",
+    "tax": "税",
+    "discount": "折扣",
+    "total": "总计",
+    "notes": "备注",
+    "itemDescription": "项目说明"
+}

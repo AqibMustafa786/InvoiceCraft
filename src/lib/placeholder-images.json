@@ -1,0 +1,52 @@
+{
+  "placeholderImages": [
+    {
+      "id": "construction-template",
+      "description": "A construction site with a crane and building frame.",
+      "imageUrl": "https://images.unsplash.com/photo-1535732759880-bbd5c7265e3f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxjb25zdHJ1Y3Rpb24lMjBzaXRlfGVufDB8fHx8MTc2NzYyOTUyNXww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "construction site"
+    },
+    {
+      "id": "freelance-desk",
+      "description": "A creative desk setup for a freelancer.",
+      "imageUrl": "https://images.unsplash.com/photo-1741466072239-fafcc7052467?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxjcmVhdGl2ZSUyMGRlc2t8ZW58MHx8fHwxNzY3NjU0NTg1fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "creative desk"
+    },
+    {
+      "id": "retail-store",
+      "description": "Interior of a modern retail store.",
+      "imageUrl": "https://images.unsplash.com/photo-1441984904996-e0b6ba687e04?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw2fHxyZXRhaWwlMjBzdG9yZXxlbnwwfHx8fDE3Njc1ODE1NDZ8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "retail store"
+    },
+    {
+      "id": "auto-repair",
+      "description": "A car engine being worked on in a garage.",
+      "imageUrl": "https://images.unsplash.com/photo-1552656967-7a0991a13906?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxjYXIlMjBlbmdpbmV8ZW58MHx8fHwxNzY3NTk0NDQyfDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "car engine"
+    },
+    {
+      "id": "photography-gear",
+      "description": "A collection of camera gear on a wooden surface.",
+      "imageUrl": "https://images.unsplash.com/photo-1626328473821-47cf23331417?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxjYW1lcmElMjBnZWFyfGVufDB8fHx8MTc2NzY1NDU4NXww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "camera gear"
+    },
+    {
+      "id": "modern-house",
+      "description": "The exterior of a modern house at dusk.",
+      "imageUrl": "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxtb2Rlcm4lMjBob3VzZXxlbnwwfHx8fDE3Njc2NDM1MDl8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "modern house"
+    },
+    {
+      "id": "law-books",
+      "description": "A stack of old law books on a shelf.",
+      "imageUrl": "https://images.unsplash.com/photo-1521587760476-6c12a4b040da?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxsYXclMjBib29rc3xlbnwwfHx8fDE3Njc2NTQ1ODV8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "law books"
+    },
+    {
+      "id": "medical-tools",
+      "description": "A collection of medical tools on a sterile surface.",
+      "imageUrl": "https://images.unsplash.com/photo-1763198302526-5d77d7ebd79d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxtZWRpY2FsJTIwdG9vbHN8ZW58MHx8fHwxNzY3NjU0NTg1fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "medical tools"
+    }
+  ]
+}

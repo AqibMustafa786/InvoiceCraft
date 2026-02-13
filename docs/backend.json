@@ -1,0 +1,342 @@
+
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "type": "object",
+      "description": "Represents a user of the InvoiceCraft application.",
+      "properties": {
+        "uid": {
+          "type": "string",
+          "description": "Unique identifier for the User entity from Firebase Auth."
+        },
+        "email": {
+          "type": "string",
+          "description": "User's email address.",
+          "format": "email"
+        },
+        "name": {
+          "type": "string",
+          "description": "User's display name."
+        },
+        "avatarUrl": {
+            "type": "string",
+            "format": "uri",
+            "description": "URL of the user's profile picture."
+        },
+        "phone": {
+          "type": "string",
+          "description": "User's phone number."
+        },
+        "position": {
+            "type": "string",
+            "description": "The user's position or job title within the company."
+        },
+        "designation": {
+            "type": "string",
+            "description": "The user's official designation."
+        },
+        "companyId": {
+          "type": "string",
+          "description": "Reference to the Company the user belongs to."
+        },
+        "role": {
+            "type": "string",
+            "description": "The user's role within their company.",
+            "enum": ["admin", "staff", "viewer"]
+        },
+        "status": {
+            "type": "string",
+            "description": "The current status of the user.",
+            "enum": ["active", "pending_invitation", "disabled"]
+        },
+        "plan": {
+            "type": "string",
+            "description": "The user's subscription plan.",
+            "enum": ["free", "business"]
+        },
+        "stripeCustomerId": {
+            "type": "string",
+            "description": "The user's Stripe Customer ID."
+        },
+        "subscriptionId": {
+            "type": "string",
+            "description": "The user's active Stripe Subscription ID."
+        },
+        "subscriptionStatus": {
+            "type": "string",
+            "description": "The status of the user's subscription.",
+            "enum": ["active", "trialing", "past_due", "canceled", "unpaid"]
+        },
+        "planExpires": {
+            "type": "string",
+            "description": "The expiration date of the user's plan.",
+            "format": "date-time"
+        },
+        "createdAt": {
+            "type": "string",
+            "description": "The timestamp when the user was created.",
+            "format": "date-time"
+        }
+      },
+      "required": [
+        "uid",
+        "email",
+        "companyId",
+        "role",
+        "plan",
+        "createdAt"
+      ]
+    },
+    "Company": {
+      "title": "Company",
+      "type": "object",
+      "description": "Represents a company that uses the InvoiceCraft application.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the Company entity."
+        },
+        "name": {
+          "type": "string",
+          "description": "Name of the company."
+        },
+        "ownerId": {
+          "type": "string",
+          "description": "The UID of the user who owns/created the company."
+        },
+        "logoUrl": {
+          "type": "string",
+          "description": "URL of the company logo.",
+          "format": "uri"
+        },
+         "stripeCustomerId": {
+            "type": "string",
+            "description": "The company's Stripe Customer ID."
+        },
+        "subscriptionId": {
+            "type": "string",
+            "description": "The company's active Stripe Subscription ID."
+        },
+        "subscriptionStatus": {
+            "type": "string",
+            "description": "The status of the company's subscription."
+        },
+        "createdAt": {
+            "type": "string",
+            "description": "The timestamp when the company was created.",
+            "format": "date-time"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "ownerId"
+      ]
+    },
+    "Client": {
+      "title": "Client",
+      "type": "object",
+      "description": "Represents a client of a company.",
+      "properties": {
+        "id": { "type": "string", "description": "Unique identifier for the Client entity." },
+        "companyId": { "type": "string", "description": "The ID of the company this client belongs to." },
+        "name": { "type": "string", "description": "Full name of the client contact." },
+        "companyName": { "type": "string", "description": "The client's company name." },
+        "email": { "type": "string", "format": "email", "description": "Primary contact email for the client." },
+        "phone": { "type": "string", "description": "Primary contact phone number for the client." },
+        "address": { "type": "string", "description": "Billing address for the client." },
+        "shippingAddress": { "type": "string", "description": "Shipping address for the client." },
+        "website": { "type": "string", "format": "uri", "description": "Client's website URL." },
+        "taxId": { "type": "string", "description": "Client's Tax ID or VAT number." },
+        "notes": { "type": "string", "description": "Internal notes about the client." },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Timestamp of when the client was created." },
+        "updatedAt": { "type": "string", "format": "date-time", "description": "Timestamp of the last client update." }
+      },
+      "required": ["id", "companyId", "name", "email"]
+    },
+    "Invoice": {
+      "title": "Invoice",
+      "type": "object",
+      "description": "Represents an invoice document.",
+      "properties": {
+        "id": { "type": "string" },
+        "companyId": { "type": "string" },
+        "clientId": { "type": "string", "description": "The ID of the client this invoice belongs to." },
+        "userId": { "type": "string" },
+        "companyName": { "type": "string" },
+        "clientName": { "type": "string" },
+        "invoiceDate": { "type": "string", "format": "date-time" },
+        "totalAmount": { "type": "number" },
+        "status": { "type": "string", "enum": ["draft", "sent", "paid", "overdue"] }
+      },
+      "required": ["id", "companyId", "clientId", "userId", "companyName", "clientName", "invoiceDate", "totalAmount", "status"]
+    },
+    "Estimate": {
+      "title": "Estimate",
+      "type": "object",
+      "description": "Represents a quote or estimate generated by a user.",
+      "properties": {
+        "id": { "type": "string" },
+        "companyId": { "type": "string" },
+        "clientId": { "type": "string", "description": "The ID of the client this estimate belongs to." },
+        "userId": { "type": "string" },
+        "estimateNumber": { "type": "string" },
+        "status": { "type": "string", "enum": ["draft", "sent", "accepted", "rejected", "expired"] },
+        "estimateDate": { "type": "string", "format": "date-time" },
+        "validUntilDate": { "type": "string", "format": "date-time" },
+        "projectTitle": { "type": "string" },
+        "business": { "$ref": "#/entities/BusinessInfo" },
+        "client": { "$ref": "#/entities/ClientInfo" },
+        "lineItems": { "type": "array", "items": { "$ref": "#/entities/LineItem" } },
+        "summary": { "$ref": "#/entities/EstimateSummary" }
+      },
+      "required": ["id", "companyId", "clientId", "userId", "estimateNumber", "status", "estimateDate", "business", "client", "lineItems", "summary"]
+    },
+    "LineItem": {
+      "title": "LineItem",
+      "type": "object",
+      "description": "Represents an item within a quote or invoice.",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "description": { "type": "string" },
+        "quantity": { "type": "number" },
+        "unitPrice": { "type": "number" },
+        "taxable": { "type": "boolean" }
+      },
+      "required": ["id", "name", "quantity", "unitPrice"]
+    },
+    "BusinessInfo": {
+        "title": "Business Info",
+        "type": "object",
+        "description": "Represents the sender's business information.",
+        "properties": {
+            "name": { "type": "string" },
+            "address": { "type": "string" },
+            "phone": { "type": "string" },
+            "email": { "type": "string", "format": "email" },
+            "website": { "type": "string", "format": "uri" }
+        },
+        "required": ["name", "address", "phone", "email"]
+    },
+    "ClientInfo": {
+        "title": "Client Info",
+        "type": "object",
+        "description": "Represents the recipient's client information.",
+        "properties": {
+            "name": { "type": "string" },
+            "companyName": { "type": "string" },
+            "address": { "type": "string" },
+            "email": { "type": "string", "format": "email" }
+        },
+        "required": ["name", "address", "email"]
+    },
+    "EstimateSummary": {
+        "title": "Estimate Summary",
+        "type": "object",
+        "description": "Represents the financial summary of an estimate.",
+        "properties": {
+            "subtotal": { "type": "number" },
+            "taxPercentage": { "type": "number" },
+            "taxAmount": { "type": "number" },
+            "discount": { "type": "number" },
+            "grandTotal": { "type": "number" }
+        },
+        "required": ["subtotal", "taxAmount", "grandTotal"]
+    },
+    "Role": {
+        "title": "Role",
+        "type": "object",
+        "description": "Defines user roles within a company.",
+        "properties": {
+            "name": { "type": "string", "enum": ["admin", "staff", "viewer"] }
+        },
+        "required": ["name"]
+    },
+    "Settings": {
+        "title": "Settings",
+        "type": "object",
+        "description": "Company-wide settings.",
+        "properties": { "accentColor": { "type": "string" } }
+    },
+    "Preset": {
+        "title": "Preset",
+        "type": "object",
+        "description": "A reusable set of line items.",
+        "properties": {
+            "name": { "type": "string" },
+            "items": { "type": "array", "items": { "$ref": "#/entities/LineItem" } }
+        }
+    }
+  },
+  "auth": {
+    "providers": [
+      "password",
+      "anonymous"
+    ],
+    "customClaims": {
+        "companyId": { "type": "string" },
+        "role": { "type": "string", "enum": ["admin", "staff", "viewer"] }
+    }
+  },
+  "firestore": {
+    "structure": [
+      {
+        "path": "/companies/{companyId}",
+        "schema": { "$ref": "#/entities/Company" },
+        "description": "Root collection for all companies (tenants)."
+      },
+      {
+        "path": "/companies/{companyId}/users/{userId}",
+        "schema": { "$ref": "#/entities/User" },
+        "description": "Stores user profiles belonging to a specific company."
+      },
+      {
+        "path": "/companies/{companyId}/clients/{clientId}",
+        "schema": { "$ref": "#/entities/Client" },
+        "description": "Stores client profiles belonging to a specific company."
+      },
+      {
+        "path": "/companies/{companyId}/roles/{roleId}",
+        "schema": { "$ref": "#/entities/Role" },
+        "description": "Manages roles within a company."
+      },
+      {
+        "path": "/companies/{companyId}/invoices/{invoiceId}",
+        "schema": { "$ref": "#/entities/Invoice" },
+        "description": "Stores invoices for a specific company."
+      },
+      {
+        "path": "/companies/{companyId}/estimates/{estimateId}",
+        "schema": { "$ref": "#/entities/Estimate" },
+        "description": "Stores estimates for a specific company."
+      },
+      {
+        "path": "/companies/{companyId}/quotes/{quoteId}",
+        "schema": { "$ref": "#/entities/Estimate" },
+        "description": "Stores quotes for a specific company (using Estimate schema)."
+      },
+      {
+        "path": "/companies/{companyId}/presets/{presetId}",
+        "schema": { "$ref": "#/entities/Preset" },
+        "description": "Stores reusable line item presets for a company."
+      },
+      {
+        "path": "/companies/{companyId}/settings/{settingsId}",
+        "schema": { "$ref": "#/entities/Settings" },
+        "description": "Stores settings for a specific company."
+      },
+      {
+        "path": "/users/{userId}",
+        "schema": { "$ref": "#/entities/User" },
+        "description": "Global user collection for quick lookup and storing primary user metadata."
+      },
+      {
+        "path": "/mail/{docId}",
+        "schema": {},
+        "description": "Collection to trigger sending emails via an extension."
+      }
+    ]
+  }
+}

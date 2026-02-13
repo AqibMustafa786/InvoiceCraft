@@ -1,0 +1,15 @@
+{
+    "invoice": "Facture",
+    "billTo": "FACTURER À",
+    "invoiceDate": "Date de la facture",
+    "dueDate": "Date d'échéance",
+    "item": "Article",
+    "quantity": "Quantité",
+    "rate": "Taux",
+    "subtotal": "Sous-total",
+    "tax": "Taxe",
+    "discount": "Remise",
+    "total": "Total",
+    "notes": "Remarques",
+    "itemDescription": "Description de l'article"
+}

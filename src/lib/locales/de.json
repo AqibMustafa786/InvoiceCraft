@@ -1,0 +1,15 @@
+{
+    "invoice": "Rechnung",
+    "billTo": "Rechnung an",
+    "invoiceDate": "Rechnungsdatum",
+    "dueDate": "Fälligkeitsdatum",
+    "item": "Artikel",
+    "quantity": "Menge",
+    "rate": "Satz",
+    "subtotal": "Zwischensumme",
+    "tax": "Steuer",
+    "discount": "Rabatt",
+    "total": "Gesamt",
+    "notes": "Anmerkungen",
+    "itemDescription": "Artikelbeschreibung"
+}

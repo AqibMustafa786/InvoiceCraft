@@ -1,0 +1,16 @@
+
+{
+    "invoice": "انوائس",
+    "billTo": "بل بنام",
+    "invoiceDate": "انوائس کی تاریخ",
+    "dueDate": "واجب الادا تاریخ",
+    "item": "آئٹم",
+    "quantity": "مقدار",
+    "rate": "شرح",
+    "subtotal": "ذیلی کل",
+    "tax": "ٹیکس",
+    "discount": "رعایت",
+    "total": "کل",
+    "notes": "نوٹس",
+    "itemDescription": "آئٹم کی تفصیل"
+}
