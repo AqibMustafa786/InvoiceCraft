@@ -421,6 +421,7 @@ export default function DashboardPage() {
             template: 'default',
             amountPaid: 0,
             paymentInstructions: 'Thank you for your business. Please make payment to the details provided below.',
+            poNumber: '',
             auditLog: [newAuditLogEntry],
         };
 
@@ -486,15 +487,16 @@ export default function DashboardPage() {
                 }
             });
 
+
             if (newDoc.auditLog) {
                 const entries = Array.isArray(newDoc.auditLog) ? newDoc.auditLog : Object.values(newDoc.auditLog);
-                newDoc.auditLog = entries.map(entry => ({ ...entry, timestamp: toDateSafe((entry as any).timestamp) }));
+                newDoc.auditLog = entries.map((entry: any) => ({ ...entry, timestamp: toDateSafe(entry.timestamp) }));
             }
             if (!newDoc.documentType && 'policyNumber' in newDoc) {
                 newDoc.documentType = 'insurance';
             }
 
-            return newDoc as DocumentType;
+            return newDoc as any as DocumentType;
         }).sort((a, b) => {
             const dateA = toDateSafe((a as any).updatedAt) || toDateSafe((a as any).createdAt);
             const dateB = toDateSafe((b as any).updatedAt) || toDateSafe((b as any).createdAt);
@@ -511,13 +513,16 @@ export default function DashboardPage() {
             let docDate: Date | null = null;
             let clientName = '';
 
-            if ('invoiceDate' in doc) {
+            if (doc.documentType === 'invoice') {
                 docDate = toDateSafe((doc as Invoice).invoiceDate);
                 clientName = (doc as Invoice).client.name;
-            } else if ('estimateDate' in doc) {
+            } else if (doc.documentType === 'estimate') {
                 docDate = toDateSafe((doc as Estimate).estimateDate);
                 clientName = (doc as Estimate).client.name;
-            } else if ('documentDate' in doc) {
+            } else if (doc.documentType === 'quote') {
+                docDate = toDateSafe((doc as Quote).estimateDate);
+                clientName = (doc as Quote).client.name;
+            } else if (doc.documentType === 'insurance') {
                 docDate = toDateSafe((doc as InsuranceDocument).documentDate);
                 clientName = (doc as InsuranceDocument).policyHolder.name;
             }
@@ -608,7 +613,7 @@ export default function DashboardPage() {
                     variants={tableContainerVariants}
                     initial="hidden"
                     animate="visible"
-                    as={TableBody}
+                    className="[&_tr:last-child]:border-0"
                 >
                     {isLoading ? (
                         <TableRow>
@@ -645,8 +650,7 @@ export default function DashboardPage() {
                             <motion.tr
                                 key={doc.id}
                                 variants={tableRowVariants}
-                                className="transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted"
-                                as={TableRow}
+                                className="transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted border-b"
                             >
                                 <TableCell className="font-medium text-xs hidden sm:table-cell">{docNumber}</TableCell>
                                 <TableCell className="text-xs">{clientName}</TableCell>
@@ -692,7 +696,7 @@ export default function DashboardPage() {
                                                     <span className="text-xs">Edit</span>
                                                 </Link>
                                             </DropdownMenuItem>
-                                            {(docType === 'estimate' || docType === 'quote') && (
+                                            {(doc.documentType === 'estimate' || doc.documentType === 'quote') && (
                                                 <>
                                                     <DropdownMenuItem onClick={() => handleShare(doc.id, doc.documentType as 'estimate' | 'quote')} className="cursor-pointer">
                                                         <Share2 className="mr-2 h-3.5 w-3.5" />
@@ -704,7 +708,7 @@ export default function DashboardPage() {
                                                     </DropdownMenuItem>
                                                 </>
                                             )}
-                                            {docType === 'insurance' && (
+                                            {doc.documentType === 'insurance' && (
                                                 <DropdownMenuItem onClick={() => handleShare(doc.id, 'insurance')} className="cursor-pointer">
                                                     <Share2 className="mr-2 h-3.5 w-3.5" />
                                                     <span className="text-xs">Share COI</span>
@@ -757,16 +761,15 @@ export default function DashboardPage() {
                             variants={tableContainerVariants}
                             initial="hidden"
                             animate="visible"
-                            as={TableBody}
+                            className="[&_tr:last-child]:border-0"
                         >
                             {isLoadingClients ? (
                                 <TableRow><TableCell colSpan={4} className="text-center h-24">Loading clients...</TableCell></TableRow>
                             ) : filteredClients && filteredClients.length > 0 ? filteredClients.map((client) => (
                                 <motion.tr
-                                    as={TableRow}
                                     key={client.id}
                                     variants={tableRowVariants}
-                                    className="cursor-pointer"
+                                    className="cursor-pointer border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted"
                                     onClick={() => router.push(`/dashboard/clients/${client.id}`)}
                                 >
                                     <TableCell className="font-medium text-xs">{client.name}</TableCell>

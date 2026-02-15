@@ -214,6 +214,10 @@ export function ClientFormDialog({ open, onOpenChange, client, onSave }: ClientF
       const dataToSave: Client = {
         id: idToSave,
         companyId: userProfile?.companyId || user.uid,
+        name: data.name,
+        companyName: data.companyName || '',
+        email: data.email,
+        phone: data.phone || '',
         address: data.address || '',
         shippingAddress: data.shippingAddress || '',
         website: data.website || '',

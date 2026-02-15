@@ -105,7 +105,15 @@ export function ClientFormDialog({ open, onOpenChange, client, onSave }: ClientF
       const dataToSave: Client = {
         id: idToSave,
         companyId: userProfile.companyId,
-        ...data,
+        name: data.name,
+        email: data.email,
+        companyName: data.companyName || '',
+        phone: data.phone || '',
+        address: data.address || '',
+        shippingAddress: data.shippingAddress || '',
+        website: data.website || '',
+        taxId: data.taxId || '',
+        notes: data.notes || '',
         updatedAt: serverTimestamp(),
         createdAt: isNewClient ? serverTimestamp() : client?.createdAt,
       };

@@ -192,7 +192,7 @@ export function InviteUserDialog({ open, onOpenChange, onUserInvited, user: edit
       if (isNewUser) {
         const emailLower = data.email.toLowerCase();
         const newUserId = `invited_${emailLower.replace(/[^a-zA-Z0-9]/g, '')}`;
-        const newUserRef = doc(firestore, 'companies', userProfile.companyId, 'users', newUserId);
+        const newUserRef = doc(firestore, 'companies', companyId, 'users', newUserId);
 
         await setDoc(newUserRef, {
           ...data,
@@ -246,7 +246,7 @@ export function InviteUserDialog({ open, onOpenChange, onUserInvited, user: edit
         if (!editingUser?.uid) {
           throw new Error("Cannot update employee without a User ID.");
         }
-        const userRef = doc(firestore, 'companies', userProfile.companyId, 'users', editingUser.uid);
+        const userRef = doc(firestore, 'companies', companyId, 'users', editingUser.uid);
         // Exclude uid and email from the update payload
         const { uid, email, ...updateData } = data;
 

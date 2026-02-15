@@ -11,10 +11,10 @@ import {
 } from "@/components/ui/dialog";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import type { Invoice, Estimate, Quote } from '@/lib/types';
+import type { Invoice, Estimate, Quote, InsuranceDocument } from '@/lib/types';
 import { format } from 'date-fns';
 
-type DocumentType = Invoice | Estimate | Quote;
+type DocumentType = Invoice | Estimate | Quote | InsuranceDocument;
 
 interface KpiDetailsModalProps {
   isOpen: boolean;
@@ -25,13 +25,13 @@ interface KpiDetailsModalProps {
 }
 
 const safeFormat = (date: any, formatString: string) => {
-    if (!date) return 'N/A';
-    try {
-        const d = date.toDate ? date.toDate() : new Date(date);
-        return format(d, formatString);
-    } catch (e) {
-        return "Invalid Date";
-    }
+  if (!date) return 'N/A';
+  try {
+    const d = date.toDate ? date.toDate() : new Date(date);
+    return format(d, formatString);
+  } catch (e) {
+    return "Invalid Date";
+  }
 }
 
 export function KpiDetailsModal({ isOpen, onClose, title, documents, currencySymbol }: KpiDetailsModalProps) {
@@ -44,6 +44,14 @@ export function KpiDetailsModal({ isOpen, onClose, title, documents, currencySym
         date: safeFormat(invoice.invoiceDate, 'MMM d, yyyy'),
         amount: invoice.summary.grandTotal
       };
+    } else if (doc.documentType === 'insurance') {
+      const insurance = doc as InsuranceDocument;
+      return {
+        number: insurance.policyNumber,
+        client: insurance.policyHolder.name,
+        date: safeFormat(insurance.documentDate, 'MMM d, yyyy'),
+        amount: 0 // Insurance docs might not have a grandTotal in the same way, or use valid markup. Using 0 or a specific field.
+      };
     } else {
       const estimate = doc as Estimate | Quote;
       return {
@@ -54,7 +62,7 @@ export function KpiDetailsModal({ isOpen, onClose, title, documents, currencySym
       };
     }
   };
-  
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-[625px] bg-card/80 backdrop-blur-sm">
@@ -102,4 +110,3 @@ export function KpiDetailsModal({ isOpen, onClose, title, documents, currencySym
   );
 }
 
-    

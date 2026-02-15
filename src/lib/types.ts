@@ -144,24 +144,25 @@ export interface EstimateSummary {
 export interface ConstructionInfo {
   jobSiteAddress: string;
   permitNumber: string;
-  laborRate: number | null;
-  equipmentRentalFees: number | null;
-  wasteDisposalFee: number | null;
-  projectStartDate: Date | null;
-  projectEndDate: Date | null;
+  laborRate?: number | null;
+  equipmentRentalFees?: number | null;
+  wasteDisposalFee?: number | null;
+  projectStartDate?: Date | null;
+  projectEndDate?: Date | null;
+  squareFootage?: number | null;
 }
 
 export interface RoofingInfo {
   roofType: string;
-  squareFootage: number | null;
+  squareFootage?: number | null;
   pitch: string;
   tearOffRequired: boolean;
   underlaymentType: string;
-  dumpsterFee: number | null;
+  dumpsterFee?: number | null;
   roofMaterial?: string;
   shingleBrand?: string;
   roofSize?: string;
-  layersToRemove?: number;
+  layersToRemove?: number | string; // Updated to allow string if needed ("1 layer")
   roofPitch?: string;
   flashingDetails?: string;
   ventilationSystem?: string;
@@ -173,208 +174,87 @@ export interface RoofingInfo {
 
 export interface PlumbingInfo {
   serviceType: string;
+  fixtureType: string;
   pipeMaterial: string;
-  fixtureName: string;
-  emergencyFee: number | null;
-  fixtureType?: string;
-  floorLevel?: string;
-  emergencyService?: boolean;
-  waterPressureIssue?: boolean;
-  leakLocation?: string;
-  estimatedRepairTime?: string;
+  floorLevel: string;
+  emergencyService: boolean;
+  waterPressureIssue: boolean;
+  leakLocation: string;
+  estimatedRepairTime: string;
+  fixtureName?: string;
+  emergencyFee?: number | null;
 }
 
 export interface ElectricalInfo {
   serviceType: string;
-  voltage: string;
-  fixtureDevice: string;
-  permitCost: number | null;
+  wiringType?: string;
+  panelUpgradeNeeded: boolean;
+  panelSize: string;
+  outletsFixturesCount?: number | null;
+  roomsInvolved: string;
+  evChargerNeeded: boolean;
+  inspectionRequired: boolean;
+  voltage?: string;
+  fixtureDevice?: string;
+  permitCost?: number | null;
 }
 
 export interface HVACInfo {
-  unitType: string;
-  modelNumber: string;
+  serviceType?: string;
+  systemType: string;
+  unitSize?: number | null;
+  seerRating: string;
+  furnaceType: string;
+  ductworkRequired: boolean;
+  thermostatType: string;
+  existingSystemCondition: string;
   refrigerantType: string;
-  maintenanceFee: number | null;
+  maintenanceFee?: number | null;
+  unitType?: string;
+  modelNumber?: string;
 }
 
 export interface LandscapingInfo {
-  lawnSquareFootage: number | null;
   serviceType: string;
-  equipmentFee: number | null;
-  disposalFee: number | null;
-  propertySize?: string;
-  yardCondition?: string;
-  grassHeight?: string;
-  treeCount?: number;
-  fenceLengthNeeded?: number;
+  propertySize: string;
+  grassHeight: string;
+  treeCount?: number | null;
+  fenceLengthNeeded: string; // Changed to string to match usage
+  yardCondition: string;
+  lawnSquareFootage?: number | null;
+  equipmentFee?: number | null;
+  disposalFee?: number | null;
 }
 
 export interface CleaningInfo {
   cleaningType: string;
-  numberOfRooms: number | null;
-  squareFootage: number | null;
-  suppliesFee: number | null;
-  recurringSchedule: string;
-  addOns?: string[];
-  frequency?: string;
-  homeSize?: string;
-  bedrooms?: number;
-  bathrooms?: number;
-  kitchenSize?: string;
-  hasPets?: boolean;
+  homeSize?: number | null;
+  bedrooms?: number | null;
+  bathrooms?: number | null;
+  kitchenSize: string;
+  hasPets: boolean;
+  addOns: string[];
+  frequency: string;
+  numberOfRooms?: number | null;
+  squareFootage?: number | null;
+  suppliesFee?: number | null;
+  recurringSchedule?: string;
 }
-
-export interface ConsultingInfo {
-  consultationType: string;
-  sessionHours: number | null;
-  retainerFee: number | null;
-}
-
-export interface LegalInfo {
-  caseName: string;
-  caseNumber: string;
-  serviceType: string;
-  hourlyRate: number | null;
-  hoursWorked: number | null;
-  retainerAmount: number | null;
-  courtFilingFees: number | null;
-  travelTime: number | null;
-  additionalDisbursements: string | null;
-}
-
-export interface MedicalInfo {
-  patientName: string;
-  patientId: string;
-  serviceType: string;
-  cptCode: string;
-  icdCode: string;
-  visitDate: Date | null;
-  physicianName: string;
-  copayAmount: number | null;
-  labFee: number | null;
-  medicationCharges: number | null;
-}
-
-export interface AutoRepairInfo {
-  vehicleMake: string;
-  vehicleModel: string;
-  year: number | null;
-  vehicleYear?: number;
-  licensePlate: string;
-  vin: string;
-  odometer: number | null;
-  mileage?: number;
-  laborHours: number | null;
-  laborRate: number | null;
-  diagnosticFee: number | null;
-  shopSupplyFee: number | null;
-  towingFee: number | null;
-  parts: { name: string; partNumber: string; cost: number; }[];
-  issueDescription?: string;
-  partsRequired?: string;
-  diagnosticType?: string;
-}
-
-export interface EcommerceInfo {
-  orderNumber: string;
-  sku: string;
-  productCategory: string;
-  weight: number | null;
-  quantity: number | null;
-  shippingCost: number | null;
-  shippingCarrier: string;
-  trackingId: string;
-  salesTax: number | null;
-  packagingFee: number | null;
-}
-
-export interface RetailInfo {
-  sku: string;
-  productName: string;
-  productCategory: string;
-  unitOfMeasure: string;
-  batchNumber: string;
-  stockQuantity: number | null;
-  wholesalePrice: number | null;
-  shippingPalletCost: number | null;
-}
-
-export interface PhotographyInfo {
-  eventType: string;
-  shootDate: Date | null;
-  hoursOfCoverage: number | null;
-  packageSelected: string;
-  editedPhotosCount: number | null;
-  rawFilesCost: number | null;
-  travelFee?: number;
-  equipmentRentalFee?: number;
-}
-
-export interface RealEstateInfo {
-  propertyAddress: string;
-  unitNumber: string;
-  leaseTerm: string;
-  tenantName: string;
-  monthlyRent: number | null;
-  cleaningFee: number | null;
-  maintenanceFee: number | null;
-  lateFee: number | null;
-  hoaCharges: number | null;
-  utilityCharges: number | null;
-}
-
-export interface TransportationInfo {
-  pickupLocation: string;
-  dropoffLocation: string;
-  milesDriven: number | null;
-  ratePerMile: number | null;
-  weight: number | null;
-  loadType: string;
-  fuelSurcharge: number | null;
-  tollCharges: number | null;
-  detentionFee: number | null;
-}
-
-export interface ITServiceInfo {
-  serviceType: string;
-  hourlyRate: number | null;
-  hardwareReplacementCost: number | null;
-  monthlyMaintenanceFee: number | null;
-  deviceType: string;
-  serialNumber: string;
-  hoursWorked: number | null;
-}
-
-export interface RentalInfo {
-  rentalItemName: string;
-  rentalStartDate: Date | null;
-  rentalEndDate: Date | null;
-  dailyRate: number | null;
-  hourlyRate: number | null;
-  numberOfDays: number | null;
-  numberOfHours: number | null;
-  securityDeposit: number | null;
-  damageCharges: number | null;
-  deliveryFee: number | null;
-  pickupFee: number | null;
-}
-
 
 export interface ITFreelanceInfo {
-  projectName: string;
-  hourlyRate: number | null;
-  fixedRate: number | null;
-  hoursLogged: number | null;
-  milestoneDescription: string;
-  projectType?: string;
-  designStyle?: string;
-  pagesScreensCount?: number;
-  revisionsIncluded?: number;
-  deliveryTimeline?: string;
-  scopeOfWork?: string;
-  featuresNeeded?: string;
-  integrations?: string;
+  projectType: string;
+  scopeOfWork: string;
+  pagesScreensCount?: number | null;
+  designStyle: string;
+  featuresNeeded: string;
+  integrations: string;
+  revisionsIncluded?: number | null;
+  deliveryTimeline: string;
+  projectName?: string;
+  hourlyRate?: number | null;
+  fixedRate?: number | null;
+  hoursLogged?: number | null;
+  milestoneDescription?: string;
 }
 
 export interface AuditLogEntry {
@@ -512,6 +392,7 @@ export interface Estimate {
   updatedAt?: any;
 
   // Category specific data
+  // Category specific data
   homeRemodeling?: HomeRemodelingInfo;
   roofing?: RoofingInfo;
   hvac?: HVACInfo;
@@ -535,6 +416,141 @@ export interface Estimate {
 }
 
 export type Quote = Estimate & { documentType: 'quote' };
+
+export interface ConsultingInfo {
+  consultationType: string;
+  sessionHours?: number | null;
+  retainerFee?: number | null;
+}
+
+export interface LegalInfo {
+  caseName: string;
+  caseNumber: string;
+  serviceType: string;
+  hourlyRate?: number | null;
+  hoursWorked?: number | null;
+  retainerAmount?: number | null;
+  courtFilingFees?: number | null;
+  travelTime?: number | null;
+  additionalDisbursements?: string | null;
+}
+
+export interface MedicalInfo {
+  patientName: string;
+  patientId: string;
+  serviceType: string;
+  cptCode: string;
+  icdCode: string;
+  visitDate?: Date | null;
+  physicianName: string;
+  copayAmount?: number | null;
+  labFee?: number | null;
+  medicationCharges?: number | null;
+}
+
+export interface AutoRepairInfo {
+  vehicleMake: string;
+  vehicleModel: string;
+  year?: number | null;
+  vehicleYear?: number;
+  licensePlate: string;
+  vin: string;
+  odometer?: number | null;
+  mileage?: number;
+  laborHours?: number | null;
+  laborRate?: number | null;
+  diagnosticFee?: number | null;
+  shopSupplyFee?: number | null;
+  towingFee?: number | null;
+  parts: { name: string; partNumber: string; cost: number; }[];
+  issueDescription?: string;
+  partsRequired?: string;
+  diagnosticType?: string;
+}
+
+export interface EcommerceInfo {
+  orderNumber: string;
+  sku: string;
+  productCategory: string;
+  weight?: number | null;
+  quantity?: number | null;
+  shippingCost?: number | null;
+  shippingCarrier: string;
+  trackingId: string;
+  salesTax?: number | null;
+  packagingFee?: number | null;
+}
+
+export interface RetailInfo {
+  sku: string;
+  productName: string;
+  productCategory: string;
+  unitOfMeasure: string;
+  batchNumber: string;
+  stockQuantity?: number | null;
+  wholesalePrice?: number | null;
+  shippingPalletCost?: number | null;
+}
+
+export interface PhotographyInfo {
+  eventType: string;
+  shootDate?: Date | null;
+  hoursOfCoverage?: number | null;
+  packageSelected: string;
+  editedPhotosCount?: number | null;
+  rawFilesCost?: number | null;
+  travelFee?: number;
+  equipmentRentalFee?: number;
+}
+
+export interface RealEstateInfo {
+  propertyAddress: string;
+  unitNumber: string;
+  leaseTerm: string;
+  tenantName: string;
+  monthlyRent?: number | null;
+  cleaningFee?: number | null;
+  maintenanceFee?: number | null;
+  lateFee?: number | null;
+  hoaCharges?: number | null;
+  utilityCharges?: number | null;
+}
+
+export interface TransportationInfo {
+  pickupLocation: string;
+  dropoffLocation: string;
+  milesDriven?: number | null;
+  ratePerMile?: number | null;
+  weight?: number | null;
+  loadType: string;
+  fuelSurcharge?: number | null;
+  tollCharges?: number | null;
+  detentionFee?: number | null;
+}
+
+export interface ITServiceInfo {
+  serviceType: string;
+  hourlyRate?: number | null;
+  hardwareReplacementCost?: number | null;
+  monthlyMaintenanceFee?: number | null;
+  deviceType: string;
+  serialNumber: string;
+  hoursWorked?: number | null;
+}
+
+export interface RentalInfo {
+  rentalItemName: string;
+  rentalStartDate?: Date | null;
+  rentalEndDate?: Date | null;
+  dailyRate?: number | null;
+  hourlyRate?: number | null;
+  numberOfDays?: number | null;
+  numberOfHours?: number | null;
+  securityDeposit?: number | null;
+  damageCharges?: number | null;
+  deliveryFee?: number | null;
+  pickupFee?: number | null;
+}
 
 
 export interface PolicyHolderInfo {
@@ -599,6 +615,7 @@ export interface InsuranceDocument {
   }
 
   policyNumber: string;
+  documentType: 'insurance';
   documentDate: Date;
 
   items: LineItem[];

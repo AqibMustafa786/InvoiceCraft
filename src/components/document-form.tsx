@@ -3,7 +3,7 @@
 
 import { ChangeEvent, Dispatch, SetStateAction, useState, useEffect } from 'react';
 import type {
-  Estimate, LineItem, Quote, EstimateCategory, Client,
+  Estimate, LineItem, Quote, EstimateCategory, Client, ClientInfo,
   ConstructionInfo, RoofingInfo, PlumbingInfo, ElectricalInfo, HVACInfo,
   LandscapingInfo, CleaningInfo, ITFreelanceInfo, HomeRemodelingInfo,
   AuditLogEntry
@@ -138,6 +138,14 @@ export function DocumentForm({ document, setDocument, accentColor, setAccentColo
   const [isClientPopoverOpen, setIsClientPopoverOpen] = useState(false);
 
   const companyId = userProfile?.companyId;
+
+  const getInitialClientInfo = (): ClientInfo => ({
+    name: '',
+    address: '',
+    phone: '',
+    email: '',
+    companyName: '',
+  });
 
   const clientsQuery = useMemoFirebase(() => {
     if (!firestore || !companyId) return null;
