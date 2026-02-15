@@ -12,61 +12,13 @@ import React, { useEffect, useState } from 'react';
 import { useTheme } from 'next-themes';
 import dynamic from 'next/dynamic';
 import { Badge } from '@/components/ui/badge';
-import { StackedCarousel } from '@/components/templates/stacked-carousel';
+import { TemplateShowcase } from '@/components/templates/stacked-carousel';
+import { TestimonialsSection } from '@/components/home/testimonials-section';
 
 const AIChatbot = dynamic(() => import('@/components/ai-chatbot').then(mod => mod.AIChatbot), { ssr: false });
 
 
-const tools = [
-  {
-    href: '/create-invoice',
-    label: 'Invoice',
-    icon: <FileText className="h-10 w-10 text-primary" />,
-  },
-  {
-    href: '/create-estimate',
-    label: 'Estimate',
-    icon: <FilePlus className="h-10 w-10 text-primary" />,
-  },
-  {
-    href: '/create-quote',
-    label: 'Quote',
-    icon: <FileText className="h-10 w-10 text-primary" />,
-  },
-  {
-    href: '/create-insurance',
-    label: 'Insurance',
-    icon: <Shield className="h-10 w-10 text-primary" />,
-  },
-];
-
-const homePageFeatures = [
-  {
-    icon: <Edit className="h-8 w-8 text-primary" />,
-    name: 'Live Preview',
-    description: 'See your changes in real-time as you build your document, ensuring a perfect result.',
-  },
-  {
-    icon: <LayoutDashboard className="h-8 w-8 text-primary" />,
-    name: 'Cloud Dashboard',
-    description: 'Securely access and manage all your documents from anywhere with our Firestore-backed dashboard.',
-  },
-  {
-    icon: <Share2 className="h-8 w-8 text-primary" />,
-    name: 'Share & Collaborate',
-    description: 'Email documents directly to clients or share public links for online viewing and acceptance.',
-  },
-  {
-    icon: <Palette className="h-8 w-8 text-primary" />,
-    name: 'Deep Customization',
-    description: 'Personalize documents with your logo, brand colors, and professional templates.',
-  },
-  {
-    icon: <Bot className="h-8 w-8 text-primary" />,
-    name: 'AI-Powered Workflow',
-    description: 'Leverage Genkit AI for intelligent features like automated PDF generation for emails.',
-  }
-];
+import { FEATURES, TOOLS } from '@/lib/features';
 
 const problems = [
   { text: "Manual, repetitive invoicing takes hours", icon: <Clock className="h-5 w-5 text-destructive" /> },
@@ -82,96 +34,11 @@ const solutions = [
   { text: "Clear, itemized billing for faster payments", icon: <CheckCircle className="h-5 w-5 text-primary" /> },
 ];
 
-const testimonials = [
-  {
-    quote: "InvoiceCraft has revolutionized how I handle my billing. I'm saving hours every week and getting paid faster than ever.",
-    name: 'Jane Doe',
-    role: 'Freelance Designer',
-    avatar: 'https://picsum.photos/seed/woman1/100/100'
-  },
-  {
-    quote: "The templates are stunning and so easy to customize. My clients always comment on how professional my invoices look.",
-    name: 'John Smith',
-    role: 'Small Business Owner',
-    avatar: 'https://picsum.photos/seed/man1/100/100'
-  },
-  {
-    quote: "I love the dashboard feature. Seeing all my documents in one place and tracking their status is a game-changer for my freelance business.",
-    name: 'Emily White',
-    role: 'Finance Manager',
-    avatar: 'https://picsum.photos/seed/woman2/100/100'
-  },
-  {
-    quote: "The best invoicing tool I've used. Simple, fast, and the AI features are surprisingly helpful.",
-    name: 'Michael Brown',
-    role: 'Tech Consultant',
-    avatar: 'https://picsum.photos/seed/man2/100/100'
-  },
-  {
-    quote: "As a contractor, I need to create estimates on the go. InvoiceCraft's mobile interface is fantastic for that.",
-    name: 'David Wilson',
-    role: 'General Contractor',
-    avatar: 'https://picsum.photos/seed/man3/100/100'
-  },
-  {
-    quote: "The ability to create professional insurance documents has been a huge plus for my agency.",
-    name: 'Sarah Johnson',
-    role: 'Insurance Agent',
-    avatar: 'https://picsum.photos/seed/woman3/100/100'
-  },
-];
+// Testimonials data removed in favor of dedicated component
 
 
 export default function HomePage() {
   const [mounted, setMounted] = useState(false);
-  const [[page, direction], setPage] = useState([0, 0]);
-  const { theme } = useTheme();
-
-  const testimonialsPerPage = 3;
-  const numPages = Math.ceil(testimonials.length / testimonialsPerPage);
-
-  const paginate = (newDirection: number) => {
-    setPage([page + newDirection, newDirection]);
-  };
-
-  const nextTestimonials = () => {
-    paginate(1);
-  };
-
-  const prevTestimonials = () => {
-    paginate(-1);
-  };
-
-  const testimonialIndex = ((page % numPages) + numPages) % numPages;
-
-  const variants = {
-    enter: (direction: number) => ({
-      rotateY: direction > 0 ? -180 : 180,
-      opacity: 0,
-      scale: 0.8,
-    }),
-    center: {
-      rotateY: 0,
-      opacity: 1,
-      scale: 1,
-      transition: {
-        rotateY: { duration: 0.5 },
-        opacity: { duration: 0.2, delay: 0.15 },
-        scale: { duration: 0.5 }
-      }
-    },
-    exit: (direction: number) => ({
-      rotateY: direction < 0 ? -180 : 180,
-      opacity: 0,
-      scale: 0.8,
-      transition: {
-        rotateY: { duration: 0.5 },
-        opacity: { duration: 0.2 },
-        scale: { duration: 0.5 }
-      }
-    })
-  };
-
 
   useEffect(() => {
     setMounted(true);
@@ -196,6 +63,7 @@ export default function HomePage() {
       y: 0,
     },
   };
+
 
   return (
     <div className="flex flex-col min-h-dvh">
@@ -243,8 +111,8 @@ export default function HomePage() {
                   animate={{ opacity: 1 }}
                   transition={{ delay: 0.4 }}
                 >
-                  We develop beautiful and functional documents for desktop, tablet,
-                  and mobile.
+                  We provide the ultimate toolkit for US freelancers and agencies to look professional, save time, and automate billing.
+                  Built for desktop, tablet, and mobile.
                 </motion.p>
                 <motion.div
                   className="flex flex-col items-center justify-center gap-4 mt-8 sm:flex-row lg:justify-start"
@@ -276,16 +144,21 @@ export default function HomePage() {
         <section className="py-20 md:py-28 bg-primary/5 rounded-3xl">
           <div className="container px-4 mx-auto md:px-6">
             <div className="text-center max-w-2xl mx-auto mb-12">
-              <h2 className="text-4xl md:text-5xl font-bold font-headline">A Tool for Every Need</h2>
-              <p className="mt-4 text-muted-foreground">Whether you're billing a client, estimating a project, or quoting a price, we have you covered.</p>
+              <h2 className="text-4xl md:text-5xl font-bold font-headline">Everything You Need to Run Your Business</h2>
+              <p className="mt-4 text-muted-foreground text-lg">From invoices to insurance, we provide the essential tools for modern contractors and freelancers.</p>
             </div>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-              {tools.map((tool) => (
+              {TOOLS.map((tool) => (
                 <Link href={tool.href} key={tool.href} className="group">
                   <motion.div whileHover={{ y: -8, scale: 1.05 }} transition={{ type: "spring", stiffness: 300 }} className="h-full">
-                    <div className="bg-card/50 backdrop-blur-sm shadow-lg group-hover:shadow-primary/20 transition-all duration-300 rounded-xl p-6 flex flex-col items-center text-center gap-4 h-full">
-                      {React.cloneElement(tool.icon, { className: "h-10 w-10 text-primary" })}
-                      <p className="font-semibold text-lg">{tool.label}</p>
+                    <div className="bg-card/50 backdrop-blur-sm shadow-lg group-hover:shadow-primary/20 transition-all duration-300 rounded-xl p-6 flex flex-col items-center text-center gap-4 h-full border border-border/50">
+                      <div className="p-3 bg-primary/10 rounded-full">
+                        <tool.icon className="h-8 w-8 text-primary" />
+                      </div>
+                      <div>
+                        <p className="font-bold text-lg mb-1">{tool.label}</p>
+                        <p className="text-sm text-muted-foreground">{tool.description}</p>
+                      </div>
                     </div>
                   </motion.div>
                 </Link>
@@ -304,15 +177,21 @@ export default function HomePage() {
                 transition={{ duration: 0.5, ease: 'easeOut' }}
                 viewport={{ once: true, amount: 0.3 }}
               >
-                <h2 className="text-4xl md:text-5xl font-bold font-headline">Features That Power Your Business</h2>
-                <p className="mt-4 text-muted-foreground">
+                <h2 className="text-4xl md:text-5xl font-bold font-headline">Enterprise-Grade Features for Everyone</h2>
+                <p className="mt-4 text-muted-foreground text-lg">
                   InvoiceCraft is packed with powerful, intuitive features designed to save you time, make you look professional, and help you get paid faster.
+                  Join thousands of US businesses streamlining their finances.
                 </p>
-                <Button asChild size="lg" className="mt-8">
-                  <Link href="/features">
-                    Explore All Features <ArrowRight className="ml-2 h-5 w-5" />
-                  </Link>
-                </Button>
+                <div className="flex gap-4 mt-8">
+                  <Button asChild size="lg" className="shadow-lg shadow-primary/20">
+                    <Link href="/signup">
+                      Start for Free <ArrowRight className="ml-2 h-5 w-5" />
+                    </Link>
+                  </Button>
+                  <Button asChild size="lg" variant="outline">
+                    <Link href="/pricing">View Pricing</Link>
+                  </Button>
+                </div>
               </motion.div>
               <motion.div
                 className="grid grid-cols-1 sm:grid-cols-2 gap-6"
@@ -321,12 +200,16 @@ export default function HomePage() {
                 whileInView="visible"
                 viewport={{ once: true, amount: 0.2 }}
               >
-                {homePageFeatures.map((feature, index) => (
+                {FEATURES.map((feature, index) => (
                   <motion.div key={index} variants={itemVariants}>
-                    <div className="border bg-card/80 backdrop-blur-sm shadow-lg hover:shadow-primary/20 transition-all duration-300 h-full p-6 flex flex-col rounded-xl">
-                      {React.cloneElement(feature.icon, { className: "h-8 w-8 text-primary" })}
-                      <h3 className="text-xl font-semibold mt-4 mb-2">{feature.name}</h3>
-                      <p className="text-muted-foreground text-sm flex-1">{feature.description}</p>
+                    <div className={`border bg-card/80 backdrop-blur-sm shadow-sm hover:shadow-lg hover:shadow-primary/10 transition-all duration-300 h-full p-6 flex flex-col rounded-xl ${feature.highlight ? 'border-primary/50 bg-primary/5' : 'border-border/50'}`}>
+                      <div className="flex items-center gap-3 mb-3">
+                        <div className={`p-2 rounded-lg ${feature.highlight ? 'bg-primary text-primary-foreground' : 'bg-muted text-foreground'}`}>
+                          <feature.icon className="h-5 w-5" />
+                        </div>
+                        <h3 className="text-lg font-bold">{feature.title}</h3>
+                      </div>
+                      <p className="text-muted-foreground text-sm flex-1 leading-relaxed">{feature.description}</p>
                     </div>
                   </motion.div>
                 ))}
@@ -390,97 +273,86 @@ export default function HomePage() {
           </div>
         </section>
 
-        <section className="relative overflow-hidden bg-background py-20 md:py-28 text-foreground">
-          <div className="absolute inset-0 z-0 opacity-5">
-            <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
-              <defs>
-                <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
-                  <path d="M 40 0 L 0 0 0 40" fill="none" stroke="hsl(var(--foreground))" strokeWidth="0.2" />
-                </pattern>
-              </defs>
-              <rect width="100%" height="100%" fill="url(#grid)" />
-            </svg>
-          </div>
-          <div className="absolute inset-0 bg-gradient-to-b from-background via-background/80 to-background z-10"></div>
+        <section className="relative overflow-hidden py-24 md:py-32 bg-[#0A0A0A] text-white">
+          {/* Ambient Background */}
+          <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-primary/20 rounded-full blur-[120px] opacity-30 pointer-events-none"></div>
+          <div className="absolute bottom-0 right-1/4 w-[500px] h-[500px] bg-blue-500/20 rounded-full blur-[120px] opacity-30 pointer-events-none"></div>
 
-          <div className="container relative z-20 px-4 mx-auto md:px-6">
-            <div className="grid lg:grid-cols-2 gap-12 items-center">
-              <div className="max-w-lg">
-                <p className="text-sm font-bold tracking-wider uppercase text-primary">Discipline Will Take You Places</p>
-                <h2 className="text-4xl md:text-5xl font-bold font-headline mt-2">Design Smarter, <br />Not Harder.</h2>
-                <p className="mt-4 text-muted-foreground">Stop wrestling with generic templates. InvoiceCraft gives you the power to create beautiful, branded documents that reflect the quality of your work. Impress clients and get paid faster.</p>
-                <div className="mt-8 flex gap-4">
-                  <Button size="lg" asChild>
-                    <Link href="/templates">Browse Templates</Link>
+          <div className="container relative z-10 px-4 mx-auto md:px-6">
+            <div className="grid lg:grid-cols-2 gap-16 items-center">
+              {/* Left Content */}
+              <motion.div
+                initial={{ opacity: 0, x: -30 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6, ease: "easeOut" }}
+                className="max-w-xl"
+              >
+                <Badge variant="outline" className="mb-6 px-4 py-1.5 text-sm font-medium border-primary/30 text-primary bg-primary/10 backdrop-blur-md">
+                  Professional Identity
+                </Badge>
+
+                <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold font-headline leading-tight mb-6">
+                  Craft Your <br />
+                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-white to-gray-400">
+                    Business Legacy.
+                  </span>
+                </h2>
+
+                <p className="text-lg text-gray-400 leading-relaxed mb-8">
+                  In the competitive US market, perception is reality. Stop settling for generic, uninspired invoices.
+                  <strong className="text-white"> InvoiceCraft</strong> empowers you to build a cohesive brand identity with legally compliant,
+                  designer-grade templates that command respect and ensure you get paid on time.
+                </p>
+
+                <div className="flex flex-col sm:flex-row gap-4">
+                  <Button size="lg" asChild className="h-14 px-8 text-base bg-white text-black hover:bg-gray-200 border-none shadow-[0_0_20px_rgba(255,255,255,0.3)] transition-all hover:scale-105">
+                    <Link href="/templates">
+                      Explore Template Gallery
+                    </Link>
                   </Button>
-                  <Button size="lg" variant="outline">
-                    Learn More
+                  <Button size="lg" variant="outline" className="h-14 px-8 text-base border-white/20 text-white hover:bg-white/10 hover:text-white bg-transparent backdrop-blur-sm">
+                    How It Works
                   </Button>
                 </div>
+
+                <div className="mt-10 flex items-center gap-6 text-sm text-gray-500">
+                  <div className="flex items-center gap-2">
+                    <CheckCircle className="h-4 w-4 text-primary" />
+                    <span>US Tax Compliant</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <CheckCircle className="h-4 w-4 text-primary" />
+                    <span>Mobile Optimized</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <CheckCircle className="h-4 w-4 text-primary" />
+                    <span>PDF & Web View</span>
+                  </div>
+                </div>
+              </motion.div>
+
+              {/* Right Showcase */}
+              <div className="relative">
+                {/* Decorative Elements */}
+                <div className="absolute inset-0 bg-gradient-to-tr from-primary/10 to-transparent rounded-full blur-3xl -z-10"></div>
+
+                <div className="relative z-10 p-8 rounded-3xl border border-white/10 bg-white/5 backdrop-blur-2xl shadow-2xl">
+                  <div className="absolute -top-6 -right-6 bg-background/80 backdrop-blur-md border border-border/50 p-4 rounded-xl shadow-xl animate-bounce duration-[3000ms]">
+                    <div className="flex items-center gap-3">
+                      <div className="h-3 w-3 rounded-full bg-green-500"></div>
+                      <span className="text-sm font-medium">Invoice #1024 Paid</span>
+                    </div>
+                  </div>
+
+                  <TemplateShowcase />
+                </div>
               </div>
-              <StackedCarousel />
             </div>
           </div>
         </section>
 
-        <section className="py-20 md:py-28 bg-card dark:bg-card text-card-foreground overflow-hidden">
-          <div className="container px-4 mx-auto md:px-6 relative">
-            <div className="absolute top-0 left-0 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-primary/20 rounded-full blur-3xl"></div>
-            <div className="absolute bottom-0 right-0 translate-x-1/2 translate-y-1/2 w-96 h-96 bg-accent/20 rounded-full blur-3xl"></div>
-            <div className="text-center max-w-2xl mx-auto mb-16">
-              <p className="text-sm font-bold tracking-wider uppercase text-muted-foreground">TESTIMONIALS</p>
-              <h2 className="text-4xl md:text-5xl font-bold font-headline mt-2 text-primary">What Our Customers Say</h2>
-              <p className="mt-4 text-muted-foreground">Trusted by thousands of businesses worldwide.</p>
-            </div>
-            <div className="relative min-h-[350px]" style={{ perspective: '1000px' }}>
-              <AnimatePresence initial={false} custom={direction}>
-                <motion.div
-                  key={page}
-                  custom={direction}
-                  variants={variants}
-                  initial="enter"
-                  animate="center"
-                  exit="exit"
-                  className="absolute w-full grid grid-cols-1 md:grid-cols-3 gap-8"
-                >
-                  {testimonials.slice(testimonialIndex * testimonialsPerPage, testimonialIndex * testimonialsPerPage + testimonialsPerPage).map((testimonial, index) => (
-                    <div key={index} className="relative pt-12 flex flex-col w-full">
-                      <div className="absolute top-0 left-1/2 -translate-x-1/2">
-                        <Image
-                          src={testimonial.avatar}
-                          alt={testimonial.name}
-                          width={80}
-                          height={80}
-                          className="rounded-full border-4 border-background shadow-lg"
-                        />
-                      </div>
-                      <div className="bg-background/80 border border-border/50 rounded-2xl p-8 pt-16 text-center flex flex-col flex-grow">
-                        <div className="flex justify-center mb-4 text-yellow-400">
-                          {[...Array(5)].map((_, i) => (
-                            <Star key={i} className="h-5 w-5 fill-current" />
-                          ))}
-                        </div>
-                        <p className="text-muted-foreground text-sm leading-relaxed flex-grow">"{testimonial.quote}"</p>
-                        <div className="mt-6">
-                          <h4 className="font-bold text-lg text-primary">{testimonial.name}</h4>
-                          <p className="text-xs text-muted-foreground">{testimonial.role}</p>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </motion.div>
-              </AnimatePresence>
-            </div>
-            <div className="flex justify-center gap-4 mt-12">
-              <Button size="icon" variant="outline" className="bg-background/50 border-border text-foreground hover:bg-accent rounded-full" onClick={prevTestimonials}>
-                <ChevronLeft className="h-5 w-5" />
-              </Button>
-              <Button size="icon" variant="outline" className="bg-background/50 border-border text-foreground hover:bg-accent rounded-full" onClick={nextTestimonials}>
-                <ChevronRight className="h-5 w-5" />
-              </Button>
-            </div>
-          </div>
-        </section>
+        <TestimonialsSection />
 
         <AIChatbot />
       </main>

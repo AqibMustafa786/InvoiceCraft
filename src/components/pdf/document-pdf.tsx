@@ -251,7 +251,7 @@ const createStyles = (language: Language, colors: { accent?: string; background?
 };
 
 // A reusable PDF document component that mirrors the structure of DocumentPreview
-export const PDFDocument = ({ data, language }: { data: Estimate | Quote | Invoice, language?: Language }) => {
+export const PDFDocument = ({ data, language, plan }: { data: Estimate | Quote | Invoice, language?: Language, plan?: string }) => {
   const lang = (data as any).language as Language || language || 'en';
   const customFont = (data as any).fontFamily;
 
@@ -452,6 +452,19 @@ export const PDFDocument = ({ data, language }: { data: Estimate | Quote | Invoi
                 </View>
               </View>
             )}
+          </View>
+        )}
+
+        {/* WATERMARK FOR FREE PLAN */}
+        {plan === 'free' && (
+          <View fixed style={{
+            position: 'absolute',
+            bottom: 300,
+            left: 100,
+            opacity: 0.1,
+            transform: 'rotate(-45deg)',
+          }}>
+            <Text style={{ fontSize: 60, color: 'grey', fontWeight: 'bold' }}>Created with InvoiceCraft</Text>
           </View>
         )}
 

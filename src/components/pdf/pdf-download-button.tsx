@@ -5,7 +5,9 @@ import { PDFDownloadLink } from '@react-pdf/renderer';
 import { Download, Loader2 } from 'lucide-react';
 import { PDFDocument } from './document-pdf';
 import type { Invoice, Estimate, Quote } from '@/lib/types';
+import type { Invoice, Estimate, Quote } from '@/lib/types';
 import { useLanguage } from '@/context/language-context';
+import { useUserAuth } from '@/context/auth-provider';
 
 interface PDFDownloadButtonProps {
     document: Invoice | Estimate | Quote;
@@ -15,6 +17,7 @@ interface PDFDownloadButtonProps {
 export function PDFDownloadButton({ document, fileName }: PDFDownloadButtonProps) {
     const [isMounted, setIsMounted] = useState(false);
     const { language } = useLanguage();
+    const { userProfile } = useUserAuth();
 
     useEffect(() => {
         setIsMounted(true);
@@ -31,7 +34,7 @@ export function PDFDownloadButton({ document, fileName }: PDFDownloadButtonProps
 
     return (
         <PDFDownloadLink
-            document={<PDFDocument data={document} language={language} />}
+            document={<PDFDocument data={document} language={language} plan={userProfile?.plan || 'free'} />}
             fileName={fileName}
             className="flex items-center w-full"
         >

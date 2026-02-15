@@ -215,7 +215,9 @@ export default function CreateQuotePage() {
     if (isNew && userProfile?.plan === 'free') {
       const canCreate = await checkUsageLimit(user.uid, QUOTES_COLLECTION);
       if (!canCreate) {
-        setIsUpgradeModalOpen(true);
+        // Redirect to pricing instead of modal
+        // setIsUpgradeModalOpen(true);
+        router.push('/pricing');
         return;
       }
     }
@@ -267,7 +269,9 @@ export default function CreateQuotePage() {
     if (userProfile?.plan === 'free') {
       const canCreate = await checkUsageLimit(user.uid, QUOTES_COLLECTION);
       if (!canCreate) {
-        setIsUpgradeModalOpen(true);
+        // Redirect to pricing instead of modal
+        // setIsUpgradeModalOpen(true);
+        router.push('/pricing');
         return;
       }
     }

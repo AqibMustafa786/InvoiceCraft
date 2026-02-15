@@ -3,10 +3,10 @@ import { collection, query, where, getDocs, Timestamp, getFirestore, getCountFro
 import { getFirebase } from '@/firebase';
 
 export const LIMITS = {
-    invoices: 3,
-    estimates: 3,
-    quotes: 1,
-    insurance: 1,
+    invoices: 5,
+    estimates: 5,
+    quotes: 5,
+    insurance: 5,
     clients: 3,
 };
 

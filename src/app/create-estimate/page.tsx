@@ -475,7 +475,9 @@ export default function CreateEstimatePage() {
     if (isNew && userProfile?.plan === 'free') {
       const canCreate = await checkUsageLimit(user.uid, ESTIMATES_COLLECTION);
       if (!canCreate) {
-        setIsUpgradeModalOpen(true);
+        // Redirect to pricing instead of modal
+        // setIsUpgradeModalOpen(true);
+        router.push('/pricing');
         return;
       }
     }
@@ -565,7 +567,9 @@ export default function CreateEstimatePage() {
     if (userProfile.plan === 'free') {
       const canCreate = await checkUsageLimit(user.uid, ESTIMATES_COLLECTION);
       if (!canCreate) {
-        setIsUpgradeModalOpen(true);
+        // Redirect to pricing instead of modal
+        // setIsUpgradeModalOpen(true);
+        router.push('/pricing');
         return;
       }
     }

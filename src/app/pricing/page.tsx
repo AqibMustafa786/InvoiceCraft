@@ -20,68 +20,7 @@ import { useFirebase, useMemoFirebase } from "@/firebase/provider";
 import { motion } from 'framer-motion';
 
 
-const plans = [
-  {
-    title: "Free",
-    price: {
-      monthly: "$0",
-      yearly: "$0"
-    },
-    description: "For freelancers and very small service providers starting out.",
-    features: [
-      { text: "Up to 5 invoices/month", included: true },
-      { text: "Up to 3 estimates/month", included: true },
-      { text: "PDF Export", included: true },
-      { text: "Basic Templates", included: true },
-      { text: "Cloud Save (last 5 docs)", included: true },
-      { text: "No Quotes or Insurance Docs", included: false },
-      { text: "No Custom Branding", included: false },
-      { text: "No Emailing", included: false },
-    ],
-    cta: "Get Started for Free",
-    ctaLink: "/signup",
-    variant: "default" as "default" | "primary",
-  },
-  {
-    title: "Business",
-    price: {
-      monthly: "$19.99",
-      yearly: "$199.99"
-    },
-    priceIds: {
-      monthly: process.env.STRIPE_PRICE_MONTHLY,
-      yearly: process.env.STRIPE_PRICE_YEARLY,
-    },
-    description: "For contractors, agencies, and freelancers with heavy usage.",
-    features: [
-      { text: "Unlimited Invoices & Estimates", included: true },
-      { text: "Unlimited Quotes & Insurance Docs", included: true },
-      { text: "All Professional Templates (20+)", included: true },
-      { text: "Custom Branding (Logo & Colors)", included: true },
-      { text: "Email PDF to Client", included: true },
-      { text: "Reusable Line Item Presets", included: true },
-      { text: "Unlimited Cloud Storage", included: true },
-      { text: "Remove 'Made with InvoiceCraft' Watermark", included: true },
-    ],
-    cta: "Choose Business",
-    ctaLink: "/signup", // This would later go to /checkout
-    variant: "primary" as "default" | "primary",
-  },
-];
-
-const comparisonFeatures = [
-  { feature: "Invoices", free: "5 per month", pro: "Unlimited" },
-  { feature: "Estimates", free: "3 per month", pro: "Unlimited" },
-  { feature: "Quotes", free: false, pro: true },
-  { feature: "Insurance Docs", free: false, pro: true },
-  { feature: "Line Item Presets", free: false, pro: true },
-  { feature: "Templates", free: "Basic (3)", pro: "All (20+)" },
-  { feature: "Custom Branding", free: false, pro: true },
-  { feature: "Email PDF to Client", free: false, pro: true },
-  { feature: "Remove Watermark", free: false, pro: true },
-  { feature: "Cloud Document Storage", free: "5 documents", pro: "Unlimited" },
-  { feature: "Analytics", free: false, pro: true },
-];
+import { PRICING_PLANS, COMPARISON_TABLE } from "@/lib/features";
 
 export default function PricingPage() {
   const [billingCycle, setBillingCycle] = useState<'monthly' | 'yearly'>('monthly');
@@ -158,42 +97,51 @@ export default function PricingPage() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-        {plans.map((plan) => (
-          <motion.div key={plan.title} whileHover={{ y: -8, scale: 1.03 }} transition={{ type: "spring", stiffness: 300 }}>
+        {PRICING_PLANS.map((plan) => (
+          <motion.div key={plan.id} whileHover={{ y: -8, scale: 1.03 }} transition={{ type: "spring", stiffness: 300 }}>
             <Card
-              className={`flex flex-col bg-card/50 backdrop-blur-sm shadow-lg h-full ${plan.variant === 'primary' ? 'border-primary border-2 shadow-primary/20' : 'border'}`}
+              className={`flex flex-col bg-card/50 backdrop-blur-sm shadow-lg h-full relative overflow-hidden ${plan.popular ? 'border-primary border-2 shadow-primary/20' : 'border'}`}
             >
+              {plan.popular && (
+                <div className="absolute top-0 right-0 bg-primary text-primary-foreground text-xs font-bold px-3 py-1 rounded-bl-xl z-10">
+                  MOST POPULAR
+                </div>
+              )}
               <CardHeader>
-                <CardTitle>{plan.title}</CardTitle>
-                <CardDescription>{plan.description}</CardDescription>
+                <CardTitle className="text-2xl">{plan.title}</CardTitle>
+                <CardDescription className="text-sm h-10">{plan.description}</CardDescription>
                 <div className="flex items-baseline pt-4">
-                  <span className="text-4xl font-bold">{plan.title === 'Free' ? plan.price.monthly : plan.price[billingCycle]}</span>
-                  {plan.title !== "Free" && <span className="text-muted-foreground">/{billingCycle === 'monthly' ? 'month' : 'year'}</span>}
+                  <span className="text-4xl font-bold">{plan.price[billingCycle]}</span>
+                  {plan.price.monthly !== "$0" && <span className="text-muted-foreground">/{billingCycle === 'monthly' ? 'month' : 'year'}</span>}
                 </div>
               </CardHeader>
               <CardContent className="flex-1 space-y-4">
                 <ul className="space-y-3 text-sm text-muted-foreground">
                   {plan.features.map((feature, index) => (
                     <li key={index} className="flex items-center gap-2">
-                      {feature.included ? <Check className="h-5 w-5 text-primary" /> : <X className="h-5 w-5 text-muted-foreground/50" />}
-                      <span>{feature.text}</span>
+                      {feature.included ? (
+                        <div className="p-0.5 rounded-full bg-primary/10 text-primary"><Check className="h-3.5 w-3.5" /></div>
+                      ) : (
+                        <X className="h-4 w-4 text-muted-foreground/30" />
+                      )}
+                      <span className={feature.included ? "text-foreground font-medium" : "opacity-60"}>{feature.text}</span>
                     </li>
                   ))}
                 </ul>
               </CardContent>
               <CardFooter>
-                {plan.title === 'Business' ? (
+                {plan.id === 'business' ? (
                   <Button
-                    className={`w-full text-lg ${plan.variant === 'primary' ? 'text-white bg-gradient-to-r from-primary to-accent shadow-lg hover:scale-105 transition-transform' : ''}`}
+                    className="w-full text-lg text-white bg-gradient-to-r from-primary to-purple-600 shadow-lg hover:shadow-primary/40 hover:scale-[1.02] transition-all"
                     onClick={handleCheckout}
                     disabled={isLoading}
                     size="lg"
                   >
-                    {isLoading ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Please wait</> : 'Choose Business'}
+                    {isLoading ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Processing...</> : plan.cta}
                   </Button>
                 ) : (
                   <Button asChild className="w-full" variant="outline" size="lg">
-                    <Link href={plan.ctaLink}>{plan.cta}</Link>
+                    <Link href="/signup">{plan.cta}</Link>
                   </Button>
                 )}
               </CardFooter>
@@ -215,13 +163,13 @@ export default function PricingPage() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {comparisonFeatures.map(item => (
+                {COMPARISON_TABLE.map(item => (
                   <TableRow key={item.feature}>
                     <TableCell className="font-medium">{item.feature}</TableCell>
                     <TableCell className="text-center">
-                      {typeof item.free === 'boolean' ? (item.free ? <Check className="h-5 w-5 text-primary mx-auto" /> : <X className="h-5 w-5 text-muted-foreground/50 mx-auto" />) : item.free}
+                      {typeof item.free === 'boolean' ? (item.free ? <Check className="h-5 w-5 text-primary mx-auto" /> : <X className="h-5 w-5 text-muted-foreground/50 mx-auto" />) : <span className="text-muted-foreground">{item.free}</span>}
                     </TableCell>
-                    <TableCell className="text-center">
+                    <TableCell className="text-center font-bold text-primary">
                       {typeof item.pro === 'boolean' ? (item.pro ? <Check className="h-5 w-5 text-primary mx-auto" /> : <X className="h-5 w-5 text-muted-foreground/50 mx-auto" />) : item.pro}
                     </TableCell>
                   </TableRow>

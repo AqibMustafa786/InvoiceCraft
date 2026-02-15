@@ -402,7 +402,9 @@ export default function CreateInsurancePage() {
     if (isNew && userProfile?.plan === 'free') {
       const canCreate = await checkUsageLimit(user.uid, INSURANCE_COLLECTION);
       if (!canCreate) {
-        setIsUpgradeModalOpen(true);
+        // Redirect to pricing instead of modal
+        // setIsUpgradeModalOpen(true);
+        router.push('/pricing');
         return;
       }
     }
@@ -480,7 +482,9 @@ export default function CreateInsurancePage() {
     if (userProfile?.plan === 'free') {
       const canCreate = await checkUsageLimit(user.uid, INSURANCE_COLLECTION);
       if (!canCreate) {
-        setIsUpgradeModalOpen(true);
+        // Redirect to pricing instead of modal
+        // setIsUpgradeModalOpen(true);
+        router.push('/pricing');
         return;
       }
     }
