@@ -215,13 +215,11 @@ export default function HomePage() {
             <div className="grid gap-12 lg:grid-cols-2 lg:gap-16 items-center">
               <motion.div
                 className="max-w-xl text-center lg:text-left mx-auto"
-                initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, ease: 'easeOut' }}
               >
                 <motion.p
                   className="mb-2 text-sm font-bold tracking-wider uppercase text-primary"
-                  initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ delay: 0.2 }}
                 >
@@ -229,7 +227,6 @@ export default function HomePage() {
                 </motion.p>
                 <motion.h1
                   className="text-3xl font-bold tracking-tight md:text-4xl lg:text-5xl font-headline"
-                  initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ delay: 0.3 }}
                 >
@@ -243,7 +240,6 @@ export default function HomePage() {
                 </motion.h1>
                 <motion.p
                   className="mt-6 text-base text-muted-foreground md:text-lg"
-                  initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ delay: 0.4 }}
                 >
@@ -252,7 +248,6 @@ export default function HomePage() {
                 </motion.p>
                 <motion.div
                   className="flex flex-col items-center justify-center gap-4 mt-8 sm:flex-row lg:justify-start"
-                  initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ delay: 0.5 }}
                 >

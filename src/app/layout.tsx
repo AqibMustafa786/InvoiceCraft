@@ -16,18 +16,21 @@ import { SpeedInsights } from '@vercel/speed-insights/next';
 const inter = Inter({
   subsets: ['latin'],
   variable: '--font-inter',
+  display: 'swap',
 });
 
 const poppins = Poppins({
   subsets: ['latin'],
   weight: ['300', '400', '500', '600', '700'],
   variable: '--font-poppins',
+  display: 'swap',
 });
 
 const roboto = Roboto({
   subsets: ['latin'],
   weight: ['300', '400', '500', '700'],
   variable: '--font-roboto',
+  display: 'swap',
 });
 
 export const metadata: Metadata = {
