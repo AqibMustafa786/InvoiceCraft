@@ -7,7 +7,7 @@ import type { Quote, LineItem, Estimate } from '@/lib/types';
 import { DocumentForm } from '@/components/document-form';
 import { ClientDocumentPreview } from '@/components/document-preview';
 import { Button } from '@/components/ui/button';
-import { Printer, FilePlus, LayoutDashboard, Edit, Share2, Mail, Loader2, MoreVertical } from 'lucide-react';
+import { Printer, FilePlus, LayoutDashboard, Edit, Share2, Mail, Loader2, MoreVertical, Brush } from 'lucide-react';
 import { addDays, isValid } from 'date-fns';
 import { useToast } from '@/hooks/use-toast';
 import Link from 'next/link';
@@ -22,6 +22,7 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
+  DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu"
 
 import { UpgradeModal } from '@/components/upgrade-modal';
@@ -123,6 +124,7 @@ export default function CreateQuotePage() {
   const { user, userProfile, isLoading: isUserLoading } = useUserAuth();
   const router = useRouter();
   const [isUpgradeModalOpen, setIsUpgradeModalOpen] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const searchParams = useSearchParams();
 
   const draftId = searchParams.get('draftId');

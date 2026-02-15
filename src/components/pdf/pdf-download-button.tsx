@@ -5,7 +5,7 @@ import { PDFDownloadLink } from '@react-pdf/renderer';
 import { Download, Loader2 } from 'lucide-react';
 import { PDFDocument } from './document-pdf';
 import type { Invoice, Estimate, Quote } from '@/lib/types';
-import type { Invoice, Estimate, Quote } from '@/lib/types';
+
 import { useLanguage } from '@/context/language-context';
 import { useUserAuth } from '@/context/auth-provider';
 
@@ -38,6 +38,7 @@ export function PDFDownloadButton({ document, fileName }: PDFDownloadButtonProps
             fileName={fileName}
             className="flex items-center w-full"
         >
+            {/* @ts-ignore */}
             {({ loading }: { loading: boolean }) => (
                 <>
                     {loading ? <Loader2 className="mr-2 h-3.5 w-3.5 animate-spin" /> : <Download className="mr-2 h-3.5 w-3.5" />}

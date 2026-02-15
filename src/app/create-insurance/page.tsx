@@ -319,7 +319,7 @@ export default function CreateInsurancePage() {
         ...loadedDraft,
         id: draftId,
         userId: user.uid,
-        companyId: userProfile.companyId,
+        companyId: userProfile.companyId || '',
       };
     } else {
       const newDocId = firestore ? doc(collection(firestore, 'companies', 'temp', INSURANCE_COLLECTION)).id : crypto.randomUUID();
@@ -334,7 +334,7 @@ export default function CreateInsurancePage() {
         ...getInitialInsuranceDoc(),
         id: newDocId,
         userId: user.uid,
-        companyId: userProfile.companyId,
+        companyId: userProfile.companyId || '',
         auditLog: [newAuditLogEntry]
       };
 

@@ -2,8 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import { checkUsageLimit } from '@/lib/limits';
-import { useRouter } from 'next/navigation';
-import { checkUsageLimit } from '@/lib/limits';
+
 import { useState, useEffect, ChangeEvent } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -159,7 +158,7 @@ export function ClientFormDialog({ open, onOpenChange, client, onSave }: ClientF
     // ALLOW FREE USERS WITHOUT COMPANY ID
     // If plan is 'free', we might not have a companyId yet, so we use user.uid as the "company" context.
     // The previous check blocked this.
-    const effectiveCompanyId = userProfile?.companyId || (userProfile?.plan === 'free' ? user.uid : null);
+    const effectiveCompanyId = userProfile?.companyId || (userProfile?.plan === 'free' && user ? user.uid : null);
 
     if (!firestore || !effectiveCompanyId || !user) {
       toast({ title: "Error", description: "Cannot save client. User or context not identified.", variant: "destructive" });
@@ -215,7 +214,11 @@ export function ClientFormDialog({ open, onOpenChange, client, onSave }: ClientF
       const dataToSave: Client = {
         id: idToSave,
         companyId: userProfile?.companyId || user.uid,
-        ...data,
+        address: data.address || '',
+        shippingAddress: data.shippingAddress || '',
+        website: data.website || '',
+        taxId: data.taxId || '',
+        notes: data.notes || '',
         avatarUrl: avatarPreview || '',
         updatedAt: serverTimestamp(),
         createdAt: isNewClient ? serverTimestamp() : client?.createdAt,
