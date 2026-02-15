@@ -561,7 +561,7 @@ export default function CreateEstimatePage() {
 
 
   const handleNew = async () => {
-    if (!user || !companyId || !userProfile) return;
+    if (!user || !userProfile) return;
 
     // LIMIT CHECK FOR FREE PLAN
     if (userProfile.plan === 'free') {
@@ -574,7 +574,7 @@ export default function CreateEstimatePage() {
       }
     }
 
-    const newDocId = firestore ? doc(collection(firestore, 'companies', companyId, ESTIMATES_COLLECTION)).id : crypto.randomUUID();
+    const newDocId = (firestore && companyId) ? doc(collection(firestore, 'companies', companyId, ESTIMATES_COLLECTION)).id : crypto.randomUUID();
     const newAuditLogEntry: AuditLogEntry = {
       id: crypto.randomUUID(),
       action: 'created',
@@ -587,7 +587,7 @@ export default function CreateEstimatePage() {
       id: newDocId,
       estimateNumber: `EST-${new Date().getFullYear()}-${String(Math.floor(Math.random() * 1000)).padStart(3, '0')}`,
       userId: user.uid,
-      companyId: companyId,
+      companyId: companyId || '',
       auditLog: [newAuditLogEntry]
     };
     setDocument(newDoc);

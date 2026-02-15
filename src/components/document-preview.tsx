@@ -63,11 +63,11 @@ interface CommonTemplateProps {
 }
 
 interface PageProps extends CommonTemplateProps {
-    pageItems: (Estimate | Quote)['lineItems'];
-    pageIndex: number;
-    totalPages: number;
-    summary: (Estimate | Quote)['summary'];
-    style: React.CSSProperties;
+  pageItems: (Estimate | Quote)['lineItems'];
+  pageIndex: number;
+  totalPages: number;
+  summary: (Estimate | Quote)['summary'];
+  style: React.CSSProperties;
 }
 
 const templates: { [key: string]: FC<PageProps> } = {
@@ -170,141 +170,142 @@ const PAGE_PADDING = 80; // 40px top + 40px bottom
 const AVAILABLE_HEIGHT = PAGE_HEIGHT - PAGE_PADDING;
 
 const CategorySpecificDetails: FC<{ document: Estimate | Quote, t: any }> = ({ document, t }) => {
-    const category = document.category;
+  const category = document.category;
 
-    switch(category) {
-        case 'Construction Estimate': return <ConstructionDetails document={document} t={t} textColor={document.textColor || '#000'}/>;
-        case 'Home Remodeling / Renovation': return <RemodelingDetails document={document} t={t} textColor={document.textColor || '#000'}/>;
-        case 'Roofing Estimate': return <RoofingDetails document={document} t={t} />;
-        case 'HVAC (Air Conditioning / Heating)': return <HvacDetails document={document} t={t} textColor={document.textColor || '#000'} />;
-        case 'Plumbing Estimate': return <PlumbingDetails document={document} t={t} />;
-        case 'Electrical Estimate': return <ElectricalDetails document={document} t={t} textColor={document.textColor || '#000'} />;
-        case 'Landscaping Estimate': return <LandscapingDetails document={document} t={t} />;
-        case 'Cleaning Estimate': return <CleaningDetails document={document} t={t} textColor={document.textColor || '#000'} />;
-        case 'Auto Repair Estimate': return <AutoRepairDetails document={document} t={t} textColor={document.textColor || '#000'} />;
-        case 'IT / Freelance Estimate': return <ITFreelanceDetails document={document} t={t} />;
-        // Add more cases here as you create more detail components
-        default: return null;
-    }
+  switch (category) {
+    case 'Construction Estimate': return <ConstructionDetails document={document} t={t} textColor={document.textColor || '#000'} />;
+    case 'Home Remodeling / Renovation': return <RemodelingDetails document={document} t={t} textColor={document.textColor || '#000'} />;
+    case 'Roofing Estimate': return <RoofingDetails document={document} t={t} />;
+    case 'HVAC (Air Conditioning / Heating)': return <HvacDetails document={document} t={t} textColor={document.textColor || '#000'} />;
+    case 'Plumbing Estimate': return <PlumbingDetails document={document} t={t} />;
+    case 'Electrical Estimate': return <ElectricalDetails document={document} t={t} textColor={document.textColor || '#000'} />;
+    case 'Landscaping Estimate': return <LandscapingDetails document={document} t={t} />;
+    case 'Cleaning Estimate': return <CleaningDetails document={document} t={t} textColor={document.textColor || '#000'} />;
+    case 'Auto Repair Estimate': return <AutoRepairDetails document={document} t={t} textColor={document.textColor || '#000'} />;
+    case 'IT / Freelance Estimate': return <ITFreelanceDetails document={document} t={t} />;
+    // Add more cases here as you create more detail components
+    default: return null;
+  }
 }
 
 
 const DocumentPreviewInternal: FC<DocumentPreviewProps> = ({ document, accentColor, backgroundColor, textColor, id = 'document-preview', isPrint = false }) => {
-  const [paginatedItems, setPaginatedItems] = useState<(Estimate | Quote)['lineItems'][]>(document ? [document.lineItems] : [[]]);
+  const [paginatedItems, setPaginatedItems] = useState<(Estimate | Quote)['lineItems'][]>(document ? [document.lineItems || []] : [[]]);
   const [needsRemeasure, setNeedsRemeasure] = useState(true);
   const containerRef = useRef<HTMLDivElement>(null);
-  
+
   const t = locales[document.language as keyof locales] || locales.en;
-  
+
   const serializedDocument = useMemo(() => JSON.stringify(document), [document]);
 
   useEffect(() => {
     setNeedsRemeasure(true);
   }, [serializedDocument]);
-  
+
   const previewStyle = {
-      color: document?.textColor || '#374151',
-      fontFamily: document?.fontFamily || 'Inter, sans-serif',
-      fontSize: `${document?.fontSize || 10}pt`,
-      backgroundColor: document?.backgroundColor || '#FFFFFF',
+    color: document?.textColor || '#374151',
+    fontFamily: document?.fontFamily || 'Inter, sans-serif',
+    fontSize: `${document?.fontSize || 10}pt`,
+    backgroundColor: document?.backgroundColor || '#FFFFFF',
   } as React.CSSProperties;
 
   const dynamicColorStyle = {
-      color: accentColor,
-      fontFamily: document?.fontFamily || 'Inter, sans-serif',
-      fontSize: `${document?.fontSize || 10}pt`,
+    color: accentColor,
+    fontFamily: document?.fontFamily || 'Inter, sans-serif',
+    fontSize: `${document?.fontSize || 10}pt`,
   }
 
   const TemplateComponent = templates[document.template] || templates['generic-1'];
-  
+
   useLayoutEffect(() => {
     if (!document || !isPrint || !needsRemeasure || !TemplateComponent) return;
 
     const measureAndPaginate = async () => {
-        if (typeof window.document === 'undefined') return;
-        const container = containerRef.current;
-        if (!container) return;
+      if (typeof window.document === 'undefined') return;
+      const container = containerRef.current;
+      if (!container) return;
 
-        const tempRoot = window.document.createElement('div');
-        tempRoot.style.position = 'absolute';
-        tempRoot.style.left = '-9999px';
-        tempRoot.style.width = `${container.clientWidth}px`;
-        window.document.body.appendChild(tempRoot);
+      const tempRoot = window.document.createElement('div');
+      tempRoot.style.position = 'absolute';
+      tempRoot.style.left = '-9999px';
+      tempRoot.style.width = `${container.clientWidth}px`;
+      window.document.body.appendChild(tempRoot);
 
-        try {
-            const tempContainer = container.cloneNode(true) as HTMLElement;
-            tempRoot.appendChild(tempContainer);
-            
-            await new Promise(resolve => setTimeout(resolve, 0));
+      try {
+        const tempContainer = container.cloneNode(true) as HTMLElement;
+        tempRoot.appendChild(tempContainer);
 
-            const headerContentEl = tempContainer.querySelector('[data-element="page-header-content"]') as HTMLElement;
-            const clientDetailsEl = tempContainer.querySelector('[data-element="client-details"]') as HTMLElement;
-            const categoryEl = tempContainer.querySelector('[data-element="category-preview-wrapper"]') as HTMLElement;
-            const tableHeaderEl = tempContainer.querySelector('[data-element="table-header"]') as HTMLElement;
-            const footerEl = tempContainer.querySelector('[data-element="footer"]') as HTMLElement;
-            const allRows = Array.from(tempContainer.querySelectorAll('[data-element="table-row"]')) as HTMLElement[];
+        await new Promise(resolve => setTimeout(resolve, 0));
 
-            if (!headerContentEl || !tableHeaderEl || !footerEl || allRows.length === 0) {
-                setPaginatedItems([document.lineItems]);
-                setNeedsRemeasure(false);
-                window.document.body.removeChild(tempRoot);
-                return;
-            }
-            
-            const firstPageHeaderHeight = headerContentEl.offsetHeight + (clientDetailsEl?.offsetHeight || 0) + (categoryEl?.offsetHeight || 0);
-            const subsequentPageHeaderHeight = headerContentEl.offsetHeight;
-            const tableHeaderHeight = tableHeaderEl.offsetHeight;
-            const footerHeight = footerEl.offsetHeight;
+        const headerContentEl = tempContainer.querySelector('[data-element="page-header-content"]') as HTMLElement;
+        const clientDetailsEl = tempContainer.querySelector('[data-element="client-details"]') as HTMLElement;
+        const categoryEl = tempContainer.querySelector('[data-element="category-preview-wrapper"]') as HTMLElement;
+        const tableHeaderEl = tempContainer.querySelector('[data-element="table-header"]') as HTMLElement;
+        const footerEl = tempContainer.querySelector('[data-element="footer"]') as HTMLElement;
+        const allRows = Array.from(tempContainer.querySelectorAll('[data-element="table-row"]')) as HTMLElement[];
 
-            const pages: (Estimate | Quote)['lineItems'][] = [];
-            let currentPageItems: (Estimate | Quote)['lineItems'] = [];
-            let currentPageHeight = 0;
-
-            for (let i = 0; i < document.lineItems.length; i++) {
-                const item = document.lineItems[i];
-                const rowHeight = allRows[i] ? allRows[i].offsetHeight : 20;
-                
-                const isFirstPage = pages.length === 0;
-                const isFirstItemOnNewPage = currentPageItems.length === 0;
-
-                let usedHeight = currentPageHeight;
-                if (isFirstItemOnNewPage) {
-                    usedHeight += isFirstPage ? firstPageHeaderHeight + tableHeaderHeight : subsequentPageHeaderHeight + tableHeaderHeight;
-                }
-                
-                const isLastItem = i === document.lineItems.length - 1;
-                const spaceNeeded = rowHeight + (isLastItem ? footerHeight : 0);
-
-                if (usedHeight + spaceNeeded > AVAILABLE_HEIGHT) {
-                    pages.push(currentPageItems);
-                    currentPageItems = [item];
-                    currentPageHeight = rowHeight;
-                } else {
-                    currentPageItems.push(item);
-                    currentPageHeight += rowHeight;
-                }
-            }
-
-            if (currentPageItems.length > 0) {
-                pages.push(currentPageItems);
-            }
-            
-            if (pages.length === 0 && document.lineItems.length > 0) {
-                pages.push(document.lineItems);
-            } else if (pages.length === 0) {
-                pages.push([]);
-            }
-
-            setPaginatedItems(pages);
-            setNeedsRemeasure(false);
-
-        } finally {
-            if (window.document.body.contains(tempRoot)) {
-                window.document.body.removeChild(tempRoot);
-            }
+        if (!headerContentEl || !tableHeaderEl || !footerEl || allRows.length === 0) {
+          setPaginatedItems([document.lineItems]);
+          setNeedsRemeasure(false);
+          window.document.body.removeChild(tempRoot);
+          return;
         }
+
+        const firstPageHeaderHeight = headerContentEl.offsetHeight + (clientDetailsEl?.offsetHeight || 0) + (categoryEl?.offsetHeight || 0);
+        const subsequentPageHeaderHeight = headerContentEl.offsetHeight;
+        const tableHeaderHeight = tableHeaderEl.offsetHeight;
+        const footerHeight = footerEl.offsetHeight;
+
+        const pages: (Estimate | Quote)['lineItems'][] = [];
+        let currentPageItems: (Estimate | Quote)['lineItems'] = [];
+        let currentPageHeight = 0;
+
+        const lineItems = document.lineItems || [];
+        for (let i = 0; i < lineItems.length; i++) {
+          const item = lineItems[i];
+          const rowHeight = allRows[i] ? allRows[i].offsetHeight : 20;
+
+          const isFirstPage = pages.length === 0;
+          const isFirstItemOnNewPage = currentPageItems.length === 0;
+
+          let usedHeight = currentPageHeight;
+          if (isFirstItemOnNewPage) {
+            usedHeight += isFirstPage ? firstPageHeaderHeight + tableHeaderHeight : subsequentPageHeaderHeight + tableHeaderHeight;
+          }
+
+          const isLastItem = i === document.lineItems.length - 1;
+          const spaceNeeded = rowHeight + (isLastItem ? footerHeight : 0);
+
+          if (usedHeight + spaceNeeded > AVAILABLE_HEIGHT) {
+            pages.push(currentPageItems);
+            currentPageItems = [item];
+            currentPageHeight = rowHeight;
+          } else {
+            currentPageItems.push(item);
+            currentPageHeight += rowHeight;
+          }
+        }
+
+        if (currentPageItems.length > 0) {
+          pages.push(currentPageItems);
+        }
+
+        if (pages.length === 0 && document.lineItems.length > 0) {
+          pages.push(document.lineItems);
+        } else if (pages.length === 0) {
+          pages.push([]);
+        }
+
+        setPaginatedItems(pages);
+        setNeedsRemeasure(false);
+
+      } finally {
+        if (window.document.body.contains(tempRoot)) {
+          window.document.body.removeChild(tempRoot);
+        }
+      }
     };
-    
+
     const timer = setTimeout(measureAndPaginate, 100);
     return () => clearTimeout(timer);
 
@@ -331,20 +332,20 @@ const DocumentPreviewInternal: FC<DocumentPreviewProps> = ({ document, accentCol
 
   if (isPrint) {
     const itemsToRender = needsRemeasure ? [document.lineItems] : paginatedItems;
-    
+
     return (
-      <div id={id} style={{backgroundColor: backgroundColor}} ref={containerRef}>
+      <div id={id} style={{ backgroundColor: backgroundColor }} ref={containerRef}>
         <div style={{ position: 'absolute', left: '-9999px' }}>
-             {/* This is a dummy for measurement */}
+          {/* This is a dummy for measurement */}
         </div>
         {itemsToRender.map((pageItems, pageIndex) => (
-           <TemplateComponent
+          <TemplateComponent
             key={pageIndex}
             {...commonProps}
             pageItems={pageItems}
             pageIndex={pageIndex}
             totalPages={itemsToRender.length}
-            summary={document.summary}
+            summary={document.summary || {}}
             style={dynamicColorStyle}
           />
         ))}
@@ -354,15 +355,15 @@ const DocumentPreviewInternal: FC<DocumentPreviewProps> = ({ document, accentCol
 
   return (
     <Card id={id} className="w-full shadow-lg rounded-xl overflow-hidden print-hide hover:shadow-primary/20 transition-shadow" style={previewStyle}>
-      <CardContent className="p-0" style={{backgroundColor: backgroundColor}}>
-         <TemplateComponent
-            {...commonProps}
-            pageItems={document.lineItems}
-            pageIndex={0}
-            totalPages={1}
-            summary={document.summary}
-            style={dynamicColorStyle}
-          />
+      <CardContent className="p-0" style={{ backgroundColor: backgroundColor }}>
+        <TemplateComponent
+          {...commonProps}
+          pageItems={document.lineItems}
+          pageIndex={0}
+          totalPages={1}
+          summary={document.summary || {}}
+          style={dynamicColorStyle}
+        />
       </CardContent>
     </Card>
   );

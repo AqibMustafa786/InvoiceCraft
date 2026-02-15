@@ -274,9 +274,9 @@ export const PDFDocument = ({ data, language, plan }: { data: Estimate | Quote |
   const poNumber = isInvoice ? (data as Invoice).poNumber : (data as Estimate).referenceNumber;
   const category = (data as any).category;
 
-  const { business, client, lineItems, summary } = data;
+  const { business = {} as any, client = {} as any, lineItems = [], summary = { subtotal: 0, taxAmount: 0, discount: 0, shippingCost: 0, grandTotal: 0, taxPercentage: 0 } } = data;
   const amountPaid = (data as any).amountPaid || 0;
-  const balanceDue = summary.grandTotal - amountPaid;
+  const balanceDue = (summary?.grandTotal || 0) - amountPaid;
 
   // cast to any for extended fields
   const termsAndConditions = (data as any).termsAndConditions;

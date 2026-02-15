@@ -40,20 +40,20 @@ interface InvoicePreviewProps {
 }
 
 export interface PageProps {
-    invoice: Invoice;
-    pageItems: LineItem[];
-    pageIndex: number;
-    totalPages: number;
-    subtotal: number;
-    taxAmount: number;
-    discountAmount: number;
-    total: number;
-    balanceDue: number;
-    t: any;
-    currencySymbol: string;
-    accentColor: string;
-    backgroundColor: string;
-    textColor: string;
+  invoice: Invoice;
+  pageItems: LineItem[];
+  pageIndex: number;
+  totalPages: number;
+  subtotal: number;
+  taxAmount: number;
+  discountAmount: number;
+  total: number;
+  balanceDue: number;
+  t: any;
+  currencySymbol: string;
+  accentColor: string;
+  backgroundColor: string;
+  textColor: string;
 }
 
 const templates: Record<string, FC<PageProps>> = {
@@ -156,19 +156,22 @@ const AVAILABLE_PAGE_HEIGHT_PX = PAGE_HEIGHT_PX - PAGE_PADDING_Y_PX;
 const InvoicePreviewInternal: FC<InvoicePreviewProps> = ({ invoice, accentColor, backgroundColor, textColor, id = 'invoice-preview', isPrint = false }) => {
   const [paginatedItems, setPaginatedItems] = useState<LineItem[][]>([invoice?.lineItems || []]);
   const [needsRemeasure, setNeedsRemeasure] = useState(true);
-  
+
   const serializedInvoice = useMemo(() => JSON.stringify(invoice), [invoice]);
 
   const t = locales[invoice.language as keyof locales] || locales.en;
-  
-  const subtotal = invoice.lineItems.reduce((acc, item) => acc + item.quantity * (toNumberSafe((item as any).unitPrice) || 0), 0);
-  const discountAmount = invoice.summary.discount;
+
+  const lineItems = invoice.lineItems || [];
+  const summary = invoice.summary || { discount: 0, taxPercentage: 0, shippingCost: 0, grandTotal: 0, subtotal: 0, taxAmount: 0 };
+
+  const subtotal = lineItems.reduce((acc, item) => acc + item.quantity * (toNumberSafe((item as any).unitPrice) || 0), 0);
+  const discountAmount = summary.discount || 0;
   const subtotalAfterDiscount = subtotal - discountAmount;
-  const taxAmount = (subtotalAfterDiscount * invoice.summary.taxPercentage) / 100;
-  const total = subtotalAfterDiscount + taxAmount + (invoice.summary.shippingCost || 0);
+  const taxAmount = (subtotalAfterDiscount * (summary.taxPercentage || 0)) / 100;
+  const total = subtotalAfterDiscount + taxAmount + (summary.shippingCost || 0);
   const balanceDue = total - (invoice.amountPaid || 0);
   const currencySymbol = locales[invoice.language as keyof locales]?.currencySymbol || '$';
-  
+
   const commonProps: Omit<PageProps, 'pageItems' | 'pageIndex' | 'totalPages'> = useMemo(() => ({
     invoice,
     accentColor,
@@ -188,12 +191,12 @@ const InvoicePreviewInternal: FC<InvoicePreviewProps> = ({ invoice, accentColor,
   }, [serializedInvoice, accentColor, backgroundColor, textColor]);
 
   const previewStyle = {
-      '--primary-hsl': accentColor,
-      '--primary': accentColor,
-      fontFamily: invoice.fontFamily || 'Inter, sans-serif',
-      fontSize: `${invoice.fontSize || 10}pt`,
-      backgroundColor: backgroundColor || '#FFFFFF',
-      color: textColor || '#374151',
+    '--primary-hsl': accentColor,
+    '--primary': accentColor,
+    fontFamily: invoice.fontFamily || 'Inter, sans-serif',
+    fontSize: `${invoice.fontSize || 10}pt`,
+    backgroundColor: backgroundColor || '#FFFFFF',
+    color: textColor || '#374151',
   } as React.CSSProperties;
 
   const getTemplateComponent = () => {
@@ -202,7 +205,7 @@ const InvoicePreviewInternal: FC<InvoicePreviewProps> = ({ invoice, accentColor,
   };
 
   const TemplateComponent = getTemplateComponent();
-  
+
   useLayoutEffect(() => {
     if (!isPrint || !needsRemeasure || typeof window === 'undefined' || !TemplateComponent) return;
 
@@ -229,13 +232,13 @@ const InvoicePreviewInternal: FC<InvoicePreviewProps> = ({ invoice, accentColor,
 
       // Measure header content only once
       const headerContent = (
-          <>
-              <header data-element="header"></header>
-              <section data-element="client-details"></section>
-              <div data-element="category-details"></div>
-          </>
+        <>
+          <header data-element="header"></header>
+          <section data-element="client-details"></section>
+          <div data-element="category-details"></div>
+        </>
       );
-      
+
       const firstPageHeaderHeight = measureComponent(
         <div style={previewStyle} className="p-8 md:p-10">{React.cloneElement(firstPageDummy, { children: headerContent })}</div>
       );
@@ -248,7 +251,7 @@ const InvoicePreviewInternal: FC<InvoicePreviewProps> = ({ invoice, accentColor,
 
       const firstPageAvailableHeight = AVAILABLE_PAGE_HEIGHT_PX - firstPageHeaderHeight - footerHeight - tableHeaderHeight;
       const subsequentPageAvailableHeight = AVAILABLE_PAGE_HEIGHT_PX - subsequentPageHeaderHeight - footerHeight - tableHeaderHeight;
-      
+
       const rowHeights = invoice.lineItems.map(item =>
         measureComponent(<table className="w-full" style={previewStyle}><tbody><tr data-element="table-row">{item.name}</tr></tbody></table>)
       );
@@ -261,13 +264,13 @@ const InvoicePreviewInternal: FC<InvoicePreviewProps> = ({ invoice, accentColor,
         const itemHeight = rowHeights[i];
         const isFirstPage = pages.length === 0;
         const availableHeight = isFirstPage ? firstPageAvailableHeight : subsequentPageAvailableHeight;
-        
+
         if (currentHeight + itemHeight > availableHeight && currentPageItems.length > 0) {
-            pages.push(currentPageItems);
-            currentPageItems = [];
-            currentHeight = 0;
+          pages.push(currentPageItems);
+          currentPageItems = [];
+          currentHeight = 0;
         }
-        
+
         currentPageItems.push(invoice.lineItems[i]);
         currentHeight += itemHeight;
       }
@@ -275,7 +278,7 @@ const InvoicePreviewInternal: FC<InvoicePreviewProps> = ({ invoice, accentColor,
       if (currentPageItems.length > 0) {
         pages.push(currentPageItems);
       }
-      
+
       setPaginatedItems(pages.length > 0 ? pages : [[]]);
       setNeedsRemeasure(false);
 
@@ -285,20 +288,20 @@ const InvoicePreviewInternal: FC<InvoicePreviewProps> = ({ invoice, accentColor,
     const timer = setTimeout(measureAndPaginate, 150);
     return () => clearTimeout(timer);
   }, [isPrint, needsRemeasure, TemplateComponent, commonProps, invoice.lineItems, previewStyle, serializedInvoice]);
-  
+
   if (isPrint) {
     const itemsToRender = needsRemeasure ? [invoice.lineItems] : (paginatedItems.length > 0 ? paginatedItems : [[]]);
-    
+
     return (
       <div id={id}>
         {itemsToRender.map((pageItems, pageIndex) => (
           <div key={pageIndex} data-element="page-container" className={pageIndex < itemsToRender.length - 1 ? "page-break-after" : ""}>
-             <TemplateComponent
-                {...commonProps}
-                pageItems={pageItems}
-                pageIndex={pageIndex}
-                totalPages={itemsToRender.length}
-              />
+            <TemplateComponent
+              {...commonProps}
+              pageItems={pageItems}
+              pageIndex={pageIndex}
+              totalPages={itemsToRender.length}
+            />
           </div>
         ))}
       </div>
@@ -307,48 +310,48 @@ const InvoicePreviewInternal: FC<InvoicePreviewProps> = ({ invoice, accentColor,
 
   // Default live preview (single page)
   return (
-    <Card id={id} className="w-full shadow-lg rounded-xl overflow-hidden print-hide hover:shadow-primary/20 transition-shadow" style={{backgroundColor: backgroundColor}}>
-      <CardContent className="p-0" style={{color: textColor}}>
-          <div data-element="page-container">
-            <TemplateComponent
-              {...commonProps}
-              pageItems={invoice.lineItems}
-              pageIndex={0}
-              totalPages={1}
-            />
-          </div>
+    <Card id={id} className="w-full shadow-lg rounded-xl overflow-hidden print-hide hover:shadow-primary/20 transition-shadow" style={{ backgroundColor: backgroundColor }}>
+      <CardContent className="p-0" style={{ color: textColor }}>
+        <div data-element="page-container">
+          <TemplateComponent
+            {...commonProps}
+            pageItems={invoice.lineItems}
+            pageIndex={0}
+            totalPages={1}
+          />
+        </div>
       </CardContent>
     </Card>
   );
 };
 
 const PagePropsFooter: FC<Omit<PageProps, 'pageItems' | 'pageIndex' | 'totalPages'>> = (props) => {
-    // A simplified footer just for measurement, adjust if your footers are very different
-    return <footer className="mt-auto pt-8">Footer Content</footer>
+  // A simplified footer just for measurement, adjust if your footers are very different
+  return <footer className="mt-auto pt-8">Footer Content</footer>
 };
 
 
 export const ClientInvoicePreview: FC<InvoicePreviewProps> = (props) => {
-    const processedInvoice = useMemo(() => {
-        if (!props.invoice) return null;
-        // Deep copy and process dates
-        const newInvoice = JSON.parse(JSON.stringify(props.invoice));
-        newInvoice.invoiceDate = toDateSafe(newInvoice.invoiceDate);
-        newInvoice.dueDate = toDateSafe(newInvoice.dueDate);
-        // Process any other date fields here if necessary
-        return newInvoice;
-    }, [props.invoice]);
-    
-    if (!processedInvoice) {
-        return (
-            <Card id={props.id} className="w-full shadow-lg rounded-xl overflow-hidden print-hide">
-                <CardContent className="p-8 text-center text-muted-foreground">
-                    Loading Preview...
-                </CardContent>
-            </Card>
-        );
-    }
-    return <InvoicePreviewInternal {...props} invoice={processedInvoice} />;
+  const processedInvoice = useMemo(() => {
+    if (!props.invoice) return null;
+    // Deep copy and process dates
+    const newInvoice = JSON.parse(JSON.stringify(props.invoice));
+    newInvoice.invoiceDate = toDateSafe(newInvoice.invoiceDate);
+    newInvoice.dueDate = toDateSafe(newInvoice.dueDate);
+    // Process any other date fields here if necessary
+    return newInvoice;
+  }, [props.invoice]);
+
+  if (!processedInvoice) {
+    return (
+      <Card id={props.id} className="w-full shadow-lg rounded-xl overflow-hidden print-hide">
+        <CardContent className="p-8 text-center text-muted-foreground">
+          Loading Preview...
+        </CardContent>
+      </Card>
+    );
+  }
+  return <InvoicePreviewInternal {...props} invoice={processedInvoice} />;
 }
 
 

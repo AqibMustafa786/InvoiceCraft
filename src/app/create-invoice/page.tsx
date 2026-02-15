@@ -679,7 +679,9 @@ export default function CreateInvoicePage() {
   };
 
   const handleNew = async () => {
-    if (!user || !companyId) return;
+    if (!user) return;
+    // Free users might not have companyId, so we don't return early if companyId is missing.
+
 
     // LIMIT CHECK FOR FREE PLAN
     if (userProfile?.plan === 'free') {
@@ -690,7 +692,7 @@ export default function CreateInvoicePage() {
       }
     }
 
-    const newDocId = firestore ? doc(collection(firestore, 'companies', companyId, INVOICES_COLLECTION)).id : crypto.randomUUID();
+    const newDocId = (firestore && companyId) ? doc(collection(firestore, 'companies', companyId, INVOICES_COLLECTION)).id : crypto.randomUUID();
     const newAuditLogEntry: AuditLogEntry = {
       id: crypto.randomUUID(),
       action: 'created',
@@ -713,7 +715,7 @@ export default function CreateInvoicePage() {
       id: newDocId,
       invoiceNumber: `INV-${new Date().getFullYear()}-${String(Math.floor(Math.random() * 1000)).padStart(3, '0')}`,
       userId: user.uid,
-      companyId: companyId,
+      companyId: companyId || '',
       auditLog: [newAuditLogEntry]
     };
     setInvoice(newInvoice);
