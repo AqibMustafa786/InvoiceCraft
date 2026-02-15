@@ -1,4 +1,4 @@
-'use client';
+
 
 import React from 'react';
 import { Document, Page, Text, View, StyleSheet, Image, Font } from '@react-pdf/renderer';
@@ -8,13 +8,13 @@ import { dictionaries, type Language } from '@/lib/i18n/dictionaries';
 import { toDateSafe } from '@/lib/utils';
 
 // Register Fonts
-Font.register({
-  family: 'Inter',
-  fonts: [
-    { src: 'https://cdn.jsdelivr.net/gh/google/fonts@v1.0.1/ofl/inter/static/Inter-Regular.ttf' },
-    { src: 'https://cdn.jsdelivr.net/gh/google/fonts@v1.0.1/ofl/inter/static/Inter-Bold.ttf', fontWeight: 'bold' },
-  ],
-});
+// Font.register({
+//   family: 'Inter',
+//   fonts: [
+//     { src: 'https://cdn.jsdelivr.net/fontsource/fonts/inter@latest/latin-400-normal.ttf' },
+//     { src: 'https://cdn.jsdelivr.net/fontsource/fonts/inter@latest/latin-700-normal.ttf', fontWeight: 'bold' },
+//   ],
+// });
 
 Font.register({
   family: 'Noto Sans SC',
@@ -44,7 +44,7 @@ const s = (val: any): string => {
 const getFontForLanguage = (lang: Language): string => {
   if (lang === 'zh') return 'Noto Sans SC';
   if (lang === 'hi') return 'Noto Sans Devanagari';
-  return 'Inter';
+  return 'Helvetica';
 };
 
 // Define styles creator

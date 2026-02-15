@@ -17,6 +17,7 @@ import { Eye, EyeOff } from 'lucide-react';
 import { bootstrapUser } from '@/firebase/auth-helpers';
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { motion, AnimatePresence } from "framer-motion";
+import { logAuditAction } from '@/services/audit-service';
 
 const loginSchema = z.object({
     email: z.string().email({ message: "Invalid email address." }),
@@ -69,6 +70,18 @@ function LoginContent() {
                         title: "Login Successful",
                         description: `Welcome, ${result.user.displayName}!`,
                     });
+
+                    await logAuditAction({
+                        action: 'User Login',
+                        status: 'Success',
+                        user: {
+                            uid: result.user.uid,
+                            name: result.user.displayName || 'User',
+                            email: result.user.email || 'unknown',
+                        },
+                        details: { method: 'Redirect' }
+                    });
+
                     router.push('/dashboard');
                 }
             })
@@ -87,11 +100,23 @@ function LoginContent() {
             if (!auth) {
                 throw new Error("Authentication service is not available.");
             }
-            await signInWithEmailAndPassword(auth, data.email, data.password);
+            const userCredential = await signInWithEmailAndPassword(auth, data.email, data.password);
             toast({
                 title: "Login Successful",
                 description: "Welcome back!",
             });
+
+            await logAuditAction({
+                action: 'User Login',
+                status: 'Success',
+                user: {
+                    uid: userCredential.user.uid,
+                    name: userCredential.user.displayName || 'User',
+                    email: userCredential.user.email || data.email,
+                },
+                details: { method: 'Email/Password' }
+            });
+
             router.push('/dashboard');
         } catch (error: any) {
             console.error("Login error:", error.code, error.message);
@@ -159,6 +184,18 @@ function LoginContent() {
                 title: "Login Successful",
                 description: `Welcome, ${userCredential.user.displayName}!`,
             });
+
+            await logAuditAction({
+                action: 'User Login',
+                status: 'Success',
+                user: {
+                    uid: userCredential.user.uid,
+                    name: userCredential.user.displayName || 'User',
+                    email: userCredential.user.email || 'unknown',
+                },
+                details: { method: 'Popup', provider: providerName }
+            });
+
             router.push('/dashboard');
         } catch (error: any) {
             if (error.code === 'auth/popup-closed-by-user' || error.code === 'auth/cancelled-popup-request') {

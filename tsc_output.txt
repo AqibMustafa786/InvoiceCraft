@@ -1,0 +1,1420 @@
+src/components/invoice-templates/photography-templates.ts(29,14): error TS1005: '>' expected.
+src/components/invoice-templates/photography-templates.ts(29,23): error TS1005: ')' expected.
+src/components/invoice-templates/photography-templates.ts(30,20): error TS1005: '>' expected.
+src/components/invoice-templates/photography-templates.ts(30,23): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(30,54): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(30,64): error TS1005: ':' expected.
+src/components/invoice-templates/photography-templates.ts(30,66): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(30,76): error TS1005: ':' expected.
+src/components/invoice-templates/photography-templates.ts(30,78): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(30,116): error TS1109: Expression expected.
+src/components/invoice-templates/photography-templates.ts(31,16): error TS1005: '>' expected.
+src/components/invoice-templates/photography-templates.ts(31,25): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(31,100): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/photography-templates.ts(32,10): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/photography-templates.ts(33,5): error TS1128: Declaration or statement expected.
+src/components/invoice-templates/photography-templates.ts(34,1): error TS1128: Declaration or statement expected.
+src/components/invoice-templates/photography-templates.ts(40,18): error TS1005: '>' expected.
+src/components/invoice-templates/photography-templates.ts(40,27): error TS1005: ')' expected.
+src/components/invoice-templates/photography-templates.ts(41,16): error TS1005: '>' expected.
+src/components/invoice-templates/photography-templates.ts(41,25): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(41,83): error TS1136: Property assignment expected.
+src/components/invoice-templates/photography-templates.ts(41,137): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(41,138): error TS1110: Type expected.
+src/components/invoice-templates/photography-templates.ts(42,18): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(43,26): error TS1005: '>' expected.
+src/components/invoice-templates/photography-templates.ts(43,35): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(43,67): error TS1136: Property assignment expected.
+src/components/invoice-templates/photography-templates.ts(43,91): error TS1128: Declaration or statement expected.
+src/components/invoice-templates/photography-templates.ts(43,92): error TS1128: Declaration or statement expected.
+src/components/invoice-templates/photography-templates.ts(43,94): error TS1110: Type expected.
+src/components/invoice-templates/photography-templates.ts(44,26): error TS1005: '>' expected.
+src/components/invoice-templates/photography-templates.ts(44,35): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(44,67): error TS1136: Property assignment expected.
+src/components/invoice-templates/photography-templates.ts(44,90): error TS1128: Declaration or statement expected.
+src/components/invoice-templates/photography-templates.ts(44,91): error TS1128: Declaration or statement expected.
+src/components/invoice-templates/photography-templates.ts(44,93): error TS1110: Type expected.
+src/components/invoice-templates/photography-templates.ts(44,146): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(44,153): error TS1002: Unterminated string literal.
+src/components/invoice-templates/photography-templates.ts(45,58): error TS1005: '>' expected.
+src/components/invoice-templates/photography-templates.ts(45,67): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(45,99): error TS1136: Property assignment expected.
+src/components/invoice-templates/photography-templates.ts(45,126): error TS1128: Declaration or statement expected.
+src/components/invoice-templates/photography-templates.ts(45,128): error TS1110: Type expected.
+src/components/invoice-templates/photography-templates.ts(45,172): error TS1109: Expression expected.
+src/components/invoice-templates/photography-templates.ts(46,26): error TS1005: '>' expected.
+src/components/invoice-templates/photography-templates.ts(46,35): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(46,67): error TS1136: Property assignment expected.
+src/components/invoice-templates/photography-templates.ts(46,91): error TS1128: Declaration or statement expected.
+src/components/invoice-templates/photography-templates.ts(46,92): error TS1128: Declaration or statement expected.
+src/components/invoice-templates/photography-templates.ts(46,94): error TS1110: Type expected.
+src/components/invoice-templates/photography-templates.ts(47,29): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(47,60): error TS1005: '>' expected.
+src/components/invoice-templates/photography-templates.ts(47,69): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(47,99): error TS1005: ':' expected.
+src/components/invoice-templates/photography-templates.ts(47,101): error TS1136: Property assignment expected.
+src/components/invoice-templates/photography-templates.ts(47,129): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(47,131): error TS1110: Type expected.
+src/components/invoice-templates/photography-templates.ts(47,173): error TS1109: Expression expected.
+src/components/invoice-templates/photography-templates.ts(48,55): error TS1005: '>' expected.
+src/components/invoice-templates/photography-templates.ts(48,64): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(48,96): error TS1136: Property assignment expected.
+src/components/invoice-templates/photography-templates.ts(48,119): error TS1128: Declaration or statement expected.
+src/components/invoice-templates/photography-templates.ts(48,121): error TS1110: Type expected.
+src/components/invoice-templates/photography-templates.ts(48,170): error TS1109: Expression expected.
+src/components/invoice-templates/photography-templates.ts(49,52): error TS1005: '>' expected.
+src/components/invoice-templates/photography-templates.ts(49,61): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(49,93): error TS1136: Property assignment expected.
+src/components/invoice-templates/photography-templates.ts(49,119): error TS1128: Declaration or statement expected.
+src/components/invoice-templates/photography-templates.ts(49,121): error TS1110: Type expected.
+src/components/invoice-templates/photography-templates.ts(49,167): error TS1109: Expression expected.
+src/components/invoice-templates/photography-templates.ts(50,61): error TS1005: '>' expected.
+src/components/invoice-templates/photography-templates.ts(50,70): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(50,102): error TS1136: Property assignment expected.
+src/components/invoice-templates/photography-templates.ts(50,129): error TS1128: Declaration or statement expected.
+src/components/invoice-templates/photography-templates.ts(50,131): error TS1110: Type expected.
+src/components/invoice-templates/photography-templates.ts(50,186): error TS1109: Expression expected.
+src/components/invoice-templates/photography-templates.ts(51,14): error TS1110: Type expected.
+src/components/invoice-templates/photography-templates.ts(52,10): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/photography-templates.ts(53,5): error TS1128: Declaration or statement expected.
+src/components/invoice-templates/photography-templates.ts(54,1): error TS1128: Declaration or statement expected.
+src/components/invoice-templates/photography-templates.ts(65,14): error TS1005: '>' expected.
+src/components/invoice-templates/photography-templates.ts(65,23): error TS1005: ')' expected.
+src/components/invoice-templates/photography-templates.ts(65,25): error TS1136: Property assignment expected.
+src/components/invoice-templates/photography-templates.ts(65,133): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(65,140): error TS1136: Property assignment expected.
+src/components/invoice-templates/photography-templates.ts(65,153): error TS1003: Identifier expected.
+src/components/invoice-templates/photography-templates.ts(65,161): error TS1005: ':' expected.
+src/components/invoice-templates/photography-templates.ts(65,188): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(65,224): error TS1128: Declaration or statement expected.
+src/components/invoice-templates/photography-templates.ts(65,225): error TS1109: Expression expected.
+src/components/invoice-templates/photography-templates.ts(67,18): error TS1005: '>' expected.
+src/components/invoice-templates/photography-templates.ts(67,27): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(68,26): error TS1005: '>' expected.
+src/components/invoice-templates/photography-templates.ts(68,35): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(70,29): error TS1005: '>' expected.
+src/components/invoice-templates/photography-templates.ts(70,38): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(70,74): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(70,90): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/photography-templates.ts(71,28): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(71,55): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(71,69): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(71,95): error TS1110: Type expected.
+src/components/invoice-templates/photography-templates.ts(72,28): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(72,68): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(72,97): error TS1005: ':' expected.
+src/components/invoice-templates/photography-templates.ts(72,100): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/photography-templates.ts(73,22): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/photography-templates.ts(74,26): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(75,28): error TS1005: '>' expected.
+src/components/invoice-templates/photography-templates.ts(75,37): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(75,49): error TS1136: Property assignment expected.
+src/components/invoice-templates/photography-templates.ts(75,128): error TS1128: Declaration or statement expected.
+src/components/invoice-templates/photography-templates.ts(75,129): error TS1128: Declaration or statement expected.
+src/components/invoice-templates/photography-templates.ts(75,131): error TS1110: Type expected.
+src/components/invoice-templates/photography-templates.ts(76,28): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(76,65): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(76,72): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/photography-templates.ts(77,22): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/photography-templates.ts(78,18): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/photography-templates.ts(79,26): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(81,28): error TS1005: '>' expected.
+src/components/invoice-templates/photography-templates.ts(81,37): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(81,70): error TS1136: Property assignment expected.
+src/components/invoice-templates/photography-templates.ts(81,111): error TS1128: Declaration or statement expected.
+src/components/invoice-templates/photography-templates.ts(81,113): error TS1110: Type expected.
+src/components/invoice-templates/photography-templates.ts(82,28): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(82,59): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(82,66): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/photography-templates.ts(83,28): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(83,69): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(83,79): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/photography-templates.ts(84,37): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(84,45): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/photography-templates.ts(85,37): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(85,45): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/photography-templates.ts(86,58): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(86,68): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/photography-templates.ts(87,58): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(87,85): error TS1110: Type expected.
+src/components/invoice-templates/photography-templates.ts(88,51): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(88,72): error TS1110: Type expected.
+src/components/invoice-templates/photography-templates.ts(89,22): error TS1110: Type expected.
+src/components/invoice-templates/photography-templates.ts(91,28): error TS1005: '>' expected.
+src/components/invoice-templates/photography-templates.ts(91,37): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(91,70): error TS1136: Property assignment expected.
+src/components/invoice-templates/photography-templates.ts(91,107): error TS1128: Declaration or statement expected.
+src/components/invoice-templates/photography-templates.ts(91,109): error TS1110: Type expected.
+src/components/invoice-templates/photography-templates.ts(92,28): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(92,57): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(92,64): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/photography-templates.ts(93,58): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(93,72): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/photography-templates.ts(94,28): error TS1005: '>' expected.
+src/components/invoice-templates/photography-templates.ts(94,37): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(94,67): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(94,77): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/photography-templates.ts(95,35): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(95,43): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/photography-templates.ts(96,35): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(96,43): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/photography-templates.ts(97,22): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/photography-templates.ts(98,18): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/photography-templates.ts(100,37): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(100,57): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(100,64): error TS1109: Expression expected.
+src/components/invoice-templates/photography-templates.ts(102,23): error TS1005: '>' expected.
+src/components/invoice-templates/photography-templates.ts(102,32): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(103,28): error TS1005: '>' expected.
+src/components/invoice-templates/photography-templates.ts(103,37): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(105,33): error TS1005: '>' expected.
+src/components/invoice-templates/photography-templates.ts(105,42): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(105,54): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(105,61): error TS1136: Property assignment expected.
+src/components/invoice-templates/photography-templates.ts(105,91): error TS1128: Declaration or statement expected.
+src/components/invoice-templates/photography-templates.ts(105,92): error TS1109: Expression expected.
+src/components/invoice-templates/photography-templates.ts(106,37): error TS1005: '>' expected.
+src/components/invoice-templates/photography-templates.ts(106,46): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(106,74): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(106,81): error TS1136: Property assignment expected.
+src/components/invoice-templates/photography-templates.ts(106,105): error TS1128: Declaration or statement expected.
+src/components/invoice-templates/photography-templates.ts(106,106): error TS1109: Expression expected.
+src/components/invoice-templates/photography-templates.ts(106,108): error TS1136: Property assignment expected.
+src/components/invoice-templates/photography-templates.ts(106,140): error TS1128: Declaration or statement expected.
+src/components/invoice-templates/photography-templates.ts(106,142): error TS1110: Type expected.
+src/components/invoice-templates/photography-templates.ts(107,37): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(107,74): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(107,81): error TS1136: Property assignment expected.
+src/components/invoice-templates/photography-templates.ts(107,105): error TS1128: Declaration or statement expected.
+src/components/invoice-templates/photography-templates.ts(107,106): error TS1109: Expression expected.
+src/components/invoice-templates/photography-templates.ts(107,108): error TS1136: Property assignment expected.
+src/components/invoice-templates/photography-templates.ts(107,154): error TS1128: Declaration or statement expected.
+src/components/invoice-templates/photography-templates.ts(107,156): error TS1110: Type expected.
+src/components/invoice-templates/photography-templates.ts(108,37): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(108,77): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(108,84): error TS1136: Property assignment expected.
+src/components/invoice-templates/photography-templates.ts(108,108): error TS1128: Declaration or statement expected.
+src/components/invoice-templates/photography-templates.ts(108,109): error TS1109: Expression expected.
+src/components/invoice-templates/photography-templates.ts(108,111): error TS1136: Property assignment expected.
+src/components/invoice-templates/photography-templates.ts(108,145): error TS1128: Declaration or statement expected.
+src/components/invoice-templates/photography-templates.ts(108,147): error TS1110: Type expected.
+src/components/invoice-templates/photography-templates.ts(109,37): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(109,78): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(109,85): error TS1136: Property assignment expected.
+src/components/invoice-templates/photography-templates.ts(109,109): error TS1128: Declaration or statement expected.
+src/components/invoice-templates/photography-templates.ts(109,110): error TS1109: Expression expected.
+src/components/invoice-templates/photography-templates.ts(109,112): error TS1136: Property assignment expected.
+src/components/invoice-templates/photography-templates.ts(109,147): error TS1128: Declaration or statement expected.
+src/components/invoice-templates/photography-templates.ts(109,149): error TS1110: Type expected.
+src/components/invoice-templates/photography-templates.ts(110,37): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(110,77): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(110,84): error TS1136: Property assignment expected.
+src/components/invoice-templates/photography-templates.ts(110,108): error TS1128: Declaration or statement expected.
+src/components/invoice-templates/photography-templates.ts(110,109): error TS1109: Expression expected.
+src/components/invoice-templates/photography-templates.ts(110,111): error TS1136: Property assignment expected.
+src/components/invoice-templates/photography-templates.ts(110,145): error TS1128: Declaration or statement expected.
+src/components/invoice-templates/photography-templates.ts(110,147): error TS1110: Type expected.
+src/components/invoice-templates/photography-templates.ts(111,30): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/photography-templates.ts(112,26): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/photography-templates.ts(115,37): error TS1005: '>' expected.
+src/components/invoice-templates/photography-templates.ts(115,40): error TS1005: ')' expected.
+src/components/invoice-templates/photography-templates.ts(115,46): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(115,51): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(116,41): error TS1005: '>' expected.
+src/components/invoice-templates/photography-templates.ts(116,50): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(116,95): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(116,102): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/photography-templates.ts(117,41): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(117,105): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(117,119): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/photography-templates.ts(118,41): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(118,85): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(118,90): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(118,113): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/photography-templates.ts(119,41): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(119,75): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(119,86): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/photography-templates.ts(120,41): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(120,85): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(120,86): error TS1136: Property assignment expected.
+src/components/invoice-templates/photography-templates.ts(120,129): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(120,131): error TS1110: Type expected.
+src/components/invoice-templates/photography-templates.ts(121,34): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/photography-templates.ts(122,29): error TS1128: Declaration or statement expected.
+src/components/invoice-templates/photography-templates.ts(122,30): error TS1128: Declaration or statement expected.
+src/components/invoice-templates/photography-templates.ts(122,31): error TS1128: Declaration or statement expected.
+src/components/invoice-templates/photography-templates.ts(123,26): error TS1110: Type expected.
+src/components/invoice-templates/photography-templates.ts(124,22): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/photography-templates.ts(125,18): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/photography-templates.ts(128,25): error TS1005: '>' expected.
+src/components/invoice-templates/photography-templates.ts(128,34): error TS1005: ')' expected.
+src/components/invoice-templates/photography-templates.ts(129,26): error TS1005: '>' expected.
+src/components/invoice-templates/photography-templates.ts(129,35): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(130,30): error TS1005: '>' expected.
+src/components/invoice-templates/photography-templates.ts(130,39): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(131,32): error TS1005: '>' expected.
+src/components/invoice-templates/photography-templates.ts(131,37): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(131,64): error TS1109: Expression expected.
+src/components/invoice-templates/photography-templates.ts(131,67): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(131,105): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(131,107): error TS1110: Type expected.
+src/components/invoice-templates/photography-templates.ts(132,41): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(132,48): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/photography-templates.ts(133,41): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(133,49): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/photography-templates.ts(134,33): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(134,79): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(134,100): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/photography-templates.ts(135,34): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(136,51): error TS1005: '>' expected.
+src/components/invoice-templates/photography-templates.ts(136,60): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(136,104): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(136,153): error TS1109: Expression expected.
+src/components/invoice-templates/photography-templates.ts(137,51): error TS1005: '>' expected.
+src/components/invoice-templates/photography-templates.ts(137,60): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(137,96): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(137,137): error TS1109: Expression expected.
+src/components/invoice-templates/photography-templates.ts(138,30): error TS1110: Type expected.
+src/components/invoice-templates/photography-templates.ts(139,26): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/photography-templates.ts(140,30): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(141,32): error TS1005: '>' expected.
+src/components/invoice-templates/photography-templates.ts(141,41): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(141,73): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(141,170): error TS1110: Type expected.
+src/components/invoice-templates/photography-templates.ts(142,57): error TS1005: '>' expected.
+src/components/invoice-templates/photography-templates.ts(142,66): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(142,111): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(142,202): error TS1110: Type expected.
+src/components/invoice-templates/photography-templates.ts(143,61): error TS1005: '>' expected.
+src/components/invoice-templates/photography-templates.ts(143,70): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(143,102): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(143,196): error TS1110: Type expected.
+src/components/invoice-templates/photography-templates.ts(144,32): error TS1005: '>' expected.
+src/components/invoice-templates/photography-templates.ts(144,41): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(144,73): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(144,154): error TS1110: Type expected.
+src/components/invoice-templates/photography-templates.ts(145,32): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(145,95): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(145,102): error TS1136: Property assignment expected.
+src/components/invoice-templates/photography-templates.ts(145,127): error TS1109: Expression expected.
+src/components/invoice-templates/photography-templates.ts(145,136): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(145,231): error TS1110: Type expected.
+src/components/invoice-templates/photography-templates.ts(146,26): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/photography-templates.ts(147,22): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/photography-templates.ts(148,18): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/photography-templates.ts(149,17): error TS1128: Declaration or statement expected.
+src/components/invoice-templates/photography-templates.ts(149,18): error TS1128: Declaration or statement expected.
+src/components/invoice-templates/photography-templates.ts(150,14): error TS1110: Type expected.
+src/components/invoice-templates/photography-templates.ts(152,18): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(153,32): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(153,42): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/photography-templates.ts(154,23): error TS1127: Invalid character.
+src/components/invoice-templates/photography-templates.ts(154,25): error TS1110: Type expected.
+src/components/invoice-templates/photography-templates.ts(155,32): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(155,42): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/photography-templates.ts(156,24): error TS1127: Invalid character.
+src/components/invoice-templates/photography-templates.ts(156,26): error TS1110: Type expected.
+src/components/invoice-templates/photography-templates.ts(157,32): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(157,40): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/photography-templates.ts(158,14): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/photography-templates.ts(159,10): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/photography-templates.ts(160,5): error TS1128: Declaration or statement expected.
+src/components/invoice-templates/photography-templates.ts(161,1): error TS1128: Declaration or statement expected.
+src/components/invoice-templates/photography-templates.ts(170,14): error TS1005: '>' expected.
+src/components/invoice-templates/photography-templates.ts(170,23): error TS1005: ')' expected.
+src/components/invoice-templates/photography-templates.ts(170,25): error TS1136: Property assignment expected.
+src/components/invoice-templates/photography-templates.ts(170,117): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(170,124): error TS1136: Property assignment expected.
+src/components/invoice-templates/photography-templates.ts(170,137): error TS1003: Identifier expected.
+src/components/invoice-templates/photography-templates.ts(170,145): error TS1005: ':' expected.
+src/components/invoice-templates/photography-templates.ts(170,172): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(170,208): error TS1128: Declaration or statement expected.
+src/components/invoice-templates/photography-templates.ts(170,209): error TS1109: Expression expected.
+src/components/invoice-templates/photography-templates.ts(171,21): error TS1005: '>' expected.
+src/components/invoice-templates/photography-templates.ts(171,30): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(171,71): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(171,78): error TS1136: Property assignment expected.
+src/components/invoice-templates/photography-templates.ts(171,127): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(171,137): error TS1128: Declaration or statement expected.
+src/components/invoice-templates/photography-templates.ts(171,138): error TS1109: Expression expected.
+src/components/invoice-templates/photography-templates.ts(173,25): error TS1005: '>' expected.
+src/components/invoice-templates/photography-templates.ts(173,34): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(173,65): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(173,72): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/photography-templates.ts(174,26): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(175,28): error TS1005: '>' expected.
+src/components/invoice-templates/photography-templates.ts(175,37): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(175,69): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(175,79): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/photography-templates.ts(176,37): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(176,45): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/photography-templates.ts(177,37): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(177,45): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/photography-templates.ts(178,58): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(178,68): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/photography-templates.ts(179,59): error TS1127: Invalid character.
+src/components/invoice-templates/photography-templates.ts(179,60): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(179,87): error TS1110: Type expected.
+src/components/invoice-templates/photography-templates.ts(180,51): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(180,72): error TS1110: Type expected.
+src/components/invoice-templates/photography-templates.ts(181,22): error TS1110: Type expected.
+src/components/invoice-templates/photography-templates.ts(182,18): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/photography-templates.ts(183,23): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(184,25): error TS1005: '>' expected.
+src/components/invoice-templates/photography-templates.ts(184,34): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(184,67): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/photography-templates.ts(185,24): error TS1127: Invalid character.
+src/components/invoice-templates/photography-templates.ts(185,25): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(185,51): error TS1110: Type expected.
+src/components/invoice-templates/photography-templates.ts(186,18): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/photography-templates.ts(187,14): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/photography-templates.ts(188,18): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(189,26): error TS1005: '>' expected.
+src/components/invoice-templates/photography-templates.ts(189,35): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(191,28): error TS1005: '>' expected.
+src/components/invoice-templates/photography-templates.ts(191,37): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(191,57): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(191,78): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(191,80): error TS1110: Type expected.
+src/components/invoice-templates/photography-templates.ts(192,35): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(192,42): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/photography-templates.ts(193,58): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(193,72): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/photography-templates.ts(194,28): error TS1005: '>' expected.
+src/components/invoice-templates/photography-templates.ts(194,37): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(194,67): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(194,77): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/photography-templates.ts(195,35): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(195,43): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/photography-templates.ts(196,35): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(196,43): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/photography-templates.ts(197,55): error TS1005: '>' expected.
+src/components/invoice-templates/photography-templates.ts(197,64): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(197,78): error TS1005: '>' expected.
+src/components/invoice-templates/photography-templates.ts(197,87): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(197,105): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(197,109): error TS1110: Type expected.
+src/components/invoice-templates/photography-templates.ts(197,127): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(197,145): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/photography-templates.ts(198,22): error TS1110: Type expected.
+src/components/invoice-templates/photography-templates.ts(199,27): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(200,38): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(200,54): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(200,56): error TS1110: Type expected.
+src/components/invoice-templates/photography-templates.ts(201,38): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(201,67): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(201,69): error TS1110: Type expected.
+src/components/invoice-templates/photography-templates.ts(202,34): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(202,69): error TS1127: Invalid character.
+src/components/invoice-templates/photography-templates.ts(202,72): error TS1110: Type expected.
+src/components/invoice-templates/photography-templates.ts(202,111): error TS1109: Expression expected.
+src/components/invoice-templates/photography-templates.ts(203,22): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/photography-templates.ts(204,18): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/photography-templates.ts(205,37): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(205,57): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(205,64): error TS1109: Expression expected.
+src/components/invoice-templates/photography-templates.ts(206,23): error TS1005: '>' expected.
+src/components/invoice-templates/photography-templates.ts(206,32): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(207,28): error TS1005: '>' expected.
+src/components/invoice-templates/photography-templates.ts(207,37): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(209,33): error TS1005: '>' expected.
+src/components/invoice-templates/photography-templates.ts(209,42): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(210,37): error TS1005: '>' expected.
+src/components/invoice-templates/photography-templates.ts(210,46): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(210,72): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(210,89): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/photography-templates.ts(211,37): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(211,72): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(211,103): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/photography-templates.ts(212,37): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(212,78): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(212,98): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/photography-templates.ts(213,37): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(213,77): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(213,105): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/photography-templates.ts(214,37): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(214,77): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(214,98): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/photography-templates.ts(215,30): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/photography-templates.ts(216,26): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/photography-templates.ts(219,37): error TS1005: '>' expected.
+src/components/invoice-templates/photography-templates.ts(219,40): error TS1005: ')' expected.
+src/components/invoice-templates/photography-templates.ts(219,46): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(219,51): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(220,41): error TS1005: '>' expected.
+src/components/invoice-templates/photography-templates.ts(220,50): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(220,97): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(220,104): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/photography-templates.ts(221,41): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(221,113): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(221,127): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/photography-templates.ts(222,41): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(222,75): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(222,86): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/photography-templates.ts(223,41): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(223,85): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(223,90): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(223,113): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/photography-templates.ts(224,41): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(224,85): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(224,86): error TS1136: Property assignment expected.
+src/components/invoice-templates/photography-templates.ts(224,129): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(224,131): error TS1110: Type expected.
+src/components/invoice-templates/photography-templates.ts(225,34): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/photography-templates.ts(226,29): error TS1128: Declaration or statement expected.
+src/components/invoice-templates/photography-templates.ts(226,30): error TS1128: Declaration or statement expected.
+src/components/invoice-templates/photography-templates.ts(226,31): error TS1128: Declaration or statement expected.
+src/components/invoice-templates/photography-templates.ts(227,26): error TS1110: Type expected.
+src/components/invoice-templates/photography-templates.ts(228,22): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/photography-templates.ts(229,18): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/photography-templates.ts(231,29): error TS1005: '>' expected.
+src/components/invoice-templates/photography-templates.ts(231,38): error TS1005: ')' expected.
+src/components/invoice-templates/photography-templates.ts(232,30): error TS1005: '>' expected.
+src/components/invoice-templates/photography-templates.ts(232,39): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(233,33): error TS1005: '>' expected.
+src/components/invoice-templates/photography-templates.ts(233,42): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(234,36): error TS1005: '>' expected.
+src/components/invoice-templates/photography-templates.ts(234,45): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(234,82): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(234,106): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(234,108): error TS1110: Type expected.
+src/components/invoice-templates/photography-templates.ts(234,173): error TS1110: Type expected.
+src/components/invoice-templates/photography-templates.ts(235,61): error TS1005: '>' expected.
+src/components/invoice-templates/photography-templates.ts(235,70): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(235,120): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(235,144): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(235,146): error TS1110: Type expected.
+src/components/invoice-templates/photography-templates.ts(235,212): error TS1110: Type expected.
+src/components/invoice-templates/photography-templates.ts(236,65): error TS1005: '>' expected.
+src/components/invoice-templates/photography-templates.ts(236,74): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(236,111): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(236,137): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(236,139): error TS1110: Type expected.
+src/components/invoice-templates/photography-templates.ts(236,208): error TS1110: Type expected.
+src/components/invoice-templates/photography-templates.ts(237,36): error TS1005: '>' expected.
+src/components/invoice-templates/photography-templates.ts(237,45): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(237,82): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(237,96): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(237,98): error TS1110: Type expected.
+src/components/invoice-templates/photography-templates.ts(237,164): error TS1110: Type expected.
+src/components/invoice-templates/photography-templates.ts(238,36): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(238,101): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(238,119): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(238,121): error TS1110: Type expected.
+src/components/invoice-templates/photography-templates.ts(238,188): error TS1110: Type expected.
+src/components/invoice-templates/photography-templates.ts(239,29): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/photography-templates.ts(240,26): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/photography-templates.ts(241,31): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(242,32): error TS1005: '>' expected.
+src/components/invoice-templates/photography-templates.ts(242,41): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(242,56): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(242,100): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(242,102): error TS1110: Type expected.
+src/components/invoice-templates/photography-templates.ts(243,32): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(243,95): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(243,116): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/photography-templates.ts(244,26): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/photography-templates.ts(245,31): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(246,47): error TS1005: '>' expected.
+src/components/invoice-templates/photography-templates.ts(246,56): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(246,100): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(246,149): error TS1109: Expression expected.
+src/components/invoice-templates/photography-templates.ts(247,47): error TS1005: '>' expected.
+src/components/invoice-templates/photography-templates.ts(247,56): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(247,92): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(247,133): error TS1109: Expression expected.
+src/components/invoice-templates/photography-templates.ts(248,26): error TS1110: Type expected.
+src/components/invoice-templates/photography-templates.ts(249,22): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/photography-templates.ts(250,17): error TS1128: Declaration or statement expected.
+src/components/invoice-templates/photography-templates.ts(251,14): error TS1110: Type expected.
+src/components/invoice-templates/photography-templates.ts(252,10): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/photography-templates.ts(253,5): error TS1128: Declaration or statement expected.
+src/components/invoice-templates/photography-templates.ts(254,1): error TS1128: Declaration or statement expected.
+src/components/invoice-templates/photography-templates.ts(261,15): error TS1005: '>' expected.
+src/components/invoice-templates/photography-templates.ts(261,24): error TS1005: ')' expected.
+src/components/invoice-templates/photography-templates.ts(261,26): error TS1136: Property assignment expected.
+src/components/invoice-templates/photography-templates.ts(261,126): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(261,133): error TS1136: Property assignment expected.
+src/components/invoice-templates/photography-templates.ts(261,146): error TS1003: Identifier expected.
+src/components/invoice-templates/photography-templates.ts(261,155): error TS1005: ':' expected.
+src/components/invoice-templates/photography-templates.ts(261,156): error TS1128: Declaration or statement expected.
+src/components/invoice-templates/photography-templates.ts(261,157): error TS1109: Expression expected.
+src/components/invoice-templates/photography-templates.ts(262,21): error TS1005: '>' expected.
+src/components/invoice-templates/photography-templates.ts(262,30): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(263,21): error TS1005: '>' expected.
+src/components/invoice-templates/photography-templates.ts(263,30): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(263,61): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(263,68): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/photography-templates.ts(264,20): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(264,42): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(264,73): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/photography-templates.ts(265,14): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/photography-templates.ts(266,22): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(268,24): error TS1005: '>' expected.
+src/components/invoice-templates/photography-templates.ts(268,33): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(268,48): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(268,74): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/photography-templates.ts(269,31): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(269,41): error TS1109: Expression expected.
+src/components/invoice-templates/photography-templates.ts(269,49): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(269,59): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/photography-templates.ts(270,54): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(270,68): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/photography-templates.ts(271,31): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(271,48): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(271,56): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/photography-templates.ts(272,18): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/photography-templates.ts(273,22): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(274,34): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(274,62): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(274,64): error TS1110: Type expected.
+src/components/invoice-templates/photography-templates.ts(275,34): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(275,50): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(275,52): error TS1110: Type expected.
+src/components/invoice-templates/photography-templates.ts(275,107): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(275,114): error TS1002: Unterminated string literal.
+src/components/invoice-templates/photography-templates.ts(276,18): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/photography-templates.ts(277,14): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/photography-templates.ts(278,33): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(278,53): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(278,60): error TS1109: Expression expected.
+src/components/invoice-templates/photography-templates.ts(279,19): error TS1005: '>' expected.
+src/components/invoice-templates/photography-templates.ts(279,28): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(280,24): error TS1005: '>' expected.
+src/components/invoice-templates/photography-templates.ts(280,33): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(282,29): error TS1005: '>' expected.
+src/components/invoice-templates/photography-templates.ts(282,38): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(283,33): error TS1005: '>' expected.
+src/components/invoice-templates/photography-templates.ts(283,42): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(283,67): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(283,84): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/photography-templates.ts(284,33): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(284,67): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(284,98): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/photography-templates.ts(285,33): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(285,73): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(285,93): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/photography-templates.ts(286,33): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(286,72): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(286,100): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/photography-templates.ts(287,33): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(287,72): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(287,87): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/photography-templates.ts(288,26): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/photography-templates.ts(289,22): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/photography-templates.ts(292,33): error TS1005: '>' expected.
+src/components/invoice-templates/photography-templates.ts(292,36): error TS1005: ')' expected.
+src/components/invoice-templates/photography-templates.ts(292,42): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(292,47): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(293,37): error TS1005: '>' expected.
+src/components/invoice-templates/photography-templates.ts(293,46): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(293,92): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(293,99): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/photography-templates.ts(294,37): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(294,108): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(294,122): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/photography-templates.ts(295,37): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(295,70): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(295,81): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/photography-templates.ts(296,37): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(296,80): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(296,85): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(296,108): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/photography-templates.ts(297,37): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(297,80): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(297,81): error TS1136: Property assignment expected.
+src/components/invoice-templates/photography-templates.ts(297,124): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(297,126): error TS1110: Type expected.
+src/components/invoice-templates/photography-templates.ts(298,30): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/photography-templates.ts(299,25): error TS1128: Declaration or statement expected.
+src/components/invoice-templates/photography-templates.ts(299,26): error TS1128: Declaration or statement expected.
+src/components/invoice-templates/photography-templates.ts(299,27): error TS1128: Declaration or statement expected.
+src/components/invoice-templates/photography-templates.ts(300,22): error TS1110: Type expected.
+src/components/invoice-templates/photography-templates.ts(301,18): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/photography-templates.ts(302,14): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/photography-templates.ts(304,25): error TS1005: '>' expected.
+src/components/invoice-templates/photography-templates.ts(304,34): error TS1005: ')' expected.
+src/components/invoice-templates/photography-templates.ts(305,26): error TS1005: '>' expected.
+src/components/invoice-templates/photography-templates.ts(305,35): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(306,30): error TS1005: '>' expected.
+src/components/invoice-templates/photography-templates.ts(306,39): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(307,32): error TS1005: '>' expected.
+src/components/invoice-templates/photography-templates.ts(307,41): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(307,73): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(307,163): error TS1110: Type expected.
+src/components/invoice-templates/photography-templates.ts(308,57): error TS1005: '>' expected.
+src/components/invoice-templates/photography-templates.ts(308,66): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(308,111): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(308,202): error TS1110: Type expected.
+src/components/invoice-templates/photography-templates.ts(309,61): error TS1005: '>' expected.
+src/components/invoice-templates/photography-templates.ts(309,70): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(309,102): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(309,196): error TS1110: Type expected.
+src/components/invoice-templates/photography-templates.ts(310,32): error TS1005: '>' expected.
+src/components/invoice-templates/photography-templates.ts(310,41): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(310,87): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(310,168): error TS1110: Type expected.
+src/components/invoice-templates/photography-templates.ts(311,32): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(311,88): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(311,174): error TS1110: Type expected.
+src/components/invoice-templates/photography-templates.ts(312,26): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/photography-templates.ts(313,22): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/photography-templates.ts(314,27): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(315,43): error TS1005: '>' expected.
+src/components/invoice-templates/photography-templates.ts(315,52): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(315,96): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(315,145): error TS1109: Expression expected.
+src/components/invoice-templates/photography-templates.ts(316,43): error TS1005: '>' expected.
+src/components/invoice-templates/photography-templates.ts(316,52): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(316,88): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(316,129): error TS1109: Expression expected.
+src/components/invoice-templates/photography-templates.ts(317,22): error TS1110: Type expected.
+src/components/invoice-templates/photography-templates.ts(318,18): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/photography-templates.ts(319,13): error TS1128: Declaration or statement expected.
+src/components/invoice-templates/photography-templates.ts(320,10): error TS1110: Type expected.
+src/components/invoice-templates/photography-templates.ts(321,5): error TS1128: Declaration or statement expected.
+src/components/invoice-templates/photography-templates.ts(322,1): error TS1128: Declaration or statement expected.
+src/components/invoice-templates/photography-templates.ts(330,14): error TS1005: '>' expected.
+src/components/invoice-templates/photography-templates.ts(330,23): error TS1005: ')' expected.
+src/components/invoice-templates/photography-templates.ts(330,25): error TS1136: Property assignment expected.
+src/components/invoice-templates/photography-templates.ts(330,94): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(330,101): error TS1136: Property assignment expected.
+src/components/invoice-templates/photography-templates.ts(330,114): error TS1003: Identifier expected.
+src/components/invoice-templates/photography-templates.ts(330,123): error TS1005: ':' expected.
+src/components/invoice-templates/photography-templates.ts(330,124): error TS1128: Declaration or statement expected.
+src/components/invoice-templates/photography-templates.ts(330,125): error TS1109: Expression expected.
+src/components/invoice-templates/photography-templates.ts(331,21): error TS1005: '>' expected.
+src/components/invoice-templates/photography-templates.ts(331,30): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(331,83): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(331,90): error TS1136: Property assignment expected.
+src/components/invoice-templates/photography-templates.ts(331,135): error TS1128: Declaration or statement expected.
+src/components/invoice-templates/photography-templates.ts(331,136): error TS1109: Expression expected.
+src/components/invoice-templates/photography-templates.ts(332,21): error TS1005: '>' expected.
+src/components/invoice-templates/photography-templates.ts(332,30): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(332,61): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(332,68): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/photography-templates.ts(333,22): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(334,25): error TS1005: '>' expected.
+src/components/invoice-templates/photography-templates.ts(334,34): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(334,56): error TS1127: Invalid character.
+src/components/invoice-templates/photography-templates.ts(334,57): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(334,83): error TS1110: Type expected.
+src/components/invoice-templates/photography-templates.ts(335,18): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/photography-templates.ts(336,14): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/photography-templates.ts(337,18): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(338,26): error TS1005: '>' expected.
+src/components/invoice-templates/photography-templates.ts(338,35): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(340,28): error TS1005: '>' expected.
+src/components/invoice-templates/photography-templates.ts(340,37): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(340,55): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(340,62): error TS1136: Property assignment expected.
+src/components/invoice-templates/photography-templates.ts(340,97): error TS1128: Declaration or statement expected.
+src/components/invoice-templates/photography-templates.ts(340,98): error TS1109: Expression expected.
+src/components/invoice-templates/photography-templates.ts(340,101): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(340,127): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/photography-templates.ts(341,28): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(341,61): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(341,68): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/photography-templates.ts(342,51): error TS1005: '>' expected.
+src/components/invoice-templates/photography-templates.ts(342,60): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(342,92): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(342,106): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/photography-templates.ts(343,28): error TS1005: '>' expected.
+src/components/invoice-templates/photography-templates.ts(343,37): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(343,89): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(343,99): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/photography-templates.ts(344,28): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(344,69): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(344,77): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/photography-templates.ts(345,28): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(345,69): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(345,77): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/photography-templates.ts(346,22): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/photography-templates.ts(347,26): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(348,29): error TS1005: '>' expected.
+src/components/invoice-templates/photography-templates.ts(348,38): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(348,56): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(348,63): error TS1136: Property assignment expected.
+src/components/invoice-templates/photography-templates.ts(348,98): error TS1128: Declaration or statement expected.
+src/components/invoice-templates/photography-templates.ts(348,99): error TS1109: Expression expected.
+src/components/invoice-templates/photography-templates.ts(348,102): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(348,128): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/photography-templates.ts(349,29): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(349,70): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(349,80): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/photography-templates.ts(350,38): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(350,46): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/photography-templates.ts(351,38): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(351,46): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/photography-templates.ts(352,59): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(352,69): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/photography-templates.ts(353,60): error TS1127: Invalid character.
+src/components/invoice-templates/photography-templates.ts(353,61): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(353,88): error TS1110: Type expected.
+src/components/invoice-templates/photography-templates.ts(354,52): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(354,73): error TS1110: Type expected.
+src/components/invoice-templates/photography-templates.ts(355,22): error TS1110: Type expected.
+src/components/invoice-templates/photography-templates.ts(356,18): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/photography-templates.ts(357,26): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(358,34): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(358,50): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(358,52): error TS1110: Type expected.
+src/components/invoice-templates/photography-templates.ts(358,107): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(358,114): error TS1002: Unterminated string literal.
+src/components/invoice-templates/photography-templates.ts(359,34): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(359,63): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(359,65): error TS1110: Type expected.
+src/components/invoice-templates/photography-templates.ts(359,122): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(359,129): error TS1002: Unterminated string literal.
+src/components/invoice-templates/photography-templates.ts(360,18): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/photography-templates.ts(361,37): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(361,57): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(361,64): error TS1109: Expression expected.
+src/components/invoice-templates/photography-templates.ts(362,23): error TS1005: '>' expected.
+src/components/invoice-templates/photography-templates.ts(362,32): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(363,28): error TS1005: '>' expected.
+src/components/invoice-templates/photography-templates.ts(363,37): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(364,36): error TS1005: '>' expected.
+src/components/invoice-templates/photography-templates.ts(364,45): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(364,64): error TS1005: '>' expected.
+src/components/invoice-templates/photography-templates.ts(364,73): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(364,98): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(364,176): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(364,230): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(364,234): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(364,244): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(364,255): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(364,298): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(364,302): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(364,312): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(364,322): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(364,358): error TS1002: Unterminated string literal.
+src/components/invoice-templates/photography-templates.ts(365,42): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(365,60): error TS1005: '>' expected.
+src/components/invoice-templates/photography-templates.ts(365,63): error TS1005: ')' expected.
+src/components/invoice-templates/photography-templates.ts(365,69): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(365,74): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(366,33): error TS1005: '>' expected.
+src/components/invoice-templates/photography-templates.ts(366,42): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(366,86): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(366,93): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/photography-templates.ts(367,33): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(367,96): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(367,110): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/photography-templates.ts(368,33): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(368,66): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(368,77): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/photography-templates.ts(369,33): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(369,76): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(369,77): error TS1136: Property assignment expected.
+src/components/invoice-templates/photography-templates.ts(369,120): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(369,131): error TS1109: Expression expected.
+src/components/invoice-templates/photography-templates.ts(369,132): error TS1128: Declaration or statement expected.
+src/components/invoice-templates/photography-templates.ts(369,133): error TS1128: Declaration or statement expected.
+src/components/invoice-templates/photography-templates.ts(370,26): error TS1110: Type expected.
+src/components/invoice-templates/photography-templates.ts(371,22): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/photography-templates.ts(372,18): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/photography-templates.ts(374,25): error TS1005: '>' expected.
+src/components/invoice-templates/photography-templates.ts(374,34): error TS1005: ')' expected.
+src/components/invoice-templates/photography-templates.ts(375,26): error TS1005: '>' expected.
+src/components/invoice-templates/photography-templates.ts(375,35): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(376,30): error TS1005: '>' expected.
+src/components/invoice-templates/photography-templates.ts(376,39): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(377,32): error TS1005: '>' expected.
+src/components/invoice-templates/photography-templates.ts(377,41): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(377,78): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(377,96): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(377,98): error TS1110: Type expected.
+src/components/invoice-templates/photography-templates.ts(377,163): error TS1110: Type expected.
+src/components/invoice-templates/photography-templates.ts(378,58): error TS1005: '>' expected.
+src/components/invoice-templates/photography-templates.ts(378,67): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(378,117): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(378,141): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(378,143): error TS1110: Type expected.
+src/components/invoice-templates/photography-templates.ts(378,209): error TS1110: Type expected.
+src/components/invoice-templates/photography-templates.ts(379,62): error TS1005: '>' expected.
+src/components/invoice-templates/photography-templates.ts(379,71): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(379,108): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(379,132): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(379,134): error TS1110: Type expected.
+src/components/invoice-templates/photography-templates.ts(379,203): error TS1110: Type expected.
+src/components/invoice-templates/photography-templates.ts(380,33): error TS1005: '>' expected.
+src/components/invoice-templates/photography-templates.ts(380,42): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(380,79): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(380,93): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(380,95): error TS1110: Type expected.
+src/components/invoice-templates/photography-templates.ts(380,161): error TS1110: Type expected.
+src/components/invoice-templates/photography-templates.ts(381,32): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(381,96): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(381,121): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(381,123): error TS1110: Type expected.
+src/components/invoice-templates/photography-templates.ts(381,190): error TS1110: Type expected.
+src/components/invoice-templates/photography-templates.ts(382,26): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/photography-templates.ts(383,22): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/photography-templates.ts(384,27): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(385,28): error TS1005: '>' expected.
+src/components/invoice-templates/photography-templates.ts(385,37): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(385,52): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(385,96): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(385,98): error TS1110: Type expected.
+src/components/invoice-templates/photography-templates.ts(386,28): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(386,91): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(386,112): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/photography-templates.ts(387,22): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/photography-templates.ts(388,27): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(389,43): error TS1005: '>' expected.
+src/components/invoice-templates/photography-templates.ts(389,52): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(389,96): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(389,145): error TS1109: Expression expected.
+src/components/invoice-templates/photography-templates.ts(390,43): error TS1005: '>' expected.
+src/components/invoice-templates/photography-templates.ts(390,52): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(390,88): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(390,129): error TS1109: Expression expected.
+src/components/invoice-templates/photography-templates.ts(391,22): error TS1110: Type expected.
+src/components/invoice-templates/photography-templates.ts(392,18): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/photography-templates.ts(393,17): error TS1128: Declaration or statement expected.
+src/components/invoice-templates/photography-templates.ts(394,14): error TS1110: Type expected.
+src/components/invoice-templates/photography-templates.ts(395,10): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/photography-templates.ts(396,5): error TS1128: Declaration or statement expected.
+src/components/invoice-templates/photography-templates.ts(397,1): error TS1128: Declaration or statement expected.
+src/components/invoice-templates/photography-templates.ts(404,14): error TS1005: '>' expected.
+src/components/invoice-templates/photography-templates.ts(404,23): error TS1005: ')' expected.
+src/components/invoice-templates/photography-templates.ts(404,25): error TS1136: Property assignment expected.
+src/components/invoice-templates/photography-templates.ts(404,100): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(404,107): error TS1136: Property assignment expected.
+src/components/invoice-templates/photography-templates.ts(404,120): error TS1003: Identifier expected.
+src/components/invoice-templates/photography-templates.ts(404,128): error TS1005: ':' expected.
+src/components/invoice-templates/photography-templates.ts(404,142): error TS1003: Identifier expected.
+src/components/invoice-templates/photography-templates.ts(404,183): error TS1128: Declaration or statement expected.
+src/components/invoice-templates/photography-templates.ts(404,184): error TS1128: Declaration or statement expected.
+src/components/invoice-templates/photography-templates.ts(404,185): error TS1109: Expression expected.
+src/components/invoice-templates/photography-templates.ts(405,21): error TS1005: '>' expected.
+src/components/invoice-templates/photography-templates.ts(405,30): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(406,21): error TS1005: '>' expected.
+src/components/invoice-templates/photography-templates.ts(406,30): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(406,61): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(406,68): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/photography-templates.ts(407,20): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(407,56): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(407,112): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/photography-templates.ts(408,23): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(409,33): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(409,43): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/photography-templates.ts(410,33): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(410,52): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(410,60): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/photography-templates.ts(411,54): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(411,64): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/photography-templates.ts(412,54): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(412,81): error TS1110: Type expected.
+src/components/invoice-templates/photography-templates.ts(413,47): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(413,68): error TS1110: Type expected.
+src/components/invoice-templates/photography-templates.ts(414,18): error TS1110: Type expected.
+src/components/invoice-templates/photography-templates.ts(415,14): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/photography-templates.ts(416,22): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(418,24): error TS1005: '>' expected.
+src/components/invoice-templates/photography-templates.ts(418,33): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(418,48): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(418,69): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/photography-templates.ts(419,31): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(419,38): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/photography-templates.ts(420,54): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(420,68): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/photography-templates.ts(421,24): error TS1005: '>' expected.
+src/components/invoice-templates/photography-templates.ts(421,33): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(421,63): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(421,73): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/photography-templates.ts(422,31): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(422,48): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(422,56): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/photography-templates.ts(423,18): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/photography-templates.ts(424,25): error TS1005: '>' expected.
+src/components/invoice-templates/photography-templates.ts(424,34): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(424,48): error TS1136: Property assignment expected.
+src/components/invoice-templates/photography-templates.ts(424,124): error TS1128: Declaration or statement expected.
+src/components/invoice-templates/photography-templates.ts(424,126): error TS1110: Type expected.
+src/components/invoice-templates/photography-templates.ts(424,162): error TS1110: Type expected.
+src/components/invoice-templates/photography-templates.ts(425,25): error TS1005: '>' expected.
+src/components/invoice-templates/photography-templates.ts(425,34): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(425,49): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(425,126): error TS1110: Type expected.
+src/components/invoice-templates/photography-templates.ts(426,26): error TS1005: '>' expected.
+src/components/invoice-templates/photography-templates.ts(426,35): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(426,50): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(426,142): error TS1110: Type expected.
+src/components/invoice-templates/photography-templates.ts(427,55): error TS1005: '>' expected.
+src/components/invoice-templates/photography-templates.ts(427,64): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(427,81): error TS1127: Invalid character.
+src/components/invoice-templates/photography-templates.ts(427,120): error TS1110: Type expected.
+src/components/invoice-templates/photography-templates.ts(428,14): error TS1110: Type expected.
+src/components/invoice-templates/photography-templates.ts(429,33): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(429,53): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(429,60): error TS1109: Expression expected.
+src/components/invoice-templates/photography-templates.ts(430,19): error TS1005: '>' expected.
+src/components/invoice-templates/photography-templates.ts(430,28): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(431,25): error TS1005: '>' expected.
+src/components/invoice-templates/photography-templates.ts(431,34): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(432,36): error TS1005: '>' expected.
+src/components/invoice-templates/photography-templates.ts(432,45): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(432,98): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(432,181): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(432,235): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(432,240): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(432,251): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(432,263): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(432,277): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(432,288): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(432,331): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(432,336): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(432,347): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(432,359): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(432,373): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(432,383): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(432,434): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(432,439): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(432,450): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(432,462): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(432,476): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(432,486): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(432,524): error TS1002: Unterminated string literal.
+src/components/invoice-templates/photography-templates.ts(435,33): error TS1005: '>' expected.
+src/components/invoice-templates/photography-templates.ts(435,36): error TS1005: ')' expected.
+src/components/invoice-templates/photography-templates.ts(435,42): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(436,37): error TS1005: '>' expected.
+src/components/invoice-templates/photography-templates.ts(436,46): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(436,100): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(436,107): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/photography-templates.ts(437,37): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(437,118): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(437,132): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/photography-templates.ts(438,37): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(438,80): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(438,91): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/photography-templates.ts(439,37): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(439,90): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(439,95): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(439,118): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/photography-templates.ts(440,37): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(440,90): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(440,91): error TS1136: Property assignment expected.
+src/components/invoice-templates/photography-templates.ts(440,134): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(440,136): error TS1110: Type expected.
+src/components/invoice-templates/photography-templates.ts(441,30): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/photography-templates.ts(442,25): error TS1128: Declaration or statement expected.
+src/components/invoice-templates/photography-templates.ts(442,26): error TS1128: Declaration or statement expected.
+src/components/invoice-templates/photography-templates.ts(442,27): error TS1128: Declaration or statement expected.
+src/components/invoice-templates/photography-templates.ts(443,22): error TS1110: Type expected.
+src/components/invoice-templates/photography-templates.ts(444,18): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/photography-templates.ts(445,14): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/photography-templates.ts(447,25): error TS1005: '>' expected.
+src/components/invoice-templates/photography-templates.ts(447,34): error TS1005: ')' expected.
+src/components/invoice-templates/photography-templates.ts(448,27): error TS1005: '>' expected.
+src/components/invoice-templates/photography-templates.ts(448,36): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(449,30): error TS1005: '>' expected.
+src/components/invoice-templates/photography-templates.ts(449,39): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(450,32): error TS1005: '>' expected.
+src/components/invoice-templates/photography-templates.ts(450,41): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(450,73): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(450,157): error TS1110: Type expected.
+src/components/invoice-templates/photography-templates.ts(451,57): error TS1005: '>' expected.
+src/components/invoice-templates/photography-templates.ts(451,66): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(451,111): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(451,202): error TS1110: Type expected.
+src/components/invoice-templates/photography-templates.ts(452,61): error TS1005: '>' expected.
+src/components/invoice-templates/photography-templates.ts(452,70): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(452,102): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(452,196): error TS1110: Type expected.
+src/components/invoice-templates/photography-templates.ts(453,32): error TS1005: '>' expected.
+src/components/invoice-templates/photography-templates.ts(453,41): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(453,88): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(453,95): error TS1136: Property assignment expected.
+src/components/invoice-templates/photography-templates.ts(453,116): error TS1109: Expression expected.
+src/components/invoice-templates/photography-templates.ts(453,125): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(453,220): error TS1110: Type expected.
+src/components/invoice-templates/photography-templates.ts(454,26): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/photography-templates.ts(455,22): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/photography-templates.ts(456,27): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(457,28): error TS1005: '>' expected.
+src/components/invoice-templates/photography-templates.ts(457,37): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(457,52): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(457,96): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(457,98): error TS1110: Type expected.
+src/components/invoice-templates/photography-templates.ts(458,28): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(458,91): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(458,112): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/photography-templates.ts(459,22): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/photography-templates.ts(460,27): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(461,43): error TS1005: '>' expected.
+src/components/invoice-templates/photography-templates.ts(461,52): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(461,96): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(461,145): error TS1109: Expression expected.
+src/components/invoice-templates/photography-templates.ts(462,43): error TS1005: '>' expected.
+src/components/invoice-templates/photography-templates.ts(462,52): error TS1005: ';' expected.
+src/components/invoice-templates/photography-templates.ts(462,88): error TS1005: ',' expected.
+src/components/invoice-templates/photography-templates.ts(462,129): error TS1109: Expression expected.
+src/components/invoice-templates/photography-templates.ts(463,22): error TS1110: Type expected.
+src/components/invoice-templates/photography-templates.ts(464,18): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/photography-templates.ts(465,13): error TS1128: Declaration or statement expected.
+src/components/invoice-templates/photography-templates.ts(465,14): error TS1128: Declaration or statement expected.
+src/components/invoice-templates/photography-templates.ts(466,10): error TS1110: Type expected.
+src/components/invoice-templates/photography-templates.ts(467,5): error TS1128: Declaration or statement expected.
+src/components/invoice-templates/photography-templates.ts(468,1): error TS1128: Declaration or statement expected.
+src/components/invoice-templates/retail-templates.ts(30,14): error TS1005: '>' expected.
+src/components/invoice-templates/retail-templates.ts(30,23): error TS1005: ')' expected.
+src/components/invoice-templates/retail-templates.ts(31,24): error TS1005: '>' expected.
+src/components/invoice-templates/retail-templates.ts(31,27): error TS1005: ';' expected.
+src/components/invoice-templates/retail-templates.ts(31,58): error TS1005: ';' expected.
+src/components/invoice-templates/retail-templates.ts(31,68): error TS1005: ':' expected.
+src/components/invoice-templates/retail-templates.ts(31,70): error TS1005: ';' expected.
+src/components/invoice-templates/retail-templates.ts(31,80): error TS1005: ':' expected.
+src/components/invoice-templates/retail-templates.ts(31,82): error TS1005: ';' expected.
+src/components/invoice-templates/retail-templates.ts(31,120): error TS1109: Expression expected.
+src/components/invoice-templates/retail-templates.ts(32,16): error TS1005: '>' expected.
+src/components/invoice-templates/retail-templates.ts(32,25): error TS1005: ';' expected.
+src/components/invoice-templates/retail-templates.ts(32,100): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/retail-templates.ts(33,10): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/retail-templates.ts(34,5): error TS1128: Declaration or statement expected.
+src/components/invoice-templates/retail-templates.ts(35,1): error TS1128: Declaration or statement expected.
+src/components/invoice-templates/retail-templates.ts(43,22): error TS1005: '>' expected.
+src/components/invoice-templates/retail-templates.ts(43,31): error TS1005: ')' expected.
+src/components/invoice-templates/retail-templates.ts(44,20): error TS1005: '>' expected.
+src/components/invoice-templates/retail-templates.ts(44,29): error TS1005: ';' expected.
+src/components/invoice-templates/retail-templates.ts(44,72): error TS1005: ',' expected.
+src/components/invoice-templates/retail-templates.ts(44,110): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/retail-templates.ts(45,14): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/retail-templates.ts(46,9): error TS1128: Declaration or statement expected.
+src/components/invoice-templates/retail-templates.ts(47,5): error TS1128: Declaration or statement expected.
+src/components/invoice-templates/retail-templates.ts(49,18): error TS1005: '>' expected.
+src/components/invoice-templates/retail-templates.ts(49,27): error TS1005: ')' expected.
+src/components/invoice-templates/retail-templates.ts(50,16): error TS1005: '>' expected.
+src/components/invoice-templates/retail-templates.ts(50,25): error TS1005: ';' expected.
+src/components/invoice-templates/retail-templates.ts(50,68): error TS1005: ',' expected.
+src/components/invoice-templates/retail-templates.ts(50,106): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/retail-templates.ts(51,18): error TS1005: ';' expected.
+src/components/invoice-templates/retail-templates.ts(52,24): error TS1005: ',' expected.
+src/components/invoice-templates/retail-templates.ts(52,41): error TS1005: '>' expected.
+src/components/invoice-templates/retail-templates.ts(52,50): error TS1005: ',' expected.
+src/components/invoice-templates/retail-templates.ts(52,80): error TS1005: ':' expected.
+src/components/invoice-templates/retail-templates.ts(52,83): error TS1005: ',' expected.
+src/components/invoice-templates/retail-templates.ts(52,97): error TS1005: ',' expected.
+src/components/invoice-templates/retail-templates.ts(52,98): error TS1136: Property assignment expected.
+src/components/invoice-templates/retail-templates.ts(52,122): error TS1109: Expression expected.
+src/components/invoice-templates/retail-templates.ts(53,53): error TS1005: '>' expected.
+src/components/invoice-templates/retail-templates.ts(53,62): error TS1005: ';' expected.
+src/components/invoice-templates/retail-templates.ts(53,95): error TS1005: ',' expected.
+src/components/invoice-templates/retail-templates.ts(53,126): error TS1005: ';' expected.
+src/components/invoice-templates/retail-templates.ts(53,128): error TS1110: Type expected.
+src/components/invoice-templates/retail-templates.ts(53,163): error TS1109: Expression expected.
+src/components/invoice-templates/retail-templates.ts(54,51): error TS1005: '>' expected.
+src/components/invoice-templates/retail-templates.ts(54,60): error TS1005: ';' expected.
+src/components/invoice-templates/retail-templates.ts(54,93): error TS1005: ',' expected.
+src/components/invoice-templates/retail-templates.ts(54,118): error TS1005: ';' expected.
+src/components/invoice-templates/retail-templates.ts(54,120): error TS1110: Type expected.
+src/components/invoice-templates/retail-templates.ts(54,153): error TS1109: Expression expected.
+src/components/invoice-templates/retail-templates.ts(55,49): error TS1005: '>' expected.
+src/components/invoice-templates/retail-templates.ts(55,58): error TS1005: ';' expected.
+src/components/invoice-templates/retail-templates.ts(55,91): error TS1005: ',' expected.
+src/components/invoice-templates/retail-templates.ts(55,117): error TS1005: ';' expected.
+src/components/invoice-templates/retail-templates.ts(55,119): error TS1110: Type expected.
+src/components/invoice-templates/retail-templates.ts(55,150): error TS1109: Expression expected.
+src/components/invoice-templates/retail-templates.ts(56,51): error TS1005: '>' expected.
+src/components/invoice-templates/retail-templates.ts(56,60): error TS1005: ';' expected.
+src/components/invoice-templates/retail-templates.ts(56,93): error TS1005: ',' expected.
+src/components/invoice-templates/retail-templates.ts(56,119): error TS1005: ';' expected.
+src/components/invoice-templates/retail-templates.ts(56,121): error TS1110: Type expected.
+src/components/invoice-templates/retail-templates.ts(56,154): error TS1109: Expression expected.
+src/components/invoice-templates/retail-templates.ts(57,52): error TS1005: '>' expected.
+src/components/invoice-templates/retail-templates.ts(57,61): error TS1005: ';' expected.
+src/components/invoice-templates/retail-templates.ts(57,94): error TS1005: ',' expected.
+src/components/invoice-templates/retail-templates.ts(57,125): error TS1005: ';' expected.
+src/components/invoice-templates/retail-templates.ts(57,127): error TS1110: Type expected.
+src/components/invoice-templates/retail-templates.ts(57,173): error TS1109: Expression expected.
+src/components/invoice-templates/retail-templates.ts(58,56): error TS1005: '>' expected.
+src/components/invoice-templates/retail-templates.ts(58,65): error TS1005: ';' expected.
+src/components/invoice-templates/retail-templates.ts(58,98): error TS1005: ',' expected.
+src/components/invoice-templates/retail-templates.ts(58,127): error TS1005: ';' expected.
+src/components/invoice-templates/retail-templates.ts(58,129): error TS1110: Type expected.
+src/components/invoice-templates/retail-templates.ts(58,179): error TS1109: Expression expected.
+src/components/invoice-templates/retail-templates.ts(59,14): error TS1110: Type expected.
+src/components/invoice-templates/retail-templates.ts(60,10): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/retail-templates.ts(61,5): error TS1128: Declaration or statement expected.
+src/components/invoice-templates/retail-templates.ts(62,1): error TS1128: Declaration or statement expected.
+src/components/invoice-templates/retail-templates.ts(70,14): error TS1005: '>' expected.
+src/components/invoice-templates/retail-templates.ts(70,23): error TS1005: ')' expected.
+src/components/invoice-templates/retail-templates.ts(70,25): error TS1136: Property assignment expected.
+src/components/invoice-templates/retail-templates.ts(70,99): error TS1005: ',' expected.
+src/components/invoice-templates/retail-templates.ts(70,106): error TS1136: Property assignment expected.
+src/components/invoice-templates/retail-templates.ts(70,119): error TS1003: Identifier expected.
+src/components/invoice-templates/retail-templates.ts(70,127): error TS1005: ':' expected.
+src/components/invoice-templates/retail-templates.ts(70,154): error TS1005: ',' expected.
+src/components/invoice-templates/retail-templates.ts(70,190): error TS1128: Declaration or statement expected.
+src/components/invoice-templates/retail-templates.ts(70,191): error TS1109: Expression expected.
+src/components/invoice-templates/retail-templates.ts(71,18): error TS1005: '>' expected.
+src/components/invoice-templates/retail-templates.ts(71,27): error TS1005: ';' expected.
+src/components/invoice-templates/retail-templates.ts(71,34): error TS1005: ';' expected.
+src/components/invoice-templates/retail-templates.ts(71,41): error TS1136: Property assignment expected.
+src/components/invoice-templates/retail-templates.ts(71,86): error TS1128: Declaration or statement expected.
+src/components/invoice-templates/retail-templates.ts(71,87): error TS1109: Expression expected.
+src/components/invoice-templates/retail-templates.ts(71,89): error TS1110: Type expected.
+src/components/invoice-templates/retail-templates.ts(72,18): error TS1005: ';' expected.
+src/components/invoice-templates/retail-templates.ts(73,25): error TS1005: '>' expected.
+src/components/invoice-templates/retail-templates.ts(73,34): error TS1005: ';' expected.
+src/components/invoice-templates/retail-templates.ts(75,34): error TS1005: ',' expected.
+src/components/invoice-templates/retail-templates.ts(75,57): error TS1005: '>' expected.
+src/components/invoice-templates/retail-templates.ts(75,60): error TS1005: ',' expected.
+src/components/invoice-templates/retail-templates.ts(75,61): error TS1136: Property assignment expected.
+src/components/invoice-templates/retail-templates.ts(75,91): error TS1005: ';' expected.
+src/components/invoice-templates/retail-templates.ts(75,101): error TS1005: ':' expected.
+src/components/invoice-templates/retail-templates.ts(75,103): error TS1005: ';' expected.
+src/components/invoice-templates/retail-templates.ts(75,113): error TS1005: ':' expected.
+src/components/invoice-templates/retail-templates.ts(75,115): error TS1005: ';' expected.
+src/components/invoice-templates/retail-templates.ts(75,147): error TS1109: Expression expected.
+src/components/invoice-templates/retail-templates.ts(75,148): error TS1109: Expression expected.
+src/components/invoice-templates/retail-templates.ts(76,29): error TS1005: '>' expected.
+src/components/invoice-templates/retail-templates.ts(76,38): error TS1005: ';' expected.
+src/components/invoice-templates/retail-templates.ts(76,68): error TS1005: ',' expected.
+src/components/invoice-templates/retail-templates.ts(76,75): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/retail-templates.ts(77,28): error TS1005: ';' expected.
+src/components/invoice-templates/retail-templates.ts(77,77): error TS1005: ',' expected.
+src/components/invoice-templates/retail-templates.ts(77,87): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/retail-templates.ts(78,28): error TS1005: ';' expected.
+src/components/invoice-templates/retail-templates.ts(78,57): error TS1005: ',' expected.
+src/components/invoice-templates/retail-templates.ts(78,76): error TS1005: ',' expected.
+src/components/invoice-templates/retail-templates.ts(78,84): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/retail-templates.ts(79,28): error TS1005: ';' expected.
+src/components/invoice-templates/retail-templates.ts(79,57): error TS1005: ',' expected.
+src/components/invoice-templates/retail-templates.ts(79,67): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/retail-templates.ts(80,55): error TS1005: '>' expected.
+src/components/invoice-templates/retail-templates.ts(80,64): error TS1005: ';' expected.
+src/components/invoice-templates/retail-templates.ts(80,78): error TS1005: ';' expected.
+src/components/invoice-templates/retail-templates.ts(80,105): error TS1110: Type expected.
+src/components/invoice-templates/retail-templates.ts(81,47): error TS1005: '>' expected.
+src/components/invoice-templates/retail-templates.ts(81,56): error TS1005: ';' expected.
+src/components/invoice-templates/retail-templates.ts(81,71): error TS1005: ';' expected.
+src/components/invoice-templates/retail-templates.ts(81,92): error TS1110: Type expected.
+src/components/invoice-templates/retail-templates.ts(82,22): error TS1110: Type expected.
+src/components/invoice-templates/retail-templates.ts(83,26): error TS1005: ';' expected.
+src/components/invoice-templates/retail-templates.ts(84,29): error TS1005: '>' expected.
+src/components/invoice-templates/retail-templates.ts(84,38): error TS1005: ';' expected.
+src/components/invoice-templates/retail-templates.ts(84,83): error TS1005: ',' expected.
+src/components/invoice-templates/retail-templates.ts(84,99): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/retail-templates.ts(85,28): error TS1005: ';' expected.
+src/components/invoice-templates/retail-templates.ts(85,59): error TS1005: '>' expected.
+src/components/invoice-templates/retail-templates.ts(85,68): error TS1005: ';' expected.
+src/components/invoice-templates/retail-templates.ts(85,87): error TS1005: ',' expected.
+src/components/invoice-templates/retail-templates.ts(85,103): error TS1005: ';' expected.
+src/components/invoice-templates/retail-templates.ts(85,105): error TS1110: Type expected.
+src/components/invoice-templates/retail-templates.ts(86,28): error TS1005: '>' expected.
+src/components/invoice-templates/retail-templates.ts(86,37): error TS1005: ';' expected.
+src/components/invoice-templates/retail-templates.ts(86,54): error TS1005: '>' expected.
+src/components/invoice-templates/retail-templates.ts(86,63): error TS1005: ';' expected.
+src/components/invoice-templates/retail-templates.ts(86,80): error TS1127: Invalid character.
+src/components/invoice-templates/retail-templates.ts(86,81): error TS1005: ';' expected.
+src/components/invoice-templates/retail-templates.ts(86,83): error TS1110: Type expected.
+src/components/invoice-templates/retail-templates.ts(87,22): error TS1110: Type expected.
+src/components/invoice-templates/retail-templates.ts(88,18): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/retail-templates.ts(89,22): error TS1005: ';' expected.
+src/components/invoice-templates/retail-templates.ts(89,57): error TS1110: Type expected.
+src/components/invoice-templates/retail-templates.ts(90,26): error TS1005: ';' expected.
+src/components/invoice-templates/retail-templates.ts(92,28): error TS1005: '>' expected.
+src/components/invoice-templates/retail-templates.ts(92,37): error TS1005: ';' expected.
+src/components/invoice-templates/retail-templates.ts(92,52): error TS1005: ',' expected.
+src/components/invoice-templates/retail-templates.ts(92,73): error TS1005: ';' expected.
+src/components/invoice-templates/retail-templates.ts(92,75): error TS1110: Type expected.
+src/components/invoice-templates/retail-templates.ts(93,35): error TS1005: ',' expected.
+src/components/invoice-templates/retail-templates.ts(93,42): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/retail-templates.ts(94,58): error TS1005: ',' expected.
+src/components/invoice-templates/retail-templates.ts(94,72): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/retail-templates.ts(95,28): error TS1005: '>' expected.
+src/components/invoice-templates/retail-templates.ts(95,37): error TS1005: ';' expected.
+src/components/invoice-templates/retail-templates.ts(95,67): error TS1005: ',' expected.
+src/components/invoice-templates/retail-templates.ts(95,77): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/retail-templates.ts(96,35): error TS1005: ',' expected.
+src/components/invoice-templates/retail-templates.ts(96,52): error TS1005: ',' expected.
+src/components/invoice-templates/retail-templates.ts(96,60): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/retail-templates.ts(97,22): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/retail-templates.ts(99,28): error TS1005: '>' expected.
+src/components/invoice-templates/retail-templates.ts(99,37): error TS1005: ';' expected.
+src/components/invoice-templates/retail-templates.ts(99,52): error TS1005: ',' expected.
+src/components/invoice-templates/retail-templates.ts(99,73): error TS1005: ';' expected.
+src/components/invoice-templates/retail-templates.ts(99,75): error TS1110: Type expected.
+src/components/invoice-templates/retail-templates.ts(100,37): error TS1005: ',' expected.
+src/components/invoice-templates/retail-templates.ts(100,87): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/retail-templates.ts(101,28): error TS1005: ';' expected.
+src/components/invoice-templates/retail-templates.ts(101,69): error TS1005: ',' expected.
+src/components/invoice-templates/retail-templates.ts(101,112): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/retail-templates.ts(102,22): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/retail-templates.ts(103,18): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/retail-templates.ts(104,26): error TS1005: ';' expected.
+src/components/invoice-templates/retail-templates.ts(105,29): error TS1005: '>' expected.
+src/components/invoice-templates/retail-templates.ts(105,38): error TS1005: ';' expected.
+src/components/invoice-templates/retail-templates.ts(107,33): error TS1005: '>' expected.
+src/components/invoice-templates/retail-templates.ts(107,42): error TS1005: ';' expected.
+src/components/invoice-templates/retail-templates.ts(108,37): error TS1005: '>' expected.
+src/components/invoice-templates/retail-templates.ts(108,46): error TS1005: ';' expected.
+src/components/invoice-templates/retail-templates.ts(108,76): error TS1005: ',' expected.
+src/components/invoice-templates/retail-templates.ts(108,99): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/retail-templates.ts(109,37): error TS1005: ';' expected.
+src/components/invoice-templates/retail-templates.ts(109,76): error TS1005: ',' expected.
+src/components/invoice-templates/retail-templates.ts(109,102): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/retail-templates.ts(110,37): error TS1005: ';' expected.
+src/components/invoice-templates/retail-templates.ts(110,76): error TS1005: ',' expected.
+src/components/invoice-templates/retail-templates.ts(110,100): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/retail-templates.ts(111,37): error TS1005: ';' expected.
+src/components/invoice-templates/retail-templates.ts(111,76): error TS1005: ',' expected.
+src/components/invoice-templates/retail-templates.ts(111,95): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/retail-templates.ts(112,37): error TS1005: ';' expected.
+src/components/invoice-templates/retail-templates.ts(112,76): error TS1005: ',' expected.
+src/components/invoice-templates/retail-templates.ts(112,103): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/retail-templates.ts(113,30): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/retail-templates.ts(114,26): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/retail-templates.ts(117,37): error TS1005: '>' expected.
+src/components/invoice-templates/retail-templates.ts(117,46): error TS1005: ';' expected.
+src/components/invoice-templates/retail-templates.ts(117,69): error TS1005: ',' expected.
+src/components/invoice-templates/retail-templates.ts(117,87): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/retail-templates.ts(118,37): error TS1005: ';' expected.
+src/components/invoice-templates/retail-templates.ts(118,80): error TS1005: ',' expected.
+src/components/invoice-templates/retail-templates.ts(118,107): error TS1005: ':' expected.
+src/components/invoice-templates/retail-templates.ts(118,110): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/retail-templates.ts(119,37): error TS1005: ';' expected.
+src/components/invoice-templates/retail-templates.ts(119,61): error TS1110: Type expected.
+src/components/invoice-templates/retail-templates.ts(120,37): error TS1005: ';' expected.
+src/components/invoice-templates/retail-templates.ts(120,69): error TS1005: ',' expected.
+src/components/invoice-templates/retail-templates.ts(120,105): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/retail-templates.ts(121,37): error TS1005: ';' expected.
+src/components/invoice-templates/retail-templates.ts(121,80): error TS1005: ',' expected.
+src/components/invoice-templates/retail-templates.ts(121,109): error TS1005: ':' expected.
+src/components/invoice-templates/retail-templates.ts(121,112): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/retail-templates.ts(122,30): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/retail-templates.ts(123,26): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/retail-templates.ts(124,23): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/retail-templates.ts(125,18): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/retail-templates.ts(127,32): error TS1005: ';' expected.
+src/components/invoice-templates/retail-templates.ts(127,52): error TS1005: ';' expected.
+src/components/invoice-templates/retail-templates.ts(127,59): error TS1109: Expression expected.
+src/components/invoice-templates/retail-templates.ts(129,23): error TS1005: '>' expected.
+src/components/invoice-templates/retail-templates.ts(129,32): error TS1005: ';' expected.
+src/components/invoice-templates/retail-templates.ts(130,28): error TS1005: '>' expected.
+src/components/invoice-templates/retail-templates.ts(130,37): error TS1005: ';' expected.
+src/components/invoice-templates/retail-templates.ts(132,33): error TS1005: '>' expected.
+src/components/invoice-templates/retail-templates.ts(132,42): error TS1005: ';' expected.
+src/components/invoice-templates/retail-templates.ts(133,37): error TS1005: '>' expected.
+src/components/invoice-templates/retail-templates.ts(133,46): error TS1005: ';' expected.
+src/components/invoice-templates/retail-templates.ts(133,84): error TS1005: ',' expected.
+src/components/invoice-templates/retail-templates.ts(133,101): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/retail-templates.ts(134,37): error TS1005: ';' expected.
+src/components/invoice-templates/retail-templates.ts(134,84): error TS1005: ',' expected.
+src/components/invoice-templates/retail-templates.ts(134,115): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/retail-templates.ts(135,37): error TS1005: ';' expected.
+src/components/invoice-templates/retail-templates.ts(135,88): error TS1005: ',' expected.
+src/components/invoice-templates/retail-templates.ts(135,113): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/retail-templates.ts(136,37): error TS1005: ';' expected.
+src/components/invoice-templates/retail-templates.ts(136,87): error TS1005: ',' expected.
+src/components/invoice-templates/retail-templates.ts(136,115): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/retail-templates.ts(137,37): error TS1005: ';' expected.
+src/components/invoice-templates/retail-templates.ts(137,87): error TS1005: ',' expected.
+src/components/invoice-templates/retail-templates.ts(137,115): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/retail-templates.ts(138,30): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/retail-templates.ts(139,26): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/retail-templates.ts(142,37): error TS1005: '>' expected.
+src/components/invoice-templates/retail-templates.ts(142,40): error TS1005: ')' expected.
+src/components/invoice-templates/retail-templates.ts(142,46): error TS1005: ',' expected.
+src/components/invoice-templates/retail-templates.ts(143,41): error TS1005: '>' expected.
+src/components/invoice-templates/retail-templates.ts(143,50): error TS1005: ',' expected.
+src/components/invoice-templates/retail-templates.ts(143,83): error TS1005: ',' expected.
+src/components/invoice-templates/retail-templates.ts(143,90): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/retail-templates.ts(144,41): error TS1005: ',' expected.
+src/components/invoice-templates/retail-templates.ts(144,69): error TS1005: ',' expected.
+src/components/invoice-templates/retail-templates.ts(144,83): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/retail-templates.ts(145,41): error TS1005: ',' expected.
+src/components/invoice-templates/retail-templates.ts(145,81): error TS1005: ',' expected.
+src/components/invoice-templates/retail-templates.ts(145,92): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/retail-templates.ts(146,41): error TS1005: ',' expected.
+src/components/invoice-templates/retail-templates.ts(146,91): error TS1005: ',' expected.
+src/components/invoice-templates/retail-templates.ts(146,96): error TS1005: ',' expected.
+src/components/invoice-templates/retail-templates.ts(146,119): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/retail-templates.ts(147,41): error TS1005: ',' expected.
+src/components/invoice-templates/retail-templates.ts(147,91): error TS1005: ',' expected.
+src/components/invoice-templates/retail-templates.ts(147,92): error TS1136: Property assignment expected.
+src/components/invoice-templates/retail-templates.ts(147,135): error TS1005: ',' expected.
+src/components/invoice-templates/retail-templates.ts(147,137): error TS1110: Type expected.
+src/components/invoice-templates/retail-templates.ts(148,34): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/retail-templates.ts(149,29): error TS1128: Declaration or statement expected.
+src/components/invoice-templates/retail-templates.ts(149,30): error TS1128: Declaration or statement expected.
+src/components/invoice-templates/retail-templates.ts(149,31): error TS1128: Declaration or statement expected.
+src/components/invoice-templates/retail-templates.ts(151,37): error TS1005: '>' expected.
+src/components/invoice-templates/retail-templates.ts(151,40): error TS1005: ')' expected.
+src/components/invoice-templates/retail-templates.ts(151,42): error TS1136: Property assignment expected.
+src/components/invoice-templates/retail-templates.ts(151,54): error TS1005: ',' expected.
+src/components/invoice-templates/retail-templates.ts(151,55): error TS1109: Expression expected.
+src/components/invoice-templates/retail-templates.ts(151,60): error TS1005: '>' expected.
+src/components/invoice-templates/retail-templates.ts(151,69): error TS1005: ';' expected.
+src/components/invoice-templates/retail-templates.ts(151,88): error TS1110: Type expected.
+src/components/invoice-templates/retail-templates.ts(151,128): error TS1005: '>' expected.
+src/components/invoice-templates/retail-templates.ts(151,137): error TS1005: ';' expected.
+src/components/invoice-templates/retail-templates.ts(151,152): error TS1110: Type expected.
+src/components/invoice-templates/retail-templates.ts(151,192): error TS1005: '>' expected.
+src/components/invoice-templates/retail-templates.ts(151,201): error TS1005: ';' expected.
+src/components/invoice-templates/retail-templates.ts(151,216): error TS1110: Type expected.
+src/components/invoice-templates/retail-templates.ts(152,29): error TS1109: Expression expected.
+src/components/invoice-templates/retail-templates.ts(152,30): error TS1128: Declaration or statement expected.
+src/components/invoice-templates/retail-templates.ts(152,31): error TS1128: Declaration or statement expected.
+src/components/invoice-templates/retail-templates.ts(153,26): error TS1110: Type expected.
+src/components/invoice-templates/retail-templates.ts(154,22): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/retail-templates.ts(155,18): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/retail-templates.ts(157,25): error TS1005: '>' expected.
+src/components/invoice-templates/retail-templates.ts(157,34): error TS1005: ')' expected.
+src/components/invoice-templates/retail-templates.ts(158,26): error TS1005: '>' expected.
+src/components/invoice-templates/retail-templates.ts(158,35): error TS1005: ';' expected.
+src/components/invoice-templates/retail-templates.ts(160,32): error TS1005: '>' expected.
+src/components/invoice-templates/retail-templates.ts(160,41): error TS1005: ';' expected.
+src/components/invoice-templates/retail-templates.ts(160,64): error TS1005: ',' expected.
+src/components/invoice-templates/retail-templates.ts(160,111): error TS1005: ';' expected.
+src/components/invoice-templates/retail-templates.ts(160,113): error TS1110: Type expected.
+src/components/invoice-templates/retail-templates.ts(161,32): error TS1005: ';' expected.
+src/components/invoice-templates/retail-templates.ts(161,95): error TS1005: ',' expected.
+src/components/invoice-templates/retail-templates.ts(161,116): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/retail-templates.ts(162,75): error TS1005: '>' expected.
+src/components/invoice-templates/retail-templates.ts(162,84): error TS1005: ';' expected.
+src/components/invoice-templates/retail-templates.ts(162,141): error TS1109: Expression expected.
+src/components/invoice-templates/retail-templates.ts(162,142): error TS1109: Expression expected.
+src/components/invoice-templates/retail-templates.ts(163,26): error TS1110: Type expected.
+src/components/invoice-templates/retail-templates.ts(164,30): error TS1005: ';' expected.
+src/components/invoice-templates/retail-templates.ts(165,37): error TS1005: '>' expected.
+src/components/invoice-templates/retail-templates.ts(165,46): error TS1005: ';' expected.
+src/components/invoice-templates/retail-templates.ts(167,45): error TS1005: '>' expected.
+src/components/invoice-templates/retail-templates.ts(167,54): error TS1005: ';' expected.
+src/components/invoice-templates/retail-templates.ts(167,75): error TS1005: ',' expected.
+src/components/invoice-templates/retail-templates.ts(167,193): error TS1110: Type expected.
+src/components/invoice-templates/retail-templates.ts(168,70): error TS1005: '>' expected.
+src/components/invoice-templates/retail-templates.ts(168,79): error TS1005: ';' expected.
+src/components/invoice-templates/retail-templates.ts(168,113): error TS1005: ',' expected.
+src/components/invoice-templates/retail-templates.ts(168,245): error TS1110: Type expected.
+src/components/invoice-templates/retail-templates.ts(169,45): error TS1005: '>' expected.
+src/components/invoice-templates/retail-templates.ts(169,54): error TS1005: ';' expected.
+src/components/invoice-templates/retail-templates.ts(169,75): error TS1005: ',' expected.
+src/components/invoice-templates/retail-templates.ts(169,99): error TS1005: ',' expected.
+src/components/invoice-templates/retail-templates.ts(169,115): error TS1109: Expression expected.
+src/components/invoice-templates/retail-templates.ts(169,211): error TS1110: Type expected.
+src/components/invoice-templates/retail-templates.ts(170,45): error TS1005: '>' expected.
+src/components/invoice-templates/retail-templates.ts(170,54): error TS1005: ';' expected.
+src/components/invoice-templates/retail-templates.ts(170,75): error TS1005: ',' expected.
+src/components/invoice-templates/retail-templates.ts(170,231): error TS1110: Type expected.
+src/components/invoice-templates/retail-templates.ts(171,41): error TS1005: ';' expected.
+src/components/invoice-templates/retail-templates.ts(171,67): error TS1005: '>' expected.
+src/components/invoice-templates/retail-templates.ts(171,76): error TS1005: ';' expected.
+src/components/invoice-templates/retail-templates.ts(171,97): error TS1005: ',' expected.
+src/components/invoice-templates/retail-templates.ts(171,211): error TS1110: Type expected.
+src/components/invoice-templates/retail-templates.ts(172,34): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/retail-templates.ts(173,31): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/retail-templates.ts(174,26): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/retail-templates.ts(175,22): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/retail-templates.ts(176,25): error TS1005: ';' expected.
+src/components/invoice-templates/retail-templates.ts(176,74): error TS1005: ',' expected.
+src/components/invoice-templates/retail-templates.ts(176,130): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/retail-templates.ts(177,18): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/retail-templates.ts(178,17): error TS1128: Declaration or statement expected.
+src/components/invoice-templates/retail-templates.ts(179,14): error TS1110: Type expected.
+src/components/invoice-templates/retail-templates.ts(180,10): error TS1161: Unterminated regular expression literal.
+src/components/invoice-templates/retail-templates.ts(181,5): error TS1128: Declaration or statement expected.
+src/components/invoice-templates/retail-templates.ts(182,1): error TS1128: Declaration or statement expected.

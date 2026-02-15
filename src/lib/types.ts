@@ -86,6 +86,7 @@ export interface PortalSettings {
   backgroundStyle: string; // 'solid', 'gradient', 'mesh'
   gradientColor?: string;
   fontFace: string;      // 'Inter', 'Roboto', 'Playfair Display', 'Montserrat'
+  fontColor?: string;    // Custom font color
 }
 
 export interface Company {

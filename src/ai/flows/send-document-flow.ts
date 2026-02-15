@@ -1,4 +1,3 @@
-
 'use server';
 
 import { z } from 'zod';
@@ -8,6 +7,7 @@ import { PDFDocument } from '@/components/pdf/document-pdf';
 import { renderToBuffer } from '@react-pdf/renderer';
 import { sendEmail } from '@/ai/flows/send-email-flow';
 import type { Estimate, Quote, Invoice } from '@/lib/types';
+import { logAuditAction } from '@/services/audit-service';
 
 const SendDocumentSchema = z.object({
   docId: z.string(),
@@ -83,6 +83,23 @@ export async function sendDocumentByEmail(input: SendDocumentInput) {
           contentType: 'application/pdf',
         },
       ],
+    });
+
+    // Log the action
+    await logAuditAction({
+      action: 'Document Sent',
+      status: 'Success',
+      details: {
+        docId: document.id,
+        docType: docType,
+        recipient: document.client.email,
+        docNumber: docNumber,
+      },
+      user: {
+        uid: (document as any).business.userId || 'unknown', // Assuming business object has userId
+        name: document.business.name || 'Unknown',
+        email: document.business.email || 'unknown@example.com', // Assuming business object has email
+      },
     });
 
     return { success: true, message: 'Email sent successfully.' };

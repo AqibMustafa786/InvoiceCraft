@@ -44,6 +44,7 @@
     "@react-pdf/renderer": "^3.4.5",
     "@stripe/stripe-js": "^4.1.0",
     "@vercel/speed-insights": "^1.0.12",
+    "ai": "^6.0.86",
     "class-variance-authority": "^0.7.1",
     "cloudinary": "^2.2.0",
     "clsx": "^2.1.1",

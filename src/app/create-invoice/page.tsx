@@ -818,26 +818,45 @@ export default function CreateInvoicePage() {
         onClose={() => setIsUpgradeModalOpen(false)}
         featureName="Invoices"
       />
-      <div className="container mx-auto p-4 md:p-8">
-        <div className="flex flex-col md:flex-row justify-between md:items-center gap-4 mb-8">
-          <div>
-            <h1 className="text-xl font-bold font-headline">Create Invoice</h1>
-            <p className="text-sm text-muted-foreground">Select a template, then fill out the form to generate your invoice.</p>
+      <header className="sticky top-0 z-20 w-full border-b bg-background/80 backdrop-blur-md supports-[backdrop-filter]:bg-background/60">
+        <div className="container mx-auto px-4 md:px-8 h-16 flex items-center justify-between gap-4">
+          <div className="flex items-center gap-2">
+            <div className="h-8 w-1 bg-primary rounded-full hidden md:block" />
+            <div>
+              <h1 className="text-lg font-bold tracking-tight bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">Create Invoice</h1>
+            </div>
           </div>
-          <div className="flex w-full md:w-auto items-center gap-2">
-            <Button onClick={handleSaveDraft} className="w-full md:w-auto h-9 px-4 text-sm">
-              <Edit className="mr-2 h-4 w-4" /> Save Draft
-            </Button>
-            <Button onClick={handlePrint} variant="outline" className="w-full md:w-auto h-9 px-4 text-sm">
-              <Printer className="mr-2 h-4 w-4" /> Save as PDF
-            </Button>
+
+          <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1 bg-muted/50 p-1 rounded-md border border-border/50">
+              <Button
+                onClick={handleSaveDraft}
+                variant="ghost"
+                size="sm"
+                className="h-8 px-3 text-xs font-medium hover:bg-background hover:shadow-sm transition-all"
+              >
+                <Edit className="mr-2 h-3.5 w-3.5 text-muted-foreground" />
+                Save Draft
+              </Button>
+              <div className="w-px h-4 bg-border/50 mx-1" />
+              <Button
+                onClick={handlePrint}
+                variant="ghost"
+                size="sm"
+                className="h-8 px-3 text-xs font-medium hover:bg-background hover:shadow-sm transition-all"
+              >
+                <Printer className="mr-2 h-3.5 w-3.5 text-muted-foreground" />
+                PDF
+              </Button>
+            </div>
+
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="icon" className="shrink-0 h-9 w-9">
+                <Button variant="outline" size="icon" className="h-8 w-8 ml-1 shadow-sm border-border/50 bg-background/50 hover:bg-background hover:border-primary/20 transition-all">
                   <MoreVertical className="h-4 w-4" />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
+              <DropdownMenuContent align="end" className="w-48">
                 <DropdownMenuItem onClick={() => setIsSidebarOpen(!isSidebarOpen)}>
                   <Brush className="mr-2 h-4 w-4" /> Change Template
                 </DropdownMenuItem>
@@ -849,12 +868,15 @@ export default function CreateInvoicePage() {
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={handleNew}>
-                  <FilePlus className="mr-2 h-4 w-4" /> New
+                  <FilePlus className="mr-2 h-4 w-4" /> New Invoice
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
         </div>
+      </header >
+
+      <div className="container mx-auto p-4 md:p-8 pt-6">
 
         <div className="flex gap-4">
           <motion.div

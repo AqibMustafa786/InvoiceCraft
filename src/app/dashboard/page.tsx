@@ -51,8 +51,8 @@ import { UpgradeModal } from '@/components/upgrade-modal';
 import { hasAccess } from '@/lib/permissions';
 import { useLanguage } from '@/context/language-context';
 
-const MotionTableBody = motion(TableBody);
-const MotionTableRow = motion(TableRow);
+const MotionTableBody = motion.create(TableBody);
+const MotionTableRow = motion.create(TableRow);
 
 
 const INVOICES_COLLECTION = 'invoices';
@@ -813,17 +813,6 @@ function DashboardPageContent() {
                     </Card>
                     <Card className="bg-card/50 backdrop-blur-sm border-white/10 overflow-hidden group hover:border-primary/50 transition-all duration-300">
                         <CardHeader className="pb-2">
-                            <CardTitle className="text-xs font-bold uppercase tracking-widest text-muted-foreground">{t('dashboard.totalInvoices')}</CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                            <div className="flex items-center justify-between">
-                                <span className="text-3xl font-bold font-headline">{invoices?.length || 0}</span>
-                                <FileText className="h-8 w-8 text-primary/20 group-hover:text-primary/40 transition-colors" />
-                            </div>
-                        </CardContent>
-                    </Card>
-                    <Card className="bg-card/50 backdrop-blur-sm border-white/10 overflow-hidden group hover:border-primary/50 transition-all duration-300">
-                        <CardHeader className="pb-2">
                             <CardTitle className="text-xs font-bold uppercase tracking-widest text-muted-foreground">{t('dashboard.activeQuotes')}</CardTitle>
                         </CardHeader>
                         <CardContent>
@@ -839,7 +828,7 @@ function DashboardPageContent() {
                         </CardHeader>
                         <CardContent>
                             <div className="flex items-center justify-between">
-                                <span className="text-3xl font-bold font-headline">{clients?.length || 0}</span>
+                                <span className="text-3xl font-bold font-headline">{validClients?.length || 0}</span>
                                 <Users className="h-8 w-8 text-primary/20 group-hover:text-primary/40 transition-colors" />
                             </div>
                         </CardContent>
@@ -857,16 +846,20 @@ function DashboardPageContent() {
                     </Card>
                 </div>
 
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                     <Card className="bg-card/50 backdrop-blur-sm border-white/10">
-                        <CardHeader>
+                        <CardHeader className="pb-2">
                             <CardTitle className="text-lg font-bold">{t('dashboard.recentActivity')}</CardTitle>
                         </CardHeader>
                         <CardContent>
-                            <ScrollArea className="h-[300px] pr-4">
-                                <div className="space-y-4">
+                            <ScrollArea className="h-[250px] pr-4">
+                                <div className="space-y-3">
                                     {[...invoices || [], ...estimates || [], ...quotes || [], ...insuranceDocs || []]
-                                        .sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0))
+                                        .sort((a, b) => {
+                                            const dateA = toDateSafe(a.createdAt);
+                                            const dateB = toDateSafe(b.createdAt);
+                                            return (dateB?.getTime() || 0) - (dateA?.getTime() || 0);
+                                        })
                                         .slice(0, 20)
                                         .map((doc: any, i) => {
                                             const docType = doc.documentType || (doc.policyNumber ? 'insurance' : 'invoice');
@@ -878,12 +871,12 @@ function DashboardPageContent() {
 
                                             return (
                                                 <Link href={viewUrl} key={i} className="block group/item">
-                                                    <div className="flex items-center justify-between p-3 rounded-lg bg-white/5 border border-white/5 transition-all duration-200 hover:bg-white/10 hover:border-primary/20 hover:scale-[1.02] cursor-pointer">
+                                                    <div className="flex items-center justify-between p-2.5 rounded-lg bg-white/5 border border-white/5 transition-all duration-200 hover:bg-white/10 hover:border-primary/20 hover:scale-[1.01] cursor-pointer">
                                                         <div className="flex items-center gap-3">
-                                                            <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-primary group-hover/item:bg-primary/20 transition-colors">
-                                                                {docType === 'invoice' ? <FileText className="h-4 w-4" /> :
-                                                                    docType === 'insurance' ? <ShieldCheck className="h-4 w-4" /> :
-                                                                        <FilePlus2 className="h-4 w-4" />}
+                                                            <div className="h-7 w-7 rounded-full bg-primary/10 flex items-center justify-center text-primary group-hover/item:bg-primary/20 transition-colors">
+                                                                {docType === 'invoice' ? <FileText className="h-3.5 w-3.5" /> :
+                                                                    docType === 'insurance' ? <ShieldCheck className="h-3.5 w-3.5" /> :
+                                                                        <FilePlus2 className="h-3.5 w-3.5" />}
                                                             </div>
                                                             <div>
                                                                 <p className="text-sm font-semibold group-hover/item:text-primary transition-colors">{doc.customerName || doc.client?.name || doc.policyHolder?.name || 'New Document'}</p>
@@ -901,24 +894,24 @@ function DashboardPageContent() {
                     </Card>
 
                     <Card className="bg-card/50 backdrop-blur-sm border-white/10">
-                        <CardHeader className="flex flex-row items-center justify-between">
+                        <CardHeader className="flex flex-row items-center justify-between pb-2">
                             <CardTitle className="text-lg font-bold">{t('dashboard.quickActions')}</CardTitle>
                         </CardHeader>
-                        <CardContent className="grid grid-cols-2 gap-3">
-                            <Button variant="outline" className="h-20 flex flex-col gap-2 rounded-2xl hover:bg-primary/5 hover:border-primary/30" onClick={handleCreateInvoice}>
-                                <FilePlus2 className="h-5 w-5 text-primary" />
+                        <CardContent className="grid grid-cols-2 gap-2">
+                            <Button variant="outline" className="h-16 flex flex-col gap-1 rounded-xl hover:bg-primary/5 hover:border-primary/30" onClick={handleCreateInvoice}>
+                                <FilePlus2 className="h-4 w-4 text-primary" />
                                 <span className="text-xs">{t('dashboard.newInvoice')}</span>
                             </Button>
-                            <Button variant="outline" className="h-20 flex flex-col gap-2 rounded-2xl hover:bg-primary/5 hover:border-primary/30" onClick={handleCreateEstimate}>
-                                <FileQuestion className="h-5 w-5 text-primary" />
+                            <Button variant="outline" className="h-16 flex flex-col gap-1 rounded-xl hover:bg-primary/5 hover:border-primary/30" onClick={handleCreateEstimate}>
+                                <FileQuestion className="h-4 w-4 text-primary" />
                                 <span className="text-xs">{t('dashboard.newEstimate')}</span>
                             </Button>
-                            <Button variant="outline" className="h-20 flex flex-col gap-2 rounded-2xl hover:bg-primary/5 hover:border-primary/30" onClick={handleAddClient}>
-                                <UserPlus className="h-5 w-5 text-primary" />
+                            <Button variant="outline" className="h-16 flex flex-col gap-1 rounded-xl hover:bg-primary/5 hover:border-primary/30" onClick={handleAddClient}>
+                                <UserPlus className="h-4 w-4 text-primary" />
                                 <span className="text-xs">{t('dashboard.addClient')}</span>
                             </Button>
-                            <Button variant="outline" className="h-20 flex flex-col gap-2 rounded-2xl hover:bg-primary/5 hover:border-primary/30" onClick={() => router.push('/dashboard/analytics')}>
-                                <AreaChart className="h-5 w-5 text-primary" />
+                            <Button variant="outline" className="h-16 flex flex-col gap-1 rounded-xl hover:bg-primary/5 hover:border-primary/30" onClick={() => router.push('/dashboard/analytics')}>
+                                <AreaChart className="h-4 w-4 text-primary" />
                                 <span className="text-xs">{t('dashboard.viewReports')}</span>
                             </Button>
                         </CardContent>
@@ -1413,7 +1406,7 @@ function DashboardPageContent() {
                         )}
                         {activeTab === 'clients' && (
                             <CardContent>
-                                <ClientStatsGrid clients={clients || []} invoices={invoices || []} />
+                                <ClientStatsGrid clients={validClients || []} invoices={invoices || []} />
                             </CardContent>
                         )}
                     </Card>

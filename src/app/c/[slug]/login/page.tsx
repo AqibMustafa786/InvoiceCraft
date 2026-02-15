@@ -197,8 +197,8 @@ export default function BrandedLoginPage({ params }: { params: { slug: string } 
                             </div>
                         )}
                         <div className="space-y-1">
-                            <h1 className="text-3xl font-bold tracking-tight text-zinc-900">{portalSettings?.title}</h1>
-                            <p className="text-zinc-500 text-sm font-medium">{portalSettings?.description}</p>
+                            <h1 className="text-3xl font-bold tracking-tight" style={{ color: portalSettings?.fontColor }}>{portalSettings?.title}</h1>
+                            <p className="text-sm font-medium" style={{ color: portalSettings?.fontColor, opacity: 0.8 }}>{portalSettings?.description}</p>
                         </div>
                     </div>
 
@@ -224,12 +224,12 @@ export default function BrandedLoginPage({ params }: { params: { slug: string } 
                                 name="email"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel className="text-xs uppercase tracking-widest font-bold text-zinc-600">Email Address</FormLabel>
+                                        <FormLabel className="text-xs uppercase tracking-widest font-bold" style={{ color: portalSettings?.fontColor, opacity: 0.9 }}>Email Address</FormLabel>
                                         <FormControl>
                                             <Input
                                                 placeholder="name@company.com"
                                                 {...field}
-                                                className="h-12 border-zinc-200 bg-white/50 focus:bg-white transition-colors"
+                                                className="h-12 border-zinc-200 bg-white/50 focus:bg-white text-zinc-900 placeholder:text-zinc-500 transition-colors"
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -242,7 +242,7 @@ export default function BrandedLoginPage({ params }: { params: { slug: string } 
                                 render={({ field }) => (
                                     <FormItem>
                                         <div className="flex items-center justify-between">
-                                            <FormLabel className="text-xs uppercase tracking-widest font-bold text-zinc-600">Password</FormLabel>
+                                            <FormLabel className="text-xs uppercase tracking-widest font-bold" style={{ color: portalSettings?.fontColor, opacity: 0.9 }}>Password</FormLabel>
                                             <a href="#" className="text-xs font-semibold text-primary/80 hover:text-primary underline-offset-4 hover:underline">Reset Helper</a>
                                         </div>
                                         <FormControl>
@@ -250,7 +250,7 @@ export default function BrandedLoginPage({ params }: { params: { slug: string } 
                                                 <Input
                                                     type={showPassword ? "text" : "password"}
                                                     {...field}
-                                                    className="h-12 border-zinc-200 bg-white/50 focus:bg-white transition-colors pr-12"
+                                                    className="h-12 border-zinc-200 bg-white/50 focus:bg-white text-zinc-900 placeholder:text-zinc-500 transition-colors pr-12"
                                                 />
                                                 <Button
                                                     type="button"
@@ -283,7 +283,7 @@ export default function BrandedLoginPage({ params }: { params: { slug: string } 
                     </Form>
 
                     <div className="pt-6 text-center border-t border-zinc-200/50">
-                        <p className="text-[10px] text-zinc-400 font-bold uppercase tracking-[0.2em]">{portalSettings?.footerText || 'Powered by InvoiceCraft'}</p>
+                        <p className="text-[10px] font-bold uppercase tracking-[0.2em]" style={{ color: portalSettings?.fontColor, opacity: 0.7 }}>{portalSettings?.footerText || 'Powered by InvoiceCraft'}</p>
                     </div>
                 </div>
 

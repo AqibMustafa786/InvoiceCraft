@@ -36,6 +36,7 @@ const portalSchema = z.object({
     backgroundStyle: z.string(),
     gradientColor: z.string().optional(),
     fontFace: z.string(),
+    fontColor: z.string().optional(),
 });
 
 type PortalFormValues = z.infer<typeof portalSchema>;
@@ -65,6 +66,7 @@ export function PortalSettings() {
             backgroundStyle: 'solid',
             gradientColor: '#e9d5ff',
             fontFace: 'Inter',
+            fontColor: '#18181b', // Default zinc-900
         }
     });
 
@@ -350,6 +352,22 @@ export function PortalSettings() {
                                             <div className="grid grid-cols-2 gap-4">
                                                 <FormField
                                                     control={form.control}
+                                                    name="fontColor"
+                                                    render={({ field }) => (
+                                                        <FormItem>
+                                                            <FormLabel>Font Color</FormLabel>
+                                                            <div className="flex gap-2">
+                                                                <FormControl><Input type="color" className="w-10 h-10 p-1" {...field} /></FormControl>
+                                                                <Input value={field.value} onChange={field.onChange} className="flex-1" />
+                                                            </div>
+                                                        </FormItem>
+                                                    )}
+                                                />
+                                            </div>
+
+                                            <div className="grid grid-cols-2 gap-4">
+                                                <FormField
+                                                    control={form.control}
                                                     name="backgroundColor"
                                                     render={({ field }) => (
                                                         <FormItem>
@@ -501,8 +519,8 @@ export function PortalSettings() {
                                                         <ShieldCheck className="h-6 w-6 text-primary" />
                                                     </div>
                                                 )}
-                                                <h4 className="text-xl font-bold">{watchedValues.title}</h4>
-                                                <p className="text-xs text-muted-foreground">{watchedValues.description}</p>
+                                                <h4 className="text-xl font-bold" style={{ color: watchedValues.fontColor }}>{watchedValues.title}</h4>
+                                                <p className="text-xs" style={{ color: watchedValues.fontColor, opacity: 0.8 }}>{watchedValues.description}</p>
                                             </div>
 
                                             <div className="space-y-3">
@@ -520,7 +538,7 @@ export function PortalSettings() {
                                             </div>
 
                                             <div className="pt-2 text-center">
-                                                <p className="text-[10px] text-muted-foreground">{watchedValues.footerText}</p>
+                                                <p className="text-[10px]" style={{ color: watchedValues.fontColor, opacity: 0.7 }}>{watchedValues.footerText}</p>
                                             </div>
                                         </div>
                                     </div>

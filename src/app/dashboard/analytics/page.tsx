@@ -248,7 +248,7 @@ export default function AnalyticsPage() {
 
   return (
     <motion.div
-      className="space-y-6 max-w-[1600px] mx-auto"
+      className="space-y-8 max-w-[95%] mx-auto py-8"
       variants={containerVariants}
       initial="hidden"
       animate="visible"
@@ -260,20 +260,20 @@ export default function AnalyticsPage() {
       />
 
       {/* Header */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 pb-6 border-b border-border/40">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-foreground to-foreground/60">
-            Analytics Overview
+          <h1 className="text-4xl font-extrabold tracking-tight">
+            <span className="text-primary">Analytics</span> <span className="text-muted-foreground font-light">Overview</span>
           </h1>
-          <p className="text-muted-foreground mt-1">
+          <p className="text-muted-foreground mt-2 text-lg font-light">
             Track your financial performance and business growth.
           </p>
         </div>
 
         <Tabs defaultValue="monthly" onValueChange={(v) => setRevenueRange(v as any)} className="w-[400px]">
-          <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="monthly">Last 12 Months</TabsTrigger>
-            <TabsTrigger value="yearly">This Year</TabsTrigger>
+          <TabsList className="grid w-full grid-cols-2 h-10">
+            <TabsTrigger value="monthly" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">Last 12 Months</TabsTrigger>
+            <TabsTrigger value="yearly" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">This Year</TabsTrigger>
           </TabsList>
         </Tabs>
       </div>
