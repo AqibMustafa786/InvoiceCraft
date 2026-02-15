@@ -19,3 +19,6 @@ export async function sendDocumentByEmail(input: SendDocumentInput) {
 export async function sendInvitationAction(input: InvitationSchemaType) {
   return await sendInvitationFlow(input);
 }
+
+// Re-export type for external use
+export type { InvitationSchemaType };

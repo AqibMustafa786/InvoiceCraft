@@ -118,3 +118,6 @@ export function TemplateShowcase() {
     </div>
   );
 }
+
+// Export with alias for backward compatibility
+export { TemplateShowcase as StackedCarousel };
