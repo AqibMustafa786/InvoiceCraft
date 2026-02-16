@@ -12,22 +12,32 @@ export let firestore: ReturnType<typeof getFirestore>;
 
 function initializeFirebase() {
   if (!getApps().length) {
-    if (process.env.NODE_ENV === "production") {
+    const isProd = process.env.NODE_ENV === "production";
+
+    // Validate config before initializing
+    if (!firebaseConfig.apiKey) {
+      console.warn("Firebase API Key is missing. Skipping initialization. This is expected during some build phases on Vercel.");
+      return;
+    }
+
+    if (isProd) {
       try {
-        firebaseApp = initializeApp();
+        firebaseApp = initializeApp(firebaseConfig);
       } catch (e) {
-        console.warn('Automatic initialization failed. Falling back to firebase config object.', e);
+        console.warn('Initialization failed. Falling back.', e);
         firebaseApp = initializeApp(firebaseConfig);
       }
     } else {
-      // Force config in dev to avoid issues
       firebaseApp = initializeApp(firebaseConfig);
     }
   } else {
     firebaseApp = getApp();
   }
-  auth = getAuth(firebaseApp);
-  firestore = getFirestore(firebaseApp);
+
+  if (firebaseApp) {
+    auth = getAuth(firebaseApp);
+    firestore = getFirestore(firebaseApp);
+  }
 }
 
 // Initialize on first import
