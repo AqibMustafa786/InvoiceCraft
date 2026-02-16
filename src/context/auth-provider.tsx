@@ -33,6 +33,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     let unsubscribeProfile: (() => void) | null = null;
 
+    if (!auth || !firestore) {
+      // Services not available (e.g. missing API keys)
+      // client-provider.tsx should handle the UI, but we must prevent crash here.
+      setIsLoading(false);
+      return;
+    }
+
     const unsubscribeAuth = onAuthStateChanged(auth, async (firebaseUser) => {
       setUser(firebaseUser);
 
@@ -42,7 +49,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         unsubscribeProfile = null;
       }
 
-      if (firebaseUser && firestore) {
+      if (firebaseUser) {
         // Bootstrap user on first login or if data is missing
         await bootstrapUser(firebaseUser);
 

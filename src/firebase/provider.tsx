@@ -70,7 +70,10 @@ export const FirebaseProvider: React.FC<FirebaseProviderProps> = ({
   // Effect to subscribe to Firebase auth state changes
   useEffect(() => {
     if (!auth) { // If no Auth service instance, cannot determine user state
-      setUserAuthState({ user: null, isUserLoading: false, userError: new Error("Auth service not provided.") });
+      // This happens if initialization failed. We set a specific error.
+      // However, client-provider.tsx catches this case and renders a friendly UI.
+      // We set state here just in case this provider is consumed directly.
+      setUserAuthState({ user: null, isUserLoading: false, userError: new Error("Auth service not provided. Check Firebase config.") });
       return;
     }
 
@@ -122,28 +125,12 @@ export const useFirebase = (): FirebaseServicesAndUser => {
     throw new Error('useFirebase must be used within a FirebaseProvider.');
   }
 
-  const isServer = typeof window === 'undefined';
-
-  if (!context.areServicesAvailable || !context.firebaseApp || !context.firestore || !context.auth) {
-    // During prerendering/SSR, we don't want to crash the build if services are missing.
-    // My previous fix in firebase/index.ts skips initialization if the API key is missing.
-    if (isServer) {
-      return {
-        firebaseApp: context.firebaseApp!,
-        firestore: context.firestore!,
-        auth: context.auth!,
-        user: context.user,
-        isUserLoading: context.isUserLoading,
-        userError: context.userError,
-      };
-    }
-    throw new Error('Firebase core services not available. Check FirebaseProvider props.');
-  }
-
+  // Never throw if services are missing, just return them as null (typed as non-null for convenience, but the UI must handle it or be protected)
+  // This prevents hydration mismatches and site-wide crashes when API keys are missing.
   return {
-    firebaseApp: context.firebaseApp,
-    firestore: context.firestore,
-    auth: context.auth,
+    firebaseApp: context.firebaseApp!,
+    firestore: context.firestore!,
+    auth: context.auth!,
     user: context.user,
     isUserLoading: context.isUserLoading,
     userError: context.userError,
