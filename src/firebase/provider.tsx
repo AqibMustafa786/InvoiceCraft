@@ -122,7 +122,21 @@ export const useFirebase = (): FirebaseServicesAndUser => {
     throw new Error('useFirebase must be used within a FirebaseProvider.');
   }
 
+  const isServer = typeof window === 'undefined';
+
   if (!context.areServicesAvailable || !context.firebaseApp || !context.firestore || !context.auth) {
+    // During prerendering/SSR, we don't want to crash the build if services are missing.
+    // My previous fix in firebase/index.ts skips initialization if the API key is missing.
+    if (isServer) {
+      return {
+        firebaseApp: context.firebaseApp!,
+        firestore: context.firestore!,
+        auth: context.auth!,
+        user: context.user,
+        isUserLoading: context.isUserLoading,
+        userError: context.userError,
+      };
+    }
     throw new Error('Firebase core services not available. Check FirebaseProvider props.');
   }
 
@@ -155,8 +169,8 @@ export const useFirebaseApp = (): FirebaseApp => {
 };
 
 export function useMemoFirebase<T>(factory: () => T, deps: DependencyList): T {
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    return useMemo(factory, deps);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  return useMemo(factory, deps);
 }
 
 
