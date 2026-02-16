@@ -1,5 +1,5 @@
 
-import type {NextConfig} from 'next';
+import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
   async headers() {
@@ -37,7 +37,7 @@ const nextConfig: NextConfig = {
         pathname: '/**',
       },
       {
-        protocol: 'https' ,
+        protocol: 'https',
         hostname: 'picsum.photos',
         port: '',
         pathname: '/**',
@@ -51,6 +51,18 @@ const nextConfig: NextConfig = {
       {
         protocol: 'https',
         hostname: 'res.cloudinary.com',
+        port: '',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'ui-avatars.com',
+        port: '',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'i.pravatar.cc',
         port: '',
         pathname: '/**',
       }

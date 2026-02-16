@@ -10,7 +10,7 @@ const TESTIMONIALS = [
         author: "Jessica Martinez",
         role: "Founder, JM Digital",
         location: "Austin, TX",
-        avatar: "https://i.pravatar.cc/150?u=jessica",
+        avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=256&h=256&auto=format&fit=crop",
         rating: 5
     },
     {
@@ -18,34 +18,39 @@ const TESTIMONIALS = [
         author: "David Buckland",
         role: "Owner, Buckland Roofing",
         location: "Miami, FL",
+        avatar: "https://images.unsplash.com/photo-1560250097-0b93528c311a?q=80&w=256&h=256&auto=format&fit=crop",
         rating: 5
     },
     {
         content: "Finally, an invoicing tool that feels premium. It makes my small freelance business look like a Fortune 500 company. The client portal is a game changer.",
         author: "Sarah Chen",
-        role: "Freelance Designer",
+        role: "Lead Product Designer",
         location: "San Francisco, CA",
+        avatar: "https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?q=80&w=256&h=256&auto=format&fit=crop",
         rating: 5
     },
     {
         content: "I switched from QuickBooks because I needed something simpler but still professional. InvoiceCraft is exactly that. It does everything I need without the bloat.",
         author: "Michael Ross",
-        role: "Consultant",
+        role: "Senior Financial Consultant",
         location: "New York, NY",
+        avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?q=80&w=256&h=256&auto=format&fit=crop",
         rating: 5
     },
     {
         content: "The ability to add legal disclaimers and insurance info directly to my quotes has saved me so much headache. Highly recommended for any service business.",
         author: "Amanda Lowery",
-        role: "Event Planner",
+        role: "Principal Event Planner",
         location: "Chicago, IL",
+        avatar: "https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=256&h=256&auto=format&fit=crop",
         rating: 5
     },
     {
         content: "Customer support is top-notch. I had a question about taxes and they answered within minutes. Plus, the automated recurring invoices save me 5 hours a week.",
         author: "James Wilson",
-        role: "Web Developer",
+        role: "Full-Stack Developer",
         location: "Seattle, WA",
+        avatar: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?q=80&w=256&h=256&auto=format&fit=crop",
         rating: 5
     }
 ];
@@ -101,7 +106,7 @@ export function TestimonialsSection() {
                                 <div className="flex items-center gap-4 mt-auto pt-6 border-t border-border/40">
                                     <div className="relative w-12 h-12 rounded-full overflow-hidden border-2 border-primary/10">
                                         <Image
-                                            src={testimonial.author ? testimonial.avatar : `https://ui-avatars.com/api/?name=${testimonial.author}`}
+                                            src={testimonial.avatar || `https://ui-avatars.com/api/?name=${testimonial.author}`}
                                             alt={testimonial.author}
                                             fill
                                             className="object-cover"
@@ -124,9 +129,15 @@ export function TestimonialsSection() {
                 <div className="mt-16 flex justify-center">
                     <div className="flex flex-col items-center gap-2">
                         <div className="flex -space-x-3">
-                            {[1, 2, 3, 4, 5].map((i) => (
+                            {[
+                                "https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=100&h=100&auto=format&fit=crop",
+                                "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=100&h=100&auto=format&fit=crop",
+                                "https://images.unsplash.com/photo-1554151228-14d9def656e4?q=80&w=100&h=100&auto=format&fit=crop",
+                                "https://images.unsplash.com/photo-1599566150163-29194dcaad36?q=80&w=100&h=100&auto=format&fit=crop",
+                                "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=100&h=100&auto=format&fit=crop"
+                            ].map((url, i) => (
                                 <div key={i} className="w-10 h-10 rounded-full border-2 border-background bg-muted overflow-hidden relative">
-                                    <Image src={`https://i.pravatar.cc/150?u=${i + 20}`} alt="User" fill className="object-cover" />
+                                    <Image src={url} alt="User" fill className="object-cover" />
                                 </div>
                             ))}
                             <div className="w-10 h-10 rounded-full border-2 border-background bg-primary text-primary-foreground flex items-center justify-center text-xs font-bold z-10">

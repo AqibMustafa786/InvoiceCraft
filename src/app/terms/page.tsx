@@ -1,49 +1,124 @@
+'use client';
+
+import { motion } from "framer-motion";
+import { FileText, Gavel, ShieldAlert, Globe, CheckCircle2, Handshake } from "lucide-react";
+import { Button } from "@/components/ui/button";
+
 export default function TermsPage() {
-  return (
-    <div className="container mx-auto p-4 md:p-8 max-w-4xl">
-        <div className="text-center mb-16">
-            <h1 className="text-4xl md:text-5xl font-bold font-headline tracking-tight">
-            Terms of Service
-            </h1>
-            <p className="mt-6 text-lg md:text-xl text-muted-foreground">
-            Please read these terms carefully before using our service.
-            </p>
-             <p className="mt-2 text-sm text-muted-foreground">Last updated: July 29, 2024</p>
+    const lastUpdated = "July 29, 2024";
+
+    return (
+        <div className="relative min-h-screen pt-20 pb-24 overflow-hidden">
+            {/* Background Elements */}
+            <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/5 rounded-full blur-[120px] -z-10"></div>
+            <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-blue-500/5 rounded-full blur-[100px] -z-10"></div>
+
+            <div className="container mx-auto px-4 md:px-8 max-w-4xl">
+                <motion.div
+                    className="text-center mb-20"
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.8 }}
+                >
+                    <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 text-primary text-[10px] font-black uppercase tracking-[0.2em] mb-8">
+                        <Handshake className="w-4 h-4" /> Professional User Agreement
+                    </div>
+                    <h1 className="text-5xl md:text-7xl font-black tracking-tighter mb-6">
+                        Terms of <span className="text-primary italic">Service</span>
+                    </h1>
+                    <p className="text-xl text-gray-400 max-w-2xl mx-auto leading-relaxed">
+                        Transparent, fair, and professional guidelines for the modern US business landscape.
+                    </p>
+                    <p className="mt-8 text-[10px] font-bold uppercase tracking-[0.4em] text-gray-600">Protocol ID: T-2024-CORE • Last Revision: {lastUpdated}</p>
+                </motion.div>
+
+                <motion.div
+                    className="space-y-12"
+                    initial={{ opacity: 0 }}
+                    whileInView={{ opacity: 1 }}
+                    transition={{ duration: 1 }}
+                    viewport={{ once: true }}
+                >
+                    {/* Executive Summary Card */}
+                    <div className="p-8 md:p-12 rounded-[2.5rem] bg-[#0A0A0A] border border-white/5 relative overflow-hidden group">
+                        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-primary/30 to-transparent"></div>
+                        <div className="flex items-center gap-6 mb-8">
+                            <div className="p-4 rounded-2xl bg-white/5 text-primary">
+                                <FileText className="w-8 h-8" />
+                            </div>
+                            <h2 className="text-3xl font-black tracking-tight">The Agreement</h2>
+                        </div>
+                        <p className="text-gray-400 text-lg leading-relaxed">
+                            By engaging with the **InvoiceCraft ecosystem** at <a href="https://invoicecraft.app" className="text-white hover:text-primary underline-offset-8 decoration-primary/30 underline transition-all">invoicecraft.app</a>,
+                            you are entering into a professional license agreement. These terms are engineered to protect both your business integrity and ours
+                            within the jurisdiction of the United States.
+                        </p>
+                    </div>
+
+                    <article className="prose prose-invert prose-lg max-w-none space-y-12 px-4">
+                        <section className="space-y-6">
+                            <h2 className="text-2xl font-black tracking-tight flex items-center gap-3">
+                                <CheckCircle2 className="w-6 h-6 text-primary" /> 1. Professional Use License
+                            </h2>
+                            <p className="text-gray-400 leading-relaxed">
+                                We grant you a non-transferable, premium license to utilize InvoiceCraft for your business operations. Under this license, you are empowered to generate professional documents but are restricted from:
+                            </p>
+                            <ul className="list-none space-y-4 text-gray-400 pl-0">
+                                <li className="flex items-start gap-3">
+                                    <div className="h-1.5 w-1.5 rounded-full bg-primary mt-2.5 flex-shrink-0"></div>
+                                    <span>Reverse engineering or attempting to extract the core engine code.</span>
+                                </li>
+                                <li className="flex items-start gap-3">
+                                    <div className="h-1.5 w-1.5 rounded-full bg-primary mt-2.5 flex-shrink-0"></div>
+                                    <span>Removing official proprietary notations from generated assets.</span>
+                                </li>
+                                <li className="flex items-start gap-3">
+                                    <div className="h-1.5 w-1.5 rounded-full bg-primary mt-2.5 flex-shrink-0"></div>
+                                    <span>"Mirroring" our framework on external US-based or international servers.</span>
+                                </li>
+                            </ul>
+                        </section>
+
+                        <section className="space-y-6">
+                            <h2 className="text-2xl font-black tracking-tight flex items-center gap-3">
+                                <ShieldAlert className="w-6 h-6 text-primary" /> 2. Disclaimer & Protocol
+                            </h2>
+                            <p className="text-gray-400 leading-relaxed">
+                                Materials on InvoiceCraft's portal are provided as a "Master-Grade" toolkit. While we strive for absolute accuracy, InvoiceCraft makes no warranties, expressed or implied, regarding the final legal standing of invoices in local US tax jurisdictions.
+                            </p>
+                        </section>
+
+                        <section className="space-y-6">
+                            <h2 className="text-2xl font-black tracking-tight flex items-center gap-3">
+                                <Globe className="w-6 h-6 text-primary" /> 3. Strategic Limitations
+                            </h2>
+                            <p className="text-gray-400 leading-relaxed">
+                                In no professional scenario shall InvoiceCraft or its developers be liable for consequential damages arising from the use of our generator. We provide the engine; you drive the business.
+                            </p>
+                        </section>
+
+                        <section className="space-y-6">
+                            <h2 className="text-2xl font-black tracking-tight flex items-center gap-3">
+                                <Gavel className="w-6 h-6 text-primary" /> 4. Governing US Law
+                            </h2>
+                            <p className="text-gray-400 leading-relaxed">
+                                These terms are governed by and construed in accordance with the laws of the United States. You irrevocably submit to the exclusive jurisdiction of the federal and state courts for all legal resolutions.
+                            </p>
+                        </section>
+                    </article>
+                </motion.div>
+
+                {/* Support CTA */}
+                <div className="mt-20 p-12 rounded-[3rem] bg-primary/5 border border-primary/20 text-center space-y-6">
+                    <h3 className="text-2xl font-bold">Have Legal Questions?</h3>
+                    <p className="text-gray-400 max-w-sm mx-auto">Our compliance team is available to discuss our service terms in detail.</p>
+                    <a href="mailto:legal@invoicecraft.app" className="inline-block">
+                        <Button size="lg" className="rounded-2xl h-14 px-10 bg-primary hover:bg-primary/90 text-white font-bold">
+                            Inquire with Legal HQ
+                        </Button>
+                    </a>
+                </div>
+            </div>
         </div>
-
-        <div className="prose prose-lg max-w-none text-foreground prose-headings:text-foreground prose-a:text-primary mx-auto space-y-6">
-            <p>
-                By accessing the website at <a href="https://invoicecraft.app">invoicecraft.app</a>, you are agreeing to be bound by these terms of service, all applicable laws and regulations, and agree that you are responsible for compliance with any applicable local laws.
-            </p>
-
-            <h2 className="text-2xl font-bold">1. Use License</h2>
-            <p>
-                Permission is granted to temporarily download one copy of the materials (information or software) on InvoiceCraft's website for personal, non-commercial transitory viewing only. This is the grant of a license, not a transfer of title, and under this license you may not:
-            </p>
-            <ol className="list-decimal pl-6 space-y-2">
-                <li>modify or copy the materials;</li>
-                <li>use the materials for any commercial purpose, or for any public display (commercial or non-commercial);</li>
-                <li>attempt to decompile or reverse engineer any software contained on InvoiceCraft's website;</li>
-                <li>remove any copyright or other proprietary notations from the materials; or</li>
-                <li>transfer the materials to another person or "mirror" the materials on any other server.</li>
-            </ol>
-
-            <h2 className="text-2xl font-bold">2. Disclaimer</h2>
-            <p>
-                The materials on InvoiceCraft's website are provided on an 'as is' basis. InvoiceCraft makes no warranties, expressed or implied, and hereby disclaims and negates all other warranties including, without limitation, implied warranties or conditions of merchantability, fitness for a particular purpose, or non-infringement of intellectual property or other violation of rights.
-            </p>
-
-            <h2 className="text-2xl font-bold">3. Limitations</h2>
-            <p>
-                In no event shall InvoiceCraft or its suppliers be liable for any damages (including, without limitation, damages for loss of data or profit, or due to business interruption) arising out of the use or inability to use the materials on InvoiceCraft's website, even if InvoiceCraft or a InvoiceCraft authorized representative has been notified orally or in writing of the possibility of such damage.
-            </p>
-            
-            <h2 className="text-2xl font-bold">4. Governing Law</h2>
-            <p>
-                These terms and conditions are governed by and construed in accordance with the laws of the jurisdiction of the website owner and you irrevocably submit to the exclusive jurisdiction of the courts in that State or location.
-            </p>
-
-        </div>
-    </div>
-  );
+    );
 }

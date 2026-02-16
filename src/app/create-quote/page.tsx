@@ -105,7 +105,7 @@ function PrintableDocument({ doc, accentColor }: { doc: Quote, accentColor: stri
   }
 
   return createPortal(
-    <ClientDocumentPreview document={doc} accentColor={accentColor} id="quote-preview-print" isPrint={true} />,
+    <ClientDocumentPreview document={doc} accentColor={accentColor} id="quote-preview-print" isPrint={true} plan={doc.userId ? 'free' : 'free'} />,
     printRoot
   );
 }
@@ -429,7 +429,7 @@ export default function CreateQuotePage() {
           <div className="lg:col-span-1">
             <div className="sticky top-24">
               <h2 className="text-2xl font-bold font-headline mb-6">Live Preview</h2>
-              <ClientDocumentPreview document={document as Quote} accentColor={accentColor} />
+              <ClientDocumentPreview document={document as Quote} accentColor={accentColor} plan={userProfile?.plan || 'free'} />
             </div>
           </div>
         </div>

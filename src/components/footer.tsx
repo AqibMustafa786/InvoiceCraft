@@ -3,7 +3,10 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Twitter, Github, Linkedin, Instagram } from 'lucide-react';
+import { Twitter, Github, Linkedin, Instagram, Mail, ShieldCheck, CreditCard, Zap, CheckCircle2, Palette } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 
 export function Footer() {
   const pathname = usePathname();
@@ -17,74 +20,132 @@ export function Footer() {
   }
 
   return (
-    <footer className="border-t border-border/40 bg-transparent">
-      <div className="container grid grid-cols-1 gap-12 px-4 py-12 mx-auto md:grid-cols-5 md:px-6">
+    <motion.footer
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.8, ease: "easeOut" }}
+      className="relative border-t border-border/40 bg-[#020202] text-white pt-24 pb-12 overflow-hidden"
+    >
+      {/* Premium Background Mesh */}
+      <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/10 rounded-full blur-[120px] -z-10 pointer-events-none"></div>
+      <div className="absolute bottom-0 left-0 w-[300px] h-[300px] bg-blue-500/5 rounded-full blur-[100px] -z-10 pointer-events-none"></div>
 
-        {/* Branding Section */}
-        <div className="flex flex-col gap-4 md:col-span-2">
-          <Link href="/" className="flex items-center gap-2">
-            <span className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent">InvoiceCraft</span>
-          </Link>
-          <p className="max-w-sm text-muted-foreground">
-            Smart, simple, and professional invoicing for modern freelancers and businesses.
-          </p>
-          <div className="flex gap-3 mt-4">
-            <Link href="#" aria-label="Twitter" rel="noopener noreferrer" target="_blank" className="transition-colors text-muted-foreground hover:text-primary">
+      <div className="container px-4 mx-auto md:px-6 relative z-10">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 mb-20">
+
+          {/* Brand & Newsletter */}
+          <div className="lg:col-span-5 space-y-8">
+            <Link href="/" className="flex items-center gap-2 group">
+              <span className="text-4xl font-black tracking-tighter text-white group-hover:text-primary transition-colors">
+                Invoice<span className="text-primary group-hover:text-white">Craft</span>
+              </span>
+            </Link>
+            <p className="max-w-md text-gray-400 text-lg leading-relaxed">
+              Empowering the modern American workforce.
+              The most advanced invoicing engine for freelancers, agencies, and top-tier contractors across the USA.
+            </p>
+
+            <div className="space-y-4">
+              <p className="text-sm font-bold uppercase tracking-widest text-primary/80">Stay Ahead of the Game</p>
+              <div className="flex gap-2 max-w-md">
+                <Input
+                  placeholder="Enter your business email"
+                  className="bg-white/5 border-white/10 text-white placeholder:text-gray-500 rounded-full h-12 px-6 focus:ring-primary focus:border-primary transition-all"
+                />
+                <Button className="rounded-full h-12 px-8 bg-primary hover:bg-primary/90 text-white font-bold transition-transform hover:scale-105">
+                  Join Beta
+                </Button>
+              </div>
+              <p className="text-[10px] text-gray-500">Join 500+ US founders receiving bi-weekly billing optimizations.</p>
+            </div>
+          </div>
+
+          {/* Links Grid */}
+          <div className="lg:col-span-7">
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-12">
+              <div className="space-y-6">
+                <h3 className="text-xs font-black uppercase tracking-[0.2em] text-white">Solutions</h3>
+                <nav className="flex flex-col space-y-4">
+                  <Link href="/features" className="text-sm text-gray-400 hover:text-primary transition-colors flex items-center gap-2">
+                    <Zap className="w-3 h-3" /> Smart Billing
+                  </Link>
+                  <Link href="/templates" className="text-sm text-gray-400 hover:text-primary transition-colors flex items-center gap-2">
+                    <Palette className="w-3 h-3" /> Design Gallery
+                  </Link>
+                  <Link href="/pricing" className="text-sm text-gray-400 hover:text-primary transition-colors flex items-center gap-2">
+                    <CreditCard className="w-3 h-3" /> Pricing Plans
+                  </Link>
+                </nav>
+              </div>
+
+              <div className="space-y-6">
+                <h3 className="text-xs font-black uppercase tracking-[0.2em] text-white">Company</h3>
+                <nav className="flex flex-col space-y-4">
+                  <Link href="/about" className="text-sm text-gray-400 hover:text-primary transition-colors">Our Mission</Link>
+                  <Link href="/blog" className="text-sm text-gray-400 hover:text-primary transition-colors">Growth Blog</Link>
+                  <Link href="/contact" className="text-sm text-gray-400 hover:text-primary transition-colors">Direct Support</Link>
+                  <Link href="/press" className="text-sm text-gray-400 hover:text-primary transition-colors">Press Kit</Link>
+                </nav>
+              </div>
+
+              <div className="space-y-6">
+                <h3 className="text-xs font-black uppercase tracking-[0.2em] text-white">Compliance</h3>
+                <nav className="flex flex-col space-y-4">
+                  <Link href="/privacy" className="text-sm text-gray-400 hover:text-primary transition-colors">Privacy Shield</Link>
+                  <Link href="/terms" className="text-sm text-gray-400 hover:text-primary transition-colors">Service Terms</Link>
+                  <Link href="/security" className="text-sm text-gray-400 hover:text-primary transition-colors flex items-center gap-2">
+                    <ShieldCheck className="w-4 h-4 text-green-500/50" /> Secure Data
+                  </Link>
+                </nav>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Trust Bar */}
+        <div className="py-12 border-t border-white/5 flex flex-wrap items-center justify-between gap-8">
+          <div className="flex items-center gap-6 saturate-0 opacity-40 hover:saturate-100 hover:opacity-100 transition-all duration-500">
+            <div className="flex items-center gap-2">
+              <CheckCircle2 className="w-5 h-5 text-primary" />
+              <span className="text-xs font-bold uppercase tracking-widest">Built for USA</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <CheckCircle2 className="w-5 h-5 text-primary" />
+              <span className="text-xs font-bold uppercase tracking-widest">PCI Compliant</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <CheckCircle2 className="w-5 h-5 text-primary" />
+              <span className="text-xs font-bold uppercase tracking-widest">Bank-Level Security</span>
+            </div>
+          </div>
+
+          <div className="flex gap-4">
+            <Link href="#" className="p-3 bg-white/5 rounded-full hover:bg-white/10 transition-colors text-gray-400 hover:text-primary">
               <Twitter className="w-5 h-5" />
             </Link>
-            <Link href="#" aria-label="GitHub" rel="noopener noreferrer" target="_blank" className="transition-colors text-muted-foreground hover:text-primary">
-              <Github className="w-5 h-5" />
-            </Link>
-            <Link href="#" aria-label="LinkedIn" rel="noopener noreferrer" target="_blank" className="transition-colors text-muted-foreground hover:text-primary">
+            <Link href="#" className="p-3 bg-white/5 rounded-full hover:bg-white/10 transition-colors text-gray-400 hover:text-primary">
               <Linkedin className="w-5 h-5" />
             </Link>
-            <Link href="#" aria-label="Instagram" rel="noopener noreferrer" target="_blank" className="transition-colors text-muted-foreground hover:text-primary">
+            <Link href="#" className="p-3 bg-white/5 rounded-full hover:bg-white/10 transition-colors text-gray-400 hover:text-primary">
+              <Github className="w-5 h-5" />
+            </Link>
+            <Link href="#" className="p-3 bg-white/5 rounded-full hover:bg-white/10 transition-colors text-gray-400 hover:text-white">
               <Instagram className="w-5 h-5" />
             </Link>
           </div>
         </div>
 
-        {/* Links Section */}
-        <div className="grid grid-cols-2 gap-8 text-sm md:col-span-3 sm:grid-cols-3">
-          <div className="space-y-4">
-            <h3 className="font-semibold tracking-wider uppercase text-foreground">Product</h3>
-            <nav className="flex flex-col space-y-3">
-              <Link href="/features" className="transition-colors text-muted-foreground hover:text-primary">Features</Link>
-              <Link href="/pricing" className="transition-colors text-muted-foreground hover:text-primary">Pricing</Link>
-              <Link href="/templates" className="transition-colors text-muted-foreground hover:text-primary">Templates</Link>
-            </nav>
-          </div>
-          <div className="space-y-4">
-            <h3 className="font-semibold tracking-wider uppercase text-foreground">Company</h3>
-            <nav className="flex flex-col space-y-3">
-              <Link href="/about" className="transition-colors text-muted-foreground hover:text-primary">About Us</Link>
-              <Link href="/blog" className="transition-colors text-muted-foreground hover:text-primary">Blog</Link>
-              <Link href="/careers" className="transition-colors text-muted-foreground hover:text-primary">Careers</Link>
-              <Link href="/press" className="transition-colors text-muted-foreground hover:text-primary">Press</Link>
-            </nav>
-          </div>
-          <div className="space-y-4">
-            <h3 className="font-semibold tracking-wider uppercase text-foreground">Legal</h3>
-            <nav className="flex flex-col space-y-3">
-              <Link href="/terms" className="transition-colors text-muted-foreground hover:text-primary">Terms of Service</Link>
-              <Link href="/privacy" className="transition-colors text-muted-foreground hover:text-primary">Privacy Policy</Link>
-              <Link href="/security" className="transition-colors text-muted-foreground hover:text-primary">Security</Link>
-              <Link href="/cookies" className="transition-colors text-muted-foreground hover:text-primary">Cookie Policy</Link>
-            </nav>
+        {/* Final Copyright */}
+        <div className="pt-8 border-t border-white/5 flex flex-col md:flex-row items-center justify-between gap-4 text-[10px] text-gray-600 font-bold uppercase tracking-[0.3em]">
+          <p>© {new Date().getFullYear()} InvoiceCraft HQ. All Rights Reserved. PROUDLY BUILT IN THE USA.</p>
+          <div className="flex items-center gap-6">
+            <Link href="/help" className="hover:text-white transition-colors">Help</Link>
+            <Link href="/privacy" className="hover:text-white transition-colors">Privacy</Link>
+            <Link href="/cookies" className="hover:text-white transition-colors">Cookies</Link>
           </div>
         </div>
       </div>
-
-      {/* Bottom Bar */}
-      <div className="container flex flex-col-reverse sm:flex-row items-center justify-between gap-4 px-4 py-6 mx-auto">
-        <p className="text-sm text-center sm:text-left text-muted-foreground">
-          © {new Date().getFullYear()} InvoiceCraft. All rights reserved.
-        </p>
-        <div className="flex items-center gap-4 text-sm">
-          <Link href="/help" className="transition-colors text-muted-foreground hover:text-primary">Help Center</Link>
-          <Link href="/contact" className="transition-colors text-muted-foreground hover:text-primary">Contact</Link>
-        </div>
-      </div>
-    </footer>
+    </motion.footer>
   );
 }

@@ -37,6 +37,7 @@ interface InvoicePreviewProps {
   textColor: string;
   id?: string;
   isPrint?: boolean;
+  plan?: string;
 }
 
 export interface PageProps {
@@ -153,7 +154,7 @@ const PAGE_HEIGHT_PX = 1056; // 11 inches * 96 DPI
 const PAGE_PADDING_Y_PX = 80; // 40px top + 40px bottom
 const AVAILABLE_PAGE_HEIGHT_PX = PAGE_HEIGHT_PX - PAGE_PADDING_Y_PX;
 
-const InvoicePreviewInternal: FC<InvoicePreviewProps> = ({ invoice, accentColor, backgroundColor, textColor, id = 'invoice-preview', isPrint = false }) => {
+const InvoicePreviewInternal: FC<InvoicePreviewProps> = ({ invoice, accentColor, backgroundColor, textColor, id = 'invoice-preview', isPrint = false, plan }) => {
   const [paginatedItems, setPaginatedItems] = useState<LineItem[][]>([invoice?.lineItems || []]);
   const [needsRemeasure, setNeedsRemeasure] = useState(true);
 
@@ -302,6 +303,11 @@ const InvoicePreviewInternal: FC<InvoicePreviewProps> = ({ invoice, accentColor,
               pageIndex={pageIndex}
               totalPages={itemsToRender.length}
             />
+            {plan === 'free' && (
+              <div className="watermark-overlay">
+                <span className="watermark-text">Created with InvoiceCraft</span>
+              </div>
+            )}
           </div>
         ))}
       </div>
@@ -319,6 +325,11 @@ const InvoicePreviewInternal: FC<InvoicePreviewProps> = ({ invoice, accentColor,
             pageIndex={0}
             totalPages={1}
           />
+          {plan === 'free' && (
+            <div className="watermark-overlay">
+              <span className="watermark-text">Created with InvoiceCraft</span>
+            </div>
+          )}
         </div>
       </CardContent>
     </Card>

@@ -261,6 +261,7 @@ function PrintableDocument({ doc, accentColor }: { doc: Estimate | Quote, accent
           textColor={doc.textColor || '#374151'}
           id="estimate-preview-print"
           isPrint={true}
+          plan={doc.userId ? 'free' : 'free'}
         />,
         container
       );
@@ -752,7 +753,7 @@ export default function CreateEstimatePage() {
             <div className="sticky top-24 space-y-4">
               <div>
                 <h2 className="text-xl font-semibold tracking-tight mb-4">Live Preview</h2>
-                <ClientDocumentPreview document={processedDocument} accentColor={accentColor} backgroundColor={backgroundColor} textColor={textColor} />
+                <ClientDocumentPreview document={processedDocument} accentColor={accentColor} backgroundColor={backgroundColor} textColor={textColor} plan={userProfile?.plan || 'free'} />
               </div>
             </div>
           </motion.div>

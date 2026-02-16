@@ -52,6 +52,7 @@ interface DocumentPreviewProps {
   textColor?: string;
   id?: string;
   isPrint?: boolean;
+  plan?: string;
 }
 
 interface CommonTemplateProps {
@@ -189,7 +190,7 @@ const CategorySpecificDetails: FC<{ document: Estimate | Quote, t: any }> = ({ d
 }
 
 
-const DocumentPreviewInternal: FC<DocumentPreviewProps> = ({ document, accentColor, backgroundColor, textColor, id = 'document-preview', isPrint = false }) => {
+const DocumentPreviewInternal: FC<DocumentPreviewProps> = ({ document, accentColor, backgroundColor, textColor, id = 'document-preview', isPrint = false, plan }) => {
   const [paginatedItems, setPaginatedItems] = useState<(Estimate | Quote)['lineItems'][]>(document ? [document.lineItems || []] : [[]]);
   const [needsRemeasure, setNeedsRemeasure] = useState(true);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -339,15 +340,21 @@ const DocumentPreviewInternal: FC<DocumentPreviewProps> = ({ document, accentCol
           {/* This is a dummy for measurement */}
         </div>
         {itemsToRender.map((pageItems, pageIndex) => (
-          <TemplateComponent
-            key={pageIndex}
-            {...commonProps}
-            pageItems={pageItems}
-            pageIndex={pageIndex}
-            totalPages={itemsToRender.length}
-            summary={document.summary || {}}
-            style={dynamicColorStyle}
-          />
+          <div key={pageIndex} className="watermark-container">
+            <TemplateComponent
+              {...commonProps}
+              pageItems={pageItems}
+              pageIndex={pageIndex}
+              totalPages={itemsToRender.length}
+              summary={document.summary || {}}
+              style={dynamicColorStyle}
+            />
+            {plan === 'free' && (
+              <div className="watermark-overlay">
+                <span className="watermark-text">Created with InvoiceCraft</span>
+              </div>
+            )}
+          </div>
         ))}
       </div>
     );
@@ -364,6 +371,11 @@ const DocumentPreviewInternal: FC<DocumentPreviewProps> = ({ document, accentCol
           summary={document.summary || {}}
           style={dynamicColorStyle}
         />
+        {plan === 'free' && (
+          <div className="watermark-overlay">
+            <span className="watermark-text">Created with InvoiceCraft</span>
+          </div>
+        )}
       </CardContent>
     </Card>
   );

@@ -34,8 +34,43 @@ const roboto = Roboto({
 });
 
 export const metadata: Metadata = {
-  title: 'InvoiceCraft - Professional Invoice Generator',
-  description: 'Easily create, manage, and export professional invoices.',
+  title: {
+    default: 'InvoiceCraft | Professional US Invoicing & Billing Software',
+    template: '%s | InvoiceCraft'
+  },
+  description: 'The premier invoicing toolkit for US freelancers and agencies. Automate billing, manage estimates, and get paid faster with professional, compliant templates.',
+  keywords: ['US Invoicing Software', 'Freelancer Billing Tool', 'Professional Invoice Generator', 'Agency Financial Management', 'US Tax Compliant Invoices', 'Stripe Billing Integration'],
+  authors: [{ name: 'InvoiceCraft Team' }],
+  creator: 'InvoiceCraft',
+  publisher: 'InvoiceCraft',
+  formatDetection: {
+    email: false,
+    address: false,
+    telephone: false,
+  },
+  openGraph: {
+    type: 'website',
+    locale: 'en_US',
+    url: 'https://invoicecraft.com',
+    siteName: 'InvoiceCraft',
+    title: 'InvoiceCraft | Professional US Invoicing & Billing',
+    description: 'Transform your business workflow with the ultimate US-targeted invoicing solution.',
+    images: [
+      {
+        url: 'https://invoicecraft.com/og-image.png',
+        width: 1200,
+        height: 630,
+        alt: 'InvoiceCraft Professional Billing',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'InvoiceCraft | Professional US Invoicing',
+    description: 'Automate your billing and look professional with InvoiceCraft.',
+    images: ['https://invoicecraft.com/twitter-image.png'],
+    creator: '@invoicecraft',
+  },
 };
 
 export default function RootLayout({

@@ -352,6 +352,7 @@ function PrintableInvoice({ invoice, accentColor, backgroundColor, textColor }: 
           textColor={serializedTextColor}
           id="invoice-preview-print"
           isPrint={true}
+          plan={invoice.userId ? 'free' : 'free'}
         />,
         container
       );
